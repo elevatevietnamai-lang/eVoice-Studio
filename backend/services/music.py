@@ -39,6 +39,7 @@ _PYTHON_VERSION = "3.11"
 MIN_SECONDS, MAX_SECONDS = 10, 240
 IDLE_STOP_SECONDS = 300
 START_TIMEOUT_SECONDS = 900  # first start loads several GB of weights
+POLL_TIMEOUT_SECONDS = 1800
 
 
 @dataclass
@@ -119,6 +120,26 @@ def _safe_extract(archive: Path, dest: Path) -> None:
             if src is not None:
                 with open(target, "wb") as out:
                     out.write(src.read())
+
+
+def _clean_env(extra: Optional[dict] = None) -> dict:
+    """Environment for the engine's own interpreter: nothing from VoiceStudio's venv may leak in."""
+    env = os.environ.copy()
+    for name in ("VIRTUAL_ENV", "PYTHONHOME", "PYTHONPATH", "UV_PROJECT_ENVIRONMENT"):
+        env.pop(name, None)
+    env.update({"PYTHONUNBUFFERED": "1", "PYTHONIOENCODING": "utf-8",
+                "ACESTEP_PROJECT_ROOT": str(source_dir()),
+                "ACESTEP_CHECKPOINTS_DIR": str(checkpoints_dir())})
+    env.update(extra or {})
+    return env
+
+
+def _log_tail(lines: int = 20) -> str:
+    try:
+        text = (engine_dir() / "server.log").read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+    return "\n".join(text.splitlines()[-lines:])
 
 
 def _unwrap(payload: dict) -> object:
@@ -207,7 +228,7 @@ class AceStepEngine:
             if not uv:
                 raise RuntimeError("uv was not found; reinstall VoiceStudio or install uv.")
             engines = Path(get_engines_dir(DATA_DIR))
-            env = uv_subprocess_env(engines)
+            env = _clean_env(uv_subprocess_env(engines))
             src = source_dir()
             if not (src / "pyproject.toml").is_file():
                 yield {"type": "progress", "progress": 0.02, "message": "Downloading ACE-Step source"}
@@ -225,7 +246,7 @@ class AceStepEngine:
             yield {"type": "progress", "progress": 0.08,
                    "message": "Installing the music engine (several GB, can take a while)"}
             sync = [uv, "sync", "--locked", "--python", _PYTHON_VERSION]
-            proc_env = {**env, "PYTHONUNBUFFERED": "1"}
+            proc_env = env
             async for line in _run_logged(sync, proc_env, 3600, cwd=str(src)):
                 yield {"type": "log", "message": line}
             yield {"type": "progress", "progress": 0.7, "message": "Downloading the music model (~5 GB)"}
@@ -246,16 +267,17 @@ class AceStepEngine:
             if not self._alive():
                 from core.contained_subprocess import spawn_owned
                 srv.port, srv.key = _free_port(), secrets.token_urlsafe(24)
-                env = os.environ.copy()
-                env.update({"ACESTEP_API_HOST": "127.0.0.1", "ACESTEP_API_PORT": str(srv.port),
-                            "ACESTEP_API_KEY": srv.key, "ACESTEP_INIT_LLM": "false",
-                            "ACESTEP_LM_BACKEND": "pt", "PYTHONUNBUFFERED": "1",
-                            "PYTHONIOENCODING": "utf-8",
-                            "ACESTEP_TMPDIR": str(engine_dir() / "tmp")})
+                env = _clean_env({"ACESTEP_API_HOST": "127.0.0.1", "ACESTEP_API_PORT": str(srv.port),
+                                  "ACESTEP_API_KEY": srv.key, "ACESTEP_INIT_LLM": "false",
+                                  "ACESTEP_LM_BACKEND": "pt",
+                                  "ACESTEP_TMPDIR": str(engine_dir() / "tmp")})
                 logger.info("starting ACE-Step on 127.0.0.1:%s", srv.port)
-                srv.proc = spawn_owned([str(venv_python()), "-m", "acestep.api_server"], env=env,
-                                       cwd=str(source_dir()), stdout=subprocess.DEVNULL,
-                                       stderr=subprocess.DEVNULL)
+                log_file = open(engine_dir() / "server.log", "wb")
+                try:
+                    srv.proc = spawn_owned([str(venv_python()), "-m", "acestep.api_server"], env=env,
+                                           cwd=str(source_dir()), stdout=log_file, stderr=subprocess.STDOUT)
+                finally:
+                    log_file.close()  # the child keeps its own handle
                 await self._wait_healthy()
             srv.last_used = time.monotonic()
             if srv.reaper is None or srv.reaper.done():
@@ -268,9 +290,10 @@ class AceStepEngine:
         async with httpx.AsyncClient(timeout=3.0) as client:
             while time.monotonic() < deadline:
                 if not self._alive():
-                    raise RuntimeError("The music server exited while starting.")
+                    raise RuntimeError("The music server exited while starting.\n" + _log_tail())
                 try:
-                    r = await client.get(f"http://127.0.0.1:{srv.port}/health")
+                    r = await client.get(f"http://127.0.0.1:{srv.port}/health",
+                                         headers={"Authorization": f"Bearer {srv.key}"})
                     if r.status_code == 200:
                         _unwrap(r.json())
                         return
@@ -278,7 +301,7 @@ class AceStepEngine:
                     pass
                 await asyncio.sleep(2.0)
         await self.stop()
-        raise RuntimeError("The music server did not become ready in time.")
+        raise RuntimeError("The music server did not become ready in time.\n" + _log_tail())
 
     async def _reap_idle(self) -> None:
         srv = self._server
@@ -324,16 +347,23 @@ class AceStepEngine:
                     raise RuntimeError("The music server did not return a task id.")
                 yield {"type": "progress", "progress": 0.1, "message": "Generating"}
                 waited = 0.0
+                missing = 0
                 while True:
+                    if waited > POLL_TIMEOUT_SECONDS:
+                        raise RuntimeError("Music generation took too long and was stopped.")
                     await asyncio.sleep(2.0)
                     waited += 2.0
                     srv.last_used = time.monotonic()
                     q = await client.post(f"{base}/query_result", json={"task_id_list": [task_id]})
                     items = _unwrap(q.json()) or []
                     item = next((i for i in items if isinstance(i, dict) and i.get("task_id") == task_id), None)
+                    missing = 0 if item else missing + 1
+                    if missing >= 15:
+                        raise RuntimeError("The music server lost the task (it may have restarted).")
                     state = _task_state(item.get("status") if item else 0)
                     if state == "failed":
-                        raise RuntimeError("Music generation failed on the music server.")
+                        detail = str(item.get("result") or "")[:300] if item else ""
+                        raise RuntimeError("Music generation failed on the music server. " + detail)
                     if state == "succeeded":
                         results = item.get("result")
                         results = json.loads(results) if isinstance(results, str) else (results or [])

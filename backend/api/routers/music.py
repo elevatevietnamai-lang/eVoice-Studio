@@ -17,6 +17,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
+from api.dependencies import require_admin, require_desktop
 from core.browser_guard import reject_cross_site_get
 from services import music, music_library
 
@@ -49,7 +50,8 @@ def music_status():
     return music.get_engine().status()
 
 
-@router.get("/music/install-stream", dependencies=[Depends(reject_cross_site_get)])
+@router.get("/music/install-stream",
+            dependencies=[Depends(reject_cross_site_get), Depends(require_admin), Depends(require_desktop)])
 async def music_install_stream():
     async def gen():
         try:
@@ -61,7 +63,7 @@ async def music_install_stream():
     return _stream(gen())
 
 
-@router.post("/music/stop")
+@router.post("/music/stop", dependencies=[Depends(require_admin)])
 async def music_stop():
     await music.get_engine().stop()
     return {"stopped": True}
