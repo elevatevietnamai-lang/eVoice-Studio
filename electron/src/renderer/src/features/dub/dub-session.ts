@@ -2003,11 +2003,13 @@ export async function importDubSubtitles(file: File) {
   });
 }
 
+export type HardsubMethod = 'sttn' | 'lama' | 'propainter';
+
 export type HardsubState = {
   region?: [number, number] | null;
   cue_count?: number;
   cleaned?: boolean;
-  method?: 'lama' | 'opencv' | null;
+  method?: HardsubMethod | null;
   revision?: number;
 };
 
@@ -2069,7 +2071,7 @@ export async function readDubHardsub(
 }
 
 /** Rebuild the frames without the burned-in subtitles; the job video becomes the clean copy. */
-export async function removeDubHardsub(method: 'lama' | 'opencv', onProgress?: HardsubProgress) {
+export async function removeDubHardsub(method: HardsubMethod, onProgress?: HardsubProgress) {
   const snapshot = dubSession.state;
   if (!snapshot.jobId || snapshot.recovery || controller || cancelling) return false;
   const jobId = snapshot.jobId;

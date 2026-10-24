@@ -247,7 +247,7 @@ def _apply_cues(job_id: str, data: dict, top: float, bottom: float) -> list[dict
 # ───────────────────────────────────────────────────────────── removal
 
 @router.get("/dub/hardsub/clean-stream/{job_id}", dependencies=[Depends(reject_cross_site_get)])
-async def hardsub_clean_stream(job_id: str, method: str = Query("lama", pattern="^(lama|opencv)$")):
+async def hardsub_clean_stream(job_id: str, method: str = Query("lama", pattern="^(sttn|lama|propainter|opencv)$")):
     """Remove the OCR'd subtitles from the picture and use the result as the job video."""
 
     async def gen():

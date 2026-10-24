@@ -16,6 +16,7 @@ import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
 import { cn } from '@/lib/utils';
 import {
+  type HardsubMethod,
   readDubHardsub,
   removeDubHardsub,
   restoreDubHardsub,
@@ -67,7 +68,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
   );
   const [frameAt, setFrameAt] = useState(() => Math.min(5, duration * 0.3));
   const [fps, setFps] = useState(4);
-  const [method, setMethod] = useState<'lama' | 'opencv'>('lama');
+  const [method, setMethod] = useState<HardsubMethod>('lama');
   const [task, setTask] = useState<{ kind: 'install' | 'ocr' | 'clean'; progress: number } | null>(
     null,
   );
@@ -345,8 +346,8 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             </div>
 
             <div className="space-y-2 border-t border-border/50 pt-3">
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted/40 p-1">
-                {(['lama', 'opencv'] as const).map((value) => (
+              <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1">
+                {(['sttn', 'lama', 'propainter'] as const).map((value) => (
                   <Button
                     key={value}
                     size="xs"

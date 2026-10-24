@@ -20,9 +20,22 @@ burned into the picture. Dub can read them and remove them:
    The clean video becomes the job's video for preview, burned-in subtitle
    export and every video export. **Use original video** switches back.
 
+   Rebuild modes:
+
+   | Mode | How it fills | Speed |
+   |---|---|---|
+   | STTN | median of up to 5 matching neighbour frames, classical fill for pixels never exposed | fastest, no GPU |
+   | LaMa (default) | nearest matching neighbour frame, LaMa for what was never exposed | medium |
+   | ProPainter | same median as STTN, then LaMa refines the whole area (65% real background / 35% LaMa) to remove ringing | slowest |
+
+   STTN and ProPainter follow the naming of VideoSubtitleRemover (MIT). They are
+   temporal-background hybrids, **not** the STTN or ProPainter networks and use none of
+   their weights (the ProPainter weights are non-commercial). LaMa is downloaded on
+   first use; if it is unavailable, LaMa and ProPainter fall back to the STTN fill.
+
 API: `GET /dub/hardsub/status`, `GET /dub/hardsub/install-stream`,
 `GET /dub/hardsub/frame/{job_id}?t=`, `GET /dub/hardsub/ocr-stream/{job_id}?top=&bottom=&fps=`,
-`GET /dub/hardsub/clean-stream/{job_id}?method=lama|opencv`,
+`GET /dub/hardsub/clean-stream/{job_id}?method=sttn|lama|propainter` (`opencv` is the legacy name of `sttn`),
 `POST /dub/hardsub/restore/{job_id}`, `GET /dub/hardsub/state/{job_id}`.
 
 Limits: an object moving directly behind the text can leave a soft smear

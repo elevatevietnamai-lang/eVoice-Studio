@@ -5,6 +5,14 @@ Thứ tự lấp vùng chữ cho mỗi khung hình:
      có căn chỉnh dịch chuyển camera và kiểm tra cảnh tĩnh quanh viền vùng chữ.
   2. Khung hình vừa xử lý trước đó (giữ tính liên tục, tránh nhấp nháy).
   3. Phần còn thiếu: LaMa (AI) hoặc OpenCV Telea (nhanh).
+
+Chế độ (method):
+  sttn       nền thật từ nhiều khung lân cận, lấy trung vị; phần chưa từng lộ thì OpenCV (nhanh nhất).
+  lama       nền thật từ khung lân cận gần nhất, phần còn thiếu do LaMa vẽ (mặc định).
+  propainter nền thật lấy trung vị + LaMa tinh chỉnh toàn vùng (pha 65/35) để xóa vệt răng cưa.
+  opencv     tên cũ của sttn.
+Lưu ý: sttn/propainter theo cách đặt tên của VideoSubtitleRemover (MIT); đó là thuật toán lai
+nền-thời-gian, KHÔNG phải mạng STTN/ProPainter gốc và không dùng trọng số của chúng.
 """
 from __future__ import annotations
 
@@ -19,6 +27,10 @@ import numpy as np
 from .hw import ort_providers
 from .subs import Segment
 from .video import VideoInfo, VideoWriter
+
+METHODS = ("sttn", "lama", "propainter", "opencv")
+MEDIAN_FRAMES = {"sttn": 5, "propainter": 5}
+PROPAINTER_TEMPORAL_WEIGHT = 0.65
 
 LAMA_URLS = [
     "https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx",
@@ -90,19 +102,22 @@ class Filler:
     """Lấp vùng thiếu bằng AI (LaMa, chia ô vuông theo chiều ngang) hoặc OpenCV."""
 
     def __init__(self, method: str, models_dir: str, prefer_gpu: bool, log=print):
-        self.method = method
+        if method not in METHODS:
+            raise ValueError(f"method phải thuộc {METHODS}")
+        self.requested = "sttn" if method == "opencv" else method
+        self.method = self.requested
         self.lama = None
-        if method == "lama":
+        if method in ("lama", "propainter"):
             try:
                 self.lama = LamaOnnx(ensure_lama(models_dir, log), prefer_gpu)
             except Exception as e:
                 log(f"⚠️ Không dùng được LaMa ({e}). Chuyển sang OpenCV.")
-                self.method = "opencv"
+                self.method = "sttn"
 
     def fill(self, img: np.ndarray, hole: np.ndarray) -> np.ndarray:
         if not hole.any():
             return img
-        if self.method != "lama":
+        if self.lama is None:
             return cv2.inpaint(img, hole.astype(np.uint8) * 255, 7, cv2.INPAINT_TELEA)
         return self._lama_tiles(img, hole)
 
@@ -163,8 +178,12 @@ def _estimate_shift(g_cur, g_ref, invalid):
     return dx, dy, resp
 
 
-def temporal_fill(cur, hole, cands, ring_px=12, diff_thr=6.0, max_tries=16, match_frac=0.85):
-    """cands: list (ảnh band, valid bool) theo thứ tự ưu tiên. Trả (ảnh, phần còn thiếu)."""
+def temporal_fill(cur, hole, cands, ring_px=12, diff_thr=6.0, max_tries=16, match_frac=0.85,
+                  median_of=1):
+    """cands: list (ảnh band, valid bool) theo thứ tự ưu tiên. Trả (ảnh, phần còn thiếu).
+
+    median_of > 1: gom tối đa ngần ấy khung khớp nền rồi lấy trung vị từng điểm ảnh (loại vật thể
+    đi ngang); =1: lấy từ khung khớp đầu tiên (nhanh hơn)."""
     out = cur.copy()
     remaining = hole.copy()
     k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * ring_px + 1, 2 * ring_px + 1))
@@ -174,10 +193,16 @@ def temporal_fill(cur, hole, cands, ring_px=12, diff_thr=6.0, max_tries=16, matc
         return out, remaining
     g_cur = _gray(cur)
     tries = 0
+    stack: list[tuple[np.ndarray, np.ndarray]] = []
+    votes = np.zeros(hole.shape, np.int16)
     for img, valid in cands:
-        if not remaining.any() or tries >= max_tries:
+        if tries >= max_tries:
             break
-        if not (remaining & valid).any():
+        if median_of <= 1 and not remaining.any():
+            break
+        if median_of > 1 and hole.any() and votes[hole].min() >= median_of:
+            break
+        if not ((remaining if median_of <= 1 else hole) & valid).any():
             continue
         tries += 1
         g = _gray(img)
@@ -199,7 +224,7 @@ def temporal_fill(cur, hole, cands, ring_px=12, diff_thr=6.0, max_tries=16, matc
         # cảnh coi là cùng nền nếu đa số viền khớp (chịu được vật thể nhỏ đi ngang)
         if match.mean() < match_frac:
             continue
-        take = remaining & valid
+        take = (remaining if median_of <= 1 else hole & (votes < median_of)) & valid
         if not take.any():
             continue
         # cân bằng sáng theo phần viền khớp để tránh vệt
@@ -208,8 +233,19 @@ def temporal_fill(cur, hole, cands, ring_px=12, diff_thr=6.0, max_tries=16, matc
         off = np.median(cm, 0) - np.median(im, 0)
         if np.abs(off).max() > 10:
             continue  # lệch màu lớn: nhiều khả năng không phải cùng nền
-        out[take] = np.clip(img[take].astype(np.float32) + off, 0, 255).astype(np.uint8)
-        remaining &= ~take
+        fixed = np.clip(img.astype(np.float32) + off, 0, 255)
+        if median_of <= 1:
+            out[take] = fixed[take].astype(np.uint8)
+            remaining &= ~take
+        else:
+            stack.append((fixed, take))
+            votes += take
+    if stack:
+        arr = np.stack([np.where(t[..., None], f, np.nan) for f, t in stack])
+        covered = votes > 0
+        med = np.nanmedian(arr[:, covered], axis=0)
+        out[covered] = np.clip(np.round(med), 0, 255).astype(np.uint8)
+        remaining &= ~covered
     return out, remaining
 
 
@@ -272,7 +308,7 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
                      method: str = "lama", models_dir: str = "models", prefer_gpu: bool = True,
                      time_margin: float = 0.08, window_sec: float = 2.5,
                      use_temporal: bool = True, progress=None, log=print) -> str:
-    """Tạo video sạch phụ đề. method: 'lama' | 'opencv'."""
+    """Tạo video sạch phụ đề. method: 'sttn' | 'lama' | 'propainter' | 'opencv' (= sttn)."""
     plan = MaskPlan(segs, info, time_margin)
     if plan.empty:
         raise RuntimeError("Không có vị trí phụ đề (box) nào để xóa.")
@@ -310,13 +346,21 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
                         cands.append((bands[s], ~hs if hs is not None else np.ones_like(hole)))
             if prev_out_band is not None:  # nền thật ưu tiên trước, rồi mới tới khung đã lấp
                 cands.append((prev_out_band, np.ones_like(hole)))
-            filled, remaining = temporal_fill(band, hole, cands)
+            filled, remaining = temporal_fill(band, hole, cands,
+                                              median_of=MEDIAN_FRAMES.get(filler.requested, 1))
             if remaining.sum() < hole.sum():
                 n_temporal += 1
         if remaining.any():
             k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
             remaining = cv2.dilate(remaining.astype(np.uint8), k).astype(bool) & hole
             filled = filler.fill(filled, remaining)
+            n_ai += 1
+        if filler.requested == "propainter" and filler.lama is not None:
+            # LaMa tinh chỉnh lại toàn vùng: nền thật giữ 65%, LaMa 35% để xóa vệt/ringing
+            refined = filler.fill(filled, hole)
+            blend = (filled.astype(np.float32) * PROPAINTER_TEMPORAL_WEIGHT
+                     + refined.astype(np.float32) * (1 - PROPAINTER_TEMPORAL_WEIGHT))
+            filled = np.where(hole[..., None], np.clip(blend, 0, 255).astype(np.uint8), filled)
             n_ai += 1
         filled = _feather_blend(band, filled, hole)
         out = frame.copy()

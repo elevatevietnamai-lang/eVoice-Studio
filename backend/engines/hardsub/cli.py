@@ -114,7 +114,7 @@ def main():
     c = sub.add_parser("clean")
     c.add_argument("--video", required=True)
     c.add_argument("--cues", required=True)
-    c.add_argument("--method", choices=["lama", "opencv"], default="lama")
+    c.add_argument("--method", choices=["lama", "sttn", "propainter", "opencv"], default="lama")
     c.add_argument("--models", default=os.path.join(HERE, "models"))
     c.add_argument("--cpu", action="store_true")
     c.add_argument("--out", required=True)
