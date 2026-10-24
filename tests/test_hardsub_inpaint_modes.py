@@ -87,3 +87,13 @@ def test_lama_modes_degrade_to_sttn_when_the_model_is_unavailable(method, monkey
     f = inpaint.Filler(method, "unused", False, log=logs.append)
     assert f.requested == method and f.method == "sttn" and f.lama is None
     assert any("LaMa" in m for m in logs)
+
+
+def test_engine_media_commands_only_open_files_and_pipes():
+    from hardsub_core.hw import local_inputs_only
+    probe = local_inputs_only(["/x/ffprobe", "-v", "error", "clip.mp4"])
+    assert probe[1:3] == ["-protocol_whitelist", "file,pipe"]
+    enc = local_inputs_only(["/x/ffmpeg", "-f", "rawvideo", "-i", "-", "-i", "a.mp4", "o.mp4"])
+    assert enc.count("-protocol_whitelist") == 2
+    assert all(enc[i - 2:i] == ["-protocol_whitelist", "file,pipe"] for i, a in enumerate(enc) if a == "-i")
+    assert local_inputs_only(enc) == enc  # idempotent

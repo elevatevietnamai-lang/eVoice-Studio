@@ -59,7 +59,7 @@ async def music_install_stream():
                 yield _sse("done" if event["type"] == "done" else event["type"], event)
         except Exception as exc:
             logger.warning("music install failed: %s", exc)
-            yield _sse("error", {"error": "music_install_failed", "stage": "install", "reason": str(exc)[-1200:]})
+            yield _sse("error", {"error": "music_install_failed", "stage": "install", "reason": (str(exc) or type(exc).__name__)[-1200:]})
     return _stream(gen())
 
 
@@ -93,7 +93,7 @@ async def music_generate(body: GenerateBody):
             yield _sse("done", {"track": record})
         except Exception as exc:
             logger.warning("music generation failed: %s", exc)
-            yield _sse("error", {"error": "music_failed", "stage": "music", "reason": str(exc)[-1200:]})
+            yield _sse("error", {"error": "music_failed", "stage": "music", "reason": (str(exc) or type(exc).__name__)[-1200:]})
     return _stream(gen())
 
 

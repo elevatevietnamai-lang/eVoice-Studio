@@ -9,7 +9,7 @@ from fractions import Fraction
 import cv2
 import numpy as np
 
-from .hw import ffmpeg_bin, ffprobe_bin, video_encoder
+from .hw import ffmpeg_bin, ffprobe_bin, local_inputs_only, video_encoder
 
 
 @dataclass
@@ -26,7 +26,8 @@ class VideoInfo:
 
 def probe(path: str) -> VideoInfo:
     out = subprocess.run(
-        [ffprobe_bin(), "-v", "error", "-print_format", "json", "-show_streams", "-show_format", path],
+        local_inputs_only([ffprobe_bin(), "-v", "error", "-print_format", "json", "-show_streams",
+                           "-show_format", path]),
         capture_output=True, text=True, check=True).stdout
     data = json.loads(out)
     v = next(s for s in data["streams"] if s.get("codec_type") == "video")
@@ -71,6 +72,7 @@ class VideoWriter:
         if audio_src and info.has_audio:
             cmd += ["-i", audio_src, "-map", "0:v", "-map", "1:a?", "-c:a", "copy"]
         cmd += ["-c:v", enc, *enc_args, "-pix_fmt", "yuv420p", out_path]
+        cmd = local_inputs_only(cmd)
         self.proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def write(self, frame: np.ndarray):

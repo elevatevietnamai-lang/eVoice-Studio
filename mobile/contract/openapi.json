@@ -2338,6 +2338,74 @@
     "title": "FitOptions",
     "type": "object"
    },
+   "GenerateBody": {
+    "properties": {
+     "bpm": {
+      "anyOf": [
+       {
+        "maximum": 300.0,
+        "minimum": 30.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Bpm"
+     },
+     "duration": {
+      "default": 60.0,
+      "maximum": 240.0,
+      "minimum": 10.0,
+      "title": "Duration",
+      "type": "number"
+     },
+     "instrumental": {
+      "default": true,
+      "title": "Instrumental",
+      "type": "boolean"
+     },
+     "key_scale": {
+      "default": "",
+      "maxLength": 24,
+      "title": "Key Scale",
+      "type": "string"
+     },
+     "lyrics": {
+      "default": "",
+      "maxLength": 8000,
+      "title": "Lyrics",
+      "type": "string"
+     },
+     "prompt": {
+      "default": "",
+      "maxLength": 1000,
+      "title": "Prompt",
+      "type": "string"
+     },
+     "seed": {
+      "anyOf": [
+       {
+        "maximum": 2147483647.0,
+        "minimum": 0.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Seed"
+     },
+     "vocal_language": {
+      "default": "en",
+      "maxLength": 8,
+      "title": "Vocal Language",
+      "type": "string"
+     }
+    },
+    "title": "GenerateBody",
+    "type": "object"
+   },
    "GlossaryTerm": {
     "properties": {
      "note": {
@@ -10384,6 +10452,292 @@
     "summary": "Dub Get Audio"
    }
   },
+  "/dub/bgm/download/{job_id}": {
+   "get": {
+    "operationId": "bgm_download_dub_bgm_download__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "file",
+      "required": true,
+      "schema": {
+       "title": "File",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Bgm Download"
+   }
+  },
+  "/dub/bgm/export-stream/{job_id}": {
+   "get": {
+    "operationId": "bgm_export_stream_dub_bgm_export_stream__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "lang",
+      "required": true,
+      "schema": {
+       "title": "Lang",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "music_gain",
+      "required": false,
+      "schema": {
+       "default": 0.35,
+       "maximum": 1.5,
+       "minimum": 0.0,
+       "title": "Music Gain",
+       "type": "number"
+      }
+     },
+     {
+      "in": "query",
+      "name": "burn",
+      "required": false,
+      "schema": {
+       "default": true,
+       "title": "Burn",
+       "type": "boolean"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Bgm Export Stream"
+   }
+  },
+  "/dub/bgm/generate-stream/{job_id}": {
+   "get": {
+    "operationId": "bgm_generate_stream_dub_bgm_generate_stream__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "style",
+      "required": false,
+      "schema": {
+       "default": "",
+       "maxLength": 400,
+       "title": "Style",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "seed",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Seed"
+      }
+     },
+     {
+      "in": "query",
+      "name": "bpm",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "maximum": 220,
+         "minimum": 40,
+         "type": "integer"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "title": "Bpm"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Bgm Generate Stream"
+   }
+  },
+  "/dub/bgm/preview/{job_id}": {
+   "get": {
+    "operationId": "bgm_preview_dub_bgm_preview__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Bgm Preview"
+   }
+  },
+  "/dub/bgm/state/{job_id}": {
+   "get": {
+    "operationId": "bgm_state_dub_bgm_state__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Bgm State"
+   }
+  },
+  "/dub/bgm/status": {
+   "get": {
+    "operationId": "bgm_status_dub_bgm_status_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Bgm Status"
+   }
+  },
   "/dub/cleanup-segments/{job_id}": {
    "post": {
     "description": "Re-run merge/stitch passes to drop fragments.\n\nCleans the editor's segments when sent, so unsaved text, timing and\ndirection edits survive; otherwise the job's stored segments. The\neditor's result is returned without being stored: it is an undoable edit\nlike any other, and the job keeps the segments its existing audio and\nsubtitle exports were generated from until the next generation.",
@@ -11123,6 +11477,307 @@
      }
     },
     "summary": "Dub Generate"
+   }
+  },
+  "/dub/hardsub/clean-stream/{job_id}": {
+   "get": {
+    "description": "Remove the OCR'd subtitles from the picture and use the result as the job video.",
+    "operationId": "hardsub_clean_stream_dub_hardsub_clean_stream__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "method",
+      "required": false,
+      "schema": {
+       "default": "lama",
+       "pattern": "^(sttn|lama|propainter|opencv)$",
+       "title": "Method",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Hardsub Clean Stream"
+   }
+  },
+  "/dub/hardsub/frame/{job_id}": {
+   "get": {
+    "description": "A JPEG frame of the ORIGINAL video for drawing the subtitle region.",
+    "operationId": "hardsub_frame_dub_hardsub_frame__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "t",
+      "required": false,
+      "schema": {
+       "default": 0.0,
+       "minimum": 0.0,
+       "title": "T",
+       "type": "number"
+      }
+     },
+     {
+      "in": "query",
+      "name": "width",
+      "required": false,
+      "schema": {
+       "default": 960,
+       "maximum": 1920,
+       "minimum": 160,
+       "title": "Width",
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Hardsub Frame"
+   }
+  },
+  "/dub/hardsub/install-stream": {
+   "get": {
+    "operationId": "hardsub_install_stream_dub_hardsub_install_stream_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Hardsub Install Stream"
+   }
+  },
+  "/dub/hardsub/ocr-stream/{job_id}": {
+   "get": {
+    "description": "Read the burned-in subtitles and make them the job's source segments.",
+    "operationId": "hardsub_ocr_stream_dub_hardsub_ocr_stream__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "top",
+      "required": false,
+      "schema": {
+       "default": 0.62,
+       "maximum": 1.0,
+       "minimum": 0.0,
+       "title": "Top",
+       "type": "number"
+      }
+     },
+     {
+      "in": "query",
+      "name": "bottom",
+      "required": false,
+      "schema": {
+       "default": 0.98,
+       "maximum": 1.0,
+       "minimum": 0.0,
+       "title": "Bottom",
+       "type": "number"
+      }
+     },
+     {
+      "in": "query",
+      "name": "fps",
+      "required": false,
+      "schema": {
+       "default": 4.0,
+       "maximum": 12.0,
+       "minimum": 1.0,
+       "title": "Fps",
+       "type": "number"
+      }
+     },
+     {
+      "in": "query",
+      "name": "any_script",
+      "required": false,
+      "schema": {
+       "default": false,
+       "title": "Any Script",
+       "type": "boolean"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Hardsub Ocr Stream"
+   }
+  },
+  "/dub/hardsub/restore/{job_id}": {
+   "post": {
+    "description": "Use the original (subtitled) video again.",
+    "operationId": "hardsub_restore_dub_hardsub_restore__job_id__post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Hardsub Restore"
+   }
+  },
+  "/dub/hardsub/state/{job_id}": {
+   "get": {
+    "operationId": "hardsub_state_dub_hardsub_state__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Hardsub State"
+   }
+  },
+  "/dub/hardsub/status": {
+   "get": {
+    "operationId": "hardsub_status_dub_hardsub_status_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Hardsub Status"
    }
   },
   "/dub/history": {
@@ -15692,6 +16347,180 @@
      }
     },
     "summary": "Delete Model"
+   }
+  },
+  "/music/audio/{track_id}": {
+   "get": {
+    "operationId": "music_audio_music_audio__track_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "track_id",
+      "required": true,
+      "schema": {
+       "title": "Track Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Audio"
+   }
+  },
+  "/music/generate": {
+   "post": {
+    "operationId": "music_generate_music_generate_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/GenerateBody"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Generate"
+   }
+  },
+  "/music/install-stream": {
+   "get": {
+    "operationId": "music_install_stream_music_install_stream_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Install Stream"
+   }
+  },
+  "/music/library": {
+   "get": {
+    "operationId": "music_list_music_library_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music List"
+   }
+  },
+  "/music/library/{track_id}": {
+   "delete": {
+    "operationId": "music_delete_music_library__track_id__delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "track_id",
+      "required": true,
+      "schema": {
+       "title": "Track Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Delete"
+   }
+  },
+  "/music/status": {
+   "get": {
+    "operationId": "music_status_music_status_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Status"
+   }
+  },
+  "/music/stop": {
+   "post": {
+    "operationId": "music_stop_music_stop_post",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Stop"
    }
   },
   "/personalities": {

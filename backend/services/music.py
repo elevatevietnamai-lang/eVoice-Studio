@@ -13,10 +13,13 @@ from __future__ import annotations
 
 import asyncio
 import atexit
+import gzip
+import hashlib
 import json
 import logging
 import os
 import secrets
+import shutil
 import socket
 import subprocess
 import sys
@@ -35,6 +38,10 @@ logger = logging.getLogger("omnivoice.music")
 
 ACESTEP_REVISION = "ca1e85fe9430179831e6bc6be790c332190a3866"
 ACESTEP_TARBALL = f"https://codeload.github.com/ace-step/ACE-Step-1.5/tar.gz/{ACESTEP_REVISION}"
+# SHA-256 of the *uncompressed* tar (git archive output is stable; the gzip layer is not).
+ACESTEP_TAR_SHA256 = "c1babe13937c756a10bb9ddc59f989b7cce58bf544ad234720095a5814ffd1db"
+_MAX_ARCHIVE_ENTRIES = 20_000
+_MAX_ARCHIVE_BYTES = 200 * 1024 * 1024
 _PYTHON_VERSION = "3.11"
 MIN_SECONDS, MAX_SECONDS = 10, 240
 IDLE_STOP_SECONDS = 300
@@ -100,26 +107,62 @@ def _free_port() -> int:
         return s.getsockname()[1]
 
 
-def _safe_extract(archive: Path, dest: Path) -> None:
-    """Extract a GitHub tarball, dropping its top-level folder and refusing escapes."""
-    dest.mkdir(parents=True, exist_ok=True)
-    root = dest.resolve()
-    with tarfile.open(archive, "r:gz") as tar:
-        for member in tar.getmembers():
-            parts = Path(member.name).parts[1:]
-            if not parts or not (member.isfile() or member.isdir()):
-                continue
-            target = root.joinpath(*parts).resolve()
-            if root not in target.parents and target != root:
-                raise RuntimeError("The downloaded archive contains an unsafe path.")
-            if member.isdir():
-                target.mkdir(parents=True, exist_ok=True)
-                continue
-            target.parent.mkdir(parents=True, exist_ok=True)
-            src = tar.extractfile(member)
-            if src is not None:
-                with open(target, "wb") as out:
-                    out.write(src.read())
+def _verify_tar_hash(archive: Path, expected: str) -> None:
+    h = hashlib.sha256()
+    with gzip.open(archive, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    if h.hexdigest() != expected:
+        raise RuntimeError("The downloaded ACE-Step archive failed its integrity check.")
+
+
+def _safe_extract(archive: Path, dest: Path, expected_sha256: Optional[str] = None) -> None:
+    """Extract a GitHub tarball, dropping its top-level folder and refusing escapes.
+
+    Verified first (when a hash is given), bounded in entries and bytes, and written to a
+    sibling folder that replaces `dest` only after everything extracted, so an interrupted
+    run never leaves a half-filled source tree behind.
+    """
+    if expected_sha256:
+        _verify_tar_hash(archive, expected_sha256)
+    staging = dest.with_name(dest.name + ".extracting")
+    shutil.rmtree(staging, ignore_errors=True)
+    staging.mkdir(parents=True)
+    root = staging.resolve()
+    total = 0
+    try:
+        with tarfile.open(archive, "r:gz") as tar:
+            members = tar.getmembers()
+            if len(members) > _MAX_ARCHIVE_ENTRIES:
+                raise RuntimeError("The downloaded archive has too many entries.")
+            for member in members:
+                parts = Path(member.name).parts[1:]
+                if not parts or not (member.isfile() or member.isdir()):
+                    continue
+                target = root.joinpath(*parts).resolve()
+                if root not in target.parents and target != root:
+                    raise RuntimeError("The downloaded archive contains an unsafe path.")
+                if member.isdir():
+                    target.mkdir(parents=True, exist_ok=True)
+                    continue
+                total += member.size
+                if total > _MAX_ARCHIVE_BYTES:
+                    raise RuntimeError("The downloaded archive is larger than expected.")
+                target.parent.mkdir(parents=True, exist_ok=True)
+                src = tar.extractfile(member)
+                if src is not None:
+                    with open(target, "wb") as out:
+                        shutil.copyfileobj(src, out)
+        dest.mkdir(parents=True, exist_ok=True)
+        for item in staging.iterdir():
+            final = dest / item.name
+            if final.is_dir():
+                shutil.rmtree(final)
+            elif final.exists():
+                final.unlink()
+            os.replace(item, final)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
 
 
 def _clean_env(extra: Optional[dict] = None) -> dict:
@@ -242,7 +285,7 @@ class AceStepEngine:
                             with open(archive, "wb") as f:
                                 async for chunk in r.aiter_bytes():
                                     f.write(chunk)
-                    await asyncio.to_thread(_safe_extract, archive, src)
+                    await asyncio.to_thread(_safe_extract, archive, src, ACESTEP_TAR_SHA256)
             yield {"type": "progress", "progress": 0.08,
                    "message": "Installing the music engine (several GB, can take a while)"}
             sync = [uv, "sync", "--locked", "--python", _PYTHON_VERSION]
@@ -348,14 +391,23 @@ class AceStepEngine:
                 yield {"type": "progress", "progress": 0.1, "message": "Generating"}
                 waited = 0.0
                 missing = 0
+                transient = 0
                 while True:
                     if waited > POLL_TIMEOUT_SECONDS:
                         raise RuntimeError("Music generation took too long and was stopped.")
                     await asyncio.sleep(2.0)
                     waited += 2.0
                     srv.last_used = time.monotonic()
-                    q = await client.post(f"{base}/query_result", json={"task_id_list": [task_id]})
-                    items = _unwrap(q.json()) or []
+                    try:
+                        q = await client.post(f"{base}/query_result", json={"task_id_list": [task_id]})
+                        items = _unwrap(q.json()) or []
+                        transient = 0
+                    except httpx.TransportError as exc:
+                        # The server can stall briefly while it loads weights; only give up on a streak.
+                        transient += 1
+                        if transient >= 10:
+                            raise RuntimeError(f"Lost the connection to the music server ({type(exc).__name__}).")
+                        continue
                     item = next((i for i in items if isinstance(i, dict) and i.get("task_id") == task_id), None)
                     missing = 0 if item else missing + 1
                     if missing >= 15:

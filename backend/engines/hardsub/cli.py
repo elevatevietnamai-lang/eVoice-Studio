@@ -12,6 +12,10 @@ Progress is printed to stdout as one JSON object per line:
 from __future__ import annotations
 
 import argparse
+import os
+
+# OpenCV's bundled FFmpeg must not follow URLs inside a crafted "video" (set before cv2 is imported).
+os.environ.setdefault("OPENCV_FFMPEG_CAPTURE_OPTIONS", "protocol_whitelist;file,pipe")
 import json
 import os
 import sys

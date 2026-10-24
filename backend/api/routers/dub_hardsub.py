@@ -22,7 +22,7 @@ import time
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response, StreamingResponse
 
-from api.dependencies import require_local
+from api.dependencies import require_admin, require_desktop, require_local
 from core.browser_guard import reject_cross_site_get
 from core.logging_utils import log_safe
 from services import dub_pipeline, hardsub
@@ -100,7 +100,8 @@ def hardsub_status():
 
 
 @router.get("/dub/hardsub/install-stream",
-            dependencies=[Depends(reject_cross_site_get), Depends(require_local)])
+            dependencies=[Depends(reject_cross_site_get), Depends(require_local), Depends(require_admin),
+                          Depends(require_desktop)])
 async def hardsub_install_stream():
     async def gen():
         try:

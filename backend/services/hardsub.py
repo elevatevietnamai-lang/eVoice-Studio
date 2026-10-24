@@ -23,7 +23,7 @@ logger = logging.getLogger("omnivoice.hardsub")
 
 ENGINE_SRC = Path(__file__).resolve().parent.parent / "engines" / "hardsub"
 CLI = ENGINE_SRC / "cli.py"
-REQUIREMENTS = ENGINE_SRC / "requirements.txt"
+LOCKS = ENGINE_SRC / "locks"  # hash-pinned (uv pip compile --universal --generate-hashes)
 _PYTHON_VERSION = "3.11"
 
 _install_lock = asyncio.Lock()
@@ -70,19 +70,25 @@ def _has_nvidia() -> bool:
         return False
 
 
-def _onnxruntime_requirement() -> list[str]:
+def _onnxruntime_lock() -> Path:
     if sys.platform == "darwin":
-        return ["onnxruntime>=1.17"]  # includes CoreML EP on Apple Silicon
+        return LOCKS / "ort-cpu.lock"  # includes the CoreML EP on Apple Silicon
     if _has_nvidia():
-        return ["onnxruntime-gpu>=1.19", "nvidia-cublas-cu12", "nvidia-cudnn-cu12>=9,<10",
-                "nvidia-cuda-runtime-cu12", "nvidia-cufft-cu12"]
+        return LOCKS / "ort-gpu.lock"
     if sys.platform == "win32":
-        return ["onnxruntime-directml>=1.17"]  # AMD / Intel GPUs on Windows
-    return ["onnxruntime>=1.17"]
+        return LOCKS / "ort-directml.lock"  # AMD / Intel GPUs on Windows
+    return LOCKS / "ort-cpu.lock"
+
+
+# Only what the engine needs; the backend's own environment (API keys, admin tokens) stays behind.
+_ENV_ALLOW = ("PATH", "PATHEXT", "SYSTEMROOT", "WINDIR", "COMSPEC", "TEMP", "TMP", "TMPDIR", "HOME",
+              "USERPROFILE", "APPDATA", "LOCALAPPDATA", "PROGRAMDATA", "PROGRAMFILES", "PROGRAMFILES(X86)",
+              "LANG", "LC_ALL", "LD_LIBRARY_PATH", "CUDA_VISIBLE_DEVICES", "CUDA_PATH",
+              "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY", "SSL_CERT_FILE", "REQUESTS_CA_BUNDLE")
 
 
 def engine_env() -> dict[str, str]:
-    env = os.environ.copy()
+    env = {k: v for k, v in os.environ.items() if k.upper() in _ENV_ALLOW}
     env["PYTHONUNBUFFERED"] = "1"
     env["PYTHONIOENCODING"] = "utf-8"
     ff = find_ffmpeg()
@@ -142,13 +148,15 @@ async def install() -> AsyncIterator[dict]:
             if not venv_python().is_file():
                 steps.append(("Creating Python environment",
                               [uv, "venv", "--python", _PYTHON_VERSION, str(venv_dir())]))
-            pip = [uv, "pip", "install", "--python", str(venv_python())]
+            # --no-config: the app repo's own [tool.uv] settings must not leak into the engine install
+            pip = [uv, "pip", "install", "--no-config", "--python", str(venv_python()), "--require-hashes"]
         else:
             if not venv_python().is_file():
                 steps.append(("Creating Python environment", [sys.executable, "-m", "venv", str(venv_dir())]))
-            pip = [str(venv_python()), "-m", "pip", "install"]
+            pip = [str(venv_python()), "-m", "pip", "install", "--require-hashes"]
         steps.append(("Installing OCR and inpainting libraries",
-                      [*pip, "-r", str(REQUIREMENTS), *_onnxruntime_requirement()]))
+                      [*pip, "-r", str(LOCKS / "requirements.lock")]))
+        steps.append(("Installing the GPU runtime", [*pip, "-r", str(_onnxruntime_lock())]))
         for i, (label, cmd) in enumerate(steps):
             yield {"type": "progress", "progress": i / len(steps), "message": label}
             async for line in _run_logged(cmd, env, idle_timeout=1800):

@@ -54,6 +54,37 @@ def test_extract_refuses_path_traversal(tmp_path):
     assert not (tmp_path / "evil.txt").exists()
 
 
+def _tar(tmp_path, names):
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+        for name in names:
+            info = tarfile.TarInfo(name)
+            info.size = 1
+            tar.addfile(info, io.BytesIO(b"x"))
+    archive = tmp_path / "b.tar.gz"
+    archive.write_bytes(buf.getvalue())
+    return archive
+
+
+def test_extract_checks_hash_and_never_leaves_partial_tree(tmp_path):
+    import gzip
+    import hashlib
+    archive = _tar(tmp_path, ["root/a.txt", "root/sub/b.txt"])
+    good = hashlib.sha256(gzip.decompress(archive.read_bytes())).hexdigest()
+    with pytest.raises(RuntimeError):
+        music._safe_extract(archive, tmp_path / "bad", "0" * 64)
+    assert not (tmp_path / "bad").exists()
+    music._safe_extract(archive, tmp_path / "ok", good)
+    assert (tmp_path / "ok" / "sub" / "b.txt").read_bytes() == b"x"
+    assert not (tmp_path / "ok.extracting").exists()
+
+
+def test_extract_caps_entry_count(tmp_path, monkeypatch):
+    monkeypatch.setattr(music, "_MAX_ARCHIVE_ENTRIES", 2)
+    with pytest.raises(RuntimeError):
+        music._safe_extract(_tar(tmp_path, ["r/a", "r/b", "r/c"]), tmp_path / "out")
+
+
 def test_download_only_follows_the_servers_own_audio_path(tmp_path):
     async def run():
         async with httpx.AsyncClient() as client:
@@ -107,3 +138,34 @@ def test_library_roundtrip_and_id_validation(tmp_path, monkeypatch):
     assert music_library.delete(tid) and not music_library.list_tracks()
     with pytest.raises(ValueError):
         music_library.audio_path("../etc/passwd")
+
+
+def test_generate_survives_a_transient_connection_error(tmp_path, monkeypatch):
+    state = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/release_task":
+            return httpx.Response(200, json=_wrap({"task_id": "t1", "status": "queued"}))
+        if request.url.path == "/query_result":
+            state["n"] += 1
+            if state["n"] == 1:
+                raise httpx.ReadError("")  # empty message, as seen on a stalled server
+            result = json.dumps([{"file": "/v1/audio?path=x.wav", "status": 1}])
+            return httpx.Response(200, json=_wrap([{"task_id": "t1", "status": 1, "result": result}]))
+        return httpx.Response(200, content=b"RIFF")
+
+    real = httpx.AsyncClient
+    monkeypatch.setattr(music.httpx, "AsyncClient", lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    real_sleep = asyncio.sleep
+    monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
+    engine = music.AceStepEngine()
+
+    async def fake_running():
+        return "http://127.0.0.1:9", "k"
+
+    monkeypatch.setattr(engine, "_ensure_running", fake_running)
+
+    async def run():
+        return [e async for e in engine.generate(music.MusicRequest(prompt="x"), str(tmp_path / "o.wav"))]
+
+    assert asyncio.run(run())[-1]["type"] == "done" and state["n"] == 2

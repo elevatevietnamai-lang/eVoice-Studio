@@ -1,0 +1,5 @@
+onnxruntime-gpu>=1.19
+nvidia-cublas-cu12
+nvidia-cudnn-cu12>=9,<10
+nvidia-cuda-runtime-cu12
+nvidia-cufft-cu12

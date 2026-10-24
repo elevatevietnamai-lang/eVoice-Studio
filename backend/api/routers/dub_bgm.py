@@ -106,7 +106,7 @@ async def bgm_generate_stream(job_id: str, style: str = Query("", max_length=400
             yield _sse("done", {"revision": info["revision"]})
         except Exception as exc:
             logger.warning("bgm generation failed for %s: %s", log_safe(job_id), exc)
-            yield _sse("error", {"error": "bgm_failed", "stage": "music", "reason": str(exc)[-1200:]})
+            yield _sse("error", {"error": "bgm_failed", "stage": "music", "reason": (str(exc) or type(exc).__name__)[-1200:]})
     return _stream(gen())
 
 
@@ -196,7 +196,7 @@ async def bgm_export_stream(job_id: str, lang: str = Query(...), music_gain: flo
             yield _sse("done", {"file": name})
         except Exception as exc:
             logger.warning("bgm export failed for %s: %s", log_safe(job_id), exc)
-            yield _sse("error", {"error": "bgm_export_failed", "stage": "export", "reason": str(exc)[-1200:]})
+            yield _sse("error", {"error": "bgm_export_failed", "stage": "export", "reason": (str(exc) or type(exc).__name__)[-1200:]})
     return _stream(gen())
 
 

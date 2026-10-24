@@ -16,6 +16,7 @@ nền-thời-gian, KHÔNG phải mạng STTN/ProPainter gốc và không dùng t
 """
 from __future__ import annotations
 
+import hashlib
 import math
 import os
 import urllib.request
@@ -32,27 +33,58 @@ METHODS = ("sttn", "lama", "propainter", "opencv")
 MEDIAN_FRAMES = {"sttn": 5, "propainter": 5}
 PROPAINTER_TEMPORAL_WEIGHT = 0.65
 
+# Pinned to one Hugging Face commit and one SHA-256: a swapped file (or a mirror serving a different
+# one) is rejected before it ever reaches onnxruntime.
+LAMA_REVISION = "c3c0c9e468934d62e79c329e35d82dd09ff8c444"
+LAMA_SHA256 = "1faef5301d78db7dda502fe59966957ec4b79dd64e16f03ed96913c7a4eb68d6"
+LAMA_SIZE = 208044816
 LAMA_URLS = [
-    "https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx",
-    "https://hf-mirror.com/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx",
+    f"https://huggingface.co/Carve/LaMa-ONNX/resolve/{LAMA_REVISION}/lama_fp32.onnx",
+    f"https://hf-mirror.com/Carve/LaMa-ONNX/resolve/{LAMA_REVISION}/lama_fp32.onnx",
 ]
+
+
+def _sha256_of(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _download_verified(url: str, tmp: str) -> None:
+    h = hashlib.sha256()
+    size = 0
+    with urllib.request.urlopen(url, timeout=60) as resp, open(tmp, "wb") as out:
+        for chunk in iter(lambda: resp.read(1 << 20), b""):
+            size += len(chunk)
+            if size > LAMA_SIZE:
+                raise RuntimeError("LaMa download is larger than expected")
+            h.update(chunk)
+            out.write(chunk)
+    if size != LAMA_SIZE or h.hexdigest() != LAMA_SHA256:
+        raise RuntimeError("LaMa download failed its integrity check")
 
 
 def ensure_lama(models_dir: str, log=print) -> str:
     path = os.path.join(models_dir, "lama_fp32.onnx")
-    if os.path.exists(path) and os.path.getsize(path) > 50_000_000:
+    if os.path.exists(path) and os.path.getsize(path) == LAMA_SIZE and _sha256_of(path) == LAMA_SHA256:
         return path
     os.makedirs(models_dir, exist_ok=True)
     last = None
     for url in LAMA_URLS:
+        tmp = path + ".part"
         try:
             log(f"Đang tải model LaMa (~200MB) từ {url} …")
-            tmp = path + ".part"
-            urllib.request.urlretrieve(url, tmp)
+            _download_verified(url, tmp)
             os.replace(tmp, path)
             return path
-        except Exception as e:  # thử mirror tiếp theo
+        except Exception as e:  # thử nguồn tiếp theo
             last = e
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
     raise RuntimeError(f"Không tải được model LaMa: {last}. Hãy tải thủ công lama_fp32.onnx vào {models_dir}")
 
 

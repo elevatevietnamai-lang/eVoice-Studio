@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import functools
+import os
 import platform
 import shutil
 import subprocess
@@ -60,9 +61,32 @@ def ort_providers(prefer_gpu: bool = True) -> tuple[str, ...]:
     return tuple(order)
 
 
+def local_inputs_only(cmd: list) -> list:
+    """Limit every ffmpeg input (or ffprobe's single input) to plain files and pipes.
+
+    Same contract as backend `services.ffmpeg_utils.local_inputs_only`, repeated here because
+    the engine runs in its own venv and cannot import the backend. A user-supplied "video" may
+    really be a playlist that points at http:// or file:// URIs.
+    """
+    wl = ["-protocol_whitelist", "file,pipe"]
+    if "-protocol_whitelist" in cmd:
+        return list(cmd)
+    if os.path.basename(str(cmd[0])).lower().startswith("ffprobe"):
+        return [cmd[0], *wl, *cmd[1:]]
+    out, i = [cmd[0]], 1
+    while i < len(cmd):
+        if cmd[i] == "-i" and i + 1 < len(cmd):
+            out += [*wl, "-i", cmd[i + 1]]
+            i += 2
+        else:
+            out.append(cmd[i])
+            i += 1
+    return out
+
+
 def _encoder_works(enc: str) -> bool:
-    cmd = [ffmpeg_bin(), "-hide_banner", "-loglevel", "error", "-f", "lavfi",
-           "-i", "color=c=black:s=256x256:d=0.2", "-c:v", enc, "-f", "null", "-"]
+    cmd = local_inputs_only([ffmpeg_bin(), "-hide_banner", "-loglevel", "error", "-f", "lavfi",
+                             "-i", "color=c=black:s=256x256:d=0.2", "-c:v", enc, "-f", "null", "-"])
     try:
         return subprocess.run(cmd, capture_output=True, timeout=30).returncode == 0
     except Exception:

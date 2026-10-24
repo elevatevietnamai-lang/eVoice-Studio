@@ -46,6 +46,10 @@ _ALLOWED_PREFIXES = ("electron/src/shared/i18n/", "electron/src/renderer/src/i18
 # Functional / data / documentation files where CJK is intentional and required.
 _ALLOWED_FILES = {
     "electron/src/main/blank-window-guard.ts",
+    # Hardcoded-subtitle engine: the OCR keeps Chinese subtitle text, so these hold script ranges and
+    # full-width punctuation that must be matched/escaped (text-processing regexes, not UI strings)
+    "backend/engines/hardsub/hardsub_core/ocr.py",
+    "backend/engines/hardsub/hardsub_core/subs.py",
     # Documentation & translated docs
     "README.md",                                  # native language-switcher link
     "README_CN.md",                               # Chinese README (a translation)
