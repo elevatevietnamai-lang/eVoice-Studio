@@ -136,6 +136,10 @@ export interface DubSession {
   project?: DubProject;
   translationFallback?: boolean;
   subtitleImport?: { file: string; stats: Record<string, number> };
+  /** On-screen (burned-in) subtitles: OCR + removal state for the current job. */
+  hardsub?: HardsubState;
+  /** Skip speech recognition after upload: the transcript will come from on-screen subtitles. */
+  hardsubFirst?: boolean;
   recovery: 'preparing' | 'generating' | 'transcribing' | null;
   target: string;
   multiTargets?: Array<{ lang: string; code: string }>;
@@ -328,6 +332,10 @@ export const setDubExportPreferences = (value: Partial<DubExportPreferences>) =>
 export const setDubQuality = (quality: DubSession['quality']) => {
   if (['idle', 'editing', 'done'].includes(dubSession.state.phase) && !dubSession.state.recovery)
     patch({ quality, ...(quality === 'agent' ? {} : { agentCli: undefined }) });
+};
+export const setDubHardsubFirst = (hardsubFirst: boolean) => {
+  if (['idle', 'editing', 'done'].includes(dubSession.state.phase) && !dubSession.state.recovery)
+    patch({ hardsubFirst });
 };
 export const setDubTranslationOptions = (
   value: Pick<
@@ -981,6 +989,11 @@ async function finishPreparation(jobId: string, taskId: string, signal: AbortSig
       // A missing, malformed, or stale caption track must not strand the job.
       // The ordinary ASR path remains the transparent fallback.
     }
+  }
+  if (dubSession.state.hardsubFirst && dubSession.state.inputType === 'video') {
+    // The transcript will be read from the burned-in subtitles instead.
+    patch({ phase: 'editing', segments: [], recovery: null });
+    return;
   }
   await transcribeJob(jobId, signal);
 }
@@ -1988,6 +2001,112 @@ export async function importDubSubtitles(file: File) {
       subtitleImport: { file: file.name, stats: result.stats },
     });
   });
+}
+
+export type HardsubState = {
+  region?: [number, number] | null;
+  cue_count?: number;
+  cleaned?: boolean;
+  method?: 'lama' | 'opencv' | null;
+  revision?: number;
+};
+
+export type HardsubProgress = (progress: number, message: string) => void;
+
+function hardsubEvent(event: TaskEvent, onProgress?: HardsubProgress) {
+  if (event.type === 'progress' && onProgress)
+    onProgress(Number(event.progress) || 0, String(event.message || ''));
+  if (event.type === 'error') {
+    const failure = publicFailureFromEvent(event, 'On-screen subtitle task failed');
+    patch({ failure });
+    throw new Error(failure.reason);
+  }
+  return event.type === 'done';
+}
+
+/** Read the burned-in subtitles (OCR) and make them the source transcript. */
+export async function readDubHardsub(
+  options: { top: number; bottom: number; fps: number; anyScript?: boolean },
+  onProgress?: HardsubProgress,
+) {
+  const snapshot = dubSession.state;
+  if (!snapshot.jobId || snapshot.recovery || controller || cancelling) return false;
+  const jobId = snapshot.jobId;
+  return run('importing', async (signal) => {
+    const query = new URLSearchParams({
+      top: options.top.toFixed(4),
+      bottom: options.bottom.toFixed(4),
+      fps: String(options.fps),
+    });
+    if (options.anyScript) query.set('any_script', 'true');
+    let received = false;
+    await consumeTaskStream(
+      `/dub/hardsub/ocr-stream/${encodeURIComponent(jobId)}?${query}`,
+      (event) => {
+        if (event.type === 'final') {
+          received = true;
+          const raw = Array.isArray(event.segments) ? (event.segments as DubSegment[]) : [];
+          clearDubEditHistory();
+          patch({
+            segments: raw.map((segment, index) => ({
+              ...segment,
+              id: String(segment.id ?? index),
+              text_original: segment.text_original ?? segment.text,
+            })),
+            sourceLang: String(event.source_lang || 'zh'),
+            tracks: [],
+            subtitleImport: undefined,
+            hardsub: { ...dubSession.state.hardsub, ...(event.state as HardsubState) },
+          });
+        }
+        return hardsubEvent(event, onProgress);
+      },
+      signal,
+    );
+    if (!received) throw new Error('Subtitle reading ended without a result');
+    patch({ phase: 'editing' });
+  });
+}
+
+/** Rebuild the frames without the burned-in subtitles; the job video becomes the clean copy. */
+export async function removeDubHardsub(method: 'lama' | 'opencv', onProgress?: HardsubProgress) {
+  const snapshot = dubSession.state;
+  if (!snapshot.jobId || snapshot.recovery || controller || cancelling) return false;
+  const jobId = snapshot.jobId;
+  const returnPhase = snapshot.phase;
+  return run('importing', async (signal) => {
+    await consumeTaskStream(
+      `/dub/hardsub/clean-stream/${encodeURIComponent(jobId)}?method=${method}`,
+      (event) => {
+        if (event.type === 'done' && event.state)
+          patch({ hardsub: { ...dubSession.state.hardsub, ...(event.state as HardsubState) } });
+        return hardsubEvent(event, onProgress);
+      },
+      signal,
+    );
+    restoreActionPhase(jobId, returnPhase === 'importing' ? 'editing' : returnPhase);
+  });
+}
+
+/** Go back to the original video (with its burned-in subtitles). */
+export async function restoreDubHardsub() {
+  const snapshot = dubSession.state;
+  if (!snapshot.jobId || controller || cancelling) return;
+  const state = await apiJson<HardsubState>(
+    `/dub/hardsub/restore/${encodeURIComponent(snapshot.jobId)}`,
+    { method: 'POST' },
+  );
+  if (dubSession.state.jobId === snapshot.jobId) patch({ hardsub: state });
+}
+
+/** Refresh the job's server-side on-screen subtitle state (after reload / project open). */
+export async function syncDubHardsub(jobId: string) {
+  try {
+    const state = await apiJson<HardsubState>(`/dub/hardsub/state/${encodeURIComponent(jobId)}`);
+    if (dubSession.state.jobId === jobId) patch({ hardsub: state });
+  } catch {
+    // Older jobs or a missing job simply have no on-screen subtitle state.
+  }
 }
 
 /** `run` falls back to editing on failure; an action that edits segments

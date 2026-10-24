@@ -20,11 +20,14 @@ import { GlossaryPanel } from './glossary-panel';
 import { CastingBoard } from './casting-board';
 import { DubbingDemo } from './dubbing-demo';
 import { CheckpointBanner, type CheckpointStage } from './checkpoint-banner';
+import { HardsubPanel } from './hardsub-panel';
+import { BgmPanel } from './bgm-panel';
 import { ConfirmDialog } from '../clone/confirm-dialog';
 import { useDubOnsets } from './use-dub-onsets';
 import { useDubLivePreview } from './use-dub-live-preview';
 import {
   setDubFitOptions,
+  setDubHardsubFirst,
   setDubQuality,
   setDubProduction,
   setDubTranslationOptions,
@@ -475,6 +478,7 @@ export function DubPage() {
     !diarisationModel.incomplete,
   );
   const job = encodeURIComponent(session.jobId || '');
+  const hardsubRevision = session.hardsub?.revision || 0;
   const previewRevision = useMemo(
     () =>
       preview === 'original' ? '' : fingerprintRevision(session.fingerprintsByLang?.[preview]),
@@ -487,11 +491,18 @@ export function DubPage() {
             const revision = fingerprintRevision(session.fingerprintsByLang?.[track]);
             return {
               track,
-              path: `/dub/preview-video/${job}?mix=surgical2&lang=${encodeURIComponent(track)}${revision ? `&v=${revision}` : ''}`,
+              path: `/dub/preview-video/${job}?mix=surgical2&lang=${encodeURIComponent(track)}${revision ? `&v=${revision}` : ''}${hardsubRevision ? `&hs=${hardsubRevision}` : ''}`,
             };
           })
         : [],
-    [job, session.fingerprintsByLang, session.inputType, session.jobId, session.tracks],
+    [
+      hardsubRevision,
+      job,
+      session.fingerprintsByLang,
+      session.inputType,
+      session.jobId,
+      session.tracks,
+    ],
   );
   const source = useMemo(
     () =>
@@ -503,10 +514,10 @@ export function DubPage() {
           )
         : apiPath(
             preview === 'original'
-              ? `/dub/media/${job}`
-              : `/dub/preview-video/${job}?mix=surgical2&lang=${encodeURIComponent(preview)}${previewRevision ? `&v=${previewRevision}` : ''}`,
+              ? `/dub/media/${job}${hardsubRevision ? `?hs=${hardsubRevision}` : ''}`
+              : `/dub/preview-video/${job}?mix=surgical2&lang=${encodeURIComponent(preview)}${previewRevision ? `&v=${previewRevision}` : ''}${hardsubRevision ? `&hs=${hardsubRevision}` : ''}`,
           ),
-    [job, preview, previewRevision, session.inputType],
+    [hardsubRevision, job, preview, previewRevision, session.inputType],
   );
   // Vidstack treats a new object identity as a source update. Keep this
   // stable while unrelated transcript/progress state changes so the native
@@ -1214,6 +1225,20 @@ export function DubPage() {
                 </div>
               )}
             </details>
+            <label className="flex items-start gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs">
+              <Switch
+                checked={Boolean(session.hardsubFirst)}
+                disabled={busy || Boolean(session.recovery)}
+                onCheckedChange={(checked) => setDubHardsubFirst(Boolean(checked))}
+                aria-label={t('dub_hardsub.skip_asr')}
+              />
+              <span className="space-y-0.5">
+                <span className="block font-medium">{t('dub_hardsub.skip_asr')}</span>
+                <span className="block leading-5 text-muted-foreground">
+                  {t('dub_hardsub.skip_asr_help')}
+                </span>
+              </span>
+            </label>
             <input
               ref={subtitles}
               type="file"
@@ -1237,6 +1262,9 @@ export function DubPage() {
                 <UploadIcon />
                 {t('dub.import_srt')}
               </Button>
+            )}
+            {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
+              <HardsubPanel busy={busy} />
             )}
             {session.subtitleImport && (
               <p role="status" className="text-xs leading-5 text-muted-foreground">
@@ -1454,7 +1482,7 @@ export function DubPage() {
                 </p>
               )}
             </div>
-            {session.quality === 'agent' && (
+            {(session.quality === 'agent' || provider?.id === 'openai') && (
               <div className="space-y-2 border-t border-border/50 pt-3">
                 <label htmlFor="dub-translation-instructions" className="text-xs font-medium">
                   {t('dubStyle.label')}
@@ -1804,6 +1832,11 @@ export function DubPage() {
           </details>
           <DubExportPanel
             key={session.jobId || session.inputType}
+            session={session}
+            disabled={busy || Boolean(session.recovery)}
+          />
+          <BgmPanel
+            key={`bgm-${session.jobId || ''}`}
             session={session}
             disabled={busy || Boolean(session.recovery)}
           />

@@ -83,6 +83,12 @@ GET /docs
 GET /dub/ass/{job_id}
 GET /dub/ass/{job_id}/{filename}
 GET /dub/audio/{job_id}
+GET /dub/bgm/download/{job_id}
+GET /dub/bgm/export-stream/{job_id}
+GET /dub/bgm/generate-stream/{job_id}
+GET /dub/bgm/preview/{job_id}
+GET /dub/bgm/state/{job_id}
+GET /dub/bgm/status
 GET /dub/download-audio/{job_id}
 GET /dub/download-audio/{job_id}/{filename}
 GET /dub/download-mp3/{job_id}
@@ -91,6 +97,12 @@ GET /dub/download/{job_id}
 GET /dub/download/{job_id}/{filename}
 GET /dub/export-segments/{job_id}
 GET /dub/export-stems/{job_id}
+GET /dub/hardsub/clean-stream/{job_id}
+GET /dub/hardsub/frame/{job_id}
+GET /dub/hardsub/install-stream
+GET /dub/hardsub/ocr-stream/{job_id}
+GET /dub/hardsub/state/{job_id}
+GET /dub/hardsub/status
 GET /dub/history
 GET /dub/media/{job_id}
 GET /dub/onsets/{job_id}
@@ -225,6 +237,7 @@ POST /dub/abort/{job_id}
 POST /dub/agent-fit
 POST /dub/cleanup-segments/{job_id}
 POST /dub/generate/{job_id}
+POST /dub/hardsub/restore/{job_id}
 POST /dub/import-srt/{job_id}
 POST /dub/ingest-url
 POST /dub/parse-subtitle-text

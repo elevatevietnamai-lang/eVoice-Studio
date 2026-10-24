@@ -181,6 +181,23 @@ def _discover_job_artifact(path: Path, job_id: str) -> Path | None:
     return current if current.is_file() else None
 
 
+def _hardsub_burn_style(job: dict) -> str:
+    """Place burned subtitles where the removed on-screen subtitles were.
+
+    libass renders SRT on a 384x288 canvas; MarginV is measured from the bottom
+    edge in that space. Only applies when the job's on-screen subtitles were read.
+    """
+    region = (job.get("hardsub") or {}).get("region")
+    try:
+        top, bottom = float(region[0]), float(region[1])
+    except (TypeError, ValueError, IndexError):
+        return ""
+    if not (0.0 <= top < bottom <= 1.0):
+        return ""
+    margin = max(4, min(140, int(round((1.0 - bottom) * 288 + 2))))
+    return f":force_style='MarginV={margin},Fontsize=18,Bold=1,Outline=1.6,Shadow=0'"
+
+
 def _dub_artifact(value: object, job_id: str, *, missing_detail: str = "File not found") -> str:
     """Resolve a persisted job artifact inside the global dub-data boundary."""
     try:
@@ -947,7 +964,8 @@ async def dub_download(
         else:
             sub_src = "[0:v]"
         _sub_filter = "ass" if sub_is_ass else "subtitles"
-        filter_parts.append(f"{sub_src}{_sub_filter}='{esc}'[vsub]")
+        _style = "" if sub_is_ass else _hardsub_burn_style(job)
+        filter_parts.append(f"{sub_src}{_sub_filter}='{esc}'{_style}[vsub]")
         video_map = "[vsub]"
     if stretch_entry:
         orig_dur = float(stretch_entry.get("orig_duration") or job.get("duration") or 0.0)

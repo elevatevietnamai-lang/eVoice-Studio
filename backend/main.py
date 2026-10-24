@@ -722,6 +722,8 @@ def _phase_a_build_inner() -> None:
         dub_generate,
         dub_export,
         dub_translate,
+        dub_hardsub,  # on-screen (burned-in) subtitle OCR + removal
+        dub_bgm,  # AI background music via local ACE-Step
         projects,
         glossary,
         engines,
@@ -758,7 +760,7 @@ def _phase_a_build_inner() -> None:
     from api.routers import cloud_sync as _cloud_sync_router  # noqa: E402
     _router_modules.extend([
         system, profiles, profile_images, exports, generation, voice_convert, dub_core, dub_generate,
-        dub_export, dub_translate, projects, glossary, engines, tools,
+        dub_export, dub_translate, dub_hardsub, dub_bgm, projects, glossary, engines, tools,
         stories, setup, gallery, archetypes, describe_voice, community,
         batch, watermark, events, capture, capture_ws, speech_platform, dictation,
         openai_compat, tts_stream, marketplace, personas, sonitranslate,
