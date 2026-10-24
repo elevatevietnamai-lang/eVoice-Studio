@@ -3929,7 +3929,7 @@
   "dub_bgm": {
     "title": "Nhạc nền AI",
     "help": "Thay âm thanh nền gốc (thường là nhạc có bản quyền) bằng nhạc không lời do ACE-Step tạo, tự giảm âm lượng khi có giọng lồng tiếng. Tiếng động gốc cũng sẽ được thay.",
-    "not_running": "Chưa chạy máy chủ nhạc. Chạy run_music.bat (ACE-Step + ACE-Step UI), đợi sẵn sàng rồi mở lại mục này.",
+    "not_running": "Chưa cài engine nhạc. Mở Music Studio, cài một lần rồi quay lại đây.",
     "style": "Phong cách nhạc",
     "generate": "Tạo nhạc",
     "regenerate": "Tạo lại",

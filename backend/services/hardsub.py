@@ -104,8 +104,9 @@ async def _readline(stream, idle_timeout: float) -> bytes:
     return await asyncio.wait_for(stream.readline(), timeout=idle_timeout)
 
 
-async def _run_logged(cmd: list[str], env: dict, idle_timeout: float) -> AsyncIterator[str]:
-    proc = await spawn_subprocess(*cmd, env=env, stdout=asyncio.subprocess.PIPE,
+async def _run_logged(cmd: list[str], env: dict, idle_timeout: float,
+                      cwd: Optional[str] = None) -> AsyncIterator[str]:
+    proc = await spawn_subprocess(*cmd, env=env, cwd=cwd, stdout=asyncio.subprocess.PIPE,
                                   stderr=asyncio.subprocess.STDOUT)
     tail: list[str] = []
     try:

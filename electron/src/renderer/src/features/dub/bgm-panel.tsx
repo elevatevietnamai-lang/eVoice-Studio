@@ -11,7 +11,7 @@ import { consumeTaskStream } from '@/lib/api/event-stream';
 import { saveExport } from '@/lib/export-history';
 import type { DubSession } from './dub-session';
 
-type MusicStatus = { running: boolean; model_ready: boolean };
+type MusicStatus = { installed: boolean; running: boolean; model_ready: boolean };
 type MusicState = { has_track: boolean; style?: string | null; revision: number };
 
 const STYLE_PRESETS = [
@@ -53,7 +53,7 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
   }, [lang, session.tracks]);
 
   if (session.inputType !== 'video' || !jobId) return null;
-  const running = Boolean(status.data?.running);
+  const running = Boolean(status.data?.installed);
   const locked = disabled || Boolean(task);
 
   const generate = async () => {

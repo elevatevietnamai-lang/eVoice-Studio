@@ -3,7 +3,7 @@
 Replaces the source's background audio — often copyrighted music in re-uploaded
 videos — with a generated instrumental, ducked under the dubbed speech.
 
-* ``GET /dub/bgm/status``                     — is the local music server running?
+* ``GET /dub/bgm/status``                     — is the music engine installed?
 * ``GET /dub/bgm/generate-stream/{job}``      — generate a track sized to the video (SSE)
 * ``GET /dub/bgm/preview/{job}``              — the generated track
 * ``GET /dub/bgm/export-stream/{job}?lang=``  — mux video + dubbed speech + AI music (SSE)
@@ -86,9 +86,9 @@ async def bgm_generate_stream(job_id: str, style: str = Query("", max_length=400
             if duration <= 0:
                 raise RuntimeError("The video duration is unknown; prepare the video first.")
             st = await bgm.status()
-            if not st["running"]:
-                yield _sse("error", {"error": "bgm_not_running",
-                                     "reason": "Start the music server (run_music.bat) first."})
+            if not st["installed"]:
+                yield _sse("error", {"error": "bgm_not_installed",
+                                     "reason": "Install the music engine first (Music Studio)."})
                 return
             out = os.path.join(job_dir, BGM_FILE)
             async for event in bgm.generate(style, duration, out, seed=seed, bpm=bpm):
