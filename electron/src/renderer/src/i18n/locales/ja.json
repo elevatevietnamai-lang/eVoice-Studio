@@ -3955,6 +3955,10 @@
     "free_memory": "GPUメモリを解放",
     "credit": "音楽は ACE-Step (MIT ライセンス) を使用してこのコンピューター上で生成されます。"
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "AI BGM",
     "help": "元の背景音声（著作権保護された音楽など）を、吹き替え音声に合わせて音量を抑えた ACE-Step 生成のインストゥルメンタルに置き換えます。元の環境音も置き換えられます。",

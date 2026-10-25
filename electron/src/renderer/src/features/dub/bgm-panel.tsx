@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { getBridge } from '@/components/bridge';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
+import { gpuBusyMessage } from '@/lib/api/failure';
 import { saveExport } from '@/lib/export-history';
 import type { DubSession } from './dub-session';
 
@@ -65,7 +66,7 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
         (event) => {
           if (event.type === 'progress')
             setTask({ kind: 'gen', progress: Number(event.progress) || 0 });
-          if (event.type === 'error') throw new Error(String(event.reason || 'Music failed'));
+          if (event.type === 'error') throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
           if (event.type === 'done')
             setState((prev) => ({
               has_track: true,

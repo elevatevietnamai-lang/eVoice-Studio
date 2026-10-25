@@ -42,6 +42,23 @@ it('rejects a non-web documentation URL and uses the shared safe fallback', () =
 });
 
 it.each([
+  ['music', 'gpuBusy.music'],
+  ['dub', 'gpuBusy.dub'],
+])('localizes gpu_busy when %s holds the GPU', (busyWith, key) => {
+  const translate = vi.spyOn(i18next, 't').mockReturnValue('GPU is busy');
+  try {
+    const failure = publicFailureFromEvent(
+      { error_code: 'gpu_busy', busy_with: busyWith, reason: 'Raw English' },
+      'Fallback',
+    );
+    expect(failure.reason).toBe('GPU is busy');
+    expect(translate).toHaveBeenCalledWith(key);
+  } finally {
+    translate.mockRestore();
+  }
+});
+
+it.each([
   ['dub_speech_missing', 'dubIntegrity.missingSpeech'],
   ['dub_timing_overflow', 'dubIntegrity.timingOverflow'],
   ['dub_source_changed', 'dubIntegrity.sourceChanged'],

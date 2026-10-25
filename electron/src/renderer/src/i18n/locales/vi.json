@@ -3955,6 +3955,10 @@
     "free_memory": "Giải phóng bộ nhớ GPU",
     "credit": "Nhạc được tạo ngay trên máy này bằng ACE-Step (giấy phép MIT)."
   },
+  "gpuBusy": {
+    "dub": "Một tác vụ lồng tiếng đang dùng GPU. Hãy đợi nó xong rồi mới tạo nhạc.",
+    "music": "Đang tạo nhạc trên GPU. Hãy đợi xong rồi chạy lại bước này."
+  },
   "dub_bgm": {
     "title": "Nhạc nền AI",
     "help": "Thay âm thanh nền gốc (thường là nhạc có bản quyền) bằng nhạc không lời do ACE-Step tạo, tự giảm âm lượng khi có giọng lồng tiếng. Tiếng động gốc cũng sẽ được thay.",

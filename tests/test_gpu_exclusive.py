@@ -73,3 +73,33 @@ def test_released_on_error_and_stop_failure_does_not_block():
             pass
 
     asyncio.run(run())
+
+
+def test_music_generate_stream_reports_gpu_busy_with_code():
+    import json
+
+    from fastapi.testclient import TestClient
+
+    from api.routers import music as music_router
+    from fastapi import FastAPI
+
+    app = FastAPI()
+    app.include_router(music_router.router)
+
+    async def hold():
+        async with gpu_exclusive.dub_job():
+            return await asyncio.to_thread(_post, app)
+
+    def _post(a):
+        import services.music as m
+
+        orig = m.is_installed
+        m.is_installed = lambda: True
+        try:
+            return TestClient(a).post("/music/generate", json={"prompt": "calm"}).text
+        finally:
+            m.is_installed = orig
+
+    body = asyncio.run(hold())
+    assert '"error_code": "gpu_busy"' in body and '"busy_with": "dub"' in body
+    assert json.dumps("gpu_busy") in body

@@ -3955,6 +3955,10 @@
     "free_memory": "GPU belleğini boşalt",
     "credit": "Müzik, ACE-Step (MIT lisansı) ile bu bilgisayarda oluşturulur."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "YZ arka plan müziği",
     "help": "Orijinal arka plan sesini (genellikle telifli müzik) ACE-Step tarafından oluşturulan ve dublaj sesinin altında kısık çalan enstrümantal bir müzikle değiştirin. Orijinal ortam sesi de değiştirilir.",

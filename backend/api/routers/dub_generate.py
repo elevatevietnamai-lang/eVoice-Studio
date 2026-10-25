@@ -534,7 +534,7 @@ async def dub_generate(job_id: str, req: DubRequest):
                         async for event in events:
                             yield event
             except gpu_exclusive.GpuBusy as exc:
-                yield f"data: {json.dumps({'type': 'error', 'error_code': 'gpu_busy', 'error': str(exc)})}\n\n"
+                yield f"data: {json.dumps({'type': 'error', 'error_code': 'gpu_busy', 'busy_with': 'music', 'error': str(exc)})}\n\n"
 
     async def _render(task_id, voice_lease, stage_dir):
         total = len(req.segments)

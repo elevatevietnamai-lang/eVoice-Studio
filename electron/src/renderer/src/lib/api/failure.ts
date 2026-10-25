@@ -12,6 +12,12 @@ export interface PublicFailure {
 
 const text = (value: unknown) => (typeof value === 'string' && value.trim() ? value : undefined);
 
+/** Localised "the GPU is held by the other side" text, or undefined for any other failure. */
+export function gpuBusyMessage(event: Record<string, unknown>): string | undefined {
+  if (event.error_code !== 'gpu_busy') return undefined;
+  return i18next.t(event.busy_with === 'dub' ? 'gpuBusy.dub' : 'gpuBusy.music');
+}
+
 export function publicFailureFromEvent(
   event: Record<string, unknown>,
   fallback: string,
@@ -19,6 +25,7 @@ export function publicFailureFromEvent(
   const localized = generationFailureMessage(event, i18next.t);
   return {
     reason:
+      gpuBusyMessage(event) ||
       (event.error_code === 'dub_speech_missing'
         ? i18next.t('dubIntegrity.missingSpeech')
         : event.error_code === 'dub_timing_overflow'

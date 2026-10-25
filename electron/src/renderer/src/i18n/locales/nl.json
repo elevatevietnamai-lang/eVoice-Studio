@@ -3955,6 +3955,10 @@
     "free_memory": "GPU-geheugen vrijmaken",
     "credit": "Muziek wordt op deze computer gegenereerd met ACE-Step (MIT-licentie)."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "AI-achtergrondmuziek",
     "help": "Vervang de originele achtergrondaudio (vaak auteursrechtelijk beschermde muziek) door een instrumentale track gegenereerd met ACE-Step, gedempt onder de nagesynchroniseerde stem. Ook het originele omgevingsgeluid wordt vervangen.",

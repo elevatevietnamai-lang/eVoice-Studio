@@ -3955,6 +3955,10 @@
     "free_memory": "释放显存",
     "credit": "音乐由本机使用 ACE-Step（MIT 许可证）生成。"
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "AI 背景音乐",
     "help": "用 ACE-Step 生成的纯音乐替换原视频的背景音频（通常为受版权保护的音乐），并在配音人声出现时自动压低音量。原有的环境音也会一并替换。",

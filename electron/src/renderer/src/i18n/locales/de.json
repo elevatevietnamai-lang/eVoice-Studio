@@ -3955,6 +3955,10 @@
     "free_memory": "GPU-Speicher freigeben",
     "credit": "Musik wird auf diesem Computer mit ACE-Step generiert (MIT-Lizenz)."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "KI-Hintergrundmusik",
     "help": "Ersetzt den ursprünglichen Hintergrundton (oft urheberrechtlich geschützte Musik) durch ein von ACE-Step generiertes Instrumentalstück, das unter der synchronisierten Stimme abgesenkt wird. Auch die ursprünglichen Umgebungsgeräusche werden ersetzt.",

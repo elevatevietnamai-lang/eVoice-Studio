@@ -3955,6 +3955,10 @@
     "free_memory": "Frigör GPU-minne",
     "credit": "Musiken genereras på den här datorn med ACE-Step (MIT-licens)."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "AI-bakgrundsmusik",
     "help": "Ersätt det ursprungliga bakgrundsljudet (ofta upphovsrättsskyddad musik) med en instrumental låt genererad av ACE-Step, dämpad under den dubbade rösten. Det ursprungliga omgivningsljudet ersätts också.",

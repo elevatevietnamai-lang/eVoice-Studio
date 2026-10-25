@@ -3961,6 +3961,10 @@
     "free_memory": "Zwolnij pamięć GPU",
     "credit": "Muzyka jest generowana na tym komputerze za pomocą ACE-Step (licencja MIT)."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "Muzyka w tle z AI",
     "help": "Zastąp oryginalny dźwięk w tle (często muzykę objętą prawami autorskimi) utworem instrumentalnym wygenerowanym przez ACE-Step, ściszonym pod głosem dubbingu. Oryginalne dźwięki otoczenia również zostaną zastąpione.",

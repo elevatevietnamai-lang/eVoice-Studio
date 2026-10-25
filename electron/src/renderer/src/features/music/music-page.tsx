@@ -21,6 +21,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
+import { gpuBusyMessage } from '@/lib/api/failure';
 import { saveExport } from '@/lib/export-history';
 
 type MusicStatus = { installed: boolean; running: boolean };
@@ -106,7 +107,7 @@ export function MusicPage() {
         (event) => {
           if (event.type === 'progress')
             setTask({ kind: 'generate', progress: Number(event.progress) || 0 });
-          if (event.type === 'error') throw new Error(String(event.reason || 'Music failed'));
+          if (event.type === 'error') throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
           if (event.type === 'done') {
             const track = event.track as Track | undefined;
             if (track?.id) setSelectedId(track.id);

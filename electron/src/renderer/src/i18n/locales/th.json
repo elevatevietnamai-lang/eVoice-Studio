@@ -3955,6 +3955,10 @@
     "free_memory": "คืนพื้นที่หน่วยความจำ GPU",
     "credit": "เพลงถูกสร้างขึ้นในคอมพิวเตอร์เครื่องนี้ด้วย ACE-Step (สัญญาอนุญาต MIT)"
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "เพลงประกอบ AI",
     "help": "แทนที่เสียงประกอบต้นฉบับ (ซึ่งมักเป็นเพลงที่มีลิขสิทธิ์) ด้วยเพลงบรรเลงที่สร้างโดย ACE-Step โดยลดระดับเสียงลงเมื่อมีเสียงพากย์ เสียงบรรยากาศต้นฉบับจะถูกแทนที่ด้วยเช่นกัน",

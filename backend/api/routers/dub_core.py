@@ -2401,7 +2401,7 @@ async def dub_transcribe_stream(
                 async for ev in _gen_body():
                     yield ev
         except gpu_exclusive.GpuBusy as exc:
-            yield _sse_event("error", {"error": str(exc), "error_code": "gpu_busy"})
+            yield _sse_event("error", {"error": str(exc), "error_code": "gpu_busy", "busy_with": "music"})
             yield _sse_event("done", {})
         except Exception as exc:  # noqa: BLE001 — last-resort stream finalizer
             logger.error("Transcription stream failed unexpectedly (class=%s)", type(exc).__name__)

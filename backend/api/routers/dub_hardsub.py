@@ -183,6 +183,9 @@ async def hardsub_ocr_stream(
             yield _sse("final", {"segments": segments, "source_lang": "zh",
                                  "state": _public_state(dub_pipeline.get_job(job_id) or {})})
             yield _sse("done", {"count": len(segments)})
+        except gpu_exclusive.GpuBusy as exc:
+            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": "music",
+                                 "stage": "ocr", "reason": str(exc)})
         except Exception as exc:
             logger.warning("hardsub OCR failed for %s: %s", log_safe(job_id), exc)
             yield _sse("error", {"error": "hardsub_ocr_failed", "stage": "ocr", "reason": str(exc)[-1500:]})
@@ -292,6 +295,9 @@ async def hardsub_clean_stream(job_id: str, method: str = Query("lama", pattern=
                     state = _public_state(job)
                 _drop_preview_caches(job_dir)
             yield _sse("done", {"state": state})
+        except gpu_exclusive.GpuBusy as exc:
+            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": "music",
+                                 "stage": "inpaint", "reason": str(exc)})
         except Exception as exc:
             logger.warning("hardsub removal failed for %s: %s", log_safe(job_id), exc)
             yield _sse("error", {"error": "hardsub_clean_failed", "stage": "inpaint", "reason": str(exc)[-1500:]})

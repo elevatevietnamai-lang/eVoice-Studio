@@ -3955,6 +3955,10 @@
     "free_memory": "GPU 메모리 비우기",
     "credit": "음악은 이 컴퓨터에서 ACE-Step(MIT 라이선스)으로 생성됩니다."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "AI 배경 음악",
     "help": "원본 배경 오디오(주로 저작권이 있는 음악)를 ACE-Step으로 생성한 연주곡으로 대체하고, 더빙 음성이 나올 때 음악 볼륨을 자동으로 낮춥니다. 원본 주변 소리도 함께 대체됩니다.",

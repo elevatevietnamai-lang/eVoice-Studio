@@ -102,7 +102,7 @@ async def music_generate(body: GenerateBody):
                 bpm=body.bpm, seed=body.seed)
             yield _sse("done", {"track": record})
         except gpu_exclusive.GpuBusy as exc:
-            yield _sse("error", {"error": "gpu_busy", "stage": "music", "reason": str(exc)})
+            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": "dub", "stage": "music", "reason": str(exc)})
         except Exception as exc:
             logger.warning("music generation failed: %s", exc)
             yield _sse("error", {"error": "music_failed", "stage": "music", "reason": (str(exc) or type(exc).__name__)[-1200:]})

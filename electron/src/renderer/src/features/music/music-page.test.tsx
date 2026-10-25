@@ -33,7 +33,12 @@ vi.mock('@/components/workspace-sidebar', () => ({
 vi.mock('@/components/waveform-player', () => ({
   WaveformPlayer: ({ src }: { src: string }) => <div data-testid="player">{src}</div>,
 }));
-vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+const toastError = vi.hoisted(() => vi.fn());
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: toastError } }));
+vi.mock('@/lib/api/failure', () => ({
+  gpuBusyMessage: (e: { error_code?: string }) =>
+    e.error_code === 'gpu_busy' ? 'gpuBusy.dub' : undefined,
+}));
 
 import { MusicPage } from './music-page';
 
@@ -110,4 +115,16 @@ it('deletes a track through the library endpoint', async () => {
   renderPage();
   fireEvent.click(await screen.findByLabelText('musicStudio.delete'));
   await waitFor(() => expect(state.calls).toContain('DELETE /music/library/abc123def456'));
+});
+
+it('shows the localized GPU-busy message when a dubbing job holds the GPU', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({ type: 'error', error_code: 'gpu_busy', busy_with: 'dub', reason: 'raw english' });
+  });
+  renderPage();
+  const generate = (await screen.findByText('musicStudio.generate')).closest('button') as HTMLButtonElement;
+  await waitFor(() => expect(generate.disabled).toBe(false));
+  fireEvent.click(generate);
+  await waitFor(() => expect(toastError).toHaveBeenCalledWith('Error: gpuBusy.dub'));
 });

@@ -3955,6 +3955,10 @@
     "free_memory": "Kosongkan memori GPU",
     "credit": "Musik dibuat di komputer ini dengan ACE-Step (lisensi MIT)."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "Musik latar AI",
     "help": "Ganti audio latar asli (sering kali musik berhak cipta) dengan instrumental yang dibuat oleh ACE-Step, dipelankan di bawah suara dubbing. Suara sekitar asli juga diganti.",

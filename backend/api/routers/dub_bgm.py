@@ -105,6 +105,9 @@ async def bgm_generate_stream(job_id: str, style: str = Query("", max_length=400
                 job["bgm"] = info
                 dub_pipeline.save_job(job_id, job)
             yield _sse("done", {"revision": info["revision"]})
+        except gpu_exclusive.GpuBusy as exc:
+            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": "dub",
+                                 "stage": "music", "reason": str(exc)})
         except Exception as exc:
             logger.warning("bgm generation failed for %s: %s", log_safe(job_id), exc)
             yield _sse("error", {"error": "bgm_failed", "stage": "music", "reason": (str(exc) or type(exc).__name__)[-1200:]})

@@ -3963,6 +3963,10 @@
     "free_memory": "تحرير ذاكرة GPU",
     "credit": "تُولَّد الموسيقى على هذا الجهاز باستخدام ACE-Step (رخصة MIT)."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "موسيقى خلفية بالذكاء الاصطناعي",
     "help": "استبدل صوت الخلفية الأصلي (غالباً موسيقى محمية بحقوق النشر) بمعزوفة مولّدة بواسطة ACE-Step مع خفض مستواها تحت الصوت المدبلج. يُستبدل الصوت المحيطي الأصلي أيضاً.",

@@ -3961,6 +3961,10 @@
     "free_memory": "Звільнити пам’ять GPU",
     "credit": "Музика генерується на цьому комп’ютері за допомогою ACE-Step (ліцензія MIT)."
   },
+  "gpuBusy": {
+    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
+    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+  },
   "dub_bgm": {
     "title": "Фонова ШІ-музика",
     "help": "Замініть оригінальне фонове аудіо (часто захищену авторським правом музику) на інструментал, згенерований ACE-Step, притишений під дубльованим голосом. Оригінальні фонові звуки також буде замінено.",
