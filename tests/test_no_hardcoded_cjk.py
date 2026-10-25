@@ -50,6 +50,8 @@ _ALLOWED_FILES = {
     # full-width punctuation that must be matched/escaped (text-processing regexes, not UI strings)
     "backend/engines/hardsub/hardsub_core/ocr.py",
     "backend/engines/hardsub/hardsub_core/subs.py",
+    # Translation tooling: native language names in the prompt table.
+    "scripts/i18n_translate_agy.py",
     # Documentation & translated docs
     "README.md",                                  # native language-switcher link
     "README_CN.md",                               # Chinese README (a translation)
