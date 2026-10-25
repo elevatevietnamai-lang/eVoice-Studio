@@ -3962,8 +3962,8 @@
     "credit": "Музика генерується на цьому комп’ютері за допомогою ACE-Step (ліцензія MIT)."
   },
   "gpuBusy": {
-    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
-    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+    "dub": "Завдання дубляжу використовує GPU. Дочекайтеся завершення, а потім створіть музику.",
+    "music": "На GPU створюється музика. Дочекайтеся завершення, а потім запустіть цей крок."
   },
   "dub_bgm": {
     "title": "Фонова ШІ-музика",

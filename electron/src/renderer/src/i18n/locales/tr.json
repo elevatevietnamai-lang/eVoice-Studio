@@ -3956,8 +3956,8 @@
     "credit": "Müzik, ACE-Step (MIT lisansı) ile bu bilgisayarda oluşturulur."
   },
   "gpuBusy": {
-    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
-    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+    "dub": "Bir dublaj işi GPU'yu kullanıyor. Bitmesini bekleyin, sonra müziği oluşturun.",
+    "music": "GPU'da müzik oluşturuluyor. Bitmesini bekleyin, sonra bu adımı çalıştırın."
   },
   "dub_bgm": {
     "title": "YZ arka plan müziği",

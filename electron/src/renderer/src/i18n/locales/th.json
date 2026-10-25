@@ -3956,8 +3956,8 @@
     "credit": "เพลงถูกสร้างขึ้นในคอมพิวเตอร์เครื่องนี้ด้วย ACE-Step (สัญญาอนุญาต MIT)"
   },
   "gpuBusy": {
-    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
-    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+    "dub": "งานพากย์เสียงกำลังใช้ GPU อยู่ รอให้เสร็จก่อน แล้วค่อยสร้างเพลง",
+    "music": "กำลังสร้างเพลงบน GPU รอให้เสร็จก่อน แล้วค่อยรันขั้นตอนนี้"
   },
   "dub_bgm": {
     "title": "เพลงประกอบ AI",

@@ -3956,8 +3956,8 @@
     "credit": "Musik dibuat di komputer ini dengan ACE-Step (lisensi MIT)."
   },
   "gpuBusy": {
-    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
-    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+    "dub": "Tugas dubbing sedang memakai GPU. Tunggu sampai selesai, lalu buat musik.",
+    "music": "Musik sedang dibuat di GPU. Tunggu sampai selesai, lalu jalankan langkah ini."
   },
   "dub_bgm": {
     "title": "Musik latar AI",

@@ -3956,8 +3956,8 @@
     "credit": "Musiken genereras på den här datorn med ACE-Step (MIT-licens)."
   },
   "gpuBusy": {
-    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
-    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+    "dub": "Ett dubbningsjobb använder GPU:n. Vänta tills det är klart och skapa sedan musiken.",
+    "music": "Musik genereras på GPU:n. Vänta tills den är klar och kör sedan det här steget."
   },
   "dub_bgm": {
     "title": "AI-bakgrundsmusik",

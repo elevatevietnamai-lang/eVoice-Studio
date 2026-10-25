@@ -3964,8 +3964,8 @@
     "credit": "تُولَّد الموسيقى على هذا الجهاز باستخدام ACE-Step (رخصة MIT)."
   },
   "gpuBusy": {
-    "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",
-    "music": "Music is being generated on the GPU. Wait for it to finish, then run this step."
+    "dub": "مهمة دبلجة تستخدم وحدة معالجة الرسومات حالياً. انتظر حتى تنتهي ثم أنشئ الموسيقى.",
+    "music": "يتم إنشاء الموسيقى على وحدة معالجة الرسومات. انتظر حتى تنتهي ثم شغّل هذه الخطوة."
   },
   "dub_bgm": {
     "title": "موسيقى خلفية بالذكاء الاصطناعي",
