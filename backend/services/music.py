@@ -38,6 +38,20 @@ logger = logging.getLogger("omnivoice.music")
 
 ACESTEP_REVISION = "ca1e85fe9430179831e6bc6be790c332190a3866"
 ACESTEP_TARBALL = f"https://codeload.github.com/ace-step/ACE-Step-1.5/tar.gz/{ACESTEP_REVISION}"
+# Hugging Face model repo, pinned like the source: the checkpoint folders carry .py files the engine loads.
+ACESTEP_MODEL_REPO = "ACE-Step/Ace-Step1.5"
+ACESTEP_MODEL_REVISION = "19671f406d603126926c1b7e2adc169acbcade22"
+# Runs inside the engine venv. Mirrors acestep's download_main_model, but fetches the pinned
+# revision from Hugging Face only (no unpinned ModelScope fallback).
+MODEL_DOWNLOAD_CODE = (
+    "import sys;from pathlib import Path;import acestep.model_downloader as md;"
+    "from huggingface_hub import snapshot_download;"
+    "d=Path(sys.argv[1]);d.mkdir(parents=True,exist_ok=True);"
+    "snapshot_download(repo_id=sys.argv[2],revision=sys.argv[3],local_dir=str(d)) "
+    "if not md.check_main_model_exists(d) else None;"
+    "[md._sync_model_code_files(c,d) for c in md.MAIN_MODEL_COMPONENTS if c in md._CHECKPOINT_TO_VARIANT];"
+    "print('Music model ready at '+str(d))"
+)
 # SHA-256 of the *uncompressed* tar (git archive output is stable; the gzip layer is not).
 ACESTEP_TAR_SHA256 = "c1babe13937c756a10bb9ddc59f989b7cce58bf544ad234720095a5814ffd1db"
 _MAX_ARCHIVE_ENTRIES = 20_000
@@ -300,12 +314,12 @@ class AceStepEngine:
             async for line in _run_logged(sync, proc_env, 3600, cwd=str(src)):
                 yield {"type": "log", "message": line}
             yield {"type": "progress", "progress": 0.7, "message": "Downloading the music model (~5 GB)"}
-            code = ("import sys;from acestep.model_downloader import download_main_model as d;"
-                    "ok,msg=d(sys.argv[1]);print(msg);sys.exit(0 if ok else 1)")
-            cmd = [str(venv_python()), "-u", "-c", code, str(checkpoints_dir())]
+            cmd = [str(venv_python()), "-u", "-c", MODEL_DOWNLOAD_CODE, str(checkpoints_dir()),
+                   ACESTEP_MODEL_REPO, ACESTEP_MODEL_REVISION]
             async for line in _run_logged(cmd, proc_env, 3600, cwd=str(src)):
                 yield {"type": "log", "message": line}
-            _marker().write_text(json.dumps({"revision": ACESTEP_REVISION, "at": time.time()}), encoding="utf-8")
+            _marker().write_text(json.dumps({"revision": ACESTEP_REVISION, "model_revision": ACESTEP_MODEL_REVISION,
+                                                  "at": time.time()}), encoding="utf-8")
             yield {"type": "done", "installed": True}
 
     # ── lifecycle

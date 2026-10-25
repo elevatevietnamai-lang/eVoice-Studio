@@ -190,3 +190,14 @@ def test_library_rejects_unknown_extension_and_caps_size(tmp_path, monkeypatch):
     assert lib.get("0123456789ab") is None
     monkeypatch.setattr(lib, "MAX_TRACKS", 0)
     assert lib.is_full()
+
+
+def test_model_download_is_pinned_to_a_commit():
+    import re
+
+    from services import music
+
+    assert re.fullmatch(r"[0-9a-f]{40}", music.ACESTEP_MODEL_REVISION)
+    assert "revision=sys.argv[3]" in music.MODEL_DOWNLOAD_CODE
+    assert "modelscope" not in music.MODEL_DOWNLOAD_CODE.lower()
+    compile(music.MODEL_DOWNLOAD_CODE, "<model-download>", "exec")
