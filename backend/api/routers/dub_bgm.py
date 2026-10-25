@@ -23,13 +23,14 @@ from fastapi.responses import FileResponse, StreamingResponse
 
 from core.browser_guard import reject_cross_site_get
 from core.logging_utils import log_safe
-from services import bgm, dub_pipeline, gpu_exclusive
+from services import bgm, dub_pipeline, gpu_exclusive, music
 from services.ffmpeg_utils import find_ffmpeg, local_inputs_only
 
 router = APIRouter()
 logger = logging.getLogger("omnivoice.api")
 
 _JOB_RE = re.compile(r"[A-Za-z0-9_-]{1,64}")
+_gen_locks: dict[str, asyncio.Lock] = {}
 _LANG_RE = re.compile(r"[A-Za-z0-9_-]{1,16}")
 _FILE_RE = re.compile(r"bgm_[A-Za-z0-9_-]{1,16}_\d{10,}\.mp4")
 BGM_FILE = "bgm_ai.wav"
@@ -90,11 +91,15 @@ async def bgm_generate_stream(job_id: str, style: str = Query("", max_length=400
                 yield _sse("error", {"error": "bgm_not_installed",
                                      "reason": "Install the music engine first (Music Studio)."})
                 return
+            lock = _gen_locks.setdefault(job_id, asyncio.Lock())
+            if lock.locked():
+                raise RuntimeError("Background music is already being generated for this video.")
             out = os.path.join(job_dir, BGM_FILE)
-            with gpu_exclusive.music_job():
-                async for event in bgm.generate(style, duration, out, seed=seed, bpm=bpm):
-                    if event["type"] == "progress":
-                        yield _sse("progress", event)
+            async with lock:
+                with gpu_exclusive.music_job():
+                    async for event in bgm.generate(style, duration, out, seed=seed, bpm=bpm):
+                        if event["type"] == "progress":
+                            yield _sse("progress", event)
             with dub_pipeline._dub_jobs_lock:
                 job = dub_pipeline.get_job(job_id)
                 if not job:
@@ -106,11 +111,11 @@ async def bgm_generate_stream(job_id: str, style: str = Query("", max_length=400
                 dub_pipeline.save_job(job_id, job)
             yield _sse("done", {"revision": info["revision"]})
         except gpu_exclusive.GpuBusy as exc:
-            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": "dub",
+            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": exc.busy_with,
                                  "stage": "music", "reason": str(exc)})
         except Exception as exc:
             logger.warning("bgm generation failed for %s: %s", log_safe(job_id), exc)
-            yield _sse("error", {"error": "bgm_failed", "stage": "music", "reason": (str(exc) or type(exc).__name__)[-1200:]})
+            yield _sse("error", {"error": "bgm_failed", "stage": "music", "reason": music.public_reason(exc)})
     return _stream(gen())
 
 

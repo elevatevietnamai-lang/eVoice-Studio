@@ -169,3 +169,24 @@ def test_generate_survives_a_transient_connection_error(tmp_path, monkeypatch):
         return [e async for e in engine.generate(music.MusicRequest(prompt="x"), str(tmp_path / "o.wav"))]
 
     assert asyncio.run(run())[-1]["type"] == "done" and state["n"] == 2
+
+
+def test_public_reason_hides_library_text():
+    from services import music
+
+    assert music.public_reason(RuntimeError("Music generation failed on the music server.")) == (
+        "Music generation failed on the music server.")
+    leaked = music.public_reason(OSError("C:/Users/secret/path"))
+    assert "secret" not in leaked and "OSError" in leaked
+
+
+def test_library_rejects_unknown_extension_and_caps_size(tmp_path, monkeypatch):
+    from services import music_library as lib
+
+    monkeypatch.setattr(lib, "DATA_DIR", str(tmp_path))
+    with pytest.raises(ValueError):
+        lib.audio_path("0123456789ab", "exe")
+    lib.save("0123456789ab", ext="../../x")
+    assert lib.get("0123456789ab") is None
+    monkeypatch.setattr(lib, "MAX_TRACKS", 0)
+    assert lib.is_full()

@@ -49,6 +49,13 @@ START_TIMEOUT_SECONDS = 900  # first start loads several GB of weights
 POLL_TIMEOUT_SECONDS = 1800
 
 
+def public_reason(exc: BaseException) -> str:
+    """What a generation failure may tell the client: our own messages, never raw server or library text."""
+    if isinstance(exc, (RuntimeError, ValueError)):
+        return (str(exc) or type(exc).__name__)[:300]
+    return f"Music generation failed ({type(exc).__name__}). See the backend log."
+
+
 @dataclass
 class MusicRequest:
     prompt: str
@@ -381,12 +388,14 @@ class AceStepEngine:
         base, key = await self._ensure_running()
         srv = self._server
         srv.busy += 1
+        finished = False
         try:
             headers = {"Authorization": f"Bearer {key}"}
             async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, read=600.0), headers=headers) as client:
                 r = await client.post(f"{base}/release_task", json=build_payload(request))
                 if r.status_code >= 400:
-                    raise RuntimeError(f"Music generation was refused: {r.text[:300]}")
+                    logger.warning("music server refused the task: %s", r.text[:300])
+                    raise RuntimeError(f"Music generation was refused (HTTP {r.status_code}).")
                 data = _unwrap(r.json()) or {}
                 task_id = data.get("task_id") if isinstance(data, dict) else None
                 if not task_id:
@@ -417,19 +426,24 @@ class AceStepEngine:
                         raise RuntimeError("The music server lost the task (it may have restarted).")
                     state = _task_state(item.get("status") if item else 0)
                     if state == "failed":
-                        detail = str(item.get("result") or "")[:300] if item else ""
-                        raise RuntimeError("Music generation failed on the music server. " + detail)
+                        logger.warning("music task failed: %s", str(item.get("result") or "")[:300] if item else "")
+                        raise RuntimeError("Music generation failed on the music server. See the backend log.")
                     if state == "succeeded":
                         results = item.get("result")
                         results = json.loads(results) if isinstance(results, str) else (results or [])
                         file_url = next((x.get("file") for x in results if isinstance(x, dict) and x.get("file")), "")
                         await _download(client, base, file_url, out_path)
+                        finished = True
                         yield {"type": "done", "seconds": request.seconds()}
                         return
                     yield {"type": "progress", "progress": min(0.1 + waited / 240.0, 0.95), "message": "Generating"}
         finally:
             srv.busy -= 1
             srv.last_used = time.monotonic()
+            if not finished and srv.busy == 0:
+                # The client left or the job failed mid-run: the server has no cancel call,
+                # so stop it to free the GPU instead of finishing a track nobody wants.
+                self._kill_now()
 
 
 async def _download(client: httpx.AsyncClient, base: str, file_url: str, out_path: str) -> None:

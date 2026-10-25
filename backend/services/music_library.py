@@ -12,6 +12,8 @@ from typing import Optional
 from core.config import DATA_DIR
 
 _ID_RE = re.compile(r"[0-9a-f]{12}")
+ALLOWED_EXTS = frozenset({"wav", "mp3", "flac", "ogg"})
+MAX_TRACKS = 200
 
 
 def library_dir() -> Path:
@@ -27,6 +29,8 @@ def new_id() -> str:
 def audio_path(track_id: str, ext: str = "wav") -> Path:
     if not _ID_RE.fullmatch(track_id or ""):
         raise ValueError("Invalid track id")
+    if ext not in ALLOWED_EXTS:
+        raise ValueError("Unsupported audio type")
     return library_dir() / f"{track_id}.{ext}"
 
 
@@ -50,7 +54,10 @@ def get(track_id: str) -> Optional[dict]:
         record = json.loads(_meta_path(track_id).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
-    return record if audio_path(track_id, record.get("ext", "wav")).is_file() else None
+    try:
+        return record if audio_path(track_id, record.get("ext", "wav")).is_file() else None
+    except ValueError:
+        return None
 
 
 def list_tracks() -> list[dict]:
@@ -61,6 +68,10 @@ def list_tracks() -> list[dict]:
             if record:
                 records.append(record)
     return sorted(records, key=lambda r: r.get("created_at", 0), reverse=True)
+
+
+def is_full() -> bool:
+    return len(list_tracks()) >= MAX_TRACKS
 
 
 def delete(track_id: str) -> bool:

@@ -87,6 +87,10 @@ async def music_generate(body: GenerateBody):
                 yield _sse("error", {"error": "music_not_installed",
                                      "reason": "Install the music engine first."})
                 return
+            if music_library.is_full():
+                yield _sse("error", {"error": "music_library_full", "stage": "music",
+                                     "reason": f"The library holds {music_library.MAX_TRACKS} tracks. Delete some first."})
+                return
             request = music.MusicRequest(prompt=body.prompt, lyrics=body.lyrics, instrumental=body.instrumental,
                                          duration=body.duration, bpm=body.bpm, key_scale=body.key_scale,
                                          seed=body.seed, vocal_language=body.vocal_language)
@@ -102,10 +106,10 @@ async def music_generate(body: GenerateBody):
                 bpm=body.bpm, seed=body.seed)
             yield _sse("done", {"track": record})
         except gpu_exclusive.GpuBusy as exc:
-            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": "dub", "stage": "music", "reason": str(exc)})
+            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": exc.busy_with, "stage": "music", "reason": str(exc)})
         except Exception as exc:
             logger.warning("music generation failed: %s", exc)
-            yield _sse("error", {"error": "music_failed", "stage": "music", "reason": (str(exc) or type(exc).__name__)[-1200:]})
+            yield _sse("error", {"error": "music_failed", "stage": "music", "reason": music.public_reason(exc)})
     return _stream(gen())
 
 

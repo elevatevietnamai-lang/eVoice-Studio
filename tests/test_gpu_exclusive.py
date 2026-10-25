@@ -103,3 +103,22 @@ def test_music_generate_stream_reports_gpu_busy_with_code():
     body = asyncio.run(hold())
     assert '"error_code": "gpu_busy"' in body and '"busy_with": "dub"' in body
     assert json.dumps("gpu_busy") in body
+
+
+def test_only_one_music_job_at_a_time():
+    with gpu_exclusive.music_job():
+        with pytest.raises(gpu_exclusive.GpuBusy) as info:
+            with gpu_exclusive.music_job():
+                pass
+        assert info.value.busy_with == "music"
+
+
+def test_dub_busy_reports_who_holds_the_gpu():
+    async def run():
+        async with gpu_exclusive.dub_job():
+            with pytest.raises(gpu_exclusive.GpuBusy) as info:
+                with gpu_exclusive.music_job():
+                    pass
+            assert info.value.busy_with == "dub"
+
+    asyncio.run(run())

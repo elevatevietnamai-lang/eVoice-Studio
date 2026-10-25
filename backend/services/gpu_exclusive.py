@@ -17,6 +17,7 @@ from typing import Awaitable, Callable, Iterator, AsyncIterator
 
 DUB_BUSY_MESSAGE = "A dubbing job is using the GPU. Wait for it to finish, then generate music."
 MUSIC_BUSY_MESSAGE = "Music is being generated on the GPU. Wait for it to finish, then run this step."
+MAX_MUSIC_JOBS = 1
 
 _dub_active = 0
 _music_active = 0
@@ -24,7 +25,11 @@ _stop_music: Callable[[], Awaitable[None]] | None = None
 
 
 class GpuBusy(RuntimeError):
-    """The GPU is held by the other side of the exclusion."""
+    """The GPU is held by someone else; ``busy_with`` says who (``"dub"`` or ``"music"``)."""
+
+    def __init__(self, message: str, busy_with: str):
+        super().__init__(message)
+        self.busy_with = busy_with
 
 
 def register_music_stop(callback: Callable[[], Awaitable[None]] | None) -> None:
@@ -40,7 +45,9 @@ def state() -> dict:
 def music_job() -> Iterator[None]:
     global _music_active
     if _dub_active:
-        raise GpuBusy(DUB_BUSY_MESSAGE)
+        raise GpuBusy(DUB_BUSY_MESSAGE, "dub")
+    if _music_active >= MAX_MUSIC_JOBS:
+        raise GpuBusy(MUSIC_BUSY_MESSAGE, "music")
     _music_active += 1
     try:
         yield
@@ -52,7 +59,7 @@ def music_job() -> Iterator[None]:
 async def dub_job() -> AsyncIterator[None]:
     global _dub_active
     if _music_active:
-        raise GpuBusy(MUSIC_BUSY_MESSAGE)
+        raise GpuBusy(MUSIC_BUSY_MESSAGE, "music")
     _dub_active += 1
     try:
         if _stop_music is not None:
