@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import {
   createMacApplicationMenuTemplate,
@@ -10,17 +10,31 @@ import {
 describe('installAppIdentity', () => {
   it('names Electron internals consistently', () => {
     const setName = vi.fn();
+    const setPath = vi.fn();
+    const getPath = vi.fn(() => join('/home', 'appdata'));
 
-    installAppIdentity({ setName });
+    installAppIdentity({ setName, setPath, getPath });
 
     expect(setName).toHaveBeenCalledOnce();
-    expect(setName).toHaveBeenCalledWith('VoiceStudio');
+    expect(setName).toHaveBeenCalledWith('eVoice Studio');
   });
 
-  it('defines the complete native macOS menu with VoiceStudio app labels', () => {
+  it('keeps the existing data folder when the product name changes', () => {
+    const setPath = vi.fn();
+
+    installAppIdentity({
+      setName: vi.fn(),
+      setPath,
+      getPath: () => join('/home', 'appdata'),
+    });
+
+    expect(setPath).toHaveBeenCalledWith('userData', join('/home', 'appdata', 'VoiceStudio'));
+  });
+
+  it('defines the complete native macOS menu with eVoice Studio app labels', () => {
     const template = createMacApplicationMenuTemplate();
 
-    expect(template[0]).toMatchObject({ label: 'VoiceStudio' });
+    expect(template[0]).toMatchObject({ label: 'eVoice Studio' });
     expect(template[0]?.submenu).toEqual(
       expect.arrayContaining([{ role: 'about' }, { role: 'hide' }, { role: 'quit' }]),
     );
@@ -54,7 +68,7 @@ describe('installAppIdentity', () => {
     installMacApplicationMenu(application, menu, '0.5.6');
 
     expect(application.setAboutPanelOptions).toHaveBeenCalledWith({
-      applicationName: 'VoiceStudio',
+      applicationName: 'eVoice Studio',
       applicationVersion: '0.5.6',
       version: '0.5.6',
     });

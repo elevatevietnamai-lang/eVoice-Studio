@@ -76,7 +76,7 @@ assert.equal(config.productName, PRODUCT_NAME, 'Builder uses the central product
 assert.equal(config.appId, APP_ID, 'Builder uses the central application ID');
 assert.equal(
   config.artifactName,
-  `${PRODUCT_NAME}-${
+  `${PRODUCT_NAME.replace(/[^A-Za-z0-9]+/g, '-')}-${
     {
       'microsoft-store': 'MicrosoftStore',
       'mac-app-store': 'MacAppStore',

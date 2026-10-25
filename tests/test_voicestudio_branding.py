@@ -37,7 +37,7 @@ def test_current_version_is_in_lockstep_everywhere() -> None:
 def test_visible_brand_surfaces_say_voicestudio() -> None:
     visible_files = ("electron/build/Info.plist", "electron/src/renderer/index.html")
     product_name = json.loads((ROOT / "config/app.json").read_text())["productName"]
-    assert product_name == "VoiceStudio"
+    assert product_name == "eVoice Studio"
     for path in visible_files:
         text = (ROOT / path).read_text()
         assert "__APP_PRODUCT_NAME__" in text, path
