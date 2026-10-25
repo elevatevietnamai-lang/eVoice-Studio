@@ -11,6 +11,7 @@ import type { PreflightReport } from '@shared/api/setup-types';
 import { SystemPreflight } from '@/features/settings/system-preflight';
 import { PermissionsSettings } from '@/features/settings/permissions-settings';
 import { SetupMediaEngine } from '@/features/settings/media-tools';
+import { SetupHardsubEngine } from '@/features/dub/hardsub-setup';
 import { ModelSettings } from '@/features/settings/model-settings';
 import { modelFamilies, type ModelFamily } from '@/features/settings/model-family';
 import { MirrorSettings } from '@/features/settings/mirror-settings';
@@ -171,6 +172,7 @@ export function SetupGate({ children }: { children: ReactNode }) {
               {step === 1 && (
                 <>
                   <PerformanceModelPacks compact={!advanced} />
+                  <SetupHardsubEngine />
                   {advanced && (
                     <div className="space-y-4">
                       <ModelLibrary setup />

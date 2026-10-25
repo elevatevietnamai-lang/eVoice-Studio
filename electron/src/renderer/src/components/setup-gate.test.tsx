@@ -26,6 +26,9 @@ vi.mock('@/features/settings/model-settings', () => ({
   modelFamilies: ['tts'],
 }));
 vi.mock('@/features/settings/mirror-settings', () => ({ MirrorSettings: () => null }));
+vi.mock('@/features/dub/hardsub-setup', () => ({
+  SetupHardsubEngine: () => <div>hardsub-setup-card</div>,
+}));
 vi.mock('@/features/settings/media-tools', () => ({
   SetupMediaEngine: () => null,
   MediaTools: () => null,
@@ -92,6 +95,7 @@ it('requires passing preflight and installed models before completion', async ()
   );
   fireEvent.click(screen.getByRole('button', { name: 'setup.continue_ok' }));
   await screen.findByText('Model packs');
+  expect(screen.getByText('hardsub-setup-card')).toBeInTheDocument();
   expect(screen.queryByText('Models')).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'dub.advanced' }));
   expect(screen.getByText('Models')).toBeInTheDocument();

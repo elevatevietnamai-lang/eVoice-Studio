@@ -52,3 +52,7 @@ ducked under the dubbed voice. It talks to a local ACE-Step UI server
 `GET /dub/bgm/preview/{job_id}`, `GET /dub/bgm/export-stream/{job_id}?lang=&music_gain=&burn=`,
 `GET /dub/bgm/download/{job_id}?file=`. The export replaces the whole
 background, ambient sound included. Stretch Video timing is not supported yet.
+
+## First-run setup
+
+The models step of first-run setup offers an optional "On-screen subtitles" card that installs this engine up front (about 600 MB). Skipping it is fine: the same install is available later in the dub page.
