@@ -1,0 +1,113 @@
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+
+const state = vi.hoisted(() => ({
+  status: { installed: false, running: false },
+  tracks: [] as unknown[],
+  calls: [] as string[],
+  stream: vi.fn(),
+}));
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }),
+}));
+vi.mock('@/lib/api/client', () => ({
+  apiJson: async (path: string, init?: { method?: string }) => {
+    state.calls.push(`${init?.method || 'GET'} ${path}`);
+    if (path === '/music/status') return state.status;
+    if (path === '/music/library') return { tracks: state.tracks };
+    return {};
+  },
+  apiPath: (path: string) => path,
+  describeError: (error: unknown) => String(error),
+}));
+vi.mock('@/lib/api/event-stream', () => ({ consumeTaskStream: state.stream }));
+vi.mock('@/lib/export-history', () => ({ saveExport: vi.fn() }));
+vi.mock('@/components/bridge', () => ({ getBridge: () => null }));
+vi.mock('@/components/app-shell/workspace-header', () => ({
+  WorkspaceHeader: ({ children }: { children: unknown }) => <header>{children as never}</header>,
+}));
+vi.mock('@/components/workspace-sidebar', () => ({
+  SecondarySidebar: ({ children }: { children: unknown }) => <aside>{children as never}</aside>,
+}));
+vi.mock('@/components/waveform-player', () => ({
+  WaveformPlayer: ({ src }: { src: string }) => <div data-testid="player">{src}</div>,
+}));
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+
+import { MusicPage } from './music-page';
+
+const track = {
+  id: 'abc123def456',
+  title: 'calm lo-fi',
+  prompt: 'calm lo-fi',
+  lyrics: '',
+  instrumental: true,
+  duration: 15,
+  bpm: null,
+  created_at: 1_700_000_000,
+};
+
+function renderPage() {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={client}>
+      <MusicPage />
+    </QueryClientProvider>,
+  );
+}
+
+beforeEach(() => {
+  state.status = { installed: false, running: false };
+  state.tracks = [];
+  state.calls = [];
+  state.stream.mockReset();
+});
+afterEach(cleanup);
+
+it('asks to install the engine first and keeps generation disabled', async () => {
+  renderPage();
+  expect(await screen.findByText('musicStudio.engine_install')).toBeTruthy();
+  const generate = screen.getByText('musicStudio.generate').closest('button');
+  expect(generate?.disabled).toBe(true);
+  expect(screen.getByText('musicStudio.empty')).toBeTruthy();
+});
+
+it('streams the install and reports progress through the shared task stream', async () => {
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({ type: 'progress', progress: 0.5 });
+    onEvent({ type: 'done' });
+  });
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.engine_install'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(state.stream.mock.calls[0][0]).toBe('/music/install-stream');
+});
+
+it('lists saved tracks, plays the first and posts a generate request as JSON', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [track];
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({ type: 'done', track });
+  });
+  renderPage();
+  const player = await screen.findByTestId('player');
+  expect(player.textContent).toContain('/music/audio/abc123def456');
+
+  const generate = screen.getByText('musicStudio.generate').closest('button') as HTMLButtonElement;
+  await waitFor(() => expect(generate.disabled).toBe(false));
+  fireEvent.click(generate);
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  const [path, , , init] = state.stream.mock.calls[0];
+  expect(path).toBe('/music/generate');
+  expect(init.method).toBe('POST');
+  expect(JSON.parse(init.body)).toMatchObject({ instrumental: true, duration: 60, lyrics: '' });
+});
+
+it('deletes a track through the library endpoint', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [track];
+  renderPage();
+  fireEvent.click(await screen.findByLabelText('musicStudio.delete'));
+  await waitFor(() => expect(state.calls).toContain('DELETE /music/library/abc123def456'));
+});

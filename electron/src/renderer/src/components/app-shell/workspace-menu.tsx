@@ -16,6 +16,7 @@ import {
   ChevronRightIcon,
   BlocksIcon,
   WorkflowIcon,
+  MusicIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -31,6 +32,7 @@ type Destination = readonly [
     | '/projects'
     | '/tools'
     | '/batch'
+    | '/music'
     | '/gallery'
     | '/dub'
     | '/design'
@@ -54,6 +56,7 @@ const voiceDestinations: Destination[] = [
 const storyDestinations: Destination[] = [
   ['/stories', 'nav.stories', AudioLinesIcon],
   ['/audiobook', 'audiobook.title', BookOpenIcon],
+  ['/music', 'musicStudio.title', MusicIcon],
 ];
 const dubDestinations: Destination[] = [
   ['/dub', 'dubWorkspace.title', FilmIcon],
@@ -81,6 +84,7 @@ const iconMotion: Record<Destination[0], string> = {
   '/audiobook': 'tilt',
   '/dub': 'tilt',
   '/batch': 'lift',
+  '/music': 'wave',
   '/transcriptions': 'nudge',
   '/calls': 'pulse',
   '/projects': 'lift',

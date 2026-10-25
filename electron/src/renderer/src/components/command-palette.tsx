@@ -35,6 +35,7 @@ import {
   WrenchIcon,
   XIcon,
   type LucideIcon,
+  MusicIcon,
 } from 'lucide-react';
 import {
   designDraftFromTake,
@@ -131,6 +132,13 @@ export function CommandPalette() {
       group: workspaceGroup,
       icon: FilmIcon,
       run: () => navigate({ to: '/dub' }),
+    },
+    {
+      id: 'music',
+      label: t('musicStudio.title'),
+      group: workspaceGroup,
+      icon: MusicIcon,
+      run: () => navigate({ to: '/music' }),
     },
     {
       id: 'batch',

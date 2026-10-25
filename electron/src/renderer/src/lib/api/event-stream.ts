@@ -16,8 +16,9 @@ export async function consumeTaskStream(
   path: string,
   onEvent: (event: TaskEvent) => boolean,
   signal?: AbortSignal,
+  init?: RequestInit,
 ): Promise<void> {
-  const response = await apiFetch(path, { signal });
+  const response = await apiFetch(path, { ...init, signal });
   if (!response.body) throw new IncompleteTaskStreamError();
   const reader = response.body.getReader();
   const decoder = new TextDecoder();

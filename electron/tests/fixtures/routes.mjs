@@ -11,6 +11,7 @@ export const ROUTES = Object.freeze([
   '/audiobook',
   '/dub',
   '/batch',
+  '/music',
   '/projects',
   '/tools',
   '/integrations',
