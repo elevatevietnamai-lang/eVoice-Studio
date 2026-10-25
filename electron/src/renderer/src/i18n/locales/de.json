@@ -3946,6 +3946,7 @@
     "bpm_hint": "Auto",
     "generate": "Musik generieren",
     "generating": "Wird generiert…",
+    "loading_model": "Das Musikmodell wird geladen … der erste Titel kann einige Minuten dauern.",
     "generated": "Track in Ihrer Mediathek gespeichert.",
     "library": "Ihre Tracks",
     "empty": "Noch keine Tracks. Beschreiben Sie die gewünschte Musik und generieren Sie sie.",

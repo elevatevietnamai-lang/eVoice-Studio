@@ -3946,6 +3946,7 @@
     "bpm_hint": "自动",
     "generate": "生成音乐",
     "generating": "正在生成…",
+    "loading_model": "正在加载音乐模型…第一首曲目可能需要几分钟。",
     "generated": "曲目已保存到你的曲库。",
     "library": "你的曲目",
     "empty": "暂无曲目。描述你想要的音乐，然后生成。",

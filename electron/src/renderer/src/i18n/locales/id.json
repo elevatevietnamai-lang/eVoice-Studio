@@ -3946,6 +3946,7 @@
     "bpm_hint": "Otomatis",
     "generate": "Buat musik",
     "generating": "Membuat…",
+    "loading_model": "Memuat model musik… trek pertama bisa memakan waktu beberapa menit.",
     "generated": "Trek disimpan ke pustaka Anda.",
     "library": "Trek Anda",
     "empty": "Belum ada trek. Deskripsikan musik yang Anda inginkan, lalu buat.",

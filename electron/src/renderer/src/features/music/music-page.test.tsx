@@ -128,3 +128,32 @@ it('shows the localized GPU-busy message when a dubbing job holds the GPU', asyn
   fireEvent.click(generate);
   await waitFor(() => expect(toastError).toHaveBeenCalledWith('Error: gpuBusy.dub'));
 });
+
+it('keeps the failure on screen and explains the model load while progress is low', async () => {
+  state.status = { installed: true, running: false };
+  let finish: () => void = () => {};
+  state.stream.mockImplementation(
+    (_path: string, onEvent: (e: unknown) => boolean) =>
+      new Promise<void>((resolve, reject) => {
+        onEvent({ type: 'progress', progress: 0 });
+        finish = () => {
+          try {
+            onEvent({ type: 'error', reason: 'Music generation failed on the music server.' });
+          } catch (error) {
+            reject(error);
+          }
+        };
+        void resolve;
+      }),
+  );
+  renderPage();
+  const generate = (await screen.findByText('musicStudio.generate')).closest('button') as HTMLButtonElement;
+  await waitFor(() => expect(generate.disabled).toBe(false));
+  fireEvent.click(generate);
+  expect(await screen.findByText('musicStudio.loading_model')).toBeTruthy();
+  finish();
+  const alert = await screen.findByRole('alert');
+  expect(alert.textContent).toContain('Music generation failed on the music server.');
+  expect(screen.queryByText('musicStudio.loading_model')).toBeNull();
+});
+

@@ -3946,6 +3946,7 @@
     "bpm_hint": "Tự động",
     "generate": "Tạo nhạc",
     "generating": "Đang tạo…",
+    "loading_model": "Đang nạp mô hình nhạc… bài đầu tiên có thể mất vài phút.",
     "generated": "Đã lưu bài nhạc vào thư viện.",
     "library": "Bài nhạc của bạn",
     "empty": "Chưa có bài nào. Hãy mô tả bản nhạc bạn muốn rồi bấm tạo.",

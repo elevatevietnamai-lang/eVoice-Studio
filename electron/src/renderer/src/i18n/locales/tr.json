@@ -3946,6 +3946,7 @@
     "bpm_hint": "Otomatik",
     "generate": "Müzik oluştur",
     "generating": "Oluşturuluyor…",
+    "loading_model": "Müzik modeli yükleniyor… ilk parça birkaç dakika sürebilir.",
     "generated": "Parça kitaplığınıza kaydedildi.",
     "library": "Parçalarınız",
     "empty": "Henüz parça yok. İstediğiniz müziği tarif edin ve oluşturun.",

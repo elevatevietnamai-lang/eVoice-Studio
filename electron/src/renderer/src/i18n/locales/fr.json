@@ -3948,6 +3948,7 @@
     "bpm_hint": "Auto",
     "generate": "Générer la musique",
     "generating": "Génération…",
+    "loading_model": "Chargement du modèle musical… le premier morceau peut prendre quelques minutes.",
     "generated": "Piste enregistrée dans votre bibliothèque.",
     "library": "Vos pistes",
     "empty": "Aucune piste pour le moment. Décrivez la musique souhaitée, puis générez-la.",

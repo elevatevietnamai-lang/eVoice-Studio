@@ -58,6 +58,7 @@ export function MusicPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [task, setTask] = useState<{ kind: 'install' | 'generate'; progress: number } | null>(null);
   const abort = useRef<AbortController | null>(null);
+  const [failure, setFailure] = useState<string | null>(null);
 
   const status = useQuery({
     queryKey: ['music-status'],
@@ -93,6 +94,7 @@ export function MusicPage() {
 
   const generate = async () => {
     abort.current = new AbortController();
+    setFailure(null);
     setTask({ kind: 'generate', progress: 0 });
     try {
       const body = {
@@ -124,7 +126,11 @@ export function MusicPage() {
       toast.success(t('musicStudio.generated'));
       await queryClient.invalidateQueries({ queryKey: ['music-library'] });
     } catch (error) {
-      if (!abort.current?.signal.aborted) toast.error(describeError(error));
+      if (!abort.current?.signal.aborted) {
+        const message = describeError(error);
+        setFailure(message);
+        toast.error(message);
+      }
     } finally {
       abort.current = null;
       setTask(null);
@@ -288,10 +294,22 @@ export function MusicPage() {
             {task?.kind === 'generate' ? t('musicStudio.generating') : t('musicStudio.generate')}
           </Button>
           {task?.kind === 'generate' && (
-            <Progress
-              value={Math.round(task.progress * 100)}
-              aria-label={t('musicStudio.generating')}
-            />
+            <>
+              <Progress
+                value={Math.round(task.progress * 100)}
+                aria-label={t('musicStudio.generating')}
+              />
+              {task.progress < 0.1 && (
+                <p role="status" className="text-xs text-muted-foreground">
+                  {t('musicStudio.loading_model')}
+                </p>
+              )}
+            </>
+          )}
+          {failure && !busy && (
+            <p role="alert" className="text-xs text-destructive">
+              {failure}
+            </p>
           )}
           {installed && status.data?.running && (
             <Button

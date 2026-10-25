@@ -3946,6 +3946,7 @@
     "bpm_hint": "Auto",
     "generate": "Muziek genereren",
     "generating": "Genereren…",
+    "loading_model": "Het muziekmodel wordt geladen… het eerste nummer kan enkele minuten duren.",
     "generated": "Track opgeslagen in je bibliotheek.",
     "library": "Jouw tracks",
     "empty": "Nog geen tracks. Beschrijf de muziek die je wilt en genereer deze.",

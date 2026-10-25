@@ -3946,6 +3946,7 @@
     "bpm_hint": "Auto",
     "generate": "Skapa musik",
     "generating": "Skapar…",
+    "loading_model": "Musikmodellen läses in … det första spåret kan ta några minuter.",
     "generated": "Spåret har sparats i ditt bibliotek.",
     "library": "Dina spår",
     "empty": "Inga spår ännu. Beskriv musiken du vill ha och generera den sedan.",
