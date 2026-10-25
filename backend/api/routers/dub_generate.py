@@ -18,6 +18,7 @@ from core.path_security import contained_join
 from core.tasks import task_manager
 from schemas.requests import DubRequest
 from services.model_manager import _gpu_pool, run_on_gpu_pool_guarded
+from services import gpu_exclusive
 from services.srt_parser import vouch_cue_source
 from services.tts_backend import (
     TTSBackend, active_backend_id, ensure_active_engine_licence, resolve_generation_backend,
@@ -527,9 +528,13 @@ async def dub_generate(job_id: str, req: DubRequest):
         # Every reference take the render resolves stays held until it ends,
         # so the retired-voice sweep never deletes one mid-dub (#2535).
         with voice_leases.VoiceFileLease() as voice_lease, _render_staging(job_id) as stage_dir:
-            async with contextlib.aclosing(_render(task_id, voice_lease, stage_dir)) as events:
-                async for event in events:
-                    yield event
+            try:
+                async with gpu_exclusive.dub_job():
+                    async with contextlib.aclosing(_render(task_id, voice_lease, stage_dir)) as events:
+                        async for event in events:
+                            yield event
+            except gpu_exclusive.GpuBusy as exc:
+                yield f"data: {json.dumps({'type': 'error', 'error_code': 'gpu_busy', 'error': str(exc)})}\n\n"
 
     async def _render(task_id, voice_lease, stage_dir):
         total = len(req.segments)

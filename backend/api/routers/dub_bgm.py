@@ -23,7 +23,7 @@ from fastapi.responses import FileResponse, StreamingResponse
 
 from core.browser_guard import reject_cross_site_get
 from core.logging_utils import log_safe
-from services import bgm, dub_pipeline
+from services import bgm, dub_pipeline, gpu_exclusive
 from services.ffmpeg_utils import find_ffmpeg, local_inputs_only
 
 router = APIRouter()
@@ -91,9 +91,10 @@ async def bgm_generate_stream(job_id: str, style: str = Query("", max_length=400
                                      "reason": "Install the music engine first (Music Studio)."})
                 return
             out = os.path.join(job_dir, BGM_FILE)
-            async for event in bgm.generate(style, duration, out, seed=seed, bpm=bpm):
-                if event["type"] == "progress":
-                    yield _sse("progress", event)
+            with gpu_exclusive.music_job():
+                async for event in bgm.generate(style, duration, out, seed=seed, bpm=bpm):
+                    if event["type"] == "progress":
+                        yield _sse("progress", event)
             with dub_pipeline._dub_jobs_lock:
                 job = dub_pipeline.get_job(job_id)
                 if not job:

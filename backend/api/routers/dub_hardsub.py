@@ -25,7 +25,7 @@ from fastapi.responses import Response, StreamingResponse
 from api.dependencies import require_admin, require_desktop, require_local
 from core.browser_guard import reject_cross_site_get
 from core.logging_utils import log_safe
-from services import dub_pipeline, hardsub
+from services import dub_pipeline, gpu_exclusive, hardsub
 from services.dub_pipeline import replace_source_segments
 from services.ffmpeg_utils import find_ffmpeg, local_inputs_only
 
@@ -166,7 +166,7 @@ async def hardsub_ocr_stream(
             lock = _lock(job_id)
             if lock.locked():
                 raise RuntimeError("Another on-screen subtitle task is running for this video.")
-            async with lock:
+            async with gpu_exclusive.dub_job(), lock:
                 out = os.path.join(job_dir, CUES_FILE + ".tmp")
                 args = ["ocr", "--video", video, "--top", f"{top:.4f}", "--bottom", f"{bottom:.4f}",
                         "--fps", f"{fps:g}", "--out", out]
@@ -265,7 +265,7 @@ async def hardsub_clean_stream(job_id: str, method: str = Query("lama", pattern=
             lock = _lock(job_id)
             if lock.locked():
                 raise RuntimeError("Another on-screen subtitle task is running for this video.")
-            async with lock:
+            async with gpu_exclusive.dub_job(), lock:
                 tmp = os.path.join(job_dir, "hardsub_clean.tmp.mp4")
                 args = ["clean", "--video", video, "--cues", cues, "--method", method,
                         "--models", str(hardsub.models_dir()), "--out", tmp]

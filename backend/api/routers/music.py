@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field
 
 from api.dependencies import require_admin, require_desktop
 from core.browser_guard import reject_cross_site_get
-from services import music, music_library
+from services import gpu_exclusive, music, music_library
 
 router = APIRouter()
 logger = logging.getLogger("omnivoice.api")
@@ -63,6 +63,15 @@ async def music_install_stream():
     return _stream(gen())
 
 
+async def _stop_idle_music() -> None:
+    engine = music.get_engine()
+    if not engine.is_busy():
+        await engine.stop()
+
+
+gpu_exclusive.register_music_stop(_stop_idle_music)
+
+
 @router.post("/music/stop", dependencies=[Depends(require_admin)])
 async def music_stop():
     await music.get_engine().stop()
@@ -83,14 +92,17 @@ async def music_generate(body: GenerateBody):
                                          seed=body.seed, vocal_language=body.vocal_language)
             track_id = music_library.new_id()
             out = str(music_library.audio_path(track_id))
-            async for event in engine.generate(request, out):
-                if event["type"] == "progress":
-                    yield _sse("progress", event)
+            with gpu_exclusive.music_job():
+                async for event in engine.generate(request, out):
+                    if event["type"] == "progress":
+                        yield _sse("progress", event)
             record = music_library.save(
                 track_id, title=(body.prompt.strip()[:60] or "Untitled"), prompt=body.prompt,
                 lyrics=body.lyrics, instrumental=body.instrumental, duration=request.seconds(),
                 bpm=body.bpm, seed=body.seed)
             yield _sse("done", {"track": record})
+        except gpu_exclusive.GpuBusy as exc:
+            yield _sse("error", {"error": "gpu_busy", "stage": "music", "reason": str(exc)})
         except Exception as exc:
             logger.warning("music generation failed: %s", exc)
             yield _sse("error", {"error": "music_failed", "stage": "music", "reason": (str(exc) or type(exc).__name__)[-1200:]})

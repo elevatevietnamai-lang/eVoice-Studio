@@ -47,7 +47,7 @@ from services.segmentation import (
     clean_up_segments,
 )
 from services.onset_align import snap_segment_starts
-from services import dub_pipeline
+from services import dub_pipeline, gpu_exclusive
 from core.browser_guard import reject_cross_site_get
 
 router = APIRouter()
@@ -2397,8 +2397,12 @@ async def dub_transcribe_stream(
         # (with the actionable hint from build_failure) then `done`, so the user
         # sees the real failure + a Retry instead of a silent disconnect.
         try:
-            async for ev in _gen_body():
-                yield ev
+            async with gpu_exclusive.dub_job():
+                async for ev in _gen_body():
+                    yield ev
+        except gpu_exclusive.GpuBusy as exc:
+            yield _sse_event("error", {"error": str(exc), "error_code": "gpu_busy"})
+            yield _sse_event("done", {})
         except Exception as exc:  # noqa: BLE001 — last-resort stream finalizer
             logger.error("Transcription stream failed unexpectedly (class=%s)", type(exc).__name__)
             from core.public_errors import stream_failure, transcription_failure_code

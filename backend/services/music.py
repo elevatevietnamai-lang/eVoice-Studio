@@ -355,6 +355,9 @@ class AceStepEngine:
                 await self.stop()
                 return
 
+    def is_busy(self) -> bool:
+        return bool(self._server and self._server.busy)
+
     async def stop(self) -> None:
         await asyncio.to_thread(self._kill_now)
 

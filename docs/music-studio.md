@@ -14,3 +14,7 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   same time on a small GPU.
 - **API:** `GET /music/status`, `GET /music/install-stream`, `POST /music/generate` (SSE),
   `GET /music/library`, `GET /music/audio/{id}`, `DELETE /music/library/{id}`, `POST /music/stop`.
+
+## GPU exclusion
+
+Dubbing (dub generate, ASR transcription, on-screen subtitle OCR/removal) and the ACE-Step music server never share the GPU (`backend/services/gpu_exclusive.py`). Starting one of those jobs stops an idle music server; if a track is being generated, the job is refused with `gpu_busy`. Generating music (Music Studio or background music) while such a job runs is refused the same way.
