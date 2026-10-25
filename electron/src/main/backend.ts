@@ -480,7 +480,7 @@ export async function resolveSpawnPlan(
       return {
         error:
           `The Python environment in ${root} is missing (no ${relative(root, python)}), and this is not a VoiceStudio source checkout. ` +
-          'Install VoiceStudio from the release installer, or clone the repository and run `bun run setup:api` inside it.',
+          'Install eVoice Studio from the release installer, or clone the repository and run `bun run setup:api` inside it.',
       };
     }
     return {
@@ -626,7 +626,7 @@ export function spawnFailureMessage(
   const launchRejected = ['ENOENT', 'UNKNOWN', 'EACCES', 'EPERM'].includes(code ?? '');
   if (!launchRejected) return `Could not start ${command}: ${detail}`;
   return runtimeOwned
-    ? `Could not start ${command}: ${detail}. Install or repair the local runtime, then restart VoiceStudio.`
+    ? `Could not start ${command}: ${detail}. Install or repair the local runtime, then restart eVoice Studio.`
     : `Could not start ${command}: ${detail}. Check that the program exists and can be launched, then try again.`;
 }
 
