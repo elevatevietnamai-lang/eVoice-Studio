@@ -93,6 +93,13 @@
   --glass-blur: 16px;
   --glass-saturation: 1.08;
 }
+/* The Elevate default is flat: menus and popovers are solid, not frosted. Named palettes keep the glass. */
+html:not([data-theme-id]),
+html[data-theme-id=''] {
+  --glass-blur: 0px;
+  --glass-opacity: 100%;
+  --glass-saturation: 1;
+}
 
 @utility surface-glass {
   background: var(--popover);

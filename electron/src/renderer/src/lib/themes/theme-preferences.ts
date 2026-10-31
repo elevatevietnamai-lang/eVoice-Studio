@@ -1,6 +1,7 @@
 import { BUILT_IN_THEMES, getThemeColorsForAppearance, type ThemeAppearance } from './t3-palettes';
+import { STUDIO_THEME } from './studio-palette';
 import { TAURI_THEME } from './tauri-palette';
-export const AVAILABLE_PALETTES = [...BUILT_IN_THEMES, TAURI_THEME];
+export const AVAILABLE_PALETTES = [...BUILT_IN_THEMES, TAURI_THEME, STUDIO_THEME];
 export type PaletteId = 'default' | (typeof BUILT_IN_THEMES)[number]['id'];
 export type ThemeMode = ThemeAppearance | 'system';
 export interface ThemePreferences {
