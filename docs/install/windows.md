@@ -64,6 +64,11 @@ the best experience on a CPU, pick a light voice engine (KittenTTS,
 Supertonic-3, PocketTTS) and a small Whisper model in the Model Catalogue; the
 setup screen lists them as its CPU preset. Set `OMNIVOICE_TORCH_VARIANT=cuda`
 (or `cpu`) before launching to override the detection.
+
+The CUDA build of PyTorch is a single download of about 3 GB. If the connection
+drops, setup resumes that file from where it stopped (also after you close and
+reopen the app) and verifies its checksum before installing it, instead of
+starting over. Other packages are fetched by uv as before.
 Source setup (`bun run setup:api`) also selects locked CPU wheels when NVIDIA
 is absent. See [CPU setup and overrides](../../electron/README.md#running-without-a-gpu).
 

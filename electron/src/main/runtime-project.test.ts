@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile, statfs } from 'node:fs/promise
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { downloadRuntimeInstaller } from './runtime-download';
+import { downloadLockedWheel } from './runtime-wheel';
 import * as pthAscii from './pth-ascii';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -26,6 +27,10 @@ import {
 } from './runtime-project';
 
 vi.mock('./runtime-download', () => ({ downloadRuntimeInstaller: vi.fn() }));
+vi.mock('./runtime-wheel', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./runtime-wheel')>()),
+  downloadLockedWheel: vi.fn(async (_wheel: unknown, dir: string) => join(dir, 'torch.whl')),
+}));
 
 vi.mock('node:fs/promises', async (importOriginal) => ({
   ...(await importOriginal<typeof import('node:fs/promises')>()),
@@ -782,4 +787,121 @@ it('hands explicit download proxies and loopback bypasses to uv', async () => {
   expect(env?.HTTPS_PROXY).toBe('socks5h://127.0.0.1:10808');
   expect(env?.NO_PROXY).toContain('localhost,127.0.0.1,::1');
   expect(env?.PYTHONPATH).toBeUndefined();
+});
+
+describe('resumable CUDA torch install', () => {
+  const lock = `version = 1
+
+[[package]]
+name = "torch"
+version = "2.8.0+cu128"
+source = { registry = "https://download.pytorch.org/whl/cu128" }
+wheels = [
+    { url = "https://download.pytorch.org/whl/cu128/torch-2.8.0%2Bcu128-cp311-cp311-win_amd64.whl", hash = "sha256:${'d'.repeat(64)}" },
+]
+`;
+  async function cudaFixture() {
+    forcePlatform('win32');
+    vi.spyOn(process, 'arch', 'get').mockReturnValue('x64');
+    const fx = await fixture();
+    await writeFile(join(fx.bundle, 'uv.lock'), lock);
+    return fx;
+  }
+  const calls = (run: ReturnType<typeof vi.fn>) =>
+    run.mock.calls.map(([, args]) => (args as string[]).join(' '));
+
+  beforeEach(() => {
+    vi.mocked(downloadLockedWheel).mockReset();
+    vi.mocked(downloadLockedWheel).mockImplementation(async (_wheel, dir) => join(dir, 'torch.whl'));
+  });
+
+  it('syncs without torch, then downloads the locked wheel and installs it from the local file', async () => {
+    const { bundle, project } = await cudaFixture();
+    const run = vi.fn(async (_command: string, args: string[]) => {
+      if (args[0] === 'sync') await interpreter(project);
+      return undefined;
+    });
+    const log = vi.fn();
+    await installRuntime(bundle, project, 'uv', run, new AbortController().signal, undefined, 'global', log);
+
+    const lines = calls(run);
+    const sync = lines.findIndex((line) => line.startsWith('sync '));
+    const install = lines.findIndex((line) => line.startsWith('pip install '));
+    expect(lines[sync]).toContain('--no-install-package torch');
+    expect(install).toBeGreaterThan(sync);
+    expect(lines[install]).toContain('--no-deps --no-index --find-links');
+    expect(lines[install]).toContain(join(project, '..', '.wheels'));
+    expect(lines[install]).toMatch(/torch==2\.8\.0\+cu128$/);
+    expect(lines[install]).not.toContain('--reinstall');
+    expect(downloadLockedWheel).toHaveBeenCalledOnce();
+    expect(vi.mocked(downloadLockedWheel).mock.calls[0][0]).toMatchObject({
+      version: '2.8.0+cu128',
+      sha256: 'd'.repeat(64),
+    });
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('Downloading PyTorch 2.8.0+cu128'));
+  });
+
+  it('reinstalls the resumable wheel instead of asking uv to reinstall torch when torch is broken', async () => {
+    const { bundle, project } = await cudaFixture();
+    await interpreter(project);
+    let repaired = false;
+    const run = vi.fn(async (_command: string, args: string[]) => {
+      if (args[0] === 'pip') repaired = true;
+      if (!repaired && (args[1] === RUNTIME_IMPORT_PROBE || args[1] === RUNTIME_NATIVE_IMPORT_PROBE)) {
+        throw new Error('ModuleNotFoundError');
+      }
+      return undefined;
+    });
+    await installRuntime(bundle, project, 'uv', run, new AbortController().signal, undefined, 'global');
+
+    const lines = calls(run);
+    const sync = lines.find((line) => line.startsWith('sync '))!;
+    expect(sync).not.toContain('--reinstall-package torch ');
+    expect(sync).not.toMatch(/--reinstall-package torch$/);
+    expect(sync).toContain('--reinstall-package torchaudio');
+    expect(sync).toContain('--no-install-package torch');
+    expect(lines.find((line) => line.startsWith('pip install '))).toContain('--reinstall');
+  });
+
+  it('leaves everything to uv when the locked torch is already installed', async () => {
+    const { bundle, project } = await cudaFixture();
+    await interpreter(project);
+    const run = vi.fn(async (_command: string, args: string[]) =>
+      args[1]?.includes("m.version('torch')") ? '2.8.0+cu128\n' : undefined,
+    );
+    await installRuntime(bundle, project, 'uv', run, new AbortController().signal, undefined, 'global');
+
+    const lines = calls(run);
+    expect(lines.find((line) => line.startsWith('sync '))).not.toContain('--no-install-package');
+    expect(lines.some((line) => line.startsWith('pip install '))).toBe(false);
+    expect(downloadLockedWheel).not.toHaveBeenCalled();
+  });
+
+  it('fails setup and keeps the runtime not ready when the wheel cannot be downloaded', async () => {
+    const { bundle, project } = await cudaFixture();
+    vi.mocked(downloadLockedWheel).mockRejectedValueOnce(new Error('connection keeps dropping'));
+    const run = vi.fn(async (_command: string, args: string[]) => {
+      if (args[0] === 'sync') await interpreter(project);
+      return undefined;
+    });
+    await expect(
+      installRuntime(bundle, project, 'uv', run, new AbortController().signal, undefined, 'global'),
+    ).rejects.toThrow('connection keeps dropping');
+    expect(calls(run).some((line) => line.startsWith('pip install '))).toBe(false);
+    expect(await runtimeReady(bundle, project)).toBe(false);
+  });
+
+  it('keeps the plain uv path for a CPU runtime', async () => {
+    forcePlatform('win32');
+    vi.spyOn(process, 'arch', 'get').mockReturnValue('x64');
+    vi.stubEnv('OMNIVOICE_TORCH_VARIANT', 'cpu');
+    const { bundle, project } = await fixture();
+    await writeFile(join(bundle, 'uv.lock'), lock);
+    const run = vi.fn(async (_command: string, args: string[]) => {
+      if (args[0] === 'sync') await interpreter(project);
+      return undefined;
+    });
+    await installRuntime(bundle, project, 'uv', run, new AbortController().signal, undefined, 'global');
+    expect(downloadLockedWheel).not.toHaveBeenCalled();
+  });
 });

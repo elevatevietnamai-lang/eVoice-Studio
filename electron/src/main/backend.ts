@@ -1085,6 +1085,9 @@ export class BackendSupervisor extends EventEmitter<{
           this.emitStatus();
         },
         this.runtimeRegion,
+        (line) => {
+          if (gen === this.generation) this.pushLog('out', line);
+        },
       );
       if (gen === this.generation) await this.start();
     } catch (error) {
