@@ -73,6 +73,9 @@
   --text-editor: 1rem;
   --text-editor--line-height: 1.75rem;
   --color-zinc-25: oklch(99.2% 0 0);
+  /* Elevate motion: every `transition-*` utility gets the brand timing unless it sets its own. */
+  --default-transition-duration: 160ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
@@ -82,6 +85,11 @@
   --ios-home-wordmark-size: 1.75rem;
   --workspace-footer-height: 40px;
   --control-radius: 0.5rem;
+  --card-radius: 1rem;
+  --motion-fast: 160ms;
+  --motion-base: 240ms;
+  --motion-slow: 480ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --workspace-gap: 1rem;
   --workspace-inset: 1.5rem;
   --glass-blur: 12px;
