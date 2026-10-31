@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { PlayIcon, PauseIcon, LoaderCircleIcon, CircleAlertIcon } from 'lucide-react';
+import { LoaderCircleIcon, CircleAlertIcon } from 'lucide-react';
+import { Pause, Play } from 'lucide';
+import { MorphIcon } from './ui/morph-icon';
 import { useTranslation } from 'react-i18next';
 import {
   StudioMediaPlayer,
@@ -136,10 +138,8 @@ function PreviewButton({
           <CircleAlertIcon className="text-destructive" />
         ) : status === 'loading' ? (
           <LoaderCircleIcon className="animate-spin" />
-        ) : status === 'playing' ? (
-          <PauseIcon />
         ) : (
-          <PlayIcon />
+          <MorphIcon icon={status === 'playing' ? Pause : Play} />
         )}
       </Button>
     </span>

@@ -1,16 +1,14 @@
-// @vitest-environment node
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import tokensJson from '../../../../../../mobile/contract/tokens.json?raw';
 
 /**
  * The Elevate default palette must stay readable (WCAG AA) in both appearances. The generated
  * mobile token file holds the resolved colours, so this checks what the apps and the desktop share.
  */
 type Colors = Record<string, string>;
-const tokens = JSON.parse(
-  readFileSync(resolve(import.meta.dirname, '../../../../../../mobile/contract/tokens.json'), 'utf8'),
-) as { palettes: { id: string; colors: { light: Colors; dark: Colors } }[] };
+const tokens = JSON.parse(tokensJson) as {
+  palettes: { id: string; colors: { light: Colors; dark: Colors } }[];
+};
 const elevate = tokens.palettes.find((palette) => palette.id === 'default')!.colors;
 
 function rgba(hex: string): [number, number, number, number] {

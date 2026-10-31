@@ -1,6 +1,7 @@
-import { PanelLeftCloseIcon, PanelLeftOpenIcon } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { isMac } from '@/components/bridge';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
 
@@ -18,7 +19,7 @@ export function SidebarToggle() {
       aria-expanded={!compact}
       onClick={() => setOpen(compact)}
     >
-      {compact ? <PanelLeftOpenIcon /> : <PanelLeftCloseIcon />}
+      <MorphIcon icon={compact ? PanelLeftOpen : PanelLeftClose} />
     </Button>
   );
 }

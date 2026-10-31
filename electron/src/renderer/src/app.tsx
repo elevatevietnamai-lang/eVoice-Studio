@@ -6,6 +6,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { MotionProvider } from '@/components/motion';
 import { queryClient } from '@/lib/query';
 import { router } from './router';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -127,9 +128,11 @@ export function App() {
           <GenerationProvider>
             <FirstSoundHandoff />
             <TooltipProvider>
-              <RouterProvider router={router} />
-              <ModelLicenceGate />
-              <Toaster richColors position="bottom-right" />
+              <MotionProvider>
+                <RouterProvider router={router} />
+                <ModelLicenceGate />
+                <Toaster richColors position="bottom-right" />
+              </MotionProvider>
             </TooltipProvider>
           </GenerationProvider>
         </WebAuthGate>

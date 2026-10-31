@@ -1,4 +1,5 @@
-import { PauseIcon, PlayIcon } from 'lucide-react';
+import { Pause, Play } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAudioProvider, type MediaPlayerProps } from '@vidstack/react';
@@ -218,7 +219,7 @@ function WaveformControls({
           else void player.current?.pause();
         }}
       >
-        {paused ? <PlayIcon /> : <PauseIcon />}
+        <MorphIcon icon={paused ? Play : Pause} />
       </Button>
       {error ? (
         <p role="status" className="flex-1 text-xs text-muted-foreground">
