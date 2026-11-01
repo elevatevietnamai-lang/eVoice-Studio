@@ -126,8 +126,8 @@ themes:
   selectable: [studio, signal, canopy, current, hearth, orchid, heritage]
   note: "Studio Classic ('studio') is the previous zinc and blue default. Named palettes override the default through html[data-theme-id]."
 coverage:
-  applied: [tokens, fonts, ui-components, motion-provider, morph-icons-in-4-controls]
-  notApplied: [page-layouts, home-feature-tints]
+  applied: [tokens, fonts, ui-components, motion-provider, morph-icons-in-4-controls, brand-mark, home-layout]
+  notApplied: [setup-and-music-layouts, voice-dub-design-layouts]
 ---
 
 # Design System: eVoice Studio
@@ -243,7 +243,7 @@ Desktop first: the window has a minimum size set by Electron and the sidebar col
 - `tokensMeasured` is false: values are read from source and the generated tokens, not from a running page. Compare computed styles in the browser pane against `t3-theme.css` once the backend is up.
 - Success and info foreground colours come from Tailwind palette names (`emerald`, `blue`) and are not in the theme role list; their contrast was not computed.
 - In dark mode `--update-foreground` is blue (`#51a2ff`) while light mode uses graphite; the update banner is therefore the one non-functional hue left. Decide whether to make it monochrome.
-- Home still uses per-feature colour tints (about 30 hard-coded hue classes in `features/home/home-page.tsx`); it is outside this pass.
+- Home is flat and monochrome (a test blocks hue classes). Setup, Music Studio and the Voice, Dub and Design screens keep their earlier layouts and were not checked visually in this pass.
 - Page layouts, Setup, Dub, Voice and Music Studio screens keep their previous structure.
 - No breakpoints or touch-target sizes are documented; they were not measured.
 - Mobile apps receive the new default through generated tokens but their screens were not reviewed.
