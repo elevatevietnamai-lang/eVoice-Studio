@@ -5,7 +5,7 @@ import { getBridge, isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 
 const buttonClass =
-  'app-no-drag flex h-10 w-[46px] items-center justify-center text-muted-foreground outline-none transition-colors duration-160 hover:bg-accent hover:text-foreground active:bg-(--sidebar-row-selected) focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring';
+  'app-no-drag flex h-[52px] w-[46px] items-center justify-center text-muted-foreground outline-none transition-colors duration-160 hover:bg-accent hover:text-foreground active:bg-(--sidebar-row-selected) focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring';
 
 /**
  * Minimize, maximize and close for the frameless window on Windows and Linux (macOS keeps its traffic
@@ -31,7 +31,7 @@ export function WindowControls() {
   return (
     <div
       data-slot="window-controls"
-      className="app-no-drag fixed top-0 right-0 z-[60] flex h-10 items-stretch"
+      className="app-no-drag fixed top-0 right-0 z-[60] flex h-[52px] items-stretch"
     >
       <button
         type="button"

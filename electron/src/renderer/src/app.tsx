@@ -116,6 +116,7 @@ export function App() {
   }, []);
   return (
     <QueryClientProvider client={queryClient}>
+      <WindowControls />
       <ErrorBoundary>
         <WebAuthGate>
           <NativeDictationSync />
@@ -131,7 +132,6 @@ export function App() {
             <TooltipProvider>
               <MotionProvider>
                 <RouterProvider router={router} />
-                <WindowControls />
                 <ModelLicenceGate />
                 <Toaster richColors position="bottom-right" />
               </MotionProvider>
