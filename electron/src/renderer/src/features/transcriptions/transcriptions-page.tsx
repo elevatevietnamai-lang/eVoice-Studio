@@ -285,7 +285,7 @@ export function TranscriptionsPage() {
                   className={cn(
                     'w-full rounded-xl border border-transparent px-3 py-2.5 text-left text-sm transition-[color,background-color,border-color,box-shadow] hover:border-border/55 hover:bg-accent',
                     selectedId === entry.id &&
-                      'border-primary/20 bg-primary/[0.07] shadow-[inset_2px_0_0_var(--primary)]',
+                      'border-primary/20 bg-primary/[0.07]',
                   )}
                   aria-pressed={selectedId === entry.id}
                   onClick={() => setSelectedId(entry.id)}

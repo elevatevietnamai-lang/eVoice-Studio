@@ -57,7 +57,7 @@ export function CheckpointBanner({
   return (
     <div
       role="status"
-      className="flex items-center gap-3 rounded-xl border border-primary/15 bg-primary/5 px-3 py-2 shadow-[inset_0_1px_0_rgb(255_255_255/5%)]"
+      className="flex items-center gap-3 rounded-(--card-radius) border border-primary/15 bg-primary/5 px-3 py-2"
     >
       <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
         <Icon className="size-4" />

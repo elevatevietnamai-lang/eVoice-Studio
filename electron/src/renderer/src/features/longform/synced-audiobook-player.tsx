@@ -56,7 +56,7 @@ export function SyncedAudiobookPlayer({
       src={audioSource(src)}
       viewType="audio"
       load="eager"
-      className="overflow-hidden rounded-xl border border-border/60 bg-muted/20 shadow-[inset_0_1px_0_rgb(255_255_255/4%)]"
+      className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-muted/20"
     >
       <MediaProvider loaders={audioLoaders} className="hidden" />
       <SyncedPlayerContent player={player} script={script} chapters={chapters} />

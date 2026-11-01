@@ -309,7 +309,8 @@
     "dark": "다크",
     "system": "시스템",
     "default": "Studio",
-    "glass": "유리 모드"
+    "glass": "유리 모드",
+    "glass_flat_hint": "Studio는 평면 테마입니다. 유리 효과를 쓰려면 다른 팔레트를 선택하세요."
   },
   "cloneFlow": {
     "choose_voice": "음성을 선택하세요",

@@ -311,7 +311,8 @@
     "dark": "Escuro",
     "system": "Sistema",
     "default": "Studio",
-    "glass": "Modo vidro"
+    "glass": "Modo vidro",
+    "glass_flat_hint": "Studio é um tema plano. Escolha outra paleta para usar o vidro."
   },
   "cloneFlow": {
     "choose_voice": "Escolha uma voz",

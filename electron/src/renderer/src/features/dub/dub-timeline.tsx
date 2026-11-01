@@ -338,7 +338,7 @@ export function DubTimeline({
         {playback.duration > 0 && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-primary shadow-[0_0_8px_color-mix(in_oklch,var(--primary),transparent_20%)]"
+            className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-primary"
             style={{ left: `${(Math.min(playback.time, duration) / duration) * 100}%` }}
           />
         )}

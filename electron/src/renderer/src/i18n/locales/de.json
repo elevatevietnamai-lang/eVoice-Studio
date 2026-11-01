@@ -309,7 +309,8 @@
     "dark": "Dunkel",
     "system": "System",
     "default": "Studio",
-    "glass": "Glasmodus"
+    "glass": "Glasmodus",
+    "glass_flat_hint": "Studio ist ein flaches Design. Wähle eine andere Palette für Glas."
   },
   "cloneFlow": {
     "choose_voice": "Wählen Sie eine Stimme",

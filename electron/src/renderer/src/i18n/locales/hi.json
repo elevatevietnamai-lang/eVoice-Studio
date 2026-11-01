@@ -309,7 +309,8 @@
     "dark": "गहरा",
     "system": "सिस्टम",
     "default": "Studio",
-    "glass": "ग्लास मोड"
+    "glass": "ग्लास मोड",
+    "glass_flat_hint": "Studio एक फ़्लैट थीम है। ग्लास के लिए कोई दूसरा पैलेट चुनें।"
   },
   "cloneFlow": {
     "choose_voice": "आवाज़ चुनें",

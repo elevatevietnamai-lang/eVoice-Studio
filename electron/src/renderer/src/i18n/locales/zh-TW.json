@@ -309,7 +309,8 @@
     "dark": "深色",
     "system": "系統",
     "default": "Studio",
-    "glass": "玻璃模式"
+    "glass": "玻璃模式",
+    "glass_flat_hint": "Studio 是扁平主題。請選擇其他配色以使用玻璃效果。"
   },
   "cloneFlow": {
     "choose_voice": "選擇聲音",

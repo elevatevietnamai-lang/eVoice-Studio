@@ -204,10 +204,6 @@ export function UpdateSettings() {
     <>
       <SettingsSection icon={RefreshCwIcon} title={t('updates.tab')}>
         <div className="relative flex flex-col gap-4 overflow-hidden px-4 py-4 @2xl:flex-row @2xl:items-center">
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-linear-to-b from-primary/7 to-transparent"
-            aria-hidden="true"
-          />
           <div className="flex min-w-0 flex-1 items-start gap-3">
             <span className="relative mt-0.5 shrink-0" aria-hidden="true">
               {statusIcon}

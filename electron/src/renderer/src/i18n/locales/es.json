@@ -311,7 +311,8 @@
     "dark": "Oscuro",
     "system": "Sistema",
     "default": "Studio",
-    "glass": "Modo cristal"
+    "glass": "Modo cristal",
+    "glass_flat_hint": "Studio es un tema plano. Elige otra paleta para usar el cristal."
   },
   "cloneFlow": {
     "choose_voice": "Elige una voz",

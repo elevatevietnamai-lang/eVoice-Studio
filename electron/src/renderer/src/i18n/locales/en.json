@@ -658,7 +658,8 @@
     "dark": "Dark",
     "system": "System",
     "default": "Studio",
-    "glass": "Glass mode"
+    "glass": "Glass mode",
+    "glass_flat_hint": "Studio is a flat theme. Pick another palette to use glass."
   },
   "cloneFlow": {
     "choose_voice": "Choose a voice",

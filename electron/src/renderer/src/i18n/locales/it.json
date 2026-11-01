@@ -311,7 +311,8 @@
     "dark": "Scuro",
     "system": "Sistema",
     "default": "Studio",
-    "glass": "Modalità vetro"
+    "glass": "Modalità vetro",
+    "glass_flat_hint": "Studio è un tema piatto. Scegli un'altra tavolozza per il vetro."
   },
   "cloneFlow": {
     "choose_voice": "Scegli una voce",

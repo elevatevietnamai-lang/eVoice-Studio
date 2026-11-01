@@ -317,7 +317,8 @@
     "dark": "داكن",
     "system": "النظام",
     "default": "Studio",
-    "glass": "الوضع الزجاجي"
+    "glass": "الوضع الزجاجي",
+    "glass_flat_hint": "Studio سمة مسطحة. اختر لوحة ألوان أخرى لاستخدام الزجاج."
   },
   "cloneFlow": {
     "choose_voice": "اختر صوتًا",

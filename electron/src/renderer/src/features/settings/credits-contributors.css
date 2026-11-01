@@ -26,8 +26,7 @@
   outline-offset: 2px;
   cursor: pointer;
   transition:
-    transform 180ms ease,
-    box-shadow 180ms ease;
+    box-shadow 200ms var(--ease-standard);
 }
 
 .home-contributor-avatar {
@@ -65,8 +64,7 @@
 }
 
 .home-contributor:is(:hover, :focus-visible, [data-popup-open]) {
-  transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgb(0 0 0 / 15%);
+  box-shadow: 0 0 0 2px var(--border);
 }
 
 .home-contributor:focus-visible {

@@ -311,7 +311,8 @@
     "dark": "Sombre",
     "system": "Système",
     "default": "Studio",
-    "glass": "Mode verre"
+    "glass": "Mode verre",
+    "glass_flat_hint": "Studio est un thème plat. Choisissez une autre palette pour le verre."
   },
   "cloneFlow": {
     "choose_voice": "Choisir une voix",

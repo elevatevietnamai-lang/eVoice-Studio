@@ -173,7 +173,7 @@ export function CastingBoard({
                 className={cn(
                   'rounded-lg border border-border/50 bg-background/25 p-2 transition-[background-color,border-color,box-shadow] duration-150',
                   dropTarget === speaker &&
-                    'border-primary/60 bg-primary/8 shadow-[inset_0_0_0_1px_rgb(255_255_255/5%)]',
+                    'border-primary/60 bg-primary/8',
                 )}
                 onDragOver={(event) => {
                   if (disabled) return;

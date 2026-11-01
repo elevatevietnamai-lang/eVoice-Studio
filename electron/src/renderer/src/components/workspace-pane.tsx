@@ -45,7 +45,7 @@ export function WorkspacePane({
         aria-label={title}
         className="group/resize absolute inset-y-0 -left-1 z-20 flex w-2 cursor-col-resize touch-none items-center justify-center outline-none"
       >
-        <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color,box-shadow] duration-150 group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-hover/resize:shadow-[0_0_8px_var(--primary)] group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
+        <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color] duration-150 group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
       </div>
       <header
         className={cn(
@@ -55,7 +55,7 @@ export function WorkspacePane({
       >
         <div className="flex min-w-0 flex-1 items-center gap-2.5">
           {Icon && (
-            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 bg-background/50 text-primary shadow-[inset_0_1px_0_rgb(255_255_255/7%)]">
+            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 bg-background/50 text-primary">
               <Icon aria-hidden="true" className="size-4" />
             </span>
           )}

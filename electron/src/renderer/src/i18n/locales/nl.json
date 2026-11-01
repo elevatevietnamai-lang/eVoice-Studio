@@ -309,7 +309,8 @@
     "dark": "Donker",
     "system": "Systeem",
     "default": "Studio",
-    "glass": "Glasmodus"
+    "glass": "Glasmodus",
+    "glass_flat_hint": "Studio is een plat thema. Kies een ander palet voor glas."
   },
   "cloneFlow": {
     "choose_voice": "Kies een stem",

@@ -181,6 +181,9 @@ Rules:
 - **Input, Select, Textarea**: 32 px high, 6 px radius, `border-input`, fill at 20% of the input token; focus shows the ring at 50% alpha.
 - **Card**: 16 px radius (`--card-radius`), `ring-1`, no shadow.
 - **Dialog, popover, select menu**: `surface-glass` utility. In the default theme blur is 0 and opacity 100%, so they are solid; named palettes keep the frosted look.
+- **Glass mode** (Settings → Appearance) applies to named palettes only: every `[data-glass='true']` rule also requires `[data-theme-id]`, which the default Studio theme never sets. The switch is disabled with a hint while Studio is active. `globals.test.ts` enforces this.
+- **Selected rows** use a flat surface (`--sidebar-row-selected` in sidebars, `bg-accent` elsewhere). No 2 px accent bar, inset highlight or glow.
+- **Call sites never re-style primitives** with gradients, white highlight edges, primary glows, hover shadows, hover blur or hover scale. Card-like containers use the Card grammar: `rounded-(--card-radius)`, `border-border`, `bg-card`, no shadow. `no-decorative-effects.test.ts` enforces this.
 - **Tabs, Toggle, Switch, Slider, Progress**: filled with `primary`; never a hue.
 - **Icons**: `lucide-react` for static icons (stroke 1.75). Use `MorphIcon` (`components/ui/morph-icon.tsx`) only where an icon changes state: theme toggle, sidebar toggle, play and pause. Pass Lucide icon data from `lucide`, not a component.
 - **Toasts**: `sonner`, status colours follow section 2.

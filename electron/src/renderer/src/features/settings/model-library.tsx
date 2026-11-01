@@ -1262,7 +1262,7 @@ export function ModelLibrary({
         contentVariant="cards"
       >
         {!setup && (
-          <div className="glass-panel col-span-full flex items-center gap-2 rounded-xl border border-border/60 bg-card/40 px-4 py-3 shadow-xs/5">
+          <div className="glass-panel col-span-full flex items-center gap-2 rounded-(--card-radius) border border-border bg-card px-4 py-3">
             <SearchIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
             <Input
               type="search"
@@ -1288,7 +1288,7 @@ export function ModelLibrary({
             {primary?.map(renderModel)}
             {optional.length > 0 && (
               <details className="group/models col-span-full">
-                <summary className="glass-panel cursor-pointer rounded-xl border border-border/60 bg-card/40 px-4 py-3 text-sm text-muted-foreground shadow-xs/5 focus-visible:outline-ring">
+                <summary className="glass-panel cursor-pointer rounded-(--card-radius) border border-border bg-card px-4 py-3 text-sm text-muted-foreground focus-visible:outline-ring">
                   {t('firstrun.lib_show_all', { count: optional.length })}
                 </summary>
                 <div className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,20rem),1fr))] gap-3">
@@ -1298,7 +1298,7 @@ export function ModelLibrary({
             )}
             {incompatible.length > 0 && (
               <details className="group/models col-span-full">
-                <summary className="glass-panel cursor-pointer rounded-xl border border-border/60 bg-card/40 px-4 py-3 text-sm text-muted-foreground shadow-xs/5 focus-visible:outline-ring">
+                <summary className="glass-panel cursor-pointer rounded-(--card-radius) border border-border bg-card px-4 py-3 text-sm text-muted-foreground focus-visible:outline-ring">
                   {t('modelSettings.unavailable')} ({incompatible.length})
                 </summary>
                 <div className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,20rem),1fr))] gap-3">

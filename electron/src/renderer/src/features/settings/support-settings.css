@@ -44,7 +44,7 @@
 .support-giving {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-radius: 24px;
+  border-radius: var(--card-radius);
   background: var(--support-surface);
   border: 1px solid var(--support-line);
   overflow: hidden;
@@ -77,7 +77,7 @@
   min-height: 50px;
   padding: 10px 6px;
   border: 1px solid var(--support-line);
-  border-radius: 11px;
+  border-radius: var(--control-radius);
   font-size: 15px;
   font-weight: 550;
   background: var(--background);
@@ -108,7 +108,7 @@
 .support-studio .support-payments a {
   min-height: 46px;
   border: 0;
-  border-radius: 11px;
+  border-radius: var(--control-radius);
   background: var(--primary);
   color: var(--primary-foreground);
   font-size: 14px;
@@ -169,7 +169,7 @@
   min-width: 0;
   padding: 26px 28px 18px;
   border: 1px solid var(--support-line);
-  border-radius: 22px;
+  border-radius: var(--card-radius);
   background: var(--support-surface);
 }
 .support-tile-icon {
@@ -198,7 +198,7 @@
   margin: 20px 0;
   padding: 15px;
   border: 1px dashed color-mix(in srgb, var(--foreground) 20%, transparent);
-  border-radius: 12px;
+  border-radius: var(--card-radius);
   color: var(--muted-foreground);
   font-size: 13px;
 }
@@ -285,7 +285,7 @@
   gap: 10px;
   padding: 12px 8px;
   border: 1px solid transparent;
-  border-radius: 14px;
+  border-radius: var(--card-radius);
   background: transparent;
   box-shadow: none;
   white-space: normal;

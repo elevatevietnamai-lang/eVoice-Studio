@@ -309,7 +309,8 @@
     "dark": "Gelap",
     "system": "Sistem",
     "default": "Studio",
-    "glass": "Mode kaca"
+    "glass": "Mode kaca",
+    "glass_flat_hint": "Studio adalah tema datar. Pilih palet lain untuk memakai kaca."
   },
   "cloneFlow": {
     "choose_voice": "Pilih suara",

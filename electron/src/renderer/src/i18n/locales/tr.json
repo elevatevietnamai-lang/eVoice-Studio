@@ -309,7 +309,8 @@
     "dark": "Koyu",
     "system": "Sistem",
     "default": "Studio",
-    "glass": "Cam modu"
+    "glass": "Cam modu",
+    "glass_flat_hint": "Studio düz bir temadır. Cam için başka bir palet seçin."
   },
   "cloneFlow": {
     "choose_voice": "Bir ses seçin",

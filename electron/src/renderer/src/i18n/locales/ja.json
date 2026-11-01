@@ -309,7 +309,8 @@
     "dark": "ダーク",
     "system": "システム",
     "default": "Studio",
-    "glass": "ガラスモード"
+    "glass": "ガラスモード",
+    "glass_flat_hint": "Studio はフラットなテーマです。ガラスを使うには別のパレットを選んでください。"
   },
   "cloneFlow": {
     "choose_voice": "音声を選択",

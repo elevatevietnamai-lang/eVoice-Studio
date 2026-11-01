@@ -309,7 +309,8 @@
     "dark": "Mörk",
     "system": "System",
     "default": "Studio",
-    "glass": "Glasläge"
+    "glass": "Glasläge",
+    "glass_flat_hint": "Studio är ett platt tema. Välj en annan palett för glas."
   },
   "cloneFlow": {
     "choose_voice": "Välj en röst",

@@ -313,7 +313,8 @@
     "dark": "Ciemny",
     "system": "Systemowy",
     "default": "Studio",
-    "glass": "Tryb szkła"
+    "glass": "Tryb szkła",
+    "glass_flat_hint": "Studio to płaski motyw. Wybierz inną paletę, aby użyć szkła."
   },
   "cloneFlow": {
     "choose_voice": "Wybierz głos",

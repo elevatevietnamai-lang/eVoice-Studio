@@ -23,3 +23,10 @@ it('themes every scrollbar with a slim thumb, no arrow buttons and a stronger ho
   expect(css).toContain('--scrollbar-thumb-hover');
   expect(css).not.toMatch(/scrollbar-color:/);
 });
+
+/** The default Studio theme is flat (DESIGN.md): glass effects may only reach the named palettes. */
+it('keeps glass effects off the default theme', () => {
+  const selectors = css.match(/html[^{,]*\[data-glass='true'\][^{,]*/g) ?? [];
+  expect(selectors.length).toBeGreaterThan(5);
+  for (const selector of selectors) expect(selector, selector).toContain('[data-theme-id]');
+});

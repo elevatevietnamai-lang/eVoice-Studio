@@ -56,7 +56,7 @@ export function MirrorSettings() {
               aria-checked={state.mode === 'auto'}
               variant="ghost"
               disabled={action.busy}
-              className="h-auto w-full justify-start gap-3 rounded-lg px-3 py-2.5 text-left aria-checked:bg-accent/70 aria-checked:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_22%,transparent)]"
+              className="h-auto w-full justify-start gap-3 rounded-lg px-3 py-2.5 text-left aria-checked:bg-accent/70"
               onClick={() => void save('', 'auto')}
             >
               <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-border/60 bg-background/45">
@@ -87,7 +87,7 @@ export function MirrorSettings() {
                   aria-checked={selected}
                   variant="ghost"
                   disabled={action.busy}
-                  className="h-auto w-full justify-start gap-3 rounded-lg px-3 py-2.5 text-left aria-checked:bg-accent/70 aria-checked:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--primary)_22%,transparent)]"
+                  className="h-auto w-full justify-start gap-3 rounded-lg px-3 py-2.5 text-left aria-checked:bg-accent/70"
                   onClick={() => void save(preset.url)}
                 >
                   <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-border/60 bg-background/45">

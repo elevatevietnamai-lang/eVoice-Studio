@@ -309,7 +309,8 @@
     "dark": "มืด",
     "system": "ระบบ",
     "default": "Studio",
-    "glass": "โหมดกระจก"
+    "glass": "โหมดกระจก",
+    "glass_flat_hint": "Studio เป็นธีมแบบเรียบ เลือกชุดสีอื่นเพื่อใช้กระจก"
   },
   "cloneFlow": {
     "choose_voice": "เลือกเสียง",

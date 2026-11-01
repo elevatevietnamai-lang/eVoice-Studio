@@ -368,7 +368,7 @@ html[data-theme-id=''] {
   > [data-slot='button'] {
   min-height: 2.375rem;
   border: 1px solid transparent;
-  border-radius: 0.625rem;
+  border-radius: var(--control-radius);
   justify-content: flex-start;
   padding-inline: 0.625rem;
   color: color-mix(in srgb, var(--foreground) 88%, var(--muted-foreground));
@@ -400,15 +400,8 @@ html[data-theme-id=''] {
 .secondary-sidebar[data-variant='navigation']
   [data-slot='secondary-sidebar-content']
   > [data-slot='button'][aria-pressed='true'] {
-  border-color: color-mix(in srgb, var(--primary) 18%, var(--border));
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--primary) 12%, var(--background)),
-    color-mix(in srgb, var(--primary) 6%, var(--background))
-  );
-  box-shadow:
-    inset 2px 0 0 color-mix(in srgb, var(--primary) 86%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent);
+  border-color: transparent;
+  background: var(--sidebar-row-selected);
   color: var(--foreground);
 }
 .secondary-sidebar[data-variant='navigation']
@@ -544,7 +537,7 @@ html[data-theme-id=''] {
   > div[class*='overflow-y-auto']
   > button {
   color: color-mix(in srgb, var(--foreground) 92%, var(--muted-foreground));
-  border-radius: 0.625rem;
+  border-radius: var(--control-radius);
 }
 .secondary-sidebar[data-variant='library']
   [data-slot='secondary-sidebar-content']
@@ -618,16 +611,15 @@ html[data-theme-id=''] {
 }
 .performance-tier-button[data-selected='true'] {
   background: color-mix(in srgb, var(--primary) 12%, transparent);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--primary) 34%, transparent),
-    0 4px 14px -10px var(--primary);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 34%, transparent);
 }
 
-/* Glass materials are static: no animated blur, pointer tracking, or full-screen
+/* Glass belongs to the named palettes only ([data-theme-id]); the default Studio theme is flat.
+   Glass materials are static: no animated blur, pointer tracking, or full-screen
    filter. Only major panes and floating surfaces create backdrop layers. */
 @supports (backdrop-filter: blur(16px)) {
   @media (prefers-reduced-transparency: no-preference) {
-    html[data-glass='true'] {
+    html[data-glass='true'][data-theme-id] {
       --material-fill: 58%;
       --material-edge: rgb(255 255 255 / 62%);
       --material-sheen: rgb(255 255 255 / 28%);
@@ -636,13 +628,13 @@ html[data-theme-id=''] {
       --glass-opacity: 76%;
       --glass-saturation: 1.3;
     }
-    html.dark[data-glass='true'] {
+    html.dark[data-glass='true'][data-theme-id] {
       --material-fill: 64%;
       --material-edge: rgb(255 255 255 / 13%);
       --material-sheen: rgb(255 255 255 / 5%);
       --material-shadow: rgb(0 0 0 / 22%);
     }
-    html[data-glass='true'] .app-surface {
+    html[data-glass='true'][data-theme-id] .app-surface {
       background:
         radial-gradient(
           ellipse at 2% 4%,
@@ -661,10 +653,10 @@ html[data-theme-id=''] {
         ),
         var(--background);
     }
-    html[data-glass='true'] .app-surface .bg-background {
+    html[data-glass='true'][data-theme-id] .app-surface .bg-background {
       background: transparent;
     }
-    html[data-glass='true'] .app-surface aside {
+    html[data-glass='true'][data-theme-id] .app-surface aside {
       background:
         linear-gradient(155deg, var(--material-sheen), transparent 44%),
         color-mix(in srgb, var(--sidebar) var(--material-fill), transparent);
@@ -672,18 +664,18 @@ html[data-theme-id=''] {
       border-color: var(--material-edge);
       box-shadow: inset -1px 0 0 rgb(255 255 255 / 3%);
     }
-    html[data-glass='true'] .workspace-titlebar {
+    html[data-glass='true'][data-theme-id] .workspace-titlebar {
       background: color-mix(in srgb, var(--toolbar-background) 42%, transparent);
       backdrop-filter: blur(20px) saturate(130%);
       box-shadow: inset 0 1px 0 var(--material-edge);
     }
     /* A frosted pane already composites its header; avoid nested backdrop work. */
-    html[data-glass='true'] aside .workspace-titlebar {
+    html[data-glass='true'][data-theme-id] aside .workspace-titlebar {
       background: transparent;
       backdrop-filter: none;
       box-shadow: none;
     }
-    html[data-glass='true'] .glass-panel {
+    html[data-glass='true'][data-theme-id] .glass-panel {
       background:
         linear-gradient(135deg, var(--material-sheen), transparent 38%, rgb(255 255 255 / 2%) 100%),
         color-mix(in srgb, var(--card) var(--material-fill), transparent);
@@ -694,14 +686,14 @@ html[data-theme-id=''] {
         inset 0 -1px 0 rgb(0 0 0 / 5%),
         0 8px 28px -12px var(--material-shadow);
     }
-    html[data-glass='true'] .composer-surface {
+    html[data-glass='true'][data-theme-id] .composer-surface {
       border-radius: 1.125rem;
       padding: 0.75rem;
       box-shadow:
         inset 0 1px 0 var(--material-edge),
         0 12px 32px -12px var(--material-shadow);
     }
-    html[data-glass='true'] .surface-glass {
+    html[data-glass='true'][data-theme-id] .surface-glass {
       border-color: var(--material-edge);
       box-shadow:
         inset 0 1px 0 var(--material-edge),

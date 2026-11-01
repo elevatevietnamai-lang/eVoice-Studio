@@ -309,7 +309,8 @@
     "dark": "Tối",
     "system": "Hệ thống",
     "default": "Studio",
-    "glass": "Chế độ kính"
+    "glass": "Chế độ kính",
+    "glass_flat_hint": "Studio là theme phẳng. Chọn bảng màu khác để dùng hiệu ứng kính."
   },
   "cloneFlow": {
     "choose_voice": "Chọn một giọng nói",

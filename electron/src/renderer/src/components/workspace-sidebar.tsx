@@ -15,7 +15,7 @@ const VARIANT_STYLES = {
   controls:
     '[&>section]:shadow-[inset_0_1px_0_color-mix(in_oklab,var(--foreground)_3%,transparent)] [&>details]:shadow-[inset_0_1px_0_color-mix(in_oklab,var(--foreground)_3%,transparent)] [&_summary]:min-h-8 [&_summary]:select-none [&_summary]:items-center [&_summary]:px-0.5 [&_summary]:font-medium [&_summary]:text-foreground/90 [&_summary:hover]:bg-background/35 [&_h2]:text-foreground/90 [&_h3]:text-foreground/90',
   navigation:
-    '[&>button]:h-9 [&>button]:w-full [&>button]:justify-start [&>button]:gap-2.5 [&>button]:rounded-lg [&>button]:px-2.5 [&>button]:font-normal [&>button]:transition-[color,background-color,box-shadow] [&>button:hover]:bg-accent/55 [&>button[aria-pressed=true]]:bg-accent/80 [&>button[aria-pressed=true]]:font-medium [&>button[aria-pressed=true]]:shadow-[inset_2px_0_0_var(--primary)] [&>button>svg]:text-muted-foreground [&>button[aria-pressed=true]>svg]:text-primary',
+    '[&>button]:h-9 [&>button]:w-full [&>button]:justify-start [&>button]:gap-2.5 [&>button]:rounded-lg [&>button]:px-2.5 [&>button]:font-normal [&>button]:transition-[color,background-color,box-shadow] [&>button:hover]:bg-accent/55 [&>button[aria-pressed=true]]:bg-accent/80 [&>button[aria-pressed=true]]:font-medium [&>button>svg]:text-muted-foreground [&>button[aria-pressed=true]>svg]:text-primary',
   library:
     '[&_input]:bg-background/45 [&_input]:shadow-xs [&_button]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring/40',
 } as const;
@@ -104,7 +104,7 @@ export function SecondarySidebar({
           aria-label={title}
           className="group/resize absolute inset-y-0 -right-1 z-20 [display:var(--pane-resize-display)] w-2 cursor-col-resize touch-none items-center justify-center outline-none"
         >
-          <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color,box-shadow] duration-150 group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-hover/resize:shadow-[0_0_8px_var(--primary)] group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
+          <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color] duration-150 group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
         </div>
       )}
       <div
@@ -116,7 +116,7 @@ export function SecondarySidebar({
       >
         {!collapsed && (
           <>
-            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 bg-background/50 text-primary shadow-[inset_0_1px_0_rgb(255_255_255/7%)]">
+            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 bg-background/50 text-primary">
               <Icon aria-hidden="true" className="size-4" />
             </span>
             <span
