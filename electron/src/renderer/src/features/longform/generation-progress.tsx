@@ -88,10 +88,10 @@ export function GenerationProgress({
               <span
                 className={`truncate ${
                   chapter.status === 'pending'
-                    ? 'text-muted-foreground/55'
+                    ? 'text-muted-foreground'
                     : chapter.status === 'rendering'
                       ? 'font-medium'
-                      : 'text-muted-foreground'
+                      : 'text-foreground/90'
                 }`}
               >
                 {chapter.title || t('audiobook.chapter_n', { n: index + 1 })}

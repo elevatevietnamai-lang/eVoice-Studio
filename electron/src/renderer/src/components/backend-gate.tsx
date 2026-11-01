@@ -286,7 +286,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                           <Spinner className="size-4 text-primary" aria-hidden="true" />
                         ) : (
                           <CircleIcon
-                            className="size-3.5 text-muted-foreground/50"
+                            className="size-3.5 text-muted-foreground"
                             aria-hidden="true"
                           />
                         )}

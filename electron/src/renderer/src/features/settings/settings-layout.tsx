@@ -109,7 +109,7 @@ export function SettingsRow({
           {description && (
             <div
               className={cn(
-                'text-[13px] leading-[1.45] text-muted-foreground/80',
+                'text-[13px] leading-[1.45] text-muted-foreground',
                 variant === 'card' && '[overflow-wrap:anywhere]',
               )}
             >

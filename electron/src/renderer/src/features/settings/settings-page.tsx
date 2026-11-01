@@ -525,7 +525,7 @@ export function SettingsPage() {
           )}
         >
           <span className="text-muted-foreground">{t('nav.settings')}</span>
-          <ChevronRightIcon aria-hidden="true" className="size-3.5 text-muted-foreground/60" />
+          <ChevronRightIcon aria-hidden="true" className="size-3.5 text-muted-foreground" />
           <h1 className="font-medium">
             {extra
               ? t(extra.label)

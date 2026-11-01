@@ -100,6 +100,11 @@ describe.each(
   it('keeps muted sidebar text readable on hover and selected rows', () => {
     expect(contrast(colors.sidebarMutedForeground, colors.sidebarRowHover)).toBeGreaterThanOrEqual(4.5);
     expect(contrast(colors.sidebarForeground, colors.sidebarRowSelected)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(colors.sidebarMutedForeground, colors.sidebarRowSelected)).toBeGreaterThanOrEqual(4.5);
+  });
+  it('keeps muted text readable on the canvas and card surface', () => {
+    expect(contrast(colors.mutedForeground, colors.canvas)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(colors.mutedForeground, colors.surface)).toBeGreaterThanOrEqual(4.5);
   });
   it('draws input borders at 3:1 on the canvas', () => {
     expect(contrast(colors.input, colors.canvas)).toBeGreaterThanOrEqual(3);

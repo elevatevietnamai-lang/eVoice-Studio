@@ -199,7 +199,7 @@ export function ClonePage() {
                     variant="ghost"
                     disabled={isGenerating}
                     aria-label={t('cloneFlow.change_voice')}
-                    className="h-12 min-w-0 justify-start gap-2.5 px-0 hover:bg-transparent"
+                    className="-ml-2 h-12 min-w-0 justify-start gap-2.5 px-2"
                     onClick={() => {
                       openTake(null);
                       setChangingVoice(true);

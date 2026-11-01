@@ -456,7 +456,7 @@ export function DesignPage() {
               variant="ghost"
               disabled={generation.isGenerating || designProfiles.length === 0}
               aria-label={t('cloneFlow.change_voice')}
-              className="h-12 w-fit max-w-full justify-start gap-2.5 px-0 hover:bg-transparent"
+              className="-ml-2 h-12 w-fit max-w-full justify-start gap-2.5 px-2"
               onClick={() => {
                 const control = savedProfilesRef.current;
                 if (!control) return;

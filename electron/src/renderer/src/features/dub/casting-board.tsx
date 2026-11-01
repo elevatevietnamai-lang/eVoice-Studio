@@ -153,7 +153,7 @@ export function CastingBoard({
                 className="inline-flex h-8 max-w-36 shrink-0 cursor-grab items-center gap-1.5 rounded-lg border border-border/50 bg-background/45 px-2 text-xs shadow-xs active:cursor-grabbing"
                 title={choice.label}
               >
-                <GripVerticalIcon className="size-3 text-muted-foreground/70" />
+                <GripVerticalIcon className="size-3 text-muted-foreground" />
                 <VoiceIcon choice={choice} />
                 <span className="truncate">{choice.label}</span>
               </span>

@@ -2472,8 +2472,8 @@ export function DubPage() {
                         >
                           <div
                             className={cn(
-                              'flex items-start gap-1.5 pt-1 font-mono text-[11px] text-muted-foreground/55 transition-colors group-hover/segment:text-muted-foreground/75 group-focus-within/segment:text-muted-foreground',
-                              selectedSegmentId === segment.id && 'text-muted-foreground/90',
+                              'flex items-start gap-1.5 pt-1 font-mono text-[11px] text-muted-foreground transition-colors group-hover/segment:text-foreground group-focus-within/segment:text-foreground',
+                              selectedSegmentId === segment.id && 'text-foreground',
                             )}
                           >
                             <input
@@ -2502,8 +2502,8 @@ export function DubPage() {
                                 size="sm"
                                 variant="ghost"
                                 className={cn(
-                                  'h-6 min-w-0 max-w-[14rem] justify-start px-1 text-[11px] font-medium tracking-[0.01em] text-muted-foreground/55 hover:text-foreground group-hover/segment:text-muted-foreground/75 group-focus-within/segment:text-foreground/85',
-                                  selectedSegmentId === segment.id && 'text-foreground/85',
+                                  'h-6 min-w-0 max-w-[14rem] justify-start px-1 text-[11px] font-medium tracking-[0.01em] text-muted-foreground hover:text-foreground group-hover/segment:text-foreground group-focus-within/segment:text-foreground',
+                                  selectedSegmentId === segment.id && 'text-foreground',
                                 )}
                                 aria-expanded={expandedSegmentId === segment.id}
                                 aria-controls={`dub-segment-options-${index}`}
@@ -2534,8 +2534,8 @@ export function DubPage() {
                               {segment.text_original && segment.text_original !== segment.text ? (
                                 <p
                                   className={cn(
-                                    'min-w-0 flex-1 truncate px-1 text-xs text-muted-foreground/50 transition-colors group-hover/segment:text-muted-foreground/70 group-focus-within/segment:text-foreground/70',
-                                    selectedSegmentId === segment.id && 'text-foreground/72',
+                                    'min-w-0 flex-1 truncate px-1 text-xs text-muted-foreground transition-colors group-hover/segment:text-foreground group-focus-within/segment:text-foreground',
+                                    selectedSegmentId === segment.id && 'text-foreground',
                                   )}
                                   title={segment.text_original}
                                 >

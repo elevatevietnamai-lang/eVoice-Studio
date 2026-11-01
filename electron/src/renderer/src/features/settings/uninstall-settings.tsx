@@ -137,7 +137,7 @@ export function UninstallSettings() {
                     <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
                       {t('settings.uninstall_models_caveat')}
                     </span>
-                    <code className="mt-1 block truncate text-[11px] text-muted-foreground/70">
+                    <code className="mt-1 block truncate text-[11px] text-muted-foreground">
                       {sharedModels.path}
                     </code>
                   </span>
@@ -233,7 +233,7 @@ function TargetRow({ target, label }: { target: UninstallTarget; label: string }
       <Icon className="size-4 shrink-0 text-muted-foreground" />
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-medium">{label}</span>
-        <code className="mt-0.5 block truncate text-[11px] text-muted-foreground/70">
+        <code className="mt-0.5 block truncate text-[11px] text-muted-foreground">
           {target.path}
         </code>
       </span>

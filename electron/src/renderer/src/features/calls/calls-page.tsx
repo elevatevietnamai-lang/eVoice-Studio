@@ -100,7 +100,7 @@ function EmptyCall() {
   const { t } = useTranslation();
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2 p-8 text-center">
-      <PhoneCallIcon aria-hidden="true" className="size-8 text-muted-foreground/60" />
+      <PhoneCallIcon aria-hidden="true" className="size-8 text-muted-foreground" />
       <p className="text-sm font-medium">{t('calls.no_call_title')}</p>
       <p className="max-w-sm text-sm text-muted-foreground">{t('calls.no_call_body')}</p>
     </div>

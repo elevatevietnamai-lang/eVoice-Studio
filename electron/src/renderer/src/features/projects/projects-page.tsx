@@ -734,7 +734,7 @@ export function ProjectsPage() {
                       <div className="min-w-0 flex-1">
                         {row.projectKind ? (
                           <Button
-                            className="h-auto max-w-full justify-start p-0 text-left font-medium whitespace-normal hover:bg-transparent"
+                            className="h-auto max-w-full justify-start p-0 text-left font-medium whitespace-normal underline-offset-2 hover:bg-transparent hover:underline"
                             variant="ghost"
                             disabled={locked}
                             onClick={() =>
