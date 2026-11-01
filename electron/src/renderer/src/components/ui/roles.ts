@@ -86,7 +86,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--border', '--muted-foreground'],
     type: 'text-ui',
     motion: 'reveal',
-    motionNote: 'Gap: content swaps instantly today. Target is height and opacity over 240 ms.',
+    motionNote: 'Panel height and opacity animate over 240 ms (Base UI start and end styles).',
   },
   dialog: {
     role: 'overlay',
@@ -259,5 +259,7 @@ export const motionKit = {
   Stagger:
     'Container that reveals StaggerItem children 40 ms apart. For grids and lists of at most about 12 items.',
   StaggerItem: 'Child of Stagger.',
+  RouteFade:
+    'App shell wraps the routed page: opacity-only fade over 160 ms, keyed on the top-level route segment.',
   MorphIcon: 'See morph-icon above.',
 } as const;

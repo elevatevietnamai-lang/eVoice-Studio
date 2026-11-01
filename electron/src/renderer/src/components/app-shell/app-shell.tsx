@@ -9,12 +9,14 @@ import { cn } from '@/lib/utils';
 import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { AccountCorner } from './account-corner';
+import { RouteFade } from '@/components/motion';
 
 export function AppShell() {
   const backend = useBackendStatus();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
+  const segment = pathname.split('/')[1] ?? '';
   const shellOnly = pathname.startsWith('/settings') || pathname === '/pro';
   const macWorkspace = isMac() && !shellOnly;
   const SettingsWorkspace = pathname === '/settings/openapi' ? 'div' : 'main';
@@ -38,7 +40,9 @@ export function AppShell() {
               className="@container relative flex min-w-0 flex-1 flex-col overflow-hidden"
             >
               <div className="min-h-0 flex-1 overflow-hidden">
-                <Outlet />
+                <RouteFade segment={segment}>
+                  <Outlet />
+                </RouteFade>
               </div>
               <RepairAgentDock />
             </SettingsWorkspace>
@@ -53,7 +57,9 @@ export function AppShell() {
               className="@container relative flex min-w-0 flex-1 flex-col overflow-hidden"
             >
               <div className="min-h-0 flex-1 overflow-hidden">
-                <Outlet />
+                <RouteFade segment={segment}>
+                  <Outlet />
+                </RouteFade>
               </div>
               <RepairAgentDock />
             </main>

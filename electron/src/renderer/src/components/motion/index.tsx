@@ -89,3 +89,21 @@ export function Stagger({ stagger = 0.04, ...props }: StaggerProps) {
 export function StaggerItem(props: Omit<HTMLMotionProps<'div'>, 'variants'>) {
   return <motion.div variants={itemVariants} {...props} />;
 }
+
+/**
+ * Page change: the new route fades in over the fast token. Enter only, opacity only, so layout and
+ * scroll position never jump. Key it on the top-level route segment so nested pages keep their state.
+ */
+export function RouteFade({ segment, children }: { segment: string; children: ReactNode }) {
+  return (
+    <motion.div
+      key={segment}
+      className="h-full min-h-0"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: motionTokens.fast, ease: motionTokens.ease }}
+    >
+      {children}
+    </motion.div>
+  );
+}

@@ -195,7 +195,7 @@ Source of truth: `components/ui/roles.ts` (`roles.test.ts` fails when a primitiv
 | `badge` | status | Short label or count next to a name (state, tier, language). | `--secondary` `--secondary-foreground` `--primary` `--destructive` | `text-caption` | none: Static. Avoid: Do not make it clickable; use Button or Toggle. |
 | `button` | action | Any action. One primary per view; secondary, outline or ghost for the rest. | `--primary` `--primary-foreground` `--secondary` `--accent` `--destructive` `--ring` | `text-ui` | feedback: Colour and opacity change over 160 ms; no scale or bounce. Avoid: No gradients, glow or inset highlights. Do not animate icon swaps unless the icon changes state. |
 | `card` | container | Group of related content on the surface ladder. | `--card` `--card-foreground` `--border` `--card-radius` | `inherit` | enter-exit: Optional FadeIn (8 px drift, 240 ms) on first mount; Stagger (40 ms) for grids. Avoid: No shadows; depth comes from the border and surface step. |
-| `collapsible` | structure | Disclosure that hides secondary content. | `--border` `--muted-foreground` | `text-ui` | reveal: Gap: content swaps instantly today. Target is height and opacity over 240 ms. |
+| `collapsible` | structure | Disclosure that hides secondary content. | `--border` `--muted-foreground` | `text-ui` | reveal: Panel height and opacity animate over 240 ms (Base UI start and end styles). |
 | `dialog` | overlay | Modal task or confirmation that blocks the page. | `--popover` `--popover-foreground` `--border` `--ring` | `text-ui` | enter-exit: Backdrop and panel fade over 160 ms; the panel also scales from 95%. Closes the same way. Avoid: Do not stack dialogs; no blur on the backdrop. |
 | `input` | input | Single-line text, number, search or password entry. | `--input` `--background` `--foreground` `--placeholder` `--ring` `--destructive` | `text-ui` | feedback: Border and ring colour over 160 ms on focus. Avoid: Do not use a placeholder as the only label. |
 | `kbd` | hint | Keyboard shortcut hint. | `--muted` `--muted-foreground` `--border` | `text-caption` | none: Static. |
@@ -222,6 +222,7 @@ Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 - `FadeIn`: Fade plus 8 px drift on mount. For a page section, a card or a result appearing after a user action.
 - `Stagger`: Container that reveals StaggerItem children 40 ms apart. For grids and lists of at most about 12 items.
 - `StaggerItem`: Child of Stagger.
+- `RouteFade`: App shell wraps the routed page: opacity-only fade over 160 ms, keyed on the top-level route segment.
 - `MorphIcon`: See morph-icon above.
 
 ## 5. Layout Principles
