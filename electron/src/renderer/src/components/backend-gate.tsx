@@ -29,7 +29,7 @@ import { isBackendBusy } from '@shared/utils/backendStage';
 import { backendFailureHints } from '@shared/utils/backendHint';
 import { scrubText } from '@shared/utils/scrub';
 import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale } from '@/i18n';
-import { brandIcon } from '@/lib/brand';
+import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { cn } from '@/lib/utils';
 import type { RuntimeRegion } from '../../../preload/index.d';
 import { getBridge, isMac } from './bridge';
@@ -203,7 +203,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
           isMac() && 'pl-24',
         )}
       >
-        <img src={brandIcon} alt="" className="size-6 shrink-0" />
+        <EVoiceMark size={24} className="shrink-0" />
         <span className="whitespace-nowrap text-sm font-medium tracking-tight">
           {t('app.name')}
         </span>

@@ -17,7 +17,7 @@ import { modelFamilies, type ModelFamily } from '@/features/settings/model-famil
 import { MirrorSettings } from '@/features/settings/mirror-settings';
 import { PrivacySettings } from '@/features/settings/privacy-settings';
 import { ShortcutSettings } from '@/features/settings/shortcut-settings';
-import { brandIcon } from '@/lib/brand';
+import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { cn } from '@/lib/utils';
 import { appearanceScales, useAppearance } from '@/hooks/use-appearance';
 import { FIRST_SOUND_EVENT } from '@/lib/first-sound';
@@ -85,7 +85,7 @@ export function SetupGate({ children }: { children: ReactNode }) {
     return (
       <div className="flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-4">
         <div className="flex items-center gap-2.5">
-          <img src={brandIcon} alt="" className="size-9" />
+          <EVoiceMark size={36} />
           <span className="text-lg font-semibold tracking-tight">{t('app.name')}</span>
         </div>
         <Button variant="ghost" disabled={!status.isError} onClick={() => void status.refetch()}>
@@ -110,7 +110,7 @@ export function SetupGate({ children }: { children: ReactNode }) {
           isMac() && 'pl-24',
         )}
       >
-        <img src={brandIcon} alt="" className="size-6" />
+        <EVoiceMark size={24} />
         <h1 className="text-sm font-medium">{t('app.name')}</h1>
         {advanced && (
           <div className="ml-auto flex items-center gap-1" aria-label={t('preferences.ui_scale')}>

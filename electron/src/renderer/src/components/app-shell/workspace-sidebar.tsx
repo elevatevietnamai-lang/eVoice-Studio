@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { PanelLeftIcon, PanelLeftOpenIcon, SettingsIcon } from 'lucide-react';
-import { brandIcon, brandArtwork } from '@/lib/brand';
+import { brandArtwork } from '@/lib/brand';
+import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { appVersion, isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -79,7 +80,7 @@ export function WorkspaceSidebar() {
               {mac ? (
                 <PanelLeftOpenIcon className="size-5" aria-hidden="true" />
               ) : (
-                <img src={brandIcon} alt="" className="size-6 shrink-0" />
+                <EVoiceMark size={24} className="shrink-0" />
               )}
             </Button>
           </div>
@@ -139,7 +140,7 @@ export function WorkspaceSidebar() {
               aria-label={`${t('app.name')} ${versionLabel}`}
               className="flex min-w-0 flex-1 items-center gap-2 rounded outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <img src={brandIcon} alt="" className="size-6 shrink-0" />
+              <EVoiceMark size={24} className="shrink-0" />
               <span className="flex min-w-0 flex-col leading-tight">
                 <span className="truncate text-base font-semibold">{t('app.name')}</span>
                 <span className="text-[11px] leading-none text-muted-foreground tabular-nums">
