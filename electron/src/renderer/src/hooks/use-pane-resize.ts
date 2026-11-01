@@ -36,7 +36,10 @@ export function usePaneResize({
     let parent = host.current?.parentElement ?? null;
     while (
       parent &&
-      (parent.clientWidth === 0 || window.getComputedStyle(parent).display === 'contents')
+      (parent.clientWidth === 0 ||
+        // The shell's panel column is as wide as the panel itself; measure the window row instead.
+        parent.hasAttribute('data-panel-slot') ||
+        window.getComputedStyle(parent).display === 'contents')
     )
       parent = parent.parentElement;
     if (!enabled || !parent) return;

@@ -27,6 +27,7 @@ vi.mock('@/lib/store/workspace', () => ({
   useWorkspace: () => layout.state,
   setWorkspace: (patch: object) => layout.setWorkspace(patch),
   usePanelMounted: () => layout.panelMounted,
+  setMenuGroup: () => {},
 }));
 vi.mock('@/components/bridge', () => ({ appVersion: () => '0.5.7', isMac: () => false }));
 vi.mock('@/lib/brand', () => ({ brandIcon: 'icon.png', brandArtwork: 'art.png' }));
@@ -65,4 +66,11 @@ it('shows the panel toggle only while a page has a control panel', () => {
   view.rerender(<WorkspaceSidebar />);
   fireEvent.click(screen.getByRole('button', { name: 'paneActions.collapse' }));
   expect(layout.setWorkspace).toHaveBeenCalledWith({ panelCollapsed: true });
+});
+
+it('draws the rail logo as the app icon, as large as the rail items', () => {
+  render(<WorkspaceSidebar />);
+  const logo = screen.getByRole('button', { name: 'clone.toggle_sidebar' });
+  expect(logo).toHaveClass('size-10', 'rounded-[22.6%]');
+  expect(logo.querySelector('svg')).toHaveAttribute('width', '32');
 });

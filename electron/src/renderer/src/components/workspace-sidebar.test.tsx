@@ -5,8 +5,11 @@ import { act } from 'react';
 import { SecondarySidebar } from './workspace-sidebar';
 import { renderHook } from '@testing-library/react';
 import { setWorkspace, usePanelMounted } from '@/lib/store/workspace';
+import { PanelSlotContext } from './panel-slot-context';
+import { WorkspaceHeader } from './app-shell/workspace-header';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+vi.mock('./app-shell/command-search', () => ({ CommandSearch: () => null }));
 
 afterEach(() => {
   cleanup();
@@ -173,4 +176,56 @@ it('registers itself so the rail offers a panel toggle only while a pane is moun
   pane.unmount();
   mounted.rerender();
   expect(mounted.result.current).toBe(false);
+});
+
+it('renders into the shell panel column, and waits for it to mount', () => {
+  const column = document.createElement('div');
+  document.body.append(column);
+  const pane = (slot: HTMLElement | null) => (
+    <PanelSlotContext.Provider value={slot}>
+      <div data-testid="page">
+        <SecondarySidebar title="Dub" icon={FilmIcon}>
+          <section>Upload</section>
+        </SecondarySidebar>
+      </div>
+    </PanelSlotContext.Provider>
+  );
+  const view = render(pane(null));
+  expect(screen.queryByText('Upload')).toBeNull();
+  view.rerender(pane(column));
+  expect(column).toContainElement(screen.getByText('Upload'));
+  expect(screen.getByTestId('page')).toBeEmptyDOMElement();
+  column.remove();
+});
+
+it('names the page once: the library tabs replace the panel title', () => {
+  render(
+    <SecondarySidebar title="Dubbing" icon={FilmIcon} library={<div />} libraryLabel="Projects">
+      <section>Upload</section>
+    </SecondarySidebar>,
+  );
+  expect(screen.getAllByText('Dubbing')).toHaveLength(1);
+  expect(screen.getByRole('tab', { name: 'Dubbing' })).toBeInTheDocument();
+  expect(screen.getByRole('tab', { name: 'Projects' })).toBeInTheDocument();
+});
+
+it('keeps the page heading for screen readers only while a panel names the page', () => {
+  const view = render(
+    <WorkspaceHeader>
+      <h1>Dubbing</h1>
+    </WorkspaceHeader>,
+  );
+  expect(screen.getByRole('banner')).not.toHaveClass('[&>h1]:sr-only');
+  view.rerender(
+    <>
+      <WorkspaceHeader>
+        <h1>Dubbing</h1>
+      </WorkspaceHeader>
+      <SecondarySidebar title="Dubbing" icon={FilmIcon}>
+        <section>Upload</section>
+      </SecondarySidebar>
+    </>,
+  );
+  expect(screen.getByRole('banner')).toHaveClass('[&>h1]:sr-only');
+  expect(screen.getByRole('heading', { level: 1, name: 'Dubbing' })).toBeInTheDocument();
 });

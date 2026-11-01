@@ -1,8 +1,18 @@
-import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import {
+  useContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
 import { type LucideIcon } from 'lucide-react';
 import { usePaneResize } from '@/hooks/use-pane-resize';
 import { registerPanel, setWorkspace, useWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
+import { PanelSlotContext } from '@/components/panel-slot-context';
 
 const WIDTHS = {
   default: { minimum: 248, initial: 280, maximum: 515, reserve: 480 },
@@ -54,6 +64,7 @@ export function SecondarySidebar({
   // One panel per page: the rail's bottom toggle folds it, and navigation reopens it (AppShell).
   const { panelCollapsed } = useWorkspace();
   const collapsed = controlledCollapsed ?? panelCollapsed;
+  const slot = useContext(PanelSlotContext);
   useEffect(() => registerPanel(), []);
   // While the width opens, the content is still narrow and would rewrap in view: keep it
   // transparent until the pane is wide, then fade it in.
@@ -90,7 +101,7 @@ export function SecondarySidebar({
     ...dimensions,
     enabled: !collapsed,
   });
-  return (
+  const panel = (
     <aside
       ref={resize.host}
       aria-label={title}
@@ -133,12 +144,73 @@ export function SecondarySidebar({
             <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 bg-background/50 text-primary">
               <Icon aria-hidden="true" className="size-4" />
             </span>
-            <span
-              className="min-w-0 flex-1 truncate text-sm font-semibold tracking-[-0.014em] text-foreground/95"
-              title={title}
-            >
-              {title}
-            </span>
+            {/* With a library, the tabs are the title: the page name is shown once (DESIGN.md). */}
+            {library != null ? (
+              <div
+                role="tablist"
+                aria-label={title}
+                data-slot="secondary-sidebar-tabs"
+                className="flex min-w-0 flex-1 gap-1"
+                onKeyDown={(event) => {
+                  if (event.altKey || event.ctrlKey || event.metaKey) return;
+                  const tabs = [
+                    ...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
+                  ];
+                  const current = tabs.findIndex((tab) => tab === event.target);
+                  if (current < 0) return;
+                  const forward =
+                    getComputedStyle(event.currentTarget).direction === 'rtl'
+                      ? 'ArrowLeft'
+                      : 'ArrowRight';
+                  const backward = forward === 'ArrowRight' ? 'ArrowLeft' : 'ArrowRight';
+                  const next =
+                    event.key === 'Home'
+                      ? 0
+                      : event.key === 'End'
+                        ? 1
+                        : event.key === forward || event.key === backward
+                          ? 1 - current
+                          : null;
+                  if (next === null) return;
+                  event.preventDefault();
+                  chooseView(next === 0 ? 'controls' : 'library');
+                  tabs[next]?.focus();
+                }}
+              >
+                {(
+                  [
+                    ['controls', title],
+                    ['library', libraryLabel ?? title],
+                  ] as const
+                ).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    role="tab"
+                    id={`${tabsId}-${value}`}
+                    aria-controls={`${tabsId}-panel-${value}`}
+                    aria-selected={view === value}
+                    tabIndex={view === value ? 0 : -1}
+                    onClick={() => chooseView(value)}
+                    className={cn(
+                      'h-7 min-w-0 flex-1 truncate rounded-md px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                      view === value
+                        ? 'bg-accent/80 text-foreground'
+                        : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                    )}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <span
+                className="min-w-0 flex-1 truncate text-sm font-semibold tracking-[-0.014em] text-foreground/95"
+                title={title}
+              >
+                {title}
+              </span>
+            )}
             {meta !== undefined && meta !== null && (
               <span className="shrink-0 rounded-md border border-border/40 bg-muted/55 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
                 {meta}
@@ -147,65 +219,6 @@ export function SecondarySidebar({
           </>
         )}
       </div>
-      {library != null && !collapsed && (
-        <div
-          role="tablist"
-          aria-label={title}
-          data-slot="secondary-sidebar-tabs"
-          className="flex shrink-0 gap-1 border-b border-border/45 px-2.5 py-2"
-          onKeyDown={(event) => {
-            if (event.altKey || event.ctrlKey || event.metaKey) return;
-            const tabs = [
-              ...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
-            ];
-            const current = tabs.findIndex((tab) => tab === event.target);
-            if (current < 0) return;
-            const forward =
-              getComputedStyle(event.currentTarget).direction === 'rtl'
-                ? 'ArrowLeft'
-                : 'ArrowRight';
-            const backward = forward === 'ArrowRight' ? 'ArrowLeft' : 'ArrowRight';
-            const next =
-              event.key === 'Home'
-                ? 0
-                : event.key === 'End'
-                  ? 1
-                  : event.key === forward || event.key === backward
-                    ? 1 - current
-                    : null;
-            if (next === null) return;
-            event.preventDefault();
-            chooseView(next === 0 ? 'controls' : 'library');
-            tabs[next]?.focus();
-          }}
-        >
-          {(
-            [
-              ['controls', title],
-              ['library', libraryLabel ?? title],
-            ] as const
-          ).map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              id={`${tabsId}-${value}`}
-              aria-controls={`${tabsId}-panel-${value}`}
-              aria-selected={view === value}
-              tabIndex={view === value ? 0 : -1}
-              onClick={() => chooseView(value)}
-              className={cn(
-                'h-7 min-w-0 flex-1 truncate rounded-md px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
-                view === value
-                  ? 'bg-accent/80 text-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-foreground',
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      )}
       {library != null && (
         <div
           role="tabpanel"
@@ -262,4 +275,6 @@ export function SecondarySidebar({
       )}
     </aside>
   );
+  if (slot === null) return null;
+  return slot ? createPortal(panel, slot) : panel;
 }

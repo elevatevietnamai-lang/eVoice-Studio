@@ -82,3 +82,26 @@ export function usePanelMounted(): boolean {
     () => mountedPanels > 0,
   );
 }
+
+/**
+ * The rail group whose menu fills the panel column, or null when the column shows the page's
+ * control panel. Not persisted: every launch starts on the panel.
+ */
+let menuGroup: string | null = null;
+const menuListeners = new Set<() => void>();
+export function setMenuGroup(group: string | null) {
+  if (group === menuGroup) return;
+  menuGroup = group;
+  menuListeners.forEach((listener) => listener());
+}
+export function useMenuGroup(): string | null {
+  return useSyncExternalStore(
+    (listener) => {
+      menuListeners.add(listener);
+      return () => {
+        menuListeners.delete(listener);
+      };
+    },
+    () => menuGroup,
+  );
+}

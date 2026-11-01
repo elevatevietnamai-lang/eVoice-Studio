@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { usePaneResize } from '@/hooks/use-pane-resize';
 import { useWindowFullscreen } from '@/hooks/use-window-fullscreen';
-import { setWorkspace, usePanelMounted, useWorkspace } from '@/lib/store/workspace';
+import { setMenuGroup, setWorkspace, usePanelMounted, useWorkspace } from '@/lib/store/workspace';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
@@ -70,16 +70,22 @@ export function WorkspaceSidebar() {
           >
             {/* The rail can always reopen itself, on every platform: the
                 brand icon alone gave Windows/Linux no local control. */}
+            {/* The app icon as the brand kit draws it (eVoice-brand 2.4): a tile as large as the
+                rail items, 22.6% corners, the mark at 80%. */}
             <Button
-              variant="ghost"
+              variant="default"
               size="icon"
               aria-label={t('clone.toggle_sidebar')}
               title={t('clone.toggle_sidebar')}
               aria-expanded={false}
-              onClick={() => setOpen(true)}
-              className="size-10 shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              data-slot="rail-logo"
+              onClick={() => {
+                setMenuGroup(null);
+                setOpen(true);
+              }}
+              className="size-10 shrink-0 rounded-[22.6%] outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <EVoiceMark size={30} className="shrink-0" />
+              <EVoiceMark size={32} className="size-8 shrink-0" />
             </Button>
           </div>
           <WorkspaceNavigation compact />
@@ -152,9 +158,7 @@ export function WorkspaceSidebar() {
                       'workspace-nav-item',
                     )}
                   >
-                    <SettingsIcon
-                      className="workspace-nav-icon"
-                    />
+                    <SettingsIcon className="workspace-nav-icon" />
                   </Link>
                 ) : undefined
               }
@@ -168,9 +172,7 @@ export function WorkspaceSidebar() {
                     'workspace-nav-item',
                   )}
                 >
-                  <SettingsIcon
-                    className="workspace-nav-icon"
-                  />
+                  <SettingsIcon className="workspace-nav-icon" />
                   {t('nav.settings')}
                 </Link>
               )}
@@ -209,7 +211,10 @@ function PanelToggle({ collapsed }: { collapsed: boolean }) {
             size="icon"
             aria-label={label}
             aria-expanded={!collapsed}
-            onClick={() => setWorkspace({ panelCollapsed: !collapsed })}
+            onClick={() => {
+              setMenuGroup(null);
+              setWorkspace({ panelCollapsed: !collapsed });
+            }}
             className="workspace-nav-item size-10"
           />
         }
