@@ -116,7 +116,6 @@ export function App() {
   }, []);
   return (
     <QueryClientProvider client={queryClient}>
-      <WindowControls />
       <ErrorBoundary>
         <WebAuthGate>
           <NativeDictationSync />
@@ -139,6 +138,9 @@ export function App() {
           </GenerationProvider>
         </WebAuthGate>
       </ErrorBoundary>
+      {/* Electron builds the drag region in document order: a drag titlebar that comes later
+          covers an earlier no-drag button. Keep the window buttons last, outside the boundary. */}
+      <WindowControls />
     </QueryClientProvider>
   );
 }

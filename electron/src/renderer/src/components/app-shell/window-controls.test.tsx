@@ -15,6 +15,7 @@ vi.mock('@/components/bridge', () => ({
 }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 import { WindowControls } from './window-controls';
+import appSource from '../../app.tsx?raw';
 
 afterEach(() => {
   cleanup();
@@ -47,4 +48,12 @@ it('renders nothing on macOS or without the desktop bridge', () => {
   platform.bridge = false;
   rerender(<WindowControls />);
   expect(container).toBeEmptyDOMElement();
+});
+
+// Electron unions and subtracts app-region rects in document order, so a drag titlebar rendered
+// after the buttons swallows their clicks. They must mount after the router and the boundary.
+it('mounts after every workspace titlebar in the app root', () => {
+  const controls = appSource.indexOf('<WindowControls />');
+  expect(controls).toBeGreaterThan(appSource.indexOf('<RouterProvider'));
+  expect(controls).toBeGreaterThan(appSource.indexOf('</ErrorBoundary>'));
 });
