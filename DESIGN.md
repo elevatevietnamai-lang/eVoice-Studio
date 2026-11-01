@@ -126,7 +126,7 @@ themes:
   selectable: [studio, signal, canopy, current, hearth, orchid, heritage]
   note: "Studio Classic ('studio') is the previous zinc and blue default. Named palettes override the default through html[data-theme-id]."
 coverage:
-  applied: [tokens, fonts, ui-components, component-roles, motion-provider, morph-icons-in-4-controls, brand-mark, home-layout]
+  applied: [tokens, fonts, ui-components, component-roles, workspace-menu, header, motion-provider, morph-icons-in-4-controls, brand-mark, home-layout]
   notApplied: [setup-and-music-layouts, voice-dub-design-layouts]
 ---
 
@@ -183,6 +183,8 @@ Rules:
 - **Tabs, Toggle, Switch, Slider, Progress**: filled with `primary`; never a hue.
 - **Icons**: `lucide-react` for static icons (stroke 1.75). Use `MorphIcon` (`components/ui/morph-icon.tsx`) only where an icon changes state: theme toggle, sidebar toggle, play and pause. Pass Lucide icon data from `lucide`, not a component.
 - **Toasts**: `sonner`, status colours follow section 2.
+- **Workspace menu** (`components/app-shell/workspace-menu.tsx`): flat rows, 32 px high. Rest uses `--sidebar-muted-foreground`, hover `--sidebar-row-hover`, current page `--sidebar-row-selected` with `--sidebar-foreground`. Icons are single-colour and static; no per-item hues, glow, blur or hover animation. Groups: Voice, Stories, Dubbing, More (transcribe, calls, tools, integrations), then Projects. Group open and close takes 240 ms; the compact rail opens each group as a flyout. A test (`nav-style.test.ts`) blocks gradients, blur and hue classes in the menu, sidebar, header and status bar.
+- **Header**: title on the left; the command-palette button and account corner on the right. No promotional buttons (Get Pro and the GitHub star badge were removed; the Pro page stays under Settings).
 - Hover, active and disabled states are inherited from the component files; document a new one here when you add it.
 
 ### Component roles

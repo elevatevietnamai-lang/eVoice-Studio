@@ -2209,7 +2209,8 @@
     "design": "Progettazione vocale",
     "clone": "Clonazione vocale",
     "primary": "Navigazione principale",
-    "calls": "Chiamate"
+    "calls": "Chiamate",
+    "more": "Altro"
   },
   "profiles": {
     "locked": "Voce bloccata! L’identità è ora coerente in tutte le generazioni.",

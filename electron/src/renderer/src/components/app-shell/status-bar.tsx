@@ -114,18 +114,18 @@ function DeviceMetric({
 
 function engineStateClass(state: string) {
   if (state === 'engineRuntime.loading' || state === 'engineRuntime.working')
-    return 'bg-amber-400 shadow-[0_0_7px_rgb(251_191_36/55%)] animate-pulse motion-reduce:animate-none';
-  if (state === 'engineRuntime.ready') return 'bg-emerald-400 shadow-[0_0_7px_rgb(52_211_153/45%)]';
+    return 'bg-warning animate-pulse motion-reduce:animate-none';
+  if (state === 'engineRuntime.ready') return 'bg-success';
   if (state === 'engineRuntime.idle')
-    return 'bg-primary shadow-[0_0_7px_color-mix(in_oklab,var(--primary)_50%,transparent)]';
+    return 'bg-primary';
   if (state === 'modelSettings.unavailable') return 'bg-destructive';
   return 'bg-muted-foreground/45';
 }
 
 const engineLinkClass =
-  'group/engine-icon relative flex h-7 min-w-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-[color,background-color,box-shadow,backdrop-filter] duration-150 hover:bg-sidebar-accent/65 hover:text-foreground hover:backdrop-blur-xl hover:shadow-[inset_0_1px_0_rgb(255_255_255/8%),0_5px_14px_rgb(0_0_0/10%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 focus-visible:ring-2 focus-visible:ring-ring';
+  'group/engine-icon relative flex h-7 min-w-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring';
 const engineIconClass =
-  'size-4 transition-filter duration-150 group-hover/engine-icon:drop-shadow-[0_1px_3px_rgb(0_0_0/20%)]';
+  'size-4';
 
 const DOT: Record<BackendStage, string> = {
   setup_required: 'bg-warning',
@@ -667,7 +667,7 @@ export function StatusBar({
                   <button
                     type="button"
                     aria-label={`${deviceLabel}: ${stageText}`}
-                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1 text-left outline-none transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-sidebar-accent/65 hover:backdrop-blur-xl hover:shadow-[inset_0_1px_0_rgb(255_255_255/8%),0_5px_14px_rgb(0_0_0/10%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1 text-left outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
                   />
                 }
               >

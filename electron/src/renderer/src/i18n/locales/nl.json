@@ -2207,7 +2207,8 @@
     "clone": "Stemklonen",
     "primary": "Hoofdnavigatie",
     "dictation": "Dicteren",
-    "calls": "Oproepen"
+    "calls": "Oproepen",
+    "more": "Meer"
   },
   "profiles": {
     "locked": "Stem vergrendeld! Identiteit is nu consistent voor alle generaties.",

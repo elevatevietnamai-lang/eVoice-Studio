@@ -2209,7 +2209,8 @@
     "design": "Design de voz",
     "clone": "Clonagem de voz",
     "primary": "Navegação principal",
-    "calls": "Chamadas"
+    "calls": "Chamadas",
+    "more": "Mais"
   },
   "profiles": {
     "locked": "Voz bloqueada! A identidade agora é consistente em todas as gerações.",

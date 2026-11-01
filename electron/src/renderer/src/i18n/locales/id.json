@@ -2207,7 +2207,8 @@
     "design": "Desain Suara",
     "clone": "Kloning suara",
     "primary": "Navigasi utama",
-    "calls": "Panggilan"
+    "calls": "Panggilan",
+    "more": "Lainnya"
   },
   "profiles": {
     "locked": "Suara terkunci! Identitas sekarang konsisten di semua generasi.",

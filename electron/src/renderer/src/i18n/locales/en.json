@@ -303,7 +303,8 @@
     "gallery": "Gallery",
     "batch_dub": "Batch Dubbing",
     "transcribe": "Transcribe",
-    "calls": "Calls"
+    "calls": "Calls",
+    "more": "More"
   },
   "backend": {
     "starting": "Starting the local engine…",

@@ -1,4 +1,3 @@
-import { SupportShortcut } from './support-shortcut';
 import { SidebarToggle } from './sidebar-toggle';
 import type { ReactNode } from 'react';
 import { SearchIcon } from 'lucide-react';
@@ -19,11 +18,10 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
       {!isMac() && <SidebarToggle />}
       {children}
       <div className="ml-auto flex shrink-0 items-center gap-1">
-        <SupportShortcut />
         <Button
           variant="ghost"
           size="sm"
-          className="group h-8 shrink-0 gap-2 rounded-lg border border-transparent px-2.5 text-muted-foreground transition-[color,background-color,border-color,box-shadow] duration-150 hover:border-white/10 hover:bg-white/[0.07] hover:text-foreground hover:shadow-[0_6px_18px_-12px_hsl(var(--foreground)/0.4),inset_0_1px_0_hsl(0_0%_100%/0.08)]"
+          className="group h-8 shrink-0 gap-2 rounded-lg px-2.5 text-muted-foreground hover:bg-accent hover:text-foreground"
           aria-label={t('preferences.search')}
           title={isMac() ? 'Command + K' : 'Ctrl + K'}
           onClick={() => window.dispatchEvent(new Event('voicestudio:commands'))}

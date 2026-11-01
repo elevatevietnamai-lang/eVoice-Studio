@@ -2207,7 +2207,8 @@
     "clone": "Nhân bản giọng nói",
     "primary": "Điều hướng chính",
     "dictation": "Nhập liệu bằng giọng nói",
-    "calls": "Cuộc gọi"
+    "calls": "Cuộc gọi",
+    "more": "Thêm"
   },
   "profiles": {
     "locked": "Giọng nói bị khóa! Bản sắc bây giờ nhất quán qua tất cả các thế hệ.",

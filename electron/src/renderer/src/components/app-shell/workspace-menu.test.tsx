@@ -19,6 +19,9 @@ it('opens the current workflow, lets users collapse it, and follows route change
   const voice = screen.getByRole('button', { name: 'nav.voice' });
   expect(voice).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getByRole('link', { name: 'nav.gallery' })).toHaveAttribute('href', '/gallery');
+  const more = screen.getByRole('button', { name: 'nav.more' });
+  expect(more).toHaveAttribute('aria-expanded', 'false');
+  fireEvent.click(more);
   expect(screen.getByRole('link', { name: 'workflows.title' })).toHaveAttribute('href', '/calls');
   fireEvent.click(voice);
   expect(voice).toHaveAttribute('aria-expanded', 'false');

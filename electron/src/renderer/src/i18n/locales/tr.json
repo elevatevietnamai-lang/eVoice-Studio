@@ -2207,7 +2207,8 @@
     "design": "Ses Tasarımı",
     "clone": "Ses klonlama",
     "primary": "Ana gezinme",
-    "calls": "Aramalar"
+    "calls": "Aramalar",
+    "more": "Daha fazla"
   },
   "profiles": {
     "locked": "Ses kilitli! Kimlik artık tüm nesiller arasında tutarlıdır.",

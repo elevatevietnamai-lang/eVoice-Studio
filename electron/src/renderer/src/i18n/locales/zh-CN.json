@@ -2207,7 +2207,8 @@
     "design": "声音设计",
     "primary": "主导航",
     "dictation": "听写",
-    "calls": "通话"
+    "calls": "通话",
+    "more": "更多"
   },
   "profiles": {
     "locked": "声音已锁定！现在每次生成的身份都一致。",

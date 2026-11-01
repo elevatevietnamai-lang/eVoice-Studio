@@ -2209,7 +2209,8 @@
     "design": "Conception vocale",
     "clone": "Clonage vocal",
     "primary": "Navigation principale",
-    "calls": "Appels"
+    "calls": "Appels",
+    "more": "Plus"
   },
   "profiles": {
     "locked": "Voix verrouillée ! L’identité est désormais cohérente à travers toutes les générations.",

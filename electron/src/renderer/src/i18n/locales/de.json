@@ -2207,7 +2207,8 @@
     "design": "Sprachdesign",
     "clone": "Stimmklonen",
     "primary": "Hauptnavigation",
-    "calls": "Anrufe"
+    "calls": "Anrufe",
+    "more": "Mehr"
   },
   "profiles": {
     "locked": "Stimme gesperrt! Die Identität ist nun über alle Generationen hinweg einheitlich.",

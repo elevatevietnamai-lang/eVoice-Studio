@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { PanelLeftIcon, PanelLeftOpenIcon, SettingsIcon } from 'lucide-react';
-import { brandArtwork } from '@/lib/brand';
 import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { appVersion, isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
@@ -106,8 +105,6 @@ export function WorkspaceSidebar() {
             >
               <SettingsIcon
                 className="workspace-nav-icon"
-                data-tone="settings"
-                data-motion="turn"
               />
             </Link>
             {mac && <StatusBar compact inline />}
@@ -121,12 +118,6 @@ export function WorkspaceSidebar() {
           aria-label={t('app.name')}
           className="brand-sidebar relative isolate grid h-full min-h-0 min-w-0 shrink-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden border-r border-border/50 bg-sidebar"
         >
-          <img
-            src={brandArtwork}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-40 w-full object-cover object-right opacity-25 [mask-image:linear-gradient(black,transparent)] dark:opacity-40"
-          />
           <header
             className={cn(
               'workspace-titlebar flex shrink-0 gap-2 px-3',
@@ -182,8 +173,6 @@ export function WorkspaceSidebar() {
                   >
                     <SettingsIcon
                       className="workspace-nav-icon"
-                      data-tone="settings"
-                      data-motion="turn"
                     />
                   </Link>
                 ) : undefined
@@ -200,8 +189,6 @@ export function WorkspaceSidebar() {
                 >
                   <SettingsIcon
                     className="workspace-nav-icon"
-                    data-tone="settings"
-                    data-motion="turn"
                   />
                   {t('nav.settings')}
                 </Link>

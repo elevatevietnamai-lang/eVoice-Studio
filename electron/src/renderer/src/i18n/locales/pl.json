@@ -2211,7 +2211,8 @@
     "clone": "Klonowanie głosu",
     "primary": "Nawigacja główna",
     "dictation": "Dyktowanie",
-    "calls": "Połączenia"
+    "calls": "Połączenia",
+    "more": "Więcej"
   },
   "profiles": {
     "locked": "Głos zablokowany! Tożsamość jest teraz spójna we wszystkich pokoleniach.",

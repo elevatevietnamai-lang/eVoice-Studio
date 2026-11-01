@@ -2207,7 +2207,8 @@
     "clone": "聲音複製",
     "primary": "主要導覽",
     "dictation": "聽寫",
-    "calls": "通話"
+    "calls": "通話",
+    "more": "更多"
   },
   "profiles": {
     "locked": "語音鎖定！現在，各代的身份都是一致的。",

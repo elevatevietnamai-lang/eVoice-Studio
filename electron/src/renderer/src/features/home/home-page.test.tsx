@@ -37,12 +37,20 @@ it('presents the eVoice Studio hero with the tagline and no upstream link', () =
 });
 
 it('uses no Tailwind hue classes or hard-coded hex colours in the Home sources', () => {
-  const sources = import.meta.glob('./*.{tsx,css}', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+  const nodeProcess = (
+    globalThis as unknown as {
+      process: {
+        getBuiltinModule(id: 'node:fs'): { readFileSync(path: string, encoding: 'utf8'): string };
+      };
+    }
+  ).process;
+  const fs = nodeProcess.getBuiltinModule('node:fs');
   const hue = /(?:bg|text|ring|border|from|to|via)-(?:sky|violet|teal|rose|amber|fuchsia|cyan|indigo|slate|blue|green|red|purple|pink|orange|yellow)-\d/;
-  for (const [file, source] of Object.entries(sources)) {
-    if (file.endsWith('.test.tsx')) continue;
+  for (const file of ['home-page.tsx', 'home-page.css', 'home-feature-icon.tsx']) {
+    const source = fs.readFileSync('src/renderer/src/features/home/' + file, 'utf8');
     expect(source, file).not.toMatch(hue);
     expect(source, file).not.toMatch(/#[0-9a-fA-F]{6}/);
+    expect(source, file).not.toMatch(/gradient|@keyframes/);
   }
 });
 

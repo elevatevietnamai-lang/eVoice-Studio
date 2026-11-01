@@ -2207,7 +2207,8 @@
     "design": "Röstdesign",
     "clone": "Röstkloning",
     "primary": "Huvudnavigering",
-    "calls": "Samtal"
+    "calls": "Samtal",
+    "more": "Mer"
   },
   "profiles": {
     "locked": "Rösten låst! Identiteten är nu konsekvent över alla generationer.",
