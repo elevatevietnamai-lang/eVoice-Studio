@@ -30,7 +30,25 @@ const VARIANT_STYLES = {
 } as const;
 
 /** Local workspace controls; the global library and navigation remain in the app shell. */
-export function SecondarySidebar({
+type SecondarySidebarProps = Parameters<typeof PanelBody>[0];
+
+// A new column element (Settings to a page) remounts the panel so its effects measure the new host.
+const columnKeys = new WeakMap<HTMLElement, string>();
+let nextColumnKey = 0;
+
+/**
+ * Waits for the shell's panel column and renders the panel there, full height beside the rail.
+ * The panel mounts only once its column exists, so its resize and registration effects see it.
+ */
+export function SecondarySidebar(props: SecondarySidebarProps) {
+  const slot = useContext(PanelSlotContext);
+  if (slot === null) return null;
+  if (!slot) return <PanelBody {...props} />;
+  if (!columnKeys.has(slot)) columnKeys.set(slot, String(nextColumnKey++));
+  return createPortal(<PanelBody {...props} />, slot, columnKeys.get(slot));
+}
+
+function PanelBody({
   title,
   icon: Icon,
   children,
@@ -64,8 +82,7 @@ export function SecondarySidebar({
   // One panel per page: the rail's bottom toggle folds it, and navigation reopens it (AppShell).
   const { panelCollapsed } = useWorkspace();
   const collapsed = controlledCollapsed ?? panelCollapsed;
-  const slot = useContext(PanelSlotContext);
-  useEffect(() => registerPanel(), []);
+  useEffect(() => registerPanel(title), [title]);
   // While the width opens, the content is still narrow and would rewrap in view: keep it
   // transparent until the pane is wide, then fade it in.
   const [expanding, setExpanding] = useState(false);
@@ -101,7 +118,7 @@ export function SecondarySidebar({
     ...dimensions,
     enabled: !collapsed,
   });
-  const panel = (
+  return (
     <aside
       ref={resize.host}
       aria-label={title}
@@ -275,6 +292,4 @@ export function SecondarySidebar({
       )}
     </aside>
   );
-  if (slot === null) return null;
-  return slot ? createPortal(panel, slot) : panel;
 }

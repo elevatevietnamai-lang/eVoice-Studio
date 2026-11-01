@@ -42,12 +42,20 @@ export function usePaneResize({
         window.getComputedStyle(parent).display === 'contents')
     )
       parent = parent.parentElement;
-    if (!enabled || !parent) return;
-    const measure = () =>
-      setLimit(Math.max(minimum, Math.min(maximum, parent.clientWidth - reserve)));
+    const pane = host.current;
+    if (!enabled || !parent || !pane) return;
+    // Room from the pane's own left edge to the row's right edge: in the shell row that leaves out
+    // the rail and the main sidebar, so the pane never eats the content's reserved width.
+    const measure = () => {
+      const offset = pane.getBoundingClientRect().left - parent.getBoundingClientRect().left;
+      setLimit(Math.max(minimum, Math.min(maximum, parent.clientWidth - offset - reserve)));
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(parent);
+    // Dragging the main sidebar moves the pane without resizing the row; the content sees it.
+    const content = document.querySelector('[data-slot="workspace-content"]');
+    if (content) observer.observe(content);
     return () => observer.disconnect();
   }, [enabled, maximum, minimum, reserve]);
   const resize = (value: number) => {

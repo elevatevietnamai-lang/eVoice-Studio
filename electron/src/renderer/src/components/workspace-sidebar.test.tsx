@@ -209,23 +209,49 @@ it('names the page once: the library tabs replace the panel title', () => {
   expect(screen.getByRole('tab', { name: 'Projects' })).toBeInTheDocument();
 });
 
-it('keeps the page heading for screen readers only while a panel names the page', () => {
-  const view = render(
-    <WorkspaceHeader>
-      <h1>Dubbing</h1>
-    </WorkspaceHeader>,
-  );
-  expect(screen.getByRole('banner')).not.toHaveClass('[&>h1]:sr-only');
-  view.rerender(
+it('keeps the page heading for screen readers only while its own panel names the page', () => {
+  const page = (panelTitle: string | null) => (
     <>
       <WorkspaceHeader>
         <h1>Dubbing</h1>
       </WorkspaceHeader>
-      <SecondarySidebar title="Dubbing" icon={FilmIcon}>
-        <section>Upload</section>
-      </SecondarySidebar>
-    </>,
+      {panelTitle && (
+        <SecondarySidebar title={panelTitle} icon={FilmIcon}>
+          <section>Upload</section>
+        </SecondarySidebar>
+      )}
+    </>
   );
+  const view = render(page(null));
+  expect(screen.getByRole('banner')).not.toHaveClass('[&>h1]:sr-only');
+  // Another panel (the voice library beside Home) does not name this page.
+  view.rerender(page('Voice'));
+  expect(screen.getByRole('banner')).not.toHaveClass('[&>h1]:sr-only');
+  view.rerender(page('Dubbing'));
   expect(screen.getByRole('banner')).toHaveClass('[&>h1]:sr-only');
   expect(screen.getByRole('heading', { level: 1, name: 'Dubbing' })).toBeInTheDocument();
+});
+
+it('measures its width limit once the shell column arrives', () => {
+  vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1400);
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      disconnect() {}
+    },
+  );
+  const column = document.createElement('div');
+  document.body.append(column);
+  const pane = (slot: HTMLElement | null) => (
+    <PanelSlotContext.Provider value={slot}>
+      <SecondarySidebar title="Dub" icon={FilmIcon} size="spacious">
+        <section>Preview</section>
+      </SecondarySidebar>
+    </PanelSlotContext.Provider>
+  );
+  const view = render(pane(null));
+  view.rerender(pane(column));
+  expect(screen.getByRole('separator')).toHaveAttribute('aria-valuemax', '750');
+  column.remove();
 });
