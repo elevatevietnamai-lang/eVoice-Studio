@@ -126,7 +126,7 @@ themes:
   selectable: [studio, signal, canopy, current, hearth, orchid, heritage]
   note: "Studio Classic ('studio') is the previous zinc and blue default. Named palettes override the default through html[data-theme-id]."
 coverage:
-  applied: [tokens, fonts, ui-components, motion-provider, morph-icons-in-4-controls, brand-mark, home-layout]
+  applied: [tokens, fonts, ui-components, component-roles, motion-provider, morph-icons-in-4-controls, brand-mark, home-layout]
   notApplied: [setup-and-music-layouts, voice-dub-design-layouts]
 ---
 
@@ -184,6 +184,45 @@ Rules:
 - **Icons**: `lucide-react` for static icons (stroke 1.75). Use `MorphIcon` (`components/ui/morph-icon.tsx`) only where an icon changes state: theme toggle, sidebar toggle, play and pause. Pass Lucide icon data from `lucide`, not a component.
 - **Toasts**: `sonner`, status colours follow section 2.
 - Hover, active and disabled states are inherited from the component files; document a new one here when you add it.
+
+### Component roles
+
+Source of truth: `components/ui/roles.ts` (`roles.test.ts` fails when a primitive has no entry or is missing from this table). Read the role before choosing a component; motion kinds are defined at the top of that file.
+
+| Component | Role | Use | Tokens | Type | Motion |
+|---|---|---|---|---|---|
+| `alert` | status | Inline message that stays on the page: error, warning, info, success. | `--destructive` `--warning` `--info` `--success` `--card` | `text-ui` | none: Static. Wrap in FadeIn when it appears after a user action. Avoid: Do not use for transient confirmations; use Toaster. |
+| `badge` | status | Short label or count next to a name (state, tier, language). | `--secondary` `--secondary-foreground` `--primary` `--destructive` | `text-caption` | none: Static. Avoid: Do not make it clickable; use Button or Toggle. |
+| `button` | action | Any action. One primary per view; secondary, outline or ghost for the rest. | `--primary` `--primary-foreground` `--secondary` `--accent` `--destructive` `--ring` | `text-ui` | feedback: Colour and opacity change over 160 ms; no scale or bounce. Avoid: No gradients, glow or inset highlights. Do not animate icon swaps unless the icon changes state. |
+| `card` | container | Group of related content on the surface ladder. | `--card` `--card-foreground` `--border` `--card-radius` | `inherit` | enter-exit: Optional FadeIn (8 px drift, 240 ms) on first mount; Stagger (40 ms) for grids. Avoid: No shadows; depth comes from the border and surface step. |
+| `collapsible` | structure | Disclosure that hides secondary content. | `--border` `--muted-foreground` | `text-ui` | reveal: Gap: content swaps instantly today. Target is height and opacity over 240 ms. |
+| `dialog` | overlay | Modal task or confirmation that blocks the page. | `--popover` `--popover-foreground` `--border` `--ring` | `text-ui` | enter-exit: Backdrop and panel fade over 160 ms; the panel also scales from 95%. Closes the same way. Avoid: Do not stack dialogs; no blur on the backdrop. |
+| `input` | input | Single-line text, number, search or password entry. | `--input` `--background` `--foreground` `--placeholder` `--ring` `--destructive` | `text-ui` | feedback: Border and ring colour over 160 ms on focus. Avoid: Do not use a placeholder as the only label. |
+| `kbd` | hint | Keyboard shortcut hint. | `--muted` `--muted-foreground` `--border` | `text-caption` | none: Static. |
+| `label` | structure | Visible name for a form control; always bound with htmlFor or wrapping. | `--foreground` | `text-label` | none: Static. |
+| `morph-icon` | icon | Icon that changes shape with state (play to pause, menu to close, sun to moon). | `currentColor` | `inherit` | morph: Spring "snappy", reducedMotion "user", stroke 1.75. Avoid: Do not use for icons that never change; use lucide-react. |
+| `progress` | feedback | Determinate progress of a known task (download, render, install). | `--primary` `--secondary` `--muted-foreground` | `text-caption` | feedback: Indicator width eases over 240 ms. Avoid: Use Spinner when the duration is unknown. |
+| `scroll-area` | structure | Scrollable region with a themed scrollbar. | `--border` `--muted-foreground` | `inherit` | feedback: Focus ring only; the scrollbar thumb changes colour over 160 ms. |
+| `select` | selection | Pick one option from a list of five or more; use ToggleGroup for fewer. | `--input` `--popover` `--popover-foreground` `--accent` `--ring` | `text-ui` | enter-exit: List fades in over 160 ms, slides in from its anchor and scales from 95%; items change colour over 160 ms. |
+| `separator` | structure | Hairline between groups. | `--border` | `inherit` | none: Static. |
+| `skeleton` | feedback | Placeholder shape while content loads. | `--muted` | `inherit` | loop: Tailwind animate-pulse; stops under reduced motion. Avoid: Do not use for tasks longer than a few seconds; show Progress. |
+| `slider` | input | Pick a value in a range (speed, volume, strength). | `--primary` `--secondary` `--ring` | `text-label` | feedback: Thumb ring on focus over 160 ms; the value follows the pointer. |
+| `sonner` | feedback | Transient toast confirming an action or reporting a background result. | `--popover` `--popover-foreground` `--border` `--destructive` `--success` | `text-ui` | enter-exit: Library default slide and fade; auto-dismiss. Avoid: Never the only place an error is shown. |
+| `spinner` | feedback | Activity of unknown duration inside a button or small region. | `currentColor` | `inherit` | loop: Continuous rotation; must stop under reduced motion. |
+| `switch` | selection | Setting that applies immediately (on or off). | `--primary` `--input` `--ring` | `text-ui` | feedback: Thumb translates and track colour changes with the default 160 ms transition. Avoid: Do not use when a Save step is needed; use a checkbox. |
+| `tabs` | navigation | Switch between peer views inside one page. | `--muted` `--foreground` `--muted-foreground` `--ring` | `text-ui` | feedback: Active indicator and text colour change over 160 ms; panel content swaps with no slide. |
+| `textarea` | input | Multi-line text entry (scripts, prompts, lyrics). | `--input` `--background` `--foreground` `--placeholder` `--ring` | `text-editor` | feedback: Border and ring colour over 160 ms on focus. |
+| `toggle-group` | selection | Choose one or several from a short set (two to four) shown side by side. | `--secondary` `--accent` `--border` `--ring` | `text-label` | feedback: Colour and opacity change over 160 ms; no scale or bounce. |
+| `toggle` | selection | Single pressed or unpressed button (bold, mute, favourite). | `--accent` `--accent-foreground` `--ring` | `text-label` | feedback: Colour and opacity change over 160 ms; no scale or bounce. Pair with MorphIcon when the icon changes with the state. |
+| `tooltip` | hint | Name or explain an icon-only control; never essential information. | `--popover` `--popover-foreground` `--border` | `text-caption` | enter-exit: Fades in, slides a few px from its anchor and scales from 95%. Avoid: Do not put interactive content inside. |
+
+Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
+
+- `MotionProvider`: Wrap the app once; reducedMotion "user" turns every motion component off for people who ask.
+- `FadeIn`: Fade plus 8 px drift on mount. For a page section, a card or a result appearing after a user action.
+- `Stagger`: Container that reveals StaggerItem children 40 ms apart. For grids and lists of at most about 12 items.
+- `StaggerItem`: Child of Stagger.
+- `MorphIcon`: See morph-icon above.
 
 ## 5. Layout Principles
 
