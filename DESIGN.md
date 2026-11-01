@@ -240,7 +240,8 @@ Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 - `FadeIn`: Fade plus 8 px drift on mount. For a page section, a card or a result appearing after a user action.
 - `Stagger`: Container that reveals StaggerItem children 40 ms apart. For grids and lists of at most about 12 items.
 - `StaggerItem`: Child of Stagger.
-- `RouteFade`: App shell wraps the routed page: opacity-only fade over 240 ms, keyed on the top-level route segment.
+- `RouteFade`: App shell wraps the routed page: opacity from 60% over 120 ms (never from blank, since the old page has no exit), keyed on the top-level route segment. The control panel column runs the same settle (`.secondary-sidebar` in `globals.css`), so both columns change together.
+- `MenuReveal` / `MenuRevealItem`: the rail group menu's items arrive 25 ms apart over 160 ms; the menu surface itself is opaque from the first frame, so the panel under it never shows through.
 - `MorphIcon`: See morph-icon above.
 
 ## 5. Layout Principles
@@ -260,7 +261,7 @@ Flat. Depth comes from the surface ladder (bg, surface, surface-2, surface-3) an
 - Use semantic tokens in every component (`grep -rn "#[0-9a-f]\{6\}" components/ui` should stay empty).
 - Pair every status colour with text or an icon.
 - Keep primary actions graphite or off-white.
-- Use 160 ms for hover and focus, 200 ms for overlays, 240 ms for panels (the control panel's width animates on fold, never while dragged), 480 ms only for large reveals.
+- Use 160 ms for hover and focus, 200 ms for overlays, 240 ms for panels (the control panel's width animates only while the user folds or unfolds it: `foldPanel` sets `data-folding` for 300 ms in the same update; window resizes, sidebar drags, first measures and navigation reopen it instantly; unfolding keeps the content hidden for 130 ms, then fades it in over 140 ms), 480 ms only for large reveals.
 - Wrap new motion in `MotionProvider` descendants or use CSS transitions, so reduced motion applies.
 - Add a unit test when adding a themed colour role; contrast must reach 4.5:1 for text.
 - Keep Studio Classic and the other palettes selectable.

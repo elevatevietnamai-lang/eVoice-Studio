@@ -108,3 +108,34 @@ export function useMenuGroup(): string | null {
     () => menuGroup,
   );
 }
+
+/**
+ * True for the moment a user folds or unfolds the control panel. Only then does the panel animate
+ * its width; window resizes, sidebar drags, first measures and navigation reopen it instantly.
+ * Set in the same update as `panelCollapsed`, so the transition is on in the render that changes it.
+ */
+let panelFolding = false;
+let foldTimer: ReturnType<typeof setTimeout> | undefined;
+const foldListeners = new Set<() => void>();
+const notifyFold = () => foldListeners.forEach((listener) => listener());
+export function foldPanel(collapsed: boolean) {
+  clearTimeout(foldTimer);
+  panelFolding = true;
+  notifyFold();
+  setWorkspace({ panelCollapsed: collapsed });
+  foldTimer = setTimeout(() => {
+    panelFolding = false;
+    notifyFold();
+  }, 300);
+}
+export function usePanelFolding(): boolean {
+  return useSyncExternalStore(
+    (listener) => {
+      foldListeners.add(listener);
+      return () => {
+        foldListeners.delete(listener);
+      };
+    },
+    () => panelFolding,
+  );
+}

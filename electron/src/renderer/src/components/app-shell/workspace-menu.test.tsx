@@ -122,3 +122,11 @@ it('closes when the route changes', () => {
   view.rerender(<Shell />);
   expect(screen.queryByRole('complementary', { name: 'nav.stories' })).toBeNull();
 });
+
+it('shows an opaque menu surface from the first frame, with no fade on the surface itself', () => {
+  render(<Shell />);
+  fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
+  const menu = screen.getByRole('complementary', { name: 'nav.voice' });
+  expect(menu.className).not.toMatch(/animate-|fade-|opacity-/);
+  expect(menu).toHaveClass('bg-sidebar');
+});

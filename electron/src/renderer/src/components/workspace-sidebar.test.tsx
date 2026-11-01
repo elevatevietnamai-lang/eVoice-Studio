@@ -4,7 +4,7 @@ import { FilmIcon } from 'lucide-react';
 import { act } from 'react';
 import { SecondarySidebar } from './workspace-sidebar';
 import { renderHook } from '@testing-library/react';
-import { setWorkspace, usePanelMounted } from '@/lib/store/workspace';
+import { foldPanel, setWorkspace, usePanelMounted } from '@/lib/store/workspace';
 import { PanelSlotContext } from './panel-slot-context';
 import { WorkspaceHeader } from './app-shell/workspace-header';
 
@@ -254,4 +254,32 @@ it('measures its width limit once the shell column arrives', () => {
   view.rerender(pane(column));
   expect(screen.getByRole('separator')).toHaveAttribute('aria-valuemax', '750');
   column.remove();
+});
+
+it('animates its width only while the user folds it, never on a reopen or a resize', () => {
+  vi.useFakeTimers();
+  // Earlier tests fold through the real store; let any fold in flight settle first.
+  act(() => foldPanel(false));
+  act(() => vi.advanceTimersByTime(300));
+  render(
+    <SecondarySidebar title="Dub" icon={FilmIcon}>
+      <section>Upload</section>
+    </SecondarySidebar>,
+  );
+  const pane = () => screen.getByRole('complementary', { name: 'Dub' });
+  expect(pane()).not.toHaveAttribute('data-folding');
+  act(() => foldPanel(true));
+  expect(pane()).toHaveAttribute('data-folding');
+  act(() => vi.advanceTimersByTime(300));
+  expect(pane()).not.toHaveAttribute('data-folding');
+  // Navigation reopens the panel through the plain store update: instant, no width animation.
+  act(() => setWorkspace({ panelCollapsed: false }));
+  expect(pane()).not.toHaveAttribute('data-folding');
+  expect(pane()).not.toHaveAttribute('data-expanding');
+  act(() => foldPanel(true));
+  act(() => vi.advanceTimersByTime(300));
+  act(() => foldPanel(false));
+  // Unfolding hides the narrow content in the same render, then fades it in.
+  expect(pane()).toHaveAttribute('data-expanding');
+  vi.useRealTimers();
 });

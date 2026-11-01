@@ -28,6 +28,7 @@ vi.mock('@/lib/store/workspace', () => ({
   setWorkspace: (patch: object) => layout.setWorkspace(patch),
   usePanelMounted: () => layout.panelMounted,
   setMenuGroup: () => {},
+  foldPanel: (collapsed: boolean) => layout.setWorkspace({ panelCollapsed: collapsed }),
 }));
 vi.mock('@/components/bridge', () => ({ appVersion: () => '0.5.7', isMac: () => false }));
 vi.mock('@/lib/brand', () => ({ brandIcon: 'icon.png', brandArtwork: 'art.png' }));

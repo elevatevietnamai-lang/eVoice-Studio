@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { usePaneResize } from '@/hooks/use-pane-resize';
 import { useWindowFullscreen } from '@/hooks/use-window-fullscreen';
-import { setMenuGroup, setWorkspace, usePanelMounted, useWorkspace } from '@/lib/store/workspace';
+import { foldPanel, setMenuGroup, usePanelMounted, useWorkspace } from '@/lib/store/workspace';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
@@ -213,7 +213,7 @@ function PanelToggle({ collapsed }: { collapsed: boolean }) {
             aria-expanded={!collapsed}
             onClick={() => {
               setMenuGroup(null);
-              setWorkspace({ panelCollapsed: !collapsed });
+              foldPanel(!collapsed);
             }}
             className="workspace-nav-item size-10"
           />

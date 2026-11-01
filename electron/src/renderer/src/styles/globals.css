@@ -729,7 +729,25 @@ html[data-theme-id='heritage'] {
   }
 }
 
-/* A control panel opening: content waits for the width (240 ms), then fades in. */
+/* A page switch: the panel column settles in with the content (RouteFade, motion/index.tsx). */
+@keyframes route-settle {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.secondary-sidebar {
+  animation: route-settle 120ms var(--ease-standard) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .secondary-sidebar {
+    animation: none;
+  }
+}
+
+/* A control panel unfolding: content waits for most of the width (240 ms), then fades in. */
 @keyframes secondary-sidebar-content-in {
   from {
     opacity: 0;
@@ -739,7 +757,7 @@ html[data-theme-id='heritage'] {
   }
 }
 .secondary-sidebar[data-expanding] > :not([role='separator']) {
-  animation: secondary-sidebar-content-in 180ms var(--ease-standard) 200ms both;
+  animation: secondary-sidebar-content-in 140ms var(--ease-standard) 130ms both;
 }
 @media (prefers-reduced-motion: reduce) {
   .secondary-sidebar[data-expanding] > :not([role='separator']) {

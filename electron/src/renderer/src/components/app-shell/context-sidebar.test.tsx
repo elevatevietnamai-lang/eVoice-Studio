@@ -4,6 +4,7 @@ import { beforeEach, expect, it, vi } from 'vitest';
 const route = vi.hoisted(() => ({ pathname: '/clone' }));
 const workspace = vi.hoisted(() => ({ panelCollapsed: true, libraryTab: 'voices' as const }));
 const setWorkspace = vi.hoisted(() => vi.fn());
+const foldPanel = vi.hoisted(() => vi.fn());
 
 vi.mock('@tanstack/react-router', () => ({
   useRouterState: ({ select }: any) => select({ location: route }),
@@ -12,6 +13,8 @@ vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => k
 vi.mock('@/lib/store/workspace', () => ({
   useWorkspace: () => workspace,
   setWorkspace,
+  foldPanel,
+  usePanelFolding: () => false,
   registerPanel: () => () => {},
 }));
 vi.mock('@/features/clone/voices-sidebar', () => ({
@@ -34,7 +37,7 @@ it('follows the shared panel state and reopens from its folded strip', () => {
   );
 
   fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
-  expect(setWorkspace).toHaveBeenCalledWith({ panelCollapsed: false });
+  expect(foldPanel).toHaveBeenCalledWith(false);
 
   workspace.panelCollapsed = false;
   view.rerender(<ContextSidebar />);

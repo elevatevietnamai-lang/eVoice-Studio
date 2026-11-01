@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { MenuReveal, MenuRevealItem } from '@/components/motion';
 import { inGroup, type DestinationGroup, type WorkspaceDestination } from './destinations';
 import './workspace-menu.css';
 
@@ -269,21 +270,25 @@ export function GroupMenuPanel() {
         event.preventDefault();
         close();
       }}
-      className="absolute inset-y-0 left-0 z-30 flex w-[max(100%,18rem)] flex-col border-r border-border/55 bg-sidebar duration-200 ease-(--ease-standard) animate-in fade-in-0 motion-reduce:animate-none"
+      className="absolute inset-y-0 left-0 z-30 flex w-[max(100%,18rem)] flex-col border-r border-border/55 bg-sidebar"
     >
       <div className="workspace-titlebar flex h-12 shrink-0 items-center border-b border-border/45 px-4">
         <span className="truncate text-xs font-medium tracking-[0.12em] text-(--sidebar-muted-foreground) uppercase">
           {t(GROUPS[group])}
         </span>
       </div>
-      <nav
+      {/* Keyed on the group, so a switch replays the reveal. */}
+      <MenuReveal
+        key={group}
         aria-label={t(GROUPS[group])}
         className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain p-2"
       >
         {inGroup(group).map((destination) => (
-          <NavigationLink key={destination.to} destination={destination} flyout />
+          <MenuRevealItem key={destination.to}>
+            <NavigationLink destination={destination} flyout />
+          </MenuRevealItem>
         ))}
-      </nav>
+      </MenuReveal>
     </aside>
   );
 }

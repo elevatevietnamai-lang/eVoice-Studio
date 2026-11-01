@@ -1,16 +1,8 @@
-import {
-  useContext,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from 'react';
+import { useContext, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { type LucideIcon } from 'lucide-react';
 import { usePaneResize } from '@/hooks/use-pane-resize';
-import { registerPanel, setWorkspace, useWorkspace } from '@/lib/store/workspace';
+import { foldPanel, registerPanel, usePanelFolding, useWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
 import { PanelSlotContext } from '@/components/panel-slot-context';
 
@@ -83,18 +75,11 @@ function PanelBody({
   const { panelCollapsed } = useWorkspace();
   const collapsed = controlledCollapsed ?? panelCollapsed;
   useEffect(() => registerPanel(title), [title]);
-  // While the width opens, the content is still narrow and would rewrap in view: keep it
-  // transparent until the pane is wide, then fade it in.
-  const [expanding, setExpanding] = useState(false);
-  const wasCollapsed = useRef(collapsed);
-  useEffect(() => {
-    const opened = wasCollapsed.current && !collapsed;
-    wasCollapsed.current = collapsed;
-    if (!opened) return;
-    setExpanding(true);
-    const timer = setTimeout(() => setExpanding(false), 420);
-    return () => clearTimeout(timer);
-  }, [collapsed]);
+  // Only a user fold animates the width; while it opens, the content is still narrow and would
+  // rewrap in view, so it stays transparent until the pane is wide, then fades in. Both flags
+  // arrive in the same render as the fold itself.
+  const folding = usePanelFolding();
+  const expanding = folding && !collapsed;
   const [view, setView] = useState<'controls' | 'library'>('controls');
   const [libraryVisited, setLibraryVisited] = useState(false);
   const tabsId = useId();
@@ -108,7 +93,7 @@ function PanelBody({
   const setCollapsed = (next: boolean | ((value: boolean) => boolean)) => {
     const resolved = typeof next === 'function' ? next(collapsed) : next;
     if (resolved === collapsed) return;
-    if (controlledCollapsed === undefined) setWorkspace({ panelCollapsed: resolved });
+    if (controlledCollapsed === undefined) foldPanel(resolved);
     onCollapsedChange?.(resolved);
   };
   const dimensions = WIDTHS[size];
@@ -127,6 +112,7 @@ function PanelBody({
       data-variant={variant}
       data-collapsed={collapsed || undefined}
       data-resizing={resize.resizing || undefined}
+      data-folding={folding || undefined}
       data-expanding={expanding || undefined}
       style={
         {
@@ -134,7 +120,7 @@ function PanelBody({
         } as CSSProperties
       }
       className={cn(
-        'secondary-sidebar relative transition-[width] duration-240 ease-(--ease-standard) data-[resizing]:transition-none motion-reduce:transition-none [--pane-resize-display:flex] @max-[40rem]:[--pane-resize-display:none] flex min-h-0 shrink-0 flex-col border-r border-border/55 bg-[color-mix(in_oklab,var(--muted)_13%,var(--background))] shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] [container-type:inline-size]',
+        'secondary-sidebar relative duration-240 ease-(--ease-standard) data-[folding]:transition-[width] data-[resizing]:transition-none motion-reduce:transition-none [--pane-resize-display:flex] @max-[40rem]:[--pane-resize-display:none] flex min-h-0 shrink-0 flex-col border-r border-border/55 bg-[color-mix(in_oklab,var(--muted)_13%,var(--background))] shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] [container-type:inline-size]',
         collapsed
           ? 'w-11'
           : 'w-[var(--secondary-sidebar-width)] @max-[40rem]:max-h-[40%] @max-[40rem]:w-full @max-[40rem]:border-r-0 @max-[40rem]:border-b',

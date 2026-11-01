@@ -68,7 +68,10 @@ const itemVariants: Variants = {
   visible: { opacity: 1, y: 0 },
 };
 
-interface StaggerProps extends Omit<HTMLMotionProps<'div'>, 'variants' | 'initial' | 'animate' | 'custom'> {
+interface StaggerProps extends Omit<
+  HTMLMotionProps<'div'>,
+  'variants' | 'initial' | 'animate' | 'custom'
+> {
   /** Seconds between children. */
   stagger?: number;
 }
@@ -91,19 +94,51 @@ export function StaggerItem(props: Omit<HTMLMotionProps<'div'>, 'variants'>) {
 }
 
 /**
- * Page change: the new route fades in over the fast token. Enter only, opacity only, so layout and
- * scroll position never jump. Key it on the top-level route segment so nested pages keep their state.
+ * A page switch settles in from 60% opacity over 120 ms, never from blank: the old page has no
+ * exit, so a fade from 0 flashed the empty background. The control panel column runs the same
+ * fade (`.secondary-sidebar` in globals.css) so both columns change together. Enter only, opacity
+ * only, so layout and scroll never jump; keyed on the top-level segment so nested pages keep state.
  */
+export const ROUTE_FADE_FROM = 0.6;
+export const ROUTE_FADE_SECONDS = 0.12;
+
 export function RouteFade({ segment, children }: { segment: string; children: ReactNode }) {
   return (
     <motion.div
       key={segment}
       className="h-full min-h-0"
-      initial={{ opacity: 0 }}
+      initial={{ opacity: ROUTE_FADE_FROM }}
       animate={{ opacity: 1 }}
-      transition={{ duration: motionTokens.base, ease: motionTokens.ease }}
+      transition={{ duration: ROUTE_FADE_SECONDS, ease: motionTokens.ease }}
     >
       {children}
     </motion.div>
   );
+}
+
+const menuVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.025 } },
+};
+const menuItemVariants: Variants = {
+  hidden: { opacity: 0, x: -4 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: motionTokens.fast, ease: motionTokens.ease },
+  },
+};
+
+/**
+ * A menu's items arriving one after another (25 ms apart, 160 ms each). Only the items move: the
+ * menu's own surface is opaque from the first frame, so nothing underneath shows through.
+ */
+export function MenuReveal(
+  props: Omit<HTMLMotionProps<'nav'>, 'variants' | 'initial' | 'animate'>,
+) {
+  return <motion.nav variants={menuVariants} initial="hidden" animate="visible" {...props} />;
+}
+
+export function MenuRevealItem(props: Omit<HTMLMotionProps<'div'>, 'variants'>) {
+  return <motion.div variants={menuItemVariants} {...props} />;
 }
