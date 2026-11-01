@@ -101,7 +101,10 @@
     "stories": "Skapa scener med flera röster.",
     "audiobook": "Skapa ljudböcker med kapitel.",
     "transcribe": "Omvandla inspelningar till text.",
-    "music": "Skapa musik från en textbeskrivning."
+    "music": "Skapa musik från en textbeskrivning.",
+    "saved": "Sparade röster att återanvända.",
+    "batch": "Dubba många videor i en körning.",
+    "projects": "Dina dubbningar, berättelser och exporter."
   },
   "twilioIntegration": {
     "exposureWarning": "När detta slås på öppnas en separat lokal port som din tunnel publicerar på internet. Endast förfrågningar signerade med din Twilio Auth Token accepteras; resten av eVoice Studio förblir privat.",

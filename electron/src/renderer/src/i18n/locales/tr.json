@@ -101,7 +101,10 @@
     "stories": "Birden fazla sesle sahneler oluşturun.",
     "audiobook": "Bölümlü sesli kitaplar oluşturun.",
     "transcribe": "Kayıtları metne dönüştürün.",
-    "music": "Metin açıklamasından müzik oluşturun."
+    "music": "Metin açıklamasından müzik oluşturun.",
+    "saved": "Yeniden kullanmak için kaydedilen sesler.",
+    "batch": "Birçok videoyu tek seferde dublajlayın.",
+    "projects": "Dublajlarınız, hikâyeleriniz ve dışa aktarımlarınız."
   },
   "twilioIntegration": {
     "exposureWarning": "Bunu açmak, tünelinizin internette yayımladığı ayrı bir yerel bağlantı noktası açar. Yalnızca Twilio Auth Token'ınızla imzalanan istekler kabul edilir; eVoice Studio'nun geri kalanı gizli kalır.",

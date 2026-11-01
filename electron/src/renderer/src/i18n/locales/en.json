@@ -101,7 +101,10 @@
     "stories": "Create scenes with multiple voices.",
     "audiobook": "Build audiobooks with chapters.",
     "transcribe": "Turn recordings into text.",
-    "music": "Generate music from a text prompt."
+    "music": "Generate music from a text prompt.",
+    "saved": "Voices you saved to reuse.",
+    "batch": "Dub many videos in one run.",
+    "projects": "Your dubs, stories and exports."
   },
   "twilioIntegration": {
     "exposureWarning": "Turning this on opens a separate local port that your tunnel publishes to the internet. Only requests signed with your Twilio Auth Token are accepted; the rest of eVoice Studio stays private.",

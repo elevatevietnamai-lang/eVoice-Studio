@@ -101,7 +101,10 @@
     "stories": "Tạo cảnh với nhiều giọng nói.",
     "audiobook": "Tạo sách nói có chương.",
     "transcribe": "Chuyển bản ghi âm thành văn bản.",
-    "music": "Tạo nhạc từ mô tả bằng văn bản."
+    "music": "Tạo nhạc từ mô tả bằng văn bản.",
+    "saved": "Giọng đã lưu để dùng lại.",
+    "batch": "Lồng tiếng nhiều video trong một lần chạy.",
+    "projects": "Bản lồng tiếng, truyện và tệp xuất của bạn."
   },
   "twilioIntegration": {
     "exposureWarning": "Bật tính năng này sẽ mở một cổng cục bộ riêng mà đường hầm của bạn công bố ra internet. Chỉ các yêu cầu được ký bằng Auth Token Twilio của bạn mới được chấp nhận; phần còn lại của eVoice Studio vẫn riêng tư.",

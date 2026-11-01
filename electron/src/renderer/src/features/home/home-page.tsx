@@ -1,3 +1,4 @@
+import { destinations } from '@/components/app-shell/destinations';
 import { HomeFeatureIcon } from './home-feature-icon';
 import './home-page.css';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
@@ -31,18 +32,14 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-interface Destination {
-  to: string;
-  label: string;
-  description: string;
-}
-
 interface ExportRecord {
   id: string;
   filename: string;
   destination_path: string;
   mode?: string;
 }
+
+const PRIMARY_ROUTES = ['/clone', '/design', '/dub'];
 
 export function HomePage() {
   const { t } = useTranslation();
@@ -61,58 +58,17 @@ export function HomePage() {
     queryKey: ['longform-projects'],
     queryFn: projectLibrary.list,
   });
-  const destinations: Destination[] = [
-    {
-      to: '/clone',
-      label: t('nav.clone'),
-      description: t('clone.reference_hint'),
-    },
-    {
-      to: '/design',
-      label: t('designWorkspace.title'),
-      description: t('homeUi.design'),
-    },
-    {
-      to: '/dub',
-      label: t('dubWorkspace.title'),
-      description: t('homeUi.dub'),
-    },
-    {
-      to: '/stories',
-      label: t('nav.stories'),
-      description: t('homeUi.stories'),
-    },
-    {
-      to: '/audiobook',
-      label: t('audiobook.title'),
-      description: t('homeUi.audiobook'),
-    },
-    {
-      to: '/gallery',
-      label: t('nav.gallery'),
-      description: t('gallery.subtitle'),
-    },
-    {
-      to: '/transcriptions',
-      label: t('nav.transcribe'),
-      description: t('homeUi.transcribe'),
-    },
-    {
-      to: '/music',
-      label: t('musicStudio.title'),
-      description: t('homeUi.music'),
-    },
-    {
-      to: '/calls',
-      label: t('workflows.title'),
-      description: t('workflows.description'),
-    },
-    {
-      to: '/tools',
-      label: t('tools.title'),
-      description: t('tools.desc'),
-    },
-  ];
+  const primary = PRIMARY_ROUTES.map((to) => destinations.find((entry) => entry.to === to)!);
+  const homeDestinations = [
+    primary,
+    destinations.filter((entry) => entry.home && !PRIMARY_ROUTES.includes(entry.to)),
+  ].map((group) =>
+    group.map((entry) => ({
+      to: entry.to,
+      label: t(entry.title ?? entry.label),
+      description: t(entry.description),
+    })),
+  );
   const recentProjects = [
     ...dubProjects.map((project) => ({
       kind: 'dub' as const,
@@ -187,7 +143,7 @@ export function HomePage() {
               </h2>
               <p className="home-heading-tagline">{t('homeUi.subtitle')}</p>
             </FadeIn>
-            {[destinations.slice(0, 3), destinations.slice(3)].map((group, groupIndex) => (
+            {homeDestinations.map((group, groupIndex) => (
               <Stagger
                 key={groupIndex}
                 className={`home-destinations grid grid-cols-1 gap-3 @xl:grid-cols-2 @3xl:grid-cols-3 ${groupIndex === 0 ? 'home-destinations--primary' : 'home-destinations--secondary'}`}

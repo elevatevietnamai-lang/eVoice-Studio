@@ -101,7 +101,10 @@
     "stories": "Twórz sceny z wieloma głosami.",
     "audiobook": "Twórz audiobooki z rozdziałami.",
     "transcribe": "Zamieniaj nagrania na tekst.",
-    "music": "Twórz muzykę na podstawie opisu tekstowego."
+    "music": "Twórz muzykę na podstawie opisu tekstowego.",
+    "saved": "Zapisane głosy do ponownego użycia.",
+    "batch": "Dubbinguj wiele filmów naraz.",
+    "projects": "Twoje dubbingi, historie i eksporty."
   },
   "twilioIntegration": {
     "exposureWarning": "Włączenie otwiera osobny port lokalny, który Twój tunel publikuje w internecie. Akceptowane są tylko żądania podpisane Twoim Auth Token Twilio; reszta eVoice Studio pozostaje prywatna.",

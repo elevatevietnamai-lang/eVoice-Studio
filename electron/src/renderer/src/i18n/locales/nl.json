@@ -101,7 +101,10 @@
     "stories": "Maak scènes met meerdere stemmen.",
     "audiobook": "Maak luisterboeken met hoofdstukken.",
     "transcribe": "Zet opnamen om in tekst.",
-    "music": "Maak muziek op basis van een tekstbeschrijving."
+    "music": "Maak muziek op basis van een tekstbeschrijving.",
+    "saved": "Opgeslagen stemmen om opnieuw te gebruiken.",
+    "batch": "Dub veel video's in één keer.",
+    "projects": "Je dubs, verhalen en exports."
   },
   "twilioIntegration": {
     "exposureWarning": "Inschakelen opent een aparte lokale poort die je tunnel op internet publiceert. Alleen verzoeken die met je Twilio Auth Token zijn ondertekend worden geaccepteerd; de rest van eVoice Studio blijft privé.",

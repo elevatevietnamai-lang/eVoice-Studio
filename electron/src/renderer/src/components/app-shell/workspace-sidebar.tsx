@@ -47,7 +47,7 @@ export function WorkspaceSidebar() {
           onDoubleClick={() => setOpen(true)}
           className={cn(
             'brand-sidebar relative isolate grid h-dvh min-h-0 shrink-0 grid-rows-[auto_minmax(0,1fr)_auto_auto] overflow-hidden bg-sidebar',
-            mac ? 'w-16' : 'w-12 border-r border-border/50',
+            mac ? 'w-16' : 'w-14 border-r border-border/50',
           )}
         >
           {mac && (
@@ -84,30 +84,19 @@ export function WorkspaceSidebar() {
             </Button>
           </div>
           <WorkspaceNavigation compact />
-          {!mac && <StatusBar compact />}
-          <div
-            className={cn(
-              'shrink-0 border-t border-border/50 py-2',
-              mac ? 'grid grid-cols-2 items-center gap-1 px-1' : 'flex flex-col items-center gap-1',
-            )}
-          >
+          <div className="flex shrink-0 flex-col items-center gap-1 border-t border-border/50 py-2">
+            <StatusBar compact />
             <Link
               to="/settings"
               aria-label={t('nav.settings')}
               title={t('nav.settings')}
               className={cn(
-                buttonVariants({
-                  variant: 'ghost',
-                  size: mac ? 'icon-xs' : 'icon-sm',
-                }),
-                'workspace-nav-item',
+                buttonVariants({ variant: 'ghost', size: 'icon' }),
+                'workspace-nav-item size-10',
               )}
             >
-              <SettingsIcon
-                className="workspace-nav-icon"
-              />
+              <SettingsIcon className="workspace-nav-icon size-5" />
             </Link>
-            {mac && <StatusBar compact inline />}
           </div>
         </aside>
       )}

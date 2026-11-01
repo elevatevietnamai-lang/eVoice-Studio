@@ -101,7 +101,10 @@
     "stories": "Buat adegan dengan beberapa suara.",
     "audiobook": "Buat buku audio dengan bab.",
     "transcribe": "Ubah rekaman menjadi teks.",
-    "music": "Buat musik dari deskripsi teks."
+    "music": "Buat musik dari deskripsi teks.",
+    "saved": "Suara tersimpan untuk dipakai ulang.",
+    "batch": "Dubbing banyak video sekaligus.",
+    "projects": "Dubbing, cerita, dan ekspor Anda."
   },
   "twilioIntegration": {
     "exposureWarning": "Mengaktifkan ini membuka port lokal terpisah yang dipublikasikan tunnel Anda ke internet. Hanya permintaan yang ditandatangani dengan Auth Token Twilio Anda yang diterima; bagian lain eVoice Studio tetap privat.",

@@ -1,89 +1,28 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover';
 import { Link, useRouterState } from '@tanstack/react-router';
-import {
-  AudioLinesIcon,
-  FingerprintIcon,
-  BookOpenIcon,
-  FolderIcon,
-  WrenchIcon,
-  LayersIcon,
-  LibraryIcon,
-  FilmIcon,
-  WandSparklesIcon,
-  MicIcon,
-  UsersRoundIcon,
-  ChevronRightIcon,
-  BlocksIcon,
-  WorkflowIcon,
-  MusicIcon,
-} from 'lucide-react';
+import { AudioLinesIcon, ChevronRightIcon, FilmIcon, FingerprintIcon, WrenchIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { setWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
+import { inGroup, type WorkspaceDestination } from './destinations';
 import './workspace-menu.css';
 
-type Destination = readonly [
-  to:
-    | '/clone'
-    | '/stories'
-    | '/audiobook'
-    | '/projects'
-    | '/tools'
-    | '/batch'
-    | '/music'
-    | '/gallery'
-    | '/dub'
-    | '/design'
-    | '/transcriptions'
-    | '/personas'
-    | '/calls'
-    | '/integrations',
-  label: string,
-  icon: typeof AudioLinesIcon,
-  activate?: () => void,
-];
-
-const openSaved = () => setWorkspace({ libraryOpen: true, libraryTab: 'voices' });
-
-const voiceDestinations: Destination[] = [
-  ['/clone', 'nav.clone_short', FingerprintIcon, openSaved],
-  ['/design', 'designWorkspace.title', WandSparklesIcon],
-  ['/personas', 'nav.saved', UsersRoundIcon, openSaved],
-  ['/gallery', 'nav.gallery', LibraryIcon],
-];
-const storyDestinations: Destination[] = [
-  ['/stories', 'nav.stories', AudioLinesIcon],
-  ['/audiobook', 'audiobook.title', BookOpenIcon],
-  ['/music', 'musicStudio.title', MusicIcon],
-];
-const dubDestinations: Destination[] = [
-  ['/dub', 'dubWorkspace.title', FilmIcon],
-  ['/batch', 'nav.batch_dub', LayersIcon],
-];
-const moreDestinations: Destination[] = [
-  ['/transcriptions', 'nav.transcribe', MicIcon],
-  ['/calls', 'workflows.title', WorkflowIcon],
-  ['/tools', 'tools.title', WrenchIcon],
-  ['/integrations', 'integrationCatalog.title', BlocksIcon],
-];
-const libraryDestinations: Destination[] = [['/projects', 'projects.title', FolderIcon]];
+type Destination = WorkspaceDestination;
 
 const itemClass =
-  'workspace-nav-item group relative flex h-8 min-w-0 items-center overflow-hidden rounded-md text-sm text-(--sidebar-muted-foreground) outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring';
-const iconClass = 'workspace-nav-icon size-4 shrink-0 text-(--sidebar-muted-foreground) transition-colors';
+  'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-md text-sm text-(--sidebar-muted-foreground) outline-none transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring';
+const iconClass =
+  'workspace-nav-icon size-5 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160';
 
 function NavigationLink({
-  destination: [to, label, Icon, activate],
+  destination: { to, label, description, icon: Icon, activate },
   compact = false,
-  nested = false,
   flyout = false,
   onCurrentRoute,
 }: {
   destination: Destination;
   compact?: boolean;
-  nested?: boolean;
   flyout?: boolean;
   onCurrentRoute?: () => void;
 }) {
@@ -99,23 +38,29 @@ function NavigationLink({
       className={cn(
         itemClass,
         compact
-          ? 'h-10 justify-center px-0'
+          ? 'size-10 justify-center'
           : flyout
-            ? 'h-10 gap-2 px-3 text-sm'
-            : nested
-              ? 'h-7 gap-2 px-2 text-xs'
-              : 'gap-2.5 px-2.5',
+            ? 'h-10 gap-2.5 px-3'
+            : 'min-h-11 gap-3 px-2.5 py-1.5',
       )}
       activeProps={{
         className: 'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground',
         'aria-current': 'page',
       }}
     >
-      <Icon
-        className={cn(iconClass, nested && 'size-3.5')}
-        aria-hidden="true"
-      />
-      {!compact && <span className="truncate">{t(label)}</span>}
+      <Icon className={iconClass} aria-hidden="true" />
+      {!compact && !flyout && (
+        <span className="min-w-0 flex-1 leading-tight">
+          <span className="block truncate">{t(label)}</span>
+          <span
+            aria-hidden="true"
+            className="mt-0.5 block truncate text-xs font-normal text-(--sidebar-muted-foreground)"
+          >
+            {t(description)}
+          </span>
+        </span>
+      )}
+      {flyout && <span className="truncate">{t(label)}</span>}
     </Link>
   );
   if (!compact) return link;
@@ -141,7 +86,7 @@ function NavigationGroup({
   pathname: string;
 }) {
   const { t } = useTranslation();
-  const active = children.some(([to]) => pathname === to || pathname.startsWith(to + '/'));
+  const active = children.some(({ to }) => pathname === to || pathname.startsWith(to + '/'));
   const [expanded, setExpanded] = useState(active);
   const [popupOpen, setPopupOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -177,8 +122,10 @@ function NavigationGroup({
   const triggerClass = cn(
     itemClass,
     'w-full',
-    compact ? 'h-10 justify-center' : 'gap-2.5 px-2.5 font-medium',
-    active && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
+    compact
+      ? 'size-10 justify-center'
+      : 'h-7 gap-2 px-2.5 text-xs font-medium uppercase tracking-wide',
+    active && compact && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
   );
   if (compact)
     return (
@@ -249,10 +196,10 @@ function NavigationGroup({
           <div>
             {children.map((destination) => (
               <NavigationLink
-                key={destination[0]}
+                key={destination.to}
                 destination={destination}
                 flyout
-                onCurrentRoute={pathname === destination[0] ? () => setPopupOpen(false) : undefined}
+                onCurrentRoute={pathname === destination.to ? () => setPopupOpen(false) : undefined}
               />
             ))}
           </div>
@@ -260,7 +207,7 @@ function NavigationGroup({
       </Popover>
     );
   return (
-    <div className="py-0.5">
+    <div className="py-1">
       <button
         type="button"
         aria-expanded={expanded}
@@ -269,10 +216,6 @@ function NavigationGroup({
         onClick={() => setExpanded((value) => !value)}
         className={triggerClass}
       >
-        <Icon
-          className={iconClass}
-          aria-hidden="true"
-        />
         <span className="truncate">{t(label)}</span>
         <ChevronRightIcon
           aria-hidden="true"
@@ -292,9 +235,9 @@ function NavigationGroup({
         )}
       >
         <div className="overflow-hidden">
-          <div className="ml-[1.08rem] mt-0.5 space-y-0.5 border-l border-sidebar-border/60 pl-2">
+          <div className="mt-0.5 space-y-0.5">
             {children.map((destination) => (
-              <NavigationLink key={destination[0]} destination={destination} nested />
+              <NavigationLink key={destination.to} destination={destination} />
             ))}
           </div>
         </div>
@@ -320,33 +263,33 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
       <NavigationGroup
         label="nav.voice"
         icon={FingerprintIcon}
-        children={voiceDestinations}
+        children={inGroup('voice')}
         compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
         label="nav.stories"
         icon={AudioLinesIcon}
-        children={storyDestinations}
+        children={inGroup('stories')}
         compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
         label="nav.dub"
         icon={FilmIcon}
-        children={dubDestinations}
+        children={inGroup('dub')}
         compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
         label="nav.more"
         icon={WrenchIcon}
-        children={moreDestinations}
+        children={inGroup('more')}
         compact={compact}
         pathname={pathname}
       />
-      {libraryDestinations.map((destination) => (
-        <NavigationLink key={destination[0]} destination={destination} compact={compact} />
+      {inGroup('library').map((destination) => (
+        <NavigationLink key={destination.to} destination={destination} compact={compact} />
       ))}
     </nav>
   );

@@ -101,7 +101,10 @@
     "stories": "Crie cenas com várias vozes.",
     "audiobook": "Crie audiolivros com capítulos.",
     "transcribe": "Transforme gravações em texto.",
-    "music": "Gere música a partir de uma descrição de texto."
+    "music": "Gere música a partir de uma descrição de texto.",
+    "saved": "Vozes salvas para reutilizar.",
+    "batch": "Duble vários vídeos de uma vez.",
+    "projects": "Suas dublagens, histórias e exportações."
   },
   "twilioIntegration": {
     "exposureWarning": "Ativar isto abre uma porta local separada que seu túnel publica na internet. Apenas solicitações assinadas com seu Auth Token do Twilio são aceitas; o restante do eVoice Studio continua privado.",

@@ -101,7 +101,10 @@
     "stories": "Erstelle Szenen mit mehreren Stimmen.",
     "audiobook": "Erstelle Hörbücher mit Kapiteln.",
     "transcribe": "Wandle Aufnahmen in Text um.",
-    "music": "Erzeuge Musik aus einer Textbeschreibung."
+    "music": "Erzeuge Musik aus einer Textbeschreibung.",
+    "saved": "Gespeicherte Stimmen zur Wiederverwendung.",
+    "batch": "Viele Videos in einem Durchlauf vertonen.",
+    "projects": "Deine Synchronisationen, Geschichten und Exporte."
   },
   "twilioIntegration": {
     "exposureWarning": "Beim Einschalten wird ein separater lokaler Port geöffnet, den dein Tunnel im Internet veröffentlicht. Nur mit deinem Twilio Auth Token signierte Anfragen werden akzeptiert; der Rest von eVoice Studio bleibt privat.",

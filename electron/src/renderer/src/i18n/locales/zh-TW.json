@@ -101,7 +101,10 @@
     "stories": "用多種聲音創作場景。",
     "audiobook": "製作分章節的有聲書。",
     "transcribe": "將錄音轉成文字。",
-    "music": "根據文字描述產生音樂。"
+    "music": "根據文字描述產生音樂。",
+    "saved": "儲存下來可重複使用的聲音。",
+    "batch": "一次為多個影片配音。",
+    "projects": "你的配音、故事和匯出檔案。"
   },
   "twilioIntegration": {
     "exposureWarning": "開啟後會開啟一個獨立的本機連接埠，由你的通道發布到網際網路。只接受以你的 Twilio Auth Token 簽署的請求；eVoice Studio 的其餘部分維持私密。",

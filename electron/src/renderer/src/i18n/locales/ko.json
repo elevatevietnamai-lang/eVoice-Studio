@@ -101,7 +101,10 @@
     "stories": "여러 목소리로 장면을 만드세요.",
     "audiobook": "챕터가 있는 오디오북을 만드세요.",
     "transcribe": "녹음을 텍스트로 변환하세요.",
-    "music": "텍스트 설명으로 음악을 만듭니다."
+    "music": "텍스트 설명으로 음악을 만듭니다.",
+    "saved": "다시 쓰려고 저장한 음성.",
+    "batch": "여러 영상을 한 번에 더빙합니다.",
+    "projects": "내 더빙, 스토리, 내보내기."
   },
   "twilioIntegration": {
     "exposureWarning": "켜면 터널이 인터넷에 공개하는 별도의 로컬 포트가 열립니다. Twilio Auth Token으로 서명된 요청만 허용되며 VoiceStudio의 나머지 부분은 비공개로 유지됩니다.",
