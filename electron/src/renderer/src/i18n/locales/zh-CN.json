@@ -3979,5 +3979,10 @@
     "burn": "压制翻译字幕",
     "export": "导出含 AI 音乐的视频",
     "needs_dub": "请先生成配音；导出时会将该配音与音乐混音。"
+  },
+  "windowControls": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "还原"
   }
 }

@@ -93,7 +93,7 @@ Facts the cases rely on (checked in code):
   suppresses the consent prompt; case 2b overrides it.
 - Save dialogs are reached through `window.voicestudio.files.saveData` /
   `saveAudio` (`ipc.ts` `filesSaveData` / `filesSaveAudio`).
-- The star badge fetch is made by the renderer (`components/app-shell/github-star.tsx`).
+- The GitHub star badge (and its fetch) was removed from the header; nothing fetches the star count any more.
 - Main-process errors are journaled to `<userData>/main-process-errors.json`
   (`index.ts`); logs live in `app.getPath('logs')`.
 - `test-results/` is already gitignored.

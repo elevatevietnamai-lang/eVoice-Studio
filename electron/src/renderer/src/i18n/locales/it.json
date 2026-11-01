@@ -3981,5 +3981,10 @@
     "burn": "Imprimi sottotitoli tradotti",
     "export": "Esporta video con musica IA",
     "needs_dub": "Genera prima un doppiaggio; l'esportazione unisce quella voce alla musica."
+  },
+  "windowControls": {
+    "minimize": "Riduci a icona",
+    "maximize": "Ingrandisci",
+    "restore": "Ripristina"
   }
 }

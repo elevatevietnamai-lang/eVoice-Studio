@@ -1,3 +1,4 @@
+import { CommandSearch } from '@/components/app-shell/command-search';
 import { SidebarToggle } from '@/components/app-shell/sidebar-toggle';
 import { EditProfile } from './edit-profile';
 import { ProfileAvatar } from '@/components/profile-avatar';
@@ -11,7 +12,7 @@ import { TakeDetails } from './take-details';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
-import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon, SearchIcon } from 'lucide-react';
+import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon, } from 'lucide-react';
 import { isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -140,7 +141,7 @@ export function ClonePage() {
         <section className="flex min-w-0 flex-1 flex-col">
           <header
             className={cn(
-              'workspace-titlebar flex shrink-0 items-center justify-between gap-3 px-5',
+              'workspace-titlebar relative flex shrink-0 items-center justify-between gap-3 px-5',
               !editingProfile &&
                 !selectedTake &&
                 (!panel || choosingVoice) &&
@@ -152,16 +153,8 @@ export function ClonePage() {
               <SidebarToggle />
               <h1 className="truncate text-sm font-medium">{t('clone.title')}</h1>
             </div>
+            <CommandSearch className="ml-auto" />
             <div className="flex shrink-0 items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label={t('preferences.search')}
-                title="Ctrl/Cmd + K"
-                onClick={() => window.dispatchEvent(new Event('voicestudio:commands'))}
-              >
-                <SearchIcon />
-              </Button>
               <Button
                 variant="ghost"
                 size="sm"

@@ -178,7 +178,7 @@ function NavigationGroup({
           ref={popupRef}
           side="right"
           sideOffset={0}
-          className="w-52 p-1.5 data-open:zoom-in-100 data-closed:zoom-out-100"
+          className="w-52 p-1.5"
           onPointerEnter={cancelClose}
           onPointerLeave={(event) => {
             if (event.pointerType === 'mouse') scheduleClose();

@@ -3979,5 +3979,10 @@
     "burn": "燒入翻譯字幕",
     "export": "匯出含 AI 音樂的影片",
     "needs_dub": "請先生成配音；匯出時會將該配音與音樂混音。"
+  },
+  "windowControls": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "還原"
   }
 }

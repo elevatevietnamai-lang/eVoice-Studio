@@ -154,7 +154,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--input', '--popover', '--popover-foreground', '--accent', '--ring'],
     type: 'text-ui',
     motion: 'enter-exit',
-    motionNote: 'List fades in over 160 ms, slides in from its anchor and scales from 95%; items change colour over 160 ms.',
+    motionNote: 'List fades in and scales from 97% over 160 ms (Base UI start and end styles); items change colour over 160 ms.',
   },
   separator: {
     role: 'structure',
@@ -245,7 +245,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--popover', '--popover-foreground', '--border'],
     type: 'text-caption',
     motion: 'enter-exit',
-    motionNote: 'Fades in, slides a few px from its anchor and scales from 95%.',
+    motionNote: 'Fades in and scales from 97% over 160 ms (Base UI start and end styles).',
     avoid: 'Do not put interactive content inside.',
   },
 };

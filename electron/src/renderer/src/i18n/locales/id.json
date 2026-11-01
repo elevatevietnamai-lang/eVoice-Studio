@@ -3979,5 +3979,10 @@
     "burn": "Sematkan subtitle terjemahan",
     "export": "Ekspor video dengan musik AI",
     "needs_dub": "Buat hasil dubbing terlebih dahulu; ekspor akan mencampur suara tersebut dengan musik."
+  },
+  "windowControls": {
+    "minimize": "Perkecil",
+    "maximize": "Perbesar",
+    "restore": "Pulihkan"
   }
 }

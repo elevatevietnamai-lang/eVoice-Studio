@@ -3979,5 +3979,10 @@
     "burn": "Çevrilmiş altyazıları videoya göm",
     "export": "Videoyu YZ müziğiyle dışa aktar",
     "needs_dub": "Önce bir dublaj oluşturun; dışa aktarma işlemi bu sesi müzikle karıştırır."
+  },
+  "windowControls": {
+    "minimize": "Küçült",
+    "maximize": "Ekranı kapla",
+    "restore": "Geri yükle"
   }
 }

@@ -3985,5 +3985,10 @@
     "burn": "Wypal przetłumaczone napisy",
     "export": "Eksportuj wideo z muzyką AI",
     "needs_dub": "Najpierw wygeneruj dubbing; eksport łączy ten głos z muzyką."
+  },
+  "windowControls": {
+    "minimize": "Minimalizuj",
+    "maximize": "Maksymalizuj",
+    "restore": "Przywróć"
   }
 }

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { isImeComposing } from '@/lib/ime';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { useHistory } from '@/hooks/use-history';
 import { useProfiles } from '@/hooks/use-profiles';
 import { useGenerateClone } from '@/hooks/use-generate';
@@ -28,6 +27,7 @@ import {
   MicIcon,
   PhoneCallIcon,
   PlayIcon,
+  SearchIcon,
   SettingsIcon,
   KeyboardIcon,
   UsersRoundIcon,
@@ -309,45 +309,53 @@ export function CommandPalette() {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-xl p-3" aria-describedby={undefined}>
+        <DialogContent
+          showCloseButton={false}
+          className="top-16 max-w-xl translate-y-0 gap-0 overflow-hidden p-0 sm:max-w-xl"
+          aria-describedby={undefined}
+        >
           <DialogTitle className="sr-only">{t('preferences.search')}</DialogTitle>
-          <Input
-            autoFocus
-            role="combobox"
-            aria-expanded={open}
-            aria-controls="command-results"
-            aria-activedescendant={items[active] ? `command-${items[active].id}` : undefined}
-            aria-label={t('preferences.search')}
-            placeholder={t('preferences.search')}
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setActive(0);
-            }}
-            className="mr-8 h-10 w-[calc(100%-2rem)]"
-            onKeyDown={(event) => {
-              if (isImeComposing(event)) return;
-              if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                event.preventDefault();
-                const next =
-                  (active + (event.key === 'ArrowDown' ? 1 : -1) + items.length) %
-                  Math.max(1, items.length);
-                setActive(next);
-                document
-                  .getElementById(`command-${items[next]?.id}`)
-                  ?.scrollIntoView({ block: 'nearest' });
-              }
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                run(active);
-              }
-            }}
-          />
+          <div className="flex items-center gap-2.5 border-b border-border px-4">
+            <SearchIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <input
+              autoFocus
+              role="combobox"
+              aria-expanded={open}
+              aria-controls="command-results"
+              aria-activedescendant={items[active] ? `command-${items[active].id}` : undefined}
+              aria-label={t('preferences.search')}
+              placeholder={t('preferences.search')}
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setActive(0);
+              }}
+              className="h-12 min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              onKeyDown={(event) => {
+                if (isImeComposing(event)) return;
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                  event.preventDefault();
+                  const next =
+                    (active + (event.key === 'ArrowDown' ? 1 : -1) + items.length) %
+                    Math.max(1, items.length);
+                  setActive(next);
+                  document
+                    .getElementById(`command-${items[next]?.id}`)
+                    ?.scrollIntoView({ block: 'nearest' });
+                }
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  run(active);
+                }
+              }}
+            />
+            <Kbd>Esc</Kbd>
+          </div>
           <div
             id="command-results"
             role="listbox"
             aria-label={t('preferences.search')}
-            className="max-h-80 overflow-y-auto"
+            className="max-h-[min(24rem,60dvh)] overflow-y-auto p-2"
           >
             {items.map((item, index) => {
               const Icon = item.icon;
@@ -355,7 +363,7 @@ export function CommandPalette() {
               return (
                 <div key={item.id} role="presentation">
                   {startsGroup && (
-                    <p className="px-3 pt-3 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground">
+                    <p className="px-2.5 pt-2.5 pb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
                       {item.group}
                     </p>
                   )}
@@ -365,27 +373,39 @@ export function CommandPalette() {
                     aria-selected={active === index}
                     tabIndex={-1}
                     className={cn(
-                      'group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm outline-none transition-[background-color,box-shadow,transform]',
-                      active === index
-                        ? 'bg-accent text-accent-foreground shadow-sm ring-1 ring-inset ring-border/60'
-                        : 'hover:bg-accent',
+                      'group flex h-10 w-full items-center gap-3 rounded-md px-2.5 text-left text-sm text-foreground outline-none transition-colors duration-160',
+                      active === index ? 'bg-(--sidebar-row-selected)' : 'hover:bg-accent',
                     )}
                     onMouseMove={() => setActive(index)}
                     onClick={() => run(index)}
                   >
-                    <Icon className="size-4 shrink-0 text-muted-foreground transition-colors duration-150 group-hover:text-foreground" />
+                    <Icon
+                      className={cn(
+                        'size-4 shrink-0 transition-colors duration-160',
+                        active === index ? 'text-foreground' : 'text-muted-foreground',
+                      )}
+                    />
                     <span className="min-w-0 flex-1 truncate">{item.label}</span>
                     {item.shortcut && <Kbd>{item.shortcut}</Kbd>}
                   </button>
                 </div>
               );
             })}
+            {!items.length && (
+              <p className="p-6 text-center text-sm text-muted-foreground">
+                {t('preferences.no_matches')}
+              </p>
+            )}
           </div>
-          {!items.length && (
-            <p className="p-4 text-center text-sm text-muted-foreground">
-              {t('preferences.no_matches')}
-            </p>
-          )}
+          <div className="flex items-center gap-4 border-t border-border px-4 py-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Kbd>↑</Kbd>
+              <Kbd>↓</Kbd>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Kbd>↵</Kbd>
+            </span>
+          </div>
         </DialogContent>
       </Dialog>
       <KeyboardCheatsheet open={shortcutsOpen} onOpenChange={setShortcutsOpen} />

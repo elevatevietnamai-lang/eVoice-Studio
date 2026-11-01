@@ -37,9 +37,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const PRELOAD_PATH = join(here, '../preload/index.mjs');
 const RENDERER_DIR = join(here, '../renderer');
 
-// Neutral startup surface; transparent caption controls follow the CSS title bar.
+// Neutral startup surface; the caption buttons are drawn by the renderer (window-controls.tsx).
 const BACKGROUND = '#0a0a0a';
-const OVERLAY = { color: '#00000000', symbolColor: '#737373', height: 52 };
 
 installAppIdentity(app);
 registerAppScheme();
@@ -144,9 +143,7 @@ function createWindow(): BrowserWindow {
     show: false,
     backgroundColor: BACKGROUND,
     titleBarStyle: 'hidden',
-    ...(process.platform === 'darwin'
-      ? { trafficLightPosition: { x: 12, y: 10 } }
-      : { titleBarOverlay: OVERLAY }),
+    ...(process.platform === 'darwin' ? { trafficLightPosition: { x: 12, y: 10 } } : {}),
     webPreferences: {
       preload: PRELOAD_PATH,
       contextIsolation: true,

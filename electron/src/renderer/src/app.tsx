@@ -7,6 +7,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { MotionProvider } from '@/components/motion';
+import { WindowControls } from '@/components/app-shell/window-controls';
 import { queryClient } from '@/lib/query';
 import { router } from './router';
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -130,6 +131,7 @@ export function App() {
             <TooltipProvider>
               <MotionProvider>
                 <RouterProvider router={router} />
+                <WindowControls />
                 <ModelLicenceGate />
                 <Toaster richColors position="bottom-right" />
               </MotionProvider>

@@ -3979,5 +3979,10 @@
     "burn": "Bränn in översatta undertexter",
     "export": "Exportera video med AI-musik",
     "needs_dub": "Generera en dubbning först; exporten mixar den rösten med musiken."
+  },
+  "windowControls": {
+    "minimize": "Minimera",
+    "maximize": "Maximera",
+    "restore": "Återställ"
   }
 }

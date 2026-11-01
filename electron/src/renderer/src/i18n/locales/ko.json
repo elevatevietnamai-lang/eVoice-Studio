@@ -3979,5 +3979,10 @@
     "burn": "번역된 자막 입히기",
     "export": "AI 음악과 함께 비디오 내보내기",
     "needs_dub": "먼저 더빙을 생성하세요. 내보낼 때 해당 음성과 음악이 믹싱됩니다."
+  },
+  "windowControls": {
+    "minimize": "최소화",
+    "maximize": "최대화",
+    "restore": "이전 크기로"
   }
 }

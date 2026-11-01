@@ -3979,5 +3979,10 @@
     "burn": "Vertaalde ondertitels inbranden",
     "export": "Video exporteren met AI-muziek",
     "needs_dub": "Genereer eerst een dub; de export mixt die stem met de muziek."
+  },
+  "windowControls": {
+    "minimize": "Minimaliseren",
+    "maximize": "Maximaliseren",
+    "restore": "Herstellen"
   }
 }

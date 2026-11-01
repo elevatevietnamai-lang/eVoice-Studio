@@ -126,7 +126,7 @@ themes:
   selectable: [studio, signal, canopy, current, hearth, orchid, heritage]
   note: "Studio Classic ('studio') is the previous zinc and blue default. Named palettes override the default through html[data-theme-id]."
 coverage:
-  applied: [tokens, fonts, ui-components, component-roles, workspace-menu, header, motion-provider, morph-icons-in-4-controls, brand-mark, home-layout]
+  applied: [tokens, fonts, ui-components, component-roles, workspace-menu, header, window-controls, scrollbars, motion-provider, morph-icons-in-4-controls, brand-mark, home-layout]
   notApplied: [setup-and-music-layouts, voice-dub-design-layouts]
 ---
 
@@ -184,6 +184,10 @@ Rules:
 - **Icons**: `lucide-react` for static icons (stroke 1.75). Use `MorphIcon` (`components/ui/morph-icon.tsx`) only where an icon changes state: theme toggle, sidebar toggle, play and pause. Pass Lucide icon data from `lucide`, not a component.
 - **Toasts**: `sonner`, status colours follow section 2.
 - **Workspace menu** (`components/app-shell/workspace-menu.tsx`): flat rows, 32 px high. Rest uses `--sidebar-muted-foreground`, hover `--sidebar-row-hover`, current page `--sidebar-row-selected` with `--sidebar-foreground`. Icons are single-colour and static; no per-item hues, glow, blur or hover animation. Groups: Voice, Stories, Dubbing, More (transcribe, calls, tools, integrations), then Projects. Group open and close takes 240 ms; the compact rail opens each group as a flyout. A test (`nav-style.test.ts`) blocks gradients, blur and hue classes in the menu, sidebar, header and status bar.
+- **Window buttons** (Windows and Linux, `window-controls.tsx`): minimize, maximize or restore, and close are React buttons (46 by 40 px) mounted at the app root, so setup and the backend gate have them too. Hover uses `bg-accent`; close turns `--destructive`. They call `bridge.window`. The cost of drawing them: Windows 11's Snap Layouts flyout (on the native maximize button) is gone; edge dragging and Win+arrow snapping still work.
+- **Search field** (`command-search.tsx`): wide panes centre a 26 rem field under the header; narrow ones show a 32 px icon button. It opens the command palette, which drops from the top (`top-16`) with a search row, grouped options, a visible selected row (`--sidebar-row-selected`) and key hints.
+- **Scrollbars**: every scroll container gets a 12 px bar with a 6 px rounded thumb, no arrow buttons, thumb at 50% foreground (3:1 at rest), 68% on hover, 85% while dragging.
+- **Popovers, selects, tooltips, account menu**: fade and scale from 97% over 160 ms using Base UI `data-starting-style` and `data-ending-style` transitions; they can be interrupted mid-way.
 - **Header**: title on the left; the command-palette button and account corner on the right. No promotional buttons (Get Pro and the GitHub star badge were removed; the Pro page stays under Settings).
 - Hover, active and disabled states are inherited from the component files; document a new one here when you add it.
 - **Interaction state rules** (tested for all 8 palettes in `brand-contrast.test.ts`): a hovered sidebar row differs from the sidebar by at least 1.15:1 and a selected row by 1.25:1; a hovered toolbar control by 1.15:1; the muted label stays at 4.5:1 on both; input and select borders (`--input`) reach 3:1 on the canvas (WCAG 1.4.11). Hover on ghost, outline and toggle controls uses `bg-accent`, never `bg-muted` or a fractional alpha of it. Input fills use `--control-fill`, not `--input`.
@@ -206,7 +210,7 @@ Source of truth: `components/ui/roles.ts` (`roles.test.ts` fails when a primitiv
 | `morph-icon` | icon | Icon that changes shape with state (play to pause, menu to close, sun to moon). | `currentColor` | `inherit` | morph: Spring "snappy", reducedMotion "user", stroke 1.75. Avoid: Do not use for icons that never change; use lucide-react. |
 | `progress` | feedback | Determinate progress of a known task (download, render, install). | `--primary` `--secondary` `--muted-foreground` | `text-caption` | feedback: Indicator width eases over 240 ms. Avoid: Use Spinner when the duration is unknown. |
 | `scroll-area` | structure | Scrollable region with a themed scrollbar. | `--border` `--muted-foreground` | `inherit` | feedback: Focus ring only; the scrollbar thumb changes colour over 160 ms. |
-| `select` | selection | Pick one option from a list of five or more; use ToggleGroup for fewer. | `--input` `--popover` `--popover-foreground` `--accent` `--ring` | `text-ui` | enter-exit: List fades in over 160 ms, slides in from its anchor and scales from 95%; items change colour over 160 ms. |
+| `select` | selection | Pick one option from a list of five or more; use ToggleGroup for fewer. | `--input` `--popover` `--popover-foreground` `--accent` `--ring` | `text-ui` | enter-exit: List fades in and scales from 97% over 160 ms (Base UI start and end styles); items change colour over 160 ms. |
 | `separator` | structure | Hairline between groups. | `--border` | `inherit` | none: Static. |
 | `skeleton` | feedback | Placeholder shape while content loads. | `--muted` | `inherit` | loop: Tailwind animate-pulse; stops under reduced motion. Avoid: Do not use for tasks longer than a few seconds; show Progress. |
 | `slider` | input | Pick a value in a range (speed, volume, strength). | `--primary` `--secondary` `--ring` | `text-label` | feedback: Thumb ring on focus over 160 ms; the value follows the pointer. |
@@ -217,7 +221,7 @@ Source of truth: `components/ui/roles.ts` (`roles.test.ts` fails when a primitiv
 | `textarea` | input | Multi-line text entry (scripts, prompts, lyrics). | `--input` `--background` `--foreground` `--placeholder` `--ring` | `text-editor` | feedback: Border and ring colour over 160 ms on focus. |
 | `toggle-group` | selection | Choose one or several from a short set (two to four) shown side by side. | `--secondary` `--accent` `--border` `--ring` | `text-label` | feedback: Colour and opacity change over 160 ms; no scale or bounce. |
 | `toggle` | selection | Single pressed or unpressed button (bold, mute, favourite). | `--accent` `--accent-foreground` `--ring` | `text-label` | feedback: Colour and opacity change over 160 ms; no scale or bounce. Pair with MorphIcon when the icon changes with the state. |
-| `tooltip` | hint | Name or explain an icon-only control; never essential information. | `--popover` `--popover-foreground` `--border` | `text-caption` | enter-exit: Fades in, slides a few px from its anchor and scales from 95%. Avoid: Do not put interactive content inside. |
+| `tooltip` | hint | Name or explain an icon-only control; never essential information. | `--popover` `--popover-foreground` `--border` | `text-caption` | enter-exit: Fades in and scales from 97% over 160 ms (Base UI start and end styles). Avoid: Do not put interactive content inside. |
 
 Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 

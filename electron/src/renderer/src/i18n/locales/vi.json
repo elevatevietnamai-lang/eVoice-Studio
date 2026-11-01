@@ -3979,5 +3979,10 @@
     "burn": "Chèn phụ đề đã dịch",
     "export": "Xuất video kèm nhạc AI",
     "needs_dub": "Hãy tạo lồng tiếng trước; bản xuất sẽ trộn giọng đó với nhạc."
+  },
+  "windowControls": {
+    "minimize": "Thu nhỏ",
+    "maximize": "Phóng to",
+    "restore": "Khôi phục"
   }
 }

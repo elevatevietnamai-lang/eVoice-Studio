@@ -3979,5 +3979,10 @@
     "burn": "Übersetzte Untertitel einbrennen",
     "export": "Video mit KI-Musik exportieren",
     "needs_dub": "Generiere zuerst eine Synchronfassung; beim Export wird diese Stimme mit der Musik abgemischt."
+  },
+  "windowControls": {
+    "minimize": "Minimieren",
+    "maximize": "Maximieren",
+    "restore": "Wiederherstellen"
   }
 }

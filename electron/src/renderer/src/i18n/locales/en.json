@@ -3979,5 +3979,10 @@
     "burn": "Burn translated subtitles",
     "export": "Export video with AI music",
     "needs_dub": "Generate a dub first; the export mixes that voice with the music."
+  },
+  "windowControls": {
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "restore": "Restore"
   }
 }
