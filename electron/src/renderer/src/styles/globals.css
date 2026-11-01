@@ -168,6 +168,35 @@ html[data-theme-id=''] {
   input[type='range'] {
     accent-color: var(--primary);
   }
+  /* Tailwind v4 leaves buttons on the arrow cursor. Everything that acts on click shows a hand. */
+  :is(
+    button,
+    summary,
+    select,
+    label[for],
+    [role='button'],
+    [role='tab'],
+    [role='menuitem'],
+    [role='menuitemcheckbox'],
+    [role='menuitemradio'],
+    [role='option'],
+    [role='switch'],
+    [role='checkbox'],
+    [role='radio'],
+    input[type='checkbox'],
+    input[type='radio'],
+    input[type='range'],
+    input[type='file']
+  ):not(:disabled, [aria-disabled='true'], [data-disabled]) {
+    cursor: pointer;
+  }
+  :is(button, select, input, [role='button'], [role='tab'], [role='menuitem'], [role='option']):is(
+      :disabled,
+      [aria-disabled='true'],
+      [data-disabled]
+    ) {
+    cursor: not-allowed;
+  }
   ::selection {
     background: color-mix(in srgb, var(--primary) 35%, transparent);
   }
