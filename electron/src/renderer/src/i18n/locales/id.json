@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "Ciutkan panel",
+    "expand": "Bentangkan panel",
     "edit": "Edit profil suara"
   },
   "modelSettings": {

@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "Bereich einklappen",
+    "expand": "Bereich erweitern",
     "edit": "Stimmprofil bearbeiten"
   },
   "modelSettings": {

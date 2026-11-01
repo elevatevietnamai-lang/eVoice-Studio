@@ -56,3 +56,29 @@ export function useWorkspace() {
     () => current,
   );
 }
+
+/**
+ * How many control panels are mounted. The rail shows its panel toggle only while one is, so pages
+ * without a panel (Settings, Saved, Calls) never show a toggle that does nothing.
+ */
+let mountedPanels = 0;
+const panelListeners = new Set<() => void>();
+export function registerPanel(): () => void {
+  mountedPanels += 1;
+  panelListeners.forEach((listener) => listener());
+  return () => {
+    mountedPanels -= 1;
+    panelListeners.forEach((listener) => listener());
+  };
+}
+export function usePanelMounted(): boolean {
+  return useSyncExternalStore(
+    (listener) => {
+      panelListeners.add(listener);
+      return () => {
+        panelListeners.delete(listener);
+      };
+    },
+    () => mountedPanels > 0,
+  );
+}

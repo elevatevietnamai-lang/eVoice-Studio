@@ -722,6 +722,7 @@
   },
   "paneActions": {
     "collapse": "Collapse pane",
+    "expand": "Expand pane",
     "edit": "Edit voice profile"
   },
   "modelSettings": {

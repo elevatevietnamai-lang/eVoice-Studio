@@ -34,7 +34,7 @@ export interface WorkspaceDestination {
   activate?: () => void;
 }
 
-const openSaved = () => setWorkspace({ libraryOpen: true, libraryTab: 'voices' });
+const openSaved = () => setWorkspace({ panelCollapsed: false, libraryTab: 'voices' });
 
 /**
  * One list for the menu and for Home, so names, order and descriptions cannot drift apart.

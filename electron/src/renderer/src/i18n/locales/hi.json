@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "पैनल समेटें",
+    "expand": "पैनल खोलें",
     "edit": "वॉइस प्रोफ़ाइल संपादित करें"
   },
   "modelSettings": {

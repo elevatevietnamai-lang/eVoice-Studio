@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "Thu gọn bảng",
+    "expand": "Mở rộng bảng",
     "edit": "Chỉnh sửa hồ sơ giọng nói"
   },
   "modelSettings": {

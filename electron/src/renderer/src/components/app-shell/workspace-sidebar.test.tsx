@@ -27,6 +27,7 @@ vi.mock('react-i18next', () => ({
 vi.mock('@/lib/store/workspace', () => ({
   useWorkspace: () => ({ libraryOpen: true, libraryTab: 'voices' }),
   setWorkspace: vi.fn(),
+  usePanelMounted: () => false,
 }));
 vi.mock('@/components/bridge', () => ({ appVersion: () => '0.5.7', isMac: () => false }));
 vi.mock('@/lib/brand', () => ({ brandIcon: 'icon.png', brandArtwork: 'art.png' }));

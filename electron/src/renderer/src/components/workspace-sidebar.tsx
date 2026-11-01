@@ -1,7 +1,7 @@
-import { useId, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { type LucideIcon } from 'lucide-react';
 import { usePaneResize } from '@/hooks/use-pane-resize';
-import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
+import { registerPanel, setWorkspace, useWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
 
 const WIDTHS = {
@@ -54,6 +54,19 @@ export function SecondarySidebar({
   // One panel per page: the rail's bottom toggle folds it, and navigation reopens it (AppShell).
   const { panelCollapsed } = useWorkspace();
   const collapsed = controlledCollapsed ?? panelCollapsed;
+  useEffect(() => registerPanel(), []);
+  // While the width opens, the content is still narrow and would rewrap in view: keep it
+  // transparent until the pane is wide, then fade it in.
+  const [expanding, setExpanding] = useState(false);
+  const wasCollapsed = useRef(collapsed);
+  useEffect(() => {
+    const opened = wasCollapsed.current && !collapsed;
+    wasCollapsed.current = collapsed;
+    if (!opened) return;
+    setExpanding(true);
+    const timer = setTimeout(() => setExpanding(false), 420);
+    return () => clearTimeout(timer);
+  }, [collapsed]);
   const [view, setView] = useState<'controls' | 'library'>('controls');
   const [libraryVisited, setLibraryVisited] = useState(false);
   const tabsId = useId();
@@ -86,6 +99,7 @@ export function SecondarySidebar({
       data-variant={variant}
       data-collapsed={collapsed || undefined}
       data-resizing={resize.resizing || undefined}
+      data-expanding={expanding || undefined}
       style={
         {
           '--secondary-sidebar-width': `${resize.width}px`,

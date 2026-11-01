@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "收合面板",
+    "expand": "展開面板",
     "edit": "編輯聲音檔案"
   },
   "modelSettings": {

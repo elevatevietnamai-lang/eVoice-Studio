@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "패널 접기",
+    "expand": "패널 펼치기",
     "edit": "음성 프로필 편집"
   },
   "modelSettings": {

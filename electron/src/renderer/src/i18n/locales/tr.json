@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "Paneli daralt",
+    "expand": "Paneli genişlet",
     "edit": "Ses profilini düzenle"
   },
   "modelSettings": {

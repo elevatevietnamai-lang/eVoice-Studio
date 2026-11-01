@@ -377,6 +377,7 @@
   },
   "paneActions": {
     "collapse": "Zwiń panel",
+    "expand": "Rozwiń panel",
     "edit": "Edytuj profil głosu"
   },
   "modelSettings": {

@@ -12,6 +12,7 @@ vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => k
 vi.mock('@/lib/store/workspace', () => ({
   useWorkspace: () => workspace,
   setWorkspace,
+  registerPanel: () => () => {},
 }));
 vi.mock('@/features/clone/voices-sidebar', () => ({
   VoicesSidebar: () => <div>Voice library</div>,

@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "パネルを折りたたむ",
+    "expand": "パネルを展開",
     "edit": "音声プロフィールを編集"
   },
   "modelSettings": {

@@ -373,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "Paneel inklappen",
+    "expand": "Paneel uitvouwen",
     "edit": "Stemprofiel bewerken"
   },
   "modelSettings": {

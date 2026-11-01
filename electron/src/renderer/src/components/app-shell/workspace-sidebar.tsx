@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { usePaneResize } from '@/hooks/use-pane-resize';
 import { useWindowFullscreen } from '@/hooks/use-window-fullscreen';
-import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
+import { setWorkspace, usePanelMounted, useWorkspace } from '@/lib/store/workspace';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
@@ -26,6 +26,7 @@ export function WorkspaceSidebar() {
     version: appVersion(),
   });
   const { libraryOpen, panelCollapsed } = useWorkspace();
+  const panelMounted = usePanelMounted();
   // One source of truth for "rail or full sidebar": the header toggle and the
   // sidebar's own buttons used to keep separate copies of this state.
   const { compact, compactViewport, forceExpanded, secondaryWorkspace, setOpen } =
@@ -83,7 +84,7 @@ export function WorkspaceSidebar() {
           </div>
           <WorkspaceNavigation compact />
           <div className="flex shrink-0 flex-col items-center gap-1 border-t border-border/50 py-2">
-            {secondaryWorkspace && <PanelToggle collapsed={panelCollapsed} />}
+            {panelMounted && <PanelToggle collapsed={panelCollapsed} />}
             <StatusBar compact />
             <Link
               to="/settings"
@@ -174,7 +175,7 @@ export function WorkspaceSidebar() {
                 </Link>
               )}
               <div className="ml-auto flex items-center gap-1">
-                {secondaryWorkspace && <PanelToggle collapsed={panelCollapsed} />}
+                {panelMounted && <PanelToggle collapsed={panelCollapsed} />}
                 <Button
                   variant="ghost"
                   size="icon"

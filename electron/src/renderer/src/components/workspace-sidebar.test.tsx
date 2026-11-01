@@ -3,7 +3,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { FilmIcon } from 'lucide-react';
 import { act } from 'react';
 import { SecondarySidebar } from './workspace-sidebar';
-import { setWorkspace } from '@/lib/store/workspace';
+import { renderHook } from '@testing-library/react';
+import { setWorkspace, usePanelMounted } from '@/lib/store/workspace';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 
@@ -157,4 +158,19 @@ it('reports a retained library as inactive when its tab is hidden', () => {
   fireEvent.click(screen.getByRole('tab', { name: 'Projects' }));
   expect(screen.getByRole('textbox', { name: 'Load active' })).toBe(field);
   expect(field).toHaveValue('true');
+});
+
+it('registers itself so the rail offers a panel toggle only while a pane is mounted', () => {
+  const mounted = renderHook(() => usePanelMounted());
+  expect(mounted.result.current).toBe(false);
+  const pane = render(
+    <SecondarySidebar title="Stories" icon={FilmIcon}>
+      <section>Setup</section>
+    </SecondarySidebar>,
+  );
+  mounted.rerender();
+  expect(mounted.result.current).toBe(true);
+  pane.unmount();
+  mounted.rerender();
+  expect(mounted.result.current).toBe(false);
 });

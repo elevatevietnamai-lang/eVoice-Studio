@@ -153,7 +153,7 @@ export function CommandPalette() {
       group: workspaceGroup,
       icon: UsersRoundIcon,
       run: () => {
-        setWorkspace({ libraryOpen: true, libraryTab: 'voices' });
+        setWorkspace({ panelCollapsed: false, libraryTab: 'voices' });
         return navigate({ to: '/personas' });
       },
     },
@@ -228,7 +228,7 @@ export function CommandPalette() {
       group: workspaceGroup,
       icon: HistoryIcon,
       run: () => {
-        setWorkspace({ libraryOpen: true, libraryTab: 'takes' });
+        setWorkspace({ panelCollapsed: false, libraryTab: 'takes' });
         return navigate({ to: '/clone' });
       },
     },

@@ -158,7 +158,7 @@ export function ClonePage() {
                 size="sm"
                 onClick={() => {
                   setLibraryTab('takes');
-                  setWorkspace({ libraryOpen: true });
+                  setWorkspace({ panelCollapsed: false });
                 }}
               >
                 <HistoryIcon data-icon="inline-start" />

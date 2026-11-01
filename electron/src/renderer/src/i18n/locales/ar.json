@@ -381,6 +381,7 @@
   },
   "paneActions": {
     "collapse": "طي اللوحة",
+    "expand": "توسيع اللوحة",
     "edit": "تعديل الملف الصوتي"
   },
   "modelSettings": {

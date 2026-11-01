@@ -375,6 +375,7 @@
   },
   "paneActions": {
     "collapse": "Recolher painel",
+    "expand": "Expandir painel",
     "edit": "Editar perfil de voz"
   },
   "modelSettings": {
