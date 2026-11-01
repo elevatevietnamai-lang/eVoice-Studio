@@ -52,3 +52,26 @@ describe.each(['light', 'dark'] as const)('Elevate default palette (%s)', (appea
     expect(colors.accent).toBe(colors.text);
   });
 });
+
+/**
+ * Status colours are used as text (`text-destructive`, `text-warning`, update banners), so every
+ * palette, not just the default, must keep them at 4.5:1 on the canvas and on the card surface.
+ */
+const STATUS_KEYS = [
+  'error',
+  'errorForeground',
+  'warning',
+  'warningForeground',
+  'update',
+  'updateForeground',
+] as const;
+
+describe.each(tokens.palettes.flatMap((palette) => (['light', 'dark'] as const).map((appearance) => [palette.id, appearance, palette.colors[appearance]] as const)))(
+  'status colours in %s (%s)',
+  (_id, _appearance, colors) => {
+    it.each(STATUS_KEYS)('%s reaches 4.5:1 on canvas and surface', (key) => {
+      expect(contrast(colors[key], colors.canvas)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(colors[key], colors.surface)).toBeGreaterThanOrEqual(4.5);
+    });
+  },
+);

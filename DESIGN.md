@@ -241,7 +241,7 @@ Desktop first: the window has a minimum size set by Electron and the sidebar col
 ## 10. Known Gaps
 
 - `tokensMeasured` is false: values are read from source and the generated tokens, not from a running page. Compare computed styles in the browser pane against `t3-theme.css` once the backend is up.
-- Success and info foreground colours come from Tailwind palette names (`emerald`, `blue`) and are not in the theme role list; their contrast was not computed.
+- Error, warning and update colours are tested at 4.5:1 on canvas and surface for every palette (`brand-contrast.test.ts`). Success and info come from Tailwind steps (emerald-700 and blue-600 on light, 500 on dark, computed by hand, not in the token file) and have no automated test.
 - In dark mode `--update-foreground` is blue (`#51a2ff`) while light mode uses graphite; the update banner is therefore the one non-functional hue left. Decide whether to make it monochrome.
 - Home is flat and monochrome (a test blocks hue classes). Setup, Music Studio and the Voice, Dub and Design screens keep their earlier layouts and were not checked visually in this pass.
 - Page layouts, Setup, Dub, Voice and Music Studio screens keep their previous structure.
