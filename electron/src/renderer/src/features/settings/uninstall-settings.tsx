@@ -111,7 +111,7 @@ export function UninstallSettings() {
             </Alert>
           )}
           {present.length > 0 && (
-            <div className="overflow-hidden rounded-xl border border-border/60 bg-background/25">
+            <div className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-background/25">
               {present
                 .filter((target) => !target.shared)
                 .map((target) => (
@@ -173,7 +173,7 @@ export function UninstallSettings() {
             <DialogTitle>{t('settings.uninstall_confirm_title')}</DialogTitle>
             <DialogDescription>{t('settings.uninstall_confirm_body')}</DialogDescription>
           </DialogHeader>
-          <ul className="space-y-1 rounded-xl bg-muted/30 p-3">
+          <ul className="space-y-1 rounded-lg bg-muted/30 p-3">
             {selected.map((target) => (
               <li
                 key={`${target.key}:${target.path}`}

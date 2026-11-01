@@ -266,7 +266,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
             ) : null}
           </div>
           {installing ? (
-            <div className="w-full rounded-2xl border border-border/60 bg-card/55 p-3 shadow-sm backdrop-blur-xl">
+            <div className="w-full rounded-(--card-radius) border border-border/60 bg-card/55 p-3 backdrop-blur-xl">
               <ol className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-1" aria-label={stageText}>
                 {SETUP_PHASES.map((phase, index) => {
                   const complete = index < setupPhaseIndex;
@@ -447,7 +447,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                 </label>
               </div>
               {status.runtimePath && (
-                <div className="w-full rounded-xl border border-border/60 bg-muted/20 p-3 text-left">
+                <div className="w-full rounded-(--card-radius) border border-border/60 bg-muted/20 p-3 text-left">
                   <div className="flex items-start gap-3">
                     <FolderOpenIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                     <div className="min-w-0 flex-1">

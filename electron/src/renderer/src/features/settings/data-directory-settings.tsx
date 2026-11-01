@@ -103,7 +103,7 @@ export function DataDirectorySettings() {
             <DialogDescription>{t('settings.data_move_desc')}</DialogDescription>
           </DialogHeader>
           {selection && (
-            <div className="space-y-3 rounded-xl border border-border/60 bg-muted/25 p-3.5">
+            <div className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/25 p-3.5">
               <div className="grid min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-2">
                 <code className="truncate text-xs text-muted-foreground" title={selection.source}>
                   {selection.source}

@@ -214,7 +214,7 @@ export function BatchPage() {
             }}
           />
           <section
-            className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3"
+            className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
             onDragOver={(event) => event.preventDefault()}
             onDrop={(event) => {
               event.preventDefault();
@@ -259,7 +259,7 @@ export function BatchPage() {
               </p>
             )}
           </section>
-          <section className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3">
+          <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <h2 className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
               <LanguagesIcon className="size-4" />
               {t('batch.target_languages')}
@@ -303,7 +303,7 @@ export function BatchPage() {
                 />
               )}
           </section>
-          <section className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3">
+          <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <details className="text-xs">
               <summary className="cursor-pointer font-medium">{t('batch.voice_kicker')}</summary>
               <div className="mt-2 flex flex-wrap gap-1">
@@ -390,7 +390,7 @@ export function BatchPage() {
         </SecondarySidebar>
         <section className="min-w-0 flex-1 overflow-y-auto p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="inline-flex gap-1 rounded-xl border border-border/50 bg-muted/20 p-1">
+            <div className="inline-flex gap-1 rounded-(--card-radius) border border-border/50 bg-muted/20 p-1">
               {['active', 'done', 'failed'].map((value) => (
                 <Button
                   key={value}
@@ -436,7 +436,7 @@ export function BatchPage() {
           {jobs.isPending && <p role="status">{t('common.loading')}</p>}
           {jobs.data?.length === 0 && (
             <div className="flex min-h-[28rem] flex-col items-center justify-center text-center">
-              <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <div className="mb-4 flex size-14 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <LayersIcon className="size-6" />
               </div>
               <h2 className="text-sm font-semibold">
@@ -506,7 +506,7 @@ function BatchJobCard({
   const created = formatTimestamp(job.created_at, i18n.resolvedLanguage);
 
   return (
-    <article className="rounded-xl border border-border/50 bg-card/20 p-4 transition-colors hover:border-border">
+    <article className="rounded-(--card-radius) border border-border/50 bg-card/20 p-4 transition-colors hover:border-border">
       <div className="flex items-center gap-3">
         <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/35 text-muted-foreground">
           <FilmIcon className="size-4" />

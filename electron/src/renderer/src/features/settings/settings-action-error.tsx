@@ -23,7 +23,7 @@ export function SettingsActionError({
     <div
       role="alert"
       className={cn(
-        'rounded-xl border border-destructive/20 bg-destructive/8 p-3 text-destructive',
+        'rounded-(--card-radius) border border-destructive/20 bg-destructive/8 p-3 text-destructive',
         className,
       )}
     >

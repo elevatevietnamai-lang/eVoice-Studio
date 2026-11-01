@@ -184,7 +184,7 @@ export function DesignPage() {
           libraryLabel={t('clone.saved_profiles')}
           className="space-y-3"
         >
-          <section className="space-y-2 rounded-xl border border-border/60 bg-muted/20 p-3">
+          <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <div className="flex items-center justify-between gap-2">
               <label
                 htmlFor="voice-description"
@@ -247,7 +247,7 @@ export function DesignPage() {
           </section>
           <details
             ref={savedProfilesRef}
-            className="group rounded-xl border border-border/60 bg-muted/20 p-3 text-sm"
+            className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3 text-sm"
           >
             <summary className="flex cursor-pointer list-none items-center gap-2 font-medium">
               {t('clone.saved_profiles')}
@@ -315,7 +315,7 @@ export function DesignPage() {
           <details
             open={startingOpen}
             onToggle={(event) => setStartingOpen(event.currentTarget.open)}
-            className="group rounded-xl border border-border/60 bg-muted/20 p-3 text-sm"
+            className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3 text-sm"
           >
             <summary className="flex cursor-pointer list-none items-center gap-2 font-medium">
               <SparklesIcon className="size-4 text-muted-foreground" />
@@ -355,7 +355,7 @@ export function DesignPage() {
               </div>
             </div>
           </details>
-          <details className="group rounded-xl border border-border/60 bg-muted/20 p-3 text-sm">
+          <details className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3 text-sm">
             <summary className="flex cursor-pointer list-none items-center gap-2 font-medium">
               <SlidersHorizontalIcon className="size-4 text-muted-foreground" />
               {t('clone.details')}
@@ -423,7 +423,7 @@ export function DesignPage() {
             </div>
           </details>
           <form
-            className="space-y-2 rounded-xl border border-border/60 bg-muted/20 p-3"
+            className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
             onSubmit={(event) => {
               event.preventDefault();
               void save();
@@ -554,7 +554,7 @@ export function DesignPage() {
                 onDismiss={generation.clearError}
               />
             )}
-            <div className="glass-panel relative grid min-h-16 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-xl border border-border/60 bg-muted/30 p-3 max-md:grid-cols-[1fr_auto]">
+            <div className="glass-panel relative grid min-h-16 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-(--card-radius) border border-border/60 bg-muted/30 p-3 max-md:grid-cols-[1fr_auto]">
               <div className="min-w-0 justify-self-start">
                 <div className="flex items-center gap-1">
                   <EngineLanguagePicker operation="tts" />

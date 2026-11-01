@@ -191,7 +191,7 @@ export function AnalyticsConsentBanner() {
   return (
     <aside
       aria-label={t('consent.title')}
-      className="glass-panel fixed top-4 left-1/2 z-[70] flex w-[min(680px,calc(100vw-32px))] -translate-x-1/2 items-start gap-3 rounded-xl border border-border/60 bg-popover/85 p-4 shadow-xl backdrop-blur-2xl"
+      className="glass-panel fixed top-4 left-1/2 z-[70] flex w-[min(680px,calc(100vw-32px))] -translate-x-1/2 items-start gap-3 rounded-(--card-radius) border border-border/60 bg-popover/85 p-4 shadow-xl backdrop-blur-2xl"
     >
       <BarChart3Icon className="mt-1 size-4 shrink-0 text-primary" aria-hidden="true" />
       <div className="min-w-0 flex-1">

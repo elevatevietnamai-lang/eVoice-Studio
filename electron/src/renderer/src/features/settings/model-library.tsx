@@ -232,7 +232,7 @@ export function PerformanceModelPacks({ compact = false }: { compact?: boolean }
             if (next) setSelectedTier(next);
           }}
           disabled={busy}
-          className="grid w-full grid-cols-2 rounded-xl border border-border/60 bg-muted/45 p-1 sm:grid-cols-4"
+          className="grid w-full grid-cols-2 rounded-(--card-radius) border border-border/60 bg-muted/45 p-1 sm:grid-cols-4"
         >
           {performanceTiers.map((candidate) => (
             <ToggleGroupItem key={candidate} value={candidate}>
@@ -249,7 +249,7 @@ export function PerformanceModelPacks({ compact = false }: { compact?: boolean }
             return (
               <div
                 key={model.repo_id}
-                className="flex min-w-0 items-center gap-2.5 rounded-xl border border-border/55 bg-background/25 px-3 py-2.5"
+                className="flex min-w-0 items-center gap-2.5 rounded-(--card-radius) border border-border/55 bg-background/25 px-3 py-2.5"
               >
                 <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-muted/55 text-muted-foreground">
                   <Icon className="size-3.5" aria-hidden="true" />

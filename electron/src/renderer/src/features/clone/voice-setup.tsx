@@ -60,7 +60,7 @@ function VoiceCard({
     <div
       data-slot="voice-card"
       className={cn(
-        'group/card relative flex h-[68px] min-w-0 items-center gap-3 rounded-xl border bg-card/40 px-3 transition-[background-color,border-color,box-shadow] duration-150 hover:border-border hover:bg-accent has-[[data-choose]:focus-visible]:ring-2 has-[[data-choose]:focus-visible]:ring-ring',
+        'group/card relative flex h-[68px] min-w-0 items-center gap-3 rounded-(--card-radius) border bg-card/40 px-3 transition-[background-color,border-color,box-shadow] duration-150 hover:border-border hover:bg-accent has-[[data-choose]:focus-visible]:ring-2 has-[[data-choose]:focus-visible]:ring-ring',
         current ? 'border-primary/60 bg-primary/5' : 'border-border/60',
       )}
     >
@@ -70,7 +70,7 @@ function VoiceCard({
         data-choose
         aria-label={profile.name}
         aria-current={current || undefined}
-        className="absolute inset-0 rounded-xl outline-none"
+        className="absolute inset-0 rounded-(--card-radius) outline-none"
         onClick={() => onChoose(profile)}
       />
       <ProfilePhoto

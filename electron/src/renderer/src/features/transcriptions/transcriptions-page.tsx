@@ -262,7 +262,7 @@ export function TranscriptionsPage() {
           {entries.length === 0 ? (
             <div className="grid min-h-32 flex-1 place-items-center px-4 text-center text-muted-foreground">
               <div className="space-y-2">
-                <span className="mx-auto grid size-9 place-items-center rounded-xl border border-border/45 bg-background/45 text-muted-foreground">
+                <span className="mx-auto grid size-9 place-items-center rounded-(--card-radius) border border-border/45 bg-background/45 text-muted-foreground">
                   <HistoryIcon className="size-4" aria-hidden="true" />
                 </span>
                 <p className="max-w-40 text-xs leading-5">{t('transcriptions.empty_title')}</p>
@@ -283,7 +283,7 @@ export function TranscriptionsPage() {
                 <button
                   key={entry.id}
                   className={cn(
-                    'w-full rounded-xl border border-transparent px-3 py-2.5 text-left text-sm transition-[color,background-color,border-color,box-shadow] hover:border-border/55 hover:bg-accent',
+                    'w-full rounded-(--card-radius) border border-transparent px-3 py-2.5 text-left text-sm transition-[color,background-color,border-color,box-shadow] hover:border-border/55 hover:bg-accent',
                     selectedId === entry.id &&
                       'border-primary/20 bg-primary/[0.07]',
                   )}
@@ -354,7 +354,7 @@ export function TranscriptionsPage() {
         </SecondarySidebar>
         <section className="flex min-w-0 flex-1 flex-col">
           <div className="border-b border-border/50 px-6 py-4">
-            <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-2 rounded-xl border border-border/60 bg-muted/20 p-2">
+            <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-2">
               <ToggleGroup
                 value={[mode]}
                 onValueChange={(value) => chooseMode(value[0])}
@@ -618,7 +618,7 @@ export function TranscriptionsPage() {
             </div>
           )}
           {failed && (
-            <div className="mx-6 mt-4 rounded-xl border border-border/60 bg-muted/20 px-4 py-3 text-sm">
+            <div className="mx-6 mt-4 rounded-(--card-radius) border border-border/60 bg-muted/20 px-4 py-3 text-sm">
               <div className="flex items-center gap-3">
                 <AlertCircleIcon className="size-4 shrink-0 text-destructive" />
                 <span role="alert" className="min-w-0 flex-1 font-medium">
@@ -760,7 +760,7 @@ export function TranscriptionsPage() {
               </article>
             ) : (
               <div className="mx-auto flex min-h-[28rem] max-w-lg flex-col items-center justify-center px-6 text-center">
-                <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <div className="mb-4 flex size-14 items-center justify-center rounded-(--card-radius) bg-primary/10 text-primary">
                   {search ? <FileTextIcon className="size-6" /> : <MicIcon className="size-6" />}
                 </div>
                 <h2 className="text-lg font-semibold">

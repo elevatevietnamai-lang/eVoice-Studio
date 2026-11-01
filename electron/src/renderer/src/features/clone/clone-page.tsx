@@ -242,7 +242,7 @@ export function ClonePage() {
           {((!choosingVoice && !savingUpload) || isGenerating) && (
             <SynthesisDock output={<OutputPanel />}>
               <div className="mx-auto w-full max-w-4xl px-6 pb-4">
-                <div className="glass-panel composer-surface rounded-xl border border-border/60 bg-muted/30 p-2.5 shadow-[0_2px_12px_rgb(0_0_0/4%)]">
+                <div className="glass-panel composer-surface rounded-(--card-radius) border border-border/60 bg-muted/30 p-2.5 shadow-[0_2px_12px_rgb(0_0_0/4%)]">
                   <ActionBar />
                 </div>
               </div>

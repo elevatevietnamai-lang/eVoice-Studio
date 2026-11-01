@@ -12,7 +12,7 @@ const WIDTHS = {
 
 const VARIANT_STYLES = {
   controls:
-    '[&>section]:shadow-[inset_0_1px_0_color-mix(in_oklab,var(--foreground)_3%,transparent)] [&>details]:shadow-[inset_0_1px_0_color-mix(in_oklab,var(--foreground)_3%,transparent)] [&_summary]:min-h-8 [&_summary]:select-none [&_summary]:items-center [&_summary]:px-0.5 [&_summary]:font-medium [&_summary]:text-foreground/90 [&_summary:hover]:bg-background/35 [&_h2]:text-foreground/90 [&_h3]:text-foreground/90',
+    '[&_summary]:min-h-8 [&_summary]:select-none [&_summary]:items-center [&_summary]:px-0.5 [&_summary]:font-medium [&_summary]:text-foreground/90 [&_summary:hover]:bg-background/35 [&_h2]:text-foreground/90 [&_h3]:text-foreground/90',
   navigation:
     '[&>button]:h-9 [&>button]:w-full [&>button]:justify-start [&>button]:gap-2.5 [&>button]:rounded-lg [&>button]:px-2.5 [&>button]:font-normal [&>button]:transition-[color,background-color,box-shadow] [&>button:hover]:bg-accent/55 [&>button[aria-pressed=true]]:bg-accent/80 [&>button[aria-pressed=true]]:font-medium [&>button>svg]:text-muted-foreground [&>button[aria-pressed=true]>svg]:text-primary',
   library:

@@ -296,7 +296,7 @@ export function ImportsView() {
         ) : null}
         <div className="grid gap-3 lg:grid-cols-2">
           {voices.data?.map((voice) => (
-            <article key={voice.id} className="space-y-3 rounded-xl border border-border/50 p-4">
+            <article key={voice.id} className="space-y-3 rounded-(--card-radius) border border-border/50 p-4">
               <div className="flex items-center gap-3">
                 <AudioPreviewButton
                   src={apiPath('/gallery/voices/' + encodeURIComponent(voice.id) + '/preview')}

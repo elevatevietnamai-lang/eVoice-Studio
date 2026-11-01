@@ -276,7 +276,7 @@ Desktop first: the window has a minimum size set by Electron and the sidebar col
 
 **Quick reference**
 - Canvas `#f8f8f6` / `#030305`, ink `#15191b` / `#f6f6f6`, muted `#575b5f` / `#a1a3a6`.
-- Radius: control 8 px, card 16 px.
+- Radius: control 8 px, card 16 px. App code uses only these two: `rounded-lg` (or smaller) for controls, rows, icon tiles and blocks nested inside a card, and `rounded-(--card-radius)` for cards, panels, banners and chat bubbles. `rounded-xl`, `rounded-2xl` and `rounded-3xl` stay inside `components/ui` only; `no-decorative-effects.test.ts` enforces this.
 - Heights: 24, 28, 32, 36 px.
 - Motion: 160 / 240 / 480 ms, `cubic-bezier(0.22, 1, 0.36, 1)`.
 - Headings Space Grotesk, UI Inter.

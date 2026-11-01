@@ -158,7 +158,7 @@ export function PerformanceProfile({
           aria-labelledby={groupId}
           aria-busy={profile.isSaving}
           className={cn(
-            'grid min-w-0 grid-cols-2 gap-1 rounded-xl border border-border/60 bg-muted/45 p-1 sm:grid-flow-col sm:auto-cols-fr',
+            'grid min-w-0 grid-cols-2 gap-1 rounded-(--card-radius) border border-border/60 bg-muted/45 p-1 sm:grid-flow-col sm:auto-cols-fr',
             disabled && 'opacity-50',
           )}
         >

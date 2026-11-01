@@ -351,10 +351,6 @@ html[data-theme-id=''] {
 [data-slot='workspace-pane-content'] details[open] > summary {
   color: var(--foreground);
 }
-[data-slot='secondary-sidebar-content'] > :is(section, form, details),
-[data-slot='workspace-pane-content'] > :is(section, form, details) {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--foreground) 2.5%, transparent);
-}
 [data-slot='secondary-sidebar-content'] > :is(section, form, details):hover,
 [data-slot='workspace-pane-content'] > :is(section, form, details):hover {
   border-color: color-mix(in srgb, var(--border) 72%, var(--foreground));
@@ -420,32 +416,29 @@ html[data-theme-id=''] {
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  > :is(section, form, details, div.rounded-xl) {
+  > :is(section, form, details, div[class~='rounded-(--card-radius)']) {
   overflow: clip;
   border-color: color-mix(in srgb, var(--border) 88%, transparent);
   background: color-mix(in srgb, var(--card) 54%, transparent);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--foreground) 3%, transparent),
-    0 1px 2px color-mix(in srgb, var(--background) 45%, transparent);
-  transition-property: border-color, background-color, box-shadow;
+  transition-property: border-color, background-color;
   transition-duration: 150ms;
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  > :is(section, form, details, div.rounded-xl)
+  > :is(section, form, details, div[class~='rounded-(--card-radius)'])
   > :is(h2, legend, summary):first-child {
   font-weight: 600;
   letter-spacing: -0.012em;
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  > :is(section, form, details, div.rounded-xl)
+  > :is(section, form, details, div[class~='rounded-(--card-radius)'])
   :is(h2, legend, summary, label) {
   color: color-mix(in srgb, var(--foreground) 92%, var(--muted-foreground));
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  > :is(section, form, details, div.rounded-xl)
+  > :is(section, form, details, div[class~='rounded-(--card-radius)'])
   :is(h2, summary)
   > .lucide:first-child {
   width: 1rem;
@@ -469,7 +462,7 @@ html[data-theme-id=''] {
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  > :is(section, form, details, div.rounded-xl):hover {
+  > :is(section, form, details, div[class~='rounded-(--card-radius)']):hover {
   border-color: color-mix(in srgb, var(--border) 76%, var(--foreground));
   background-color: color-mix(in srgb, var(--card) 60%, transparent);
 }
@@ -574,8 +567,8 @@ html[data-theme-id=''] {
   }
   .secondary-sidebar[data-variant='controls']
     [data-slot='secondary-sidebar-content']
-    > :is(section, form, details, div.rounded-xl) {
-    border-radius: 0.625rem;
+    > :is(section, form, details, div[class~='rounded-(--card-radius)']) {
+    border-radius: var(--control-radius);
   }
 }
 .secondary-sidebar [role='alert'],

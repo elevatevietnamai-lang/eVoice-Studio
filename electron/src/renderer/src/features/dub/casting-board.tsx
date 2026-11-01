@@ -117,7 +117,7 @@ export function CastingBoard({
   return (
     <details
       open={open}
-      className="group rounded-xl border border-border/60 bg-muted/20 p-3"
+      className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
       onToggle={(event) => {
         setOpen(event.currentTarget.open);
         if (!event.currentTarget.open) setDropTarget(null);

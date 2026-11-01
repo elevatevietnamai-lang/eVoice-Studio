@@ -61,7 +61,7 @@ export function TakeDetails({ item }: { item: HistoryItem }) {
   };
   return (
     <div className="flex flex-col gap-5">
-      <section className="flex min-w-0 items-center gap-3 rounded-xl border border-border/60 bg-muted/20 p-3">
+      <section className="flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
         {voice ? (
           <ProfileAvatar name={voice.name} imageUrl={voice.image_url} className="size-10" />
         ) : (
@@ -117,7 +117,7 @@ export function TakeDetails({ item }: { item: HistoryItem }) {
         )}
       </dl>
       {hasRecipe ? (
-        <details className="group rounded-xl border border-border/60 bg-muted/15 p-3">
+        <details className="group rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
           <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
             <SlidersHorizontalIcon className="size-4 text-muted-foreground" aria-hidden="true" />
             {t('clone.production_overrides')}

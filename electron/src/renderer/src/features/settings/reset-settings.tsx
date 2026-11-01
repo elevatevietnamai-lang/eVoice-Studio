@@ -257,7 +257,7 @@ export function ResetSettings({
               return (
                 <label
                   key={id}
-                  className={`flex min-h-24 gap-3 rounded-xl border p-3.5 transition-colors ${
+                  className={`flex min-h-24 gap-3 rounded-(--card-radius) border p-3.5 transition-colors ${
                     disabled
                       ? 'cursor-not-allowed opacity-45'
                       : active
@@ -304,7 +304,7 @@ export function ResetSettings({
                 {t('settings.reset_advanced')}
               </Button>
               {advanced && (
-                <div className="overflow-hidden rounded-xl border border-border/60 bg-background/25">
+                <div className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-background/25">
                   {SCOPE_ORDER.map((scope) => {
                     const value = byKey[scope];
                     const frontend = FRONTEND_SCOPES.has(scope);

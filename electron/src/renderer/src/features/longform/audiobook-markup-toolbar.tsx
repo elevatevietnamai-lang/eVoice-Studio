@@ -67,7 +67,7 @@ export function AudiobookMarkupToolbar({
     <div
       role="toolbar"
       aria-label={t('audiobook.markup_toolbar')}
-      className="flex flex-wrap items-center gap-1 rounded-xl border border-border/50 bg-muted/15 p-1.5"
+      className="flex flex-wrap items-center gap-1 rounded-(--card-radius) border border-border/50 bg-muted/15 p-1.5"
     >
       <Button size="xs" variant="ghost" disabled={disabled} onClick={() => insert('[pause 500ms]')}>
         <PauseIcon />

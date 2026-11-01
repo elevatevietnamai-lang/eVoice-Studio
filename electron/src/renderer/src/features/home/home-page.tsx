@@ -215,7 +215,7 @@ export function HomePage() {
                   <Link
                     key={record.id}
                     to="/projects"
-                    className="group flex min-w-0 items-center gap-3 rounded-xl border border-border/50 bg-card/20 px-3 py-2.5 outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <FolderOpenIcon className="size-4 shrink-0 text-primary" />
                     <span className="min-w-0 flex-1">
@@ -267,7 +267,7 @@ export function HomePage() {
                     <button
                       key={item.kind + ':' + item.project.id}
                       type="button"
-                      className="group flex min-w-0 items-center gap-3 rounded-xl border border-border/50 bg-card/20 px-3 py-2.5 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                      className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
                       onClick={() => void openProject(item)}
                     >
                       <Icon className="size-4 shrink-0 text-primary" />
@@ -300,11 +300,11 @@ export function HomePage() {
                       {t('projects.all')}
                     </Link>
                   </div>
-                  <div className="grid gap-1 rounded-2xl border border-border/70 bg-card/30 p-2 @3xl:grid-cols-2">
+                  <div className="grid gap-1 rounded-(--card-radius) border border-border/70 bg-card/30 p-2 @3xl:grid-cols-2">
                     {profiles.slice(0, 4).map((profile) => (
                       <div
                         key={profile.id}
-                        className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-accent"
+                        className="flex min-w-0 items-center gap-3 rounded-lg px-2.5 py-2 hover:bg-accent"
                       >
                         <ProfileAvatar name={profile.name} imageUrl={profile.image_url} />
                         <span className="min-w-0 flex-1 truncate text-sm font-medium">

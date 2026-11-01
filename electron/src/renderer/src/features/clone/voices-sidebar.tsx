@@ -192,7 +192,7 @@ export function SavedVoices({
   if (allItems.length === 0) {
     return (
       <div className="mx-auto flex min-h-72 max-w-md flex-col items-center justify-center px-6 py-10 text-center">
-        <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <FingerprintIcon className="size-5" aria-hidden="true" />
         </div>
         <p className="text-[length:var(--text-label)] leading-relaxed text-muted-foreground">

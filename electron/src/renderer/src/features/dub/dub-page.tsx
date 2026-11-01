@@ -1029,7 +1029,7 @@ export function DubPage() {
         >
           <section
             className={cn(
-              'space-y-3 rounded-xl border border-border/60 bg-muted/15 p-3 transition-colors',
+              'space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3 transition-colors',
               session.jobId && !['idle', 'preparing'].includes(session.phase) && 'rounded-b-md',
               dragging && 'border-primary/60 bg-primary/5',
             )}
@@ -1286,7 +1286,7 @@ export function DubPage() {
             )}
           </section>
           {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
-            <section className="-mt-1 space-y-3 rounded-xl rounded-t-md border border-border/60 bg-muted/15 p-3">
+            <section className="-mt-1 space-y-3 rounded-(--card-radius) rounded-t-md border border-border/60 bg-muted/15 p-3">
               <h2 className="flex items-center gap-2 text-sm font-medium">
                 <PlayIcon className="size-4 text-muted-foreground" />
                 {t('dub.preview')}
@@ -1363,7 +1363,7 @@ export function DubPage() {
               )}
             </section>
           )}
-          <section className="space-y-3 rounded-xl border border-border/60 bg-muted/15 p-3">
+          <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
             <h2 className="flex items-center gap-2 text-sm font-medium">
               <span className="grid size-5 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
                 2
@@ -1652,7 +1652,7 @@ export function DubPage() {
             disabled={busy || Boolean(session.recovery)}
             onAssign={assignDubSpeakerProfile}
           />
-          <details className="group rounded-xl border border-border/60 bg-muted/20 p-3">
+          <details className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
               <Clock3Icon className="size-4 text-muted-foreground" />
               {t('dub.timing_label')}
@@ -1747,7 +1747,7 @@ export function DubPage() {
               </div>
             </div>
           </details>
-          <details className="group rounded-xl border border-border/60 bg-muted/20 p-3">
+          <details className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
               <SlidersHorizontalIcon className="size-4 text-muted-foreground" />
               {t('clone.production_overrides')}
@@ -1850,7 +1850,7 @@ export function DubPage() {
             )}
           >
             {session.recovery && !busy && (
-              <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-warning/20 bg-warning/5 p-3">
+              <div className="mb-4 flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-warning/20 bg-warning/5 p-3">
                 <div className="mr-auto min-w-48">
                   <p className="text-sm font-medium">
                     {session.asrModelMissing ? t('asr_missing.message') : t('dub.pipeline')}
@@ -1925,7 +1925,7 @@ export function DubPage() {
             )}
             {!session.segments.length && (!session.recovery || busy) && (
               <div className="mx-auto flex min-h-[24rem] w-full max-w-5xl flex-col items-center justify-center px-6 text-center">
-                <div className="mb-3 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   {busy ? (
                     <LoaderCircleIcon className="size-6 animate-spin motion-reduce:animate-none" />
                   ) : (
@@ -2322,7 +2322,7 @@ export function DubPage() {
                 />
               )}
               {selectedSegmentIds.size > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-2.5">
+                <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-primary/20 bg-primary/5 p-2.5">
                   <span className="mr-auto flex items-center gap-2 px-1 text-sm font-medium text-primary">
                     <CheckCheckIcon className="size-4" />
                     {t('dub.selected_count', {

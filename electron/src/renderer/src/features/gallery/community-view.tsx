@@ -183,7 +183,7 @@ export function CommunityView({
           {items.map((item) => (
             <article
               key={communityKey(item)}
-              className="flex flex-col gap-3 rounded-xl border border-border/50 p-4"
+              className="flex flex-col gap-3 rounded-(--card-radius) border border-border/50 p-4"
             >
               <div className="flex items-center gap-2">
                 <h2 className="min-w-0 flex-1 truncate text-sm font-medium">{item.name}</h2>

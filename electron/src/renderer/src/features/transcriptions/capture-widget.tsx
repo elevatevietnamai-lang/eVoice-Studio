@@ -162,7 +162,7 @@ export function CaptureWidget() {
                       : t('capture.listening_label');
   return (
     <main
-      className="flex h-screen flex-col gap-3 rounded-xl border border-border bg-background p-4 text-foreground"
+      className="flex h-screen flex-col gap-3 rounded-(--card-radius) border border-border bg-background p-4 text-foreground"
       onKeyDown={(event) => {
         if (event.key === 'Escape') cancel();
       }}

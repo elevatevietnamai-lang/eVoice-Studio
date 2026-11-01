@@ -319,7 +319,7 @@ export function StoryEditor({
         <PipelineFailure fallback={previewError} onDismiss={() => setPreviewError(null)} />
       )}
       <details
-        className="group rounded-xl border border-border/60 bg-muted/20 p-3"
+        className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
         open={inputOpen}
         onToggle={(event) => setInputOpen(event.currentTarget.open)}
       >
@@ -421,8 +421,8 @@ export function StoryEditor({
       </details>
 
       {draft.lines.length === 0 && (
-        <div className="flex min-h-72 flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 px-6 text-center">
-          <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <div className="flex min-h-72 flex-col items-center justify-center rounded-(--card-radius) border border-dashed border-border/60 px-6 text-center">
+          <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <BookOpenTextIcon className="size-5" />
           </div>
           <h3 className="text-sm font-semibold">{t('stories.newStory')}</h3>
@@ -447,7 +447,7 @@ export function StoryEditor({
       )}
 
       {draft.lines.map((line, index) => (
-        <div key={line.id} className="space-y-3 rounded-xl border border-border/60 bg-muted/15 p-4">
+        <div key={line.id} className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-4">
           <div className="flex items-start gap-3">
             <textarea
               ref={(node) => {

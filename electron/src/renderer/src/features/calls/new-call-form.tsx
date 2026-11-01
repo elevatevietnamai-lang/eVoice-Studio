@@ -295,7 +295,7 @@ export function NewCallForm({
 
       <section
         aria-labelledby={`${ids}-plan`}
-        className="space-y-2 rounded-xl border border-border/60 bg-muted/25 p-3 text-sm"
+        className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/25 p-3 text-sm"
       >
         <h3 id={`${ids}-plan`} className="flex items-center gap-2 font-medium">
           <ShieldCheckIcon aria-hidden="true" className="size-4 text-primary" />
