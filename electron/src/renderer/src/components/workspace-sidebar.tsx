@@ -139,7 +139,7 @@ export function SecondarySidebar({
           title={t(collapsed ? 'paneActions.expand' : 'paneActions.collapse')}
           aria-expanded={!collapsed}
           onClick={() => setCollapsed((value) => !value)}
-          className="text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+          className="text-muted-foreground hover:bg-accent hover:text-foreground"
         >
           {collapsed ? <PanelLeftOpenIcon /> : <PanelLeftCloseIcon />}
         </Button>
@@ -195,7 +195,7 @@ export function SecondarySidebar({
                 'h-7 min-w-0 flex-1 truncate rounded-md px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
                 view === value
                   ? 'bg-accent/80 text-foreground'
-                  : 'text-muted-foreground hover:bg-accent/45 hover:text-foreground',
+                  : 'text-muted-foreground hover:bg-accent hover:text-foreground',
               )}
             >
               {label}
@@ -247,7 +247,7 @@ export function SecondarySidebar({
           title={title}
           aria-label={title}
           onClick={() => setCollapsed(false)}
-          className="group mx-auto my-2 flex min-h-0 flex-1 flex-col items-center gap-2 rounded-lg px-1.5 py-2 text-muted-foreground outline-none transition-[color,background-color,border-color] hover:bg-accent/65 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          className="group mx-auto my-2 flex min-h-0 flex-1 flex-col items-center gap-2 rounded-lg px-1.5 py-2 text-muted-foreground outline-none transition-[color,background-color,border-color] hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
         >
           <span className="grid size-7 shrink-0 place-items-center rounded-md border border-border/45 bg-background/45 text-primary">
             <Icon aria-hidden="true" className="size-4" />

@@ -368,7 +368,7 @@ export function CommandPalette() {
                       'group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm outline-none transition-[background-color,box-shadow,transform]',
                       active === index
                         ? 'bg-accent text-accent-foreground shadow-sm ring-1 ring-inset ring-border/60'
-                        : 'hover:bg-accent/60',
+                        : 'hover:bg-accent',
                     )}
                     onMouseMove={() => setActive(index)}
                     onClick={() => run(index)}

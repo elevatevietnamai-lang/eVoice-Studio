@@ -186,6 +186,7 @@ Rules:
 - **Workspace menu** (`components/app-shell/workspace-menu.tsx`): flat rows, 32 px high. Rest uses `--sidebar-muted-foreground`, hover `--sidebar-row-hover`, current page `--sidebar-row-selected` with `--sidebar-foreground`. Icons are single-colour and static; no per-item hues, glow, blur or hover animation. Groups: Voice, Stories, Dubbing, More (transcribe, calls, tools, integrations), then Projects. Group open and close takes 240 ms; the compact rail opens each group as a flyout. A test (`nav-style.test.ts`) blocks gradients, blur and hue classes in the menu, sidebar, header and status bar.
 - **Header**: title on the left; the command-palette button and account corner on the right. No promotional buttons (Get Pro and the GitHub star badge were removed; the Pro page stays under Settings).
 - Hover, active and disabled states are inherited from the component files; document a new one here when you add it.
+- **Interaction state rules** (tested for all 8 palettes in `brand-contrast.test.ts`): a hovered sidebar row differs from the sidebar by at least 1.15:1 and a selected row by 1.25:1; a hovered toolbar control by 1.15:1; the muted label stays at 4.5:1 on both; input and select borders (`--input`) reach 3:1 on the canvas (WCAG 1.4.11). Hover on ghost, outline and toggle controls uses `bg-accent`, never `bg-muted` or a fractional alpha of it. Input fills use `--control-fill`, not `--input`.
 
 ### Component roles
 

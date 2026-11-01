@@ -122,7 +122,7 @@ export function UninstallSettings() {
                   />
                 ))}
               {sharedModels && (
-                <label className="flex cursor-pointer items-start gap-3 border-t border-border/50 px-3 py-3 hover:bg-muted/30">
+                <label className="flex cursor-pointer items-start gap-3 border-t border-border/50 px-3 py-3 hover:bg-accent">
                   <input
                     type="checkbox"
                     checked={includeModels}

@@ -41,7 +41,7 @@
   --message-action: var(--primary);
   --message-action-foreground: var(--primary-foreground);
   --message-action-hover: color-mix(in srgb, var(--primary) 90%, var(--background));
-  --accent: #ebebe8;
+  --accent: #e2e2df;
   --accent-foreground: var(--brand-graphite);
   /* Status colours are used as text (text-destructive, text-warning, text-success), so the base
      tokens reach 4.5:1 on the light canvas; dark mode restores the brighter 500 steps below. */
@@ -51,7 +51,9 @@
   --error-surface: color-mix(in srgb, var(--error) 8%, transparent);
   --destructive: var(--error);
   --border: --alpha(var(--brand-graphite) / 12%);
-  --input: --alpha(var(--brand-graphite) / 20%);
+  /* Control borders reach 3:1 on the canvas (WCAG 1.4.11); fills use --control-fill. */
+  --input: #8f8f8d;
+  --control-fill: --alpha(var(--brand-graphite) / 5%);
   --ring: var(--brand-graphite);
   --destructive-foreground: var(--error-foreground);
   --info: var(--color-blue-600);
@@ -70,9 +72,10 @@
   --sidebar-foreground: var(--foreground);
   --sidebar-muted-foreground: var(--muted-foreground);
   --sidebar-control-surface: #e6e6e3;
-  --sidebar-row-hover: #e9e9e6;
-  --sidebar-row-active: var(--color-white);
-  --sidebar-row-selected: var(--color-white);
+  /* Hover and selected rows differ from the sidebar by at least 1.16:1 and 1.28:1 (tested). */
+  --sidebar-row-hover: #dededc;
+  --sidebar-row-active: #d4d4d2;
+  --sidebar-row-selected: #d4d4d2;
   --sidebar-border: var(--border);
   --sidebar-stage-fade: var(--sidebar);
   --code-background: color-mix(in srgb, var(--card) 90%, var(--background));
@@ -99,14 +102,15 @@
     --secondary-foreground: var(--brand-white);
     --muted: #15171a;
     --muted-foreground: var(--brand-silver);
-    --accent: #191b1f;
+    --accent: #202226;
     --accent-foreground: var(--brand-white);
     --error: color-mix(in srgb, var(--color-red-500) 90%, var(--color-white));
     --error-foreground: var(--color-red-400);
     --tool-error-icon: #fca5a5;
     --error-surface: color-mix(in srgb, var(--error) 16%, transparent);
     --border: --alpha(var(--brand-white) / 12%);
-    --input: --alpha(var(--brand-white) / 20%);
+    --input: #5b5b60;
+    --control-fill: --alpha(var(--brand-white) / 6%);
     --ring: var(--brand-white);
     --info: var(--color-blue-500);
     --info-foreground: var(--color-blue-400);
@@ -119,9 +123,9 @@
     --update-surface: color-mix(in srgb, var(--update) 18%, transparent);
     --sidebar: var(--card);
     --sidebar-control-surface: var(--muted);
-    --sidebar-row-hover: var(--accent);
-    --sidebar-row-active: var(--accent);
-    --sidebar-row-selected: var(--muted);
+    --sidebar-row-hover: #1f2022;
+    --sidebar-row-active: #27282a;
+    --sidebar-row-selected: #27282a;
     --sidebar-stage-fade: var(--card);
     --terminal-cursor: var(--brand-white);
     --terminal-selection-background: --alpha(var(--brand-white) / 22%);
@@ -177,6 +181,7 @@ html[data-theme-id]:not([data-theme-id='']) {
   --update-surface: var(--app-theme-update-surface);
   --border: var(--app-theme-border);
   --input: var(--app-theme-input);
+  --control-fill: color-mix(in srgb, var(--foreground) 6%, transparent);
   --ring: var(--app-theme-focus);
   --sidebar: var(--app-theme-sidebar);
   --sidebar-foreground: var(--app-theme-sidebar-foreground);

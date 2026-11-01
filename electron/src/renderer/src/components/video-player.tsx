@@ -179,7 +179,7 @@ function VideoControls({
           variant="ghost"
           aria-label={t(paused ? 'player.play' : 'player.pause')}
           aria-busy={waiting}
-          className="hover:bg-white/15 hover:text-white"
+          className="hover:bg-accent hover:text-white"
           onClick={() => {
             setFailed(false);
             rangeEnd.current = null;
@@ -202,7 +202,7 @@ function VideoControls({
             <Button
               size="icon-sm"
               variant="ghost"
-              className="hover:bg-white/15 hover:text-white"
+              className="hover:bg-accent hover:text-white"
               aria-label={`${t('player.seek')} -10s`}
               onClick={() => {
                 if (player.current) player.current.currentTime = Math.max(0, time - 10);
@@ -213,7 +213,7 @@ function VideoControls({
             <Button
               size="icon-sm"
               variant="ghost"
-              className="hover:bg-white/15 hover:text-white"
+              className="hover:bg-accent hover:text-white"
               aria-label={`${t('player.seek')} +10s`}
               onClick={() => {
                 if (player.current)
@@ -232,7 +232,7 @@ function VideoControls({
           variant="ghost"
           aria-label={t(muted ? 'player.unmute' : 'player.mute')}
           aria-pressed={muted}
-          className="hover:bg-white/15 hover:text-white"
+          className="hover:bg-accent hover:text-white"
           onClick={() => {
             if (player.current) player.current.muted = !muted;
           }}
@@ -259,7 +259,7 @@ function VideoControls({
             <Button
               size="xs"
               variant="ghost"
-              className="min-w-10 px-1.5 text-[10px] tabular-nums hover:bg-white/15 hover:text-white"
+              className="min-w-10 px-1.5 text-[10px] tabular-nums hover:bg-accent hover:text-white"
               aria-label={t('clone.speed')}
               onClick={() => {
                 const rates = [0.75, 1, 1.25, 1.5, 2];
@@ -281,7 +281,7 @@ function VideoControls({
             variant="ghost"
             disabled={!canFullscreen}
             aria-label={t(fullscreen ? 'player.exit_fullscreen' : 'player.fullscreen')}
-            className="hover:bg-white/15 hover:text-white"
+            className="hover:bg-accent hover:text-white"
             onClick={() => {
               const action = fullscreen
                 ? player.current?.exitFullscreen()

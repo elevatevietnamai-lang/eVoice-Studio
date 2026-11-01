@@ -75,3 +75,33 @@ describe.each(tokens.palettes.flatMap((palette) => (['light', 'dark'] as const).
     });
   },
 );
+
+/**
+ * House rules (not WCAG): a hover must be visible, so the row or control surface has to differ from
+ * the one it sits on by a minimum contrast, and the muted label on it must stay readable.
+ * Control borders (inputs) reach 3:1 on the canvas (WCAG 1.4.11).
+ */
+const STATE_STEPS: [state: string, base: string, min: number][] = [
+  ['sidebarRowHover', 'sidebar', 1.15],
+  ['sidebarRowSelected', 'sidebar', 1.25],
+  ['toolbarControlHover', 'toolbarControl', 1.15],
+];
+
+describe.each(
+  tokens.palettes.flatMap((palette) =>
+    (['light', 'dark'] as const).map(
+      (appearance) => [palette.id, appearance, palette.colors[appearance]] as const,
+    ),
+  ),
+)('interaction states in %s (%s)', (_id, _appearance, colors) => {
+  it.each(STATE_STEPS)('%s differs from %s by %s:1', (state, base, min) => {
+    expect(contrast(colors[state], colors[base])).toBeGreaterThanOrEqual(min);
+  });
+  it('keeps muted sidebar text readable on hover and selected rows', () => {
+    expect(contrast(colors.sidebarMutedForeground, colors.sidebarRowHover)).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(colors.sidebarForeground, colors.sidebarRowSelected)).toBeGreaterThanOrEqual(4.5);
+  });
+  it('draws input borders at 3:1 on the canvas', () => {
+    expect(contrast(colors.input, colors.canvas)).toBeGreaterThanOrEqual(3);
+  });
+});

@@ -262,7 +262,7 @@ export function ResetSettings({
                       ? 'cursor-not-allowed opacity-45'
                       : active
                         ? 'border-primary/35 bg-primary/8 shadow-[inset_2px_0_0_var(--primary)]'
-                        : 'cursor-pointer border-border/60 bg-background/30 hover:bg-muted/40'
+                        : 'cursor-pointer border-border/60 bg-background/30 hover:bg-accent'
                   }`}
                 >
                   <input
@@ -314,7 +314,7 @@ export function ResetSettings({
                       <label
                         key={scope}
                         className={`flex items-center gap-3 border-b border-border/45 px-3 py-2.5 last:border-0 ${
-                          disabled ? 'opacity-45' : 'cursor-pointer hover:bg-muted/35'
+                          disabled ? 'opacity-45' : 'cursor-pointer hover:bg-accent'
                         }`}
                       >
                         <input

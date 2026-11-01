@@ -168,7 +168,7 @@ export function LicenceAcceptanceFooter({
                     htmlFor={id}
                     className={cn(
                       'flex cursor-pointer items-start gap-3 px-3 py-2.5 text-sm transition-colors motion-reduce:transition-none',
-                      checkedModel ? 'bg-primary/[0.06]' : 'hover:bg-muted/50',
+                      checkedModel ? 'bg-primary/[0.06]' : 'hover:bg-accent',
                     )}
                   >
                     <input

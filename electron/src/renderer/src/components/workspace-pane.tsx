@@ -69,7 +69,7 @@ export function WorkspacePane({
           aria-label={t(collapsible ? 'paneActions.collapse' : 'common.close')}
           title={t(collapsible ? 'paneActions.collapse' : 'common.close')}
           onClick={onClose}
-          className="text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+          className="text-muted-foreground hover:bg-accent hover:text-foreground"
         >
           {collapsible ? <ChevronRightIcon /> : <XIcon />}
         </Button>

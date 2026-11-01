@@ -295,7 +295,7 @@ export function SavedVoices({
               <li
                 key={profile.id}
                 className={cn(
-                  'group/profile relative flex items-center gap-2 rounded-lg px-2 transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-sidebar-accent/70 hover:shadow-[inset_0_1px_0_rgb(255_255_255/8%),0_6px_18px_rgb(0_0_0/10%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 hover:backdrop-blur-xl',
+                  'group/profile relative flex items-center gap-2 rounded-lg px-2 transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-(--sidebar-row-hover) hover:shadow-[inset_0_1px_0_rgb(255_255_255/8%),0_6px_18px_rgb(0_0_0/10%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 hover:backdrop-blur-xl',
                   library ? 'py-3' : 'h-9',
                   row && 'absolute right-2 left-2 top-0',
                   active &&
@@ -419,7 +419,7 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
   return (
     <div
       className={cn(
-        'group relative flex h-9 min-w-0 items-center rounded-lg px-2 transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-sidebar-accent/60 hover:shadow-[inset_0_1px_0_rgb(255_255_255/7%),0_6px_18px_rgb(0_0_0/9%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/50 hover:backdrop-blur-xl',
+        'group relative flex h-9 min-w-0 items-center rounded-lg px-2 transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-(--sidebar-row-hover) hover:shadow-[inset_0_1px_0_rgb(255_255_255/7%),0_6px_18px_rgb(0_0_0/9%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/50 hover:backdrop-blur-xl',
         selected?.id === item.id && 'bg-sidebar-accent',
       )}
     >
@@ -677,7 +677,7 @@ export function VoicesSidebar({
               value="voices"
               title={t('clone.saved_profiles')}
               aria-label={t('clone.saved_profiles')}
-              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-sidebar-accent/50 data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
+              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-(--sidebar-row-hover) data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
             >
               <span className="min-w-0 truncate">{t('clone.saved_profiles')}</span>
             </TabsTrigger>
@@ -685,7 +685,7 @@ export function VoicesSidebar({
               value="takes"
               title={t('clone.history_title')}
               aria-label={t('clone.history_title')}
-              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-sidebar-accent/50 data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
+              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-(--sidebar-row-hover) data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
             >
               <span className="min-w-0 truncate">{t('clone.history_title')}</span>
             </TabsTrigger>
