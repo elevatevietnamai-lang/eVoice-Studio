@@ -92,6 +92,6 @@ Saved voices and Recent takes live in a context sidebar beside the navigation on
 
 In the compact rail, each group icon (Voice, Stories, Dubbing, More) names itself in a tooltip on hover and opens a menu on click. Menu items show icon, name and description. Keyboard users press Enter or Arrow Right/Down to open it, then Arrow Left or Escape to return to the trigger. Choosing a destination closes the menu and opens that page with its control panel expanded.
 
-## Sidebar expansion preference
+## Navigation rail
 
-Settings → Appearance → Keep sidebar expanded persists the choice locally. It disables automatic compaction beside a section pane and on narrow windows. With the default automatic setting, windows up to 1200px wide use the rail. The explicit close control still works. The header toggle and sidebar share one state. A compact rail can reopen itself on every desktop platform, using the brand icon on Windows/Linux.
+The navigation is always the icon rail on every platform and window width; there is no expanded sidebar and no Keep sidebar expanded preference. Rail groups open their menu in the panel column, and each page's control panel stays open beside the rail.

@@ -1,13 +1,7 @@
-import { useEffect, useId, useState } from 'react';
-import { setMenuGroup, setWorkspace, useMenuGroup } from '@/lib/store/workspace';
+import { useEffect } from 'react';
+import { setMenuGroup, useMenuGroup } from '@/lib/store/workspace';
 import { Link, useRouterState } from '@tanstack/react-router';
-import {
-  AudioLinesIcon,
-  ChevronRightIcon,
-  FilmIcon,
-  FingerprintIcon,
-  WrenchIcon,
-} from 'lucide-react';
+import { AudioLinesIcon, FilmIcon, FingerprintIcon, WrenchIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -40,7 +34,6 @@ function NavigationLink({
       aria-label={compact ? t(label) : undefined}
       onClick={() => {
         activate?.();
-        setWorkspace({ panelCollapsed: false });
         // Choosing a page, even the one already open, turns the menu column back into its panel.
         setMenuGroup(null);
         onNavigate?.();
@@ -86,105 +79,56 @@ function NavigationGroup({
   label,
   icon: Icon,
   children,
-  compact,
   pathname,
 }: {
   group: DestinationGroup;
   label: string;
   icon: typeof AudioLinesIcon;
   children: Destination[];
-  compact: boolean;
   pathname: string;
 }) {
   const { t } = useTranslation();
   const active = children.some(({ to }) => pathname === to || pathname.startsWith(to + '/'));
-  const [expanded, setExpanded] = useState(active);
   const open = useMenuGroup() === group;
-  const id = useId();
-  useEffect(() => {
-    setExpanded(active);
-  }, [pathname, active]);
   const triggerClass = cn(
     itemClass,
-    'w-full',
-    compact
-      ? 'size-10 justify-center'
-      : 'h-7 gap-2 px-2.5 text-xs font-medium uppercase tracking-wide',
-    (active || open) && compact && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
+    'size-10 w-full justify-center',
+    (active || open) && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
   );
-  if (compact)
-    return (
-      // Hover names the group; a click fills the panel column with its menu, a second click
-      // gives the column back to the page's panel.
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <button
-              type="button"
-              aria-label={t(label)}
-              aria-expanded={open}
-              aria-controls={open ? GROUP_MENU_ID : undefined}
-              data-active={active}
-              data-menu-group={group}
-              className={triggerClass}
-              onClick={() => setMenuGroup(open ? null : group)}
-              onKeyDown={(event) => {
-                if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
-                event.preventDefault();
-                setMenuGroup(group);
-                requestAnimationFrame(() =>
-                  document.getElementById(GROUP_MENU_ID)?.querySelector('a')?.focus(),
-                );
-              }}
-            />
-          }
-        >
-          <Icon className={iconClass} aria-hidden="true" />
-        </TooltipTrigger>
-        {!open && <TooltipContent side="right">{t(label)}</TooltipContent>}
-      </Tooltip>
-    );
   return (
-    <div className="py-1">
-      <button
-        type="button"
-        aria-expanded={expanded}
-        aria-controls={id}
-        data-active={active}
-        onClick={() => setExpanded((value) => !value)}
-        className={triggerClass}
+    // Hover names the group; a click fills the panel column with its menu, a second click
+    // gives the column back to the page's panel.
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <button
+            type="button"
+            aria-label={t(label)}
+            aria-expanded={open}
+            aria-controls={open ? GROUP_MENU_ID : undefined}
+            data-active={active}
+            data-menu-group={group}
+            className={triggerClass}
+            onClick={() => setMenuGroup(open ? null : group)}
+            onKeyDown={(event) => {
+              if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
+              event.preventDefault();
+              setMenuGroup(group);
+              requestAnimationFrame(() =>
+                document.getElementById(GROUP_MENU_ID)?.querySelector('a')?.focus(),
+              );
+            }}
+          />
+        }
       >
-        <span className="truncate">{t(label)}</span>
-        <ChevronRightIcon
-          aria-hidden="true"
-          className={cn(
-            'ml-auto size-3.5 shrink-0 transition-transform duration-160 motion-reduce:transition-none',
-            expanded && 'rotate-90',
-          )}
-        />
-      </button>
-      <div
-        id={id}
-        aria-hidden={!expanded}
-        inert={!expanded}
-        className={cn(
-          'grid transition-[grid-template-rows,opacity] duration-240 motion-reduce:transition-none',
-          expanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
-        )}
-      >
-        <div className="overflow-hidden">
-          <div className="mt-0.5 space-y-0.5">
-            {children.map((destination) => (
-              <NavigationLink key={destination.to} destination={destination} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+        <Icon className={iconClass} aria-hidden="true" />
+      </TooltipTrigger>
+      {!open && <TooltipContent side="right">{t(label)}</TooltipContent>}
+    </Tooltip>
   );
 }
 
-export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) {
+export function WorkspaceNavigation() {
   const { t } = useTranslation();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
@@ -195,7 +139,7 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
       aria-label={t('nav.workspaces')}
       className={cn(
         'min-h-0 overflow-y-auto overscroll-contain py-2 [scrollbar-width:none]',
-        compact ? 'space-y-0.5 px-1.5' : 'shrink-0 space-y-0.5 px-3',
+        'space-y-0.5 px-1.5',
       )}
     >
       <NavigationGroup
@@ -203,7 +147,6 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
         label="nav.voice"
         icon={FingerprintIcon}
         children={inGroup('voice')}
-        compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
@@ -211,7 +154,6 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
         label="nav.stories"
         icon={AudioLinesIcon}
         children={inGroup('stories')}
-        compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
@@ -219,7 +161,6 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
         label="nav.dub"
         icon={FilmIcon}
         children={inGroup('dub')}
-        compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
@@ -227,11 +168,10 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
         label="nav.more"
         icon={WrenchIcon}
         children={inGroup('more')}
-        compact={compact}
         pathname={pathname}
       />
       {inGroup('library').map((destination) => (
-        <NavigationLink key={destination.to} destination={destination} compact={compact} />
+        <NavigationLink key={destination.to} destination={destination} compact />
       ))}
     </nav>
   );

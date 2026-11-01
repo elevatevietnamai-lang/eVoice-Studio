@@ -23,7 +23,7 @@ import { GroupMenuPanel, WorkspaceNavigation } from './workspace-menu';
 function Shell() {
   return (
     <>
-      <WorkspaceNavigation compact />
+      <WorkspaceNavigation />
       <GroupMenuPanel />
     </>
   );
@@ -33,29 +33,6 @@ afterEach(() => {
   cleanup();
   act(() => setMenuGroup(null));
   setWorkspace.mockClear();
-});
-
-it('opens the current workflow, lets users collapse it, and follows route changes', () => {
-  const { rerender } = render(<WorkspaceNavigation />);
-  const voice = screen.getByRole('button', { name: 'nav.voice' });
-  expect(voice).toHaveAttribute('aria-expanded', 'true');
-  expect(screen.getByRole('link', { name: 'nav.gallery' })).toHaveAttribute('href', '/gallery');
-  const more = screen.getByRole('button', { name: 'nav.more' });
-  expect(more).toHaveAttribute('aria-expanded', 'false');
-  fireEvent.click(more);
-  expect(screen.getByRole('link', { name: 'workflows.title' })).toHaveAttribute('href', '/calls');
-  fireEvent.click(voice);
-  expect(voice).toHaveAttribute('aria-expanded', 'false');
-  route.pathname = '/audiobook';
-  rerender(<WorkspaceNavigation />);
-  expect(screen.getByRole('button', { name: 'nav.stories' })).toHaveAttribute(
-    'aria-expanded',
-    'true',
-  );
-  expect(screen.getByRole('link', { name: 'audiobook.title' })).toHaveAttribute(
-    'href',
-    '/audiobook',
-  );
 });
 
 it('opens a rail group as a menu in the panel column, and closes it on a second click', () => {
@@ -101,7 +78,7 @@ it('gives the column back to the page panel when a page is chosen, even the curr
   render(<Shell />);
   fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
   fireEvent.click(screen.getByRole('link', { name: /nav\.gallery/ }));
-  expect(setWorkspace).toHaveBeenCalledWith({ panelCollapsed: false });
+
   expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull();
 });
 

@@ -11,7 +11,7 @@ import { TakeDetails } from './take-details';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
-import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon, } from 'lucide-react';
+import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon } from 'lucide-react';
 import { isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -153,14 +153,7 @@ export function ClonePage() {
             </div>
             <CommandSearch className="ml-auto" />
             <div className="flex shrink-0 items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setLibraryTab('takes');
-                  setWorkspace({ panelCollapsed: false });
-                }}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setLibraryTab('takes')}>
                 <HistoryIcon data-icon="inline-start" />
                 {t('clone.history_title')}
               </Button>

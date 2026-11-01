@@ -1,22 +1,13 @@
 import { useSyncExternalStore } from 'react';
 type Layout = {
-  expandedLibraryContext?: string | null;
   editingProfileId?: string | null;
   panel: 'voice' | null;
-  libraryOpen: boolean;
   libraryTab: 'voices' | 'takes';
-  /** Shrink the sidebar to a rail when a workspace opens its own side panel on a narrow window. */
-  autoCollapseSidebar: boolean;
-  /** The current page's control panel is folded to its strip. Reopens on every navigation. */
-  panelCollapsed: boolean;
 };
 const key = 'voicestudio.workspace-layout';
 const defaults: Layout = {
   panel: null,
-  libraryOpen: true,
   libraryTab: 'voices',
-  autoCollapseSidebar: true,
-  panelCollapsed: false,
 };
 function read(): Layout {
   try {
@@ -24,11 +15,7 @@ function read(): Layout {
     return {
       // Voice controls moved to a composer popover; a stored 'settings' pane is dropped.
       panel: value?.panel === 'voice' ? 'voice' : null,
-      libraryOpen: typeof value?.libraryOpen === 'boolean' ? value.libraryOpen : true,
       libraryTab: value?.libraryTab === 'takes' ? 'takes' : 'voices',
-      autoCollapseSidebar:
-        typeof value?.autoCollapseSidebar === 'boolean' ? value.autoCollapseSidebar : true,
-      panelCollapsed: false,
     };
   } catch {
     return defaults;
@@ -78,9 +65,6 @@ export function registerPanel(title = ''): () => void {
     panelListeners.forEach((listener) => listener());
   };
 }
-export function usePanelMounted(): boolean {
-  return useSyncExternalStore(subscribePanels, () => panelTitles.length > 0);
-}
 /** Titles of the mounted panels, so a page header can tell whether its panel already names it. */
 export function usePanelTitles(): readonly string[] {
   return useSyncExternalStore(subscribePanels, () => panelTitles);
@@ -106,36 +90,5 @@ export function useMenuGroup(): string | null {
       };
     },
     () => menuGroup,
-  );
-}
-
-/**
- * True for the moment a user folds or unfolds the control panel. Only then does the panel animate
- * its width; window resizes, sidebar drags, first measures and navigation reopen it instantly.
- * Set in the same update as `panelCollapsed`, so the transition is on in the render that changes it.
- */
-let panelFolding = false;
-let foldTimer: ReturnType<typeof setTimeout> | undefined;
-const foldListeners = new Set<() => void>();
-const notifyFold = () => foldListeners.forEach((listener) => listener());
-export function foldPanel(collapsed: boolean) {
-  clearTimeout(foldTimer);
-  panelFolding = true;
-  notifyFold();
-  setWorkspace({ panelCollapsed: collapsed });
-  foldTimer = setTimeout(() => {
-    panelFolding = false;
-    notifyFold();
-  }, 300);
-}
-export function usePanelFolding(): boolean {
-  return useSyncExternalStore(
-    (listener) => {
-      foldListeners.add(listener);
-      return () => {
-        foldListeners.delete(listener);
-      };
-    },
-    () => panelFolding,
   );
 }

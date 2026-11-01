@@ -73,7 +73,6 @@ import { SettingsContent, SettingsRow, SettingsSection } from './settings-layout
 import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale } from '@/i18n';
 import { setReviewMode, useReviewMode } from '@/hooks/use-review-mode';
 import { rememberSettingsRoute } from '@/lib/settings-route';
-import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
 
 const sections = ['general', 'appearance'] as const;
 const fields = {
@@ -92,8 +91,7 @@ const settingsNavItemClass =
   'group h-9 min-w-0 rounded-md font-normal text-(--sidebar-muted-foreground) transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground aria-[current=page]:bg-(--sidebar-row-selected) aria-[current=page]:font-medium aria-[current=page]:text-sidebar-foreground';
 const settingsNavIconClass =
   'size-4 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160 group-hover:text-sidebar-foreground group-aria-[current=page]:text-sidebar-foreground';
-const settingsNavActiveClass =
-  'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground';
+const settingsNavActiveClass = 'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground';
 
 const extraSettings = [
   {
@@ -267,7 +265,6 @@ export function SettingsPage() {
   // The default Studio theme is flat; glass only applies to named palettes.
   const flatTheme = paletteId === 'default';
   const appearance = useAppearance();
-  const workspace = useWorkspace();
   const reviewMode = useReviewMode();
   const targetIds: Record<string, string> = {
     theme: 'theme-label',
@@ -626,17 +623,6 @@ export function SettingsPage() {
                       disabled={flatTheme}
                       checked={appearance.glass && !flatTheme}
                       onCheckedChange={(glass) => appearance.update({ glass })}
-                    />
-                  </SettingsRow>
-                  <SettingsRow
-                    id="sidebar-expanded-label"
-                    title={t('preferences.sidebar_expanded')}
-                    description={t('preferences.sidebar_expanded_hint')}
-                  >
-                    <Switch
-                      aria-labelledby="sidebar-expanded-label"
-                      checked={!workspace.autoCollapseSidebar}
-                      onCheckedChange={(keep) => setWorkspace({ autoCollapseSidebar: !keep })}
                     />
                   </SettingsRow>
                   <PalettePicker appearance="light" />

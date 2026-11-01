@@ -138,10 +138,7 @@ function SliderRow({ spec, value }: SliderRowProps) {
   return (
     <div className="flex min-w-0 flex-col gap-2 px-1 py-2">
       <div className="flex items-center justify-between gap-2">
-        <span
-          id={labelId}
-          className="inline-flex items-center gap-1.5 text-xs font-medium"
-        >
+        <span id={labelId} className="inline-flex items-center gap-1.5 text-xs font-medium">
           <Icon className="size-3.5 text-muted-foreground" aria-hidden="true" />
           {t(spec.labelKey)}
         </span>
@@ -365,14 +362,14 @@ export function ActionBar() {
               blocker === 'cloning'
                 ? 'convert.cloning_required'
                 : blocker === 'engine'
-                ? demo
-                  ? 'demo.prerendered_chip'
-                  : 'engines.none_ready_title'
-                : blocker === 'reference'
-                  ? 'tts_errors.upload_or_select'
-                  : blocker === 'text'
-                    ? 'tts_errors.enter_text'
-                    : 'preferences.loading',
+                  ? demo
+                    ? 'demo.prerendered_chip'
+                    : 'engines.none_ready_title'
+                  : blocker === 'reference'
+                    ? 'tts_errors.upload_or_select'
+                    : blocker === 'text'
+                      ? 'tts_errors.enter_text'
+                      : 'preferences.loading',
             )}
           </span>
           {blocker === 'reference' && (
@@ -390,7 +387,7 @@ export function ActionBar() {
               <Button
                 variant="ghost"
                 size="xs"
-                onClick={() => setWorkspace({ panelCollapsed: false, libraryTab: 'voices' })}
+                onClick={() => setWorkspace({ libraryTab: 'voices' })}
               >
                 {t('clone.saved_profiles')}
               </Button>

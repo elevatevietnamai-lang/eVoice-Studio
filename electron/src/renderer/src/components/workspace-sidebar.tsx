@@ -2,7 +2,7 @@ import { useContext, useEffect, useId, useState, type CSSProperties, type ReactN
 import { createPortal } from 'react-dom';
 import { type LucideIcon } from 'lucide-react';
 import { usePaneResize } from '@/hooks/use-pane-resize';
-import { foldPanel, registerPanel, usePanelFolding, useWorkspace } from '@/lib/store/workspace';
+import { registerPanel } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
 import { PanelSlotContext } from '@/components/panel-slot-context';
 
@@ -51,8 +51,6 @@ function PanelBody({
   footer,
   library,
   libraryLabel,
-  collapsed: controlledCollapsed,
-  onCollapsedChange,
 }: {
   title: string;
   icon: LucideIcon;
@@ -66,20 +64,9 @@ function PanelBody({
   /** Saved items beside the controls. A render callback receives visibility so retained panes can cancel hidden work. */
   library?: ReactNode | ((active: boolean) => ReactNode);
   libraryLabel?: string;
-  /** Controls the collapsed state when the parent owns a shared pane shortcut. */
-  collapsed?: boolean;
-  /** Lets the page re-home the footer's content while the pane is collapsed. */
-  onCollapsedChange?: (collapsed: boolean) => void;
 }) {
-  // One panel per page: the rail's bottom toggle folds it, and navigation reopens it (AppShell).
-  const { panelCollapsed } = useWorkspace();
-  const collapsed = controlledCollapsed ?? panelCollapsed;
+  // One panel per page, always open beside the rail (DESIGN.md).
   useEffect(() => registerPanel(title), [title]);
-  // Only a user fold animates the width; while it opens, the content is still narrow and would
-  // rewrap in view, so it stays transparent until the pane is wide, then fades in. Both flags
-  // arrive in the same render as the fold itself.
-  const folding = usePanelFolding();
-  const expanding = folding && !collapsed;
   const [view, setView] = useState<'controls' | 'library'>('controls');
   const [libraryVisited, setLibraryVisited] = useState(false);
   const tabsId = useId();
@@ -88,20 +75,12 @@ function PanelBody({
     setView(next);
   };
   const showLibrary = library != null && view === 'library';
-  // Notify from the event handler, never from inside a state updater: updaters
-  // must stay pure (StrictMode runs them twice, which would double-fire this).
-  const setCollapsed = (next: boolean | ((value: boolean) => boolean)) => {
-    const resolved = typeof next === 'function' ? next(collapsed) : next;
-    if (resolved === collapsed) return;
-    if (controlledCollapsed === undefined) foldPanel(resolved);
-    onCollapsedChange?.(resolved);
-  };
   const dimensions = WIDTHS[size];
   const resize = usePaneResize({
     storageKey: `voicestudio.secondary-sidebar.${size}`,
     side: 'left',
     ...dimensions,
-    enabled: !collapsed,
+    enabled: true,
   });
   return (
     <aside
@@ -110,116 +89,105 @@ function PanelBody({
       data-slot="secondary-sidebar"
       data-size={size}
       data-variant={variant}
-      data-collapsed={collapsed || undefined}
       data-resizing={resize.resizing || undefined}
-      data-folding={folding || undefined}
-      data-expanding={expanding || undefined}
       style={
         {
           '--secondary-sidebar-width': `${resize.width}px`,
         } as CSSProperties
       }
       className={cn(
-        'secondary-sidebar relative duration-240 ease-(--ease-standard) data-[folding]:transition-[width] data-[resizing]:transition-none motion-reduce:transition-none [--pane-resize-display:flex] @max-[40rem]:[--pane-resize-display:none] flex min-h-0 shrink-0 flex-col border-r border-border/55 bg-[color-mix(in_oklab,var(--muted)_13%,var(--background))] shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] [container-type:inline-size]',
-        collapsed
-          ? 'w-11'
-          : 'w-[var(--secondary-sidebar-width)] @max-[40rem]:max-h-[40%] @max-[40rem]:w-full @max-[40rem]:border-r-0 @max-[40rem]:border-b',
+        'secondary-sidebar relative [--pane-resize-display:flex] @max-[40rem]:[--pane-resize-display:none] flex min-h-0 shrink-0 flex-col border-r border-border/55 bg-[color-mix(in_oklab,var(--muted)_13%,var(--background))] shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] [container-type:inline-size]',
+        'w-[var(--secondary-sidebar-width)] @max-[40rem]:max-h-[40%] @max-[40rem]:w-full @max-[40rem]:border-r-0 @max-[40rem]:border-b',
       )}
     >
-      {!collapsed && (
-        <div
-          {...resize.separatorProps}
-          aria-label={title}
-          className="group/resize absolute inset-y-0 -right-1 z-20 [display:var(--pane-resize-display)] w-2 cursor-col-resize touch-none items-center justify-center outline-none"
-        >
-          <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color] duration-150 group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
-        </div>
-      )}
+      <div
+        {...resize.separatorProps}
+        aria-label={title}
+        className="group/resize absolute inset-y-0 -right-1 z-20 [display:var(--pane-resize-display)] w-2 cursor-col-resize touch-none items-center justify-center outline-none"
+      >
+        <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color] duration-150 group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
+      </div>
       <div
         data-slot="secondary-sidebar-header"
         className={cn(
           'workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-border/45 bg-background',
-          collapsed ? 'justify-center px-1' : 'px-3',
+          'px-3',
         )}
       >
-        {!collapsed && (
-          <>
-            <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 bg-background/50 text-primary">
-              <Icon aria-hidden="true" className="size-4" />
-            </span>
-            {/* With a library, the tabs are the title: the page name is shown once (DESIGN.md). */}
-            {library != null ? (
-              <div
-                role="tablist"
-                aria-label={title}
-                data-slot="secondary-sidebar-tabs"
-                className="flex min-w-0 flex-1 gap-1"
-                onKeyDown={(event) => {
-                  if (event.altKey || event.ctrlKey || event.metaKey) return;
-                  const tabs = [
-                    ...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
-                  ];
-                  const current = tabs.findIndex((tab) => tab === event.target);
-                  if (current < 0) return;
-                  const forward =
-                    getComputedStyle(event.currentTarget).direction === 'rtl'
-                      ? 'ArrowLeft'
-                      : 'ArrowRight';
-                  const backward = forward === 'ArrowRight' ? 'ArrowLeft' : 'ArrowRight';
-                  const next =
-                    event.key === 'Home'
-                      ? 0
-                      : event.key === 'End'
-                        ? 1
-                        : event.key === forward || event.key === backward
-                          ? 1 - current
-                          : null;
-                  if (next === null) return;
-                  event.preventDefault();
-                  chooseView(next === 0 ? 'controls' : 'library');
-                  tabs[next]?.focus();
-                }}
+        <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 bg-background/50 text-primary">
+          <Icon aria-hidden="true" className="size-4" />
+        </span>
+        {/* With a library, the tabs are the title: the page name is shown once (DESIGN.md). */}
+        {library != null ? (
+          <div
+            role="tablist"
+            aria-label={title}
+            data-slot="secondary-sidebar-tabs"
+            className="flex min-w-0 flex-1 gap-1"
+            onKeyDown={(event) => {
+              if (event.altKey || event.ctrlKey || event.metaKey) return;
+              const tabs = [
+                ...event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
+              ];
+              const current = tabs.findIndex((tab) => tab === event.target);
+              if (current < 0) return;
+              const forward =
+                getComputedStyle(event.currentTarget).direction === 'rtl'
+                  ? 'ArrowLeft'
+                  : 'ArrowRight';
+              const backward = forward === 'ArrowRight' ? 'ArrowLeft' : 'ArrowRight';
+              const next =
+                event.key === 'Home'
+                  ? 0
+                  : event.key === 'End'
+                    ? 1
+                    : event.key === forward || event.key === backward
+                      ? 1 - current
+                      : null;
+              if (next === null) return;
+              event.preventDefault();
+              chooseView(next === 0 ? 'controls' : 'library');
+              tabs[next]?.focus();
+            }}
+          >
+            {(
+              [
+                ['controls', title],
+                ['library', libraryLabel ?? title],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                id={`${tabsId}-${value}`}
+                aria-controls={`${tabsId}-panel-${value}`}
+                aria-selected={view === value}
+                tabIndex={view === value ? 0 : -1}
+                onClick={() => chooseView(value)}
+                className={cn(
+                  'h-7 min-w-0 flex-1 truncate rounded-md px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                  view === value
+                    ? 'bg-accent/80 text-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                )}
               >
-                {(
-                  [
-                    ['controls', title],
-                    ['library', libraryLabel ?? title],
-                  ] as const
-                ).map(([value, label]) => (
-                  <button
-                    key={value}
-                    type="button"
-                    role="tab"
-                    id={`${tabsId}-${value}`}
-                    aria-controls={`${tabsId}-panel-${value}`}
-                    aria-selected={view === value}
-                    tabIndex={view === value ? 0 : -1}
-                    onClick={() => chooseView(value)}
-                    className={cn(
-                      'h-7 min-w-0 flex-1 truncate rounded-md px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
-                      view === value
-                        ? 'bg-accent/80 text-foreground'
-                        : 'text-muted-foreground hover:bg-accent hover:text-foreground',
-                    )}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <span
-                className="min-w-0 flex-1 truncate text-sm font-semibold tracking-[-0.014em] text-foreground/95"
-                title={title}
-              >
-                {title}
-              </span>
-            )}
-            {meta !== undefined && meta !== null && (
-              <span className="shrink-0 rounded-md border border-border/40 bg-muted/55 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
-                {meta}
-              </span>
-            )}
-          </>
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <span
+            className="min-w-0 flex-1 truncate text-sm font-semibold tracking-[-0.014em] text-foreground/95"
+            title={title}
+          >
+            {title}
+          </span>
+        )}
+        {meta !== undefined && meta !== null && (
+          <span className="shrink-0 rounded-md border border-border/40 bg-muted/55 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
+            {meta}
+          </span>
         )}
       </div>
       {library != null && (
@@ -227,18 +195,14 @@ function PanelBody({
           role="tabpanel"
           id={`${tabsId}-panel-library`}
           aria-labelledby={`${tabsId}-library`}
-          hidden={!showLibrary || collapsed}
-          className={cn('flex min-h-0 flex-1 flex-col', (!showLibrary || collapsed) && 'hidden')}
+          hidden={!showLibrary}
+          className={cn('flex min-h-0 flex-1 flex-col', !showLibrary && 'hidden')}
         >
-          {libraryVisited
-            ? typeof library === 'function'
-              ? library(showLibrary && !collapsed)
-              : library
-            : null}
+          {libraryVisited ? (typeof library === 'function' ? library(showLibrary) : library) : null}
         </div>
       )}
       <div
-        hidden={collapsed || showLibrary}
+        hidden={showLibrary}
         role={library != null ? 'tabpanel' : undefined}
         id={library != null ? `${tabsId}-panel-controls` : undefined}
         aria-labelledby={library != null ? `${tabsId}-controls` : undefined}
@@ -246,35 +210,19 @@ function PanelBody({
         className={cn(
           'studio-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain p-3.5 text-[13px] [scroll-padding-block:0.875rem] [scrollbar-gutter:stable] [&>*]:min-w-0 [&>section]:w-full [&>section]:shrink-0 [&_button]:max-w-full [&_h2]:tracking-[-0.012em] [&_h3]:tracking-[-0.01em] [&_input]:max-w-full [&_label]:leading-5 [&_p]:leading-[1.55] [&_summary]:rounded-lg [&_summary]:outline-none [&_summary]:transition-[color,background-color] [&_summary]:duration-150 [&_summary:hover]:text-foreground [&_summary:focus-visible]:ring-2 [&_summary:focus-visible]:ring-ring/35 [&_textarea]:max-w-full',
           VARIANT_STYLES[variant],
-          (collapsed || showLibrary) && 'hidden',
+          showLibrary && 'hidden',
           className,
         )}
       >
         {children}
       </div>
-      {footer !== undefined && footer !== null && !collapsed && !showLibrary && (
+      {footer !== undefined && footer !== null && !showLibrary && (
         <div
           data-slot="secondary-sidebar-footer"
           className="flex min-h-0 max-h-[70%] flex-col space-y-3 border-t border-border/55 bg-background p-3.5 text-[13px]"
         >
           {footer}
         </div>
-      )}
-      {collapsed && (
-        <button
-          type="button"
-          title={title}
-          aria-label={title}
-          onClick={() => setCollapsed(false)}
-          className="group mx-auto my-2 flex min-h-0 flex-1 flex-col items-center gap-2 rounded-lg px-1.5 py-2 text-muted-foreground outline-none transition-[color,background-color,border-color] hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <span className="grid size-7 shrink-0 place-items-center rounded-md border border-border/45 bg-background/45 text-primary">
-            <Icon aria-hidden="true" className="size-4" />
-          </span>
-          <span className="min-h-0 truncate text-[11px] font-semibold tracking-[0.01em] [writing-mode:vertical-rl] [text-orientation:mixed]">
-            {title}
-          </span>
-        </button>
       )}
     </aside>
   );

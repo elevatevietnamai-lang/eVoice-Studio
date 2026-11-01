@@ -35,7 +35,6 @@ import {
 import { BookSettings } from './book-settings';
 import { duplicateWords } from './book-options';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useWorkspace } from '@/lib/store/workspace';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -125,7 +124,6 @@ export function LongformPage({ mode }: { mode: Mode }) {
         : [],
     [draft.script, draft.voiceCast, mode, profiles],
   );
-  const sidebarCollapsed = useWorkspace().panelCollapsed;
   const blocker = generateBlocker({
     mode,
     busyElsewhere: Boolean(session.active) && session.active !== mode,
@@ -489,12 +487,6 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 <Link to="/settings/logs" className="ml-3 underline">
                   {t('settings.logs')}
                 </Link>
-              </div>
-            )}
-            {sidebarCollapsed && (
-              // The setup pane is collapsed: keep Generate and the tracker in reach.
-              <div className="sticky bottom-0 z-10 -mx-2 shrink-0 rounded-(--card-radius) border border-border/60 bg-background p-3">
-                {generatePanel}
               </div>
             )}
             {draft.output && (
