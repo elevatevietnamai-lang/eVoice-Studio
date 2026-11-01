@@ -1,13 +1,14 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { PanelLeftIcon, PanelLeftOpenIcon, SettingsIcon } from 'lucide-react';
+import { PanelLeftCloseIcon, PanelLeftIcon, PanelLeftOpenIcon, SettingsIcon } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { appVersion, isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { usePaneResize } from '@/hooks/use-pane-resize';
 import { useWindowFullscreen } from '@/hooks/use-window-fullscreen';
-import { useWorkspace } from '@/lib/store/workspace';
+import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
 import { useWorkspaceSidebarState } from './use-workspace-sidebar';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
@@ -24,7 +25,7 @@ export function WorkspaceSidebar() {
   const versionLabel = t(versionTranslationKey(import.meta.env.DEV), {
     version: appVersion(),
   });
-  const { libraryOpen } = useWorkspace();
+  const { libraryOpen, panelCollapsed } = useWorkspace();
   // One source of truth for "rail or full sidebar": the header toggle and the
   // sidebar's own buttons used to keep separate copies of this state.
   const { compact, compactViewport, forceExpanded, secondaryWorkspace, setOpen } =
@@ -70,21 +71,19 @@ export function WorkspaceSidebar() {
                 brand icon alone gave Windows/Linux no local control. */}
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon"
               aria-label={t('clone.toggle_sidebar')}
+              title={t('clone.toggle_sidebar')}
               aria-expanded={false}
               onClick={() => setOpen(true)}
-              className="shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="size-10 shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              {mac ? (
-                <PanelLeftOpenIcon className="size-5" aria-hidden="true" />
-              ) : (
-                <EVoiceMark size={24} className="shrink-0" />
-              )}
+              <EVoiceMark size={30} className="shrink-0" />
             </Button>
           </div>
           <WorkspaceNavigation compact />
           <div className="flex shrink-0 flex-col items-center gap-1 border-t border-border/50 py-2">
+            {secondaryWorkspace && <PanelToggle collapsed={panelCollapsed} />}
             <StatusBar compact />
             <Link
               to="/settings"
@@ -128,14 +127,6 @@ export function WorkspaceSidebar() {
                 </span>
               </span>
             </Link>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              aria-label={t('common.close')}
-              onClick={() => setOpen(false)}
-            >
-              <PanelLeftIcon />
-            </Button>
           </header>
           <div
             {...sidebarResize.separatorProps}
@@ -167,8 +158,8 @@ export function WorkspaceSidebar() {
                 ) : undefined
               }
             />
-            {!mac && (
-              <div className="flex items-center justify-between gap-2 border-t border-border/50 px-3 py-2">
+            <div className="flex items-center justify-between gap-2 border-t border-border/50 px-3 py-2">
+              {!mac && (
                 <Link
                   to="/settings"
                   className={cn(
@@ -181,11 +172,50 @@ export function WorkspaceSidebar() {
                   />
                   {t('nav.settings')}
                 </Link>
+              )}
+              <div className="ml-auto flex items-center gap-1">
+                {secondaryWorkspace && <PanelToggle collapsed={panelCollapsed} />}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label={t('clone.toggle_sidebar')}
+                  title={t('clone.toggle_sidebar')}
+                  aria-expanded
+                  onClick={() => setOpen(false)}
+                >
+                  <PanelLeftIcon className="size-5" />
+                </Button>
               </div>
-            )}
+            </div>
           </div>
         </aside>
       )}
     </>
+  );
+}
+
+/** Folds or reopens the current page's control panel; the only toggle for it (DESIGN.md). */
+function PanelToggle({ collapsed }: { collapsed: boolean }) {
+  const { t } = useTranslation();
+  const label = t(collapsed ? 'paneActions.expand' : 'paneActions.collapse');
+  const Icon = collapsed ? PanelLeftOpenIcon : PanelLeftCloseIcon;
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={label}
+            aria-expanded={!collapsed}
+            onClick={() => setWorkspace({ panelCollapsed: !collapsed })}
+            className="workspace-nav-item size-10"
+          />
+        }
+      >
+        <Icon className="workspace-nav-icon size-5" aria-hidden="true" />
+      </TooltipTrigger>
+      <TooltipContent side="right">{label}</TooltipContent>
+    </Tooltip>
   );
 }

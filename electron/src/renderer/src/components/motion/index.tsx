@@ -101,7 +101,7 @@ export function RouteFade({ segment, children }: { segment: string; children: Re
       className="h-full min-h-0"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: motionTokens.fast, ease: motionTokens.ease }}
+      transition={{ duration: motionTokens.base, ease: motionTokens.ease }}
     >
       {children}
     </motion.div>

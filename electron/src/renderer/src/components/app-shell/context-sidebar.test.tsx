@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
 
 const route = vi.hoisted(() => ({ pathname: '/clone' }));
-const workspace = vi.hoisted(() => ({ libraryOpen: false, libraryTab: 'voices' as const }));
+const workspace = vi.hoisted(() => ({ panelCollapsed: true, libraryTab: 'voices' as const }));
 const setWorkspace = vi.hoisted(() => vi.fn());
 
 vi.mock('@tanstack/react-router', () => ({
@@ -20,25 +20,25 @@ vi.mock('@/features/clone/voices-sidebar', () => ({
 import { ContextSidebar } from './context-sidebar';
 
 beforeEach(() => {
-  workspace.libraryOpen = false;
+  workspace.panelCollapsed = true;
   workspace.libraryTab = 'voices';
   setWorkspace.mockClear();
 });
 
-it('reopens a collapsed library pane when a library shortcut opens it', () => {
+it('follows the shared panel state and reopens from its folded strip', () => {
   const view = render(<ContextSidebar />);
   expect(document.querySelector('[data-slot="secondary-sidebar"]')).toHaveAttribute(
     'data-collapsed',
     'true',
   );
 
-  workspace.libraryOpen = true;
+  fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
+  expect(setWorkspace).toHaveBeenCalledWith({ panelCollapsed: false });
+
+  workspace.panelCollapsed = false;
   view.rerender(<ContextSidebar />);
   expect(document.querySelector('[data-slot="secondary-sidebar"]')).not.toHaveAttribute(
     'data-collapsed',
   );
   expect(screen.getByText('Voice library')).toBeVisible();
-
-  fireEvent.click(screen.getByRole('button', { name: 'paneActions.collapse' }));
-  expect(setWorkspace).toHaveBeenCalledWith({ libraryOpen: false });
 });

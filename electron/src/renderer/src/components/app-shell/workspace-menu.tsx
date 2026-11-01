@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { setWorkspace } from '@/lib/store/workspace';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { AudioLinesIcon, ChevronRightIcon, FilmIcon, FingerprintIcon, WrenchIcon } from 'lucide-react';
@@ -19,12 +20,12 @@ function NavigationLink({
   destination: { to, label, description, icon: Icon, activate },
   compact = false,
   flyout = false,
-  onCurrentRoute,
+  onNavigate,
 }: {
   destination: Destination;
   compact?: boolean;
   flyout?: boolean;
-  onCurrentRoute?: () => void;
+  onNavigate?: () => void;
 }) {
   const { t } = useTranslation();
   const link = (
@@ -33,14 +34,15 @@ function NavigationLink({
       aria-label={compact ? t(label) : undefined}
       onClick={() => {
         activate?.();
-        onCurrentRoute?.();
+        setWorkspace({ panelCollapsed: false });
+        onNavigate?.();
       }}
       className={cn(
         itemClass,
         compact
           ? 'size-10 justify-center'
           : flyout
-            ? 'h-10 gap-2.5 px-3'
+            ? 'min-h-12 gap-3 px-2.5 py-2'
             : 'min-h-11 gap-3 px-2.5 py-1.5',
       )}
       activeProps={{
@@ -49,7 +51,7 @@ function NavigationLink({
       }}
     >
       <Icon className={iconClass} aria-hidden="true" />
-      {!compact && !flyout && (
+      {!compact && (
         <span className="min-w-0 flex-1 leading-tight">
           <span className="block truncate">{t(label)}</span>
           <span
@@ -60,7 +62,6 @@ function NavigationLink({
           </span>
         </span>
       )}
-      {flyout && <span className="truncate">{t(label)}</span>}
     </Link>
   );
   if (!compact) return link;
@@ -91,31 +92,9 @@ function NavigationGroup({
   const [popupOpen, setPopupOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const cancelOpen = () => {
-    if (openTimer.current !== null) clearTimeout(openTimer.current);
-    openTimer.current = null;
-  };
-  const cancelClose = () => {
-    if (closeTimer.current !== null) clearTimeout(closeTimer.current);
-    closeTimer.current = null;
-  };
-  const scheduleClose = () => {
-    cancelClose();
-    closeTimer.current = setTimeout(() => setPopupOpen(false), 240);
-  };
   const id = useId();
-  useEffect(
-    () => () => {
-      cancelOpen();
-      cancelClose();
-    },
-    [],
-  );
+  const [tipOpen, setTipOpen] = useState(false);
   useEffect(() => {
-    cancelOpen();
-    cancelClose();
     setExpanded(active);
     setPopupOpen(false);
   }, [pathname, active]);
@@ -129,60 +108,34 @@ function NavigationGroup({
   );
   if (compact)
     return (
-      <Popover
-        open={popupOpen}
-        onOpenChange={(open) => {
-          cancelOpen();
-          cancelClose();
-          setPopupOpen(open);
-        }}
-      >
-        <PopoverTrigger
-          ref={triggerRef}
-          aria-label={t(label)}
-          data-active={active}
-          className={triggerClass}
-          onKeyDown={(event) => {
-            if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
-            event.preventDefault();
-            cancelOpen();
-            setPopupOpen(true);
-            requestAnimationFrame(() => popupRef.current?.querySelector('a')?.focus());
-          }}
-          onPointerEnter={(event) => {
-            if (event.pointerType !== 'mouse') return;
-            cancelClose();
-            if (!popupOpen) {
-              cancelOpen();
-              openTimer.current = setTimeout(() => setPopupOpen(true), 90);
+      <Popover open={popupOpen} onOpenChange={setPopupOpen}>
+        {/* Hover names the group, like every other rail icon; a click opens its menu. */}
+        <Tooltip open={tipOpen && !popupOpen} onOpenChange={setTipOpen}>
+          <TooltipTrigger
+            render={
+              <PopoverTrigger
+                ref={triggerRef}
+                aria-label={t(label)}
+                data-active={active}
+                className={triggerClass}
+                onKeyDown={(event) => {
+                  if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
+                  event.preventDefault();
+                  setPopupOpen(true);
+                  requestAnimationFrame(() => popupRef.current?.querySelector('a')?.focus());
+                }}
+              />
             }
-          }}
-          onPointerLeave={(event) => {
-            if (event.pointerType === 'mouse') {
-              cancelOpen();
-              if (popupOpen) scheduleClose();
-            }
-          }}
-          onClickCapture={(event) => {
-            // A press on an already hover-open trigger should keep the flyout
-            // available. Keyboard and touch presses retain Base UI's toggle.
-            if (popupOpen && event.detail > 0) event.stopPropagation();
-          }}
-        >
-          <Icon
-            className={iconClass}
-            aria-hidden="true"
-          />
-        </PopoverTrigger>
+          >
+            <Icon className={iconClass} aria-hidden="true" />
+          </TooltipTrigger>
+          <TooltipContent side="right">{t(label)}</TooltipContent>
+        </Tooltip>
         <PopoverContent
           ref={popupRef}
           side="right"
-          sideOffset={0}
-          className="w-52 p-1.5"
-          onPointerEnter={cancelClose}
-          onPointerLeave={(event) => {
-            if (event.pointerType === 'mouse') scheduleClose();
-          }}
+          sideOffset={6}
+          className="w-72 p-1.5"
           onKeyDown={(event) => {
             if (event.key !== 'ArrowLeft') return;
             event.preventDefault();
@@ -199,7 +152,7 @@ function NavigationGroup({
                 key={destination.to}
                 destination={destination}
                 flyout
-                onCurrentRoute={pathname === destination.to ? () => setPopupOpen(false) : undefined}
+                onNavigate={() => setPopupOpen(false)}
               />
             ))}
           </div>

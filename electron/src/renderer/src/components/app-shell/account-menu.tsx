@@ -80,7 +80,7 @@ export function AccountMenu({ className }: { className?: string }) {
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-          <Menu.Popup className="min-w-52 origin-(--transform-origin) rounded-lg border border-border bg-popover p-1 text-popover-foreground outline-none transition-[opacity,transform] duration-160 ease-out data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:transition-none">
+          <Menu.Popup className="min-w-52 origin-(--transform-origin) rounded-lg border border-border bg-popover p-1 text-popover-foreground outline-none transition-[opacity,transform] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:transition-none">
             <Menu.Item
               className={ITEM}
               onClick={() =>

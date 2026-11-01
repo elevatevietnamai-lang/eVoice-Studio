@@ -1,8 +1,7 @@
 import { useId, useState, type CSSProperties, type ReactNode } from 'react';
-import { PanelLeftCloseIcon, PanelLeftOpenIcon, type LucideIcon } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button';
+import { type LucideIcon } from 'lucide-react';
 import { usePaneResize } from '@/hooks/use-pane-resize';
+import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
 
 const WIDTHS = {
@@ -52,9 +51,9 @@ export function SecondarySidebar({
   /** Lets the page re-home the footer's content while the pane is collapsed. */
   onCollapsedChange?: (collapsed: boolean) => void;
 }) {
-  const { t } = useTranslation();
-  const [uncontrolledCollapsed, setUncontrolledCollapsed] = useState(false);
-  const collapsed = controlledCollapsed ?? uncontrolledCollapsed;
+  // One panel per page: the rail's bottom toggle folds it, and navigation reopens it (AppShell).
+  const { panelCollapsed } = useWorkspace();
+  const collapsed = controlledCollapsed ?? panelCollapsed;
   const [view, setView] = useState<'controls' | 'library'>('controls');
   const [libraryVisited, setLibraryVisited] = useState(false);
   const tabsId = useId();
@@ -68,7 +67,7 @@ export function SecondarySidebar({
   const setCollapsed = (next: boolean | ((value: boolean) => boolean)) => {
     const resolved = typeof next === 'function' ? next(collapsed) : next;
     if (resolved === collapsed) return;
-    if (controlledCollapsed === undefined) setUncontrolledCollapsed(resolved);
+    if (controlledCollapsed === undefined) setWorkspace({ panelCollapsed: resolved });
     onCollapsedChange?.(resolved);
   };
   const dimensions = WIDTHS[size];
@@ -86,13 +85,14 @@ export function SecondarySidebar({
       data-size={size}
       data-variant={variant}
       data-collapsed={collapsed || undefined}
+      data-resizing={resize.resizing || undefined}
       style={
         {
           '--secondary-sidebar-width': `${resize.width}px`,
         } as CSSProperties
       }
       className={cn(
-        'secondary-sidebar relative [--pane-resize-display:flex] @max-[40rem]:[--pane-resize-display:none] flex min-h-0 shrink-0 flex-col border-r border-border/55 bg-[color-mix(in_oklab,var(--muted)_13%,var(--background))] shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] [container-type:inline-size]',
+        'secondary-sidebar relative transition-[width] duration-240 ease-(--ease-standard) data-[resizing]:transition-none motion-reduce:transition-none [--pane-resize-display:flex] @max-[40rem]:[--pane-resize-display:none] flex min-h-0 shrink-0 flex-col border-r border-border/55 bg-[color-mix(in_oklab,var(--muted)_13%,var(--background))] shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] [container-type:inline-size]',
         collapsed
           ? 'w-11'
           : 'w-[var(--secondary-sidebar-width)] @max-[40rem]:max-h-[40%] @max-[40rem]:w-full @max-[40rem]:border-r-0 @max-[40rem]:border-b',
@@ -132,17 +132,6 @@ export function SecondarySidebar({
             )}
           </>
         )}
-        <Button
-          variant="ghost"
-          size="icon-xs"
-          aria-label={t(collapsed ? 'paneActions.expand' : 'paneActions.collapse')}
-          title={t(collapsed ? 'paneActions.expand' : 'paneActions.collapse')}
-          aria-expanded={!collapsed}
-          onClick={() => setCollapsed((value) => !value)}
-          className="text-muted-foreground hover:bg-accent hover:text-foreground"
-        >
-          {collapsed ? <PanelLeftOpenIcon /> : <PanelLeftCloseIcon />}
-        </Button>
       </div>
       {library != null && !collapsed && (
         <div

@@ -1,4 +1,3 @@
-import { SidebarToggle } from './sidebar-toggle';
 import type { ReactNode } from 'react';
 import { CommandSearch } from './command-search';
 import { cn } from '@/lib/utils';
@@ -12,7 +11,6 @@ export function WorkspaceHeader({ children }: { children: ReactNode }) {
         !isMac() && 'native-controls-right',
       )}
     >
-      {!isMac() && <SidebarToggle />}
       {children}
       <CommandSearch className="ml-auto" />
     </header>

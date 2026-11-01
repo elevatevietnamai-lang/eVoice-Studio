@@ -7,6 +7,8 @@ type Layout = {
   libraryTab: 'voices' | 'takes';
   /** Shrink the sidebar to a rail when a workspace opens its own side panel on a narrow window. */
   autoCollapseSidebar: boolean;
+  /** The current page's control panel is folded to its strip. Reopens on every navigation. */
+  panelCollapsed: boolean;
 };
 const key = 'voicestudio.workspace-layout';
 const defaults: Layout = {
@@ -14,6 +16,7 @@ const defaults: Layout = {
   libraryOpen: true,
   libraryTab: 'voices',
   autoCollapseSidebar: true,
+  panelCollapsed: false,
 };
 function read(): Layout {
   try {
@@ -25,6 +28,7 @@ function read(): Layout {
       libraryTab: value?.libraryTab === 'takes' ? 'takes' : 'voices',
       autoCollapseSidebar:
         typeof value?.autoCollapseSidebar === 'boolean' ? value.autoCollapseSidebar : true,
+      panelCollapsed: false,
     };
   } catch {
     return defaults;

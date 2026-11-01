@@ -97,7 +97,7 @@ Branding remains in a fixed native title row while onboarding status loads, inst
 
 On Windows and Linux, the collapsed workspace sidebar shows the VoiceStudio icon at the top. Use the toggle beside the page title to expand the sidebar. macOS retains its existing sidebar control.
 
-Every main workspace header exposes the same sidebar toggle, including pages that automatically collapse the voice library at narrow widths. The control reflects the visible sidebar state and explicitly expands it for the current workspace.
+Workspace headers carry no sidebar toggle. The rail's logo opens the full menu, and a single panel toggle at the bottom of the rail (and in the full menu's footer) folds or reopens the current page's control panel on every platform. Every navigation reopens the panel, so a page reached from the menu, Home or search always shows its controls.
 
 The shared video player renders Vidstack's poster before playback, including the Dub source thumbnail, and hides it once playback starts. Play requests made while the video is loading wait for the provider to become ready, including timeline preview requests.
 

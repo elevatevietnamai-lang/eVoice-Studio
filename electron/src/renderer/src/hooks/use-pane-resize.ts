@@ -20,6 +20,8 @@ export function usePaneResize({
 }) {
   const host = useRef<HTMLElement>(null);
   const drag = useRef<{ x: number; width: number } | null>(null);
+  // True while the handle is dragged, so width transitions can switch off and follow the pointer.
+  const [resizing, setResizing] = useState(false);
   const [limit, setLimit] = useState(initial);
   const [preferred, setPreferred] = useState(() => {
     try {
@@ -65,6 +67,7 @@ export function usePaneResize({
       if (event.button !== 0) return;
       event.preventDefault();
       drag.current = { x: event.clientX, width };
+      setResizing(true);
       event.currentTarget.setPointerCapture(event.pointerId);
     },
     onPointerMove: (event) => {
@@ -73,14 +76,17 @@ export function usePaneResize({
     },
     onPointerUp: (event) => {
       drag.current = null;
+      setResizing(false);
       if (event.currentTarget.hasPointerCapture(event.pointerId))
         event.currentTarget.releasePointerCapture(event.pointerId);
     },
     onPointerCancel: () => {
       drag.current = null;
+      setResizing(false);
     },
     onLostPointerCapture: () => {
       drag.current = null;
+      setResizing(false);
     },
     onDoubleClick: () => resize(initial),
     onKeyDown: (event) => {
@@ -90,5 +96,5 @@ export function usePaneResize({
       }
     },
   };
-  return { host, width, separatorProps };
+  return { host, width, resizing, separatorProps };
 }

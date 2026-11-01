@@ -1,12 +1,15 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { FilmIcon } from 'lucide-react';
+import { act } from 'react';
 import { SecondarySidebar } from './workspace-sidebar';
+import { setWorkspace } from '@/lib/store/workspace';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 
 afterEach(() => {
   cleanup();
+  setWorkspace({ panelCollapsed: false });
   localStorage.clear();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
@@ -37,7 +40,7 @@ it('allows a 40% wider spacious pane and restores the saved width on remount', (
   expect(screen.getByRole('separator')).toHaveAttribute('aria-valuenow', '436');
 });
 
-it('pins a footer outside the scrolling content and reports collapse so a page can re-home it', () => {
+it('pins a footer outside the scrolling content and follows the shared panel toggle', () => {
   const onCollapsedChange = vi.fn();
   render(
     <SecondarySidebar
@@ -55,9 +58,13 @@ it('pins a footer outside the scrolling content and reports collapse so a page c
   expect(content?.contains(footer)).toBe(false); // never scrolls away with the setup cards
   expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
 
-  fireEvent.click(screen.getByRole('button', { name: /collapse/i }));
-  expect(onCollapsedChange).toHaveBeenLastCalledWith(true);
+  // The rail's panel toggle is the only collapse control; the pane has none of its own.
+  expect(screen.queryByRole('button', { name: /collapse/i })).toBeNull();
+  act(() => setWorkspace({ panelCollapsed: true }));
   expect(document.querySelector('[data-slot="secondary-sidebar-footer"]')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Stories' }));
+  expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+  expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
 });
 
 it("switches between a page's controls and its section library, hiding the pinned footer in the library", () => {
