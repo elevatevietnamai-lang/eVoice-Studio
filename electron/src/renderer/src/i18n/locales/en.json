@@ -92,16 +92,16 @@
     "copied": "Copied"
   },
   "homeUi": {
-    "subtitle": "Your open-source, fully local alternative to ElevenLabs — clone and design voices, dub videos, dictate, transcribe, and create audiobooks in 646 languages.",
+    "subtitle": "A local studio for voice and music.",
     "brand_by": "{{brand}} by",
     "all": "All",
     "allContributors": "All contributors",
-    "title": "VoiceStudio.sh Open Source",
     "design": "Design a voice from a description.",
     "dub": "Translate and dub audio or video.",
     "stories": "Create scenes with multiple voices.",
     "audiobook": "Build audiobooks with chapters.",
-    "transcribe": "Turn recordings into text."
+    "transcribe": "Turn recordings into text.",
+    "music": "Generate music from a text prompt."
   },
   "twilioIntegration": {
     "exposureWarning": "Turning this on opens a separate local port that your tunnel publishes to the internet. Only requests signed with your Twilio Auth Token are accepted; the rest of eVoice Studio stays private.",
@@ -2019,7 +2019,8 @@
     "model_credits": "Model credits",
     "model_credits_hint": "Credits for supported models. Model and component terms apply separately; these credits do not grant commercial rights.",
     "model_terms": "Model terms",
-    "model_related_sources": "Related sources:"
+    "model_related_sources": "Related sources:",
+    "built_on": "Built on VoiceStudio (AGPL-3.0) and its contributors"
   },
   "privacy": {
     "translator_online": "Translator is online: {{provider}}",

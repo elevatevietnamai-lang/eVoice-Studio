@@ -92,16 +92,16 @@
     "copied": "Kopyalandı"
   },
   "homeUi": {
-    "subtitle": "ElevenLabs’a açık kaynaklı, tamamen yerel alternatifiniz — 646 dilde ses klonlayıp tasarlayın, videolara dublaj yapın, dikte edin, yazıya dökün ve sesli kitaplar oluşturun.",
+    "subtitle": "Ses ve müzik için yerel bir stüdyo.",
     "brand_by": "{{brand}} geliştiricisi",
     "all": "Tümü",
     "allContributors": "Tüm katkıda bulunanlar",
-    "title": "VoiceStudio.sh Açık Kaynak",
     "design": "Bir açıklamadan ses tasarlayın.",
     "dub": "Ses veya videoyu çevirip dublaj yapın.",
     "stories": "Birden fazla sesle sahneler oluşturun.",
     "audiobook": "Bölümlü sesli kitaplar oluşturun.",
-    "transcribe": "Kayıtları metne dönüştürün."
+    "transcribe": "Kayıtları metne dönüştürün.",
+    "music": "Metin açıklamasından müzik oluşturun."
   },
   "twilioIntegration": {
     "exposureWarning": "Bunu açmak, tünelinizin internette yayımladığı ayrı bir yerel bağlantı noktası açar. Yalnızca Twilio Auth Token'ınızla imzalanan istekler kabul edilir; eVoice Studio'nun geri kalanı gizli kalır.",
@@ -1903,7 +1903,8 @@
     "model_credits": "Model katkıları",
     "model_credits_hint": "Desteklenen modellerin katkı bilgileri. Model ve bileşen koşulları ayrı ayrı geçerlidir; bu bilgiler ticari kullanım hakkı vermez.",
     "model_terms": "Model koşulları",
-    "model_related_sources": "İlgili kaynaklar:"
+    "model_related_sources": "İlgili kaynaklar:",
+    "built_on": "VoiceStudio (AGPL-3.0) ve katkıda bulunanlar üzerine kuruludur"
   },
   "privacy": {
     "translator_online": "Çevirmen çevrimiçi: {{provider}}",

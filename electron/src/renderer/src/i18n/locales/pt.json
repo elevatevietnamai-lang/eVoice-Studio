@@ -92,16 +92,16 @@
     "copied": "Copiado"
   },
   "homeUi": {
-    "subtitle": "Sua alternativa ao ElevenLabs, de código aberto e totalmente local — clone e crie vozes, duble vídeos, dite, transcreva e crie audiolivros em 646 idiomas.",
+    "subtitle": "Um estúdio local para voz e música.",
     "brand_by": "{{brand}} por",
     "all": "Todos",
     "allContributors": "Todos os colaboradores",
-    "title": "VoiceStudio.sh Código aberto",
     "design": "Crie uma voz a partir de uma descrição.",
     "dub": "Traduza e duble áudio ou vídeo.",
     "stories": "Crie cenas com várias vozes.",
     "audiobook": "Crie audiolivros com capítulos.",
-    "transcribe": "Transforme gravações em texto."
+    "transcribe": "Transforme gravações em texto.",
+    "music": "Gere música a partir de uma descrição de texto."
   },
   "twilioIntegration": {
     "exposureWarning": "Ativar isto abre uma porta local separada que seu túnel publica na internet. Apenas solicitações assinadas com seu Auth Token do Twilio são aceitas; o restante do eVoice Studio continua privado.",
@@ -1905,7 +1905,8 @@
     "model_credits": "Créditos dos modelos",
     "model_credits_hint": "Créditos dos modelos compatíveis. Os modelos e componentes têm condições próprias; estes créditos não concedem direitos de uso comercial.",
     "model_terms": "Termos do modelo",
-    "model_related_sources": "Fontes relacionadas:"
+    "model_related_sources": "Fontes relacionadas:",
+    "built_on": "Baseado no VoiceStudio (AGPL-3.0) e seus colaboradores"
   },
   "privacy": {
     "translator_online": "O tradutor está online: {{provider}}",

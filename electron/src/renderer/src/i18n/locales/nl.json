@@ -92,16 +92,16 @@
     "copied": "Gekopieerd"
   },
   "homeUi": {
-    "subtitle": "Jouw open-source, volledig lokale alternatief voor ElevenLabs — kloon en ontwerp stemmen, dub video’s, dicteer, transcribeer en maak luisterboeken in 646 talen.",
+    "subtitle": "Een lokale studio voor stem en muziek.",
     "brand_by": "{{brand}} door",
     "all": "Allen",
     "allContributors": "Alle bijdragers",
-    "title": "VoiceStudio.sh Open source",
     "design": "Ontwerp een stem op basis van een beschrijving.",
     "dub": "Vertaal en dub audio of video.",
     "stories": "Maak scènes met meerdere stemmen.",
     "audiobook": "Maak luisterboeken met hoofdstukken.",
-    "transcribe": "Zet opnamen om in tekst."
+    "transcribe": "Zet opnamen om in tekst.",
+    "music": "Maak muziek op basis van een tekstbeschrijving."
   },
   "twilioIntegration": {
     "exposureWarning": "Inschakelen opent een aparte lokale poort die je tunnel op internet publiceert. Alleen verzoeken die met je Twilio Auth Token zijn ondertekend worden geaccepteerd; de rest van eVoice Studio blijft privé.",
@@ -1903,7 +1903,8 @@
     "model_credits": "Modelvermeldingen",
     "model_credits_hint": "Vermeldingen voor ondersteunde modellen. Voor modellen en componenten gelden afzonderlijke voorwaarden; deze vermeldingen verlenen geen commerciële gebruiksrechten.",
     "model_terms": "Modelvoorwaarden",
-    "model_related_sources": "Gerelateerde bronnen:"
+    "model_related_sources": "Gerelateerde bronnen:",
+    "built_on": "Gebouwd op VoiceStudio (AGPL-3.0) en zijn bijdragers"
   },
   "privacy": {
     "translator_online": "Vertaler is online: {{provider}}",

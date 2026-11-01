@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { getBridge } from '@/components/bridge';
 import { apiJson, describeError } from '@/lib/api/client';
 import type { SystemInfo } from '@/lib/api/types';
+import { CreditsContributors } from './credits-contributors';
 import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { SettingsActionError } from './settings-action-error';
 import { ModelCredits } from './model-credits';
@@ -164,6 +165,9 @@ export function DiagnosticsSettings() {
         </SettingsRow>
         <SettingsRow id="diagnostics-version" title={t('about.version')}>
           <span className="font-mono text-xs">{bridge?.app.version ?? __APP_VERSION__}</span>
+        </SettingsRow>
+        <SettingsRow id="diagnostics-built-on" title={t('about.built_on')}>
+          <CreditsContributors />
         </SettingsRow>
         <SettingsRow id="diagnostics-platform" title={t('about.platform')}>
           <span className="max-w-xl text-right font-mono text-xs">{platform}</span>

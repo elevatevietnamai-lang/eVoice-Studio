@@ -92,16 +92,16 @@
     "copied": "Disalin"
   },
   "homeUi": {
-    "subtitle": "Alternatif ElevenLabs Anda yang sumber terbuka dan sepenuhnya lokal — kloning dan rancang suara, sulihsuarakan video, dikte, transkripsikan, dan buat buku audio dalam 646 bahasa.",
+    "subtitle": "Studio lokal untuk suara dan musik.",
     "brand_by": "{{brand}} oleh",
     "all": "Semua",
     "allContributors": "Semua kontributor",
-    "title": "VoiceStudio.sh Sumber Terbuka",
     "design": "Rancang suara dari deskripsi.",
     "dub": "Terjemahkan dan sulihsuarakan audio atau video.",
     "stories": "Buat adegan dengan beberapa suara.",
     "audiobook": "Buat buku audio dengan bab.",
-    "transcribe": "Ubah rekaman menjadi teks."
+    "transcribe": "Ubah rekaman menjadi teks.",
+    "music": "Buat musik dari deskripsi teks."
   },
   "twilioIntegration": {
     "exposureWarning": "Mengaktifkan ini membuka port lokal terpisah yang dipublikasikan tunnel Anda ke internet. Hanya permintaan yang ditandatangani dengan Auth Token Twilio Anda yang diterima; bagian lain eVoice Studio tetap privat.",
@@ -1903,7 +1903,8 @@
     "model_credits": "Kredit model",
     "model_credits_hint": "Kredit untuk model yang didukung. Ketentuan model dan komponen berlaku secara terpisah; kredit ini tidak memberikan hak penggunaan komersial.",
     "model_terms": "Ketentuan model",
-    "model_related_sources": "Sumber terkait:"
+    "model_related_sources": "Sumber terkait:",
+    "built_on": "Dibangun di atas VoiceStudio (AGPL-3.0) dan kontributornya"
   },
   "privacy": {
     "translator_online": "Penerjemah sedang online: {{provider}}",

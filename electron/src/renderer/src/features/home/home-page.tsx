@@ -1,14 +1,12 @@
 import { HomeFeatureIcon } from './home-feature-icon';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { getBridge } from '@/components/bridge';
-import { runRendererTask } from '@/lib/global-error-recovery';
-import { HomeContributors } from './home-contributors';
 import './home-page.css';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { ProfileAvatar } from '@/components/profile-avatar';
 import { Button } from '@/components/ui/button';
 import { useProfiles } from '@/hooks/use-profiles';
-import { brandArtwork } from '@/lib/brand';
+import { EVoiceMark } from '@/components/brand/evoice-mark';
+import { FadeIn, Stagger, StaggerItem } from '@/components/motion';
+import { PRODUCT_NAME } from '@/lib/brand';
 import { patchCloneSettings } from '@/lib/store/clone-settings';
 import { selectCloneProfile } from '@/lib/store/reference';
 import { blankLongformDraft, editLongform } from '@/features/longform/longform-session';
@@ -45,27 +43,6 @@ interface ExportRecord {
   destination_path: string;
   mode?: string;
 }
-
-const iconTones: Record<string, string> = {
-  '/clone':
-    'bg-sky-100 text-sky-700 ring-sky-300/60 dark:bg-sky-400/15 dark:text-sky-300 dark:ring-sky-300/30',
-  '/design':
-    'bg-violet-100 text-violet-700 ring-violet-300/60 dark:bg-violet-400/15 dark:text-violet-300 dark:ring-violet-300/30',
-  '/dub':
-    'bg-teal-100 text-teal-700 ring-teal-300/60 dark:bg-teal-400/15 dark:text-teal-300 dark:ring-teal-300/30',
-  '/stories':
-    'bg-rose-100 text-rose-700 ring-rose-300/60 dark:bg-rose-400/15 dark:text-rose-300 dark:ring-rose-300/30',
-  '/audiobook':
-    'bg-amber-100 text-amber-800 ring-amber-300/60 dark:bg-amber-400/15 dark:text-amber-200 dark:ring-amber-300/30',
-  '/gallery':
-    'bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-300/60 dark:bg-fuchsia-400/15 dark:text-fuchsia-300 dark:ring-fuchsia-300/30',
-  '/transcriptions':
-    'bg-cyan-100 text-cyan-700 ring-cyan-300/60 dark:bg-cyan-400/15 dark:text-cyan-200 dark:ring-cyan-300/30',
-  '/calls':
-    'bg-indigo-100 text-indigo-700 ring-indigo-300/60 dark:bg-indigo-400/15 dark:text-indigo-300 dark:ring-indigo-300/30',
-  '/tools':
-    'bg-slate-100 text-slate-700 ring-slate-300/60 dark:bg-slate-300/15 dark:text-slate-200 dark:ring-slate-300/30',
-};
 
 export function HomePage() {
   const { t } = useTranslation();
@@ -119,6 +96,11 @@ export function HomePage() {
       to: '/transcriptions',
       label: t('nav.transcribe'),
       description: t('homeUi.transcribe'),
+    },
+    {
+      to: '/music',
+      label: t('musicStudio.title'),
+      description: t('homeUi.music'),
     },
     {
       to: '/calls',
@@ -198,67 +180,27 @@ export function HomePage() {
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="home-content mx-auto w-full max-w-6xl">
           <section aria-labelledby="home-new-projects">
-            <div className="home-heading relative isolate overflow-hidden">
-              <img
-                src={brandArtwork}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 right-0 -z-10 h-full w-1/2 object-cover object-right opacity-25 [mask-image:linear-gradient(90deg,transparent,black)]"
-              />
-              <div className="home-heading-row">
-                <div className="home-heading-copy">
-                  <h2
-                    id="home-new-projects"
-                    className="flex flex-wrap items-center gap-x-3 gap-y-2 text-3xl font-semibold tracking-[-0.035em]"
-                  >
-                    <Tooltip>
-                      <TooltipTrigger
-                        render={
-                          <a
-                            href="https://voicestudio.sh"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="rounded-md transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring"
-                            onClick={(event) => {
-                              const browser = getBridge()?.browser;
-                              if (!browser) return;
-                              event.preventDefault();
-                              event.currentTarget.focus();
-                              runRendererTask('Preview official website', () =>
-                                browser.open('https://voicestudio.sh'),
-                              );
-                            }}
-                          />
-                        }
-                      >
-                        {t('homeUi.title')}
-                      </TooltipTrigger>
-                      <TooltipContent surface="theme" side="bottom">
-                        {t('siteBrowser.preview')}
-                      </TooltipContent>
-                    </Tooltip>
-                  </h2>
-                  <p className="mt-3 max-w-[80ch] text-sm leading-relaxed text-foreground/65">
-                    {t('homeUi.subtitle')}
-                  </p>
-                </div>
-                <HomeContributors />
-              </div>
-            </div>
+            <FadeIn className="home-heading">
+              <EVoiceMark size={56} className="home-heading-mark" />
+              <h2 id="home-new-projects" className="home-heading-title" translate="no">
+                {PRODUCT_NAME}
+              </h2>
+              <p className="home-heading-tagline">{t('homeUi.subtitle')}</p>
+            </FadeIn>
             {[destinations.slice(0, 3), destinations.slice(3)].map((group, groupIndex) => (
-              <div
+              <Stagger
                 key={groupIndex}
                 className={`home-destinations grid grid-cols-1 gap-3 @xl:grid-cols-2 @3xl:grid-cols-3 ${groupIndex === 0 ? 'home-destinations--primary' : 'home-destinations--secondary'}`}
               >
                 {group.map(({ to, label, description }) => (
+                  <StaggerItem key={to} className="min-w-0">
                   <Link
-                    key={to}
                     to={to}
                     data-destination={to}
                     className={`home-destination group ${groupIndex === 0 ? 'home-destination--primary' : 'home-destination--secondary'}`}
                   >
                     <div
-                      className={`home-destination-icon flex size-10 items-center justify-center rounded-xl ring-1 ring-inset shadow-[inset_0_1px_0_rgb(255_255_255/10%)] ${iconTones[to]}`}
+                      className="home-destination-icon flex size-10 items-center justify-center rounded-lg bg-secondary text-foreground"
                     >
                       <HomeFeatureIcon destination={to} />
                     </div>
@@ -292,8 +234,9 @@ export function HomePage() {
                     </div>
                     <ArrowRightIcon className="home-destination-arrow" aria-hidden="true" />
                   </Link>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             ))}
           </section>
 

@@ -92,16 +92,16 @@
     "copied": "Đã sao chép"
   },
   "homeUi": {
-    "subtitle": "Giải pháp thay thế ElevenLabs mã nguồn mở, chạy hoàn toàn trên máy — nhân bản và thiết kế giọng nói, lồng tiếng video, nhập liệu bằng giọng nói, phiên âm và tạo sách nói bằng 646 ngôn ngữ.",
+    "subtitle": "Xưởng cục bộ cho giọng nói và âm nhạc.",
     "brand_by": "{{brand}} bởi",
     "all": "Tất cả",
     "allContributors": "Tất cả người đóng góp",
-    "title": "VoiceStudio.sh Mã nguồn mở",
     "design": "Thiết kế giọng nói từ mô tả.",
     "dub": "Dịch và lồng tiếng âm thanh hoặc video.",
     "stories": "Tạo cảnh với nhiều giọng nói.",
     "audiobook": "Tạo sách nói có chương.",
-    "transcribe": "Chuyển bản ghi âm thành văn bản."
+    "transcribe": "Chuyển bản ghi âm thành văn bản.",
+    "music": "Tạo nhạc từ mô tả bằng văn bản."
   },
   "twilioIntegration": {
     "exposureWarning": "Bật tính năng này sẽ mở một cổng cục bộ riêng mà đường hầm của bạn công bố ra internet. Chỉ các yêu cầu được ký bằng Auth Token Twilio của bạn mới được chấp nhận; phần còn lại của eVoice Studio vẫn riêng tư.",
@@ -1903,7 +1903,8 @@
     "model_credits": "Ghi công mô hình",
     "model_credits_hint": "Ghi công các mô hình được hỗ trợ. Mô hình và thành phần có điều khoản riêng; phần ghi công này không cấp quyền sử dụng thương mại.",
     "model_terms": "Điều khoản mô hình",
-    "model_related_sources": "Nguồn liên quan:"
+    "model_related_sources": "Nguồn liên quan:",
+    "built_on": "Xây dựng trên VoiceStudio (AGPL-3.0) và những người đóng góp"
   },
   "privacy": {
     "translator_online": "Người dịch đang trực tuyến: {{provider}}",

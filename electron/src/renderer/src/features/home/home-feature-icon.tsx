@@ -77,7 +77,7 @@ export function HomeFeatureIcon({ destination }: { destination: string }) {
             <g className="home-svg-fan">
               <rect x="5" y="7" width="18" height="22" rx="3" />
             </g>
-            <rect x="9" y="3" width="18" height="22" rx="3" fill="var(--card)" />
+            <rect x="9" y="3" width="18" height="22" rx="3" fill="var(--secondary)" />
             <circle cx="18" cy="11" r="3" />
             <path d="M13 21c0-5 10-5 10 0" />
           </>
@@ -108,16 +108,24 @@ export function HomeFeatureIcon({ destination }: { destination: string }) {
             <circle className="home-svg-sequence home-svg-delay-long" cx="24" cy="27" r="3" />
           </>
         );
+      case '/music':
+        return (
+          <>
+            <path d="M12 23V7l14-3v16" />
+            <circle className="home-svg-spark" cx="9" cy="23" r="3.5" />
+            <circle className="home-svg-spark home-svg-delay" cx="23" cy="20" r="3.5" />
+          </>
+        );
       default:
         return (
           <>
             <path d="M4 8h24M4 16h24M4 24h24" opacity=".45" />
             <g className="home-svg-adjust">
-              <rect x="8" y="5" width="5" height="6" rx="1.5" fill="var(--card)" />
-              <rect x="8" y="21" width="5" height="6" rx="1.5" fill="var(--card)" />
+              <rect x="8" y="5" width="5" height="6" rx="1.5" fill="var(--secondary)" />
+              <rect x="8" y="21" width="5" height="6" rx="1.5" fill="var(--secondary)" />
             </g>
             <g className="home-svg-adjust home-svg-reverse">
-              <rect x="20" y="13" width="5" height="6" rx="1.5" fill="var(--card)" />
+              <rect x="20" y="13" width="5" height="6" rx="1.5" fill="var(--secondary)" />
             </g>
           </>
         );

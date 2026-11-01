@@ -92,16 +92,16 @@
     "copied": "복사됨"
   },
   "homeUi": {
-    "subtitle": "오픈 소스로 완전히 로컬에서 실행되는 ElevenLabs의 대안 — 646개 언어로 목소리를 복제하고 디자인하며, 영상 더빙, 받아쓰기, 전사, 오디오북 제작까지.",
+    "subtitle": "음성과 음악을 위한 로컬 스튜디오.",
     "brand_by": "{{brand}} 제작자",
     "all": "전체",
     "allContributors": "모든 기여자",
-    "title": "VoiceStudio.sh 오픈 소스",
     "design": "설명으로 목소리를 디자인하세요.",
     "dub": "오디오나 영상을 번역하고 더빙하세요.",
     "stories": "여러 목소리로 장면을 만드세요.",
     "audiobook": "챕터가 있는 오디오북을 만드세요.",
-    "transcribe": "녹음을 텍스트로 변환하세요."
+    "transcribe": "녹음을 텍스트로 변환하세요.",
+    "music": "텍스트 설명으로 음악을 만듭니다."
   },
   "twilioIntegration": {
     "exposureWarning": "켜면 터널이 인터넷에 공개하는 별도의 로컬 포트가 열립니다. Twilio Auth Token으로 서명된 요청만 허용되며 VoiceStudio의 나머지 부분은 비공개로 유지됩니다.",
@@ -1903,7 +1903,8 @@
     "model_credits": "모델 크레딧",
     "model_credits_hint": "지원 모델의 크레딧입니다. 모델과 구성 요소에는 각각 별도의 약관이 적용되며, 이 크레딧은 상업적 이용 권한을 부여하지 않습니다.",
     "model_terms": "모델 이용 약관",
-    "model_related_sources": "관련 출처:"
+    "model_related_sources": "관련 출처:",
+    "built_on": "VoiceStudio(AGPL-3.0)와 기여자들을 기반으로 제작"
   },
   "privacy": {
     "translator_online": "번역가가 온라인 상태입니다: {{provider}}",
