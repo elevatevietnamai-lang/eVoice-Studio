@@ -161,6 +161,7 @@ Key characteristics:
 
 Rules:
 - Components use semantic tokens (`bg-background`, `text-muted-foreground`, `border-border`), never `--brand-*` and never hex.
+- Never fade `text-muted-foreground` with an opacity suffix (`/55`): it falls below 4.5:1. Muted is the lowest text level; hover and selected text step up to `text-foreground`. `no-faded-muted-text.test.ts` enforces this.
 - **Functional colours are an intentional exception.** Error, warning, success, info and the dark-mode update colour keep a hue (`#c10007`/`#ff6467`, `#bb4d00`/`#ffb900`) because a tool needs status readable at a glance. Always pair them with text or an icon, never colour alone. The Elevate rule "success is monochrome" is not adopted.
 - Brand `text-muted` values `#717478` (dark) and `#8b8e91` (light) are not used: they fall under 4.5:1.
 - `silver` on off-white fails (2.4:1); do not put `--brand-silver` on a light surface.
