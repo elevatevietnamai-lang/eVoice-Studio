@@ -20,6 +20,12 @@ it('uses the small cut at 32 px and below and the full mark above', () => {
   expect(container.querySelector('svg')?.dataset.mark).toBe('full');
 });
 
+it('keeps the app icon drawing at small sizes when asked for the full cut', () => {
+  const { container } = render(<EVoiceMark size={26} cut="full" />);
+  expect(container.querySelector('svg')?.dataset.mark).toBe('full');
+  expect(container.querySelector('path')?.getAttribute('stroke-width')).toBe('17');
+});
+
 it('draws only with currentColor and never fills the waveform', () => {
   const { container } = render(<EVoiceMark size={64} />);
   const path = container.querySelector('path')!;

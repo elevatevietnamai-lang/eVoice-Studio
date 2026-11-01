@@ -18,15 +18,28 @@ const SMALL = {
   shift: -6,
 };
 
-export interface EVoiceMarkProps extends Omit<SVGProps<SVGSVGElement>, 'viewBox' | 'width' | 'height'> {
+export interface EVoiceMarkProps extends Omit<
+  SVGProps<SVGSVGElement>,
+  'viewBox' | 'width' | 'height'
+> {
   /** Rendered size in px. */
   size?: number;
   /** Accessible name; without it the mark is decorative. */
   label?: string;
+  /** `full` keeps the app icon's own drawing at any size (kit `mark-white.svg`); `auto` switches to
+   * the small cut at 32 px and below. */
+  cut?: 'auto' | 'full';
 }
 
-export function EVoiceMark({ size = 24, label, className, ...props }: EVoiceMarkProps) {
-  const cut = size <= 32 ? SMALL : FULL;
+export function EVoiceMark({
+  size = 24,
+  label,
+  cut: cutMode = 'auto',
+  className,
+  ...props
+}: EVoiceMarkProps) {
+  const small = cutMode === 'auto' && size <= 32;
+  const cut = small ? SMALL : FULL;
   return (
     <svg
       viewBox="0 0 256 256"
@@ -36,7 +49,7 @@ export function EVoiceMark({ size = 24, label, className, ...props }: EVoiceMark
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
-      data-mark={size <= 32 ? 'small' : 'full'}
+      data-mark={small ? 'small' : 'full'}
       {...props}
     >
       <g transform={`translate(${cut.shift} 0)`}>

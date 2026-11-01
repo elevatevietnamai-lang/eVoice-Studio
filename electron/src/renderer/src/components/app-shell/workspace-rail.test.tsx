@@ -68,9 +68,13 @@ it('shows the panel toggle only while a page has a control panel', () => {
   expect(layout.setWorkspace).toHaveBeenCalledWith({ panelCollapsed: true });
 });
 
-it('draws the rail logo as the app icon, as large as the rail items', () => {
+it("draws the rail logo with the app icon's own mark, no tile, sized like the rail items", () => {
   render(<WorkspaceSidebar />);
   const logo = screen.getByRole('button', { name: 'clone.toggle_sidebar' });
-  expect(logo).toHaveClass('size-10', 'rounded-[22.6%]');
-  expect(logo.querySelector('svg')).toHaveAttribute('width', '32');
+  expect(logo).toHaveClass('size-10');
+  expect(logo).not.toHaveClass('bg-primary');
+  expect(logo).toHaveAttribute('data-variant', 'ghost');
+  const mark = logo.querySelector('svg')!;
+  expect(mark).toHaveAttribute('width', '26');
+  expect(mark).toHaveAttribute('data-mark', 'full');
 });

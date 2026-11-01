@@ -70,10 +70,10 @@ export function WorkspaceSidebar() {
           >
             {/* The rail can always reopen itself, on every platform: the
                 brand icon alone gave Windows/Linux no local control. */}
-            {/* The app icon as the brand kit draws it (eVoice-brand 2.4): a tile as large as the
-                rail items, 22.6% corners, the mark at 80%. */}
+            {/* The app icon's own mark (kit mark-graphite / mark-white), no tile: dark on the light
+                rail, light on the dark one, sized to sit with the 20 px menu icons. */}
             <Button
-              variant="default"
+              variant="ghost"
               size="icon"
               aria-label={t('clone.toggle_sidebar')}
               title={t('clone.toggle_sidebar')}
@@ -83,9 +83,9 @@ export function WorkspaceSidebar() {
                 setMenuGroup(null);
                 setOpen(true);
               }}
-              className="size-10 shrink-0 rounded-[22.6%] outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="workspace-nav-item size-10 shrink-0 text-sidebar-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <EVoiceMark size={32} className="size-8 shrink-0" />
+              <EVoiceMark size={26} cut="full" className="size-[26px] shrink-0" />
             </Button>
           </div>
           <WorkspaceNavigation compact />
@@ -126,7 +126,7 @@ export function WorkspaceSidebar() {
               aria-label={`${t('app.name')} ${versionLabel}`}
               className="flex min-w-0 flex-1 items-center gap-2 rounded outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <EVoiceMark size={24} className="shrink-0" />
+              <EVoiceMark size={24} cut="full" className="shrink-0" />
               <span className="flex min-w-0 flex-col leading-tight">
                 <span className="truncate text-base font-semibold">{t('app.name')}</span>
                 <span className="text-[11px] leading-none text-muted-foreground tabular-nums">
