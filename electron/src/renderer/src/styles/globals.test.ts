@@ -16,3 +16,10 @@ it('shows a pointer on clickable controls and not-allowed on disabled ones', () 
   }
   expect(css).toContain('cursor: not-allowed;');
 });
+
+it('themes every scrollbar with a slim thumb, no arrow buttons and a stronger hover', () => {
+  expect(css).toContain('*::-webkit-scrollbar-thumb');
+  expect(css).toMatch(/\*::-webkit-scrollbar-button\s*\{\s*display: none;/);
+  expect(css).toContain('--scrollbar-thumb-hover');
+  expect(css).not.toMatch(/scrollbar-color:/);
+});

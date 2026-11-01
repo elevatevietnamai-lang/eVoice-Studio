@@ -203,29 +203,46 @@ html[data-theme-id=''] {
   }
 }
 
-/* Dense editors keep native scrolling, with quiet theme-aware chrome and a
-   stable gutter so content does not shift when a scrollbar appears. */
-.studio-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-gutter: stable;
-  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 38%, transparent) transparent;
+/* Scrollbars: a slim rounded thumb on a transparent track, no arrow buttons, themed from the
+   foreground colour. The thumb reaches 3:1 against the canvas at rest (WCAG 1.4.11) and darkens on
+   hover and drag. Applies to every scroll container, including popovers and menus. */
+:root {
+  --scrollbar-thumb: color-mix(in srgb, var(--foreground) 50%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--foreground) 68%, transparent);
+  --scrollbar-thumb-active: color-mix(in srgb, var(--foreground) 85%, transparent);
 }
-.studio-scrollbar::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
 }
-.studio-scrollbar::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
   background: transparent;
 }
-.studio-scrollbar::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+*::-webkit-scrollbar-thumb {
+  min-height: 36px;
+  min-width: 36px;
   border: 3px solid transparent;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--muted-foreground) 38%, transparent);
+  background: var(--scrollbar-thumb);
   background-clip: padding-box;
 }
-.studio-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--muted-foreground) 58%, transparent);
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
   background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
+  background-clip: padding-box;
+}
+/* Dense editors keep a stable gutter so content does not shift when a scrollbar appears. */
+.studio-scrollbar {
+  scrollbar-gutter: stable;
 }
 
 /* Pane headers form the native title bar; interactive controls remain clickable. */
