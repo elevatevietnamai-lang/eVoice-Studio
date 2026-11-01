@@ -124,7 +124,7 @@ export function AudiobookMarkupToolbar({
         </Menu.Trigger>
         <Menu.Portal>
           <Menu.Positioner sideOffset={6} align="start" className="z-50">
-            <Menu.Popup className="flex max-h-72 max-w-sm flex-wrap gap-1 overflow-y-auto rounded-lg border border-border bg-popover p-2 text-popover-foreground shadow-lg outline-none">
+            <Menu.Popup className="flex max-h-72 max-w-sm flex-wrap gap-1 overflow-y-auto rounded-(--card-radius) border border-border bg-popover p-2 text-popover-foreground shadow-lg outline-none">
               {TAGS.map((tag) => (
                 <Menu.Item
                   key={tag}

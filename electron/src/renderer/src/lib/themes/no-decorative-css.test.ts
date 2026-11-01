@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 /**
- * The CSS side of no-decorative-effects.test.ts. Feature stylesheets follow DESIGN.md: two radii
- * (control, card), no glow or soft drop shadows on in-flow surfaces, no backdrop blur, no lift or
+ * The CSS side of no-decorative-effects.test.ts. Feature stylesheets follow DESIGN.md: the Elevate radii
+ * (control, card, surface), no glow or soft drop shadows on in-flow surfaces, no backdrop blur, no lift or
  * scale on hover, and no gradients on surfaces. `styles/` holds the theme and the opt-in glass
  * layer, which globals.test.ts covers.
  */
@@ -50,7 +50,7 @@ describe('feature stylesheets stay on the design system', () => {
     expect(Object.keys(sheets).length).toBeGreaterThan(5);
   });
 
-  it('uses the control or card radius (small corners, circles and pills aside)', () => {
+  it('uses the control, card or surface radius (small corners, circles and pills aside)', () => {
     const hits: string[] = [];
     for (const [file, source] of Object.entries(sheets)) {
       for (const value of declarations(source, 'border-radius')) {

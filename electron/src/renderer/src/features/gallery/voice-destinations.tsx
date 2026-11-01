@@ -23,7 +23,7 @@ export function VoiceDestinations({
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-          <Menu.Popup className="min-w-56 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+          <Menu.Popup className="min-w-56 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
             <Menu.Item
               className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
               onClick={() => onChoose('stories')}

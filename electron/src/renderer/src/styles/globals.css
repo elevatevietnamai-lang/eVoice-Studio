@@ -86,7 +86,9 @@
   --ios-home-wordmark-size: 1.75rem;
   --workspace-footer-height: 40px;
   --control-radius: 0.5rem;
-  --card-radius: 1rem;
+  /* Elevate radius scale: control 8 px (--radius-sm), card and menu 12 px (--radius-md), large floating surface 20 px (--radius-lg). */
+  --card-radius: 0.75rem;
+  --surface-radius: 1.25rem;
   --motion-fast: 160ms;
   --motion-base: 240ms;
   --motion-slow: 480ms;

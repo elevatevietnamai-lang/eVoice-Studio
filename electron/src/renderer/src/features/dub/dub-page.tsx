@@ -2157,7 +2157,7 @@ export function DubPage() {
                       </Menu.Trigger>
                       <Menu.Portal>
                         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                          <Menu.Popup className="min-w-52 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                          <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
                             <Menu.Item
                               disabled={!session.jobId}
                               onClick={() =>
@@ -2342,7 +2342,7 @@ export function DubPage() {
                     </Menu.Trigger>
                     <Menu.Portal>
                       <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                        <Menu.Popup className="max-h-72 min-w-52 overflow-y-auto rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                        <Menu.Popup className="max-h-72 min-w-52 overflow-y-auto rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
                           <Menu.Item
                             onClick={() =>
                               editDubSegments(selectedSegmentIds, {
@@ -2668,7 +2668,7 @@ export function DubPage() {
                                   </Menu.Trigger>
                                   <Menu.Portal>
                                     <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                                      <Menu.Popup className="min-w-52 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                                      <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
                                         <Menu.Item
                                           disabled={segment.text.trim().length < 2}
                                           onClick={() => splitAtCursor(segment.id, segment.text)}
@@ -3059,7 +3059,7 @@ export function DubPage() {
                         </Menu.Trigger>
                         <Menu.Portal>
                           <Menu.Positioner side="top" sideOffset={6} align="end" className="z-50">
-                            <Menu.Popup className="cn-menu-target cn-menu-translucent min-w-44 rounded-lg p-1 surface-glass text-popover-foreground shadow-lg ring-1 ring-border outline-none">
+                            <Menu.Popup className="cn-menu-target cn-menu-translucent min-w-44 rounded-(--card-radius) p-1 surface-glass text-popover-foreground shadow-lg ring-1 ring-border outline-none">
                               {availableTranslationAgents.map((agent) => (
                                 <Menu.Item
                                   key={agent.id}

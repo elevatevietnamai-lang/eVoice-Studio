@@ -30,3 +30,16 @@ it('keeps glass effects off the default theme', () => {
   expect(selectors.length).toBeGreaterThan(5);
   for (const selector of selectors) expect(selector, selector).toContain('[data-theme-id]');
 });
+
+/** DESIGN.md follows the Elevate radius scale: control 8 px, card and menu 12 px, large floating surface 20 px. */
+it('pins the Elevate radius scale', () => {
+  expect(css).toContain('--control-radius: 0.5rem;');
+  expect(css).toContain('--card-radius: 0.75rem;');
+  expect(css).toContain('--surface-radius: 1.25rem;');
+  const read = (file: string) => nodeProcess.getBuiltinModule('node:fs').readFileSync(`src/renderer/src/${file}`, 'utf8');
+  for (const field of ['components/ui/input.tsx', 'components/ui/textarea.tsx']) {
+    expect(read(field), field).toContain('rounded-(--control-radius)');
+  }
+  expect(read('components/ui/dialog.tsx')).toContain('rounded-(--surface-radius)');
+  expect(read('components/ui/select.tsx')).toMatch(/SelectPrimitive\.Popup[\s\S]*?rounded-\(--card-radius\)/);
+});

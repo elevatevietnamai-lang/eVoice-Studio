@@ -68,8 +68,10 @@ typography:
     editor: { size: "1rem", lineHeight: "1.75rem" }
   heading: { family: display, appliesTo: "h1, h2, h3, .font-heading" }
 rounded:
-  control: "8px"            # --control-radius, buttons, inputs
-  card: "16px"              # --card-radius
+  # Elevate token scale (elevate-brand-kit styles/globals.css): sm 8, md 12, lg 20.
+  control: "8px"            # --control-radius, buttons, inputs (Elevate --radius-sm)
+  card: "12px"              # --card-radius, cards, panels, menus (Elevate --radius-md)
+  surface: "20px"           # --surface-radius, dialogs and the in-app browser dialog (Elevate --radius-lg)
   base: "8px"               # --radius; sm 4px, md 6px, lg 8px, xl 11.2px, 2xl 14.4px
 spacing:
   workspace-gap: "1rem"
@@ -84,7 +86,7 @@ components:
   button-sm: { height: "28px", icon: "14px" }
   button-default: { height: "32px", icon: "16px", radius: "{rounded.control}", background: "{colors.light.primary}", textColor: "{colors.light.primary-ink}" }
   button-lg: { height: "36px", icon: "16px" }
-  input: { height: "32px", border: "{colors.light.border-strong}", radius: "6px" }
+  input: { height: "32px", border: "{colors.light.border-strong}", radius: "{rounded.control}" }
   card: { radius: "{rounded.card}", surface: "{colors.light.surface}" }
 states:
   hover-primary: { background: "primary at 90%" }
@@ -178,11 +180,12 @@ Rules:
 ## 4. Component Stylings
 
 - **Button** (`components/ui/button.tsx`): heights 24 (xs), 28 (sm), 32 (default), 36 (lg); icon buttons are square at the same sizes. Radius 8 px. Primary is flat (no inset highlight), `shadow-xs`, hover at 90%. Variants: default, outline, secondary, ghost, destructive, link. Icons 14 px (xs, sm) or 16 px.
-- **Input, Select, Textarea**: 32 px high, 6 px radius, `border-input`, fill at 20% of the input token; focus shows the ring at 50% alpha.
-- **Card**: 16 px radius (`--card-radius`), `ring-1`, no shadow.
+- **Input, Select, Textarea**: 32 px high, 8 px radius (`--control-radius`), `border-input`, fill at 20% of the input token; focus shows the ring at 50% alpha.
+- **Card**: 12 px radius (`--card-radius`), `ring-1`, no shadow.
+- **Dialog**: 20 px radius (`--surface-radius`). Menus and the select popup use the card radius.
 - **Dialog, popover, select menu**: `surface-glass` utility. In the default theme blur is 0 and opacity 100%, so they are solid; named palettes keep the frosted look.
 - **Glass mode** (Settings → Appearance) applies to named palettes only: every `[data-glass='true']` rule also requires `[data-theme-id]`, which the default Studio theme never sets. The switch is disabled with a hint while Studio is active. `globals.test.ts` enforces this.
-- **Feature stylesheets** follow the same rules as components: radius is the control or card token (corners of 5 px or less, circles and pills aside), no blurred shadows or glows except floating layers (the in-app browser dialog, the narrow inspector sheet), no backdrop blur, no surface gradients, and no lift or scale on hover. Only the Pro page's feature-card illustrations draw with gradients and animate. `no-decorative-css.test.ts` enforces this.
+- **Feature stylesheets** follow the same rules as components: radius is the control, card or surface token (corners of 5 px or less, circles and pills aside), no blurred shadows or glows except floating layers (the in-app browser dialog, the narrow inspector sheet), no backdrop blur, no surface gradients, and no lift or scale on hover. Only the Pro page's feature-card illustrations draw with gradients and animate. `no-decorative-css.test.ts` enforces this.
 - **Pane headers, footers and sticky bars** are solid (`bg-background`, `bg-sidebar`), never frosted. Backdrop blur stays on layers that float over content: the analytics consent banner, the backend recovery veil and the video controls.
 - **Selected rows** use a flat surface (`--sidebar-row-selected` in sidebars, `bg-accent` elsewhere). No 2 px accent bar, inset highlight or glow.
 - **Call sites never re-style primitives** with gradients, white highlight edges, primary glows, hover shadows, hover blur or hover scale. Card-like containers use the Card grammar: `rounded-(--card-radius)`, `border-border`, `bg-card`, no shadow. `no-decorative-effects.test.ts` enforces this.
@@ -278,7 +281,7 @@ Desktop first: the window has a minimum size set by Electron and the sidebar col
 
 **Quick reference**
 - Canvas `#f8f8f6` / `#030305`, ink `#15191b` / `#f6f6f6`, muted `#575b5f` / `#a1a3a6`.
-- Radius: control 8 px, card 16 px. App code uses only these two: `rounded-lg` (or smaller) for controls, rows, icon tiles and blocks nested inside a card, and `rounded-(--card-radius)` for cards, panels, banners and chat bubbles. `rounded-xl`, `rounded-2xl` and `rounded-3xl` stay inside `components/ui` only; `no-decorative-effects.test.ts` enforces this.
+- Radius follows the Elevate token scale: control 8 px, card 12 px, surface 20 px. App code uses `rounded-lg` (or smaller) for controls, rows, icon tiles and blocks nested inside a card, and `rounded-(--card-radius)` for cards, panels, menus, banners and chat bubbles. `rounded-(--surface-radius)` is for the Dialog primitive (and the browser dialog stylesheet) only. `rounded-xl`, `rounded-2xl` and `rounded-3xl` stay inside `components/ui` only; `no-decorative-effects.test.ts` enforces this.
 - Heights: 24, 28, 32, 36 px.
 - Motion: 160 / 240 / 480 ms, `cubic-bezier(0.22, 1, 0.36, 1)`.
 - Headings Space Grotesk, UI Inter.

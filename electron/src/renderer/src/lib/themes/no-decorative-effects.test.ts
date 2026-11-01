@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 /**
- * DESIGN.md: flat surfaces, two radii (control and card), no gradients, glow, highlight edges or
+ * DESIGN.md: flat surfaces, the Elevate radius scale (control, card, surface), no gradients, glow, highlight edges or
  * scale on hover. The primitives
  * (Button, Card) follow it; this stops call sites from layering the old effects back on top.
  */
@@ -19,8 +19,11 @@ const RULES: [name: string, pattern: RegExp][] = [
   ['scale on hover', /(?:hover|group-hover)[^\s'"]*:scale-/],
   ['blur on hover', /hover:backdrop-blur/],
   ['highlight edge', /shadow-\[inset_0_1px_0/],
-  // Two radii only: controls (rounded-lg and smaller) and cards (rounded-(--card-radius)).
-  ['off-scale radius', /(?<![\w-])rounded-(?:xl|2xl|3xl)\b/],
+  // Controls use rounded-lg and smaller, cards and menus rounded-(--card-radius); the 20 px surface
+  // radius belongs to the Dialog primitive and the browser dialog stylesheet.
+  ['off-scale radius', /(?<![\w-])rounded-(?:xl|2xl|3xl\b|\(--surface-radius\))/],
+  // Menus sit on the card radius (Elevate --radius-md, 12 px), not the control radius.
+  ['menu off the card radius', /Menu\.Popup[^>]*\brounded-(?:sm|md|lg)\b/],
 ];
 
 // A dark scrim keeps the white caption readable over a user's photo.
