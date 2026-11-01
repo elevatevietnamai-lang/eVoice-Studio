@@ -1,4 +1,4 @@
-import { useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useState } from 'react';
 import {
   BriefcaseBusinessIcon,
   CheckIcon,
@@ -65,19 +65,6 @@ const benefits = [
   { icon: PackageCheckIcon, title: 'delivery_title', body: 'delivery_body', effect: 'pixels' },
   { icon: ShieldCheckIcon, title: 'preflight_title', body: 'preflight_body', effect: 'scan' },
 ] as const;
-
-function trackFeaturePointer(event: ReactPointerEvent<HTMLElement>) {
-  const card = event.currentTarget;
-  const bounds = card.getBoundingClientRect();
-  const x = event.clientX - bounds.left;
-  const y = event.clientY - bounds.top;
-  card.style.setProperty('--feature-x', `${x}px`);
-  card.style.setProperty('--feature-y', `${y}px`);
-  card.style.setProperty(
-    '--feature-angle',
-    `${(Math.atan2(y - bounds.height / 2, x - bounds.width / 2) * 180) / Math.PI + 90}deg`,
-  );
-}
 
 export function ProPage() {
   const { t } = useTranslation();
@@ -195,7 +182,6 @@ export function ProPage() {
                 <article
                   key={title}
                   className={`pro-feature-card pro-feature-card--${effect}`}
-                  onPointerMove={trackFeaturePointer}
                 >
                   <span className="pro-feature-effect" aria-hidden="true" />
                   <div className="pro-feature-copy">

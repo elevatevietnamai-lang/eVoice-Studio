@@ -124,7 +124,7 @@ export function SecondarySidebar({
       <div
         data-slot="secondary-sidebar-header"
         className={cn(
-          'workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-border/45 bg-background/30 shadow-[0_1px_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] backdrop-blur-xl',
+          'workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-border/45 bg-background',
           collapsed ? 'justify-center px-1' : 'px-3',
         )}
       >
@@ -239,7 +239,7 @@ export function SecondarySidebar({
       {footer !== undefined && footer !== null && !collapsed && !showLibrary && (
         <div
           data-slot="secondary-sidebar-footer"
-          className="flex min-h-0 max-h-[70%] flex-col space-y-3 border-t border-border/55 bg-background/40 p-3.5 text-[13px] backdrop-blur-xl"
+          className="flex min-h-0 max-h-[70%] flex-col space-y-3 border-t border-border/55 bg-background p-3.5 text-[13px]"
         >
           {footer}
         </div>

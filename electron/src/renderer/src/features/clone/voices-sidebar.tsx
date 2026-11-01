@@ -226,7 +226,7 @@ export function SavedVoices({
   return (
     <>
       {showLibraryTools ? (
-        <div className="sticky top-0 z-20 space-y-2 bg-sidebar/95 px-2 pt-1 pb-2 backdrop-blur-xl">
+        <div className="sticky top-0 z-20 space-y-2 bg-sidebar px-2 pt-1 pb-2">
           <div className="relative">
             <SearchIcon
               className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"

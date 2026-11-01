@@ -208,7 +208,7 @@ export function CallView({
         <Transcript lines={state.lines} live={active} />
       </div>
       {active && (
-        <div className="shrink-0 border-t border-border/50 bg-background/80 px-4 py-3 backdrop-blur sm:px-6">
+        <div className="shrink-0 border-t border-border/50 bg-background px-4 py-3 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <LiveControls callId={call.id} live={live} />
           </div>

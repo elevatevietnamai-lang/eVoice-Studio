@@ -182,6 +182,8 @@ Rules:
 - **Card**: 16 px radius (`--card-radius`), `ring-1`, no shadow.
 - **Dialog, popover, select menu**: `surface-glass` utility. In the default theme blur is 0 and opacity 100%, so they are solid; named palettes keep the frosted look.
 - **Glass mode** (Settings → Appearance) applies to named palettes only: every `[data-glass='true']` rule also requires `[data-theme-id]`, which the default Studio theme never sets. The switch is disabled with a hint while Studio is active. `globals.test.ts` enforces this.
+- **Feature stylesheets** follow the same rules as components: radius is the control or card token (corners of 5 px or less, circles and pills aside), no blurred shadows or glows except floating layers (the in-app browser dialog, the narrow inspector sheet), no backdrop blur, no surface gradients, and no lift or scale on hover. Only the Pro page's feature-card illustrations draw with gradients and animate. `no-decorative-css.test.ts` enforces this.
+- **Pane headers, footers and sticky bars** are solid (`bg-background`, `bg-sidebar`), never frosted. Backdrop blur stays on layers that float over content: the analytics consent banner, the backend recovery veil and the video controls.
 - **Selected rows** use a flat surface (`--sidebar-row-selected` in sidebars, `bg-accent` elsewhere). No 2 px accent bar, inset highlight or glow.
 - **Call sites never re-style primitives** with gradients, white highlight edges, primary glows, hover shadows, hover blur or hover scale. Card-like containers use the Card grammar: `rounded-(--card-radius)`, `border-border`, `bg-card`, no shadow. `no-decorative-effects.test.ts` enforces this.
 - **Tabs, Toggle, Switch, Slider, Progress**: filled with `primary`; never a hue.

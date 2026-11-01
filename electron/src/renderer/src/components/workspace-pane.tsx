@@ -49,7 +49,7 @@ export function WorkspacePane({
       </div>
       <header
         className={cn(
-          'workspace-titlebar flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border/45 bg-background/30 px-3 shadow-[0_1px_0_color-mix(in_oklab,var(--foreground)_2%,transparent)] backdrop-blur-xl',
+          'workspace-titlebar flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border/45 bg-background px-3',
           !isMac() && 'native-controls-right',
         )}
       >

@@ -9,7 +9,7 @@
   max-height: none;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--card-radius);
   box-shadow: 0 20px 70px rgb(0 0 0 / 35%);
   background: var(--background);
   color: var(--foreground);
@@ -64,7 +64,7 @@
   width: 100%;
   height: 34px;
   padding: 0 13px;
-  border-radius: 10px;
+  border-radius: var(--control-radius);
   border: 1px solid var(--border);
   background: var(--background);
   color: var(--foreground);
@@ -97,5 +97,5 @@
   background: transparent;
 }
 .site-browser-progress[data-loading='true'] {
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  background: var(--primary);
 }

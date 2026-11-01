@@ -266,7 +266,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
             ) : null}
           </div>
           {installing ? (
-            <div className="w-full rounded-(--card-radius) border border-border/60 bg-card/55 p-3 backdrop-blur-xl">
+            <div className="w-full rounded-(--card-radius) border border-border/60 bg-card p-3">
               <ol className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-1" aria-label={stageText}>
                 {SETUP_PHASES.map((phase, index) => {
                   const complete = index < setupPhaseIndex;

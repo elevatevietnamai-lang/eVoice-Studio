@@ -493,7 +493,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
             )}
             {sidebarCollapsed && (
               // The setup pane is collapsed: keep Generate and the tracker in reach.
-              <div className="sticky bottom-0 z-10 -mx-2 shrink-0 rounded-(--card-radius) border border-border/60 bg-background/90 p-3 backdrop-blur-xl">
+              <div className="sticky bottom-0 z-10 -mx-2 shrink-0 rounded-(--card-radius) border border-border/60 bg-background p-3">
                 {generatePanel}
               </div>
             )}
