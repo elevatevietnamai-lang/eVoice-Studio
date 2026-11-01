@@ -338,11 +338,11 @@ export function SharingSettings() {
       {ports.data && (
         <SettingsSection icon={NetworkIcon} title={t('sharing.ports_title')}>
           <SettingsRow id="sharing-backend-port" title={t('sharing.backend_port')}>
-            <code className="rounded-md bg-muted px-2 py-1 text-xs">{ports.data.backend_port}</code>
+            <code className="rounded-lg bg-muted px-2 py-1 text-xs">{ports.data.backend_port}</code>
           </SettingsRow>
           {ports.data.ui_port !== null && (
             <SettingsRow id="sharing-ui-port" title={t('sharing.ui_port')}>
-              <code className="rounded-md bg-muted px-2 py-1 text-xs">{ports.data.ui_port}</code>
+              <code className="rounded-lg bg-muted px-2 py-1 text-xs">{ports.data.ui_port}</code>
             </SettingsRow>
           )}
           <SettingsRow
@@ -427,7 +427,7 @@ export function SharingSettings() {
         </SettingsRow>
         {tailscaleUrl && (
           <div className="flex flex-wrap items-center gap-2 px-4 py-3">
-            <code className="min-w-0 flex-1 break-all rounded-md bg-muted px-2 py-1 text-xs">
+            <code className="min-w-0 flex-1 break-all rounded-lg bg-muted px-2 py-1 text-xs">
               {tailscaleUrl}
             </code>
             <Button

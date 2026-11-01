@@ -223,7 +223,7 @@ export function CloudSyncPanel() {
         );
       })}
       {turningOff && (
-        <div role="dialog" className="space-y-2 rounded-md border p-3 text-sm">
+        <div role="dialog" className="space-y-2 rounded-lg border p-3 text-sm">
           <p>{t('cloudsync.turned_off_prompt', { area: t(`cloudsync.${turningOff}`) })}</p>
           <div className="flex flex-wrap gap-2">
             <Button

@@ -36,7 +36,7 @@ function Avatar({ name, url }: { name: string; url: string | null }) {
 }
 
 const ITEM =
-  'flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground outline-none transition-colors duration-160 data-highlighted:bg-accent';
+  'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground outline-none transition-colors duration-160 data-highlighted:bg-accent';
 
 /**
  * The account control in the window's top-right corner: the profile photo (or

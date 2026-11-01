@@ -98,7 +98,7 @@ export function ProfilePreview({
         disabled={busy}
         onChange={(event) => setText(event.target.value)}
         placeholder={t('voice_profile.test_placeholder')}
-        className="w-full resize-y rounded-md border border-input bg-transparent p-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="w-full resize-y rounded-lg border border-input bg-transparent p-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
       />
       <Button
         type="button"
@@ -120,18 +120,13 @@ export function ProfilePreview({
         </p>
       )}
       {error && (
-        <div
-          role="alert"
-          className="rounded-md border border-border/60 bg-muted/20 p-3 text-xs"
-        >
-          <p className="font-medium">
-            {t('profileIdentity.generation_failed')}
-          </p>
+        <div role="alert" className="rounded-lg border border-border/60 bg-muted/20 p-3 text-xs">
+          <p className="font-medium">{t('profileIdentity.generation_failed')}</p>
           <details className="mt-1 text-muted-foreground">
             <summary className="cursor-pointer rounded py-1 focus-visible:outline-ring">
               {t('profileIdentity.details')}
             </summary>
-            <pre className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap break-all rounded-md bg-muted/40 p-2 font-mono text-xs">
+            <pre className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap break-all rounded-lg bg-muted/40 p-2 font-mono text-xs">
               {error}
             </pre>
             <Link to="/settings/logs" className="mt-2 inline-block underline">

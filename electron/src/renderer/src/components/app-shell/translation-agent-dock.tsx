@@ -128,7 +128,7 @@ export function TranslationAgentDock() {
                   .map((row) => (
                     <div
                       key={row.id}
-                      className="grid gap-2 rounded-md border border-sidebar-border p-2 text-sm @xl:grid-cols-2 [content-visibility:auto]"
+                      className="grid gap-2 rounded-lg border border-sidebar-border p-2 text-sm @xl:grid-cols-2 [content-visibility:auto]"
                     >
                       <p className="whitespace-pre-wrap break-words text-muted-foreground">
                         {row.source}

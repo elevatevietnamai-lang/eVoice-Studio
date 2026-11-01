@@ -88,7 +88,7 @@ const fieldKey = (key: string) =>
       : `preferences.${key}`;
 
 const settingsNavItemClass =
-  'group h-9 min-w-0 rounded-md font-normal text-(--sidebar-muted-foreground) transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground aria-[current=page]:bg-(--sidebar-row-selected) aria-[current=page]:font-medium aria-[current=page]:text-sidebar-foreground';
+  'group h-9 min-w-0 rounded-lg font-normal text-(--sidebar-muted-foreground) transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground aria-[current=page]:bg-(--sidebar-row-selected) aria-[current=page]:font-medium aria-[current=page]:text-sidebar-foreground';
 const settingsNavIconClass =
   'size-4 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160 group-hover:text-sidebar-foreground group-aria-[current=page]:text-sidebar-foreground';
 const settingsNavActiveClass = 'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground';

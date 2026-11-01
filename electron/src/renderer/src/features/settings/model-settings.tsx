@@ -459,7 +459,7 @@ export function ModelSettings({
               <div className="space-y-1.5">
                 {row.detail && <p>{row.detail}</p>}
                 {row.setupSnippet && (
-                  <code className="block w-fit max-w-full overflow-x-auto rounded-md bg-muted/55 px-2 py-1 text-[11px] text-foreground/75">
+                  <code className="block w-fit max-w-full overflow-x-auto rounded-sm bg-muted/55 px-2 py-1 text-[11px] text-foreground/75">
                     {row.setupSnippet}
                   </code>
                 )}
@@ -478,7 +478,7 @@ export function ModelSettings({
           {row.device && (
             <span
               title={row.routingReason || row.routingStatus}
-              className="inline-flex h-6 items-center gap-1.5 rounded-md border border-border/60 bg-muted/35 px-2 text-[11px] font-medium tracking-wide text-muted-foreground"
+              className="inline-flex h-6 items-center gap-1.5 rounded-sm border border-border/60 bg-muted/35 px-2 text-[11px] font-medium tracking-wide text-muted-foreground"
             >
               <ComputeVendorIcon runtime={row.device} className="size-3.5 shrink-0" />
               {formatComputeRuntime(row.device)}

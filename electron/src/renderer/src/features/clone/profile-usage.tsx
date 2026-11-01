@@ -87,7 +87,7 @@ export function ProfileUsagePanel({ id }: { id: string }) {
               </span>
             </Button>
             {pending === project.project_id && (
-              <div className="space-y-2 rounded-md bg-muted/40 p-3 text-xs">
+              <div className="space-y-2 rounded-lg bg-muted/40 p-3 text-xs">
                 <p>{t('projectActions.open', { name: project.project_name })}</p>
                 <div className="flex gap-2">
                   <Button

@@ -116,14 +116,13 @@ function engineStateClass(state: string) {
   if (state === 'engineRuntime.loading' || state === 'engineRuntime.working')
     return 'bg-warning animate-pulse motion-reduce:animate-none';
   if (state === 'engineRuntime.ready') return 'bg-success';
-  if (state === 'engineRuntime.idle')
-    return 'bg-primary';
+  if (state === 'engineRuntime.idle') return 'bg-primary';
   if (state === 'modelSettings.unavailable') return 'bg-destructive';
   return 'bg-muted-foreground/45';
 }
 
 const engineLinkClass =
-  'group/engine-icon relative flex min-w-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring';
+  'group/engine-icon relative flex min-w-0 items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring';
 const engineIconClass = 'size-5';
 
 const DOT: Record<BackendStage, string> = {
@@ -547,7 +546,7 @@ export function StatusBar({
       role="radiogroup"
       data-slot="engine-view-toggle"
       aria-label={t('sidebarTools.title')}
-      className="flex shrink-0 items-center gap-0.5 rounded-md bg-sidebar-accent/35 p-0.5 ring-1 ring-inset ring-sidebar-border/50"
+      className="flex shrink-0 items-center gap-0.5 rounded-lg bg-sidebar-accent/35 p-0.5 ring-1 ring-inset ring-sidebar-border/50"
     >
       {engineDetailLevels.map((value) => {
         const label = t(value === 'models' ? 'modelSettings.models' : 'sidebarTools.' + value);
@@ -643,9 +642,7 @@ export function StatusBar({
   );
   if (compact) {
     return (
-      <footer
-        className="flex shrink-0 flex-col items-center gap-1 text-muted-foreground"
-      >
+      <footer className="flex shrink-0 flex-col items-center gap-1 text-muted-foreground">
         {railProfile}
         {iconDevicePopover}
       </footer>
@@ -662,7 +659,7 @@ export function StatusBar({
                   <button
                     type="button"
                     aria-label={`${deviceLabel}: ${stageText}`}
-                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1 text-left outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1 text-left outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
                   />
                 }
               >

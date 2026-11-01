@@ -1027,7 +1027,7 @@ export function DubPage() {
           <section
             className={cn(
               'space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3 transition-colors',
-              session.jobId && !['idle', 'preparing'].includes(session.phase) && 'rounded-b-md',
+              session.jobId && !['idle', 'preparing'].includes(session.phase) && 'rounded-b-lg',
               dragging && 'border-primary/60 bg-primary/5',
             )}
             onDragEnter={(event) => {
@@ -1283,7 +1283,7 @@ export function DubPage() {
             )}
           </section>
           {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
-            <section className="-mt-1 space-y-3 rounded-(--card-radius) rounded-t-md border border-border/60 bg-muted/15 p-3">
+            <section className="-mt-1 space-y-3 rounded-(--card-radius) rounded-t-lg border border-border/60 bg-muted/15 p-3">
               <h2 className="flex items-center gap-2 text-sm font-medium">
                 <PlayIcon className="size-4 text-muted-foreground" />
                 {t('dub.preview')}
@@ -1996,7 +1996,7 @@ export function DubPage() {
                   style={{ backgroundColor: 'var(--background)' }}
                 >
                   <div className="col-start-1 row-start-1 flex min-w-0 items-center gap-1.5">
-                    <span className="shrink-0 rounded-md bg-muted/35 px-2 py-1 text-xs font-medium tabular-nums text-muted-foreground">
+                    <span className="shrink-0 rounded-lg bg-muted/35 px-2 py-1 text-xs font-medium tabular-nums text-muted-foreground">
                       {session.segments.length} {t('dub.segments')}
                     </span>
                     <Button
@@ -2038,7 +2038,7 @@ export function DubPage() {
                           className="w-40 bg-muted/30 sm:w-48"
                         />
                         <span
-                          className="shrink-0 rounded-md bg-muted/40 px-2 py-1 text-xs tabular-nums text-muted-foreground"
+                          className="shrink-0 rounded-lg bg-muted/40 px-2 py-1 text-xs tabular-nums text-muted-foreground"
                           title={`${activeTranslatedCount}/${session.segments.length}`}
                         >
                           {activeTranslatedCount}/{session.segments.length}
@@ -2191,7 +2191,7 @@ export function DubPage() {
                                     ),
                                   )
                               }
-                              className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
                             >
                               <WandSparklesIcon className="size-4" />
                               {t('dub.clean_up')}
@@ -2227,7 +2227,7 @@ export function DubPage() {
                                     ),
                                   )
                               }
-                              className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
                             >
                               <AudioWaveformIcon className="size-4" />
                               {t('dub.mirror_delivery')}
@@ -2235,7 +2235,7 @@ export function DubPage() {
                             <Menu.Item
                               disabled={!canRestoreOriginal}
                               onClick={restoreDubSegments}
-                              className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
                             >
                               <RotateCcwIcon className="size-4" />
                               {t('dub.restore')}
@@ -2243,7 +2243,7 @@ export function DubPage() {
                             {failedTranslationCount > 0 && code && (
                               <Menu.Item
                                 onClick={() => skipFailedDubTranslations(code)}
-                                className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
                               >
                                 <XIcon className="size-4" />
                                 {t('dub.skip_failed')}
@@ -2346,7 +2346,7 @@ export function DubPage() {
                                 profile_id: undefined,
                               })
                             }
-                            className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                            className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
                           >
                             <RotateCcwIcon className="size-4" />
                             {t('dub.clear_voice')}
@@ -2359,7 +2359,7 @@ export function DubPage() {
                                   profile_id: profile.id,
                                 })
                               }
-                              className="cursor-default rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                              className="cursor-default rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
                             >
                               {profile.name}
                             </Menu.Item>
@@ -2463,8 +2463,7 @@ export function DubPage() {
                           onFocusCapture={() => setSelectedSegmentId(segment.id)}
                           className={cn(
                             'group/segment relative isolate grid grid-cols-[3.25rem_minmax(0,1fr)] gap-x-2 px-2 py-3.5 transition-colors after:pointer-events-none after:absolute after:right-2 after:bottom-0 after:left-[4.25rem] after:h-px after:bg-border/50 hover:bg-accent/[0.12] focus-within:bg-muted/[0.16]',
-                            selectedSegmentId === segment.id &&
-                              'bg-(--sidebar-row-selected)',
+                            selectedSegmentId === segment.id && 'bg-(--sidebar-row-selected)',
                           )}
                         >
                           <div
@@ -2669,7 +2668,7 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={segment.text.trim().length < 2}
                                           onClick={() => splitAtCursor(segment.id, segment.text)}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
                                         >
                                           <ScissorsIcon className="size-4" />
                                           {t('segmentEditing.split')}
@@ -2677,7 +2676,7 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={index === 0}
                                           onClick={() => mergeDubSegment(segment.id, 'prev')}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
                                         >
                                           <MergeIcon className="size-4" />
                                           {t('segmentEditing.mergePrevious')}
@@ -2685,14 +2684,14 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={index === session.segments.length - 1}
                                           onClick={() => mergeDubSegment(segment.id)}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
                                         >
                                           <MergeIcon className="size-4" />
                                           {t('segmentEditing.mergeNext')}
                                         </Menu.Item>
                                         <Menu.Item
                                           onClick={() => insertDubSegment(segment.id)}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
                                         >
                                           <PlusIcon className="size-4" />
                                           {t('segmentEditing.insert')}
@@ -2718,7 +2717,7 @@ export function DubPage() {
                                 aria-label={t('clone.text_label') + ' ' + (index + 1)}
                                 rows={1}
                                 autoFocus
-                                className="min-h-8 max-h-32 w-full resize-y overflow-y-auto rounded-md border border-input bg-background/35 px-2 py-1 text-sm leading-5 outline-none transition-[background-color,border-color,box-shadow] [field-sizing:content] focus-visible:ring-2 focus-visible:ring-ring"
+                                className="min-h-8 max-h-32 w-full resize-y overflow-y-auto rounded-sm border border-input bg-background/35 px-2 py-1 text-sm leading-5 outline-none transition-[background-color,border-color,box-shadow] [field-sizing:content] focus-visible:ring-2 focus-visible:ring-ring"
                                 disabled={busy || Boolean(session.recovery)}
                                 value={segment.text}
                                 onBlur={() => setEditingSegmentId(null)}
@@ -2777,7 +2776,7 @@ export function DubPage() {
                               </button>
                             )}
                             {segment.plan?.suggested_text && (
-                              <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/5 p-1.5 text-xs">
+                              <div className="flex items-center gap-2 rounded-lg border border-warning/20 bg-warning/5 p-1.5 text-xs">
                                 <span className="min-w-0 flex-1 truncate text-muted-foreground">
                                   {segment.plan.suggested_text}
                                 </span>
@@ -3068,7 +3067,7 @@ export function DubPage() {
                                       // The selection remains active for this session.
                                     }
                                   }}
-                                  className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                  className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
                                 >
                                   <span
                                     className={cn(

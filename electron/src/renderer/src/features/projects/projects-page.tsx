@@ -508,7 +508,7 @@ export function ProjectsPage() {
               >
                 <Icon />
                 <span className="min-w-0 flex-1 truncate text-left">{item.label}</span>
-                <span className="rounded-md bg-background/45 px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
+                <span className="rounded-sm bg-background/45 px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
                   {counts[item.id]}
                 </span>
               </Button>

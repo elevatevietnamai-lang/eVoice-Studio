@@ -92,7 +92,7 @@ export function BookSettings({
           <img
             src={preview}
             alt={t('audiobook.cover')}
-            className="h-32 w-24 rounded-md object-cover"
+            className="h-32 w-24 rounded-sm object-cover"
           />
         )}
         {draft.cover && (

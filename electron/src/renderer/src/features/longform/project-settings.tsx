@@ -166,7 +166,7 @@ export function ProjectSettings({
                 </Button>
               </div>
               {confirmation?.project.id === project.id && (
-                <div className="space-y-2 rounded-md bg-muted/40 p-2 text-xs">
+                <div className="space-y-2 rounded-lg bg-muted/40 p-2 text-xs">
                   <p>
                     {t(
                       confirmation.action === 'delete'

@@ -201,7 +201,7 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
         </div>
       )}
       {confirm && (
-        <div className="space-y-2 rounded-md bg-muted/40 p-3 text-xs">
+        <div className="space-y-2 rounded-lg bg-muted/40 p-3 text-xs">
           <p>
             {t(
               confirm === 'unlock'

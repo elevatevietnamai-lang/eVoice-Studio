@@ -48,7 +48,7 @@ export function SettingsActionError({
           <summary className="cursor-pointer rounded py-1 focus-visible:outline-ring">
             {t('profileIdentity.details')}
           </summary>
-          <pre className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap break-all rounded-md bg-background/45 p-3 font-mono text-xs">
+          <pre className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap break-all rounded-sm bg-background/45 p-3 font-mono text-xs">
             {detail}
           </pre>
           <Link to="/settings/logs" className="mt-2 inline-block underline">

@@ -88,7 +88,8 @@ export function BatchPage() {
   useEffect(() => {
     for (const job of jobs.data ?? []) {
       const setup = job.setup_required;
-      if (setup?.kind !== 'model_licence_required' || announcedLicence.current.has(job.id)) continue;
+      if (setup?.kind !== 'model_licence_required' || announcedLicence.current.has(job.id))
+        continue;
       announcedLicence.current.add(job.id);
       announceModelLicenceRequired(setup);
     }
@@ -531,7 +532,7 @@ function BatchJobCard({
           {job.langs.map((lang) => (
             <span
               key={lang}
-              className="rounded-md border border-border/50 bg-muted/25 px-2 py-1 text-[11px] font-medium uppercase text-muted-foreground"
+              className="rounded-sm border border-border/50 bg-muted/25 px-2 py-1 text-[11px] font-medium uppercase text-muted-foreground"
             >
               {lang}
             </span>

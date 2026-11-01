@@ -16,9 +16,10 @@ const VARIANT_STYLES = {
   controls:
     '[&_summary]:min-h-8 [&_summary]:select-none [&_summary]:items-center [&_summary]:px-0.5 [&_summary]:font-medium [&_summary]:text-foreground/90 [&_summary:hover]:bg-background/35 [&_h2]:text-foreground/90 [&_h3]:text-foreground/90',
   navigation:
-    '[&>button]:h-9 [&>button]:w-full [&>button]:justify-start [&>button]:gap-2.5 [&>button]:rounded-lg [&>button]:px-2.5 [&>button]:font-normal [&>button]:transition-[color,background-color,box-shadow] [&>button:hover]:bg-accent/55 [&>button[aria-pressed=true]]:bg-accent/80 [&>button[aria-pressed=true]]:font-medium [&>button>svg]:text-muted-foreground [&>button[aria-pressed=true]>svg]:text-primary',
+    '[&>button]:h-9 [&>button]:w-full [&>button]:justify-start [&>button]:gap-2.5 [&>button]:rounded-lg [&>button]:px-2.5 [&>button]:font-normal [&>button]:transition-[color,background-color,box-shadow] [&>button:hover]:bg-accent [&>button[aria-pressed=true]]:bg-accent [&>button[aria-pressed=true]]:font-medium [&>button>svg]:text-muted-foreground [&>button[aria-pressed=true]>svg]:text-primary',
+  // Inputs, filters and buttons keep their own primitive styles; the library adds only focus rings.
   library:
-    '[&_input]:bg-background/45 [&_input]:shadow-xs [&_button]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring/40',
+    '[&_button]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring/40',
 } as const;
 
 /** Local workspace controls; the global library and navigation remain in the app shell. */
@@ -123,7 +124,7 @@ function PanelBody({
             role="tablist"
             aria-label={title}
             data-slot="secondary-sidebar-tabs"
-            className="flex min-w-0 flex-1 gap-1"
+            className="flex min-w-0 flex-1 gap-[3px] rounded-lg bg-muted p-[3px]"
             onKeyDown={(event) => {
               if (event.altKey || event.ctrlKey || event.metaKey) return;
               const tabs = [
@@ -166,10 +167,11 @@ function PanelBody({
                 tabIndex={view === value ? 0 : -1}
                 onClick={() => chooseView(value)}
                 className={cn(
-                  'h-7 min-w-0 flex-1 truncate rounded-md px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                  // The segmented grammar of Tabs and ToggleGroup: 4 px tabs in an 8 px frame.
+                  'h-[26px] min-w-0 flex-1 truncate rounded-sm px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
                   view === value
-                    ? 'bg-accent/80 text-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                    ? 'bg-background text-foreground dark:bg-control-fill'
+                    : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 {label}
@@ -185,7 +187,7 @@ function PanelBody({
           </span>
         )}
         {meta !== undefined && meta !== null && (
-          <span className="shrink-0 rounded-md border border-border/40 bg-muted/55 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
+          <span className="shrink-0 rounded-sm border border-border/40 bg-muted/55 px-1.5 py-0.5 text-[11px] font-medium tabular-nums text-muted-foreground">
             {meta}
           </span>
         )}

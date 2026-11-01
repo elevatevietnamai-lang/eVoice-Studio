@@ -79,7 +79,9 @@ export function EngineRow({
     );
   // Normal states read from the dot alone; words appear only when something needs attention.
   const quiet =
-    online && (state === 'engineRuntime.idle' || state === 'engineRuntime.ready') && level !== 'simple';
+    online &&
+    (state === 'engineRuntime.idle' || state === 'engineRuntime.ready') &&
+    level !== 'simple';
   const modelLabel = detail.includes('/')
     ? detail.slice(detail.lastIndexOf('/') + 1)
     : compactEngineName(model);
@@ -107,7 +109,7 @@ export function EngineRow({
     <>
       <span
         aria-hidden="true"
-        className="grid size-7 shrink-0 place-items-center rounded-md bg-sidebar-accent/45 text-muted-foreground ring-1 ring-inset ring-sidebar-border/40 transition-colors group-hover/engine-row:text-foreground"
+        className="grid size-7 shrink-0 place-items-center rounded-lg bg-sidebar-accent/45 text-muted-foreground ring-1 ring-inset ring-sidebar-border/40 transition-colors group-hover/engine-row:text-foreground"
       >
         <Icon className="size-3.5" />
       </span>
@@ -186,7 +188,10 @@ export function EngineRow({
             )}
             <dt className="text-muted-foreground">{t('sidebarTools.modelLabel')}</dt>
             <dd className="flex min-w-0 items-center gap-1">
-              <code className="min-w-0 truncate font-mono text-[10.5px] text-foreground/90" title={detail}>
+              <code
+                className="min-w-0 truncate font-mono text-[10.5px] text-foreground/90"
+                title={detail}
+              >
                 {detail}
               </code>
               <CopyModelId value={detail} />
@@ -202,14 +207,14 @@ export function EngineRow({
             )}
           </dl>
           {problem && (
-            <p className="mt-2 rounded-md bg-warning/10 px-2 py-1.5 text-[11px] leading-snug text-foreground/85 [overflow-wrap:anywhere]">
+            <p className="mt-2 rounded-sm bg-warning/10 px-2 py-1.5 text-[11px] leading-snug text-foreground/85 [overflow-wrap:anywhere]">
               {problem}
             </p>
           )}
           <Link
             to="/settings/models/$family"
             params={{ family }}
-            className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-md text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-sm text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
           >
             {t('modelSettings.change')}
             <ChevronRightIcon className="size-3 rtl:rotate-180" aria-hidden="true" />

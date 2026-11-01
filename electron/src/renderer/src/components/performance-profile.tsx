@@ -282,7 +282,7 @@ export function PerformanceProfile({
                   key={name}
                   to="/settings/models/$family"
                   params={{ family: name }}
-                  className="group flex min-h-7 items-center justify-between gap-3 rounded-md px-1 py-1 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                  className="group flex min-h-7 items-center justify-between gap-3 rounded-sm px-1 py-1 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span>{t('sidebarTools.' + name)}</span>
                   <span className="flex items-center gap-1.5 text-end text-[11px] text-muted-foreground">
@@ -341,7 +341,7 @@ export function PerformanceProfile({
                 type="button"
                 data-slot="performance-trigger"
                 aria-label={hardwareSummary || undefined}
-                className="group/hw flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 text-xs whitespace-nowrap text-foreground/85 outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="group/hw flex min-w-0 items-center gap-1.5 rounded-sm px-1.5 py-1 text-xs whitespace-nowrap text-foreground/85 outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               />
             }
           >

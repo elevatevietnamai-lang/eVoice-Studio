@@ -373,7 +373,7 @@ export function CommandPalette() {
                     aria-selected={active === index}
                     tabIndex={-1}
                     className={cn(
-                      'group flex h-10 w-full items-center gap-3 rounded-md px-2.5 text-left text-sm text-foreground outline-none transition-colors duration-160',
+                      'group flex h-10 w-full items-center gap-3 rounded-lg px-2.5 text-left text-sm text-foreground outline-none transition-colors duration-160',
                       active === index ? 'bg-(--sidebar-row-selected)' : 'hover:bg-accent',
                     )}
                     onMouseMove={() => setActive(index)}

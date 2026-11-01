@@ -60,8 +60,8 @@ function Transcript({ lines, live }: { lines: LiveLine[]; live: boolean }) {
                 // Cap the bubble, not the page: long lines stay readable on 4K.
                 'max-w-[min(42rem,85%)] rounded-(--card-radius) px-3.5 py-2 text-sm leading-6 whitespace-pre-wrap break-words',
                 agent
-                  ? 'rounded-br-md bg-primary text-primary-foreground'
-                  : 'rounded-bl-md bg-muted text-foreground',
+                  ? 'rounded-br-lg bg-primary text-primary-foreground'
+                  : 'rounded-bl-lg bg-muted text-foreground',
                 !line.final && 'opacity-70 italic',
               )}
             >

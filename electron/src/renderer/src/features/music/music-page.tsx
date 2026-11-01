@@ -45,7 +45,7 @@ const STYLE_PRESETS = [
 ];
 
 const fieldClass =
-  'h-8 w-full rounded-md border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50';
+  'h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50';
 
 export function MusicPage() {
   const { t } = useTranslation();
@@ -109,7 +109,8 @@ export function MusicPage() {
         (event) => {
           if (event.type === 'progress')
             setTask({ kind: 'generate', progress: Number(event.progress) || 0 });
-          if (event.type === 'error') throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
+          if (event.type === 'error')
+            throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
           if (event.type === 'done') {
             const track = event.track as Track | undefined;
             if (track?.id) setSelectedId(track.id);

@@ -129,7 +129,7 @@ export function AudiobookMarkupToolbar({
                 <Menu.Item
                   key={tag}
                   onClick={() => insert(tag)}
-                  className="cursor-default rounded-md px-2.5 py-1.5 text-xs outline-none data-highlighted:bg-accent"
+                  className="cursor-default rounded-lg px-2.5 py-1.5 text-xs outline-none data-highlighted:bg-accent"
                 >
                   {tag}
                 </Menu.Item>

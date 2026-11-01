@@ -453,7 +453,11 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium">{t('firstrun.env_dir')}</p>
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        {t(status.runtimeStorage ? 'firstrun.env_dir_desc_scoped' : 'firstrun.env_dir_desc')}
+                        {t(
+                          status.runtimeStorage
+                            ? 'firstrun.env_dir_desc_scoped'
+                            : 'firstrun.env_dir_desc',
+                        )}
                       </p>
                       <p
                         className="mt-2 truncate font-mono text-xs text-muted-foreground"
@@ -583,7 +587,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
           ) : null}
           {status.logTail.length > 0 ? (
             <Collapsible open={logOpen} onOpenChange={setLogOpen} className="w-full">
-              <CollapsibleTrigger className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+              <CollapsibleTrigger className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
                 <ChevronDownIcon
                   className={cn('size-3.5 transition-transform', logOpen && 'rotate-180')}
                   aria-hidden="true"

@@ -152,7 +152,7 @@ export function LlmProviders() {
               onChange={(value: string) => setSelected(value)}
               ariaLabel={t('settings.llmp_provider')}
               menuPortal
-              buttonClassName="flex h-9 w-full min-w-64 items-center justify-between rounded-md border border-input px-3 text-sm"
+              buttonClassName="flex h-9 w-full min-w-64 items-center justify-between rounded-lg border border-input px-3 text-sm"
             />
           </SettingsRow>
         )}

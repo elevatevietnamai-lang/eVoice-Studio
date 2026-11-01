@@ -59,7 +59,7 @@ export function ModelsDirectorySettings() {
       >
         <code
           title={path}
-          className="min-w-0 max-w-full flex-1 truncate rounded-md border border-border/60 bg-muted/35 px-2.5 py-1.5 text-xs text-muted-foreground @2xl:max-w-[32rem]"
+          className="min-w-0 max-w-full flex-1 truncate rounded-lg border border-border/60 bg-muted/35 px-2.5 py-1.5 text-xs text-muted-foreground @2xl:max-w-[32rem]"
         >
           {query.isPending ? t('common.loading') : path}
         </code>

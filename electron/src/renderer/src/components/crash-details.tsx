@@ -39,7 +39,7 @@ export function CrashDetails() {
         </dl>
         <pre
           aria-label={t('backend.log_label')}
-          className="max-h-56 overflow-auto rounded-md bg-muted/30 p-3 font-mono text-xs whitespace-pre-wrap break-words"
+          className="max-h-56 overflow-auto rounded-sm bg-muted/30 p-3 font-mono text-xs whitespace-pre-wrap break-words"
         >
           {crash.logTail.length ? scrubText(crash.logTail.join('\n')) : t('crash.no_stderr')}
         </pre>

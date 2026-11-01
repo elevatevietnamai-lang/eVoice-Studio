@@ -45,3 +45,33 @@ describe('no decorative effects outside the design system', () => {
     expect(hits).toEqual([]);
   });
 });
+
+/**
+ * Rules for every renderer source, primitives included (DESIGN.md): the primitives used to be
+ * exempt, which is how a 6 px corner and a tinted pressed state survived in them.
+ */
+const EVERYWHERE: [name: string, pattern: RegExp][] = [
+  // Elevate radius scale: 4 (rounded-sm), 8 (rounded-lg), 12 (card), 20 (surface), pills.
+  ['6 px corner', /(?<![\w-])rounded-(?:[trblse]{1,2}-)?md\b|rounded-\[min\(/],
+  // Selected, pressed and current states are flat: bg-accent, the sidebar row token, or the
+  // raised segment of Tabs and ToggleGroup. Never a primary tint, border or ring. (A checked
+  // Switch or Checkbox is filled with primary by design and is not a selection state.)
+  [
+    'primary-tinted state',
+    /(?:aria-(?:pressed|selected|current)|data-(?:pressed|selected|active)|data-\[(?:state=on|state=active|selected|active)[^\]]*\])[^\s'"`]*:(?:bg|border|ring|shadow)-primary/,
+  ],
+  // Native selects ignore the theme's control styles; use the Select primitive.
+  ['native select', /<select\b/],
+];
+
+describe('design system rules for every source', () => {
+  it.each(EVERYWHERE)('no %s', (_name, pattern) => {
+    const hits: string[] = [];
+    for (const [file, source] of Object.entries(sources)) {
+      source.split(/\r?\n/).forEach((line, index) => {
+        if (pattern.test(line)) hits.push(`${file.replace('../../', '')}:${index + 1}`);
+      });
+    }
+    expect(hits).toEqual([]);
+  });
+});

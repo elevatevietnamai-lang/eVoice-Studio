@@ -284,8 +284,7 @@ export function TranscriptionsPage() {
                   key={entry.id}
                   className={cn(
                     'w-full rounded-(--card-radius) border border-transparent px-3 py-2.5 text-left text-sm transition-[color,background-color,border-color,box-shadow] hover:border-border/55 hover:bg-accent',
-                    selectedId === entry.id &&
-                      'border-primary/20 bg-primary/[0.07]',
+                    selectedId === entry.id && 'border-primary/20 bg-primary/[0.07]',
                   )}
                   aria-pressed={selectedId === entry.id}
                   onClick={() => setSelectedId(entry.id)}
@@ -644,7 +643,7 @@ export function TranscriptionsPage() {
                 <summary className="cursor-pointer rounded py-1 focus-visible:outline-ring">
                   {t('profileIdentity.details')}
                 </summary>
-                <pre className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap break-all rounded-md bg-muted/40 p-3 font-mono text-xs">
+                <pre className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap break-all rounded-sm bg-muted/40 p-3 font-mono text-xs">
                   {failed}
                 </pre>
                 <Link to="/settings/logs" className="mt-2 inline-block underline">
