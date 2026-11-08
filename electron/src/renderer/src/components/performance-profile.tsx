@@ -380,7 +380,7 @@ export function PerformanceProfile({
           disabled={disabled}
           onClick={() => void choose(autoOn ? (plan?.resolved ?? 'balanced') : 'auto')}
           className={cn(
-            'inline-flex h-6 shrink-0 items-center justify-center gap-1 rounded-full text-[11px] font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50',
+            'inline-flex h-6 shrink-0 items-center justify-center gap-1 rounded-lg text-[11px] font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50',
             popoverMode ? 'w-6' : 'px-2',
             autoOn
               ? 'bg-accent text-foreground'

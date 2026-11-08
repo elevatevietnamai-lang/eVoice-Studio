@@ -157,14 +157,14 @@ export function MultiLanguagePicker({
           {selected.map((language) => (
             <span
               key={language}
-              className="inline-flex h-7 max-w-full items-center gap-1 rounded-full bg-muted px-2 text-xs font-medium text-foreground"
+              className="inline-flex h-7 max-w-full items-center gap-1 rounded-lg bg-muted ps-2 pe-0.5 text-xs font-medium text-foreground"
             >
               <span className="truncate">{language}</span>
               <button
                 type="button"
                 disabled={disabled}
                 aria-label={`${t('common.delete')} ${language}`}
-                className="flex size-6 shrink-0 items-center justify-center rounded-full hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+                className="flex size-6 shrink-0 items-center justify-center rounded-sm hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
                 onClick={() => onChange(selected.filter((item) => item !== language))}
               >
                 <XIcon className="size-3" />

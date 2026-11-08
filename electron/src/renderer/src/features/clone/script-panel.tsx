@@ -303,14 +303,14 @@ export function ScriptPanel({
                       id={menuId}
                       role="menu"
                       aria-label={t('clone.insert_token')}
-                      className="fixed z-50 flex max-h-56 w-[min(360px,calc(100vw-16px))] flex-wrap gap-1 overflow-y-auto rounded-lg bg-popover p-2 text-popover-foreground shadow-md ring-1 ring-foreground/10 animate-in fade-in-0 zoom-in-95 motion-reduce:animate-none"
+                      className="fixed z-50 flex max-h-56 w-[min(360px,calc(100vw-16px))] flex-wrap gap-1 overflow-y-auto rounded-(--card-radius) bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 animate-in fade-in-0 zoom-in-95 motion-reduce:animate-none"
                     >
                       {TAGS.map((tag) => (
                         <button
                           key={tag}
                           type="button"
                           role="menuitem"
-                          className="rounded-full px-2 py-0.5 text-[length:var(--text-caption)] text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                          className="rounded-lg px-2 py-1 text-[length:var(--text-caption)] text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                           onClick={() => edit(tag)}
                         >
                           {tag}
