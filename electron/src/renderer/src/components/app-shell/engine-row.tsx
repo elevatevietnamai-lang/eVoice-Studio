@@ -1,12 +1,8 @@
 import { useEffect, useId, useState } from 'react';
+import { Check as CheckShape, Copy as CopyShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { Link } from '@tanstack/react-router';
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  CopyIcon,
-  LoaderCircleIcon,
-  type LucideIcon,
-} from 'lucide-react';
+import { ChevronRightIcon, LoaderCircleIcon, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ComputeVendorIcon, formatComputeRuntime } from '@/components/compute-vendor-icon';
 import { cn } from '@/lib/utils';
@@ -38,7 +34,7 @@ function CopyModelId({ value }: { value: string }) {
           .catch(() => {})
       }
     >
-      {copied ? <CheckIcon className="size-3" /> : <CopyIcon className="size-3" />}
+      {<MorphIcon icon={copied ? CheckShape : CopyShape} className="size-3" />}
     </button>
   );
 }

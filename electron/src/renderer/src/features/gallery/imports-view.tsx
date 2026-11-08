@@ -1,4 +1,6 @@
 import { TrimAudio } from './trim-audio';
+import { Play as PlayShape, X as XShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { VoiceDestinations } from './voice-destinations';
 import { placeLongformVoice } from './place-voice';
 import type { Mode } from '@/features/longform/longform-session';
@@ -6,15 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import {
-  DownloadIcon,
-  PackageIcon,
-  PlayIcon,
-  SearchIcon,
-  Trash2Icon,
-  UploadIcon,
-  XIcon,
-} from 'lucide-react';
+import { DownloadIcon, PackageIcon, SearchIcon, Trash2Icon, UploadIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AudioPreviewButton } from '@/components/audio-preview-button';
@@ -248,7 +242,7 @@ export function ImportsView() {
                       )
                     }
                   >
-                    {previewing === result.video_id ? <XIcon /> : <PlayIcon />}
+                    {<MorphIcon icon={previewing === result.video_id ? XShape : PlayShape} />}
                     {t(previewing === result.video_id ? 'common.close' : 'gallery.preview')}
                   </Button>
                   <Button
@@ -296,7 +290,10 @@ export function ImportsView() {
         ) : null}
         <div className="grid gap-3 lg:grid-cols-2">
           {voices.data?.map((voice) => (
-            <article key={voice.id} className="space-y-3 rounded-(--card-radius) border border-border/50 p-4">
+            <article
+              key={voice.id}
+              className="space-y-3 rounded-(--card-radius) border border-border/50 p-4"
+            >
               <div className="flex items-center gap-3">
                 <AudioPreviewButton
                   src={apiPath('/gallery/voices/' + encodeURIComponent(voice.id) + '/preview')}

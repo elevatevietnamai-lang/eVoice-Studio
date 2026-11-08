@@ -1,11 +1,12 @@
 import { useState, type ReactNode } from 'react';
+import { Check as CheckShape, Copy as CopyShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import {
   CheckIcon,
   ChevronRightIcon,
   CircleHelpIcon,
-  CopyIcon,
   TriangleAlertIcon,
   UserRoundIcon,
   XIcon,
@@ -80,7 +81,7 @@ function CopyValue({ value }: { value: string }) {
             .catch(() => {});
         }}
       >
-        {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+        {<MorphIcon icon={copied ? CheckShape : CopyShape} className="size-3.5" />}
       </button>
     </span>
   );

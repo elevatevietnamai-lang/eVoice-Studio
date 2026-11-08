@@ -120,6 +120,30 @@ describe('interaction states and motion follow one grammar', () => {
     }
     expect(hits).toEqual([]);
   });
+  it('morphs an icon that changes with state instead of swapping two static icons', () => {
+    // Pairs that stand for the two states of one control (play and pause, record and stop...).
+    const pairs = [
+      ['Play', 'Pause'],
+      ['Mic', 'Square'],
+      ['Check', 'Copy'],
+      ['Check', 'Download'],
+      ['VolumeX', 'Volume2'],
+      ['Minimize', 'Maximize'],
+      ['X', 'RotateCw'],
+      ['X', 'Play'],
+      ['Sun', 'Moon'],
+      ['Menu', 'X'],
+    ].map((pair) => pair.sort().join('/'));
+    const swap = /\?\s*<(\w+)Icon\b[^>]*\/>\s*:\s*<(\w+)Icon\b/g;
+    const hits: string[] = [];
+    for (const [file, source] of Object.entries(sources)) {
+      for (const match of source.matchAll(swap)) {
+        if (pairs.includes([match[1], match[2]].sort().join('/')))
+          hits.push(`${file.replace('../../', '')}: ${match[1]}/${match[2]}`);
+      }
+    }
+    expect(hits).toEqual([]);
+  });
   it('opens every dropdown menu with the shared menu motion', () => {
     const hits: string[] = [];
     for (const [file, source] of Object.entries(sources)) {

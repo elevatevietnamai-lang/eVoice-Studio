@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
+import { Pause as PauseShape, Play as PlayShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useTranslation } from 'react-i18next';
-import { FolderOpenIcon, PauseIcon, PlayIcon, XIcon } from 'lucide-react';
+import { FolderOpenIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getBridge } from '@/components/bridge';
 import { PipelineFailure } from '@/components/pipeline-failure';
 import { describeError } from '@/lib/api/client';
-import {
-  createIngestTracker,
-  WATCH_POLL_MS,
-} from '@shared/utils/watchFolderTracker';
+import { createIngestTracker, WATCH_POLL_MS } from '@shared/utils/watchFolderTracker';
 import type { WatchSelection } from '../../../../preload/index.d';
 
 export function WatchFolder({
@@ -172,7 +171,7 @@ export function WatchFolder({
                   setPaused(pausedRef.current);
                 }}
               >
-                {paused ? <PlayIcon /> : <PauseIcon />}
+                {<MorphIcon icon={paused ? PlayShape : PauseShape} />}
               </Button>
               <Button
                 variant="ghost"

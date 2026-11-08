@@ -1,15 +1,12 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import {
-  PlayIcon,
-  PauseIcon,
-  MaximizeIcon,
-  MinimizeIcon,
-  Volume2Icon,
-  VolumeXIcon,
-  LoaderCircleIcon,
-  RotateCcwIcon,
-  RotateCwIcon,
-} from 'lucide-react';
+  Maximize as MaximizeShape,
+  Minimize as MinimizeShape,
+  Volume2 as Volume2Shape,
+  VolumeX as VolumeXShape,
+} from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
+import { PlayIcon, PauseIcon, LoaderCircleIcon, RotateCcwIcon, RotateCwIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Poster, useMediaRemote, type MediaPlayerProps } from '@vidstack/react';
 import {
@@ -78,7 +75,10 @@ export const VideoPlayer = memo(function VideoPlayer({
         loaders={videoLoaders}
         className="relative aspect-video [&_video]:h-full [&_video]:w-full [&_iframe]:h-full [&_iframe]:w-full"
       >
-        <Poster alt="" className="absolute inset-0 h-full w-full object-contain opacity-0 data-[visible]:opacity-100 data-[hidden]:hidden" />
+        <Poster
+          alt=""
+          className="absolute inset-0 h-full w-full object-contain opacity-0 data-[visible]:opacity-100 data-[hidden]:hidden"
+        />
       </MediaProvider>
       <VideoControls
         player={player}
@@ -237,7 +237,7 @@ function VideoControls({
             if (player.current) player.current.muted = !muted;
           }}
         >
-          {muted ? <VolumeXIcon /> : <Volume2Icon />}
+          {<MorphIcon icon={muted ? VolumeXShape : Volume2Shape} />}
         </Button>
         {!compact && (
           <>
@@ -289,7 +289,7 @@ function VideoControls({
               void action?.catch(() => setFailed(true));
             }}
           >
-            {fullscreen ? <MinimizeIcon /> : <MaximizeIcon />}
+            {<MorphIcon icon={fullscreen ? MinimizeShape : MaximizeShape} />}
           </Button>
         )}
       </div>

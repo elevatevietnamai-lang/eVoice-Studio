@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { Mic as MicShape, Square as SquareShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { MicIcon, SquareIcon, ShieldCheckIcon } from 'lucide-react';
+import { ShieldCheckIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RecordingInputs } from '@/components/recording-inputs';
 import { useRecording } from '@/hooks/use-recording';
@@ -179,7 +181,7 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
             disabled={busy || rec.isStarting || rec.isCleaning}
             onClick={() => (rec.isRecording ? rec.stop() : void rec.start())}
           >
-            {rec.isRecording ? <SquareIcon /> : <MicIcon />}
+            {<MorphIcon icon={rec.isRecording ? SquareShape : MicShape} />}
             {t(rec.isRecording ? 'voice_profile.consent_stop' : 'voice_profile.consent_record')}
             {rec.isRecording && <span className="tabular-nums">{Math.floor(rec.seconds)}s</span>}
           </Button>

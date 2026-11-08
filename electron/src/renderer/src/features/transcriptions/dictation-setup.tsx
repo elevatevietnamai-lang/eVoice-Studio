@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Check as CheckShape, Download as DownloadShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { CheckIcon, DownloadIcon, MicIcon, XIcon } from 'lucide-react';
+import { CheckIcon, MicIcon, XIcon } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { AgentFixButton } from '@/components/agent-fix-button';
 import { Progress } from '@/components/ui/progress';
@@ -148,7 +150,7 @@ export function DictationSetup({ onReady }: { onReady: () => void }) {
         disabled={installing !== null}
         onClick={() => void choose(model)}
       >
-        {model.installed ? <CheckIcon /> : <DownloadIcon />}
+        {<MorphIcon icon={model.installed ? CheckShape : DownloadShape} />}
         {t(model.installed ? 'asr_missing.use' : 'asr_missing.download', {
           label: model.label,
           size: model.size_gb,

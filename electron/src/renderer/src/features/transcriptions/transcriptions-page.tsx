@@ -1,4 +1,11 @@
 import { SecondarySidebar } from '@/components/workspace-sidebar';
+import {
+  Mic as MicShape,
+  Pause as PauseShape,
+  Play as PlayShape,
+  Square as SquareShape,
+} from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { LiveDictation } from './live-dictation';
 import { DictationSetup } from './dictation-setup';
@@ -18,8 +25,6 @@ import {
   Clock3Icon,
   KeyboardIcon,
   LanguagesIcon,
-  PauseIcon,
-  PlayIcon,
   XIcon,
   CopyIcon,
   DownloadIcon,
@@ -431,7 +436,7 @@ export function TranscriptionsPage() {
                       recording.isRecording ? recording.stop() : void recording.start()
                     }
                   >
-                    {recording.isRecording ? <SquareIcon /> : <MicIcon />}
+                    {<MorphIcon icon={recording.isRecording ? SquareShape : MicShape} />}
                     {t(recording.isRecording ? 'clone.stop_recording' : 'clone.record')}
                     {recording.isRecording && (
                       <span className="tabular-nums">{Math.floor(recording.seconds)}s</span>
@@ -465,7 +470,7 @@ export function TranscriptionsPage() {
                             onClick={() => live.pause()}
                             aria-label={t(liveState.paused ? 'common.resume' : 'common.pause')}
                           >
-                            {liveState.paused ? <PlayIcon /> : <PauseIcon />}
+                            {<MorphIcon icon={liveState.paused ? PlayShape : PauseShape} />}
                             {t(liveState.paused ? 'common.resume' : 'common.pause')}
                           </Button>
                           <Button onClick={() => void live.stop()}>

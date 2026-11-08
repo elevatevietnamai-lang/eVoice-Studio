@@ -1,9 +1,11 @@
 import { useConversion, setConversion } from './conversion-state';
+import { Mic as MicShape, Square as SquareShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeftRightIcon, MicIcon, SquareIcon } from 'lucide-react';
+import { ArrowLeftRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -157,7 +159,7 @@ export function ConvertVoice() {
               }
             }}
           >
-            {recording.isRecording ? <SquareIcon /> : <MicIcon />}
+            {<MorphIcon icon={recording.isRecording ? SquareShape : MicShape} />}
             {recording.isRecording ? t('clone.stop_recording') : t('clone.record')}
           </Button>
           {file && (

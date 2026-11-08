@@ -1,11 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { RotateCw as RotateCwShape, X as XShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   ChevronDownIcon,
   ExternalLinkIcon,
   GlobeIcon,
-  RotateCwIcon,
   XIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -212,7 +213,7 @@ export function SiteBrowserPage({ anchor = null }: { anchor?: HTMLElement | null
             title={t(page.loading ? 'siteBrowser.stop' : 'siteBrowser.reload')}
             onClick={() => void run(() => browser!.command(page.loading ? 'stop' : 'reload'))}
           >
-            {page.loading ? <XIcon /> : <RotateCwIcon />}
+            {<MorphIcon icon={page.loading ? XShape : RotateCwShape} />}
           </Button>
           <form
             onSubmit={(event) => {
