@@ -12,7 +12,7 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
     <SelectPrimitive.Group
       data-slot="select-group"
-      className={cn("scroll-my-1 p-1", className)}
+      className={cn("scroll-my-1", className)}
       {...props}
     />
   )
@@ -61,14 +61,13 @@ function SelectContent({
   children,
   side = "bottom",
   sideOffset = 4,
-  align = "center",
+  align = "start",
   alignOffset = 0,
-  alignItemWithTrigger = true,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<
     SelectPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
+    "align" | "alignOffset" | "side" | "sideOffset"
   >) {
   return (
     <SelectPrimitive.Portal>
@@ -77,14 +76,16 @@ function SelectContent({
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
-        alignItemWithTrigger={alignItemWithTrigger}
+        // The list always drops below the trigger (flipping above when there is no room) and
+        // stays inside the window; Base UI's default lays the selected item over the trigger.
+        alignItemWithTrigger={false}
+        collisionPadding={8}
         className="isolate z-50"
       >
         <SelectPrimitive.Popup
           data-slot="select-content"
-          data-align-trigger={alignItemWithTrigger}
           className={cn(
-            "cn-menu-target cn-menu-translucent relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-32 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-(--card-radius) surface-glass text-popover-foreground shadow-md ring-1 ring-border transition-[opacity,transform] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:transition-none",
+            "cn-menu-target cn-menu-translucent relative isolate z-50 max-h-(--available-height) max-w-(--available-width) min-w-[max(var(--anchor-width),8rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-(--card-radius) p-1 surface-glass text-popover-foreground shadow-md ring-1 ring-border transition-[opacity,transform] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:transition-none",
             className
           )}
           {...props}
@@ -120,7 +121,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg px-2 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex min-h-8 w-full cursor-default items-center gap-2 rounded-lg py-1.5 pr-8 pl-2 text-sm outline-hidden transition-colors duration-160 select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
         className
       )}
       {...props}
@@ -130,7 +131,7 @@ function SelectItem({
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none absolute right-2 flex items-center justify-center" />
+          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />
         }
       >
         <CheckIcon className="pointer-events-none" />

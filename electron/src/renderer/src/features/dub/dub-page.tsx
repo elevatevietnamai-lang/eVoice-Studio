@@ -149,7 +149,7 @@ import {
   planDubIncremental,
 } from './dub-session';
 import { Checkbox } from '@/components/ui/checkbox';
-import { menuPopupClass } from '@/components/menu-popup';
+import { menuItemClass, menuPopupClass } from '@/components/menu-popup';
 import { segmentedFrameClass } from '@/components/segmented';
 
 const DEFAULT_TRANSLATION_AGENT_KEY = 'voicestudio.defaultTranslationAgent';
@@ -2194,7 +2194,7 @@ export function DubPage() {
                                     ),
                                   )
                               }
-                              className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               <WandSparklesIcon className="size-4" />
                               {t('dub.clean_up')}
@@ -2230,7 +2230,7 @@ export function DubPage() {
                                     ),
                                   )
                               }
-                              className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               <AudioWaveformIcon className="size-4" />
                               {t('dub.mirror_delivery')}
@@ -2238,7 +2238,7 @@ export function DubPage() {
                             <Menu.Item
                               disabled={!canRestoreOriginal}
                               onClick={restoreDubSegments}
-                              className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               <RotateCcwIcon className="size-4" />
                               {t('dub.restore')}
@@ -2246,7 +2246,7 @@ export function DubPage() {
                             {failedTranslationCount > 0 && code && (
                               <Menu.Item
                                 onClick={() => skipFailedDubTranslations(code)}
-                                className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                className={menuItemClass}
                               >
                                 <XIcon className="size-4" />
                                 {t('dub.skip_failed')}
@@ -2351,7 +2351,7 @@ export function DubPage() {
                                 profile_id: undefined,
                               })
                             }
-                            className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                            className={menuItemClass}
                           >
                             <RotateCcwIcon className="size-4" />
                             {t('dub.clear_voice')}
@@ -2364,7 +2364,7 @@ export function DubPage() {
                                   profile_id: profile.id,
                                 })
                               }
-                              className="cursor-default rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               {profile.name}
                             </Menu.Item>
@@ -2672,7 +2672,7 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={segment.text.trim().length < 2}
                                           onClick={() => splitAtCursor(segment.id, segment.text)}
-                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <ScissorsIcon className="size-4" />
                                           {t('segmentEditing.split')}
@@ -2680,7 +2680,7 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={index === 0}
                                           onClick={() => mergeDubSegment(segment.id, 'prev')}
-                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <MergeIcon className="size-4" />
                                           {t('segmentEditing.mergePrevious')}
@@ -2688,14 +2688,14 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={index === session.segments.length - 1}
                                           onClick={() => mergeDubSegment(segment.id)}
-                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <MergeIcon className="size-4" />
                                           {t('segmentEditing.mergeNext')}
                                         </Menu.Item>
                                         <Menu.Item
                                           onClick={() => insertDubSegment(segment.id)}
-                                          className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <PlusIcon className="size-4" />
                                           {t('segmentEditing.insert')}
@@ -3076,7 +3076,7 @@ export function DubPage() {
                                       // The selection remains active for this session.
                                     }
                                   }}
-                                  className="flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                  className={menuItemClass}
                                 >
                                   <span
                                     className={cn(

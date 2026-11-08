@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useAccount } from '@/features/account/use-account';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { cn } from '@/lib/utils';
-import { menuPopupClass } from '@/components/menu-popup';
+import { menuItemClass, menuPopupClass } from '@/components/menu-popup';
 
 function initials(name: string): string {
   const words = name.includes('@') ? [name] : name.trim().split(/\s+/);
@@ -35,9 +35,6 @@ function Avatar({ name, url }: { name: string; url: string | null }) {
     </span>
   );
 }
-
-const ITEM =
-  'flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground outline-none transition-colors duration-160 data-highlighted:bg-accent';
 
 /**
  * The account control in the window's top-right corner: the profile photo (or
@@ -83,7 +80,7 @@ export function AccountMenu({ className }: { className?: string }) {
         <Menu.Positioner sideOffset={6} align="end" className="z-50">
           <Menu.Popup className={cn(menuPopupClass, 'min-w-52 p-1')}>
             <Menu.Item
-              className={ITEM}
+              className={menuItemClass}
               onClick={() =>
                 runRendererTask('Open account settings', () =>
                   navigate({ to: '/settings/account' }),
@@ -93,7 +90,7 @@ export function AccountMenu({ className }: { className?: string }) {
               <UserRoundCogIcon className="size-4" aria-hidden="true" />
               {t('account.menu_settings')}
             </Menu.Item>
-            <Menu.Item className={ITEM} onClick={() => void signOut()}>
+            <Menu.Item className={menuItemClass} onClick={() => void signOut()}>
               <LogOutIcon className="size-4" aria-hidden="true" />
               {t('account.sign_out')}
             </Menu.Item>

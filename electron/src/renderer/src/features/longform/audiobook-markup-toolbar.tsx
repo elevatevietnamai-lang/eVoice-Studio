@@ -13,7 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { TAGS } from '@shared/utils/constants';
-import { menuPopupClass } from '@/components/menu-popup';
+import { menuItemClass, menuPopupClass } from '@/components/menu-popup';
 import { cn } from '@/lib/utils';
 import { chipTrayClass } from '@/components/segmented';
 
@@ -137,7 +137,7 @@ export function AudiobookMarkupToolbar({
                 <Menu.Item
                   key={tag}
                   onClick={() => insert(tag)}
-                  className="cursor-default rounded-lg px-2.5 py-1.5 text-xs outline-none data-highlighted:bg-accent"
+                  className={cn(menuItemClass, 'px-2.5 py-1.5 text-xs')}
                 >
                   {tag}
                 </Menu.Item>
