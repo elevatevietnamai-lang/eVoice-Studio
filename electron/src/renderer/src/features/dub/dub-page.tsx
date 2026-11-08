@@ -148,6 +148,7 @@ import {
   skipFailedDubTranslations,
   planDubIncremental,
 } from './dub-session';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const DEFAULT_TRANSLATION_AGENT_KEY = 'voicestudio.defaultTranslationAgent';
 const LIVE_PREVIEW_KEY = 'voicestudio.dubLivePreview';
@@ -2472,13 +2473,12 @@ export function DubPage() {
                               selectedSegmentId === segment.id && 'text-foreground',
                             )}
                           >
-                            <input
-                              type="checkbox"
+                            <Checkbox
                               checked={selectedSegmentIds.has(segment.id)}
                               disabled={busy || Boolean(session.recovery)}
                               aria-label={`${t('modelSettings.select')} ${index + 1}`}
-                              className="mt-0.5 size-4 accent-primary"
-                              onChange={() =>
+                              className="mt-0.5"
+                              onCheckedChange={() =>
                                 setSelectedSegmentIds((current) => {
                                   const next = new Set(current);
                                   if (next.has(segment.id)) next.delete(segment.id);

@@ -42,6 +42,7 @@ import { translationActivity } from '@/features/dub/translation-activity';
 import { TranslationAgentDock } from './translation-agent-dock';
 import { AgentDockFrame } from './agent-dock-frame';
 import './voice-studio-agent.css';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const icons = { codex: codexIcon, claude: claudeIcon, opencode: openCodeIcon, pi: piIcon };
 const labels: Record<AgentFeature, string> = {
@@ -391,11 +392,10 @@ export function VoiceStudioAgent() {
               ))}
             </div>
             <label className="agent-workspace-source">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={source}
                 disabled={running}
-                onChange={(event) => setSource(event.target.checked)}
+                onCheckedChange={(checked) => setSource(checked)}
               />
               <WrenchIcon className="size-3.5" />
               {t('agentWorkspace.source')}

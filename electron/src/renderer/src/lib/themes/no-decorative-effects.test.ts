@@ -62,6 +62,8 @@ const EVERYWHERE: [name: string, pattern: RegExp][] = [
   ],
   // Native selects ignore the theme's control styles; use the Select primitive.
   ['native select', /<select\b/],
+  // Native checkboxes ignore the theme too; use the Checkbox primitive.
+  ['native checkbox', /type=["']checkbox["']/],
   // A translucent primary fill or border has no role in the system: selection is bg-accent,
   // callouts use the Card grammar, icons sit on bg-muted (eVoice brand 5). A solid primary
   // control may darken on hover (`hover:bg-primary/90`, DESIGN.md).

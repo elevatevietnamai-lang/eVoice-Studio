@@ -35,6 +35,7 @@ import { clearDubDraftForReset } from '@/features/dub/dub-session';
 import { fmtBytes } from '@shared/components/settings/models/format';
 import { SettingsSection } from './settings-layout';
 import { forgetSetupProgress } from '@/lib/setup-progress';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type ScopeKey =
   | 'ui_prefs'
@@ -317,18 +318,16 @@ export function ResetSettings({
                           disabled ? 'opacity-45' : 'cursor-pointer hover:bg-accent'
                         }`}
                       >
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={selected.includes(scope)}
                           disabled={disabled}
-                          onChange={() =>
+                          onCheckedChange={() =>
                             setSelected((current) =>
                               current.includes(scope)
                                 ? current.filter((item) => item !== scope)
                                 : [...current, scope],
                             )
                           }
-                          className="accent-primary"
                         />
                         <Icon className="size-4 shrink-0 text-muted-foreground" />
                         <span className="min-w-0 flex-1 text-sm">

@@ -68,6 +68,7 @@ import {
 } from '../dub/dub-session';
 import { projectPayload, type DubProject } from './project-format';
 import { RenderDetails, renderRecipe, type RenderRecord } from './render-details';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type LibraryKind =
   | 'dub'
@@ -696,14 +697,11 @@ export function ProjectsPage() {
                     }
                   >
                     <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <input
-                        type="checkbox"
-                        className="size-4 shrink-0 accent-primary"
+                      <Checkbox
                         disabled={locked}
                         aria-label={t('projects.select_item', { name: row.name })}
                         checked={selected.has(row.key)}
-                        onChange={(event) => {
-                          const checked = event.target.checked;
+                        onCheckedChange={(checked) => {
                           setSelected((current) => {
                             const next = new Set(current);
                             if (checked) next.add(row.key);

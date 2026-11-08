@@ -27,6 +27,7 @@ import { describeError } from '@/lib/api/client';
 import type { UninstallTarget } from '../../../../preload/index.d';
 import { fmtBytes } from '@shared/components/settings/models/format';
 import { SettingsSection } from './settings-layout';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const ICONS: Record<UninstallTarget['key'], LucideIcon> = {
   data: FolderIcon,
@@ -123,11 +124,10 @@ export function UninstallSettings() {
                 ))}
               {sharedModels && (
                 <label className="flex cursor-pointer items-start gap-3 border-t border-border/50 px-3 py-3 hover:bg-accent">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={includeModels}
-                    onChange={(event) => setIncludeModels(event.target.checked)}
-                    className="mt-1 accent-primary"
+                    onCheckedChange={(checked) => setIncludeModels(checked)}
+                    className="mt-1"
                   />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2 text-sm font-medium">

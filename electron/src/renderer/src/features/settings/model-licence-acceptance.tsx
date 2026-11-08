@@ -26,6 +26,7 @@ import {
   ModelLicenceView,
   modelLicenceDetailsKey,
 } from './model-licence-view';
+import { Checkbox } from '@/components/ui/checkbox';
 
 /**
  * Button row per platform convention: macOS puts the default action rightmost
@@ -193,19 +194,15 @@ export function LicenceAcceptanceFooter({
                           checkedModel ? 'bg-accent' : 'hover:bg-accent',
                         )}
                       >
-                        <input
+                        <Checkbox
                           id={id}
-                          type="checkbox"
                           checked={checkedModel}
                           disabled={busy}
-                          onChange={(event) => {
-                            const value = event.currentTarget.checked;
+                          onCheckedChange={(checked) => {
+                            const value = checked;
                             setChecked((prev) => ({ ...prev, [model.repo_id]: value }));
                           }}
-                          className={cn(
-                            'mt-0.5 size-4 shrink-0 accent-primary focus-visible:ring-2 focus-visible:ring-ring',
-                            platform === 'windows' && 'rounded-[4px]',
-                          )}
+                          className={cn('mt-0.5', platform === 'windows' && 'rounded-[4px]')}
                         />
                         <span className="min-w-0 flex-1 space-y-0.5">
                           <span

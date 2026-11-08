@@ -12,6 +12,7 @@ import { consumeTaskStream } from '@/lib/api/event-stream';
 import { gpuBusyMessage } from '@/lib/api/failure';
 import { saveExport } from '@/lib/export-history';
 import type { DubSession } from './dub-session';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type MusicStatus = { installed: boolean; running: boolean; model_ready: boolean };
 type MusicState = { has_track: boolean; style?: string | null; revision: number };
@@ -218,11 +219,10 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
                 />
               </div>
               <label className="flex items-center gap-2 text-xs">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={burn}
                   disabled={locked}
-                  onChange={(event) => setBurn(event.target.checked)}
+                  onCheckedChange={(checked) => setBurn(checked)}
                 />
                 {t('dub_bgm.burn')}
               </label>

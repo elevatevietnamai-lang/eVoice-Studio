@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { getBridge } from '@/components/bridge';
 import { apiFetch, apiPath, ApiError } from '@/lib/api/client';
 import { saveBackendFile } from '@/lib/native-save';
+import { Checkbox } from '@/components/ui/checkbox';
 
 function exportPath(profileId: string, includeReference: boolean): string {
   return (
@@ -82,12 +83,10 @@ export function PersonaExport({
         {t('voice_profile.persona_export')}
       </summary>
       <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={includeReference}
           disabled={busy || disabled}
-          onChange={(event) => setIncludeReference(event.target.checked)}
-          className="accent-primary"
+          onCheckedChange={(checked) => setIncludeReference(checked)}
         />
         {t('voice_profile.persona_include_ref')}
       </label>

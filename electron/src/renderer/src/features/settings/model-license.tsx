@@ -28,6 +28,7 @@ import {
   type ModelLicenseInfo,
   type ModelReviewPlan,
 } from './model-license-contract';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const blockerKeys: Record<string, string> = {
   component_closure_incomplete: 'modelLicense.blockerComponents',
@@ -240,13 +241,12 @@ export function ModelLicense({
                 htmlFor={acknowledgementId}
                 className="flex items-start gap-2 rounded-lg border border-border p-3"
               >
-                <input
+                <Checkbox
                   id={acknowledgementId}
-                  type="checkbox"
                   checked={acknowledged}
                   disabled={busy === 'commit'}
-                  onChange={(event) => setAcknowledged(event.currentTarget.checked)}
-                  className="mt-0.5 size-4 shrink-0 accent-primary focus-visible:ring-2 focus-visible:ring-ring"
+                  onCheckedChange={(checked) => setAcknowledged(checked)}
+                  className="mt-0.5"
                 />
                 <span>{t('modelLicense.acknowledge')}</span>
               </label>
@@ -319,7 +319,11 @@ export function ModelLicense({
             closeDisabled={busy === 'commit'}
           >
             <div className="p-4">
-              <ModelLicenceView details={details.data} infoFallback={info} extra={verifiedInstall} />
+              <ModelLicenceView
+                details={details.data}
+                infoFallback={info}
+                extra={verifiedInstall}
+              />
               {details.isError && (
                 <p role="alert" className="mt-3 text-sm text-destructive">
                   {t('modelLicense.detailsFailed')}
