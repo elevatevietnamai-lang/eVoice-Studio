@@ -59,11 +59,16 @@ def _norm_token(token: str) -> str:
 def recognized_words(result: dict) -> list[tuple[str, float, float]]:
     """``(text, start, end)`` for every ASR word with real timestamps.
 
-    Words without numeric times (whisperx leaves unalignable tokens bare) are
-    skipped rather than given invented times.
+    Reads both shapes the ASR backends return: ``segments[].words`` (whisperx,
+    faster-whisper, mlx) and ``chunks[]`` with a ``timestamp`` pair (the
+    transformers pipeline, whose chunks are words under
+    ``return_timestamps="word"``; a multi-word chunk is spread over its own
+    span). Words without numeric times (whisperx leaves unalignable tokens
+    bare) are skipped rather than given invented times.
     """
+    result = result if isinstance(result, dict) else {}
     out: list[tuple[str, float, float]] = []
-    for seg in (result or {}).get("segments") or []:
+    for seg in result.get("segments") or []:
         for w in (seg or {}).get("words") or []:
             if not isinstance(w, dict):
                 continue
@@ -75,6 +80,18 @@ def recognized_words(result: dict) -> list[tuple[str, float, float]]:
                 continue
             if text and we >= ws:
                 out.append((text, ws, we))
+    if not out:
+        for chunk in result.get("chunks") or []:
+            if not isinstance(chunk, dict):
+                continue
+            ts = chunk.get("timestamp") or ()
+            try:
+                cs, ce = float(ts[0]), float(ts[1])
+            except (IndexError, TypeError, ValueError):
+                continue
+            tokens = [t for t in _WS.split(str(chunk.get("text") or "").strip()) if t]
+            if tokens and ce >= cs:
+                out.extend((t, s, e) for t, (s, e) in zip(tokens, _spread(tokens, cs, ce)))
     out.sort(key=lambda t: t[1])
     return out
 
@@ -89,6 +106,8 @@ def _spread(tokens: Sequence[str], lo: float, hi: float) -> list[tuple[float, fl
         t0 = lo + span * acc / total
         acc += w
         out.append((t0, lo + span * acc / total))
+    if out:
+        out[-1] = (out[-1][0], lo + span)
     return out
 
 

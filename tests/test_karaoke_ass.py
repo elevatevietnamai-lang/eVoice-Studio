@@ -647,3 +647,18 @@ def test_ass_sidecar_stretch_video_scales_words_onto_fitted_cues():
     out = dx._retimed_with_words(seg, 10.0, 14.0)
     assert [w["start"] for w in out["words"]] == [10.0, 12.0]
     assert "words" not in dx._retimed_with_words(dict(seg, start=1.0, end=1.0), 10.0, 14.0)
+
+
+def test_recognized_words_read_the_transformers_pipeline_chunk_shape():
+    # pytorch-whisper returns {"text", "chunks": [{"text", "timestamp"}]} with
+    # word chunks and no "segments"; before, no words were read and every
+    # track on that backend silently kept the estimate.
+    result = {"text": " Hallo Welt", "chunks": [
+        {"text": " Hallo", "timestamp": (0.5, 0.9)},
+        {"text": " Welt", "timestamp": (1.2, 1.6)},
+        {"text": " zwei Worte", "timestamp": (2.0, 3.0)},
+        {"text": " offen", "timestamp": (3.1, None)},
+    ]}
+    words = dwt.recognized_words(result)
+    assert [w[0] for w in words] == ["Hallo", "Welt", "zwei", "Worte"]
+    assert words[0][1:] == (0.5, 0.9) and words[2][1] == 2.0 and words[3][2] == 3.0
