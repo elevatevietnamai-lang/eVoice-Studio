@@ -320,7 +320,7 @@ async def ensure_track_words(job_id: str, job: dict, lang: str | None, segments:
         from services.model_manager import _get_gpu_pool
         async with gpu_exclusive.dub_job():
             result = await run_transcribe_guarded(_get_gpu_pool(), _recognize, what="karaoke word timing")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — never fatal: karaoke falls back to the estimate
         logger.warning("karaoke word timing skipped (%s); using estimated word times", type(exc).__name__)
         return False
 
