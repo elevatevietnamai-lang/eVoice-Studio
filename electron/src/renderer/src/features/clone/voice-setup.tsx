@@ -209,7 +209,7 @@ export function VoiceSetup({ onChosen }: { onChosen: () => void }) {
                     aria-checked={sort === value}
                     onClick={() => chooseSort(value)}
                     className={cn(
-                      'h-7 rounded-lg px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                      'h-7 rounded-lg px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
                       sort === value
                         ? 'bg-background text-foreground shadow-sm'
                         : 'text-muted-foreground hover:text-foreground',

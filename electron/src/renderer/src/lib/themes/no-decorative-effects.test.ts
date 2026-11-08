@@ -104,3 +104,29 @@ describe('design system rules for every source', () => {
     expect(hits).toEqual([]);
   });
 });
+
+/**
+ * Interaction states by function (DESIGN.md): every primitive shows keyboard focus the shadcn way
+ * (ring-coloured border plus a 3 px ring at 50 %), and every dropdown menu opens with the shared
+ * menu surface and motion instead of appearing without a transition.
+ */
+describe('interaction states and motion follow one grammar', () => {
+  it('uses the shadcn focus ring in every primitive', () => {
+    const hits: string[] = [];
+    for (const [file, source] of Object.entries(sources)) {
+      if (!file.includes('/components/ui/')) continue;
+      if (/focus-visible:ring-(?:1|2|4)\b|focus-visible:ring-ring\/(?!50\b)\d+/.test(source))
+        hits.push(file.replace('../../', ''));
+    }
+    expect(hits).toEqual([]);
+  });
+  it('opens every dropdown menu with the shared menu motion', () => {
+    const hits: string[] = [];
+    for (const [file, source] of Object.entries(sources)) {
+      for (const match of source.matchAll(/<Menu\.Popup\b[^>]*>/gs)) {
+        if (!match[0].includes('menuPopupClass')) hits.push(file.replace('../../', ''));
+      }
+    }
+    expect(hits).toEqual([]);
+  });
+});

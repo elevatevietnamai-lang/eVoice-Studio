@@ -70,7 +70,7 @@ function CopyValue({ value }: { value: string }) {
       </code>
       <button
         type="button"
-        className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
         aria-label={copied ? t('modelLicense.copied') : t('modelLicense.copy')}
         title={copied ? t('modelLicense.copied') : t('modelLicense.copy')}
         onClick={() => {
@@ -328,7 +328,7 @@ export function LicenceSection({
 }) {
   return (
     <details open={defaultOpen} className="group/section rounded-lg border border-border">
-      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-lg p-3 font-medium focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-lg p-3 font-medium focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
         <ChevronRightIcon
           aria-hidden="true"
           className="size-4 shrink-0 transition-transform group-open/section:rotate-90"

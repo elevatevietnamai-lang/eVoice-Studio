@@ -132,7 +132,7 @@ export function DubProjects({ active = true }: { active?: boolean }) {
                 aria-current={active ? 'true' : undefined}
                 onClick={() => setConfirmation(row.id)}
                 className={cn(
-                  'flex w-full min-w-0 items-center gap-2.5 rounded-lg px-2 py-1.5 text-start outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50',
+                  'flex w-full min-w-0 items-center gap-2.5 rounded-lg px-2 py-1.5 text-start outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50',
                   active
                     ? 'bg-accent/80 text-foreground'
                     : 'text-foreground/85 hover:bg-accent hover:text-foreground',
@@ -195,7 +195,7 @@ export function DubProjects({ active = true }: { active?: boolean }) {
       )}
       <Link
         to="/projects"
-        className="flex h-9 shrink-0 items-center gap-2 border-t border-border/45 px-3 text-xs text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-9 shrink-0 items-center gap-2 border-t border-border/45 px-3 text-xs text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
         <FolderIcon aria-hidden="true" className="size-3.5" />
         {t('projects.title')}

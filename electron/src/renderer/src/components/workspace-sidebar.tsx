@@ -168,7 +168,7 @@ function PanelBody({
                 onClick={() => chooseView(value)}
                 className={cn(
                   // The segmented grammar of Tabs and ToggleGroup: 4 px tabs in an 8 px frame.
-                  'h-[26px] min-w-0 flex-1 truncate rounded-sm px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                  'h-[26px] min-w-0 flex-1 truncate rounded-sm px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
                   view === value
                     ? 'bg-background text-foreground dark:bg-control-fill'
                     : 'text-muted-foreground hover:text-foreground',

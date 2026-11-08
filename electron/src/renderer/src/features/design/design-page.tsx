@@ -215,7 +215,7 @@ export function DesignPage() {
               id="voice-description"
               maxLength={2000}
               disabled={generation.isGenerating}
-              className="min-h-24 w-full resize-y rounded-lg border border-input bg-background/35 p-3 text-sm leading-5 outline-none transition-[border-color,background-color,box-shadow] focus-visible:border-ring focus-visible:bg-background/50 focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="min-h-24 w-full resize-y rounded-lg border border-input bg-background/35 p-3 text-sm leading-5 outline-none transition-[border-color,background-color,box-shadow] focus-visible:border-ring focus-visible:bg-background/50 focus-visible:ring-[3px] focus-visible:ring-ring/50"
               value={description}
               placeholder={t('clone.describe_placeholder')}
               onChange={(event) => {

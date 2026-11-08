@@ -198,7 +198,7 @@ export function ModelLicense({
           <h4 className="font-medium">{t('modelLicense.components')}</h4>
           {plan.components.map((component) => (
             <details key={component.id} className="rounded-lg border border-border/60 p-3">
-              <summary className="cursor-pointer rounded break-all focus-visible:ring-2 focus-visible:ring-ring">
+              <summary className="cursor-pointer rounded break-all focus-visible:ring-[3px] focus-visible:ring-ring/50">
                 {component.id}
               </summary>
               <p>
@@ -219,7 +219,7 @@ export function ModelLicense({
           <h4 className="font-medium">{t('modelLicense.documents')}</h4>
           {plan.documents.map((document) => (
             <details key={document.id} className="rounded-lg border border-border/60 p-3">
-              <summary className="cursor-pointer rounded focus-visible:ring-2 focus-visible:ring-ring">
+              <summary className="cursor-pointer rounded focus-visible:ring-[3px] focus-visible:ring-ring/50">
                 {document.title}
               </summary>
               <p className="break-all font-mono text-xs">SHA-256: {document.sha256}</p>

@@ -343,6 +343,34 @@ html[data-theme-id=''] {
 [data-slot='workspace-pane-content'] :is(h2, summary) > .lucide:first-child {
   color: color-mix(in srgb, var(--primary) 76%, var(--muted-foreground));
 }
+/* Expanding cards: every <details> opens and closes by height over 240 ms instead of snapping,
+   the same timing as the Collapsible primitive. Chromium 131+ (Electron 44): ::details-content
+   with interpolate-size lets height animate to and from auto. */
+:root {
+  interpolate-size: allow-keywords;
+}
+details::details-content {
+  block-size: 0;
+  overflow-y: clip;
+  opacity: 0;
+  transition:
+    block-size var(--motion-base) var(--ease-standard),
+    opacity var(--motion-base) var(--ease-standard),
+    content-visibility var(--motion-base) allow-discrete;
+}
+details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+details > summary .lucide-chevron-down,
+details > summary .lucide-chevron-right {
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
+@media (prefers-reduced-motion: reduce) {
+  details::details-content {
+    transition: none;
+  }
+}
 [data-slot='secondary-sidebar-content'] details > summary,
 [data-slot='workspace-pane-content'] details > summary {
   min-height: 2rem;
@@ -467,29 +495,8 @@ html[data-theme-id=''] {
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  :is(input, textarea, [role='combobox']):focus-visible {
-  background-color: color-mix(in srgb, var(--background) 72%, transparent);
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
-  :is(input, textarea, [role='combobox']) {
-  background-color: color-mix(in srgb, var(--background) 52%, transparent);
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
-  :is(input, textarea, [role='combobox']) {
-  border-color: color-mix(in srgb, var(--border) 82%, var(--foreground));
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
   :is(input, textarea)::placeholder {
   color: color-mix(in srgb, var(--muted-foreground) 82%, transparent);
-}
-.secondary-sidebar[data-variant='library']
-  [data-slot='secondary-sidebar-content']
-  > input:first-child {
-  flex: none;
-  background: color-mix(in srgb, var(--background) 55%, transparent);
 }
 .secondary-sidebar[data-variant='library'] [data-slot='secondary-sidebar-content'] {
   overflow: hidden;

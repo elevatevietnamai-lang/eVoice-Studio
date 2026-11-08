@@ -233,7 +233,7 @@ function Overrides({ settings }: OverridesProps) {
         />
       </div>
       <details className="group border-t border-border/50 pt-2.5">
-        <summary className="flex cursor-pointer list-none items-center justify-between rounded px-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded px-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
           {t('voiceControls.advanced')}
           <ChevronDownIcon
             className="size-3.5 transition-transform group-open:rotate-180"

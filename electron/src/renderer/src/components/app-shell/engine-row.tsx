@@ -30,7 +30,7 @@ function CopyModelId({ value }: { value: string }) {
       type="button"
       aria-label={t(copied ? 'sidebarTools.copied' : 'sidebarTools.copyModel')}
       title={t(copied ? 'sidebarTools.copied' : 'sidebarTools.copyModel')}
-      className="grid size-5 shrink-0 place-items-center rounded text-muted-foreground outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      className="grid size-5 shrink-0 place-items-center rounded text-muted-foreground outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
       onClick={() =>
         void navigator.clipboard
           ?.writeText(value)
@@ -147,7 +147,7 @@ export function EngineRow({
     </>
   );
   const rowClass =
-    'group/engine-row flex min-h-11 w-full items-center gap-2.5 rounded-lg px-1.5 py-1 text-start outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring';
+    'group/engine-row flex min-h-11 w-full items-center gap-2.5 rounded-lg px-1.5 py-1 text-start outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50';
   return (
     <div data-slot="engine-row" aria-busy={loading} className="min-w-0">
       {level === 'details' ? (
@@ -214,7 +214,7 @@ export function EngineRow({
           <Link
             to="/settings/models/$family"
             params={{ family }}
-            className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-sm text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
+            className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-sm text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             {t('modelSettings.change')}
             <ChevronRightIcon className="size-3 rtl:rotate-180" aria-hidden="true" />

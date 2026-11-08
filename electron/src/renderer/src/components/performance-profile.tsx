@@ -178,7 +178,7 @@ export function PerformanceProfile({
                 disabled={disabled}
                 onClick={() => void choose(tier)}
                 className={cn(
-                  'performance-tier-button inline-flex h-9 min-w-0 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-medium text-muted-foreground outline-none transition-[background-color,color,box-shadow] duration-150 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 motion-reduce:transition-none',
+                  'performance-tier-button inline-flex h-9 min-w-0 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-medium text-muted-foreground outline-none transition-[background-color,color,box-shadow] duration-150 hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 motion-reduce:transition-none',
                   active && 'text-foreground',
                 )}
               >
@@ -282,7 +282,7 @@ export function PerformanceProfile({
                   key={name}
                   to="/settings/models/$family"
                   params={{ family: name }}
-                  className="group flex min-h-7 items-center justify-between gap-3 rounded-sm px-1 py-1 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                  className="group flex min-h-7 items-center justify-between gap-3 rounded-sm px-1 py-1 outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 >
                   <span>{t('sidebarTools.' + name)}</span>
                   <span className="flex items-center gap-1.5 text-end text-[11px] text-muted-foreground">
@@ -297,7 +297,7 @@ export function PerformanceProfile({
             })}
           </div>
           <details className="group/details border-t pt-1 text-muted-foreground">
-            <summary className="flex min-h-8 cursor-pointer list-none items-center justify-between gap-2 rounded outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+            <summary className="flex min-h-8 cursor-pointer list-none items-center justify-between gap-2 rounded outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
               {t('sidebarTools.details')}
               <ChevronRightIcon
                 className="size-3.5 shrink-0 group-open/details:rotate-90 rtl:rotate-180"
@@ -341,7 +341,7 @@ export function PerformanceProfile({
                 type="button"
                 data-slot="performance-trigger"
                 aria-label={hardwareSummary || undefined}
-                className="group/hw flex min-w-0 items-center gap-1.5 rounded-sm px-1.5 py-1 text-xs whitespace-nowrap text-foreground/85 outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="group/hw flex min-w-0 items-center gap-1.5 rounded-sm px-1.5 py-1 text-xs whitespace-nowrap text-foreground/85 outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
               />
             }
           >
@@ -380,7 +380,7 @@ export function PerformanceProfile({
           disabled={disabled}
           onClick={() => void choose(autoOn ? (plan?.resolved ?? 'balanced') : 'auto')}
           className={cn(
-            'inline-flex h-6 shrink-0 items-center justify-center gap-1 rounded-full text-[11px] font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50',
+            'inline-flex h-6 shrink-0 items-center justify-center gap-1 rounded-full text-[11px] font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50',
             popoverMode ? 'w-6' : 'px-2',
             autoOn
               ? 'bg-accent text-foreground'
@@ -424,7 +424,7 @@ export function PerformanceProfile({
               <button
                 type="button"
                 aria-label={hardwareSummary}
-                className="group/hw flex min-h-6 w-full items-center gap-1.5 rounded px-1 text-start text-[11px] text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="group/hw flex min-h-6 w-full items-center gap-1.5 rounded px-1 text-start text-[11px] text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
               />
             }
           >

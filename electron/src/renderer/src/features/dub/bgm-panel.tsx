@@ -151,7 +151,7 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
             <label className="block space-y-1.5 text-xs">
               <span className="font-medium">{t('dub_bgm.style')}</span>
               <input
-                className="h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                className="h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
                 value={style}
                 maxLength={400}
                 disabled={locked}

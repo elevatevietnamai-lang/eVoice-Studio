@@ -149,6 +149,7 @@ import {
   planDubIncremental,
 } from './dub-session';
 import { Checkbox } from '@/components/ui/checkbox';
+import { menuPopupClass } from '@/components/menu-popup';
 
 const DEFAULT_TRANSLATION_AGENT_KEY = 'voicestudio.defaultTranslationAgent';
 const LIVE_PREVIEW_KEY = 'voicestudio.dubLivePreview';
@@ -1495,7 +1496,7 @@ export function DubPage() {
                   onChange={(event) =>
                     setDubTranslationOptions({ translationInstructions: event.target.value })
                   }
-                  className="w-full resize-y rounded-lg border border-input bg-background/40 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                  className="w-full resize-y rounded-lg border border-input bg-background/40 px-3 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
                 />
                 <p
                   id="dub-translation-instructions-help"
@@ -2155,7 +2156,7 @@ export function DubPage() {
                       </Menu.Trigger>
                       <Menu.Portal>
                         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                          <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                          <Menu.Popup className={cn(menuPopupClass, 'min-w-52 p-1')}>
                             <Menu.Item
                               disabled={!session.jobId}
                               onClick={() =>
@@ -2340,7 +2341,9 @@ export function DubPage() {
                     </Menu.Trigger>
                     <Menu.Portal>
                       <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                        <Menu.Popup className="max-h-72 min-w-52 overflow-y-auto rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                        <Menu.Popup
+                          className={cn(menuPopupClass, 'max-h-72 min-w-52 overflow-y-auto p-1')}
+                        >
                           <Menu.Item
                             onClick={() =>
                               editDubSegments(selectedSegmentIds, {
@@ -2664,7 +2667,7 @@ export function DubPage() {
                                   </Menu.Trigger>
                                   <Menu.Portal>
                                     <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                                      <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                                      <Menu.Popup className={cn(menuPopupClass, 'min-w-52 p-1')}>
                                         <Menu.Item
                                           disabled={segment.text.trim().length < 2}
                                           onClick={() => splitAtCursor(segment.id, segment.text)}
@@ -2717,7 +2720,7 @@ export function DubPage() {
                                 aria-label={t('clone.text_label') + ' ' + (index + 1)}
                                 rows={1}
                                 autoFocus
-                                className="min-h-8 max-h-32 w-full resize-y overflow-y-auto rounded-sm border border-input bg-background/35 px-2 py-1 text-sm leading-5 outline-none transition-[background-color,border-color,box-shadow] [field-sizing:content] focus-visible:ring-2 focus-visible:ring-ring"
+                                className="min-h-8 max-h-32 w-full resize-y overflow-y-auto rounded-sm border border-input bg-background/35 px-2 py-1 text-sm leading-5 outline-none transition-[background-color,border-color,box-shadow] [field-sizing:content] focus-visible:ring-[3px] focus-visible:ring-ring/50"
                                 disabled={busy || Boolean(session.recovery)}
                                 value={segment.text}
                                 onBlur={() => setEditingSegmentId(null)}
@@ -2763,7 +2766,7 @@ export function DubPage() {
                                 data-segment-id={segment.id}
                                 disabled={busy || Boolean(session.recovery)}
                                 className={cn(
-                                  'block min-h-10 w-full rounded-lg bg-transparent px-2.5 py-1.5 text-left text-[15px] leading-6 text-foreground/90 outline-none transition-[color,background-color,box-shadow] hover:bg-background/25 hover:text-foreground focus-visible:bg-background/35 focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-60',
+                                  'block min-h-10 w-full rounded-lg bg-transparent px-2.5 py-1.5 text-left text-[15px] leading-6 text-foreground/90 outline-none transition-[color,background-color,box-shadow] hover:bg-background/25 hover:text-foreground focus-visible:bg-background/35 focus-visible:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-default disabled:opacity-60',
                                   selectedSegmentId === segment.id &&
                                     'bg-background/25 text-foreground shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--border)_45%,transparent)]',
                                 )}
@@ -3055,7 +3058,12 @@ export function DubPage() {
                         </Menu.Trigger>
                         <Menu.Portal>
                           <Menu.Positioner side="top" sideOffset={6} align="end" className="z-50">
-                            <Menu.Popup className="cn-menu-target cn-menu-translucent min-w-44 rounded-(--card-radius) p-1 surface-glass text-popover-foreground shadow-lg ring-1 ring-border outline-none">
+                            <Menu.Popup
+                              className={cn(
+                                menuPopupClass,
+                                'cn-menu-target cn-menu-translucent min-w-44 p-1 surface-glass',
+                              )}
+                            >
                               {availableTranslationAgents.map((agent) => (
                                 <Menu.Item
                                   key={agent.id}

@@ -944,7 +944,7 @@ export function ModelLibrary({
           <details className="group/access order-last basis-full rounded-lg border border-warning/20 bg-warning/5 text-xs @2xl:max-w-2xl">
             <summary
               role={gatedFailure || access?.ready === false ? 'alert' : 'status'}
-              className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 rounded-lg px-3 py-2 font-medium text-foreground outline-none marker:hidden hover:bg-warning/5 focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden"
+              className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 rounded-lg px-3 py-2 font-medium text-foreground outline-none marker:hidden hover:bg-warning/5 focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden"
             >
               {access?.ready && <CheckIcon className="size-3.5 text-emerald-500" />}
               <span className="min-w-0 flex-1 truncate">

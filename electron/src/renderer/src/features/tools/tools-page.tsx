@@ -186,7 +186,7 @@ function ToolForm({ tool }: { tool: Tool }) {
           />
         ) : (
           <textarea
-            className="min-h-36 w-full resize-y rounded-lg border border-input bg-transparent p-3 leading-7 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="min-h-36 w-full resize-y rounded-lg border border-input bg-transparent p-3 leading-7 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
             disabled={busy}
             value={text}
             onChange={(event) => {

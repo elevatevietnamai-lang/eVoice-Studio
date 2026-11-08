@@ -13,6 +13,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { TAGS } from '@shared/utils/constants';
+import { menuPopupClass } from '@/components/menu-popup';
+import { cn } from '@/lib/utils';
 
 export function AudiobookMarkupToolbar({
   textareaRef,
@@ -124,7 +126,12 @@ export function AudiobookMarkupToolbar({
         </Menu.Trigger>
         <Menu.Portal>
           <Menu.Positioner sideOffset={6} align="start" className="z-50">
-            <Menu.Popup className="flex max-h-72 max-w-sm flex-wrap gap-1 overflow-y-auto rounded-(--card-radius) border border-border bg-popover p-2 text-popover-foreground shadow-lg outline-none">
+            <Menu.Popup
+              className={cn(
+                menuPopupClass,
+                'flex max-h-72 max-w-sm flex-wrap gap-1 overflow-y-auto p-2',
+              )}
+            >
               {TAGS.map((tag) => (
                 <Menu.Item
                   key={tag}

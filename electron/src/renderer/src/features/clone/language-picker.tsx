@@ -124,7 +124,7 @@ export function LanguagePicker({
             </span>
             <a
               href="#/settings/models/tts"
-              className="shrink-0 rounded text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+              className="shrink-0 rounded text-primary hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               {t('languagePicker.changeModel')}
             </a>
@@ -164,7 +164,7 @@ export function MultiLanguagePicker({
                 type="button"
                 disabled={disabled}
                 aria-label={`${t('common.delete')} ${language}`}
-                className="flex size-6 shrink-0 items-center justify-center rounded-full hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                className="flex size-6 shrink-0 items-center justify-center rounded-full hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
                 onClick={() => onChange(selected.filter((item) => item !== language))}
               >
                 <XIcon className="size-3" />

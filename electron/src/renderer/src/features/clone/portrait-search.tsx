@@ -66,7 +66,7 @@ export function PortraitSearch({
                 key={index}
                 type="button"
                 aria-label={image.title || name}
-                className="aspect-square overflow-hidden rounded-lg outline-none ring-offset-background hover:ring-2 hover:ring-primary focus-visible:ring-2 focus-visible:ring-ring"
+                className="aspect-square overflow-hidden rounded-lg outline-none ring-offset-background hover:ring-2 hover:ring-primary focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 onClick={() => {
                   const bytes = Uint8Array.from(atob(image.data), (char) => char.charCodeAt(0));
                   onSelect(new File([bytes], 'portrait.jpg', { type: 'image/jpeg' }));

@@ -193,7 +193,7 @@ const LyricsChapter = memo(function LyricsChapter({
     <section>
       <button
         type="button"
-        className="mb-1 rounded-sm px-1 py-0.5 text-left text-xs font-medium text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+        className="mb-1 rounded-sm px-1 py-0.5 text-left text-xs font-medium text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
         onClick={() => onSeek(chapter.start)}
       >
         {title}
@@ -213,7 +213,7 @@ const LyricsChapter = memo(function LyricsChapter({
                   data-active-word={active || undefined}
                   aria-current={active ? 'true' : undefined}
                   className={cn(
-                    'rounded px-0.5 text-inherit outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring',
+                    'rounded px-0.5 text-inherit outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50',
                     spoken && 'text-foreground/70',
                     active && 'bg-accent font-medium text-foreground',
                   )}

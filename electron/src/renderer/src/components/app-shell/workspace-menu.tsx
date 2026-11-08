@@ -12,7 +12,7 @@ import './workspace-menu.css';
 type Destination = WorkspaceDestination;
 
 const itemClass =
-  'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-lg text-sm text-(--sidebar-muted-foreground) outline-none transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring';
+  'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-lg text-sm text-(--sidebar-muted-foreground) outline-none transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
 const iconClass =
   'workspace-nav-icon size-5 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160';
 

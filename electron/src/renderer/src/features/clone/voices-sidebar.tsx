@@ -305,7 +305,7 @@ export function SavedVoices({
               >
                 <button
                   type="button"
-                  className="absolute inset-y-0 left-0 right-24 z-0 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="absolute inset-y-0 left-0 right-24 z-0 rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   title={profile.name + ' · ' + formatRelative(profile.created_at, i18n.language)}
                   aria-label={profile.name}
                   aria-pressed={active}
@@ -435,7 +435,7 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
             runRendererTask('Open cloned take', () => navigate({ to: '/clone' }));
           }
         }}
-        className="flex h-full min-w-0 flex-1 items-center gap-2 rounded text-left text-[length:var(--text-label)] outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-full min-w-0 flex-1 items-center gap-2 rounded text-left text-[length:var(--text-label)] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         title={[
           item.text,
           workspaceLabel,

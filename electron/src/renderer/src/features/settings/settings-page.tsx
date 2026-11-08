@@ -300,7 +300,7 @@ export function SettingsPage() {
           </span>
         </header>
         <div className="studio-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain p-3 [scrollbar-gutter:stable]">
-          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar px-2.5 transition-[border-color,background-color,box-shadow] focus-within:border-ring focus-within:bg-background focus-within:ring-2 focus-within:ring-ring/20">
+          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar px-2.5 transition-[border-color,background-color,box-shadow] focus-within:border-ring focus-within:bg-background focus-within:ring-[3px] focus-within:ring-ring/50">
             <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
             <Input
               type="search"

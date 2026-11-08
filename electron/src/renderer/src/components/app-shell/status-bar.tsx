@@ -122,7 +122,7 @@ function engineStateClass(state: string) {
 }
 
 const engineLinkClass =
-  'group/engine-icon relative flex min-w-0 items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring';
+  'group/engine-icon relative flex min-w-0 items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
 const engineIconClass = 'size-5';
 
 const DOT: Record<BackendStage, string> = {
@@ -344,7 +344,7 @@ export function StatusBar({
         <button
           type="button"
           onClick={() => void deviceUsage.refetch()}
-          className="w-full rounded-lg border border-border/55 bg-muted/20 px-3 py-2 text-left text-xs text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-lg border border-border/55 bg-muted/20 px-3 py-2 text-left text-xs text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           {t('common.retry')}
         </button>
@@ -561,7 +561,7 @@ export function StatusBar({
             title={label}
             onClick={() => chooseLevel(value)}
             className={cn(
-              'grid size-6 place-items-center rounded-[5px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+              'grid size-6 place-items-center rounded-[5px] outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
               level === value
                 ? 'bg-background text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground',
@@ -659,7 +659,7 @@ export function StatusBar({
                   <button
                     type="button"
                     aria-label={`${deviceLabel}: ${stageText}`}
-                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1 text-left outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1 text-left outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   />
                 }
               >

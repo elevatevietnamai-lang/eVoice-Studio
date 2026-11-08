@@ -88,3 +88,20 @@ it('gives static panel sections and cards no hover or focus-within effect', () =
   );
   expect(containerStates).toEqual([]);
 });
+
+/** Fields keep the primitive's own surface and focus state; panes never restyle them from here. */
+it('never restyles input, textarea or select surfaces from the shared CSS', () => {
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+  const restyled = rules
+    .filter(([, selector]) => /\b(?:input|textarea)\b|\[role='combobox'\]/.test(selector))
+    .filter(([, , body]) => /\b(?:background(?:-color)?|border-color|box-shadow)\s*:/.test(body))
+    .map(([, selector]) => selector.trim());
+  expect(restyled).toEqual([]);
+});
+
+/** Expanding cards (<details>) open by height like the Collapsible primitive, never snap. */
+it('animates every details element open and closed', () => {
+  expect(css).toContain('interpolate-size: allow-keywords;');
+  expect(css).toMatch(/details::details-content\s*\{[^}]*transition:[^}]*block-size/);
+  expect(css).toMatch(/details\[open\]::details-content\s*\{[^}]*block-size:\s*auto/);
+});

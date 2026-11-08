@@ -123,7 +123,7 @@ export function QualityControls({
                   disabled={disabled}
                   onClick={() => choose(index)}
                   className={cn(
-                    'relative flex min-w-0 flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left outline-none transition-[background-color,box-shadow,color] duration-150 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-60',
+                    'relative flex min-w-0 flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left outline-none transition-[background-color,box-shadow,color] duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-default disabled:opacity-60',
                     selected
                       ? 'bg-background text-foreground shadow-sm ring-1 ring-border'
                       : 'text-muted-foreground hover:bg-background/60 hover:text-foreground',
