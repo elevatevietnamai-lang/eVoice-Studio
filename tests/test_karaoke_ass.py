@@ -329,6 +329,9 @@ def burn_env(tmp_path, monkeypatch):
 
     monkeypatch.setattr(dx, "DUB_DIR", str(tmp_path))
     monkeypatch.setattr(dx, "find_ffmpeg", lambda: "ffmpeg")
+    # The karaoke burn measures translated-track word timing with ASR; no
+    # real ASR here (tests that exercise it patch these pieces themselves).
+    monkeypatch.setattr("services.asr_backend.asr_model_missing_error", lambda: {"engine": "test"})
 
     calls: list[list[str]] = []
 
@@ -470,3 +473,177 @@ class TestKaraokeBurnEndpoint:
         assert "{\\kf" in res.text
         disposition = res.headers.get("content-disposition", "")
         assert disposition.startswith("attachment;") and ".ass" in disposition
+
+
+
+# ---------------------------------------------------------------------------
+# Translated tracks — per-word timing measured from the dub track's TTS audio
+# (services.dub_word_timing). Before this, translated tracks always fell back
+# to the estimated split because their persisted words were source-language.
+# ---------------------------------------------------------------------------
+
+from services import dub_word_timing as dwt
+
+
+def _rec(*items):
+    """ASR result shape: one segment whose words carry {word, start, end}."""
+    return {"segments": [{"words": [{"word": w, "start": s, "end": e} for w, s, e in items]}]}
+
+
+class TestAlignDisplayWords:
+    def test_keeps_display_spelling_and_takes_asr_times(self):
+        words = dwt.align_display_words(
+            "Xin chào, thế giới!", dwt.recognized_words(_rec(
+                ("xin", 0.2, 0.5), ("chào", 0.6, 1.0), ("thế", 1.3, 1.5), ("giới", 1.6, 2.0))),
+            0.0, 2.5)
+        assert [w["text"] for w in words] == ["Xin", "chào,", "thế", "giới!"]
+        assert [w["start"] for w in words] == [0.2, 0.6, 1.3, 1.6]
+
+    def test_misheard_and_missed_tokens_stay_inside_the_speech(self):
+        # "42" was spoken as one long word; "sehr" was not recognized at all.
+        words = dwt.align_display_words(
+            "Es sind 42 sehr gute Tage", dwt.recognized_words(_rec(
+                ("es", 0.0, 0.2), ("sind", 0.3, 0.6), ("zweiundvierzig", 0.7, 1.4),
+                ("gute", 1.8, 2.1), ("tage", 2.2, 2.6))),
+            0.0, 3.0)
+        assert [w["text"] for w in words] == ["Es", "sind", "42", "sehr", "gute", "Tage"]
+        starts = [w["start"] for w in words]
+        assert starts == sorted(starts)
+        assert starts[2] == 0.7 and 0.7 < starts[3] < 1.8 and starts[4] == 1.8
+
+    def test_no_space_scripts_and_silence_keep_the_estimate(self):
+        assert dwt.align_display_words(
+            "你好世界", dwt.recognized_words(_rec(("x", 0, 1))), 0, 1) is None
+        assert dwt.align_display_words("Hallo Welt", [], 0, 1) is None
+        # Words without real timestamps are dropped, never invented.
+        assert dwt.recognized_words({"segments": [{"words": [{"word": "x"}]}]}) == []
+
+
+def _smart_fit_job(track_path="dub_de.wav"):
+    return {
+        "segments": [
+            {"id": "a", "start": 0.0, "end": 2.0, "text": "Good morning world",
+             "words": [{"text": "Good", "start": 0.0, "end": 0.5},
+                       {"text": "morning", "start": 0.5, "end": 1.2},
+                       {"text": "world", "start": 1.3, "end": 2.0}]},
+            {"id": "b", "start": 2.5, "end": 4.0, "text": "Bye now"},
+        ],
+        "segments_i18n": {"de": {"a": "Guten Morgen Welt", "b": "Tschüss jetzt"}},
+        "dubbed_tracks": {"de": {"path": track_path, "language_code": "de",
+                                 "timing_strategy": "smart_fit"}},
+        "fit_plans": {"de": {"fitted_segments": [
+            {"id": "a", "start": 1.0, "end": 4.0}, {"id": "b", "start": 4.5, "end": 6.0}]}},
+    }
+
+
+# Speech as heard on the FITTED track timeline.
+_FITTED_SPEECH = _rec(("guten", 1.0, 1.5), ("morgen", 1.9, 2.6), ("welt", 3.0, 3.6),
+                      ("tschüss", 4.6, 5.2), ("jetzt", 5.3, 5.8))
+
+
+class TestTranslatedTrackWords:
+    def _measure(self, job):
+        from api.routers import dub_export as dx
+        rows = dx._track_text_segments(job, "de")
+        windows = dwt.track_cue_windows(job, "de", rows)
+        job["dubbed_tracks"]["de"]["words"] = {
+            "version": dwt.WORDS_VERSION,
+            "segments": dwt.measure_segment_words(rows, windows, dwt.recognized_words(_FITTED_SPEECH)),
+        }
+
+    def _fitted(self, job):
+        from api.routers import dub_export as dx
+        return dx._apply_fitted_times(dx._segments_for_lang(job, "de"),
+                                      job["fit_plans"]["de"]["fitted_segments"])
+
+    def test_estimate_before_measuring(self):
+        assert "{\\kf90}Guten {\\kf110}Morgen" not in build_ass(self._fitted(_smart_fit_job()))
+
+    def test_smart_fit_words_follow_the_tts_speech_not_double_scaled(self):
+        job = _smart_fit_job()
+        self._measure(job)
+        stored = job["dubbed_tracks"]["de"]["words"]["segments"]["a"]
+        # Persisted on the ORIGINAL segment timeline, like source ASR words.
+        assert (stored["start"], stored["end"]) == (0.0, 2.0)
+        assert stored["words"][0]["start"] == 0.0 and stored["words"][2]["start"] == 1.333
+        ass = build_ass(self._fitted(job))
+        # Back on the fitted timeline: Guten 1.0, Morgen 1.9, Welt 3.0, cue end 4.0.
+        assert "{\\kf90}Guten {\\kf110}Morgen {\\kf100}Welt" in ass
+        assert "{\\k10}{\\kf70}Tschüss {\\kf70}jetzt" in ass
+
+    def test_edited_text_or_new_track_falls_back_to_the_estimate(self):
+        job = _smart_fit_job()
+        self._measure(job)
+        job["segments_i18n"]["de"]["a"] = "Guten Abend Welt"
+        assert "{\\kf90}Guten" not in build_ass(self._fitted(job))
+        job = _smart_fit_job()
+        self._measure(job)
+        # Every generate publishes a fresh track entry, without the old words.
+        job["dubbed_tracks"]["de"] = {"path": "new.wav", "language_code": "de"}
+        assert dwt.track_words_for(job, "de") is None
+        assert dwt.track_words_for({"dubbed_tracks": {"de": {"words": {"version": 99}}}}, "de") is None
+
+    def test_overflowing_speech_counts_for_its_own_line(self):
+        segs = [{"id": "a", "start": 0.0, "end": 1.0, "text": "eins zwei"},
+                {"id": "b", "start": 2.0, "end": 3.0, "text": "drei"}]
+        out = dwt.measure_segment_words(
+            segs, [(0.0, 1.0), (2.0, 3.0)],
+            dwt.recognized_words(_rec(("eins", 0.1, 0.6), ("zwei", 1.1, 1.6), ("drei", 2.1, 2.5))))
+        assert [w["text"] for w in out["a"]["words"]] == ["eins", "zwei"]
+        assert [w["text"] for w in out["b"]["words"]] == ["drei"]
+
+
+class TestKaraokeBurnMeasuresTranslatedTrack:
+    def test_burn_runs_one_asr_pass_and_reuses_it(self, burn_env, monkeypatch):
+        import services.asr_backend as asr
+        import services.dub_pipeline as dp
+        import services.model_manager as mm
+        from services import gpu_exclusive
+        client, job_id, job_dir, calls = burn_env
+        from services.dub_pipeline import _dub_jobs
+        job = _dub_jobs[job_id]
+        job["segments_i18n"] = {"de": {"a": "Hallo Welt", "b": "General Kenobi"}}
+        runs = []
+
+        async def fake_guarded(_pool, fn, **_kw):
+            runs.append(gpu_exclusive.state()["dub_active"])
+            return _rec(("hallo", 0.0, 0.4), ("welt", 1.5, 2.0),
+                        ("general", 2.0, 2.4), ("kenobi", 3.2, 4.0))
+
+        monkeypatch.setattr(asr, "asr_model_missing_error", lambda: None)
+        monkeypatch.setattr(asr, "run_transcribe_guarded", fake_guarded)
+        monkeypatch.setattr(mm, "_get_gpu_pool", lambda: None)
+        monkeypatch.setattr(dp, "save_job", lambda *a, **k: None)
+        params = {"default_track": "de", "include_tracks": "de",
+                  "preserve_bg": 0, "burn_subs": 1, "karaoke": 1}
+        for _ in range(2):
+            res = client.get(f"/dub/download/{job_id}", params=params)
+            assert res.status_code == 200, res.text[:500]
+        # One pass, held under the dubbing GPU lock; the second export reuses it.
+        assert runs == [1]
+        content = sorted((job_dir / "exports").glob("burn_subs_*.ass"))[-1].read_text(encoding="utf-8")
+        assert "{\\kf150}Hallo {\\kf50}Welt" in content
+        assert "{\\kf120}General {\\kf80}Kenobi" in content
+        # The sidecar renders the same measured words.
+        assert "{\\kf150}Hallo {\\kf50}Welt" in client.get(
+            f"/dub/ass/{job_id}", params={"lang": "de"}).text
+
+    def test_missing_asr_model_keeps_the_estimate(self, burn_env, monkeypatch):
+        import services.asr_backend as asr
+        client, job_id, job_dir, _ = burn_env
+        monkeypatch.setattr(asr, "asr_model_missing_error", lambda: {"engine": "whisper"})
+        res = client.get(f"/dub/download/{job_id}", params={
+            "default_track": "de", "include_tracks": "de", "preserve_bg": 0,
+            "burn_subs": 1, "karaoke": 1})
+        assert res.status_code == 200
+        assert "{\\kf100}General {\\kf100}Kenobi" in next(
+            (job_dir / "exports").glob("burn_subs_*.ass")).read_text(encoding="utf-8")
+
+
+def test_ass_sidecar_stretch_video_scales_words_onto_fitted_cues():
+    from api.routers import dub_export as dx
+    seg = {"id": "a", "start": 0.0, "end": 2.0, "text": "a b",
+           "words": [{"text": "a", "start": 0.0, "end": 0.5}, {"text": "b", "start": 1.0, "end": 2.0}]}
+    out = dx._retimed_with_words(seg, 10.0, 14.0)
+    assert [w["start"] for w in out["words"]] == [10.0, 12.0]
+    assert "words" not in dx._retimed_with_words(dict(seg, start=1.0, end=1.0), 10.0, 14.0)

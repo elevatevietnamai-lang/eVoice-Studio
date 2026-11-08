@@ -140,6 +140,14 @@ Lao, Khmer and Burmese highlight character by character. Burned subtitles use th
 bundled Inter font on every OS; scripts it lacks (CJK, Arabic, Devanagari, Thai)
 fall back to a system font. Audio supports WAV or MP3 with bitrate choice;
 SRT/VTT/ASS sidecars and per-language stem/segment ZIPs use the existing backend.
+The karaoke burn highlights each word as it is spoken. For a translated track,
+the first karaoke burn runs one speech-recognition pass over that track's dubbed
+audio (under the dubbing GPU lock) and stores per-word timing on the track, so the
+highlight follows the TTS voice; later burns and the ASS sidecar reuse it, and Smart
+Fit carries it onto the fitted timeline. Default dubbing does no extra work. Without
+an installed ASR model, for scripts written without spaces (Chinese, Japanese, Thai),
+for older tracks, or after the line text is edited, karaoke falls back to estimated
+word times. Regenerating a track discards its stored timing.
 Each download is explicit and targets the selected language. Export errors retain
 all choices for retry. Native save filters match the encoded file format.
 Browser fixtures verify MP3/SRT downloads, query options and failed-export retry;

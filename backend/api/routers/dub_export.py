@@ -419,6 +419,20 @@ async def dub_segments_text(job_id: str, lang: str = Query(...)):
 
 
 def _segments_for_lang(job: dict, lang: "str | None") -> list:
+    """``_track_text_segments`` plus the track's measured per-word timing.
+
+    Translated tracks get words measured from their own TTS audio
+    (``services.dub_word_timing``), scaled onto each segment's current span,
+    so the karaoke builder highlights the spoken words instead of estimating
+    them. Tracks without measured words return the text rows unchanged.
+    """
+    rows = _track_text_segments(job, lang)
+    from services.dub_word_timing import overlay_track_words, track_words_for
+    track_words = track_words_for(job, lang)
+    return overlay_track_words(rows, track_words) if track_words else rows
+
+
+def _track_text_segments(job: dict, lang: "str | None") -> list:
     """Job segments with `text` overlaid from ``job["segments_i18n"][lang]``.
 
     P1.2 — ``job["segments"]`` is single-slot: it holds whichever language was
@@ -659,6 +673,19 @@ def _apply_fitted_times(segments: list[dict], fitted: list[dict]) -> list[dict]:
     return out
 
 
+def _retimed_with_words(seg: dict, start: float, end: float) -> dict:
+    """Copy of ``seg`` on ``[start, end]`` with its words scaled along (dropped
+    when the spans are degenerate, so the karaoke builder estimates)."""
+    out = {k: v for k, v in seg.items() if k != "words"}
+    out["start"], out["end"] = float(start), float(end)
+    words = seg.get("words")
+    if isinstance(words, list) and words:
+        scaled = scale_words(words, seg.get("start", 0.0), seg.get("end", 0.0), out["start"], out["end"])
+        if scaled is not None:
+            out["words"] = scaled
+    return out
+
+
 def _burn_subs_allowed(retime_kind: "str | None") -> bool:
     """Subtitle burn-in combined with video retime.
 
@@ -879,6 +906,10 @@ async def dub_download(
     sub_is_ass = False
     if burn_subs:
         if karaoke and not dual:
+            # Translated tracks: measure the spoken TTS words once (one ASR
+            # pass, persisted on the track) so the highlight follows them.
+            from services.dub_word_timing import ensure_track_words
+            await ensure_track_words(job_id, job, _burn_lang, _track_text_segments(job, _burn_lang))
             sub_path = _write_burn_ass(job, exports_dir, stamp, fitted_segments=fitted_segments,
                                        lang=_burn_lang, style=karaoke_style)
             sub_is_ass = sub_path is not None
@@ -2124,19 +2155,16 @@ async def dub_export_ass(
     if not segments:
         raise HTTPException(status_code=400, detail="No transcript segments available")
 
-    # Same strategy-aware cue timing as /dub/srt. The fitted overlay also
-    # scales word times; the stretch_video cue path has no per-word record,
-    # so words are dropped and build_ass even-splits over the new spans.
+    # Same strategy-aware cue timing as /dub/srt. Both fitted overlays carry
+    # the word times along: Smart Fit's via _apply_fitted_times, the
+    # stretch_video cue path by scaling each segment's words onto its cue.
     fitted = _fitted_segments_for(job, lang)
     if fitted:
         segments = _apply_fitted_times(segments, fitted)
     else:
         cues = _fitted_cue_times(job, lang)
         if cues:
-            segments = [
-                {**{k: v for k, v in seg.items() if k != "words"}, "start": s, "end": e}
-                for seg, (s, e) in zip(segments, cues)
-            ]
+            segments = [_retimed_with_words(seg, s, e) for seg, (s, e) in zip(segments, cues)]
 
     base_name = os.path.splitext(job.get('filename', 'video'))[0]
     dl_name = portable_filename(f"subtitles_{base_name}_karaoke.ass", "subtitles.ass")
