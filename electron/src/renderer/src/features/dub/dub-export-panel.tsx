@@ -7,7 +7,12 @@ import { getBridge } from '@/components/bridge';
 import { PipelineFailure } from '@/components/pipeline-failure';
 import { apiPath, describeError, errorFromResponse } from '@/lib/api/client';
 import { saveExport } from '@/lib/export-history';
-import { dubExportRequest, type DubExportFormat } from './dub-export';
+import {
+  dubExportRequest,
+  KARAOKE_STYLES,
+  type DubExportFormat,
+  type KaraokeStyle,
+} from './dub-export';
 import { setDubExportPreferences, type DubSession } from './dub-session';
 
 export function DubExportPanel({ session, disabled }: { session: DubSession; disabled: boolean }) {
@@ -30,6 +35,8 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
   const setDual = (dual: boolean) => setDubExportPreferences({ dual });
   const karaoke = preferences.karaoke ?? false;
   const setKaraoke = (karaoke: boolean) => setDubExportPreferences({ karaoke });
+  const karaokeStyle = preferences.karaokeStyle ?? 'sweep';
+  const setKaraokeStyle = (karaokeStyle: KaraokeStyle) => setDubExportPreferences({ karaokeStyle });
   const bitrate = preferences.bitrate || '192';
   const setBitrate = (bitrate: string) => setDubExportPreferences({ bitrate });
   const [saving, setSaving] = useState(false);
@@ -73,6 +80,7 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
         burn: burn && burnAllowed,
         dual,
         karaoke,
+        karaokeStyle,
         bitrate,
       });
       const url = apiPath(request.path);
@@ -197,6 +205,24 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
               <p className="text-xs text-muted-foreground">{t('exportModal.karaoke_dual_note')}</p>
             )}
           </>
+        )}
+        {(format === 'ass' || (format === 'mp4' && burn && burnAllowed && karaoke && !dual)) && (
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">{t('exportModal.karaoke_style')}</p>
+            <div className="flex flex-wrap gap-1">
+              {KARAOKE_STYLES.map((value) => (
+                <Button
+                  key={value}
+                  size="xs"
+                  aria-pressed={karaokeStyle === value}
+                  variant={karaokeStyle === value ? 'secondary' : 'ghost'}
+                  onClick={() => setKaraokeStyle(value)}
+                >
+                  {t(`exportModal.karaoke_style_${value}`)}
+                </Button>
+              ))}
+            </div>
+          </div>
         )}
         {subtitles && <p className="text-xs text-muted-foreground">{t('exportModal.subs_note')}</p>}
         {format === 'mp4' && !burnAllowed && (

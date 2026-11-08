@@ -168,11 +168,10 @@ async def bgm_export_stream(job_id: str, lang: str = Query(...), music_gain: flo
             )
             vf = None
             if burn:
-                from api.routers.dub_export import (_ffmpeg_filter_escape, _hardsub_burn_style,
-                                                    _write_burn_srt)
+                from api.routers.dub_export import _write_burn_srt, subtitle_burn_filter
                 srt = _write_burn_srt(job, exports, stamp, False, lang=lang)
                 if srt:
-                    vf = f"[0:v]subtitles='{_ffmpeg_filter_escape(srt)}'{_hardsub_burn_style(job)}[v]"
+                    vf = subtitle_burn_filter("[0:v]", srt, "[v]", job=job, is_ass=False)
             graph = audio_graph + (";" + vf if vf else "")
             cmd = [ffmpeg, "-y", "-hide_banner", "-loglevel", "error", "-progress", "pipe:1", "-nostats",
                    "-i", video, "-i", speech, "-stream_loop", "-1", "-i", music,

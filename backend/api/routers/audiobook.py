@@ -1526,3 +1526,94 @@ async def resume_longform(job_id: str, request: Request = None):
         ),
         media_type="text/event-stream",
     )
+
+
+# ── Audiogram clips: a short waveform video from a finished render ──────────
+
+# A finished Audiobook / Stories render as the longform renderer names it
+# (``{job_type}_{job_id}.{ext}``). Exact-match allowlist before any path use.
+_RENDER_NAME_RE = re.compile(r"^(?:audiobook|story)_[A-Za-z0-9_-]{1,64}\.(?:m4b|mp3)$")
+
+
+class AudiogramRequest(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+    output: str
+    start: float = Field(0.0, ge=0.0)
+    duration: float = Field(30.0, gt=0.0)
+    shape: Literal["square", "landscape", "vertical"] = "square"
+    title: str = Field("", max_length=500)
+    cover_path: str | None = None
+
+
+@router.post("/longform/audiogram")
+async def longform_audiogram(req: AudiogramRequest) -> dict:
+    """Render ``duration`` seconds of a finished render, from ``start``, as an
+    MP4 audiogram (waveform, optional title and cover) in the outputs folder.
+
+    Returns ``{output, start, duration}``; the clip is served from
+    ``/audio/<output>`` like the render itself. The slice is clamped to the
+    program and to ``services.audiogram.MAX_CLIP_SECONDS``.
+    """
+    from core.config import OUTPUTS_DIR
+    from api.routers.dub_export import _ffmpeg_filter_escape
+    from services import audiogram
+    from services.burn_fonts import burn_fonts_dir
+    from services.ffmpeg_utils import (
+        explain_ffmpeg_failure, find_ffmpeg, probe_duration, run_ffmpeg,
+    )
+
+    if not _RENDER_NAME_RE.match(req.output or ""):
+        raise HTTPException(status_code=404, detail="Render not found")
+    outputs = os.path.realpath(OUTPUTS_DIR)
+    source = os.path.realpath(os.path.join(outputs, os.path.basename(req.output)))
+    if os.path.commonpath([source, outputs]) != outputs or not os.path.isfile(source):
+        raise HTTPException(status_code=404, detail="Render not found")
+
+    total = await probe_duration(source, allowed_root=outputs)
+    if total is not None and req.start >= total:
+        raise HTTPException(status_code=422, detail="The clip starts after the end of the render")
+    start, duration = audiogram.clamp_clip(req.start, req.duration, total)
+
+    clip_id = uuid.uuid4().hex[:12]
+    out_name = f"audiogram_{clip_id}.mp4"
+    out_path = os.path.join(outputs, out_name)
+    title_path = None
+    title_filter = None
+    title_ass = audiogram.build_title_ass(req.title, req.shape, duration)
+    if title_ass:
+        title_path = os.path.join(outputs, f".audiogram_{clip_id}.ass")
+        with open(title_path, "w", encoding="utf-8") as fh:
+            fh.write(title_ass)
+        fonts = burn_fonts_dir()
+        fonts_opt = f":fontsdir='{_ffmpeg_filter_escape(fonts)}'" if fonts else ""
+        title_filter = f"ass='{_ffmpeg_filter_escape(title_path)}'{fonts_opt}"
+
+    cmd = audiogram.build_audiogram_cmd(
+        find_ffmpeg(), source, out_path,
+        start=start, duration=duration, shape=req.shape,
+        cover_path=_safe_cover_path(req.cover_path), title_filter=title_filter,
+    )
+    try:
+        rc, _, stderr = await run_ffmpeg(cmd, timeout=900.0)
+        if rc != 0:
+            raise RuntimeError(
+                stderr.decode(errors="replace") if stderr else "ffmpeg audiogram non-zero"
+            )
+    except asyncio.TimeoutError:
+        with contextlib.suppress(OSError):
+            os.remove(out_path)
+        raise HTTPException(status_code=504, detail="Audiogram render timed out")
+    except Exception as exc:
+        with contextlib.suppress(OSError):
+            os.remove(out_path)
+        raise HTTPException(
+            status_code=500,
+            detail=explain_ffmpeg_failure(exc, "render the audiogram", cmd=cmd),
+        )
+    finally:
+        if title_path:
+            with contextlib.suppress(OSError):
+                os.remove(title_path)
+    if not os.path.isfile(out_path) or os.path.getsize(out_path) == 0:
+        raise HTTPException(status_code=500, detail="Audiogram render produced no file")
+    return {"output": out_name, "start": start, "duration": duration}

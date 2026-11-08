@@ -43,6 +43,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { WaveformPlayer } from '@/components/waveform-player';
 import { SyncedAudiobookPlayer } from './synced-audiobook-player';
+import { AudiogramPanel } from './audiogram-panel';
 import { GeneratePanel } from './generate-panel';
 import { generateBlocker } from './generate-blocker';
 import { EngineNotice } from '@/components/engine-notice';
@@ -548,6 +549,12 @@ export function LongformPage({ mode }: { mode: Mode }) {
                     source={'longform-' + mode}
                   />
                 )}
+                <AudiogramPanel
+                  key={draft.output}
+                  output={draft.output}
+                  title={draft.title}
+                  coverPath={draft.cover?.path ?? null}
+                />
               </section>
             )}
           </div>

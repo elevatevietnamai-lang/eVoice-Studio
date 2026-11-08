@@ -132,7 +132,13 @@ and draft reloads. Cancelling Dubbing also terminates the local agent process tr
 
 Export options expand inside the existing sidebar. Users can select included video
 tracks and the default track, background mixing, burned subtitles, dual layout and
-karaoke (disabled with dual layout). Audio supports WAV or MP3 with bitrate choice;
+karaoke (disabled with dual layout). Karaoke has three looks, also used by the ASS
+sidecar: Sweep (left-to-right fill), Highlight (only the spoken word is coloured) and
+Pop (Highlight plus a short bounce). Translated lines and older jobs have no word
+timing, so longer words get proportionally more time, and Chinese, Japanese, Thai,
+Lao, Khmer and Burmese highlight character by character. Burned subtitles use the
+bundled Inter font on every OS; scripts it lacks (CJK, Arabic, Devanagari, Thai)
+fall back to a system font. Audio supports WAV or MP3 with bitrate choice;
 SRT/VTT/ASS sidecars and per-language stem/segment ZIPs use the existing backend.
 Each download is explicit and targets the selected language. Export errors retain
 all choices for retry. Native save filters match the encoded file format.
