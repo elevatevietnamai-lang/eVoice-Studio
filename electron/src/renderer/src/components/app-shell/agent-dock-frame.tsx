@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { Reveal } from '@/components/motion';
 import { cn } from '@/lib/utils';
 import { useDockResize } from '@/hooks/use-dock-resize';
 
@@ -30,17 +29,16 @@ export function AgentDockFrame({
         className,
       )}
     >
-      <Reveal>
-        {resizable && expanded && (
-          <div
-            {...resize.separatorProps}
-            aria-label={label}
-            className="group absolute inset-x-0 -top-1 z-20 h-2 cursor-row-resize touch-none outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-          >
-            <span className="absolute top-1/2 left-1/2 h-0.5 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sidebar-border opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
-          </div>
-        )}
-      </Reveal>
+      {resizable && expanded && (
+        <div
+          {...resize.separatorProps}
+          aria-label={label}
+          className="group absolute inset-x-0 -top-1 z-20 h-2 cursor-row-resize touch-none outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          <span className="absolute top-1/2 left-1/2 h-0.5 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sidebar-border opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" />
+        </div>
+      )}
+
       {children}
     </section>
   );

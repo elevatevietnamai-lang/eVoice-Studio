@@ -37,7 +37,7 @@ it('wraps every conditional error, alert and status block in Reveal', () => {
   for (const [file, source] of Object.entries(sources)) {
     for (const match of source.matchAll(block)) {
       const before = source.slice(0, match.index).trimEnd();
-      if (!before.endsWith('<Reveal>') && !before.endsWith('='))
+      if (!/<Reveal(?:\s[^>]*)?>$/.test(before) && !before.endsWith('='))
         hits.push(
           `${file.replace('../../', '')}:${source.slice(0, match.index).split('\n').length}`,
         );

@@ -189,7 +189,7 @@ export function DubProjects({ active = true }: { active?: boolean }) {
           </li>
         )}
       </ul>
-      <Reveal>
+      <Reveal className="shrink-0">
         {error && (
           <p role="alert" className="shrink-0 px-3 pb-1 text-xs text-destructive">
             {error}

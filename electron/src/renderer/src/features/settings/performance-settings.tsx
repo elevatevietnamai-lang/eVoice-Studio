@@ -259,7 +259,7 @@ export function PerformanceSettings() {
             <span className="font-mono text-foreground/80">{info.data?.python || '—'}</span>
           </p>
         </SettingsRow>
-        <Reveal>
+        <Reveal className="col-span-full">
           {(info.isError || hardware.isError) && (
             <div className="col-span-full">
               <ErrorRow

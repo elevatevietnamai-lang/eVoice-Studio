@@ -50,14 +50,14 @@ export function GeneratePanel({
       : '';
   return (
     <div data-slot="generate-panel" className="flex min-h-0 flex-col gap-3">
-      <Reveal>
+      <Reveal className="shrink-0">
         {session.failed > 0 && (
           <p role="status" className="shrink-0 text-xs text-muted-foreground">
             {t('audiobook.failed_note', { count: session.failed })}
           </p>
         )}
       </Reveal>
-      <Reveal>
+      <Reveal className="shrink-0">
         {session.stopped && !session.active && (
           <p role="status" className="shrink-0 text-xs text-muted-foreground">
             {t('audiobook.stopped_note')}
@@ -72,7 +72,7 @@ export function GeneratePanel({
           />
         </div>
       )}
-      <Reveal>
+      <Reveal className="shrink-0">
         {status && (
           <p id="generate-status" role="status" className="shrink-0 text-xs text-muted-foreground">
             {status}

@@ -512,7 +512,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 </div>
               )}
             </Reveal>
-            <Reveal>
+            <Reveal className="shrink-0">
               {draft.output && (
                 <section className="shrink-0 space-y-3 border-t border-border/50 pt-4">
                   <div className="flex items-center justify-between">

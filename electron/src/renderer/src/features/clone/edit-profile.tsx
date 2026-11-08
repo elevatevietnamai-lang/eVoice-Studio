@@ -289,7 +289,7 @@ export function EditProfile({ profile, onDone }: { profile: Profile; onDone: () 
       <div className="min-w-0">
         <ProfileConsent key={profile.id + '-consent'} profile={profile} />
       </div>
-      <Reveal>
+      <Reveal className="col-span-2">
         {failed && (
           <p role="alert" className="text-sm text-destructive @min-[620px]:col-span-2">
             {t('clone.save_failed', { message: failed })}

@@ -188,7 +188,7 @@ export function LogSettings() {
           </div>
         </div>
       )}
-      <Reveal>
+      <Reveal className="shrink-0">
         {(failed || query.isError) && (
           <p
             role="alert"

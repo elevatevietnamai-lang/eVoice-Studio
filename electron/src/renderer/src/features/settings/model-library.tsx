@@ -945,7 +945,7 @@ export function ModelLibrary({
               {t('modelSettings.selected')}
             </span>
           )}
-        <Reveal>
+        <Reveal className="basis-full order-last">
           {(model.gated || gatedFailure) && !model.installed && (
             <details className="group/access order-last basis-full rounded-lg border border-warning/20 bg-warning/5 text-xs @2xl:max-w-2xl">
               <summary
@@ -1029,7 +1029,7 @@ export function ModelLibrary({
             </details>
           )}
         </Reveal>
-        <Reveal>
+        <Reveal className="basis-full">
           {failedJob && !gatedFailure && (
             <details className="basis-full rounded-lg border border-destructive/15 bg-destructive/5 px-3 py-2 text-xs @2xl:max-w-xl">
               <summary className="cursor-pointer font-medium text-destructive">
@@ -1318,7 +1318,7 @@ export function ModelLibrary({
                 </div>
               </details>
             )}
-            <Reveal>
+            <Reveal className="col-span-full">
               {primary?.length === 0 && optional.length === 0 && incompatible.length === 0 && (
                 <p role="status" className="col-span-full p-4 text-sm text-muted-foreground">
                   {t('preferences.no_matches')}
@@ -1327,7 +1327,7 @@ export function ModelLibrary({
             </Reveal>
           </>
         )}
-        <Reveal>
+        <Reveal className="col-span-full">
           {failed && (
             <p role="alert" className="col-span-full p-4 text-sm text-destructive">
               {t('modelMaintenance.failed')}

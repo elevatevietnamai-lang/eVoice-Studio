@@ -113,7 +113,7 @@ export function SetupGate({ children }: { children: ReactNode }) {
       >
         <EVoiceMark size={24} />
         <h1 className="text-sm font-medium">{t('app.name')}</h1>
-        <Reveal>
+        <Reveal className="ml-auto">
           {advanced && (
             <div className="ml-auto flex items-center gap-1" aria-label={t('preferences.ui_scale')}>
               <span className="mr-1 text-xs text-muted-foreground">
