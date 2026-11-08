@@ -219,7 +219,7 @@ export function LicenceAcceptanceFooter({
                               className="break-all after:content-[attr(data-model-label)]"
                             />
                           </span>
-                          <span className="block leading-snug text-foreground/80">
+                          <span className="block leading-5 text-foreground/80">
                             {t('modelLicense.acceptCheckbox', { model: model.label })}
                           </span>
                         </span>

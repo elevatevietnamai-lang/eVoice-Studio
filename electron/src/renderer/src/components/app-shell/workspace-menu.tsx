@@ -60,7 +60,7 @@ function NavigationLink({
     >
       <Icon className={iconClass} aria-hidden="true" />
       {!compact && (
-        <span className="min-w-0 flex-1 leading-tight">
+        <span className="min-w-0 flex-1 leading-5">
           <span className="block truncate">{t(label)}</span>
           <span
             aria-hidden="true"

@@ -16,7 +16,7 @@
 .workflow-templates button { min-height: 38px; padding-block: 4px; color: var(--foreground); }
 .workflow-templates button > svg:first-child { flex: none; color: var(--primary); }
 .workflow-templates button > svg:last-child { flex: none; margin-left: auto; opacity: .5; }
-.workflow-templates button > span { min-width: 0; line-height: 1.25; }
+.workflow-templates button > span { min-width: 0; line-height: 1.4; }
 .workflow-library-item span, .workflow-palette button > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .workflow-library-item:hover, .workflow-palette button:hover, .workflow-templates button:hover { background: var(--accent); color: var(--foreground); }
 .workflow-library-item.is-active { border-color: color-mix(in srgb, var(--primary) 18%, var(--border)); background: var(--sidebar-row-selected); color: var(--foreground); }

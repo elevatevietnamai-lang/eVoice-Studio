@@ -30,7 +30,7 @@
   font-size: clamp(30px, 4.6cqi, 48px);
   font-weight: 650;
   letter-spacing: -0.045em;
-  line-height: 1.08;
+  line-height: 1.18;
   text-wrap: balance;
 }
 .support-intro p {

@@ -94,7 +94,7 @@ function DeviceMetric({
         <span className="ml-auto tabular-nums text-muted-foreground">{value}</span>
       </div>
       {(detail || meta) && (
-        <div className="flex min-w-0 items-center gap-2 text-[10px] leading-none text-muted-foreground">
+        <div className="flex min-w-0 items-center gap-2 text-[10px] leading-4 text-muted-foreground">
           {detail && (
             <span className="min-w-0 flex-1 truncate" title={detail}>
               {detail}

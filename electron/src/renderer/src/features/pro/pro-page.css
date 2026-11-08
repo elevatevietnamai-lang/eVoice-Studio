@@ -43,7 +43,7 @@
 .pro-section-head h2 {
   margin-top: 14px;
   font-size: clamp(33px, 4.5cqi, 53px);
-  line-height: 1.09;
+  line-height: 1.18;
   letter-spacing: -0.045em;
   font-weight: 400;
   text-wrap: balance;

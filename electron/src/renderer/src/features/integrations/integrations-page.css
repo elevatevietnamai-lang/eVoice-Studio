@@ -48,7 +48,7 @@
   font-size: clamp(26px, 3vw, 38px);
   font-weight: 650;
   letter-spacing: -0.045em;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 .integrations-hero-copy {
   display: grid;

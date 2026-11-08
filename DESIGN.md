@@ -192,7 +192,7 @@ Display hierarchy (dense desktop: hierarchy comes from face, weight and colour, 
 - One heading level per surface: a card has one title; a dialog has one title. Step down in weight and colour (500 foreground, then 400 muted) before stepping down in size.
 - Use `tabular-nums` wherever digits line up (timecodes, sizes, counters).
 - Do not set Space Grotesk on controls or body text. Do not add a third family; mono is only for code and logs.
-- Vietnamese stacks diacritics: keep line height at or above the token values and avoid all-caps for long labels.
+- Vietnamese stacks diacritics: keep line height at or above the token values and avoid all-caps for long labels. Minimums: 1.3 for truncated or clamped text (lower cuts the marks off), 1.35 for wrapped text, 1.15 for display headings; only single-glyph boxes (prices, icon buttons, initials) may sit at 1. `styles/line-height.test.ts` enforces this.
 - CJK and other scripts fall back to the system stack.
 
 ## 4. Component Stylings

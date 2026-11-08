@@ -146,7 +146,7 @@ export function DubProjects({ active = true }: { active?: boolean }) {
                     active ? 'text-primary' : 'text-muted-foreground',
                   )}
                 />
-                <span className="flex min-w-0 flex-1 flex-col leading-tight">
+                <span className="flex min-w-0 flex-1 flex-col leading-5">
                   <span className="truncate text-[13px] font-medium">{row.name}</span>
                   {when && (
                     <span className="truncate text-[11px] text-muted-foreground">{when}</span>

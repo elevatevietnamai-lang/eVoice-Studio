@@ -205,7 +205,7 @@ export function EngineRow({
               )}
             </dl>
             {problem && (
-              <p className="mt-2 rounded-sm bg-warning/10 px-2 py-1.5 text-[11px] leading-snug text-foreground/85 [overflow-wrap:anywhere]">
+              <p className="mt-2 rounded-sm bg-warning/10 px-2 py-1.5 text-[11px] leading-4 text-foreground/85 [overflow-wrap:anywhere]">
                 {problem}
               </p>
             )}

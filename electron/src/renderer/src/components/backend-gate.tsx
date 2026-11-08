@@ -292,7 +292,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                         )}
                         <span
                           className={cn(
-                            'text-xs leading-snug text-muted-foreground',
+                            'text-xs leading-[18px] text-muted-foreground',
                             current && 'font-medium text-foreground',
                           )}
                         >
