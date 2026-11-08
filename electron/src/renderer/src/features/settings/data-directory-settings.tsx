@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ArrowRightIcon, DatabaseIcon, FolderOpenIcon, LoaderCircleIcon } from 'lucide-react';
@@ -121,12 +122,14 @@ export function DataDirectorySettings() {
               </p>
             </div>
           )}
-          {busy && stage && (
-            <div role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
-              <LoaderCircleIcon className="size-4 animate-spin" />
-              {t(`settings.data_move_stage_${stage}`)}
-            </div>
-          )}
+          <Reveal>
+            {busy && stage && (
+              <div role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
+                <LoaderCircleIcon className="size-4 animate-spin" />
+                {t(`settings.data_move_stage_${stage}`)}
+              </div>
+            )}
+          </Reveal>
           <DialogFooter>
             <Button variant="ghost" disabled={busy} onClick={() => setSelection(null)}>
               {t('common.cancel')}

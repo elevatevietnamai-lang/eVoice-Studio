@@ -1,5 +1,12 @@
 import type { ReactNode } from 'react';
-import { MotionConfig, motion, type HTMLMotionProps, type Variants } from 'motion/react';
+import {
+  AnimatePresence,
+  MotionConfig,
+  motion,
+  useIsPresent,
+  type HTMLMotionProps,
+  type Variants,
+} from 'motion/react';
 
 /**
  * Motion tokens from the Elevate brand (DESIGN.md): quiet, short, never blocking.
@@ -43,7 +50,7 @@ interface FadeInProps extends Omit<HTMLMotionProps<'div'>, 'initial' | 'animate'
 /** Fades content in on mount with a short drift. Under reduced motion it only fades. */
 export function FadeIn({
   direction = 'up',
-  distance = 8,
+  distance = 4,
   delay = 0,
   transition,
   ...props
@@ -158,4 +165,94 @@ export function MenuReveal(
 
 export function MenuRevealItem(props: Omit<HTMLMotionProps<'div'>, 'variants'>) {
   return <motion.div variants={menuItemVariants} {...props} />;
+}
+
+/** Exit ease: accelerates away, the mirror of `--ease-standard`. */
+const leave = [0.4, 0, 1, 1] as const;
+
+const revealMotion = {
+  initial: { height: 0, opacity: 0, overflow: 'hidden' },
+  animate: {
+    height: 'auto',
+    opacity: 1,
+    transition: { duration: motionTokens.base, ease: motionTokens.ease },
+    transitionEnd: { overflow: 'visible' },
+  },
+  exit: {
+    height: 0,
+    opacity: 0,
+    overflow: 'hidden',
+    transition: { duration: 0.15, ease: leave },
+  },
+} as const;
+
+function present(children: ReactNode) {
+  return children !== null && children !== undefined && children !== false && children !== '';
+}
+
+/**
+ * Inline show and hide (DESIGN.md, motion by function): wrap a conditional block, `<Reveal>{error
+ * && <p role="alert">…</p>}</Reveal>`, and it opens by height and fades in over 240 ms, then closes
+ * in 150 ms, so the content around it slides instead of jumping. The condition stays at the call
+ * site, so TypeScript narrowing inside it keeps working. Blocks already on screen when the page
+ * mounts do not animate. Reduced motion keeps the fade and drops the height change.
+ */
+export function Reveal({ children, className }: { children?: ReactNode; className?: string }) {
+  return (
+    <AnimatePresence initial={false}>
+      {present(children) ? (
+        <RevealBody key="reveal" className={className}>
+          {children}
+        </RevealBody>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
+/** While it closes, the block is inert and hidden from assistive tech, so it is never read or
+ *  clicked as live content. */
+function RevealBody({ children, className }: { children: ReactNode; className?: string }) {
+  const present = useIsPresent();
+  return (
+    <motion.div
+      className={className}
+      aria-hidden={present ? undefined : true}
+      inert={present ? undefined : true}
+      {...revealMotion}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/**
+ * Content swap: crossfades between states of one region (empty and list, placeholder and result).
+ * Give each state a stable `id`; the old one fades out in 120 ms before the new one fades in.
+ */
+export function Swap({
+  id,
+  children,
+  className,
+}: {
+  id: string | number;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={id}
+        className={className}
+        initial={{ opacity: 0, y: 4 }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          transition: { duration: motionTokens.base, ease: motionTokens.ease },
+        }}
+        exit={{ opacity: 0, transition: { duration: 0.12, ease: leave } }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
 }

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Reveal } from '@/components/motion';
 import { InfoIcon } from 'lucide-react';
 import { SettingsSection } from './settings-layout';
 
@@ -137,11 +138,13 @@ export function ModelCredits() {
               {credit.name}
             </a>
             <p className="text-xs text-muted-foreground">{credit.authors}</p>
-            {credit.notice && (
-              <p lang="en" dir="ltr">
-                {credit.notice}
-              </p>
-            )}
+            <Reveal>
+              {credit.notice && (
+                <p lang="en" dir="ltr">
+                  {credit.notice}
+                </p>
+              )}
+            </Reveal>
             <a
               className={`${linkClass} text-xs`}
               href={credit.terms}

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Reveal } from '@/components/motion';
 import {
   CrownIcon,
   GaugeIcon,
@@ -220,23 +221,25 @@ export function PerformanceProfile({
             )}
           </div>
         )}
-        {(failed || profile.isError || batch.isError) && (
-          <div role="alert" className="mt-1 text-xs text-destructive">
-            {t('common.error')}
-            <Button
-              size="xs"
-              variant="ghost"
-              disabled={profile.isSaving}
-              onClick={() => {
-                if (batch.isError) void batch.refetch();
-                else if (failed && !busy) void choose(failed);
-                else void profile.refetch();
-              }}
-            >
-              {t('common.retry')}
-            </Button>
-          </div>
-        )}
+        <Reveal>
+          {(failed || profile.isError || batch.isError) && (
+            <div role="alert" className="mt-1 text-xs text-destructive">
+              {t('common.error')}
+              <Button
+                size="xs"
+                variant="ghost"
+                disabled={profile.isSaving}
+                onClick={() => {
+                  if (batch.isError) void batch.refetch();
+                  else if (failed && !busy) void choose(failed);
+                  else void profile.refetch();
+                }}
+              >
+                {t('common.retry')}
+              </Button>
+            </div>
+          )}
+        </Reveal>
       </div>
     );
   }
@@ -457,23 +460,25 @@ export function PerformanceProfile({
               : 'sidebarTools.speedHelp',
         )}
       </p>
-      {(failed || profile.isError || batch.isError) && (
-        <div role="alert" className="text-xs text-destructive">
-          {t('common.error')}
-          <Button
-            size="xs"
-            variant="ghost"
-            disabled={profile.isSaving}
-            onClick={() => {
-              if (batch.isError) void batch.refetch();
-              else if (failed && !busy) void choose(failed);
-              else void profile.refetch();
-            }}
-          >
-            {t('common.retry')}
-          </Button>
-        </div>
-      )}
+      <Reveal>
+        {(failed || profile.isError || batch.isError) && (
+          <div role="alert" className="text-xs text-destructive">
+            {t('common.error')}
+            <Button
+              size="xs"
+              variant="ghost"
+              disabled={profile.isSaving}
+              onClick={() => {
+                if (batch.isError) void batch.refetch();
+                else if (failed && !busy) void choose(failed);
+                else void profile.refetch();
+              }}
+            >
+              {t('common.retry')}
+            </Button>
+          </div>
+        )}
+      </Reveal>
     </div>
   );
   return popoverMode ? (

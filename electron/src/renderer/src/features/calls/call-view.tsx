@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -193,12 +194,14 @@ export function CallView({
               {maxMinutes ? ` / ${formatDuration(maxMinutes * 60)}` : ''}
             </span>
           </div>
-          {active && (live.stream === 'reconnecting' || live.stream === 'closed') && (
-            <p role="status" className="flex items-center gap-2 text-xs text-warning-foreground">
-              <WifiOffIcon aria-hidden="true" className="size-3.5" />
-              {t(live.stream === 'closed' ? 'calls.stream_lost' : 'calls.reconnecting')}
-            </p>
-          )}
+          <Reveal>
+            {active && (live.stream === 'reconnecting' || live.stream === 'closed') && (
+              <p role="status" className="flex items-center gap-2 text-xs text-warning-foreground">
+                <WifiOffIcon aria-hidden="true" className="size-3.5" />
+                {t(live.stream === 'closed' ? 'calls.stream_lost' : 'calls.reconnecting')}
+              </p>
+            )}
+          </Reveal>
         </div>
       </div>
       <div className="studio-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6">

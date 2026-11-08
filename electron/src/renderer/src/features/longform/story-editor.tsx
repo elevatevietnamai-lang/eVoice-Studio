@@ -1,4 +1,5 @@
 import { StoryStems } from './story-stems';
+import { Reveal } from '@/components/motion';
 import { WaveformPlayer } from '@/components/waveform-player';
 import { previewStoryLine } from './story-preview';
 import { storyVoicesReady } from './story-inputs';
@@ -311,9 +312,11 @@ export function StoryEditor({
     // shrinkable flex item let a long script paint over the generation
     // progress panel and the footer instead of pushing them down.
     <div data-slot="story-editor" className="flex-1 space-y-4">
-      {previewError && (
-        <PipelineFailure fallback={previewError} onDismiss={() => setPreviewError(null)} />
-      )}
+      <Reveal>
+        {previewError && (
+          <PipelineFailure fallback={previewError} onDismiss={() => setPreviewError(null)} />
+        )}
+      </Reveal>
       <details
         className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
         open={inputOpen}
@@ -408,11 +411,13 @@ export function StoryEditor({
             )}
           </div>
           <p className="text-xs text-muted-foreground">{t('stories.splitModeHint')}</p>
-          {notice && (
-            <p role="status" className="text-xs text-muted-foreground">
-              {notice}
-            </p>
-          )}
+          <Reveal>
+            {notice && (
+              <p role="status" className="text-xs text-muted-foreground">
+                {notice}
+              </p>
+            )}
+          </Reveal>
         </div>
       </details>
 
@@ -524,14 +529,16 @@ export function StoryEditor({
               </Button>
             </div>
           </div>
-          {previewing === line.id && (
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span role="status">{t('common.loading')}</span>
-              <Button size="sm" variant="ghost" onClick={() => controller.current?.abort()}>
-                {t('common.stop')}
-              </Button>
-            </div>
-          )}
+          <Reveal>
+            {previewing === line.id && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span role="status">{t('common.loading')}</span>
+                <Button size="sm" variant="ghost" onClick={() => controller.current?.abort()}>
+                  {t('common.stop')}
+                </Button>
+              </div>
+            )}
+          </Reveal>
           {preview?.id === line.id && (
             <WaveformPlayer showWaveform={false} src={preview.url} source="story-line-preview" />
           )}

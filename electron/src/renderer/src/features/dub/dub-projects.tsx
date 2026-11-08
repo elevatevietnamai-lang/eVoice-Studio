@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -188,11 +189,13 @@ export function DubProjects({ active = true }: { active?: boolean }) {
           </li>
         )}
       </ul>
-      {error && (
-        <p role="alert" className="shrink-0 px-3 pb-1 text-xs text-destructive">
-          {error}
-        </p>
-      )}
+      <Reveal>
+        {error && (
+          <p role="alert" className="shrink-0 px-3 pb-1 text-xs text-destructive">
+            {error}
+          </p>
+        )}
+      </Reveal>
       <Link
         to="/projects"
         className="flex h-9 shrink-0 items-center gap-2 border-t border-border/45 px-3 text-xs text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"

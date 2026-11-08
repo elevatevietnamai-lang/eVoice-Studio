@@ -1,4 +1,5 @@
 import { DubProjects } from './dub-projects';
+import { Reveal } from '@/components/motion';
 import { Menu } from '@base-ui/react/menu';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
@@ -774,11 +775,13 @@ export function DubPage() {
               </Button>
             </div>
           )}
-          {cookieError && (
-            <p role="alert" className="text-xs text-destructive">
-              {t('dub.cookie_size_error')}
-            </p>
-          )}
+          <Reveal>
+            {cookieError && (
+              <p role="alert" className="text-xs text-destructive">
+                {t('dub.cookie_size_error')}
+              </p>
+            )}
+          </Reveal>
         </details>
       )}
       {url && (
@@ -1192,38 +1195,42 @@ export function DubPage() {
               <p className="text-xs leading-5 text-muted-foreground">
                 {t('dub.num_speakers_help')}
               </p>
-              {modelCatalogue.isSuccess && (
-                <div
-                  role="status"
-                  className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs"
-                >
-                  <UsersRoundIcon
-                    className={cn(
-                      'size-3.5 shrink-0',
-                      diarisationReady ? 'text-emerald-500' : 'text-muted-foreground',
+              <Reveal>
+                {modelCatalogue.isSuccess && (
+                  <div
+                    role="status"
+                    className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs"
+                  >
+                    <UsersRoundIcon
+                      className={cn(
+                        'size-3.5 shrink-0',
+                        diarisationReady ? 'text-emerald-500' : 'text-muted-foreground',
+                      )}
+                    />
+                    <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                      {t('engineSidebar.diarisation')} ·{' '}
+                      {t(
+                        diarisationReady
+                          ? 'modelMaintenance.installed'
+                          : 'modelSettings.unavailable',
+                      )}
+                    </span>
+                    {!diarisationReady && (
+                      <Link
+                        to="/settings/models/$family"
+                        params={{ family: 'diarisation' }}
+                        className={buttonVariants({
+                          variant: 'outline',
+                          size: 'xs',
+                        })}
+                      >
+                        <Settings2Icon />
+                        {t('modelMaintenance.install')}
+                      </Link>
                     )}
-                  />
-                  <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                    {t('engineSidebar.diarisation')} ·{' '}
-                    {t(
-                      diarisationReady ? 'modelMaintenance.installed' : 'modelSettings.unavailable',
-                    )}
-                  </span>
-                  {!diarisationReady && (
-                    <Link
-                      to="/settings/models/$family"
-                      params={{ family: 'diarisation' }}
-                      className={buttonVariants({
-                        variant: 'outline',
-                        size: 'xs',
-                      })}
-                    >
-                      <Settings2Icon />
-                      {t('modelMaintenance.install')}
-                    </Link>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+              </Reveal>
             </details>
             <label className="flex items-start gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs">
               <Switch
@@ -1266,24 +1273,26 @@ export function DubPage() {
             {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
               <HardsubPanel busy={busy} />
             )}
-            {session.subtitleImport && (
-              <p role="status" className="text-xs leading-5 text-muted-foreground">
-                {t('dub_workflow.imported_cues', {
-                  count: session.subtitleImport.stats.imported,
-                  file: session.subtitleImport.file,
-                })}
-                {(['skipped_malformed', 'dropped_overlap', 'clamped_to_duration'] as const).map(
-                  (key) =>
-                    session.subtitleImport!.stats[key] ? (
-                      <span key={key} className="block">
-                        {t('dub_workflow.' + key, {
-                          count: session.subtitleImport!.stats[key],
-                        })}
-                      </span>
-                    ) : null,
-                )}
-              </p>
-            )}
+            <Reveal>
+              {session.subtitleImport && (
+                <p role="status" className="text-xs leading-5 text-muted-foreground">
+                  {t('dub_workflow.imported_cues', {
+                    count: session.subtitleImport.stats.imported,
+                    file: session.subtitleImport.file,
+                  })}
+                  {(['skipped_malformed', 'dropped_overlap', 'clamped_to_duration'] as const).map(
+                    (key) =>
+                      session.subtitleImport!.stats[key] ? (
+                        <span key={key} className="block">
+                          {t('dub_workflow.' + key, {
+                            count: session.subtitleImport!.stats[key],
+                          })}
+                        </span>
+                      ) : null,
+                  )}
+                </p>
+              )}
+            </Reveal>
           </section>
           {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
             <section className="-mt-1 space-y-3 rounded-(--card-radius) rounded-t-lg border border-border/60 bg-muted/15 p-3">
@@ -1583,14 +1592,16 @@ export function DubPage() {
                 </div>
               </div>
             )}
-            {session.translationFallback && (
-              <div role="status" className="space-y-2 text-xs text-muted-foreground">
-                <p>{t('dub_workflow.cinematic_no_llm')}</p>
-                <Link to="/settings/models/$family" params={{ family: 'llm' }}>
-                  {t('engineSidebar.llm')}
-                </Link>
-              </div>
-            )}
+            <Reveal>
+              {session.translationFallback && (
+                <div role="status" className="space-y-2 text-xs text-muted-foreground">
+                  <p>{t('dub_workflow.cinematic_no_llm')}</p>
+                  <Link to="/settings/models/$family" params={{ family: 'llm' }}>
+                    {t('engineSidebar.llm')}
+                  </Link>
+                </div>
+              )}
+            </Reveal>
             <Link
               to="/settings/models/$family"
               params={{ family: 'translation' }}
@@ -1604,47 +1615,53 @@ export function DubPage() {
                 {t('modelMaintenance.' + provider.category)}
               </p>
             )}
-            {provider?.id === 'argos' && argosPacks.isError && (
-              <PipelineFailure
-                className="text-xs"
-                fallback={describeError(argosPacks.error)}
-                action={
-                  <Button size="xs" variant="ghost" onClick={() => void argosPacks.refetch()}>
-                    <RotateCcwIcon />
-                    {t('backend.retry')}
-                  </Button>
-                }
-              />
-            )}
-            {provider?.id === 'argos' && missingArgosPacks.length > 0 && (
-              <PipelineFailure
-                className="text-xs"
-                fallback={`${t('modelMaintenance.install')} · ${provider.display_name} · ${missingArgosPacks
-                  .map((pair) => `${pair.source_lang} → ${pair.target_lang}`)
-                  .join(', ')}`}
-                action={
-                  <Button
-                    size="xs"
-                    variant="outline"
-                    disabled={installingArgosPacks}
-                    onClick={() => void installArgosLanguagePacks()}
-                  >
-                    {installingArgosPacks ? (
-                      <LoaderCircleIcon className="animate-spin" />
-                    ) : (
-                      <LanguagesIcon />
-                    )}
-                    {t(installingArgosPacks ? 'common.loading' : 'modelMaintenance.install')}
-                  </Button>
-                }
-              />
-            )}
-            {provider && !(provider.ready ?? provider.installed) && (
-              <PipelineFailure
-                className="text-xs"
-                fallback={provider.availability_reason || t('modelSettings.unavailable')}
-              />
-            )}
+            <Reveal>
+              {provider?.id === 'argos' && argosPacks.isError && (
+                <PipelineFailure
+                  className="text-xs"
+                  fallback={describeError(argosPacks.error)}
+                  action={
+                    <Button size="xs" variant="ghost" onClick={() => void argosPacks.refetch()}>
+                      <RotateCcwIcon />
+                      {t('backend.retry')}
+                    </Button>
+                  }
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {provider?.id === 'argos' && missingArgosPacks.length > 0 && (
+                <PipelineFailure
+                  className="text-xs"
+                  fallback={`${t('modelMaintenance.install')} · ${provider.display_name} · ${missingArgosPacks
+                    .map((pair) => `${pair.source_lang} → ${pair.target_lang}`)
+                    .join(', ')}`}
+                  action={
+                    <Button
+                      size="xs"
+                      variant="outline"
+                      disabled={installingArgosPacks}
+                      onClick={() => void installArgosLanguagePacks()}
+                    >
+                      {installingArgosPacks ? (
+                        <LoaderCircleIcon className="animate-spin" />
+                      ) : (
+                        <LanguagesIcon />
+                      )}
+                      {t(installingArgosPacks ? 'common.loading' : 'modelMaintenance.install')}
+                    </Button>
+                  }
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {provider && !(provider.ready ?? provider.installed) && (
+                <PipelineFailure
+                  className="text-xs"
+                  fallback={provider.availability_reason || t('modelSettings.unavailable')}
+                />
+              )}
+            </Reveal>
           </section>
           <CastingBoard
             segments={session.segments}
@@ -1915,14 +1932,16 @@ export function DubPage() {
                 </Button>
               </div>
             )}
-            {errorMessage && (
-              <PipelineFailure
-                className="mb-4"
-                failure={session.failure}
-                fallback={errorMessage}
-                onDismiss={dismissDubError}
-              />
-            )}
+            <Reveal>
+              {errorMessage && (
+                <PipelineFailure
+                  className="mb-4"
+                  failure={session.failure}
+                  fallback={errorMessage}
+                  onDismiss={dismissDubError}
+                />
+              )}
+            </Reveal>
             {!session.segments.length && (!session.recovery || busy) && (
               <div className="mx-auto flex min-h-[24rem] w-full max-w-5xl flex-col items-center justify-center px-6 text-center">
                 <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-muted text-foreground">

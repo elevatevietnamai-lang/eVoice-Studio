@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useStore } from '@tanstack/react-store';
 import { useTranslation } from 'react-i18next';
 import { BotIcon, XIcon } from 'lucide-react';
@@ -139,11 +140,13 @@ export function TranslationAgentDock() {
               ) : (
                 <p className="text-xs text-muted-foreground">{t('dubActivity.waiting')}</p>
               )}
-              {run.error && (
-                <p role="alert" className="text-xs text-destructive">
-                  {run.error}
-                </p>
-              )}
+              <Reveal>
+                {run.error && (
+                  <p role="alert" className="text-xs text-destructive">
+                    {run.error}
+                  </p>
+                )}
+              </Reveal>
               {run.status === 'failed' &&
                 run.retry &&
                 activity.runs

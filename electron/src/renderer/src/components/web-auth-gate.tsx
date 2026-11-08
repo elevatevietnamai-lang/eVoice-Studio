@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { KeyRoundIcon } from 'lucide-react';
 import { exchangeApiKey } from '@shared/api/authSession';
@@ -104,13 +105,15 @@ export function WebAuthGate({ children }: { children: ReactNode }) {
                 autoFocus
               />
             </label>
-            {errorStatus !== undefined && (
-              <p className="text-xs text-destructive" role="alert">
-                {errorStatus
-                  ? t('settings.remote_backend_error_http', { status: errorStatus })
-                  : t('settings.remote_backend_error_network')}
-              </p>
-            )}
+            <Reveal>
+              {errorStatus !== undefined && (
+                <p className="text-xs text-destructive" role="alert">
+                  {errorStatus
+                    ? t('settings.remote_backend_error_http', { status: errorStatus })
+                    : t('settings.remote_backend_error_network')}
+                </p>
+              )}
+            </Reveal>
             <Button className="w-full" type="submit" disabled={pending || !value.trim()}>
               {t('network.connect')}
             </Button>

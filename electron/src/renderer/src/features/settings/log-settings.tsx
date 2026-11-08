@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { CrashDetails } from '@/components/crash-details';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +12,7 @@ import { useBackendStatus } from '@/hooks/use-backend-status';
 import { logSeverity, stripLogAnsi, type LogSeverity } from '@/lib/log-format';
 import { openRepairAgent } from '@/lib/repair-agent-events';
 import { cn } from '@/lib/utils';
-import {
-  getFrontendLogs,
-  clearFrontendLogs,
-} from '@shared/utils/consoleBuffer';
+import { getFrontendLogs, clearFrontendLogs } from '@shared/utils/consoleBuffer';
 interface LogResponse {
   lines: string[];
   path?: string;
@@ -190,14 +188,16 @@ export function LogSettings() {
           </div>
         </div>
       )}
-      {(failed || query.isError) && (
-        <p
-          role="alert"
-          className="shrink-0 border-b border-destructive/20 bg-destructive/5 px-4 py-2 text-sm text-destructive"
-        >
-          {t('common.error')}
-        </p>
-      )}
+      <Reveal>
+        {(failed || query.isError) && (
+          <p
+            role="alert"
+            className="shrink-0 border-b border-destructive/20 bg-destructive/5 px-4 py-2 text-sm text-destructive"
+          >
+            {t('common.error')}
+          </p>
+        )}
+      </Reveal>
       <div
         ref={scroll}
         role="log"

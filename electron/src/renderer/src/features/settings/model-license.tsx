@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from '@/components/external-link';
@@ -254,13 +255,15 @@ export function ModelLicense({
           )}
         </div>
       )}
-      {failed && (
-        <p role="alert" className="text-destructive">
-          {t('modelLicense.failed')}
-        </p>
-      )}
-      {completed && <p role="status">{t('modelLicense.downloaded')}</p>}
-      {busy && <p role="status">{t('common.loading')}</p>}
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-destructive">
+            {t('modelLicense.failed')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>{completed && <p role="status">{t('modelLicense.downloaded')}</p>}</Reveal>
+      <Reveal>{busy && <p role="status">{t('common.loading')}</p>}</Reveal>
       <div className="flex justify-end">
         {completed ? null : ready ? (
           <Button
@@ -324,11 +327,13 @@ export function ModelLicense({
                 infoFallback={info}
                 extra={verifiedInstall}
               />
-              {details.isError && (
-                <p role="alert" className="mt-3 text-sm text-destructive">
-                  {t('modelLicense.detailsFailed')}
-                </p>
-              )}
+              <Reveal>
+                {details.isError && (
+                  <p role="alert" className="mt-3 text-sm text-destructive">
+                    {t('modelLicense.detailsFailed')}
+                  </p>
+                )}
+              </Reveal>
             </div>
           </LicenceAcceptanceFooter>
         </DialogContent>

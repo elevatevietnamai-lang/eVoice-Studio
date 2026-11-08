@@ -1,4 +1,5 @@
 import { BrainIcon, CheckCircle2Icon, ListFilterIcon, PlugZapIcon, SaveIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -129,16 +130,18 @@ export function LlmProviders() {
                 {t('settings.llmp_disable')}
               </Button>
             )}
-            {disableFailed && <p role="alert">{t('settings.llmp_save_failed')}</p>}
+            <Reveal>{disableFailed && <p role="alert">{t('settings.llmp_save_failed')}</p>}</Reveal>
           </SettingsRow>
         )}
-        {query.isError && (
-          <div className="p-4">
-            <Button variant="outline" onClick={() => void query.refetch()}>
-              {t('backend.retry')}
-            </Button>
-          </div>
-        )}
+        <Reveal>
+          {query.isError && (
+            <div className="p-4">
+              <Button variant="outline" onClick={() => void query.refetch()}>
+                {t('backend.retry')}
+              </Button>
+            </div>
+          )}
+        </Reveal>
         {query.isPending && <SettingsRowsSkeleton label={t('common.loading')} rows={3} />}
         {current && (
           <SettingsRow
@@ -341,16 +344,18 @@ function ProviderForm({ provider, active }: { provider: Provider; active: boolea
       {provider.transport !== 'cli' &&
         field('base_url', 'llmp_base_url', provider.base_url_from_env)}
       {field('model', 'llmp_model', provider.model_from_env)}
-      {modelListing && (
-        <p role="status" className="px-4 py-3 text-xs text-muted-foreground">
-          {t(
-            modelListing.truncated
-              ? 'settings.llmp_models_truncated'
-              : 'settings.llmp_models_loaded',
-            { count: models.length },
-          )}
-        </p>
-      )}
+      <Reveal>
+        {modelListing && (
+          <p role="status" className="px-4 py-3 text-xs text-muted-foreground">
+            {t(
+              modelListing.truncated
+                ? 'settings.llmp_models_truncated'
+                : 'settings.llmp_models_loaded',
+              { count: models.length },
+            )}
+          </p>
+        )}
+      </Reveal>
       {models.length > 0 && (
         <div className="max-h-48 overflow-y-auto px-4 py-3">
           <div className="flex flex-wrap gap-1">
@@ -397,32 +402,40 @@ function ProviderForm({ provider, active }: { provider: Provider; active: boolea
           {t('settings.llmp_save')}
         </Button>
       </div>
-      {busy && (
-        <p role="status" className="px-4 py-3 text-xs">
-          {t('common.loading')}
-        </p>
-      )}
-      {saved && !active && !provider.active_from_env && (
-        <p className="px-4 py-3 text-xs text-muted-foreground">
-          {t('settings.llmp_saved_not_active')}
-        </p>
-      )}
-      {failed && (
-        <p role="alert" className="px-4 py-3 text-sm text-destructive">
-          {t(failed)}
-        </p>
-      )}
-      {result && (
-        <p role={result.ok ? 'status' : 'alert'} className="px-4 py-3 text-sm">
-          {result.ok
-            ? t('settings.llmp_test_ok', { model: result.model, ms: result.latency_ms })
-            : t(
-                provider.transport === 'cli' && kind === 'auth'
-                  ? 'settings.llmp_cli_auth'
-                  : 'settings.llmp_err_' + kind,
-              )}
-        </p>
-      )}
+      <Reveal>
+        {busy && (
+          <p role="status" className="px-4 py-3 text-xs">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {saved && !active && !provider.active_from_env && (
+          <p className="px-4 py-3 text-xs text-muted-foreground">
+            {t('settings.llmp_saved_not_active')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {failed && (
+          <p role="alert" className="px-4 py-3 text-sm text-destructive">
+            {t(failed)}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {result && (
+          <p role={result.ok ? 'status' : 'alert'} className="px-4 py-3 text-sm">
+            {result.ok
+              ? t('settings.llmp_test_ok', { model: result.model, ms: result.latency_ms })
+              : t(
+                  provider.transport === 'cli' && kind === 'auth'
+                    ? 'settings.llmp_cli_auth'
+                    : 'settings.llmp_err_' + kind,
+                )}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }

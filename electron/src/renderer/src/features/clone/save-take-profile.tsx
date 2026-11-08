@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { SaveIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -61,11 +62,13 @@ export function SaveTakeProfile({ item }: { item: HistoryItem }) {
           {t(busy ? 'preferences.loading' : 'clone.save_as_profile')}
         </Button>
       )}
-      {failed && (
-        <p role="alert" className="text-xs text-destructive">
-          {t('clone.save_failed', { message: t('backend.retry') })}
-        </p>
-      )}
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-xs text-destructive">
+            {t('clone.save_failed', { message: t('backend.retry') })}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }

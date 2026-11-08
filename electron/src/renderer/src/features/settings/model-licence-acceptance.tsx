@@ -1,4 +1,5 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -229,11 +230,15 @@ export function LicenceAcceptanceFooter({
               </ul>
             </>
           )}
-          {error && (
-            <p role="alert" className="text-sm text-destructive">
-              {t(error === 'changed' ? 'modelLicense.acceptChanged' : 'modelLicense.acceptFailed')}
-            </p>
-          )}
+          <Reveal>
+            {error && (
+              <p role="alert" className="text-sm text-destructive">
+                {t(
+                  error === 'changed' ? 'modelLicense.acceptChanged' : 'modelLicense.acceptFailed',
+                )}
+              </p>
+            )}
+          </Reveal>
         </div>
       </div>
       <div data-licence-actions className={footerActionsClass(platform)}>
@@ -367,14 +372,16 @@ export function ModelLicenceGate() {
             onClose={close}
           >
             <div className="space-y-3 px-8 pb-4">
-              {done && (
-                <p
-                  role="status"
-                  className="rounded-lg border border-success/40 bg-success/10 p-3 text-sm"
-                >
-                  {t('modelLicense.retryHint')}
-                </p>
-              )}
+              <Reveal>
+                {done && (
+                  <p
+                    role="status"
+                    className="rounded-lg border border-success/40 bg-success/10 p-3 text-sm"
+                  >
+                    {t('modelLicense.retryHint')}
+                  </p>
+                )}
+              </Reveal>
               {(models ?? []).map((model, index) => {
                 const query = queries[index];
                 const view = <ModelLicenceView details={query?.data} infoFallback={undefined} />;

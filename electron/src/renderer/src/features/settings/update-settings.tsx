@@ -1,4 +1,5 @@
 import { splitRoundedMinutes } from '@shared/utils/timeFormat';
+import { Reveal } from '@/components/motion';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -258,12 +259,14 @@ export function UpdateSettings() {
                   )}
                 </>
               )}
-              {state.status === 'error' && state.error && (
-                <details className="mt-2 text-xs text-muted-foreground">
-                  <summary className="cursor-pointer">{t('common.more_info')}</summary>
-                  <p className="mt-1 break-words">{state.error}</p>
-                </details>
-              )}
+              <Reveal>
+                {state.status === 'error' && state.error && (
+                  <details className="mt-2 text-xs text-muted-foreground">
+                    <summary className="cursor-pointer">{t('common.more_info')}</summary>
+                    <p className="mt-1 break-words">{state.error}</p>
+                  </details>
+                )}
+              </Reveal>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">

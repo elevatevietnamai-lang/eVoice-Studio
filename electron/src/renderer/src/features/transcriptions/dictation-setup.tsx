@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { Check as CheckShape, Download as DownloadShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -198,28 +199,32 @@ export function DictationSetup({ onReady }: { onReady: () => void }) {
         </div>
       </div>
       {choice(primary)}
-      {installing && activeModel && (
-        <div className="space-y-2" role="status">
-          <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-            <span>{t('asr_missing.started', { label: activeModel.label })}</span>
-            <Button size="xs" variant="ghost" onClick={() => void cancel()}>
-              <XIcon />
-              {t('common.cancel')}
-            </Button>
+      <Reveal>
+        {installing && activeModel && (
+          <div className="space-y-2" role="status">
+            <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+              <span>{t('asr_missing.started', { label: activeModel.label })}</span>
+              <Button size="xs" variant="ghost" onClick={() => void cancel()}>
+                <XIcon />
+                {t('common.cancel')}
+              </Button>
+            </div>
+            <Progress value={progress} aria-label={t('modelMaintenance.downloading')} />
           </div>
-          <Progress value={progress} aria-label={t('modelMaintenance.downloading')} />
-        </div>
-      )}
-      {failed && (
-        <div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-destructive">
-          <span className="min-w-0 flex-1">
-            {t('asr_missing.install_failed', { message: failed })}
-          </span>
-          <AgentFixButton
-            request={`Restore local dictation readiness after the selected model install failed: ${failed}`}
-          />
-        </div>
-      )}
+        )}
+      </Reveal>
+      <Reveal>
+        {failed && (
+          <div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-destructive">
+            <span className="min-w-0 flex-1">
+              {t('asr_missing.install_failed', { message: failed })}
+            </span>
+            <AgentFixButton
+              request={`Restore local dictation readiness after the selected model install failed: ${failed}`}
+            />
+          </div>
+        )}
+      </Reveal>
       {others.length > 0 && (
         <details>
           <summary className="cursor-pointer text-xs text-muted-foreground">

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, DownloadIcon, LoaderCircleIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -210,9 +211,11 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
           {t(saving ? 'common.loading' : 'exportModal.export')}
         </Button>
       </fieldset>
-      {error && (
-        <PipelineFailure fallback={error} onDismiss={() => setError(null)} className="text-xs" />
-      )}
+      <Reveal>
+        {error && (
+          <PipelineFailure fallback={error} onDismiss={() => setError(null)} className="text-xs" />
+        )}
+      </Reveal>
     </details>
   );
 }

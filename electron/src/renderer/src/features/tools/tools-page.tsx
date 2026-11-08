@@ -1,4 +1,5 @@
 import { AudioWaveformIcon, GitCompareArrowsIcon, WrenchIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
 import { ConvertVoice } from './convert-voice';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
@@ -229,61 +230,67 @@ function ToolForm({ tool }: { tool: Tool }) {
       <Button type="submit" disabled={busy || !valid}>
         {t(busy ? 'common.loading' : 'tools.' + tool.action)}
       </Button>
-      {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+      <Reveal>
+        {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+      </Reveal>
       {tool.id === 'probe' && (
         <Link to="/settings/media" className="block text-sm text-primary hover:underline">
           {t('settings.audio_tools')}
         </Link>
       )}
-      {result && (
-        <div
-          role="region"
-          aria-label={t('tools.result')}
-          className="space-y-4 rounded-(--card-radius) border border-border/50 p-4"
-        >
-          {Boolean(result.error) && <PipelineFailure fallback={describeError(result.error)} />}
-          {tool.id === 'probe' ? (
-            <pre className="overflow-x-auto whitespace-pre-wrap break-words text-xs">
-              {JSON.stringify(result, null, 2)}
-            </pre>
-          ) : (
-            <>
-              <dl className="space-y-3 text-sm">
-                {(tool.id === 'direction'
-                  ? [
-                      ['method', 'method'],
-                      ['instruct_prompt', 'tts_instruct'],
-                      ['translate_hint', 'translate_hint'],
-                      ['rate_bias', 'rate_bias'],
-                    ]
-                  : [
-                      ['method', 'method'],
-                      ['ratio', 'ratio'],
-                      ['attempts', 'attempts'],
-                      ['text', 'result'],
-                    ]
-                ).map(([key, label]) => (
-                  <div key={key}>
-                    <dt className="text-xs text-muted-foreground">{t('tools.' + label)}</dt>
-                    <dd className="mt-1 whitespace-pre-wrap">
-                      {result[key] == null ? '?' : String(result[key])}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              {tool.id === 'direction' &&
-                ['tokens', 'taxonomy'].map((key) => (
-                  <details key={key} className="text-xs">
-                    <summary className="cursor-pointer">{t('tools.' + key)}</summary>
-                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-words">
-                      {JSON.stringify(result[key], null, 2)}
-                    </pre>
-                  </details>
-                ))}
-            </>
-          )}
-        </div>
-      )}
+      <Reveal>
+        {result && (
+          <div
+            role="region"
+            aria-label={t('tools.result')}
+            className="space-y-4 rounded-(--card-radius) border border-border/50 p-4"
+          >
+            <Reveal>
+              {Boolean(result.error) && <PipelineFailure fallback={describeError(result.error)} />}
+            </Reveal>
+            {tool.id === 'probe' ? (
+              <pre className="overflow-x-auto whitespace-pre-wrap break-words text-xs">
+                {JSON.stringify(result, null, 2)}
+              </pre>
+            ) : (
+              <>
+                <dl className="space-y-3 text-sm">
+                  {(tool.id === 'direction'
+                    ? [
+                        ['method', 'method'],
+                        ['instruct_prompt', 'tts_instruct'],
+                        ['translate_hint', 'translate_hint'],
+                        ['rate_bias', 'rate_bias'],
+                      ]
+                    : [
+                        ['method', 'method'],
+                        ['ratio', 'ratio'],
+                        ['attempts', 'attempts'],
+                        ['text', 'result'],
+                      ]
+                  ).map(([key, label]) => (
+                    <div key={key}>
+                      <dt className="text-xs text-muted-foreground">{t('tools.' + label)}</dt>
+                      <dd className="mt-1 whitespace-pre-wrap">
+                        {result[key] == null ? '?' : String(result[key])}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                {tool.id === 'direction' &&
+                  ['tokens', 'taxonomy'].map((key) => (
+                    <details key={key} className="text-xs">
+                      <summary className="cursor-pointer">{t('tools.' + key)}</summary>
+                      <pre className="mt-2 overflow-x-auto whitespace-pre-wrap break-words">
+                        {JSON.stringify(result[key], null, 2)}
+                      </pre>
+                    </details>
+                  ))}
+              </>
+            )}
+          </div>
+        )}
+      </Reveal>
     </form>
   );
 }

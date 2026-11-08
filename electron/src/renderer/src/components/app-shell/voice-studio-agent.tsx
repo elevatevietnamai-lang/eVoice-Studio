@@ -1,4 +1,5 @@
 import { useStore } from '@tanstack/react-store';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouterState } from '@tanstack/react-router';
@@ -490,11 +491,13 @@ export function VoiceStudioAgent() {
           if (canSend) void send();
         }}
       >
-        {error && (
-          <p role="alert" className="text-xs text-destructive">
-            {error}
-          </p>
-        )}
+        <Reveal>
+          {error && (
+            <p role="alert" className="text-xs text-destructive">
+              {error}
+            </p>
+          )}
+        </Reveal>
         <div className="agent-workspace-input">
           <textarea
             aria-label={t('agentWorkspace.placeholder')}

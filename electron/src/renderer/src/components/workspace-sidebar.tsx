@@ -1,4 +1,5 @@
 import { segmentedFrameClass } from '@/components/segmented';
+import { Reveal } from '@/components/motion';
 import { useContext, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { type LucideIcon } from 'lucide-react';
@@ -219,14 +220,16 @@ function PanelBody({
       >
         {children}
       </div>
-      {footer !== undefined && footer !== null && !showLibrary && (
-        <div
-          data-slot="secondary-sidebar-footer"
-          className="flex min-h-0 max-h-[70%] flex-col space-y-3 border-t border-border/55 bg-background p-3.5 text-[13px]"
-        >
-          {footer}
-        </div>
-      )}
+      <Reveal>
+        {footer !== undefined && footer !== null && !showLibrary && (
+          <div
+            data-slot="secondary-sidebar-footer"
+            className="flex min-h-0 max-h-[70%] flex-col space-y-3 border-t border-border/55 bg-background p-3.5 text-[13px]"
+          >
+            {footer}
+          </div>
+        )}
+      </Reveal>
     </aside>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import WaveSurfer from 'wavesurfer.js';
 import Regions, { type Region } from 'wavesurfer.js/dist/plugins/regions.esm.js';
@@ -8,11 +9,7 @@ import { Input } from '@/components/ui/input';
 import { PipelineFailure } from '@/components/pipeline-failure';
 import { WaveformPlayer } from '@/components/waveform-player';
 import { apiFetch, describeError } from '@/lib/api/client';
-import {
-  decodeToMonoLowRate,
-  sliceToMono,
-  encodeWav,
-} from '@shared/utils/audioTrim';
+import { decodeToMonoLowRate, sliceToMono, encodeWav } from '@shared/utils/audioTrim';
 
 const MAX_TRIM_SECONDS = 60;
 
@@ -188,22 +185,28 @@ export function TrimAudio({
             <p className="text-xs text-muted-foreground">{name}</p>
           </div>
         </div>
-        {saveError && (
-          <p role="alert" className="text-sm text-destructive">
-            {saveError}
-          </p>
-        )}
-        {error && (
-          <PipelineFailure
-            fallback={`${t('trimmer.audio_load_failed')} ${error}`}
-            onDismiss={() => setError('')}
-          />
-        )}
-        {!duration && !error && (
-          <p role="status" className="text-sm text-muted-foreground">
-            {t('trimmer.decoding')}
-          </p>
-        )}
+        <Reveal>
+          {saveError && (
+            <p role="alert" className="text-sm text-destructive">
+              {saveError}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {error && (
+            <PipelineFailure
+              fallback={`${t('trimmer.audio_load_failed')} ${error}`}
+              onDismiss={() => setError('')}
+            />
+          )}
+        </Reveal>
+        <Reveal>
+          {!duration && !error && (
+            <p role="status" className="text-sm text-muted-foreground">
+              {t('trimmer.decoding')}
+            </p>
+          )}
+        </Reveal>
         <div
           ref={container}
           className="overflow-hidden rounded-(--card-radius) border border-border/50 p-3 text-muted-foreground"
@@ -277,26 +280,28 @@ export function TrimAudio({
                 {MAX_TRIM_SECONDS} {t('trimmer.unit_seconds')}
               </span>
             </div>
-            {preview && (
-              <div ref={previewContainer} className="flex items-center gap-2">
-                <WaveformPlayer
-                  key={preview.url}
-                  src={preview.url}
-                  source="gallery-trim"
-                  loop={loop}
-                  className="flex-1"
-                />
-                <Button
-                  variant={loop ? 'secondary' : 'ghost'}
-                  size="icon-sm"
-                  aria-label={t('trimmer.loop_preview')}
-                  aria-pressed={loop}
-                  onClick={() => setLoop(!loop)}
-                >
-                  <RepeatIcon />
-                </Button>
-              </div>
-            )}
+            <Reveal>
+              {preview && (
+                <div ref={previewContainer} className="flex items-center gap-2">
+                  <WaveformPlayer
+                    key={preview.url}
+                    src={preview.url}
+                    source="gallery-trim"
+                    loop={loop}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant={loop ? 'secondary' : 'ghost'}
+                    size="icon-sm"
+                    aria-label={t('trimmer.loop_preview')}
+                    aria-pressed={loop}
+                    onClick={() => setLoop(!loop)}
+                  >
+                    <RepeatIcon />
+                  </Button>
+                </div>
+              )}
+            </Reveal>
             <div className="flex justify-end gap-2">
               <Button variant="ghost" disabled={busy} onClick={onCancel}>
                 {t('common.cancel')}

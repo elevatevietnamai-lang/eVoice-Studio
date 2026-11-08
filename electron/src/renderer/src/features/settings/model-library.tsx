@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Reveal } from '@/components/motion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -295,12 +296,14 @@ export function PerformanceModelPacks({ compact = false }: { compact?: boolean }
           </div>
         )}
 
-        {diskShortfall && (
-          <p role="alert" className="flex items-start gap-2 text-xs text-warning-foreground">
-            <AlertTriangleIcon className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
-            {t('models.pack_low_disk', { ...diskShortfall })}
-          </p>
-        )}
+        <Reveal>
+          {diskShortfall && (
+            <p role="alert" className="flex items-start gap-2 text-xs text-warning-foreground">
+              <AlertTriangleIcon className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+              {t('models.pack_low_disk', { ...diskShortfall })}
+            </p>
+          )}
+        </Reveal>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/45 pt-3">
           <p className="text-xs text-muted-foreground">
@@ -448,15 +451,17 @@ export function SystemRecommendations() {
             </div>
           )}
         </div>
-        {diskShortfall && (
-          <p
-            role="alert"
-            className="flex items-start gap-2 text-xs leading-relaxed text-warning-foreground"
-          >
-            <AlertTriangleIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-            {t('models.reco_low_disk', { ...diskShortfall })}
-          </p>
-        )}
+        <Reveal>
+          {diskShortfall && (
+            <p
+              role="alert"
+              className="flex items-start gap-2 text-xs leading-relaxed text-warning-foreground"
+            >
+              <AlertTriangleIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
+              {t('models.reco_low_disk', { ...diskShortfall })}
+            </p>
+          )}
+        </Reveal>
         {data.all_installed ? (
           <p className="flex items-center gap-2 text-sm text-foreground/80">
             <CheckIcon aria-hidden="true" className="size-4 text-primary" />
@@ -940,129 +945,136 @@ export function ModelLibrary({
               {t('modelSettings.selected')}
             </span>
           )}
-        {(model.gated || gatedFailure) && !model.installed && (
-          <details className="group/access order-last basis-full rounded-lg border border-warning/20 bg-warning/5 text-xs @2xl:max-w-2xl">
-            <summary
-              role={gatedFailure || access?.ready === false ? 'alert' : 'status'}
-              className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 rounded-lg px-3 py-2 font-medium text-foreground outline-none marker:hidden hover:bg-warning/5 focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden"
-            >
-              {access?.ready && <CheckIcon className="size-3.5 text-emerald-500" />}
-              <span className="min-w-0 flex-1 truncate">
-                {t(
-                  access?.ready
-                    ? 'modelMaintenance.gatedAccessReady'
-                    : access
-                      ? 'modelMaintenance.gatedAccessStillRequired'
-                      : 'modelMaintenance.gatedAccessRequired',
+        <Reveal>
+          {(model.gated || gatedFailure) && !model.installed && (
+            <details className="group/access order-last basis-full rounded-lg border border-warning/20 bg-warning/5 text-xs @2xl:max-w-2xl">
+              <summary
+                role={gatedFailure || access?.ready === false ? 'alert' : 'status'}
+                className="flex min-h-8 cursor-pointer list-none items-center gap-1.5 rounded-lg px-3 py-2 font-medium text-foreground outline-none marker:hidden hover:bg-warning/5 focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden"
+              >
+                {access?.ready && <CheckIcon className="size-3.5 text-emerald-500" />}
+                <span className="min-w-0 flex-1 truncate">
+                  {t(
+                    access?.ready
+                      ? 'modelMaintenance.gatedAccessReady'
+                      : access
+                        ? 'modelMaintenance.gatedAccessStillRequired'
+                        : 'modelMaintenance.gatedAccessRequired',
+                  )}
+                </span>
+                <ChevronDownIcon className="size-3.5 shrink-0 text-muted-foreground transition-transform group-open/access:rotate-180 motion-reduce:transition-none" />
+              </summary>
+              <div className="border-t border-warning/15 px-3 py-2.5">
+                <div className="flex flex-wrap gap-1.5">
+                  {model.access_url && (
+                    <ExternalLink href={model.access_url}>
+                      {t('modelMaintenance.requestModelAccess')}
+                    </ExternalLink>
+                  )}
+                  {model.prerequisite_access_url && (
+                    <ExternalLink href={model.prerequisite_access_url}>
+                      {t('modelMaintenance.acceptDependencyTerms')}
+                    </ExternalLink>
+                  )}
+                  {model.requires_hf_token && (
+                    <Link
+                      to="/settings/credentials"
+                      className={buttonVariants({
+                        variant: 'outline',
+                        size: 'sm',
+                      })}
+                    >
+                      <WrenchIcon />
+                      {t('modelMaintenance.addHfToken')}
+                    </Link>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={checkingAccess === model.repo_id}
+                    onClick={() => void checkAccess(model)}
+                  >
+                    {checkingAccess === model.repo_id ? (
+                      <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
+                    ) : access?.ready ? (
+                      <CheckIcon />
+                    ) : (
+                      <RefreshCwIcon />
+                    )}
+                    {t('modelMaintenance.checkAccess')}
+                  </Button>
+                  {gatedFailure && (
+                    <Button
+                      size="sm"
+                      variant="default"
+                      disabled={Boolean(pending) || retryAfter > 0}
+                      onClick={() => void action(model.repo_id)}
+                    >
+                      <RefreshCwIcon />
+                      {retryAfter > 0
+                        ? t('modelMaintenance.retryAfter', {
+                            seconds: retryAfter,
+                          })
+                        : t('common.retry')}
+                    </Button>
+                  )}
+                </div>
+                {gatedFailure && job?.error && (
+                  <details className="mt-2 text-muted-foreground">
+                    <summary className="cursor-pointer">{t('common.details')}</summary>
+                    <p className="mt-1 break-words">{job.error}</p>
+                  </details>
                 )}
-              </span>
-              <ChevronDownIcon className="size-3.5 shrink-0 text-muted-foreground transition-transform group-open/access:rotate-180 motion-reduce:transition-none" />
-            </summary>
-            <div className="border-t border-warning/15 px-3 py-2.5">
-              <div className="flex flex-wrap gap-1.5">
-                {model.access_url && (
-                  <ExternalLink href={model.access_url}>
-                    {t('modelMaintenance.requestModelAccess')}
-                  </ExternalLink>
-                )}
-                {model.prerequisite_access_url && (
-                  <ExternalLink href={model.prerequisite_access_url}>
-                    {t('modelMaintenance.acceptDependencyTerms')}
-                  </ExternalLink>
-                )}
-                {model.requires_hf_token && (
+              </div>
+            </details>
+          )}
+        </Reveal>
+        <Reveal>
+          {failedJob && !gatedFailure && (
+            <details className="basis-full rounded-lg border border-destructive/15 bg-destructive/5 px-3 py-2 text-xs @2xl:max-w-xl">
+              <summary className="cursor-pointer font-medium text-destructive">
+                {t('modelMaintenance.failed')}
+              </summary>
+              <p role="alert" className="mt-2 break-words text-muted-foreground">
+                {job?.docs_topic === 'HF_MIRROR_GATED'
+                  ? t('modelMaintenance.mirrorGatedAccess')
+                  : job?.error || t('modelMaintenance.failed')}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1">
+                <Button
+                  size="xs"
+                  variant="outline"
+                  disabled={Boolean(pending) || retryAfter > 0}
+                  onClick={() => void action(model.repo_id)}
+                >
+                  <RefreshCwIcon />
+                  {retryAfter > 0
+                    ? t('modelMaintenance.retryAfter', { seconds: retryAfter })
+                    : t('common.retry')}
+                </Button>
+                {recovery && (
                   <Link
-                    to="/settings/credentials"
-                    className={buttonVariants({
-                      variant: 'outline',
-                      size: 'sm',
-                    })}
+                    to={recovery.to}
+                    className={buttonVariants({ variant: 'ghost', size: 'xs' })}
                   >
                     <WrenchIcon />
-                    {t('modelMaintenance.addHfToken')}
+                    {t(recovery.label)}
                   </Link>
                 )}
                 <Button
-                  size="sm"
+                  size="xs"
                   variant="ghost"
-                  disabled={checkingAccess === model.repo_id}
-                  onClick={() => void checkAccess(model)}
+                  onClick={() =>
+                    setDismissedFailures((current) => new Set([...current, model.repo_id]))
+                  }
                 >
-                  {checkingAccess === model.repo_id ? (
-                    <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
-                  ) : access?.ready ? (
-                    <CheckIcon />
-                  ) : (
-                    <RefreshCwIcon />
-                  )}
-                  {t('modelMaintenance.checkAccess')}
+                  <XIcon />
+                  {t('common.dismiss')}
                 </Button>
-                {gatedFailure && (
-                  <Button
-                    size="sm"
-                    variant="default"
-                    disabled={Boolean(pending) || retryAfter > 0}
-                    onClick={() => void action(model.repo_id)}
-                  >
-                    <RefreshCwIcon />
-                    {retryAfter > 0
-                      ? t('modelMaintenance.retryAfter', {
-                          seconds: retryAfter,
-                        })
-                      : t('common.retry')}
-                  </Button>
-                )}
               </div>
-              {gatedFailure && job?.error && (
-                <details className="mt-2 text-muted-foreground">
-                  <summary className="cursor-pointer">{t('common.details')}</summary>
-                  <p className="mt-1 break-words">{job.error}</p>
-                </details>
-              )}
-            </div>
-          </details>
-        )}
-        {failedJob && !gatedFailure && (
-          <details className="basis-full rounded-lg border border-destructive/15 bg-destructive/5 px-3 py-2 text-xs @2xl:max-w-xl">
-            <summary className="cursor-pointer font-medium text-destructive">
-              {t('modelMaintenance.failed')}
-            </summary>
-            <p role="alert" className="mt-2 break-words text-muted-foreground">
-              {job?.docs_topic === 'HF_MIRROR_GATED'
-                ? t('modelMaintenance.mirrorGatedAccess')
-                : job?.error || t('modelMaintenance.failed')}
-            </p>
-            <div className="mt-2 flex flex-wrap gap-1">
-              <Button
-                size="xs"
-                variant="outline"
-                disabled={Boolean(pending) || retryAfter > 0}
-                onClick={() => void action(model.repo_id)}
-              >
-                <RefreshCwIcon />
-                {retryAfter > 0
-                  ? t('modelMaintenance.retryAfter', { seconds: retryAfter })
-                  : t('common.retry')}
-              </Button>
-              {recovery && (
-                <Link to={recovery.to} className={buttonVariants({ variant: 'ghost', size: 'xs' })}>
-                  <WrenchIcon />
-                  {t(recovery.label)}
-                </Link>
-              )}
-              <Button
-                size="xs"
-                variant="ghost"
-                onClick={() =>
-                  setDismissedFailures((current) => new Set([...current, model.repo_id]))
-                }
-              >
-                <XIcon />
-                {t('common.dismiss')}
-              </Button>
-            </div>
-          </details>
-        )}
+            </details>
+          )}
+        </Reveal>
         <span className="text-xs tabular-nums text-muted-foreground">
           {model.incomplete && model.size_on_disk_bytes
             ? fmtBytes(model.size_on_disk_bytes)
@@ -1306,18 +1318,22 @@ export function ModelLibrary({
                 </div>
               </details>
             )}
-            {primary?.length === 0 && optional.length === 0 && incompatible.length === 0 && (
-              <p role="status" className="col-span-full p-4 text-sm text-muted-foreground">
-                {t('preferences.no_matches')}
-              </p>
-            )}
+            <Reveal>
+              {primary?.length === 0 && optional.length === 0 && incompatible.length === 0 && (
+                <p role="status" className="col-span-full p-4 text-sm text-muted-foreground">
+                  {t('preferences.no_matches')}
+                </p>
+              )}
+            </Reveal>
           </>
         )}
-        {failed && (
-          <p role="alert" className="col-span-full p-4 text-sm text-destructive">
-            {t('modelMaintenance.failed')}
-          </p>
-        )}
+        <Reveal>
+          {failed && (
+            <p role="alert" className="col-span-full p-4 text-sm text-destructive">
+              {t('modelMaintenance.failed')}
+            </p>
+          )}
+        </Reveal>
       </SettingsSection>
       <ConfirmDialog
         open={confirmation !== null}

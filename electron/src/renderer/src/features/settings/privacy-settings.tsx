@@ -1,4 +1,5 @@
 import { ShieldCheckIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -89,14 +90,16 @@ function PrivacyToggle({ kind }: { kind: 'watermark' | 'analytics' }) {
           }
         />
       </SettingsRow>
-      {(query.isError || action.error) && (
-        <p role="alert" className="px-4 pb-3 text-sm text-destructive">
-          {t('common.error')}{' '}
-          <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-            {t('common.retry')}
-          </Button>
-        </p>
-      )}
+      <Reveal>
+        {(query.isError || action.error) && (
+          <p role="alert" className="px-4 pb-3 text-sm text-destructive">
+            {t('common.error')}{' '}
+            <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+              {t('common.retry')}
+            </Button>
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }
@@ -191,19 +194,23 @@ export function HistoryRetention() {
           </div>
         </div>
       )}
-      {(query.isError || action.error) && (
-        <p role="alert" className="p-4 text-sm text-destructive">
-          {t('common.error')}{' '}
-          <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-            {t('common.retry')}
-          </Button>
-        </p>
-      )}
-      {action.saved && (
-        <p role="status" className="p-4 text-sm text-muted-foreground">
-          {t('settings.history_retention_saved')}
-        </p>
-      )}
+      <Reveal>
+        {(query.isError || action.error) && (
+          <p role="alert" className="p-4 text-sm text-destructive">
+            {t('common.error')}{' '}
+            <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+              {t('common.retry')}
+            </Button>
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {action.saved && (
+          <p role="status" className="p-4 text-sm text-muted-foreground">
+            {t('settings.history_retention_saved')}
+          </p>
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }

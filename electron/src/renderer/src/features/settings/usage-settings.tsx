@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { BarChart3Icon, ShieldCheckIcon } from 'lucide-react';
@@ -128,23 +129,27 @@ export function UsageSettings() {
             <ShieldCheckIcon aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-primary" />
             <span>{t('settings.usage_privacy')}</span>
           </p>
-          {query.isError && (
-            <div className="p-4">
-              <PipelineFailure
-                fallback={describeError(query.error)}
-                action={
-                  <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-                    {t('common.retry')}
-                  </Button>
-                }
-              />
-            </div>
-          )}
-          {query.isPending && (
-            <p role="status" className="px-4 py-5 text-sm text-muted-foreground">
-              {t('common.loading')}
-            </p>
-          )}
+          <Reveal>
+            {query.isError && (
+              <div className="p-4">
+                <PipelineFailure
+                  fallback={describeError(query.error)}
+                  action={
+                    <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+                      {t('common.retry')}
+                    </Button>
+                  }
+                />
+              </div>
+            )}
+          </Reveal>
+          <Reveal>
+            {query.isPending && (
+              <p role="status" className="px-4 py-5 text-sm text-muted-foreground">
+                {t('common.loading')}
+              </p>
+            )}
+          </Reveal>
           {summary?.takes === 0 && (
             <p className="px-4 py-5 text-sm text-muted-foreground">{t('settings.usage_empty')}</p>
           )}
@@ -173,11 +178,13 @@ export function UsageSettings() {
           )}
         </>
       )}
-      {backend.remote && switchError && (
-        <div className="p-4">
-          <PipelineFailure fallback={switchError} onDismiss={() => setSwitchError('')} />
-        </div>
-      )}
+      <Reveal>
+        {backend.remote && switchError && (
+          <div className="p-4">
+            <PipelineFailure fallback={switchError} onDismiss={() => setSwitchError('')} />
+          </div>
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }

@@ -1,4 +1,5 @@
 import { CheckIcon, PencilIcon, PlusIcon, SearchIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -247,11 +248,13 @@ export function VoiceSetup({ onChosen }: { onChosen: () => void }) {
           </div>
         </div>
       )}
-      {profiles.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('preferences.loading')}
-        </p>
-      )}
+      <Reveal>
+        {profiles.isPending && (
+          <p role="status" className="text-sm text-muted-foreground">
+            {t('preferences.loading')}
+          </p>
+        )}
+      </Reveal>
       <div className="space-y-3">
         <h3 className="flex items-center gap-2 text-sm font-medium">
           <PlusIcon className="size-4 text-muted-foreground" aria-hidden="true" />

@@ -1,4 +1,5 @@
 import { DictationDemo } from '@/components/dictation-demo';
+import { Reveal } from '@/components/motion';
 import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +12,7 @@ import {
   nativeShortcutKey,
   useDictationPreferences,
 } from '@/hooks/use-native-dictation';
-import {
-  keyEventToAccelerator,
-  isPureModifierEvent,
-} from '@shared/utils/shortcutAccelerator';
+import { keyEventToAccelerator, isPureModifierEvent } from '@shared/utils/shortcutAccelerator';
 import { SettingsSection, SettingsRow } from './settings-layout';
 
 export function ShortcutSettings() {
@@ -220,29 +218,33 @@ export function ShortcutSettings() {
                 </span>
               )}
             </div>
-            {(shortcut.data?.error || shortcut.isError || error) && (
-              <div
-                role="alert"
-                className="flex items-center justify-between gap-3 px-4 py-3 text-sm text-destructive"
-              >
-                <span>{t('common.error')}</span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={busy}
-                  onClick={() => void save(shortcut.data?.accelerator || 'CmdOrCtrl+Shift+Space')}
+            <Reveal>
+              {(shortcut.data?.error || shortcut.isError || error) && (
+                <div
+                  role="alert"
+                  className="flex items-center justify-between gap-3 px-4 py-3 text-sm text-destructive"
                 >
-                  {t('common.retry')}
-                </Button>
-              </div>
-            )}
+                  <span>{t('common.error')}</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => void save(shortcut.data?.accelerator || 'CmdOrCtrl+Shift+Space')}
+                  >
+                    {t('common.retry')}
+                  </Button>
+                </div>
+              )}
+            </Reveal>
           </>
         )}
-        {!api && error && (
-          <p role="alert" className="p-4 text-sm text-destructive">
-            {t('common.error')}
-          </p>
-        )}
+        <Reveal>
+          {!api && error && (
+            <p role="alert" className="p-4 text-sm text-destructive">
+              {t('common.error')}
+            </p>
+          )}
+        </Reveal>
       </SettingsSection>
     </>
   );

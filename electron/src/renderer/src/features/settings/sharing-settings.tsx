@@ -1,4 +1,5 @@
 import QRCode from 'qrcode';
+import { Reveal } from '@/components/motion';
 import {
   CheckIcon,
   CopyIcon,
@@ -328,11 +329,13 @@ export function SharingSettings() {
             )}
           </div>
         )}
-        {(network.isError || networkError) && (
-          <p role="alert" className="px-4 py-3 text-sm text-destructive">
-            {networkError || t('common.error')}
-          </p>
-        )}
+        <Reveal>
+          {(network.isError || networkError) && (
+            <p role="alert" className="px-4 py-3 text-sm text-destructive">
+              {networkError || t('common.error')}
+            </p>
+          )}
+        </Reveal>
       </SettingsSection>
 
       {ports.data && (
@@ -367,11 +370,13 @@ export function SharingSettings() {
               {portBusy ? t('common.saving') : t('common.save')}
             </Button>
           </SettingsRow>
-          {portError && (
-            <p role="alert" className="px-4 py-3 text-sm text-destructive">
-              {portError}
-            </p>
-          )}
+          <Reveal>
+            {portError && (
+              <p role="alert" className="px-4 py-3 text-sm text-destructive">
+                {portError}
+              </p>
+            )}
+          </Reveal>
         </SettingsSection>
       )}
 
@@ -445,11 +450,13 @@ export function SharingSettings() {
             )}
           </div>
         )}
-        {(tailscale.isError || tailscaleError) && (
-          <p role="alert" className="px-4 py-3 text-sm text-destructive">
-            {tailscaleError || t('common.error')}
-          </p>
-        )}
+        <Reveal>
+          {(tailscale.isError || tailscaleError) && (
+            <p role="alert" className="px-4 py-3 text-sm text-destructive">
+              {tailscaleError || t('common.error')}
+            </p>
+          )}
+        </Reveal>
       </SettingsSection>
       <McpBindingsSettings />
     </>

@@ -1,4 +1,5 @@
 import { readTextFile } from '@shared/utils/readTextFile';
+import { Reveal } from '@/components/motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangleIcon, ClipboardPasteIcon, FileTextIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -147,18 +148,22 @@ export function PasteTranslation({ segments, disabled, onApply, onClose }: Paste
             </span>
           )}
         </div>
-        {(parseFailed || (plan && plan.matchedCount === 0)) && (
-          <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
-            <AlertTriangleIcon className="size-3.5" />
-            {t('dub.paste_translation_none_matched')}
-          </p>
-        )}
-        {readFailed && (
-          <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
-            <AlertTriangleIcon className="size-3.5" />
-            {t('scriptEdit.import_failed')}
-          </p>
-        )}
+        <Reveal>
+          {(parseFailed || (plan && plan.matchedCount === 0)) && (
+            <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
+              <AlertTriangleIcon className="size-3.5" />
+              {t('dub.paste_translation_none_matched')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {readFailed && (
+            <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
+              <AlertTriangleIcon className="size-3.5" />
+              {t('scriptEdit.import_failed')}
+            </p>
+          )}
+        </Reveal>
         {plan && plan.unusedCount > 0 && (
           <p className="text-xs text-warning">
             {t('dub.paste_translation_unused', { count: plan.unusedCount })}
@@ -180,13 +185,15 @@ export function PasteTranslation({ segments, disabled, onApply, onClose }: Paste
                 </span>
               </div>
             ))}
-            {plan.rows.length > PREVIEW_LIMIT && (
-              <p className="px-3 py-2 text-center text-xs text-muted-foreground">
-                {t('dub.paste_translation_more_rows', {
-                  count: plan.rows.length - PREVIEW_LIMIT,
-                })}
-              </p>
-            )}
+            <Reveal>
+              {plan.rows.length > PREVIEW_LIMIT && (
+                <p className="px-3 py-2 text-center text-xs text-muted-foreground">
+                  {t('dub.paste_translation_more_rows', {
+                    count: plan.rows.length - PREVIEW_LIMIT,
+                  })}
+                </p>
+              )}
+            </Reveal>
           </div>
         )}
         <div className="flex justify-end gap-2">

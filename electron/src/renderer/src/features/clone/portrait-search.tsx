@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { SearchIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -49,40 +50,44 @@ export function PortraitSearch({
         <SearchIcon />
         {busy ? t('preferences.loading') : t('profileIdentity.search')}
       </Button>
-      {error && (
-        <p role="alert" className="text-xs text-muted-foreground">
-          {error}
-        </p>
-      )}
-      {result?.name === name && (
-        <div className="grid grid-cols-5 gap-2">
-          {result.images.length === 0 ? (
-            <p role="status" className="col-span-5 text-xs text-muted-foreground">
-              {t('profileIdentity.search_empty')}
-            </p>
-          ) : (
-            result.images.map((image, index) => (
-              <button
-                key={index}
-                type="button"
-                aria-label={image.title || name}
-                className="aspect-square overflow-hidden rounded-lg outline-none ring-offset-background hover:ring-2 hover:ring-primary focus-visible:ring-[3px] focus-visible:ring-ring/50"
-                onClick={() => {
-                  const bytes = Uint8Array.from(atob(image.data), (char) => char.charCodeAt(0));
-                  onSelect(new File([bytes], 'portrait.jpg', { type: 'image/jpeg' }));
-                  setResult(undefined);
-                }}
-              >
-                <img
-                  src={`data:image/jpeg;base64,${image.data}`}
-                  alt={image.title}
-                  className="size-full object-cover"
-                />
-              </button>
-            ))
-          )}
-        </div>
-      )}
+      <Reveal>
+        {error && (
+          <p role="alert" className="text-xs text-muted-foreground">
+            {error}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {result?.name === name && (
+          <div className="grid grid-cols-5 gap-2">
+            {result.images.length === 0 ? (
+              <p role="status" className="col-span-5 text-xs text-muted-foreground">
+                {t('profileIdentity.search_empty')}
+              </p>
+            ) : (
+              result.images.map((image, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  aria-label={image.title || name}
+                  className="aspect-square overflow-hidden rounded-lg outline-none ring-offset-background hover:ring-2 hover:ring-primary focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  onClick={() => {
+                    const bytes = Uint8Array.from(atob(image.data), (char) => char.charCodeAt(0));
+                    onSelect(new File([bytes], 'portrait.jpg', { type: 'image/jpeg' }));
+                    setResult(undefined);
+                  }}
+                >
+                  <img
+                    src={`data:image/jpeg;base64,${image.data}`}
+                    alt={image.title}
+                    className="size-full object-cover"
+                  />
+                </button>
+              ))
+            )}
+          </div>
+        )}
+      </Reveal>
     </div>
   );
 }

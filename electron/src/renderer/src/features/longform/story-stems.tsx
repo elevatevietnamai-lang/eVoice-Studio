@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { DownloadIcon, LayersIcon } from 'lucide-react';
@@ -141,7 +142,9 @@ export function StoryStems({
           </>
         )}
       </div>
-      {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+      <Reveal>
+        {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+      </Reveal>
       {stems.length > 0 && (
         <ul className="space-y-1">
           {stems.map((stem) => (

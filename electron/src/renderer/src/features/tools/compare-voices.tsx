@@ -1,4 +1,5 @@
 import { useComparison, setComparison } from './comparison-state';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -197,17 +198,21 @@ export function CompareVoices() {
         )}
       </Button>
       {ttsBlocker === 'engine' && <EngineNotice operation="compare" compact />}
-      {ttsBlocker === 'loading' && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('preferences.loading')}
-        </p>
-      )}
-      {error && (
-        <PipelineFailure
-          fallback={error || t('profileIdentity.generation_failed')}
-          onDismiss={() => setError('')}
-        />
-      )}
+      <Reveal>
+        {ttsBlocker === 'loading' && (
+          <p role="status" className="text-sm text-muted-foreground">
+            {t('preferences.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {error && (
+          <PipelineFailure
+            fallback={error || t('profileIdentity.generation_failed')}
+            onDismiss={() => setError('')}
+          />
+        )}
+      </Reveal>
     </div>
   );
 }

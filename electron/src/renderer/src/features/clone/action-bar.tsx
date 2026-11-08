@@ -1,4 +1,5 @@
 import { PipelineFailure } from '@/components/pipeline-failure';
+import { Reveal } from '@/components/motion';
 import { InstallSttButton } from './install-stt-button';
 import { openTake } from '@/lib/store/takes';
 import { setWorkspace } from '@/lib/store/workspace';
@@ -405,14 +406,16 @@ export function ActionBar() {
           )}
         </div>
       )}
-      {error && (
-        <PipelineFailure
-          className="mb-3"
-          fallback={error}
-          action={errorTopic === 'REFERENCE_STT_MISSING' ? <InstallSttButton /> : undefined}
-          onDismiss={clearError}
-        />
-      )}
+      <Reveal>
+        {error && (
+          <PipelineFailure
+            className="mb-3"
+            fallback={error}
+            action={errorTopic === 'REFERENCE_STT_MISSING' ? <InstallSttButton /> : undefined}
+            onDismiss={clearError}
+          />
+        )}
+      </Reveal>
       <div className="flex flex-wrap items-center gap-3">
         <div className={cn(segmentedFrameClass, 'flex items-center')}>
           <EngineLanguagePicker />

@@ -1,4 +1,5 @@
 import { AlertCircleIcon, AudioLinesIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { getBridge } from '@/components/bridge';
 import { useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -133,16 +134,20 @@ export function MediaTools() {
           {t('backend.retry')}
         </Button>
       )}
-      {query.isPending && (
-        <p role="status" className="p-4">
-          {t('common.loading')}
-        </p>
-      )}
-      {(error || acquire?.state === 'error' || update?.state === 'error') && (
-        <p role="alert" className="p-4 text-sm text-destructive">
-          {t('common.error')}
-        </p>
-      )}
+      <Reveal>
+        {query.isPending && (
+          <p role="status" className="p-4">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {(error || acquire?.state === 'error' || update?.state === 'error') && (
+          <p role="alert" className="p-4 text-sm text-destructive">
+            {t('common.error')}
+          </p>
+        )}
+      </Reveal>
       {(['ffmpeg', 'ffprobe'] as const).map((tool) => {
         const info = query.data?.tools[tool];
         return (
@@ -196,11 +201,13 @@ export function MediaTools() {
             ? t('common.loading') + ' ' + Math.round((acquire.progress || 0) * 100) + '%'
             : t('settings.audio_tools_update_bundle')}
         </Button>
-        {acquire?.state === 'done' && (
-          <p role="status" className="mt-2 text-xs">
-            {t('modelSettings.available')}
-          </p>
-        )}
+        <Reveal>
+          {acquire?.state === 'done' && (
+            <p role="status" className="mt-2 text-xs">
+              {t('modelSettings.available')}
+            </p>
+          )}
+        </Reveal>
       </div>
       <SettingsRow id="media-ytdlp" title="yt-dlp" description={ytdlp?.version || '—'}>
         <Button
@@ -222,11 +229,13 @@ export function MediaTools() {
           </Button>
         )}
       </SettingsRow>
-      {update?.state === 'running' && (
-        <p role="status" className="p-4 text-sm">
-          {t('common.loading')}
-        </p>
-      )}
+      <Reveal>
+        {update?.state === 'running' && (
+          <p role="status" className="p-4 text-sm">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
       {(update?.state === 'done' ||
         (ytdlp?.overlay_version && ytdlp.overlay_version !== ytdlp.version)) && (
         <p role="status" className="p-4 text-sm">

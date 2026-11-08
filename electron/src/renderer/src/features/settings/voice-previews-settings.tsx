@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { AudioLinesIcon, RefreshCwIcon } from 'lucide-react';
@@ -100,21 +101,23 @@ export function VoicePreviewsSettings() {
           onCheckedChange={(value) => void send('/archetypes/previews', 'PUT', { enabled: value })}
         />
       </SettingsRow>
-      {failure && (
-        <div className="p-4">
-          <PipelineFailure
-            fallback={t('models.voice_previews_rejected', { message: failure })}
-            onDismiss={actionError ? () => setActionError('') : undefined}
-            action={
-              query.isError ? (
-                <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-                  {t('common.retry')}
-                </Button>
-              ) : undefined
-            }
-          />
-        </div>
-      )}
+      <Reveal>
+        {failure && (
+          <div className="p-4">
+            <PipelineFailure
+              fallback={t('models.voice_previews_rejected', { message: failure })}
+              onDismiss={actionError ? () => setActionError('') : undefined}
+              action={
+                query.isError ? (
+                  <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+                    {t('common.retry')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          </div>
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }

@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion';
 import {
   AlertTriangleIcon,
   ArrowRightIcon,
@@ -65,12 +66,14 @@ export function CheckpointBanner({
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">{t(config.title)}</p>
         <p className="mt-0.5 text-xs leading-5 text-muted-foreground">{t(config.hint)}</p>
-        {stage === 'done' && timingWarnings > 0 && (
-          <p className="mt-1 flex items-center gap-1.5 text-xs text-warning">
-            <AlertTriangleIcon className="size-3.5" />
-            {t('checkpoint.timing_review', { count: timingWarnings })}
-          </p>
-        )}
+        <Reveal>
+          {stage === 'done' && timingWarnings > 0 && (
+            <p className="mt-1 flex items-center gap-1.5 text-xs text-warning">
+              <AlertTriangleIcon className="size-3.5" />
+              {t('checkpoint.timing_review', { count: timingWarnings })}
+            </p>
+          )}
+        </Reveal>
       </div>
       {config.cta && onContinue && (
         <Button size="sm" variant="secondary" disabled={disabled} onClick={onContinue}>

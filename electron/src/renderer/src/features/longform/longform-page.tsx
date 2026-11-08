@@ -1,4 +1,5 @@
 import { readTextFile } from '@shared/utils/readTextFile';
+import { Reveal } from '@/components/motion';
 import { ProfileAvatar } from '@/components/profile-avatar';
 import {
   BookOpenTextIcon,
@@ -478,84 +479,94 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 runtime: formatRuntimeClock(stats.runtimeSec),
               })}
             </p>
-            {!warningsDismissed && warnings.length > 0 && !session.active && (
-              <ValidationWarnings
-                warnings={warnings}
-                onDismiss={() => setWarningsDismissed(true)}
-              />
-            )}
-            {session.error && (
-              <PipelineFailure
-                failure={session.failure}
-                fallback={session.error}
-                onDismiss={dismissLongformError}
-              />
-            )}
-            {localError && (
-              <PipelineFailure fallback={localError} onDismiss={() => setLocalError(null)} />
-            )}
+            <Reveal>
+              {!warningsDismissed && warnings.length > 0 && !session.active && (
+                <ValidationWarnings
+                  warnings={warnings}
+                  onDismiss={() => setWarningsDismissed(true)}
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {session.error && (
+                <PipelineFailure
+                  failure={session.failure}
+                  fallback={session.error}
+                  onDismiss={dismissLongformError}
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {localError && (
+                <PipelineFailure fallback={localError} onDismiss={() => setLocalError(null)} />
+              )}
+            </Reveal>
             <EngineNotice operation={ttsOperation} />
-            {session.storageError && (
-              <div role="alert" className="text-sm text-destructive">
-                {t('common.error')}
-                <Link to="/settings/logs" className="ml-3 underline">
-                  {t('settings.logs')}
-                </Link>
-              </div>
-            )}
-            {draft.output && (
-              <section className="shrink-0 space-y-3 border-t border-border/50 pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-sm font-medium">{t('audiobook.ready')}</h2>
-                    {mode === 'audiobook' && draft.outputCachedChapters > 0 && (
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {t('audiobook.cached_note', {
-                          count: draft.outputCachedChapters,
-                        })}
-                      </p>
-                    )}
-                    {draft.outputFailedChapters > 0 && (
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {t('audiobook.failed_note', {
-                          count: draft.outputFailedChapters,
-                        })}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {cueSheet && (
-                      <Button variant="ghost" size="sm" onClick={() => void downloadCueSheet()}>
-                        <ListIcon />
-                        {t('audiobook.download_cues')}
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={exporting}
-                      onClick={() => void download()}
-                    >
-                      <DownloadIcon />
-                      {t('audiobook.download')}
-                    </Button>
-                  </div>
+            <Reveal>
+              {session.storageError && (
+                <div role="alert" className="text-sm text-destructive">
+                  {t('common.error')}
+                  <Link to="/settings/logs" className="ml-3 underline">
+                    {t('settings.logs')}
+                  </Link>
                 </div>
-                {mode === 'audiobook' ? (
-                  <SyncedAudiobookPlayer
-                    src={apiPath('/audio/' + encodeURIComponent(draft.output))}
-                    script={draft.outputScript}
-                    chapters={draft.outputChapters}
-                  />
-                ) : (
-                  <WaveformPlayer
-                    showWaveform={false}
-                    src={apiPath('/audio/' + encodeURIComponent(draft.output))}
-                    source={'longform-' + mode}
-                  />
-                )}
-              </section>
-            )}
+              )}
+            </Reveal>
+            <Reveal>
+              {draft.output && (
+                <section className="shrink-0 space-y-3 border-t border-border/50 pt-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-sm font-medium">{t('audiobook.ready')}</h2>
+                      {mode === 'audiobook' && draft.outputCachedChapters > 0 && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {t('audiobook.cached_note', {
+                            count: draft.outputCachedChapters,
+                          })}
+                        </p>
+                      )}
+                      {draft.outputFailedChapters > 0 && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {t('audiobook.failed_note', {
+                            count: draft.outputFailedChapters,
+                          })}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {cueSheet && (
+                        <Button variant="ghost" size="sm" onClick={() => void downloadCueSheet()}>
+                          <ListIcon />
+                          {t('audiobook.download_cues')}
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={exporting}
+                        onClick={() => void download()}
+                      >
+                        <DownloadIcon />
+                        {t('audiobook.download')}
+                      </Button>
+                    </div>
+                  </div>
+                  {mode === 'audiobook' ? (
+                    <SyncedAudiobookPlayer
+                      src={apiPath('/audio/' + encodeURIComponent(draft.output))}
+                      script={draft.outputScript}
+                      chapters={draft.outputChapters}
+                    />
+                  ) : (
+                    <WaveformPlayer
+                      showWaveform={false}
+                      src={apiPath('/audio/' + encodeURIComponent(draft.output))}
+                      source={'longform-' + mode}
+                    />
+                  )}
+                </section>
+              )}
+            </Reveal>
           </div>
         </section>
       </div>

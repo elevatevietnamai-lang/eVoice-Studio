@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -220,29 +221,37 @@ export function SystemNotifications({
         align={titlebar ? 'end' : 'start'}
         className="max-h-[min(28rem,calc(100vh-2rem))] w-[min(22rem,calc(100vw-2rem))] space-y-1 overflow-y-auto p-1.5"
       >
-        {!enabled && visible.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-            {t('modelSettings.unavailable')}
-          </p>
-        )}
-        {enabled && query.isPending && visible.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-            {t('preferences.loading')}
-          </p>
-        )}
-        {enabled && !query.isPending && !query.isError && visible.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-            {t('logs.all_clear')}
-          </p>
-        )}
-        {query.isError && (
-          <div className="flex items-center justify-between gap-2 px-2 py-1.5 text-xs text-destructive">
-            <span>{t('common.error')}</span>
-            <Button size="xs" variant="ghost" onClick={() => void query.refetch()}>
-              {t('common.retry')}
-            </Button>
-          </div>
-        )}
+        <Reveal>
+          {!enabled && visible.length === 0 && (
+            <p className="px-3 py-4 text-center text-xs text-muted-foreground">
+              {t('modelSettings.unavailable')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {enabled && query.isPending && visible.length === 0 && (
+            <p className="px-3 py-4 text-center text-xs text-muted-foreground">
+              {t('preferences.loading')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {enabled && !query.isPending && !query.isError && visible.length === 0 && (
+            <p className="px-3 py-4 text-center text-xs text-muted-foreground">
+              {t('logs.all_clear')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {query.isError && (
+            <div className="flex items-center justify-between gap-2 px-2 py-1.5 text-xs text-destructive">
+              <span>{t('common.error')}</span>
+              <Button size="xs" variant="ghost" onClick={() => void query.refetch()}>
+                {t('common.retry')}
+              </Button>
+            </div>
+          )}
+        </Reveal>
         {visible.map((note) => {
           const actionable = Boolean(note.action);
           const actionLabel =

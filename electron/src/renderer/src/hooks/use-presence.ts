@@ -17,13 +17,7 @@ export function usePresence(open: boolean, exitMs = POPUP_EXIT_MS) {
       setLingering(true);
       return;
     }
-    const reduce =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) {
-      setLingering(false);
-      return;
-    }
+    // Reduced motion keeps the fade (presencePopupClass drops only the zoom), so the exit still runs.
     const id = window.setTimeout(() => setLingering(false), exitMs);
     return () => window.clearTimeout(id);
   }, [open, exitMs]);

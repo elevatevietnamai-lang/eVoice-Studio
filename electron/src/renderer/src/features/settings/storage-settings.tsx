@@ -1,4 +1,5 @@
 import { HardDriveIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -15,10 +16,7 @@ import { ModelsDirectorySettings } from './models-directory-settings';
 import { ResetSettings } from './reset-settings';
 import { DataDirectorySettings } from './data-directory-settings';
 import { UninstallSettings } from './uninstall-settings';
-import {
-  warningText,
-  type StorageWarning,
-} from '@shared/utils/storageWarnings';
+import { warningText, type StorageWarning } from '@shared/utils/storageWarnings';
 interface Item {
   id: string;
   path?: string;
@@ -97,19 +95,23 @@ export function StorageSettings() {
             {t('settings.storage_refresh')}
           </Button>
         </div>
-        {query.isPending && (
-          <p role="status" className="p-4 text-sm">
-            {t('common.loading')}
-          </p>
-        )}
-        {(query.isError || action.error) && (
-          <p role="alert" className="p-4 text-sm text-destructive">
-            {t('common.error')}{' '}
-            <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-              {t('common.retry')}
-            </Button>
-          </p>
-        )}
+        <Reveal>
+          {query.isPending && (
+            <p role="status" className="p-4 text-sm">
+              {t('common.loading')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {(query.isError || action.error) && (
+            <p role="alert" className="p-4 text-sm text-destructive">
+              {t('common.error')}{' '}
+              <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+                {t('common.retry')}
+              </Button>
+            </p>
+          )}
+        </Reveal>
         {query.data?.warnings.map((warning, index) => (
           <p key={index} role="alert" className="p-4 text-sm text-destructive">
             {warningText(t, warning)}
@@ -254,11 +256,13 @@ export function StorageSettings() {
             </div>
           </div>
         )}
-        {freed != null && (
-          <p role="status" className="p-4 text-sm text-muted-foreground">
-            {t('settings.storage_temp_cleared', { freed: fmtBytes(freed) })}
-          </p>
-        )}
+        <Reveal>
+          {freed != null && (
+            <p role="status" className="p-4 text-sm text-muted-foreground">
+              {t('settings.storage_temp_cleared', { freed: fmtBytes(freed) })}
+            </p>
+          )}
+        </Reveal>
       </SettingsSection>
       <SettingsSection icon={HardDriveIcon} title={t('updates.backup_line')}>
         <div className="space-y-2 p-4 text-sm text-muted-foreground">

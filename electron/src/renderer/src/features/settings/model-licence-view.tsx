@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { Check as CheckShape, Copy as CopyShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { useTranslation } from 'react-i18next';
@@ -361,7 +362,9 @@ export function LicenceVariants({ info }: { info?: ModelLicenseInfo }) {
                 <span className="break-all">{variant.label}</span>
               </p>
               <p>{t(modelLicenseCategoryKey(variant.license_category))}</p>
-              {variant.observations?.output_terms && <p>{variant.observations.output_terms}</p>}
+              <Reveal>
+                {variant.observations?.output_terms && <p>{variant.observations.output_terms}</p>}
+              </Reveal>
               {variant.observations?.license_status && <p>{variant.observations.license_status}</p>}
               {evidence && (
                 <ExternalLink href={evidence}>{t('modelLicense.readLicence')}</ExternalLink>

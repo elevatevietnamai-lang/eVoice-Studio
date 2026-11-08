@@ -688,6 +688,26 @@ html[data-theme-id='heritage'] {
   --glass-light-color: #ad82d9;
 }
 
+/* Messages that appear (status, alert, inline notices) settle in instead of popping: a fade and a
+   4 px rise over 240 ms when the element is inserted. Their exit is `Reveal` (motion/index.tsx).
+   Zero specificity, so an element's own transition utilities still win. */
+:where([role='alert'], [role='status'], [data-slot='alert'], [data-reveal]) {
+  transition:
+    opacity var(--motion-base) var(--ease-standard),
+    translate var(--motion-base) var(--ease-standard);
+  @starting-style {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where([role='alert'], [role='status'], [data-slot='alert'], [data-reveal]) {
+    @starting-style {
+      translate: none;
+    }
+  }
+}
+
 /* A page switch: the panel column settles in with the content (RouteFade, motion/index.tsx). */
 @keyframes route-settle {
   from {

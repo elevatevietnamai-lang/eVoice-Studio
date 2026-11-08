@@ -1,4 +1,5 @@
 import { BookOpenIcon, CpuIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { ShortcutSettings } from './shortcut-settings';
 import { RefinementSettings } from './refinement-settings';
 import { LlmSkills } from './llm-skills';
@@ -196,33 +197,39 @@ export function DiarisationSettings() {
           </SettingsRow>
         ))
       )}
-      {runtime.isError && (
-        <SettingsActionError
-          className="m-4"
-          title={t('modelMaintenance.failed')}
-          detail={describeError(runtime.error)}
-          action={
-            <Button size="xs" variant="ghost" onClick={() => void runtime.refetch()}>
-              {t('backend.retry')}
-            </Button>
-          }
-        />
-      )}
-      {failed && (
-        <SettingsActionError
-          className="m-4"
-          title={t('modelSettings.failed')}
-          detail={failed}
-          onDismiss={() => setFailed(null)}
-        />
-      )}
-      {runtime.data?.job.state === 'error' && runtime.data.job.error && (
-        <SettingsActionError
-          className="m-4"
-          title={t('modelMaintenance.failed')}
-          detail={runtime.data.job.error}
-        />
-      )}
+      <Reveal>
+        {runtime.isError && (
+          <SettingsActionError
+            className="m-4"
+            title={t('modelMaintenance.failed')}
+            detail={describeError(runtime.error)}
+            action={
+              <Button size="xs" variant="ghost" onClick={() => void runtime.refetch()}>
+                {t('backend.retry')}
+              </Button>
+            }
+          />
+        )}
+      </Reveal>
+      <Reveal>
+        {failed && (
+          <SettingsActionError
+            className="m-4"
+            title={t('modelSettings.failed')}
+            detail={failed}
+            onDismiss={() => setFailed(null)}
+          />
+        )}
+      </Reveal>
+      <Reveal>
+        {runtime.data?.job.state === 'error' && runtime.data.job.error && (
+          <SettingsActionError
+            className="m-4"
+            title={t('modelMaintenance.failed')}
+            detail={runtime.data.job.error}
+          />
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }
@@ -601,13 +608,15 @@ export function ModelSettings({
           <AecSettings />
         </>
       )}
-      {failed && (
-        <SettingsActionError
-          title={t('modelSettings.failed')}
-          detail={failed}
-          onDismiss={() => setFailed(null)}
-        />
-      )}
+      <Reveal>
+        {failed && (
+          <SettingsActionError
+            title={t('modelSettings.failed')}
+            detail={failed}
+            onDismiss={() => setFailed(null)}
+          />
+        )}
+      </Reveal>
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { Pause as PauseShape, Play as PlayShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { useTranslation } from 'react-i18next';
@@ -195,9 +196,11 @@ export function WatchFolder({
           {t(starting ? 'common.loading' : 'batch.watch_folder')}
         </Button>
       )}
-      {error && (
-        <PipelineFailure fallback={error} onDismiss={() => setError('')} className="text-xs" />
-      )}
+      <Reveal>
+        {error && (
+          <PipelineFailure fallback={error} onDismiss={() => setError('')} className="text-xs" />
+        )}
+      </Reveal>
     </div>
   );
 }

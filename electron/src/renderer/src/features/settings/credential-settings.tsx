@@ -1,4 +1,5 @@
 import { KeyRoundIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -77,11 +78,13 @@ export function HuggingFaceToken() {
           {t('settings.hf_token_test_now')}
         </Button>
       </div>
-      {query.isPending && (
-        <p role="status" className="p-4 text-sm">
-          {t('common.loading')}
-        </p>
-      )}
+      <Reveal>
+        {query.isPending && (
+          <p role="status" className="p-4 text-sm">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
       {query.data?.sources.map((source) => (
         <SettingsRow
           key={source.source}
@@ -143,44 +146,50 @@ export function HuggingFaceToken() {
           </Button>
         )}
       </form>
-      {clearOpen && (
-        <div className="space-y-3 p-4">
-          <p className="text-sm">{t('settings.hf_token_clear_confirm')}</p>
-          <label className="flex items-center gap-2 text-sm">
-            <Switch checked={clearCli} disabled={busy} onCheckedChange={setClearCli} />
-            {t('settings.hf_token_also_clear')}
-          </label>
-          <div className="flex gap-2">
-            <Button size="sm" variant="destructive" disabled={busy} onClick={() => void clear()}>
-              {t('settings.hf_token_clear_btn')}
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={busy}
-              onClick={() => {
-                setClearOpen(false);
-                setClearCli(false);
-              }}
-            >
-              {t('common.cancel')}
-            </Button>
+      <Reveal>
+        {clearOpen && (
+          <div className="space-y-3 p-4">
+            <p className="text-sm">{t('settings.hf_token_clear_confirm')}</p>
+            <label className="flex items-center gap-2 text-sm">
+              <Switch checked={clearCli} disabled={busy} onCheckedChange={setClearCli} />
+              {t('settings.hf_token_also_clear')}
+            </label>
+            <div className="flex gap-2">
+              <Button size="sm" variant="destructive" disabled={busy} onClick={() => void clear()}>
+                {t('settings.hf_token_clear_btn')}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={busy}
+                onClick={() => {
+                  setClearOpen(false);
+                  setClearCli(false);
+                }}
+              >
+                {t('common.cancel')}
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-      {(action.error || query.isError) && (
-        <p role="alert" className="p-4 text-sm text-destructive">
-          {t('common.error')}{' '}
-          <Button variant="ghost" size="sm" onClick={() => void query.refetch()}>
-            {t('common.retry')}
-          </Button>
-        </p>
-      )}
-      {action.saved && (
-        <p role="status" className="p-4 text-sm text-muted-foreground">
-          {t('credentials.saved')}
-        </p>
-      )}
+        )}
+      </Reveal>
+      <Reveal>
+        {(action.error || query.isError) && (
+          <p role="alert" className="p-4 text-sm text-destructive">
+            {t('common.error')}{' '}
+            <Button variant="ghost" size="sm" onClick={() => void query.refetch()}>
+              {t('common.retry')}
+            </Button>
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {action.saved && (
+          <p role="status" className="p-4 text-sm text-muted-foreground">
+            {t('credentials.saved')}
+          </p>
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }
@@ -239,16 +248,20 @@ function ProviderCredential({ field }: { field: (typeof PROVIDER_FIELDS)[number]
           </Button>
         </form>
       </SettingsRow>
-      {action.error && (
-        <p role="alert" className="px-4 pb-3 text-sm text-destructive">
-          {t('common.error')}
-        </p>
-      )}
-      {action.saved && (
-        <p role="status" className="px-4 pb-3 text-sm text-muted-foreground">
-          {t('credentials.saved')}
-        </p>
-      )}
+      <Reveal>
+        {action.error && (
+          <p role="alert" className="px-4 pb-3 text-sm text-destructive">
+            {t('common.error')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {action.saved && (
+          <p role="status" className="px-4 pb-3 text-sm text-muted-foreground">
+            {t('credentials.saved')}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }

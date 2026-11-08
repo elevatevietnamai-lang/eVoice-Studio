@@ -1,4 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import {
   Maximize as MaximizeShape,
   Minimize as MinimizeShape,
@@ -151,11 +152,13 @@ function VideoControls({
     <div
       className={`absolute inset-x-2 bottom-2 z-10 space-y-2 rounded-(--card-radius) border border-white/10 bg-black/55 px-2.5 py-2 text-white shadow-[0_12px_32px_rgb(0_0_0/38%)] backdrop-blur-xl transition-[opacity,transform] duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 ${paused || waiting ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}
     >
-      {(error || failed) && (
-        <p role="alert" className="text-xs text-destructive">
-          {t('player.unavailable')}
-        </p>
-      )}
+      <Reveal>
+        {(error || failed) && (
+          <p role="alert" className="text-xs text-destructive">
+            {t('player.unavailable')}
+          </p>
+        )}
+      </Reveal>
       <input
         type="range"
         aria-label={t('player.seek')}

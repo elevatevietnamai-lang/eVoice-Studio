@@ -1,4 +1,5 @@
 import { VoicesSidebar } from '@/features/clone/voices-sidebar';
+import { Reveal } from '@/components/motion';
 import { WandSparklesIcon } from 'lucide-react';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
@@ -443,11 +444,13 @@ export function DesignPage() {
               <SaveIcon />
               {t('clone.save_as_profile')}
             </Button>
-            {saveError && (
-              <p role="alert" className="text-xs text-destructive">
-                {t('clone.save_failed', { message: saveError })}
-              </p>
-            )}
+            <Reveal>
+              {saveError && (
+                <p role="alert" className="text-xs text-destructive">
+                  {t('clone.save_failed', { message: saveError })}
+                </p>
+              )}
+            </Reveal>
           </form>
         </SecondarySidebar>
         <section className="flex min-w-0 flex-1 flex-col">
@@ -542,18 +545,22 @@ export function DesignPage() {
                   </Link>
                 </div>
               )}
-            {designBlocker === 'loading' && !generation.isGenerating && (
-              <p className="mb-3 px-1 text-sm text-muted-foreground" role="status">
-                {t('preferences.loading')}
-              </p>
-            )}
-            {generation.error && (
-              <PipelineFailure
-                className="mb-3"
-                fallback={generation.error}
-                onDismiss={generation.clearError}
-              />
-            )}
+            <Reveal>
+              {designBlocker === 'loading' && !generation.isGenerating && (
+                <p className="mb-3 px-1 text-sm text-muted-foreground" role="status">
+                  {t('preferences.loading')}
+                </p>
+              )}
+            </Reveal>
+            <Reveal>
+              {generation.error && (
+                <PipelineFailure
+                  className="mb-3"
+                  fallback={generation.error}
+                  onDismiss={generation.clearError}
+                />
+              )}
+            </Reveal>
             <div className="glass-panel relative grid min-h-16 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-(--card-radius) border border-border/60 bg-muted/30 p-3 max-md:grid-cols-[1fr_auto]">
               <div className="min-w-0 justify-self-start">
                 <div className="flex items-center gap-1">

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -41,26 +42,32 @@ export function RefinementSettings() {
   const note = refineFailureNoteKey(query.data?.last_refine_status);
   return (
     <SettingsSection title={t('settings.llmskills_dictation_refinement_name')}>
-      {query.isPending && (
-        <p className="p-4" role="status">
-          {t('common.loading')}
-        </p>
-      )}
+      <Reveal>
+        {query.isPending && (
+          <p className="p-4" role="status">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
       {query.isError && (
         <Button variant="outline" onClick={() => void query.refetch()}>
           {t('backend.retry')}
         </Button>
       )}
-      {error && (
-        <p role="alert" className="p-4 text-sm text-destructive">
-          {t('common.error')}
-        </p>
-      )}
-      {note && (
-        <p role="status" className="p-4 text-sm text-muted-foreground">
-          {t(note)}
-        </p>
-      )}
+      <Reveal>
+        {error && (
+          <p role="alert" className="p-4 text-sm text-destructive">
+            {t('common.error')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {note && (
+          <p role="status" className="p-4 text-sm text-muted-foreground">
+            {t(note)}
+          </p>
+        )}
+      </Reveal>
       {query.data && !query.data.llm_ready && (
         <p className="p-4 text-sm text-muted-foreground">{t('settings.llmskills_needs_setup')}</p>
       )}

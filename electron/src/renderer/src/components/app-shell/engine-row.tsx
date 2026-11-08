@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { Check as CheckShape, Copy as CopyShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { Link } from '@tanstack/react-router';
@@ -167,56 +168,58 @@ export function EngineRow({
           {content}
         </Link>
       )}
-      {level === 'details' && open && (
-        <div
-          id={id}
-          data-slot="engine-diagnostics"
-          className="mx-1 mt-0.5 mb-1.5 rounded-lg bg-sidebar-accent/25 p-2.5 ring-1 ring-inset ring-sidebar-border/40"
-        >
-          <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1.5 text-[11px]">
-            {title && title !== detail && (
-              <>
-                <dt className="text-muted-foreground">{t('sidebarTools.engineLabel')}</dt>
-                <dd className="truncate text-foreground" title={title}>
-                  {compactEngineName(title)}
-                </dd>
-              </>
-            )}
-            <dt className="text-muted-foreground">{t('sidebarTools.modelLabel')}</dt>
-            <dd className="flex min-w-0 items-center gap-1">
-              <code
-                className="min-w-0 truncate font-mono text-[10.5px] text-foreground/90"
-                title={detail}
-              >
-                {detail}
-              </code>
-              <CopyModelId value={detail} />
-            </dd>
-            {runtime && (
-              <>
-                <dt className="text-muted-foreground">{t('sidebarTools.runsOn')}</dt>
-                <dd className="flex min-w-0 items-center gap-1.5 text-foreground">
-                  <ComputeVendorIcon runtime={runtime} className="size-3 shrink-0" />
-                  <span className="truncate">{formatComputeRuntime(runtime)}</span>
-                </dd>
-              </>
-            )}
-          </dl>
-          {problem && (
-            <p className="mt-2 rounded-sm bg-warning/10 px-2 py-1.5 text-[11px] leading-snug text-foreground/85 [overflow-wrap:anywhere]">
-              {problem}
-            </p>
-          )}
-          <Link
-            to="/settings/models/$family"
-            params={{ family }}
-            className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-sm text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      <Reveal>
+        {level === 'details' && open && (
+          <div
+            id={id}
+            data-slot="engine-diagnostics"
+            className="mx-1 mt-0.5 mb-1.5 rounded-lg bg-sidebar-accent/25 p-2.5 ring-1 ring-inset ring-sidebar-border/40"
           >
-            {t('modelSettings.change')}
-            <ChevronRightIcon className="size-3 rtl:rotate-180" aria-hidden="true" />
-          </Link>
-        </div>
-      )}
+            <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1.5 text-[11px]">
+              {title && title !== detail && (
+                <>
+                  <dt className="text-muted-foreground">{t('sidebarTools.engineLabel')}</dt>
+                  <dd className="truncate text-foreground" title={title}>
+                    {compactEngineName(title)}
+                  </dd>
+                </>
+              )}
+              <dt className="text-muted-foreground">{t('sidebarTools.modelLabel')}</dt>
+              <dd className="flex min-w-0 items-center gap-1">
+                <code
+                  className="min-w-0 truncate font-mono text-[10.5px] text-foreground/90"
+                  title={detail}
+                >
+                  {detail}
+                </code>
+                <CopyModelId value={detail} />
+              </dd>
+              {runtime && (
+                <>
+                  <dt className="text-muted-foreground">{t('sidebarTools.runsOn')}</dt>
+                  <dd className="flex min-w-0 items-center gap-1.5 text-foreground">
+                    <ComputeVendorIcon runtime={runtime} className="size-3 shrink-0" />
+                    <span className="truncate">{formatComputeRuntime(runtime)}</span>
+                  </dd>
+                </>
+              )}
+            </dl>
+            {problem && (
+              <p className="mt-2 rounded-sm bg-warning/10 px-2 py-1.5 text-[11px] leading-snug text-foreground/85 [overflow-wrap:anywhere]">
+                {problem}
+              </p>
+            )}
+            <Link
+              to="/settings/models/$family"
+              params={{ family }}
+              className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-sm text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              {t('modelSettings.change')}
+              <ChevronRightIcon className="size-3 rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          </div>
+        )}
+      </Reveal>
     </div>
   );
 }

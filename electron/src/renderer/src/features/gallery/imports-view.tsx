@@ -1,4 +1,5 @@
 import { TrimAudio } from './trim-audio';
+import { Reveal } from '@/components/motion';
 import { Play as PlayShape, X as XShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { VoiceDestinations } from './voice-destinations';
@@ -197,89 +198,97 @@ export function ImportsView() {
             if (file) void upload(file, true);
           }}
         />
-        {busy && (
-          <p role="status" className="text-sm text-muted-foreground">
-            {t('common.loading')}
-          </p>
-        )}
-        {(error || voices.isError) && (
-          <PipelineFailure
-            fallback={error || describeError(voices.error)}
-            action={
-              voices.isError ? (
-                <Button size="xs" variant="ghost" onClick={() => void voices.refetch()}>
-                  {t('common.retry')}
-                </Button>
-              ) : undefined
-            }
-            onDismiss={error ? () => setError('') : undefined}
-          />
-        )}
-        {message && (
-          <p role="status" className="text-sm">
-            {message}
-          </p>
-        )}
-        {results.length > 0 && (
-          <div className="space-y-2">
-            <h2 className="text-sm font-medium">
-              {t('gallery.search_results', { count: results.length })}
-            </h2>
-            {results.map((result) => (
-              <article
-                key={result.video_id}
-                className="space-y-3 rounded-lg border border-border/50 p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="min-w-0 flex-1 text-sm">{result.title}</span>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    aria-pressed={previewing === result.video_id}
-                    onClick={() =>
-                      setPreviewing((current) =>
-                        current === result.video_id ? null : result.video_id,
-                      )
-                    }
-                  >
-                    {<MorphIcon icon={previewing === result.video_id ? XShape : PlayShape} />}
-                    {t(previewing === result.video_id ? 'common.close' : 'gallery.preview')}
+        <Reveal>
+          {busy && (
+            <p role="status" className="text-sm text-muted-foreground">
+              {t('common.loading')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {(error || voices.isError) && (
+            <PipelineFailure
+              fallback={error || describeError(voices.error)}
+              action={
+                voices.isError ? (
+                  <Button size="xs" variant="ghost" onClick={() => void voices.refetch()}>
+                    {t('common.retry')}
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={busy}
-                    onClick={() =>
-                      void run(async () => {
-                        await importsApi.download({
-                          video_url:
-                            'https://youtube.com/watch?v=' + encodeURIComponent(result.video_id),
-                          start_time: 0,
-                          duration: Math.min(Number.parseFloat(result.duration || '') || 15, 30),
-                          character_name: result.title.slice(0, 40),
-                          category: 'import',
-                          description: result.title,
-                        });
-                        await refresh();
-                        setPreviewing(null);
-                        setResults([]);
-                      })
-                    }
-                  >
-                    <DownloadIcon />
-                    {t('gallery.import')}
-                  </Button>
-                </div>
-                {previewing === result.video_id && (
-                  <VideoPlayer
-                    src={`https://youtube.com/watch?v=${encodeURIComponent(result.video_id)}`}
-                    source={`gallery-search:${result.video_id}`}
-                  />
-                )}
-              </article>
-            ))}
-          </div>
-        )}
+                ) : undefined
+              }
+              onDismiss={error ? () => setError('') : undefined}
+            />
+          )}
+        </Reveal>
+        <Reveal>
+          {message && (
+            <p role="status" className="text-sm">
+              {message}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {results.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="text-sm font-medium">
+                {t('gallery.search_results', { count: results.length })}
+              </h2>
+              {results.map((result) => (
+                <article
+                  key={result.video_id}
+                  className="space-y-3 rounded-lg border border-border/50 p-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="min-w-0 flex-1 text-sm">{result.title}</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      aria-pressed={previewing === result.video_id}
+                      onClick={() =>
+                        setPreviewing((current) =>
+                          current === result.video_id ? null : result.video_id,
+                        )
+                      }
+                    >
+                      {<MorphIcon icon={previewing === result.video_id ? XShape : PlayShape} />}
+                      {t(previewing === result.video_id ? 'common.close' : 'gallery.preview')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={busy}
+                      onClick={() =>
+                        void run(async () => {
+                          await importsApi.download({
+                            video_url:
+                              'https://youtube.com/watch?v=' + encodeURIComponent(result.video_id),
+                            start_time: 0,
+                            duration: Math.min(Number.parseFloat(result.duration || '') || 15, 30),
+                            character_name: result.title.slice(0, 40),
+                            category: 'import',
+                            description: result.title,
+                          });
+                          await refresh();
+                          setPreviewing(null);
+                          setResults([]);
+                        })
+                      }
+                    >
+                      <DownloadIcon />
+                      {t('gallery.import')}
+                    </Button>
+                  </div>
+                  {previewing === result.video_id && (
+                    <VideoPlayer
+                      src={`https://youtube.com/watch?v=${encodeURIComponent(result.video_id)}`}
+                      source={`gallery-search:${result.video_id}`}
+                    />
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
+        </Reveal>
         <h2 className="text-sm font-medium">{t('gallery.my_imports')}</h2>
         {voices.isPending ? (
           <p role="status">{t('common.loading')}</p>

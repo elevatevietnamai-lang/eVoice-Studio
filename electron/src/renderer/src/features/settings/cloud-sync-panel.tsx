@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -126,11 +127,13 @@ export function CloudSyncPanel() {
         >
           {t('cloudsync.turn_on')}
         </Button>
-        {failed && (
-          <p role="alert" className="text-sm text-destructive">
-            {t('common.error')}
-          </p>
-        )}
+        <Reveal>
+          {failed && (
+            <p role="alert" className="text-sm text-destructive">
+              {t('common.error')}
+            </p>
+          )}
+        </Reveal>
       </div>
     );
 
@@ -147,52 +150,64 @@ export function CloudSyncPanel() {
 
   return (
     <div className="space-y-3">
-      {stopped === 'device_revoked' && (
-        <div role="alert" className="space-y-2 text-sm">
-          <p>{t('cloudsync.device_revoked')}</p>
-          <Button
-            variant="outline"
-            onClick={() =>
-              void act('/api/cloud-sync/on', { choices: view.choices, new_device: true })
-            }
-          >
-            {t('cloudsync.set_up_again')}
-          </Button>
-        </div>
-      )}
-      {stopped === 'account_suspended' && (
-        <p role="alert" className="text-sm">
-          {t('cloudsync.account_suspended')}
-        </p>
-      )}
-      {view.status.storage_full && (
-        <p role="alert" className="text-sm">
-          {t('cloudsync.storage_full', {
-            used: size(view.usage.used_bytes),
-            limit: size(view.usage.limit_bytes),
-          })}
-        </p>
-      )}
-      {view.status.offline && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('account.offline')}
-        </p>
-      )}
-      {view.status.pending_mass_delete && (
-        <div role="alert" className="flex flex-wrap items-center gap-2 text-sm">
-          <span>
-            {t('cloudsync.mass_delete', { count: view.status.pending_mass_delete.count })}
-          </span>
-          <Button variant="outline" onClick={() => void act('/api/cloud-sync/confirm-deletes')}>
-            {t('cloudsync.confirm_remove')}
-          </Button>
-        </div>
-      )}
-      {view.status.conflicts.length > 0 && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('cloudsync.conflict', { keys: view.status.conflicts.at(-1)!.keys.join(', ') })}
-        </p>
-      )}
+      <Reveal>
+        {stopped === 'device_revoked' && (
+          <div role="alert" className="space-y-2 text-sm">
+            <p>{t('cloudsync.device_revoked')}</p>
+            <Button
+              variant="outline"
+              onClick={() =>
+                void act('/api/cloud-sync/on', { choices: view.choices, new_device: true })
+              }
+            >
+              {t('cloudsync.set_up_again')}
+            </Button>
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {stopped === 'account_suspended' && (
+          <p role="alert" className="text-sm">
+            {t('cloudsync.account_suspended')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {view.status.storage_full && (
+          <p role="alert" className="text-sm">
+            {t('cloudsync.storage_full', {
+              used: size(view.usage.used_bytes),
+              limit: size(view.usage.limit_bytes),
+            })}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {view.status.offline && (
+          <p role="status" className="text-sm text-muted-foreground">
+            {t('account.offline')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {view.status.pending_mass_delete && (
+          <div role="alert" className="flex flex-wrap items-center gap-2 text-sm">
+            <span>
+              {t('cloudsync.mass_delete', { count: view.status.pending_mass_delete.count })}
+            </span>
+            <Button variant="outline" onClick={() => void act('/api/cloud-sync/confirm-deletes')}>
+              {t('cloudsync.confirm_remove')}
+            </Button>
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {view.status.conflicts.length > 0 && (
+          <p role="status" className="text-sm text-muted-foreground">
+            {t('cloudsync.conflict', { keys: view.status.conflicts.at(-1)!.keys.join(', ') })}
+          </p>
+        )}
+      </Reveal>
 
       <p className="text-sm font-medium">{t('cloudsync.choose')}</p>
       {CHOICES.map((key) => {
@@ -313,11 +328,13 @@ export function CloudSyncPanel() {
           })}
         </div>
       )}
-      {failed && (
-        <p role="alert" className="text-sm text-destructive">
-          {t('common.error')}
-        </p>
-      )}
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-sm text-destructive">
+            {t('common.error')}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }

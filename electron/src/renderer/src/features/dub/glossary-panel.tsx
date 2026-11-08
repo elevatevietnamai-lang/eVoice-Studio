@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import {
   BookOpenIcon,
   CheckIcon,
@@ -180,17 +181,21 @@ export function GlossaryPanel({
         </Button>
       </div>
       <div className="space-y-3 p-4">
-        {loading && (
-          <p role="status" className="flex items-center gap-2 text-xs text-muted-foreground">
-            <LoaderCircleIcon className="size-3.5 animate-spin" />
-            {t('common.loading')}
-          </p>
-        )}
-        {!loading && !terms.length && (
-          <p role="status" className="text-xs text-muted-foreground">
-            {t('glossary.no_terms')}
-          </p>
-        )}
+        <Reveal>
+          {loading && (
+            <p role="status" className="flex items-center gap-2 text-xs text-muted-foreground">
+              <LoaderCircleIcon className="size-3.5 animate-spin" />
+              {t('common.loading')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {!loading && !terms.length && (
+            <p role="status" className="text-xs text-muted-foreground">
+              {t('glossary.no_terms')}
+            </p>
+          )}
+        </Reveal>
         {terms.length > 0 && (
           <div className="divide-y divide-border/40 overflow-hidden rounded-lg border border-border/60 bg-background/30">
             {terms.map((term) =>

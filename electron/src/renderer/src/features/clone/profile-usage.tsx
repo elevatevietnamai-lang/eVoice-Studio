@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -113,9 +114,15 @@ export function ProfileUsagePanel({ id }: { id: string }) {
           </li>
         ))}
       </ul>
-      {failed && (
-        <PipelineFailure fallback={failed} onDismiss={() => setFailed(null)} className="text-xs" />
-      )}
+      <Reveal>
+        {failed && (
+          <PipelineFailure
+            fallback={failed}
+            onDismiss={() => setFailed(null)}
+            className="text-xs"
+          />
+        )}
+      </Reveal>
     </section>
   );
 }

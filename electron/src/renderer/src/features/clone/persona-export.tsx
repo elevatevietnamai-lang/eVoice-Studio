@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { DownloadIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -93,11 +94,13 @@ export function PersonaExport({
       <p className="text-xs leading-5 text-muted-foreground">
         {t('voice_profile.persona_include_ref_hint')}
       </p>
-      {issue && (
-        <p role="alert" className="text-xs text-destructive">
-          {t(issue)}
-        </p>
-      )}
+      <Reveal>
+        {issue && (
+          <p role="alert" className="text-xs text-destructive">
+            {t(issue)}
+          </p>
+        )}
+      </Reveal>
       <Button
         type="button"
         size="sm"

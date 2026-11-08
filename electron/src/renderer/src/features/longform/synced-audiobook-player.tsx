@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Reveal } from '@/components/motion';
 import { CircleAlertIcon, LoaderCircleIcon, PauseIcon, PlayIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -141,11 +142,13 @@ function SyncedPlayerContent({
           {formatClock(currentTime)} / {formatClock(duration)}
         </span>
       </div>
-      {error && (
-        <p role="alert" className="border-t border-border/50 px-3 py-2 text-xs text-destructive">
-          {t('player.unavailable')}
-        </p>
-      )}
+      <Reveal>
+        {error && (
+          <p role="alert" className="border-t border-border/50 px-3 py-2 text-xs text-destructive">
+            {t('player.unavailable')}
+          </p>
+        )}
+      </Reveal>
       {timeline.words.length > 0 && (
         <div
           ref={pane}

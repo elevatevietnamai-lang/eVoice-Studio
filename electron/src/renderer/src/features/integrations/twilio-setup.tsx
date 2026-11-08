@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -546,11 +547,13 @@ export function TwilioSetup({ hero, rail }: IntegrationPanelProps) {
           </div>
         )}
       </div>
-      {errors.account && (
-        <p role="alert" className="twilio-error">
-          {errors.account}
-        </p>
-      )}
+      <Reveal>
+        {errors.account && (
+          <p role="alert" className="twilio-error">
+            {errors.account}
+          </p>
+        )}
+      </Reveal>
     </StepCard>
   );
 
@@ -667,11 +670,13 @@ export function TwilioSetup({ hero, rail }: IntegrationPanelProps) {
         </Button>
       </div>
       <p className="twilio-note">{t('twilioIntegration.exposureWarning')}</p>
-      {errors.tunnel && (
-        <p role="alert" className="twilio-error">
-          {errors.tunnel}
-        </p>
-      )}
+      <Reveal>
+        {errors.tunnel && (
+          <p role="alert" className="twilio-error">
+            {errors.tunnel}
+          </p>
+        )}
+      </Reveal>
     </StepCard>
   );
 
@@ -746,11 +751,13 @@ export function TwilioSetup({ hero, rail }: IntegrationPanelProps) {
           {t('twilioIntegration.webhookNeedsTunnel')}
         </DisabledReason>
       )}
-      {errors.number && (
-        <p role="alert" className="twilio-error">
-          {errors.number}
-        </p>
-      )}
+      <Reveal>
+        {errors.number && (
+          <p role="alert" className="twilio-error">
+            {errors.number}
+          </p>
+        )}
+      </Reveal>
     </StepCard>
   );
 
@@ -948,11 +955,13 @@ export function TwilioSetup({ hero, rail }: IntegrationPanelProps) {
         )}
         <small id="twilio-disclosure-hint">{t('twilioIntegration.disclosureNote')}</small>
       </div>
-      {errors.voice && (
-        <p role="alert" className="twilio-error">
-          {errors.voice}
-        </p>
-      )}
+      <Reveal>
+        {errors.voice && (
+          <p role="alert" className="twilio-error">
+            {errors.voice}
+          </p>
+        )}
+      </Reveal>
     </StepCard>
   );
 
@@ -1045,11 +1054,13 @@ export function TwilioSetup({ hero, rail }: IntegrationPanelProps) {
       {preview && (
         <audio controls src={preview} aria-label={t('twilioIntegration.test')} className="w-full" />
       )}
-      {errors.preview && (
-        <p role="alert" className="twilio-error">
-          {errors.preview}
-        </p>
-      )}
+      <Reveal>
+        {errors.preview && (
+          <p role="alert" className="twilio-error">
+            {errors.preview}
+          </p>
+        )}
+      </Reveal>
       {callsRoute ? (
         <a href="#/calls" className={buttonVariants({ variant: 'ghost', className: 'w-full' })}>
           {t('twilioIntegration.openCalls')}
@@ -1141,11 +1152,13 @@ export function TwilioSetup({ hero, rail }: IntegrationPanelProps) {
   return (
     <>
       {hero({ status: <StatusPill status={overall} />, action: primaryAction })}
-      {errors.enable && (
-        <p role="alert" className="twilio-error twilio-page-error">
-          {errors.enable}
-        </p>
-      )}
+      <Reveal>
+        {errors.enable && (
+          <p role="alert" className="twilio-error twilio-page-error">
+            {errors.enable}
+          </p>
+        )}
+      </Reveal>
       <IntegrationDetailColumns
         main={
           <div className="twilio-steps">

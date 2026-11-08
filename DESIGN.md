@@ -275,7 +275,19 @@ Motion tokens (`globals.css` `--motion-*`, `--ease-standard`; `motionTokens` in 
 | Settle ease | `cubic-bezier(0.33, 1, 0.68, 1)` | Cascades that must read as motion to the end (group menu items) |
 | Morph spring | `snappy` | `MorphIcon` |
 
-Motion grammar by function: state changes (hover, pressed, checked) only change colour; things that appear fade in and rise at most 8 px; things that leave are faster than they arrived; nothing loops, bounces or moves on its own. Every motion honours reduced motion (`MotionProvider reducedMotion="user"`, CSS `prefers-reduced-motion`).
+Motion grammar by function:
+
+| Role | Enter | Exit | How |
+|---|---|---|---|
+| State change (hover, pressed, checked) | colour, 160 ms | colour, 160 ms | CSS transitions in the primitives |
+| Inline show and hide (errors, notices, saved and status lines, toggled panels, results) | height from 0 and fade, 240 ms | height to 0 and fade, 150 ms | `<Reveal>{cond && …}</Reveal>`; the condition stays at the call site |
+| Message inserted by a re-render (`role="alert"`, `role="status"`, `[data-slot=alert]`, `[data-reveal]`) | fade and 4 px rise, 240 ms | with its `Reveal` | global `@starting-style` rule in `globals.css` |
+| Content swap (empty and list, placeholder and result) | fade and 4 px rise, 240 ms | fade, 120 ms, before the new state | `<Swap id={state}>` |
+| Tab panel | fade, 240 ms | none (the old panel unmounts) | `TabsContent` `starting:opacity-0` |
+| Overlay (popover, select, menu, tooltip, dialog) | fade and scale from 96 to 97%, 200 to 240 ms | fade and scale, 150 ms | Base UI `data-starting-style` / `data-ending-style`; hand-built popups use `usePresence` |
+| Page | from 60% opacity, 120 ms | none | `RouteFade` |
+
+Things that leave are faster than they arrived, and travel less. Nothing loops, bounces or moves on its own. Blocks already on screen when a page mounts do not animate (`Reveal` uses `initial={false}`). Reduced motion means no movement, not no animation: it drops translate, scale and height changes and keeps short fades, so a closing popup or message still fades instead of vanishing. `reveal.test.tsx` fails on a conditional error, alert or status block that is not wrapped in `Reveal`.
 
 Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 

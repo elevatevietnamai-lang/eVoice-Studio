@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { Mic as MicShape, Square as SquareShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { useQueryClient } from '@tanstack/react-query';
@@ -80,11 +81,13 @@ function SyncConsent({ profile }: { profile: Profile }) {
           </Button>
         </div>
       )}
-      {failed && (
-        <p role="alert" className="text-xs text-destructive">
-          {t('voice_profile.consent_failed', { message: failed })}
-        </p>
-      )}
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-xs text-destructive">
+            {t('voice_profile.consent_failed', { message: failed })}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }
@@ -232,19 +235,23 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
           </div>
         </div>
       )}
-      {(busy || rec.isCleaning) && (
-        <p role="status" className="text-xs text-muted-foreground">
-          {t('preferences.loading')}
-        </p>
-      )}
-      {failed && (
-        <p role="alert" className="text-xs text-destructive">
-          {t(
-            confirm === 'unlock' ? 'voice_profile.unlock_failed' : 'voice_profile.consent_failed',
-            { message: failed },
-          )}
-        </p>
-      )}
+      <Reveal>
+        {(busy || rec.isCleaning) && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {t('preferences.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-xs text-destructive">
+            {t(
+              confirm === 'unlock' ? 'voice_profile.unlock_failed' : 'voice_profile.consent_failed',
+              { message: failed },
+            )}
+          </p>
+        )}
+      </Reveal>
     </details>
   );
 }

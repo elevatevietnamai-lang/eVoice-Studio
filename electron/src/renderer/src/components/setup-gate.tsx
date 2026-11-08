@@ -1,4 +1,5 @@
 import { ModelLibrary, PerformanceModelPacks } from '@/features/settings/model-library';
+import { Reveal } from '@/components/motion';
 import { AnalyticsConsent } from './analytics-consent';
 import { AccountConsent } from './account-consent';
 import { SetupRecovery } from './setup-recovery';
@@ -112,23 +113,27 @@ export function SetupGate({ children }: { children: ReactNode }) {
       >
         <EVoiceMark size={24} />
         <h1 className="text-sm font-medium">{t('app.name')}</h1>
-        {advanced && (
-          <div className="ml-auto flex items-center gap-1" aria-label={t('preferences.ui_scale')}>
-            <span className="mr-1 text-xs text-muted-foreground">{t('preferences.ui_scale')}</span>
-            {appearanceScales.map((scale) => (
-              <Button
-                key={scale}
-                size="sm"
-                variant={appearance.scale === scale ? 'secondary' : 'ghost'}
-                className="h-7 px-2 text-xs tabular-nums"
-                aria-pressed={appearance.scale === scale}
-                onClick={() => appearance.update({ scale })}
-              >
-                {scale}%
-              </Button>
-            ))}
-          </div>
-        )}
+        <Reveal>
+          {advanced && (
+            <div className="ml-auto flex items-center gap-1" aria-label={t('preferences.ui_scale')}>
+              <span className="mr-1 text-xs text-muted-foreground">
+                {t('preferences.ui_scale')}
+              </span>
+              {appearanceScales.map((scale) => (
+                <Button
+                  key={scale}
+                  size="sm"
+                  variant={appearance.scale === scale ? 'secondary' : 'ghost'}
+                  className="h-7 px-2 text-xs tabular-nums"
+                  aria-pressed={appearance.scale === scale}
+                  onClick={() => appearance.update({ scale })}
+                >
+                  {scale}%
+                </Button>
+              ))}
+            </div>
+          )}
+        </Reveal>
       </header>
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <nav className="grid shrink-0 grid-cols-2 gap-1 border-b border-border/50 bg-sidebar p-3 md:flex md:w-48 md:flex-col md:border-r md:border-b-0">
@@ -173,30 +178,34 @@ export function SetupGate({ children }: { children: ReactNode }) {
                 <>
                   <PerformanceModelPacks compact={!advanced} />
                   <SetupHardsubEngine />
-                  {advanced && (
-                    <div className="space-y-4">
-                      <ModelLibrary setup />
-                      <div className="flex flex-wrap gap-1">
-                        {modelFamilies.map((value) => (
-                          <Button
-                            key={value}
-                            variant={family === value ? 'secondary' : 'ghost'}
-                            size="sm"
-                            onClick={() => setFamily(value)}
-                          >
-                            {t('engineSidebar.' + value)}
-                          </Button>
-                        ))}
+                  <Reveal>
+                    {advanced && (
+                      <div className="space-y-4">
+                        <ModelLibrary setup />
+                        <div className="flex flex-wrap gap-1">
+                          {modelFamilies.map((value) => (
+                            <Button
+                              key={value}
+                              variant={family === value ? 'secondary' : 'ghost'}
+                              size="sm"
+                              onClick={() => setFamily(value)}
+                            >
+                              {t('engineSidebar.' + value)}
+                            </Button>
+                          ))}
+                        </div>
+                        <ModelSettings family={family} showLibrary={false} />
                       </div>
-                      <ModelSettings family={family} showLibrary={false} />
-                    </div>
-                  )}
-                  {Boolean(status.data?.missing?.length) && (
-                    <p role="status" className="text-sm text-muted-foreground">
-                      {t('setup.still_needed')}{' '}
-                      {status.data?.missing?.map((model) => model.label).join(', ')}
-                    </p>
-                  )}
+                    )}
+                  </Reveal>
+                  <Reveal>
+                    {Boolean(status.data?.missing?.length) && (
+                      <p role="status" className="text-sm text-muted-foreground">
+                        {t('setup.still_needed')}{' '}
+                        {status.data?.missing?.map((model) => model.label).join(', ')}
+                      </p>
+                    )}
+                  </Reveal>
                 </>
               )}
               {step < 2 &&

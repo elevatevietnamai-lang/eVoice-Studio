@@ -1,4 +1,5 @@
 import { SupportSettings } from './support-settings';
+import { Reveal } from '@/components/motion';
 import { UpdateSettings } from './update-settings';
 import { MirrorSettings } from './mirror-settings';
 import { StorageSettings } from './storage-settings';
@@ -479,11 +480,13 @@ export function SettingsPage() {
               </span>
             </Link>
           </nav>
-          {matches.length === 0 && extraMatches.length === 0 && (
-            <p role="status" className="px-2 py-6 text-center text-xs text-muted-foreground">
-              {t('preferences.no_matches')}
-            </p>
-          )}
+          <Reveal>
+            {matches.length === 0 && extraMatches.length === 0 && (
+              <p role="status" className="px-2 py-6 text-center text-xs text-muted-foreground">
+                {t('preferences.no_matches')}
+              </p>
+            )}
+          </Reveal>
         </div>
         <div className="shrink-0 space-y-1.5 border-t border-sidebar-border/50 bg-background/15 p-3">
           <Link

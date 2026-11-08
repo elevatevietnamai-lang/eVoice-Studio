@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -300,18 +301,22 @@ export function MusicPage() {
                 value={Math.round(task.progress * 100)}
                 aria-label={t('musicStudio.generating')}
               />
-              {task.progress < 0.1 && (
-                <p role="status" className="text-xs text-muted-foreground">
-                  {t('musicStudio.loading_model')}
-                </p>
-              )}
+              <Reveal>
+                {task.progress < 0.1 && (
+                  <p role="status" className="text-xs text-muted-foreground">
+                    {t('musicStudio.loading_model')}
+                  </p>
+                )}
+              </Reveal>
             </>
           )}
-          {failure && !busy && (
-            <p role="alert" className="text-xs text-destructive">
-              {failure}
-            </p>
-          )}
+          <Reveal>
+            {failure && !busy && (
+              <p role="alert" className="text-xs text-destructive">
+                {failure}
+              </p>
+            )}
+          </Reveal>
           {installed && status.data?.running && (
             <Button
               className="w-full"
