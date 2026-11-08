@@ -60,7 +60,9 @@ def test_brand_mark_is_shared_and_fills_the_icon() -> None:
     signature = "M6 34c4 0 5-7 9-7"
     assert signature in mark
     assert signature in logo
-    assert signature in favicon
+    # The browser icon is the eVoice app icon from the brand kit: dark tile, full-cut mark.
+    assert "M70 174 C77.9 174 84.1 150 92 150" in favicon
+    assert 'rx="58" fill="#030305"' in favicon
     assert "<VoiceStudioMark" in header
     assert "<VoiceStudioMark" in about
     assert 'data-testid="voice-studio-logo"' in header
