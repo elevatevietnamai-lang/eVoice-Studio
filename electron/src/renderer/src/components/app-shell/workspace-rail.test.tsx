@@ -15,7 +15,7 @@ vi.mock('react-i18next', () => ({
       values?.version ? `${key}:${values.version}` : key,
   }),
 }));
-vi.mock('@/lib/store/workspace', () => ({ setMenuGroup }));
+vi.mock('@/lib/store/workspace', () => ({ setMenuGroup, useMenuGroup: () => null }));
 vi.mock('@/components/bridge', () => ({ appVersion: () => '0.5.7', isMac: () => false }));
 vi.mock('@/hooks/use-window-fullscreen', () => ({ useWindowFullscreen: () => false }));
 vi.mock('./workspace-menu', () => ({ WorkspaceNavigation: () => <nav /> }));

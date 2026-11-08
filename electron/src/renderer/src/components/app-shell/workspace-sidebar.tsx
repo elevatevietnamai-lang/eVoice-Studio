@@ -6,7 +6,7 @@ import { appVersion, isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { useWindowFullscreen } from '@/hooks/use-window-fullscreen';
-import { setMenuGroup } from '@/lib/store/workspace';
+import { setMenuGroup, useMenuGroup } from '@/lib/store/workspace';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
 
@@ -27,6 +27,8 @@ export function WorkspaceSidebar() {
     version: appVersion(),
   });
   const appLabel = `${t('app.name')} ${versionLabel}`;
+  // One lit rail item: an open group menu takes the highlight from the current page.
+  const menuOpen = useMenuGroup() !== null;
   return (
     <aside
       aria-label={t('nav.workspaces')}
@@ -73,6 +75,7 @@ export function WorkspaceSidebar() {
           to="/settings"
           aria-label={t('nav.settings')}
           title={t('nav.settings')}
+          activeProps={{ 'data-lit': menuOpen ? undefined : 'true' }}
           className={cn(
             buttonVariants({ variant: 'ghost', size: 'icon' }),
             'workspace-nav-item size-10',

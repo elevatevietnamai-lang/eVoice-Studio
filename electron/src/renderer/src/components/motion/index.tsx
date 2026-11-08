@@ -116,23 +116,39 @@ export function RouteFade({ segment, children }: { segment: string; children: Re
   );
 }
 
+/** Ease-out cubic: it keeps moving through the last third, where ease-out quint has already stopped. */
+const settle = [0.33, 1, 0.68, 1] as const;
+
 const menuVariants: Variants = {
   hidden: {},
-  visible: { transition: { delayChildren: 0.04, staggerChildren: 0.045 } },
+  visible: { transition: { delayChildren: 0.08, staggerChildren: 0.06 } },
 };
 const menuItemVariants: Variants = {
-  hidden: { opacity: 0, y: 8 },
+  hidden: { opacity: 0, y: 6 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: motionTokens.base, ease: motionTokens.ease },
+    transition: { duration: 0.32, ease: settle },
   },
 };
 
 /**
- * A menu's items settling in one after another (45 ms apart, 240 ms each, rising 8 px), slow
- * enough to read as a cascade rather than a flash. Only the items move: the
- * menu's own surface is opaque from the first frame, so nothing underneath shows through.
+ * The rail group menu's surface wipes open from the rail side over 280 ms and closes the same way
+ * in 180 ms. It stays fully opaque (a clip, not a fade), so the page panel under it never shows
+ * through, and it never pops in as an empty block before its items.
+ */
+export const menuSurfaceMotion = {
+  initial: { clipPath: 'inset(0px 100% 0px 0px)' },
+  animate: { clipPath: 'inset(0px 0% 0px 0px)', transition: { duration: 0.28, ease: settle } },
+  exit: {
+    clipPath: 'inset(0px 100% 0px 0px)',
+    transition: { duration: 0.18, ease: [0.32, 0, 0.67, 0] },
+  },
+} as const;
+
+/**
+ * A menu's items settling in one after another (60 ms apart, 320 ms each, rising 6 px) while the
+ * surface opens, slow enough to read as a cascade rather than a flash.
  */
 export function MenuReveal(
   props: Omit<HTMLMotionProps<'nav'>, 'variants' | 'initial' | 'animate'>,

@@ -5,7 +5,8 @@ import { AudioLinesIcon, FilmIcon, FingerprintIcon, WrenchIcon } from 'lucide-re
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { MenuReveal, MenuRevealItem } from '@/components/motion';
+import { AnimatePresence, motion } from 'motion/react';
+import { MenuReveal, MenuRevealItem, menuSurfaceMotion } from '@/components/motion';
 import { inGroup, type DestinationGroup, type WorkspaceDestination } from './destinations';
 import './workspace-menu.css';
 
@@ -28,6 +29,9 @@ function NavigationLink({
   onNavigate?: () => void;
 }) {
   const { t } = useTranslation();
+  // The rail lights one item at a time: while a group's menu is open, that group, not the page.
+  const menuOpen = useMenuGroup() !== null;
+  const lit = !(compact && menuOpen);
   const link = (
     <Link
       to={to}
@@ -47,8 +51,11 @@ function NavigationLink({
             : 'min-h-11 gap-3 px-2.5 py-1.5',
       )}
       activeProps={{
-        className: 'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground',
+        className: lit
+          ? 'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground'
+          : undefined,
         'aria-current': 'page',
+        'data-lit': lit ? 'true' : undefined,
       }}
     >
       <Icon className={iconClass} aria-hidden="true" />
@@ -89,11 +96,14 @@ function NavigationGroup({
 }) {
   const { t } = useTranslation();
   const active = children.some(({ to }) => pathname === to || pathname.startsWith(to + '/'));
-  const open = useMenuGroup() === group;
+  const menuGroup = useMenuGroup();
+  const open = menuGroup === group;
+  // One lit rail item: the open menu's group while a menu is open, else the current page's group.
+  const lit = menuGroup ? open : active;
   const triggerClass = cn(
     itemClass,
     'size-10 justify-center',
-    (active || open) && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
+    lit && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
   );
   return (
     // Hover names the group; a click fills the panel column with its menu, a second click
@@ -107,6 +117,7 @@ function NavigationGroup({
             aria-expanded={open}
             aria-controls={open ? GROUP_MENU_ID : undefined}
             data-active={active}
+            data-lit={lit || undefined}
             data-menu-group={group}
             className={triggerClass}
             onClick={() => setMenuGroup(open ? null : group)}
@@ -191,17 +202,22 @@ const GROUPS: Record<Exclude<DestinationGroup, 'library'>, string> = {
  * with its one-line description. Choosing a page closes it, and the column shows that page's panel.
  */
 export function GroupMenuPanel() {
-  const { t } = useTranslation();
   const group = useMenuGroup() as keyof typeof GROUPS | null;
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   useEffect(() => setMenuGroup(null), [pathname]);
-  if (!group || !(group in GROUPS)) return null;
+  const shown = group !== null && group in GROUPS;
+  return <AnimatePresence>{shown && <GroupMenu key="group-menu" group={group} />}</AnimatePresence>;
+}
+
+function GroupMenu({ group }: { group: keyof typeof GROUPS }) {
+  const { t } = useTranslation();
   const close = () => {
     setMenuGroup(null);
     document.querySelector<HTMLElement>(`[data-menu-group="${group}"]`)?.focus();
   };
   return (
-    <aside
+    <motion.aside
+      {...menuSurfaceMotion}
       id={GROUP_MENU_ID}
       aria-label={t(GROUPS[group])}
       data-slot="group-menu"
@@ -229,6 +245,6 @@ export function GroupMenuPanel() {
           </MenuRevealItem>
         ))}
       </MenuReveal>
-    </aside>
+    </motion.aside>
   );
 }

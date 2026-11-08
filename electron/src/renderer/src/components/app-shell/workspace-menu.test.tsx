@@ -1,14 +1,19 @@
-import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 const route = vi.hoisted(() => ({ pathname: '/gallery' }));
 vi.mock('@tanstack/react-router', () => ({
   useRouterState: ({ select }: any) => select({ location: route }),
-  Link: ({ to, activeProps: _activeProps, children, ...props }: any) => (
-    <a href={to} {...props}>
-      {children}
-    </a>
-  ),
+  // Active when `to` is the current route, like the real Link.
+  Link: ({ to, activeProps, children, ...props }: any) => {
+    const { className: activeClass, ...activeAttrs } =
+      to === route.pathname ? (activeProps ?? {}) : {};
+    return (
+      <a href={to} {...props} {...activeAttrs} className={[props.className, activeClass].join(' ')}>
+        {children}
+      </a>
+    );
+  },
 }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 const setWorkspace = vi.hoisted(() => vi.fn());
@@ -35,7 +40,7 @@ afterEach(() => {
   setWorkspace.mockClear();
 });
 
-it('opens a rail group as a menu in the panel column, and closes it on a second click', () => {
+it('opens a rail group as a menu in the panel column, and closes it on a second click', async () => {
   render(<Shell />);
   const voice = screen.getByRole('button', { name: 'nav.voice' });
   expect(screen.queryByRole('link', { name: 'nav.clone_short' })).toBeNull();
@@ -49,14 +54,18 @@ it('opens a rail group as a menu in the panel column, and closes it on a second 
   );
   fireEvent.click(voice);
   expect(voice).toHaveAttribute('aria-expanded', 'false');
-  expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull();
+  await waitFor(() =>
+    expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull(),
+  );
 });
 
-it('switches the menu to another group', () => {
+it('switches the menu to another group', async () => {
   render(<Shell />);
   fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
   fireEvent.click(screen.getByRole('button', { name: 'nav.dub' }));
-  expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull();
+  await waitFor(() =>
+    expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull(),
+  );
   const menu = screen.getByRole('complementary', { name: 'nav.dub' });
   expect(within(menu).getByRole('link', { name: /nav\.batch_dub/ })).toHaveAttribute(
     'href',
@@ -70,40 +79,62 @@ it('names a rail group on hover without opening its menu', async () => {
   fireEvent.pointerEnter(voice, { pointerType: 'mouse' });
   fireEvent.mouseEnter(voice);
   await new Promise((resolve) => setTimeout(resolve, 150));
-  expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull();
+  await waitFor(() =>
+    expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull(),
+  );
 });
 
-it('gives the column back to the page panel when a page is chosen, even the current one', () => {
+it('gives the column back to the page panel when a page is chosen, even the current one', async () => {
   route.pathname = '/gallery';
   render(<Shell />);
   fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
   fireEvent.click(screen.getByRole('link', { name: /nav\.gallery/ }));
 
-  expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull();
+  await waitFor(() =>
+    expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull(),
+  );
 });
 
-it('closes on Escape and returns focus to the rail button', () => {
+it('closes on Escape and returns focus to the rail button', async () => {
   render(<Shell />);
   const voice = screen.getByRole('button', { name: 'nav.voice' });
   fireEvent.click(voice);
   fireEvent.keyDown(screen.getByRole('complementary', { name: 'nav.voice' }), { key: 'Escape' });
-  expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull();
+  await waitFor(() =>
+    expect(screen.queryByRole('complementary', { name: 'nav.voice' })).toBeNull(),
+  );
   expect(voice).toHaveFocus();
 });
 
-it('closes when the route changes', () => {
+it('closes when the route changes', async () => {
   route.pathname = '/gallery';
   const view = render(<Shell />);
   fireEvent.click(screen.getByRole('button', { name: 'nav.stories' }));
   route.pathname = '/music';
   view.rerender(<Shell />);
-  expect(screen.queryByRole('complementary', { name: 'nav.stories' })).toBeNull();
+  await waitFor(() =>
+    expect(screen.queryByRole('complementary', { name: 'nav.stories' })).toBeNull(),
+  );
 });
 
-it('shows an opaque menu surface from the first frame, with no fade on the surface itself', () => {
+it('shows an opaque menu surface from the first frame, with no fade on the surface itself', async () => {
   render(<Shell />);
   fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
   const menu = screen.getByRole('complementary', { name: 'nav.voice' });
   expect(menu.className).not.toMatch(/animate-|fade-|opacity-/);
   expect(menu).toHaveClass('bg-sidebar');
+});
+
+it('lights one rail item: the open menu group, not the current page', () => {
+  route.pathname = '/projects';
+  render(<Shell />);
+  const lit = () =>
+    Array.from(document.querySelectorAll('[data-slot="workspace-navigation"] [data-lit="true"]'));
+  const projects = screen.getByRole('link', { name: 'projects.title' });
+  expect(lit()).toEqual([projects]);
+  const voice = screen.getByRole('button', { name: 'nav.voice' });
+  fireEvent.click(voice);
+  expect(lit()).toEqual([voice]);
+  expect(projects.className).not.toMatch(/sidebar-row-selected/);
+  expect(projects).toHaveAttribute('aria-current', 'page');
 });
