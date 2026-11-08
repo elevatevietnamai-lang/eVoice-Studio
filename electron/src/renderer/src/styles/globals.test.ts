@@ -76,3 +76,15 @@ it('keeps selected and pressed states flat, with no accent bars or primary tints
     .map(([, selector]) => selector.trim());
   expect(tinted).toEqual([]);
 });
+
+/**
+ * Panel sections and cards are not controls, so they get no hover or focus-within feedback: a
+ * border that lights up under the pointer promises a click that does nothing (DESIGN.md).
+ */
+it('gives static panel sections and cards no hover or focus-within effect', () => {
+  const rules = [...css.matchAll(/([^{}]+)\{[^{}]*\}/g)].map(([, selector]) => selector);
+  const containerStates = rules.filter((selector) =>
+    /:is\([^)]*\b(?:section|form|details)\b[^)]*\):(?:hover|focus-within)/.test(selector),
+  );
+  expect(containerStates).toEqual([]);
+});

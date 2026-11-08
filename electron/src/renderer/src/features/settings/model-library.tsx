@@ -470,7 +470,7 @@ export function SystemRecommendations() {
               return (
                 <div
                   key={model.repo_id}
-                  className="flex min-w-[min(100%,24rem)] flex-1 basis-[24rem] items-center gap-2 rounded-lg border border-border/50 bg-background/25 px-3 py-2 transition-[border-color,background-color] hover:border-border hover:bg-background/40"
+                  className="flex min-w-[min(100%,24rem)] flex-1 basis-[24rem] items-center gap-2 rounded-lg border border-border/50 bg-background/25 px-3 py-2"
                 >
                   {busy ? (
                     <RefreshCwIcon

@@ -507,7 +507,7 @@ function BatchJobCard({
   const created = formatTimestamp(job.created_at, i18n.resolvedLanguage);
 
   return (
-    <article className="rounded-(--card-radius) border border-border/50 bg-card/20 p-4 transition-colors hover:border-border">
+    <article className="rounded-(--card-radius) border border-border/50 bg-card/20 p-4">
       <div className="flex items-center gap-3">
         <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/35 text-muted-foreground">
           <FilmIcon className="size-4" />

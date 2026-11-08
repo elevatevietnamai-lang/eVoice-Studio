@@ -353,14 +353,6 @@ html[data-theme-id=''] {
 [data-slot='workspace-pane-content'] details[open] > summary {
   color: var(--foreground);
 }
-[data-slot='secondary-sidebar-content'] > :is(section, form, details):hover,
-[data-slot='workspace-pane-content'] > :is(section, form, details):hover {
-  border-color: color-mix(in srgb, var(--border) 72%, var(--foreground));
-}
-[data-slot='secondary-sidebar-content'] > :is(section, form, details):focus-within,
-[data-slot='workspace-pane-content'] > :is(section, form, details):focus-within {
-  border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
-}
 .secondary-sidebar[data-variant='navigation']
   [data-slot='secondary-sidebar-content']
   > [data-slot='button'] {
@@ -461,12 +453,6 @@ html[data-theme-id=''] {
   > summary
   + * {
   margin-top: 0.75rem;
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
-  > :is(section, form, details, div[class~='rounded-(--card-radius)']):hover {
-  border-color: color-mix(in srgb, var(--border) 76%, var(--foreground));
-  background-color: color-mix(in srgb, var(--card) 60%, transparent);
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']

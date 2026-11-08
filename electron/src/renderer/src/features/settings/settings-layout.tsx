@@ -86,7 +86,7 @@ export function SettingsRow({
       className={cn(
         'px-4 py-3',
         variant === 'card' &&
-          'glass-panel min-h-40 rounded-(--card-radius) border border-border bg-card transition-colors duration-200 hover:border-foreground/25 data-[active]:border-foreground/40 motion-reduce:transition-none',
+          'glass-panel min-h-40 rounded-(--card-radius) border border-border bg-card data-[active]:border-foreground/40',
         className,
       )}
     >
