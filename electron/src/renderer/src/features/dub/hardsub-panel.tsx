@@ -24,6 +24,7 @@ import {
   syncDubHardsub,
   useDubSession,
 } from './dub-session';
+import { segmentedFrameClass } from '@/components/segmented';
 
 type EngineStatus = { installed: boolean; engine?: { providers?: string[]; encoder?: string } };
 
@@ -365,7 +366,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             </div>
 
             <div className="space-y-2 border-t border-border/50 pt-3">
-              <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1">
+              <div className={cn(segmentedFrameClass, 'grid grid-cols-3')}>
                 {(['sttn', 'lama', 'propainter'] as const).map((value) => (
                   <Button
                     key={value}

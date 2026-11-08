@@ -34,6 +34,8 @@ it("links the logo Home, named with the app version, drawn with the app icon's o
   const logo = screen.getByRole('link', { name: /^app\.name app\.version/ });
   expect(logo).toHaveAttribute('href', '/');
   expect(logo).toHaveClass('size-10');
+  // A brand mark: no hover or pressed fill (ghost button styles), only a focus ring.
+  expect(logo.className).not.toMatch(/hover:|active:|aria-expanded:/);
   const mark = logo.querySelector('svg')!;
   expect(mark).toHaveAttribute('width', '26');
   expect(mark).toHaveAttribute('data-mark', 'full');

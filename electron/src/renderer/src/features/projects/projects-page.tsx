@@ -69,6 +69,8 @@ import {
 import { projectPayload, type DubProject } from './project-format';
 import { RenderDetails, renderRecipe, type RenderRecord } from './render-details';
 import { Checkbox } from '@/components/ui/checkbox';
+import { segmentedFrameClass } from '@/components/segmented';
+import { cn } from '@/lib/utils';
 
 type LibraryKind =
   | 'dub'
@@ -574,7 +576,7 @@ export function ProjectsPage() {
                   }}
                 />
               </div>
-              <div className="flex rounded-lg border border-border/50 bg-muted/20 p-0.5">
+              <div className={cn(segmentedFrameClass, 'flex')}>
                 <Button
                   size="icon-sm"
                   variant={view === 'grid' ? 'secondary' : 'ghost'}

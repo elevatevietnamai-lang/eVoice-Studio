@@ -353,15 +353,13 @@ export function TranscriptionsPage() {
         </SecondarySidebar>
         <section className="flex min-w-0 flex-1 flex-col">
           <div className="border-b border-border/50 px-6 py-4">
-            <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-2">
+            <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-1">
               <ToggleGroup
                 value={[mode]}
                 onValueChange={(value) => chooseMode(value[0])}
                 disabled={busy || capturing}
                 size="sm"
-                spacing={0}
                 aria-label={t('transcriptions.mode_label')}
-                className="rounded-lg border border-border/50 bg-background/25 p-0.5"
               >
                 <ToggleGroupItem
                   value="fast"

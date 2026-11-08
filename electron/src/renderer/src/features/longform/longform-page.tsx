@@ -64,6 +64,8 @@ import {
 } from './longform-session';
 import { SAMPLE_AUDIOBOOK_SCRIPT } from '@shared/data/sampleAudiobook';
 import { useTtsReadiness } from '@/hooks/use-tts-readiness';
+import { segmentedFrameClass } from '@/components/segmented';
+import { cn } from '@/lib/utils';
 interface Recovery {
   job_id: string;
   type: string;
@@ -295,7 +297,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 <FileAudioIcon className="size-4" aria-hidden="true" />
                 {t('audiobook.format')}
               </h2>
-              <div className="flex gap-1 rounded-lg bg-background/40 p-1">
+              <div className={cn(segmentedFrameClass, 'flex')}>
                 {(['m4b', 'mp3'] as const).map((format) => (
                   <Button
                     key={format}

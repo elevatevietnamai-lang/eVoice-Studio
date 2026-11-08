@@ -73,6 +73,7 @@ import { SettingsContent, SettingsRow, SettingsSection } from './settings-layout
 import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale } from '@/i18n';
 import { setReviewMode, useReviewMode } from '@/hooks/use-review-mode';
 import { rememberSettingsRoute } from '@/lib/settings-route';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const sections = ['general', 'appearance'] as const;
 const fields = {
@@ -694,7 +695,7 @@ export function SettingsPage() {
                     <div
                       role="group"
                       aria-label={t('settings.review_mode')}
-                      className="inline-flex rounded-lg border border-border/60 bg-muted/30 p-0.5"
+                      className={cn(segmentedFrameClass, 'inline-flex')}
                     >
                       {(['on', 'off'] as const).map((value) => (
                         <Button

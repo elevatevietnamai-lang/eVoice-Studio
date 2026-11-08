@@ -15,6 +15,8 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { apiJson, apiPath } from '@/lib/api/client';
 import { runRendererTask } from '@/lib/global-error-recovery';
+import { chipTrayClass } from '@/components/segmented';
+import { cn } from '@/lib/utils';
 
 interface DemoManifest {
   source: {
@@ -263,7 +265,7 @@ export function DubbingDemo({
       <div
         role="group"
         aria-label={t('demo.dubbing_picker')}
-        className="flex flex-wrap items-center gap-1.5 rounded-(--card-radius) border border-border/45 bg-background/30 p-1.5"
+        className={cn(chipTrayClass, 'flex flex-wrap items-center')}
       >
         {manifest.dubbed.map((item) => (
           <Button

@@ -47,6 +47,7 @@ import {
   modelStatusPollMs,
   relaxWhenBackendBusy,
 } from '@/lib/status-polling';
+import { segmentedFrameClass } from '@/components/segmented';
 
 type BackendStage = ReturnType<typeof useBackendStatus>['stage'];
 
@@ -546,7 +547,7 @@ export function StatusBar({
       role="radiogroup"
       data-slot="engine-view-toggle"
       aria-label={t('sidebarTools.title')}
-      className="flex shrink-0 items-center gap-0.5 rounded-lg bg-sidebar-accent/35 p-0.5 ring-1 ring-inset ring-sidebar-border/50"
+      className={cn(segmentedFrameClass, 'flex shrink-0 items-center')}
     >
       {engineDetailLevels.map((value) => {
         const label = t(value === 'models' ? 'modelSettings.models' : 'sidebarTools.' + value);

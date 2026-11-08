@@ -124,7 +124,7 @@ function PanelBody({
             role="tablist"
             aria-label={title}
             data-slot="secondary-sidebar-tabs"
-            className="flex min-w-0 flex-1 gap-[3px] rounded-lg bg-muted p-[3px]"
+            className="flex min-w-0 flex-1 gap-1 rounded-lg bg-muted p-1"
             onKeyDown={(event) => {
               if (event.altKey || event.ctrlKey || event.metaKey) return;
               const tabs = [

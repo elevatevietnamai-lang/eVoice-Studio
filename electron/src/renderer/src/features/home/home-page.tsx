@@ -298,7 +298,7 @@ export function HomePage() {
                       {t('projects.all')}
                     </Link>
                   </div>
-                  <div className="grid gap-1 rounded-(--card-radius) border border-border/70 bg-card/30 p-2 @3xl:grid-cols-2">
+                  <div className="grid gap-1 rounded-(--card-radius) border border-border/70 bg-card/30 p-1 @3xl:grid-cols-2">
                     {profiles.slice(0, 4).map((profile) => (
                       <div
                         key={profile.id}

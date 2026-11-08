@@ -9,6 +9,7 @@ import { useEngines } from '@/hooks/use-engines';
 import { effectiveSamplingSteps, samplingStepRange } from '@/lib/audio/quality';
 import { resetAudioQuality, setCloneSetting, useCloneSettings } from '@/lib/store/clone-settings';
 import { cn } from '@/lib/utils';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const precisions = [16, 24, 32] as const;
 
@@ -106,7 +107,7 @@ export function QualityControls({
             aria-describedby={`${id}-size`}
             aria-disabled={disabled || undefined}
             onKeyDown={onPresetKey}
-            className="grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1 ring-1 ring-border/50"
+            className={cn(segmentedFrameClass, 'grid grid-cols-3')}
           >
             {precisions.map((value, index) => {
               const selected = value === bits;

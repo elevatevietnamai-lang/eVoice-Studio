@@ -232,7 +232,7 @@ export function PerformanceModelPacks({ compact = false }: { compact?: boolean }
             if (next) setSelectedTier(next);
           }}
           disabled={busy}
-          className="grid w-full grid-cols-2 rounded-(--card-radius) border border-border/60 bg-muted/45 p-1 sm:grid-cols-4"
+          className="grid w-full grid-cols-2 sm:grid-cols-4"
         >
           {performanceTiers.map((candidate) => (
             <ToggleGroupItem key={candidate} value={candidate}>

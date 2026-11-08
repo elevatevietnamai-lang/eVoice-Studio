@@ -150,6 +150,7 @@ import {
 } from './dub-session';
 import { Checkbox } from '@/components/ui/checkbox';
 import { menuPopupClass } from '@/components/menu-popup';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const DEFAULT_TRANSLATION_AGENT_KEY = 'voicestudio.defaultTranslationAgent';
 const LIVE_PREVIEW_KEY = 'voicestudio.dubLivePreview';
@@ -1309,7 +1310,7 @@ export function DubPage() {
                   onCanPlay={restorePreviewPosition}
                 />
               )}
-              <div className="flex flex-wrap gap-1 rounded-lg bg-background/35 p-1">
+              <div className={cn(segmentedFrameClass, 'flex flex-wrap')}>
                 <Button
                   size="xs"
                   className="min-w-0 flex-1"
@@ -1436,7 +1437,7 @@ export function DubPage() {
               <div
                 role="group"
                 aria-label={t('about.translator')}
-                className="grid grid-cols-2 gap-1 rounded-lg bg-muted/30 p-1"
+                className={cn(segmentedFrameClass, 'grid grid-cols-2')}
               >
                 <Button
                   size="sm"

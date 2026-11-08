@@ -212,7 +212,7 @@ export function ScriptPanel({
                 <div
                   role="menu"
                   aria-label={t('scriptEdit.paste_options')}
-                  className="absolute right-0 top-full z-30 mt-2 min-w-44 rounded-lg border border-border bg-popover p-1 shadow-md"
+                  className="absolute right-0 top-full z-30 mt-2 min-w-44 rounded-(--card-radius) border border-border bg-popover p-1 shadow-md [&>*]:rounded-lg"
                 >
                   <button
                     autoFocus

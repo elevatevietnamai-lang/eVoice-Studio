@@ -47,6 +47,7 @@ import { PresetVoicePicker } from './preset-voice-picker';
 import { QualityControls } from './quality-controls';
 import { CloneDemoAction } from './clone-demo';
 import { useCloneDemo } from '@/hooks/use-clone-demo';
+import { segmentedFrameClass } from '@/components/segmented';
 
 type NumericKey = 'steps' | 'cfg' | 'speed' | 'tShift' | 'posTemp' | 'classTemp' | 'layerPenalty';
 
@@ -413,7 +414,7 @@ export function ActionBar() {
         />
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1 rounded-lg bg-background/50 p-1 ring-1 ring-border/50">
+        <div className={cn(segmentedFrameClass, 'flex items-center')}>
           <EngineLanguagePicker />
           <PresetVoicePicker disabled={isGenerating} />
           <span aria-hidden="true" className="mx-1 h-4 w-px bg-border" />

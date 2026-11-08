@@ -12,6 +12,7 @@ import { setWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
 import { ProfilePhoto, useProfileImageSave } from './profile-photo';
 import { ReferencePanel } from './reference-panel';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const VIRTUALIZE_ABOVE = 30;
 const SEARCH_ABOVE = 4;
@@ -199,7 +200,7 @@ export function VoiceSetup({ onChosen }: { onChosen: () => void }) {
               <div
                 role="radiogroup"
                 aria-label={t('cloneFlow.sort_label')}
-                className="flex items-center gap-0.5 rounded-lg bg-muted/40 p-0.5 ring-1 ring-inset ring-border/50"
+                className={cn(segmentedFrameClass, 'flex items-center')}
               >
                 {(['recent', 'name'] as const).map((value) => (
                   <button

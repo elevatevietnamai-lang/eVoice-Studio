@@ -60,10 +60,8 @@ export function WorkspaceSidebar() {
           title={appLabel}
           data-slot="rail-logo"
           onClick={() => setMenuGroup(null)}
-          className={cn(
-            buttonVariants({ variant: 'ghost', size: 'icon' }),
-            'size-10 shrink-0 text-sidebar-foreground',
-          )}
+          // A brand mark, not a control surface: no hover or pressed fill, only the focus ring.
+          className="grid size-10 shrink-0 place-items-center rounded-lg text-sidebar-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           <EVoiceMark size={26} cut="full" className="size-[26px] shrink-0" />
         </Link>

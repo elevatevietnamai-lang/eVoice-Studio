@@ -105,3 +105,13 @@ it('animates every details element open and closed', () => {
   expect(css).toMatch(/details::details-content\s*\{[^}]*transition:[^}]*block-size/);
   expect(css).toMatch(/details\[open\]::details-content\s*\{[^}]*block-size:\s*auto/);
 });
+
+/** Elevate: success is monochrome in the default theme; only warnings and errors carry a hue. */
+it('keeps the default success colour on the brand graphite and white', () => {
+  const theme = nodeProcess
+    .getBuiltinModule('node:fs')
+    .readFileSync('src/renderer/src/styles/t3-theme.css', 'utf8');
+  const success = [...theme.matchAll(/--success(?:-foreground)?:\s*([^;]+);/g)].map((m) => m[1]);
+  expect(success.length).toBeGreaterThanOrEqual(4);
+  for (const value of success) expect(value).toMatch(/--brand-(?:graphite|white)|--app-theme/);
+});

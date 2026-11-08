@@ -92,7 +92,7 @@ function NavigationGroup({
   const open = useMenuGroup() === group;
   const triggerClass = cn(
     itemClass,
-    'size-10 w-full justify-center',
+    'size-10 justify-center',
     (active || open) && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
   );
   return (
@@ -139,7 +139,7 @@ export function WorkspaceNavigation() {
       aria-label={t('nav.workspaces')}
       className={cn(
         'min-h-0 overflow-y-auto overscroll-contain py-2 [scrollbar-width:none]',
-        'space-y-0.5 px-1.5',
+        'flex flex-col items-center justify-center-safe gap-0.5 px-1.5',
       )}
     >
       <NavigationGroup
