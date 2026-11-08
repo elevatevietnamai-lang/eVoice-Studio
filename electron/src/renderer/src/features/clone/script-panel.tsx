@@ -18,6 +18,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { TAGS } from '@/lib/languages';
 import { setCloneSetting, useCloneSetting } from '@/lib/store/clone-settings';
 import { cn } from '@/lib/utils';
+import { usePresence } from '@/hooks/use-presence';
+import { menuItemClass, presencePopupClass } from '@/components/menu-popup';
 import { SectionLabel } from './section-label';
 
 export function ScriptPanel({
@@ -37,6 +39,8 @@ export function ScriptPanel({
   const [insertOpen, setInsertOpen] = useState(false);
   const [pasting, setPasting] = useState(false);
   const menuId = useId();
+  const pastePresence = usePresence(pasteOpen);
+  const insertPresence = usePresence(insertOpen);
 
   useEffect(() => {
     if (!insertOpen && !pasteOpen) return;
@@ -208,17 +212,24 @@ export function ScriptPanel({
               >
                 <ChevronDownIcon />
               </Button>
-              {pasteOpen && (
+              {pastePresence.mounted && (
                 <div
                   role="menu"
                   aria-label={t('scriptEdit.paste_options')}
-                  className="absolute right-0 top-full z-30 mt-2 min-w-44 rounded-(--card-radius) border border-border bg-popover p-1 shadow-md [&>*]:rounded-lg"
+                  {...pastePresence.props}
+                  className={cn(
+                    'absolute right-0 top-full z-30 mt-2 min-w-44 origin-top-right rounded-(--card-radius) border border-border bg-popover p-1 shadow-md',
+                    presencePopupClass,
+                  )}
                 >
                   <button
                     autoFocus
                     type="button"
                     role="menuitem"
-                    className="w-full rounded px-3 py-2 text-left text-sm hover:bg-accent focus-visible:bg-muted outline-none"
+                    className={cn(
+                      menuItemClass,
+                      'w-full text-left hover:bg-accent focus-visible:bg-accent',
+                    )}
                     onClick={() => void paste(true)}
                   >
                     {t('scriptEdit.replace')}
@@ -262,7 +273,7 @@ export function ScriptPanel({
                   className={cn('transition-transform', insertOpen && 'rotate-180')}
                 />
               </Button>
-              {insertOpen
+              {insertPresence.mounted
                 ? createPortal(
                     <div
                       ref={menuRef}
@@ -303,7 +314,11 @@ export function ScriptPanel({
                       id={menuId}
                       role="menu"
                       aria-label={t('clone.insert_token')}
-                      className="fixed z-50 flex max-h-56 w-[min(360px,calc(100vw-16px))] flex-wrap gap-1 overflow-y-auto rounded-(--card-radius) bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 animate-in fade-in-0 zoom-in-95 motion-reduce:animate-none"
+                      {...insertPresence.props}
+                      className={cn(
+                        'fixed z-50 flex max-h-56 w-[min(360px,calc(100vw-16px))] flex-wrap gap-1 overflow-y-auto rounded-(--card-radius) bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10',
+                        presencePopupClass,
+                      )}
                     >
                       {TAGS.map((tag) => (
                         <button

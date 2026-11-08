@@ -13,3 +13,10 @@ export const menuPopupClass =
  */
 export const menuItemClass =
   'flex cursor-default items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground outline-none transition-colors duration-160 select-none data-disabled:pointer-events-none data-disabled:opacity-40 data-highlighted:bg-accent data-highlighted:text-accent-foreground';
+
+/**
+ * Open and close motion for a hand-built popup kept mounted by `usePresence` (hooks/use-presence):
+ * the same 200 ms in and 150 ms out, fade and scale from 95%, as the Base UI popups.
+ */
+export const presencePopupClass =
+  'origin-top duration-200 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:duration-150 data-[state=closed]:pointer-events-none motion-reduce:animate-none';

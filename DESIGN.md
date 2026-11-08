@@ -173,6 +173,24 @@ Rules:
 
 - UI: Inter Variable. Headings (`h1` to `h3`, `.font-heading`): Space Grotesk Variable. Both come from `@fontsource-variable` with `latin`, `latin-ext` and `vietnamese` subsets, self-hosted, so the app works offline.
 - Sizes come from theme tokens: `text-ui` 14/20, `text-label` 13/20, `text-caption` 12/16, `text-editor` 16/28.
+
+Display hierarchy (dense desktop: hierarchy comes from face, weight and colour, not from size jumps):
+
+| Level | Element | Face | Size / line | Weight | Colour |
+|---|---|---|---|---|---|
+| Page title | `h1` in `workspace-titlebar` (hidden with `sr-only` when the panel already names the page) | Space Grotesk | 14 / 20 | 500 | `foreground` |
+| Section, card and dialog title | `h2`, `h3`, `CardTitle`, `DialogTitle` | Space Grotesk | 14 / 20 | 500 | `foreground` |
+| Field label, row title, tab | `Label`, list rows, `TabsTrigger` | Inter | 13 / 20 (`text-label`) | 500 | `foreground` |
+| Body and controls | paragraphs, inputs, buttons, menu items | Inter | 14 / 20 (`text-ui`) | 400 (buttons 500) | `foreground` |
+| Secondary | hints, descriptions, metadata | Inter | 13 or 12 | 400 | `muted-foreground` |
+| Caption | timestamps, counters, tooltips | Inter | 12 / 16 (`text-caption`) | 400 | `muted-foreground` |
+| Long-form editing | script and transcript editors | Inter | 16 / 28 (`text-editor`) | 400 | `foreground` |
+| Data and code | logs, hashes, API snippets, timecodes | system mono | 12 | 400 | `muted-foreground` |
+| Display (exception) | empty-state heroes and the Pro page only | Space Grotesk | `text-lg` to `text-xl` | 600 | `foreground` |
+
+- Space Grotesk appears only on `h1` to `h3`, `.font-heading`, `CardTitle` and `DialogTitle`. Never on buttons, labels, inputs, numbers, badges or body copy.
+- One heading level per surface: a card has one title; a dialog has one title. Step down in weight and colour (500 foreground, then 400 muted) before stepping down in size.
+- Use `tabular-nums` wherever digits line up (timecodes, sizes, counters).
 - Do not set Space Grotesk on controls or body text. Do not add a third family; mono is only for code and logs.
 - Vietnamese stacks diacritics: keep line height at or above the token values and avoid all-caps for long labels.
 - CJK and other scripts fall back to the system stack.
@@ -206,7 +224,7 @@ Rules:
 - **Window buttons** (Windows and Linux, `window-controls.tsx`): minimize, maximize or restore, and close are React buttons (46 by 40 px) mounted at the app root, so setup and the backend gate have them too. Hover uses `bg-accent`; close turns `--destructive`. They call `bridge.window`. The cost of drawing them: Windows 11's Snap Layouts flyout (on the native maximize button) is gone; edge dragging and Win+arrow snapping still work.
 - **Search field** (`command-search.tsx`): wide panes centre a 26 rem field under the header; narrow ones show a 32 px icon button. It opens the command palette, which drops from the top (`top-16`) with a search row, grouped options, a visible selected row (`--sidebar-row-selected`) and key hints.
 - **Scrollbars**: every scroll container gets a 12 px bar with a 6 px rounded thumb, no arrow buttons, thumb at 50% foreground (3:1 at rest), 68% on hover, 85% while dragging.
-- **Popovers, selects, tooltips and every dropdown menu** (`menuPopupClass` in `components/menu-popup.ts`, required on each `Menu.Popup`; menus and popovers use the 12 px card radius): fade and scale from 97% over 200 ms in (`--ease-standard`) and 150 ms out, using Base UI `data-starting-style` and `data-ending-style` transitions; they can be interrupted mid-way.
+- **Popovers, selects, tooltips and every dropdown menu** (`menuPopupClass` in `components/menu-popup.ts`, required on each `Menu.Popup`; menus and popovers use the 12 px card radius): fade and scale from 97% over 200 ms in (`--ease-standard`) and 150 ms out, using Base UI `data-starting-style` and `data-ending-style` transitions; they can be interrupted mid-way. A hand-built popup (only where a Base UI primitive cannot express it, such as the token menu anchored at the text caret) stays mounted through its exit with `usePresence` (`hooks/use-presence.ts`) and `presencePopupClass`, so it closes with the same 150 ms fade instead of vanishing; `use-presence.test.tsx` fails on a hand-built `role="menu"` without it.
 - **Header**: title on the left; the command-palette button and account corner on the right. No promotional buttons (Get Pro and the GitHub star badge were removed; the Pro page stays under Settings).
 - Hover, active and disabled states are inherited from the component files; document a new one here when you add it.
 - **Interaction state rules** (tested for all 8 palettes in `brand-contrast.test.ts`): a hovered sidebar row differs from the sidebar by at least 1.15:1 and a selected row by 1.25:1; a hovered toolbar control by 1.15:1; the muted label stays at 4.5:1 on both; input and select borders (`--input`) reach 3:1 on the canvas (WCAG 1.4.11). Hover on ghost, outline and toggle controls uses `bg-accent`, never `bg-muted` or a fractional alpha of it. Input fills use `--control-fill`, not `--input`.
@@ -243,6 +261,22 @@ Source of truth: `components/ui/roles.ts` (`roles.test.ts` fails when a primitiv
 | `toggle` | selection | Single pressed or unpressed button (bold, mute, favourite). | `--accent` `--accent-foreground` `--ring` | `text-label` | feedback: Colour and opacity change over 160 ms; no scale or bounce. Pair with MorphIcon when the icon changes with the state. |
 | `tooltip` | hint | Name or explain an icon-only control; never essential information. | `--popover` `--popover-foreground` `--border` | `text-caption` | enter-exit: Fades in and scales from 97% over 200 ms (Base UI start and end styles). Avoid: Do not put interactive content inside. |
 
+Motion tokens (`globals.css` `--motion-*`, `--ease-standard`; `motionTokens` in `components/motion`):
+
+| Token | Value | Used for |
+|---|---|---|
+| `--motion-fast` / `motionTokens.fast` | 160 ms | Hover, focus ring, colour and icon-button state |
+| Overlay in / out | 200 ms / 150 ms | Popovers, selects, tooltips, dropdown menus (`menuPopupClass`), fade plus scale from 97% |
+| `--motion-base` / `motionTokens.base` | 240 ms | `<details>` cards opening by height, panel content, `FadeIn` |
+| Route settle | 120 ms | Page switch from 60% opacity (`RouteFade`, `.secondary-sidebar`) |
+| Group menu | 280 ms open, 180 ms close; items 320 ms, 60 ms apart | Rail group menu surface wipe and item cascade |
+| `--motion-slow` / `motionTokens.slow` | 480 ms | Large reveals only (first-run steps, empty-state hero) |
+| `--ease-standard` | `cubic-bezier(0.22, 1, 0.36, 1)` | Default ease for everything that enters |
+| Settle ease | `cubic-bezier(0.33, 1, 0.68, 1)` | Cascades that must read as motion to the end (group menu items) |
+| Morph spring | `snappy` | `MorphIcon` |
+
+Motion grammar by function: state changes (hover, pressed, checked) only change colour; things that appear fade in and rise at most 8 px; things that leave are faster than they arrived; nothing loops, bounces or moves on its own. Every motion honours reduced motion (`MotionProvider reducedMotion="user"`, CSS `prefers-reduced-motion`).
+
 Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 
 - `MotionProvider`: Wrap the app once; reducedMotion "user" turns every motion component off for people who ask.
@@ -258,11 +292,25 @@ Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 - Desktop app window with a 52 px draggable title bar and a 40 px footer. Workspace gap 1 rem, inset 1.5 rem.
 - Dense by design: the Elevate web button height of 48 px does not apply; controls stay at 24 to 36 px.
 - Left sidebar plus one workspace pane; panes use `workspace-titlebar` for the header.
-- Page layouts were not redesigned in this pass (section 10).
+- Three columns: the 56 px icon rail (64 px on macOS), the panel column (always open, resizable by its edge, never folded; the rail group menu lays over it) and the workspace pane.
 
 ## 6. Depth & Elevation
 
 Flat. Depth comes from the surface ladder (bg, surface, surface-2, surface-3) and hairline borders. No drop shadows except `shadow-xs` on the primary button. No gradients, glow or glassmorphism in the default theme.
+
+Layer order (z-index), lowest to highest:
+
+| Layer | z-index | Examples |
+|---|---|---|
+| In-pane raised | `z-1` to `z-10` | Sticky table headers, row action overlays, timeline playhead |
+| Floating in a pane | `z-20` | Floating toolbars inside a workspace pane |
+| Panel overlay | `z-30` | Rail group menu over the panel column |
+| App chrome | `z-40` | Agent dock, its launcher |
+| Popups | `z-50` | Popovers, selects, menus, dialogs, tooltips, toasts (Base UI portals) |
+| Window controls | `z-[60]` | Windows caption buttons, always clickable |
+| Consent | `z-[70]` | First-run analytics consent, above everything |
+
+Do not invent values between these layers; pick the layer by role.
 
 ## 7. Do's and Don'ts
 
@@ -286,7 +334,18 @@ Flat. Depth comes from the surface ladder (bg, surface, surface-2, surface-3) an
 
 ## 8. Responsive Behavior
 
-Desktop first: the window has a minimum size set by Electron and the navigation is always the icon rail. No custom breakpoints are defined in `globals.css`; Tailwind defaults apply. Minimum touch target is not specified for the desktop UI. Widths to check by eye: 1024, 1280, 1440, and the compact sidebar.
+Desktop first. The Electron window opens at least 960 × 640 px (`electron/src/main/index.ts`); the browser build has no minimum, so layouts must still hold at 960 px and degrade to one column below it. The navigation is always the icon rail.
+
+| Breakpoint | Width | Use |
+|---|---|---|
+| base | below 640 px | Browser build on small windows: one column, panel stacks above content |
+| `sm` | 640 px | Two-column forms and card grids |
+| `md` | 768 px | Side-by-side media and settings rows |
+| `lg` | 1024 px | Three-column grids |
+| `xl` | 1280 px | Wider editors and timelines |
+| `2xl` | 1536 px | Extra columns on large screens only; never required to use a feature |
+
+Target sizes: pointer controls are 24 to 36 px high (default 32); rail items and primary icon buttons 40 px; anything used during recording or playback at least 32 px. The browser build on touch screens follows the 44 px minimum for primary actions. Widths to check by eye: 960, 1280, 1440 and 1920.
 
 ## 9. Agent Prompt Guide
 
@@ -309,11 +368,11 @@ Desktop first: the window has a minimum size set by Electron and the navigation 
 ## 10. Known Gaps
 
 - `tokensMeasured` is false: values are read from source and the generated tokens, not from a running page. Compare computed styles in the browser pane against `t3-theme.css` once the backend is up.
-- Error, warning and update colours are tested at 4.5:1 on canvas and surface for every palette (`brand-contrast.test.ts`). Success and info come from Tailwind steps (emerald-700 and blue-600 on light, 500 on dark, computed by hand, not in the token file) and have no automated test.
+- Error, warning and update colours are tested at 4.5:1 on canvas and surface for every palette (`brand-contrast.test.ts`). Success is monochrome (graphite / white). Info still comes from Tailwind blue steps, computed by hand, with no automated test.
 - In dark mode `--update-foreground` is blue (`#51a2ff`) while light mode uses graphite; the update banner is therefore the one non-functional hue left. Decide whether to make it monochrome.
 - Home is flat and monochrome (a test blocks hue classes). Setup, Music Studio and the Voice, Dub and Design screens keep their earlier layouts and were not checked visually in this pass.
-- Page layouts, Setup, Dub, Voice and Music Studio screens keep their previous structure.
-- No breakpoints or touch-target sizes are documented; they were not measured.
+- Breakpoints and target sizes are documented (section 8) but no test enforces them.
+- Headings outside the hierarchy table (a few `text-lg` titles in Clone, Dub, Tools and Transcriptions) predate it; move them to the table's levels when those screens are next touched.
 - Mobile apps receive the new default through generated tokens but their screens were not reviewed.
 - `electron/src/shared/` legacy components may still carry older colours and were not checked.
 - Brand guideline (`eVoice-brand/brand-guideline.md`) says buttons are 48 px and cards use a lighter hover lift; the desktop app intentionally uses its denser sizes.
