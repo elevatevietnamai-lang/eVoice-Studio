@@ -52,7 +52,7 @@ export function RecordingInputs({
           }}
           disabled={busy}
         >
-          <SelectTrigger id={deviceId} className="w-full" size="sm">
+          <SelectTrigger id={deviceId} className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -81,7 +81,7 @@ export function RecordingInputs({
           }}
           disabled={busy}
         >
-          <SelectTrigger id={channelsId} className="w-full" size="sm">
+          <SelectTrigger id={channelsId} className="w-full">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

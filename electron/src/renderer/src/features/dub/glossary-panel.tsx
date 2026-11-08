@@ -148,9 +148,9 @@ export function GlossaryPanel({
   };
 
   return (
-    <section className="rounded-(--card-radius) border border-primary/20 bg-primary/[0.035]">
+    <section className="rounded-(--card-radius) border border-border bg-card">
       <div className="flex items-start gap-3 border-b border-border/50 px-4 py-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
           <BookOpenIcon className="size-4" />
         </div>
         <div className="min-w-0 flex-1">

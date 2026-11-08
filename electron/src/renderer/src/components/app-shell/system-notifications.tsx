@@ -71,7 +71,7 @@ function notificationRoute(note: SystemNotification) {
 function levelStyle(level: SystemNotification['level']) {
   if (level === 'error') return 'border-destructive/45 bg-destructive/8 text-destructive';
   if (level === 'warn') return 'border-warning/45 bg-warning/8 text-warning-foreground';
-  return 'border-primary/35 bg-primary/8 text-primary';
+  return 'border-border bg-muted text-foreground';
 }
 
 function LevelIcon({ level }: { level: SystemNotification['level'] }) {

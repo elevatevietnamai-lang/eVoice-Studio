@@ -10,11 +10,7 @@ import {
 } from '@shared/utils/splitStoryText';
 import { useEffect, useRef, useState } from 'react';
 import { buildAutoCast } from '@shared/utils/autoCast';
-import {
-  SAMPLE_STORY_CAST,
-  SAMPLE_STORY_LINES,
-  SAMPLE_STORY_NAME,
-} from '@shared/data/sampleStory';
+import { SAMPLE_STORY_CAST, SAMPLE_STORY_LINES, SAMPLE_STORY_NAME } from '@shared/data/sampleStory';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDownIcon,
@@ -422,7 +418,7 @@ export function StoryEditor({
 
       {draft.lines.length === 0 && (
         <div className="flex min-h-72 flex-col items-center justify-center rounded-(--card-radius) border border-dashed border-border/60 px-6 text-center">
-          <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-muted text-foreground">
             <BookOpenTextIcon className="size-5" />
           </div>
           <h3 className="text-sm font-semibold">{t('stories.newStory')}</h3>
@@ -447,7 +443,10 @@ export function StoryEditor({
       )}
 
       {draft.lines.map((line, index) => (
-        <div key={line.id} className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-4">
+        <div
+          key={line.id}
+          className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-4"
+        >
           <div className="flex items-start gap-3">
             <textarea
               ref={(node) => {

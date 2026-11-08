@@ -1028,7 +1028,7 @@ export function DubPage() {
             className={cn(
               'space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3 transition-colors',
               session.jobId && !['idle', 'preparing'].includes(session.phase) && 'rounded-b-lg',
-              dragging && 'border-primary/60 bg-primary/5',
+              dragging && 'border-foreground/30 bg-accent',
             )}
             onDragEnter={(event) => {
               event.preventDefault();
@@ -1050,7 +1050,7 @@ export function DubPage() {
             }}
           >
             <h2 className="flex items-center gap-2 text-sm font-medium">
-              <span className="grid size-5 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
+              <span className="grid size-5 place-items-center rounded-full bg-muted text-[11px] font-semibold text-primary">
                 1
               </span>
               {t('dub.upload_transcribe')}
@@ -1362,7 +1362,7 @@ export function DubPage() {
           )}
           <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
             <h2 className="flex items-center gap-2 text-sm font-medium">
-              <span className="grid size-5 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
+              <span className="grid size-5 place-items-center rounded-full bg-muted text-[11px] font-semibold text-primary">
                 2
               </span>
               {t('dub.target_language')}
@@ -1922,7 +1922,7 @@ export function DubPage() {
             )}
             {!session.segments.length && (!session.recovery || busy) && (
               <div className="mx-auto flex min-h-[24rem] w-full max-w-5xl flex-col items-center justify-center px-6 text-center">
-                <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-muted text-foreground">
                   {busy ? (
                     <LoaderCircleIcon className="size-6 animate-spin motion-reduce:animate-none" />
                   ) : (
@@ -1978,7 +1978,7 @@ export function DubPage() {
                           key={number}
                           className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-xs"
                         >
-                          <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 font-medium text-primary">
+                          <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted font-medium text-foreground">
                             {number}
                           </span>
                           {t(label)}
@@ -2319,7 +2319,7 @@ export function DubPage() {
                 />
               )}
               {selectedSegmentIds.size > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-primary/20 bg-primary/5 p-2.5">
+                <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-border bg-card p-2.5">
                   <span className="mr-auto flex items-center gap-2 px-1 text-sm font-medium text-primary">
                     <CheckCheckIcon className="size-4" />
                     {t('dub.selected_count', {
@@ -2636,7 +2636,7 @@ export function DubPage() {
                                   aria-pressed={livePreview.liveSegmentId === segment.id}
                                   className={cn(
                                     livePreview.liveSegmentId === segment.id &&
-                                      'bg-primary/10 text-primary',
+                                      'bg-accent text-foreground',
                                   )}
                                   onClick={() =>
                                     livePreviewEnabled
@@ -3024,7 +3024,7 @@ export function DubPage() {
                         variant={
                           session.agentCli === selectedTranslationAgent.id ? 'default' : 'outline'
                         }
-                        className="rounded-r-none border-primary/25 bg-primary/[0.06] text-foreground hover:bg-primary/10"
+                        className="rounded-r-none"
                         disabled={
                           Boolean(session.recovery) || !session.segments.length || !code || busy
                         }
@@ -3048,7 +3048,7 @@ export function DubPage() {
                                   : 'outline',
                               size: 'icon',
                             }),
-                            'rounded-l-none border-l-0 border-primary/25 bg-primary/[0.06] hover:bg-primary/10',
+                            'rounded-l-none border-l-0',
                           )}
                         >
                           <ChevronDownIcon />
@@ -3097,7 +3097,6 @@ export function DubPage() {
                     <Button
                       data-slot="translate-with-agent"
                       variant={session.quality === 'agent' ? 'default' : 'outline'}
-                      className="border-primary/25 bg-primary/[0.06] text-foreground hover:bg-primary/10"
                       disabled={
                         Boolean(session.recovery) || !session.segments.length || !code || busy
                       }

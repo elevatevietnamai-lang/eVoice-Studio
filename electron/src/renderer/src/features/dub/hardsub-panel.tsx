@@ -184,7 +184,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             {t('dub_hardsub.badge_cleaned')}
           </span>
         ) : hs?.cue_count ? (
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+          <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-primary">
             {t('dub_hardsub.badge_read', { count: hs.cue_count })}
           </span>
         ) : null}

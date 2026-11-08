@@ -51,7 +51,7 @@ export function KeyboardCheatsheet({
       <DialogContent className="max-w-2xl gap-5 p-5" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-foreground">
               <KeyboardIcon className="size-4" />
             </span>
             {t('keyboard.title')}

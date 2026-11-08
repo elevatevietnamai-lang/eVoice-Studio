@@ -65,7 +65,7 @@ export function TakeDetails({ item }: { item: HistoryItem }) {
         {voice ? (
           <ProfileAvatar name={voice.name} imageUrl={voice.image_url} className="size-10" />
         ) : (
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
             <ModeIcon className="size-4" aria-hidden="true" />
           </span>
         )}

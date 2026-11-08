@@ -187,7 +187,7 @@ export function DictationSetup({ onReady }: { onReady: () => void }) {
   return (
     <div className="space-y-3 border-b border-border/50 bg-muted/15 px-6 py-4">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
           <MicIcon aria-hidden="true" className="size-4" />
         </span>
         <div className="min-w-0 flex-1">

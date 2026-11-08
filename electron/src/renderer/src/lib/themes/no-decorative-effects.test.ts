@@ -62,13 +62,22 @@ const EVERYWHERE: [name: string, pattern: RegExp][] = [
   ],
   // Native selects ignore the theme's control styles; use the Select primitive.
   ['native select', /<select\b/],
+  // A translucent primary fill or border has no role in the system: selection is bg-accent,
+  // callouts use the Card grammar, icons sit on bg-muted (eVoice brand 5). A solid primary
+  // control may darken on hover (`hover:bg-primary/90`, DESIGN.md).
+  ['primary tint', /(?<!resize:|hover:)(?<![\w/-])(?:bg|border)-primary\/[\d.[]/],
 ];
 
+/** Data marks keep the primary: the dub timeline's segments and the tier slider's fill. */
+const isDataMark = (file: string, line: string) =>
+  file.endsWith('dub-timeline.tsx') || /Slider\.Indicator/.test(line);
+
 describe('design system rules for every source', () => {
-  it.each(EVERYWHERE)('no %s', (_name, pattern) => {
+  it.each(EVERYWHERE)('no %s', (name, pattern) => {
     const hits: string[] = [];
     for (const [file, source] of Object.entries(sources)) {
       source.split(/\r?\n/).forEach((line, index) => {
+        if (name === 'primary tint' && isDataMark(file, line)) return;
         if (pattern.test(line)) hits.push(`${file.replace('../../', '')}:${index + 1}`);
       });
     }

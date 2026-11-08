@@ -169,7 +169,7 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
       ) : (
         <>
           <p className="text-xs text-muted-foreground">{t('voice_profile.consent_explain')}</p>
-          <blockquote className="border-l-2 border-primary/40 pl-3 text-sm leading-relaxed">
+          <blockquote className="border-l-2 border-border pl-3 text-sm leading-relaxed">
             {t('voice_profile.consent_statement')}
           </blockquote>
           <RecordingInputs rec={rec} disabled={busy} />

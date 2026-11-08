@@ -261,7 +261,7 @@ export function ResetSettings({
                     disabled
                       ? 'cursor-not-allowed opacity-45'
                       : active
-                        ? 'border-primary/35 bg-primary/8'
+                        ? 'border-foreground/30 bg-accent'
                         : 'cursor-pointer border-border/60 bg-background/30 hover:bg-accent'
                   }`}
                 >

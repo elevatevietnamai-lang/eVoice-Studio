@@ -88,6 +88,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
   const [warningsDismissed, setWarningsDismissed] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
   const audiobookInput = useRef<HTMLTextAreaElement>(null);
+  const importInput = useRef<HTMLInputElement>(null);
   const locked = !!session.active || importing;
   const scriptLines = scriptSize(mode, draft);
   const query = useQuery({
@@ -373,10 +374,11 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 </h2>
                 <p className="mt-1 text-xs text-muted-foreground">{t(mode + '.subtitle')}</p>
               </div>
-              <label className={buttonVariants({ variant: 'outline', size: 'sm' })}>
-                <ImportIcon />
-                {t('audiobook.import')}
+              {/* One right-aligned group, one variant: Import, Load sample and Clear script are
+                  peers, so none floats alone or looks heavier than the others. */}
+              <div className="ml-auto flex shrink-0 items-center gap-2">
                 <input
+                  ref={importInput}
                   aria-label={t('audiobook.import')}
                   type="file"
                   accept={
@@ -384,23 +386,45 @@ export function LongformPage({ mode }: { mode: Mode }) {
                   }
                   disabled={locked}
                   className="sr-only"
+                  tabIndex={-1}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     e.target.value = '';
                     if (file) void importFile(file);
                   }}
                 />
-              </label>
-              <Button
-                variant="ghost"
-                size="sm"
-                title={t('stories.clearScriptHint')}
-                disabled={locked || scriptLines === 0}
-                onClick={() => setClearOpen(true)}
-              >
-                <Trash2Icon />
-                {t('stories.clearScript')}
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={locked}
+                  onClick={() => importInput.current?.click()}
+                >
+                  <ImportIcon />
+                  {t('audiobook.import')}
+                </Button>
+                {mode === 'audiobook' && !draft.script.trim() && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    title={t('audiobook.load_sample_hint')}
+                    disabled={locked}
+                    onClick={() => set({ script: SAMPLE_AUDIOBOOK_SCRIPT })}
+                  >
+                    <SparklesIcon />
+                    {t('audiobook.load_sample')}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  title={t('stories.clearScriptHint')}
+                  disabled={locked || scriptLines === 0}
+                  onClick={() => setClearOpen(true)}
+                >
+                  <Trash2Icon />
+                  {t('stories.clearScript')}
+                </Button>
+              </div>
               <ConfirmDialog
                 open={clearOpen}
                 onOpenChange={setClearOpen}
@@ -413,18 +437,6 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 confirmLabel={t('stories.clearScript')}
                 onConfirm={() => set(clearedScriptPatch(mode))}
               />
-              {mode === 'audiobook' && !draft.script.trim() && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  title={t('audiobook.load_sample_hint')}
-                  disabled={locked}
-                  onClick={() => set({ script: SAMPLE_AUDIOBOOK_SCRIPT })}
-                >
-                  <SparklesIcon />
-                  {t('audiobook.load_sample')}
-                </Button>
-              )}
             </div>
             {mode === 'audiobook' ? (
               <div className="flex min-h-64 flex-1 flex-col gap-3">

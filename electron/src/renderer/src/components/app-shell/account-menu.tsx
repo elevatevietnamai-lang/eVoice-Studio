@@ -19,7 +19,7 @@ function initials(name: string): string {
 function Avatar({ name, url }: { name: string; url: string | null }) {
   if (!url && !name)
     return (
-      <span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
+      <span className="grid size-7 shrink-0 place-items-center rounded-full bg-muted text-foreground">
         <UserRoundIcon className="size-4" aria-hidden="true" />
       </span>
     );
@@ -28,7 +28,7 @@ function Avatar({ name, url }: { name: string; url: string | null }) {
   ) : (
     <span
       aria-hidden="true"
-      className="grid size-7 shrink-0 place-items-center rounded-full bg-primary/15 text-[11px] font-semibold text-primary"
+      className="grid size-7 shrink-0 place-items-center rounded-full bg-muted text-[11px] font-semibold text-primary"
     >
       {initials(name)}
     </span>

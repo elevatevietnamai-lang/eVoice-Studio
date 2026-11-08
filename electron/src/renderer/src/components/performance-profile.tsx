@@ -383,7 +383,7 @@ export function PerformanceProfile({
             'inline-flex h-6 shrink-0 items-center justify-center gap-1 rounded-full text-[11px] font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50',
             popoverMode ? 'w-6' : 'px-2',
             autoOn
-              ? 'bg-primary/15 text-primary ring-1 ring-inset ring-primary/30'
+              ? 'bg-accent text-foreground'
               : 'text-muted-foreground ring-1 ring-inset ring-border/60 hover:text-foreground',
           )}
         >

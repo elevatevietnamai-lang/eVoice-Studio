@@ -126,7 +126,7 @@ export function DubbingDemo({
     return (
       <article className="min-w-0 overflow-hidden rounded-(--card-radius) border border-border/55 bg-background/25">
         <div className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-medium">
-          <span className="grid size-6 shrink-0 place-items-center rounded-sm bg-primary/12 font-mono text-[10px] font-semibold text-primary">
+          <span className="grid size-6 shrink-0 place-items-center rounded-sm bg-muted font-mono text-[10px] font-semibold text-primary">
             {channel}
           </span>
           <span>{label}</span>
@@ -233,7 +233,7 @@ export function DubbingDemo({
   return (
     <section className="glass-panel @container/dubbing-demo w-full space-y-3 rounded-(--card-radius) border border-border/60 bg-card/35 p-4 text-left">
       <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
-        <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-foreground">
           <FilmIcon className="size-4" />
         </span>
         <div className="min-w-0 flex-1">

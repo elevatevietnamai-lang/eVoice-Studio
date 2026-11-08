@@ -326,7 +326,7 @@ export function ScriptPanel({
         {coachmark ? (
           <div
             role="status"
-            className="flex items-center gap-2 rounded-lg border border-primary/15 bg-primary/5 px-3 py-2 text-xs text-muted-foreground"
+            className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground"
           >
             <SparklesIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
             <span>{coachmark}</span>

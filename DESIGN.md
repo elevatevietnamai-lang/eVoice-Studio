@@ -72,7 +72,7 @@ rounded:
   control: "8px"            # --control-radius, buttons, inputs (Elevate --radius-sm)
   card: "12px"              # --card-radius, cards, panels, menus (Elevate --radius-md)
   surface: "20px"           # --surface-radius, dialogs and the in-app browser dialog (Elevate --radius-lg)
-  base: "8px"               # --radius; sm 4px, md 6px, lg 8px, xl 11.2px, 2xl 14.4px
+  base: "8px"               # --radius; sm 4px, lg 8px. rounded-md (6 px) is off the Elevate scale and not used
 spacing:
   workspace-gap: "1rem"
   workspace-inset: "1.5rem"
@@ -187,7 +187,10 @@ Rules:
 - **Glass mode** (Settings → Appearance) applies to named palettes only: every `[data-glass='true']` rule also requires `[data-theme-id]`, which the default Studio theme never sets. The switch is disabled with a hint while Studio is active. `globals.test.ts` enforces this.
 - **Feature stylesheets** follow the same rules as components: radius is the control, card or surface token (corners of 5 px or less, circles and pills aside), no blurred shadows or glows except floating layers (the in-app browser dialog, the narrow inspector sheet), no backdrop blur, no surface gradients, and no lift or scale on hover. Only the Pro page's feature-card illustrations draw with gradients and animate. `no-decorative-css.test.ts` enforces this.
 - **Pane headers, footers and sticky bars** are solid (`bg-background`, `bg-sidebar`), never frosted. Backdrop blur stays on layers that float over content: the analytics consent banner, the backend recovery veil and the video controls.
-- **Selected rows** use a flat surface (`--sidebar-row-selected` in sidebars, `bg-accent` elsewhere). No 2 px accent bar, inset highlight or glow.
+- **Selected rows** use a flat surface (`--sidebar-row-selected` in sidebars, `bg-accent` elsewhere; a selected card adds `border-foreground/30`). No 2 px accent bar, inset highlight, glow or primary tint; `globals.css` included (`globals.test.ts`).
+- **Segmented controls** (Tabs, ToggleGroup filters, the panel header's page and library tabs) share one look: an 8 px `bg-muted` frame with 3 px padding, 4 px items, and the chosen item raised on `bg-background` (`bg-control-fill` in dark). A standalone Toggle shows pressed as flat `bg-accent`.
+- **No primary tints at call sites**: no translucent `bg-primary/N` or `border-primary/N`. Icons, avatars, step numbers and chips sit on `bg-muted` with `text-foreground` (eVoice brand 5: no coloured icon tiles); callouts use the Card grammar. Only data marks (dub timeline segments, slider fill), the resize handle and a solid primary control's hover keep primary. No native `<select>`: use `SimpleSelect` or the Select primitive. `no-decorative-effects.test.ts` enforces all three, primitives included.
+- **Toolbars** put peer actions in one right-aligned group with one variant (the Script toolbar: Import, Load sample, Clear script, all outline); a file picker is a Button that opens a hidden input, never a label styled as a button.
 - **Call sites never re-style primitives** with gradients, white highlight edges, primary glows, hover shadows, hover blur or hover scale. Card-like containers use the Card grammar: `rounded-(--card-radius)`, `border-border`, `bg-card`, no shadow. `no-decorative-effects.test.ts` enforces this.
 - **Tabs, Toggle, Switch, Slider, Progress**: filled with `primary`; never a hue.
 - **Icons**: `lucide-react` for static icons (stroke 1.75). Use `MorphIcon` (`components/ui/morph-icon.tsx`) only where an icon changes state: theme toggle, sidebar toggle, play and pause. Pass Lucide icon data from `lucide`, not a component.

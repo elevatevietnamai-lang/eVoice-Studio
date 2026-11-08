@@ -96,7 +96,7 @@ export function ProfilePhoto({
         className={cn(
           'absolute inset-0 grid place-items-center rounded-full bg-black/55 text-white opacity-0 transition-opacity duration-150 group-hover/photo:opacity-100 group-has-focus-visible/photo:opacity-100 motion-reduce:transition-none',
           (busy || dragging) && 'opacity-100',
-          dragging && 'bg-primary/70 ring-2 ring-primary',
+          dragging && 'bg-foreground/60 ring-2 ring-ring',
         )}
       >
         {busy ? (

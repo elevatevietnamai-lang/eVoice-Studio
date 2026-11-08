@@ -158,7 +158,7 @@ export function SupportSettings() {
           </div>
         </section>
         <section className="support-tile support-license" aria-labelledby="support-pro-heading">
-          <span className="mb-4 w-fit rounded-lg bg-primary/10 px-2 py-1 text-xs font-semibold tracking-wider text-primary">
+          <span className="mb-4 w-fit rounded-lg bg-muted px-2 py-1 text-xs font-semibold tracking-wider text-foreground">
             {t('supportPlans.pro')}
           </span>
           <h2 id="support-pro-heading">{t('proPage.title')}</h2>

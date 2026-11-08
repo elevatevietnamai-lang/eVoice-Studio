@@ -131,7 +131,7 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
         <MusicIcon className="size-4 text-muted-foreground" />
         <span className="mr-auto">{t('dub_bgm.title')}</span>
         {state.has_track && (
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+          <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-primary">
             {t('dub_bgm.badge_ready')}
           </span>
         )}

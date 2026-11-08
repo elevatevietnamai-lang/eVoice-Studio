@@ -215,7 +215,7 @@ export function DesignPage() {
               id="voice-description"
               maxLength={2000}
               disabled={generation.isGenerating}
-              className="min-h-24 w-full resize-y rounded-lg border border-input bg-background/35 p-3 text-sm leading-5 outline-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary/30 focus-visible:bg-background/50 focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="min-h-24 w-full resize-y rounded-lg border border-input bg-background/35 p-3 text-sm leading-5 outline-none transition-[border-color,background-color,box-shadow] focus-visible:border-ring focus-visible:bg-background/50 focus-visible:ring-2 focus-visible:ring-ring/30"
               value={description}
               placeholder={t('clone.describe_placeholder')}
               onChange={(event) => {
@@ -471,7 +471,7 @@ export function DesignPage() {
               {activeProfile ? (
                 <ProfileAvatar name={activeProfile.name} imageUrl={activeProfile.image_url} />
               ) : (
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary ring-1 ring-foreground/15">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-foreground ring-1 ring-foreground/15">
                   <WandSparklesIcon className="size-4" />
                 </span>
               )}

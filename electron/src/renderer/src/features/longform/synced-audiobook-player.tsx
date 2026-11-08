@@ -215,7 +215,7 @@ const LyricsChapter = memo(function LyricsChapter({
                   className={cn(
                     'rounded px-0.5 text-inherit outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring',
                     spoken && 'text-foreground/70',
-                    active && 'bg-primary/15 font-medium text-primary ring-1 ring-primary/20',
+                    active && 'bg-accent font-medium text-foreground',
                   )}
                   onClick={() => onSeek(word.start)}
                 >

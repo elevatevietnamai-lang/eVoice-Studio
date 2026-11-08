@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, CheckIcon, PencilIcon, PlusIcon, SearchIcon } from 'lucide-react';
+import { CheckIcon, PencilIcon, PlusIcon, SearchIcon } from 'lucide-react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +61,7 @@ function VoiceCard({
       data-slot="voice-card"
       className={cn(
         'group/card relative flex h-[68px] min-w-0 items-center gap-3 rounded-(--card-radius) border bg-card/40 px-3 transition-[background-color,border-color,box-shadow] duration-150 hover:border-border hover:bg-accent has-[[data-choose]:focus-visible]:ring-2 has-[[data-choose]:focus-visible]:ring-ring',
-        current ? 'border-primary/60 bg-primary/5' : 'border-border/60',
+        current ? 'border-foreground/30 bg-accent' : 'border-border/60',
       )}
     >
       {/* Covers the card so the whole surface chooses the voice; photo and edit sit above it. */}
@@ -111,7 +111,7 @@ function VoiceCard({
   );
 }
 
-export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack: () => void }) {
+export function VoiceSetup({ onChosen }: { onChosen: () => void }) {
   const { t, i18n } = useTranslation();
   const profiles = useProfiles();
   const selectedId = useCloneSetting('selectedProfileId');
@@ -169,21 +169,10 @@ export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack:
 
   return (
     <section className="flex w-full flex-col gap-7">
-      <div className="flex items-start gap-3">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label={t('preferences.back')}
-          title={t('preferences.back')}
-          className="mt-0.5"
-          onClick={onBack}
-        >
-          <ArrowLeftIcon />
-        </Button>
-        <div className="min-w-0">
-          <h2 className="text-xl font-semibold tracking-tight">{t('cloneFlow.choose_voice')}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{t('cloneFlow.choose_hint')}</p>
-        </div>
+      {/* No back button: the rail is the way out, and the current voice card returns to it. */}
+      <div className="min-w-0">
+        <h2 className="text-xl font-semibold tracking-tight">{t('cloneFlow.choose_voice')}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t('cloneFlow.choose_hint')}</p>
       </div>
       {eligibleVoices.length > 0 && (
         <div className="space-y-3">

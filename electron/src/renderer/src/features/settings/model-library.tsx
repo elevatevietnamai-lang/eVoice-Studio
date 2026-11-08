@@ -492,7 +492,7 @@ export function SystemRecommendations() {
                     <span
                       className={
                         selected
-                          ? 'rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary'
+                          ? 'rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-primary'
                           : 'rounded-full bg-muted/60 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground'
                       }
                     >
@@ -506,7 +506,7 @@ export function SystemRecommendations() {
                     </span>
                   )}
                   {model.required && (
-                    <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-primary">
+                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-primary">
                       {t('models.req_tag')}
                     </span>
                   )}
@@ -921,7 +921,7 @@ export function ModelLibrary({
         )}
         {!setup && model.curated && (
           <span
-            className="rounded-full bg-primary/10 px-2 py-1 text-xs text-primary"
+            className="rounded-full bg-muted px-2 py-1 text-xs text-foreground"
             title={t('firstrun.chip_recommended_title')}
           >
             {t('firstrun.chip_recommended')}
@@ -935,7 +935,7 @@ export function ModelLibrary({
         />
         {!activeAsrModel &&
           (activeEngineModel || activeDictationModel || activeDiarisationModel) && (
-            <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-1 text-xs text-primary">
+            <span className="flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-foreground">
               <CheckIcon className="size-3.5" />
               {t('modelSettings.selected')}
             </span>
@@ -1125,7 +1125,7 @@ export function ModelLibrary({
             )}
             {!setup && resident && (
               <span
-                className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-1 text-xs text-primary"
+                className="flex items-center gap-1 rounded-full bg-muted px-2 py-1 text-xs text-foreground"
                 title={[
                   t('modelMaintenance.inMemoryDescription'),
                   resident.device,

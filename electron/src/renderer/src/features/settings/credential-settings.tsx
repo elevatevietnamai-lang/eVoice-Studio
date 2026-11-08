@@ -102,7 +102,7 @@ export function HuggingFaceToken() {
             </span>
           )}
           {query.data?.active === source.source && (
-            <span className="rounded bg-primary/10 px-2 py-1 text-xs text-primary">
+            <span className="rounded bg-muted px-2 py-1 text-xs text-foreground">
               {t('settings.hf_token_active')}
             </span>
           )}

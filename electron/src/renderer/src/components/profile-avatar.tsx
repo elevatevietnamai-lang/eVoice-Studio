@@ -27,7 +27,7 @@ export function ProfileAvatar({
     <span
       aria-hidden="true"
       className={cn(
-        'relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/12 text-xs font-semibold text-primary ring-1 ring-foreground/15',
+        'relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-xs font-semibold text-primary ring-1 ring-foreground/15',
         className,
       )}
     >

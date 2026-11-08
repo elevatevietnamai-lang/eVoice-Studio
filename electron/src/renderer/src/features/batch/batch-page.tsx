@@ -437,7 +437,7 @@ export function BatchPage() {
           {jobs.isPending && <p role="status">{t('common.loading')}</p>}
           {jobs.data?.length === 0 && (
             <div className="flex min-h-[28rem] flex-col items-center justify-center text-center">
-              <div className="mb-4 flex size-14 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="mb-4 flex size-14 items-center justify-center rounded-lg bg-muted text-foreground">
                 <LayersIcon className="size-6" />
               </div>
               <h2 className="text-sm font-semibold">

@@ -79,7 +79,7 @@ export function WebAuthGate({ children }: { children: ReactNode }) {
     >
       <Card className="w-full max-w-md">
         <CardHeader>
-          <div className="mb-2 flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="mb-2 flex size-9 items-center justify-center rounded-lg bg-muted text-foreground">
             <KeyRoundIcon className="size-5" />
           </div>
           <CardTitle>

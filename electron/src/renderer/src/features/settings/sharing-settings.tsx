@@ -320,7 +320,7 @@ export function SharingSettings() {
               );
             })}
             {state.pin && (
-              <div className="flex min-h-28 flex-col items-center justify-center rounded-(--card-radius) border border-border/60 bg-primary/5 p-3 text-center">
+              <div className="flex min-h-28 flex-col items-center justify-center rounded-(--card-radius) border border-border/60 bg-muted/30 p-3 text-center">
                 <ShieldCheckIcon aria-hidden="true" className="mb-2 size-5 text-primary" />
                 <span className="text-xs text-muted-foreground">{t('network.pin')}</span>
                 <strong className="font-mono text-xl tracking-[0.18em]">{state.pin}</strong>
