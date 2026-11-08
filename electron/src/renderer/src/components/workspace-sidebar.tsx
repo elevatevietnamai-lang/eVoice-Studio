@@ -1,3 +1,4 @@
+import { segmentedFrameClass } from '@/components/segmented';
 import { useContext, useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { type LucideIcon } from 'lucide-react';
@@ -124,7 +125,7 @@ function PanelBody({
             role="tablist"
             aria-label={title}
             data-slot="secondary-sidebar-tabs"
-            className="flex min-w-0 flex-1 gap-1 rounded-lg bg-muted p-1"
+            className={cn('flex min-w-0 flex-1', segmentedFrameClass)}
             onKeyDown={(event) => {
               if (event.altKey || event.ctrlKey || event.metaKey) return;
               const tabs = [
@@ -167,8 +168,8 @@ function PanelBody({
                 tabIndex={view === value ? 0 : -1}
                 onClick={() => chooseView(value)}
                 className={cn(
-                  // The segmented grammar of Tabs and ToggleGroup: 4 px tabs in an 8 px frame.
-                  'h-[26px] min-w-0 flex-1 truncate rounded-sm px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                  // The segmented grammar of Tabs and ToggleGroup: 8 px tabs in a 12 px frame.
+                  'h-[26px] min-w-0 flex-1 truncate px-2 text-xs font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
                   view === value
                     ? 'bg-background text-foreground dark:bg-control-fill'
                     : 'text-muted-foreground hover:text-foreground',

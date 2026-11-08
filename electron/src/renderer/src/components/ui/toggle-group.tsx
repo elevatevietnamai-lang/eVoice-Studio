@@ -42,7 +42,7 @@ function ToggleGroup({
       data-orientation={orientation}
       style={{ "--gap": spacing } as React.CSSProperties}
       className={cn(
-        "group/toggle-group flex w-fit flex-row items-center gap-1 rounded-lg bg-muted p-1 text-muted-foreground data-vertical:flex-col data-vertical:items-stretch",
+        "group/toggle-group flex w-fit flex-row items-center gap-1 rounded-(--card-radius) bg-muted p-1 text-muted-foreground data-vertical:flex-col data-vertical:items-stretch",
         className
       )}
       {...props}
@@ -77,7 +77,7 @@ function ToggleGroupItem({
           size: context.size || size,
         }),
         // One look with TabsTrigger: 4 px corners inside the 8 px frame; pressed is the raised tab.
-        "shrink-0 rounded-sm hover:bg-transparent focus:z-10 focus-visible:z-10 aria-pressed:bg-background aria-pressed:text-foreground dark:aria-pressed:bg-control-fill",
+        "shrink-0 rounded-lg hover:bg-transparent focus:z-10 focus-visible:z-10 aria-pressed:bg-background aria-pressed:text-foreground dark:aria-pressed:bg-control-fill",
         className
       )}
       {...props}
