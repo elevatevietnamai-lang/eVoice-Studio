@@ -53,7 +53,7 @@ export function WorkspaceSidebar() {
         )}
       >
         {/* The app icon's own mark (kit mark-graphite / mark-white), no tile: dark on the light
-            rail, light on the dark one, sized to sit with the 20 px menu icons. It goes Home. */}
+            rail, light on the dark one, 34 px: the brand reads larger than the 20 px menu icons while filling the same 40 px box. It goes Home. */}
         <Link
           to="/"
           aria-label={appLabel}
@@ -63,7 +63,7 @@ export function WorkspaceSidebar() {
           // A brand mark, not a control surface: no hover or pressed fill, only the focus ring.
           className="grid size-10 shrink-0 place-items-center rounded-lg text-sidebar-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          <EVoiceMark size={26} cut="full" className="size-[26px] shrink-0" />
+          <EVoiceMark size={34} cut="full" className="size-[34px] shrink-0" />
         </Link>
       </div>
       <WorkspaceNavigation />
