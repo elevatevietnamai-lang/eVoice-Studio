@@ -72,6 +72,24 @@ const EVERYWHERE: [name: string, pattern: RegExp][] = [
 const isDataMark = (file: string, line: string) =>
   file.endsWith('dub-timeline.tsx') || /Slider\.Indicator/.test(line);
 
+/**
+ * Segmented controls keep one look, so call sites may size or lay them out but never restyle
+ * their surface, corners or chosen state (the voice library's tabs once did, and lost the frame).
+ */
+it('never restyles Tabs or ToggleGroup surfaces at call sites', () => {
+  const element =
+    /<(TabsList|TabsTrigger|ToggleGroupItem|ToggleGroup)\b[^>]*?className="([^"]*)"/gs;
+  const hits: string[] = [];
+  for (const [file, source] of Object.entries(sources)) {
+    if (file.includes('/components/ui/')) continue;
+    for (const match of source.matchAll(element)) {
+      if (/\bbg-|\brounded-|data-active:|aria-pressed:|\bshadow/.test(match[2]))
+        hits.push(`${file.replace('../../', '')}: ${match[1]}`);
+    }
+  }
+  expect(hits).toEqual([]);
+});
+
 describe('design system rules for every source', () => {
   it.each(EVERYWHERE)('no %s', (name, pattern) => {
     const hits: string[] = [];
