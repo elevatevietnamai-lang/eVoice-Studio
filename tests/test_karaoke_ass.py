@@ -636,7 +636,7 @@ class TestKaraokeBurnMeasuresTranslatedTrack:
             "default_track": "de", "include_tracks": "de", "preserve_bg": 0,
             "burn_subs": 1, "karaoke": 1})
         assert res.status_code == 200
-        assert "{\\kf100}General {\\kf100}Kenobi" in next(
+        assert "{\\kf107}General {\\kf93}Kenobi" in next(
             (job_dir / "exports").glob("burn_subs_*.ass")).read_text(encoding="utf-8")
 
 
