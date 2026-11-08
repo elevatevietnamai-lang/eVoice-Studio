@@ -248,7 +248,7 @@ Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 - `Stagger`: Container that reveals StaggerItem children 40 ms apart. For grids and lists of at most about 12 items.
 - `StaggerItem`: Child of Stagger.
 - `RouteFade`: App shell wraps the routed page: opacity from 60% over 120 ms (never from blank, since the old page has no exit), keyed on the top-level route segment. The control panel column runs the same settle (`.secondary-sidebar` in `globals.css`), so both columns change together.
-- `MenuReveal` / `MenuRevealItem`: the rail group menu's items arrive 25 ms apart over 160 ms; the menu surface itself is opaque from the first frame, so the panel under it never shows through.
+- `MenuReveal` / `MenuRevealItem`: the rail group menu's items settle in 45 ms apart over 240 ms each, rising 8 px; the menu surface itself is opaque from the first frame, so the panel under it never shows through.
 - `MorphIcon`: See morph-icon above.
 
 ## 5. Layout Principles

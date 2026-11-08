@@ -118,19 +118,20 @@ export function RouteFade({ segment, children }: { segment: string; children: Re
 
 const menuVariants: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.025 } },
+  visible: { transition: { delayChildren: 0.04, staggerChildren: 0.045 } },
 };
 const menuItemVariants: Variants = {
-  hidden: { opacity: 0, x: -4 },
+  hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,
-    x: 0,
-    transition: { duration: motionTokens.fast, ease: motionTokens.ease },
+    y: 0,
+    transition: { duration: motionTokens.base, ease: motionTokens.ease },
   },
 };
 
 /**
- * A menu's items arriving one after another (25 ms apart, 160 ms each). Only the items move: the
+ * A menu's items settling in one after another (45 ms apart, 240 ms each, rising 8 px), slow
+ * enough to read as a cascade rather than a flash. Only the items move: the
  * menu's own surface is opaque from the first frame, so nothing underneath shows through.
  */
 export function MenuReveal(
