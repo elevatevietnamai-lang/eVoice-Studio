@@ -92,7 +92,7 @@ final class SmokeTests: XCTestCase {
         XCTAssertTrue(no.waitForExistence(timeout: 10))
         // SwiftUI sheets aren't XCUIElement.sheets; identify the two choices directly.
         XCTAssertTrue(app.buttons["consent.yes"].exists)
-        XCTAssertEqual(app.staticTexts["consent.title"].label, "Help improve VoiceStudio?")
+        XCTAssertEqual(app.staticTexts["consent.title"].label, "Help improve eVoice Studio?")
         let yes = app.buttons["consent.yes"]
         XCTAssertEqual(yes.label, "Yes, share anonymous stats")
         XCTAssertEqual(no.label, "No thanks")

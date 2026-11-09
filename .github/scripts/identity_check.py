@@ -7,6 +7,7 @@ this status with its read-only token. The native job remains an API-health gate.
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
 from pathlib import Path
@@ -51,8 +52,18 @@ def run(gh: GitHub, event: dict, root: Path = ROOT) -> bool:
     policy_base = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, env=environment, text=True).strip()
     if policy_base != base:
         raise RuntimeError("PR base changed since this policy checkout; run a fresh target workflow")
+    # A private repository refuses anonymous fetches. Authenticate this one fetch through
+    # environment-only git config, so the token never reaches argv, .git/config or the checker.
+    fetch_environment = dict(environment)
+    if token := os.environ.get("GITHUB_TOKEN"):
+        credential = base64.b64encode(f"x-access-token:{token}".encode()).decode()
+        fetch_environment.update({
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "http.https://github.com/.extraheader",
+            "GIT_CONFIG_VALUE_0": f"AUTHORIZATION: basic {credential}",
+        })
     subprocess.run(["git", "fetch", "--no-tags", "origin", f"refs/pull/{number}/head"],
-                   cwd=root, env=environment, check=True)
+                   cwd=root, env=fetch_environment, check=True)
     fetched = subprocess.check_output(["git", "rev-parse", "FETCH_HEAD"], cwd=root, env=environment, text=True).strip()
     if fetched != sha:
         raise RuntimeError("PR head changed during fetch; recheck")

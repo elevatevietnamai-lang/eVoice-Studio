@@ -89,6 +89,11 @@ jobs:
   secrets:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-22.04
+    # The action lists the PR's commits through the API; a private repository
+    # denies that to a token without pull-requests: read.
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -100,8 +105,8 @@ jobs:
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GITLEAKS_LICENSE is only required for GitHub *organizations*; this is
-          # a personal public repo, so the action runs free without it.
+          # GITLEAKS_LICENSE is only required for repositories owned by a GitHub
+          # *organization*; a user-owned repository runs free without it.
 
   # ── CodeQL SAST (Python + JS/TS) ─────────────────────────────────────────
   codeql:
@@ -110,6 +115,9 @@ jobs:
     if: ${{ !cancelled() && needs.changes.outputs.code != 'false' }}
     runs-on: ubuntu-22.04
     permissions:
+      # actions: read lets CodeQL read its own workflow run, which a private
+      # repository otherwise refuses ("Resource not accessible by integration").
+      actions: read
       contents: read
       security-events: write
     strategy:

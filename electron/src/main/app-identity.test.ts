@@ -31,6 +31,19 @@ describe('installAppIdentity', () => {
     expect(setPath).toHaveBeenCalledWith('userData', join('/home', 'appdata', 'VoiceStudio'));
   });
 
+  it('leaves an explicit --user-data-dir profile in place', () => {
+    const setPath = vi.fn();
+
+    installAppIdentity({
+      setName: vi.fn(),
+      setPath,
+      getPath: () => join('/home', 'appdata'),
+      commandLine: { hasSwitch: (name: string) => name === 'user-data-dir' },
+    });
+
+    expect(setPath).not.toHaveBeenCalled();
+  });
+
   it('defines the complete native macOS menu with eVoice Studio app labels', () => {
     const template = createMacApplicationMenuTemplate();
 

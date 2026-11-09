@@ -54,9 +54,11 @@ def test_the_public_env_var_prefix_is_unchanged(env_var):
     assert env_var in source, WHY
 
 
-def test_the_product_and_artifact_names_are_voicestudio():
+def test_the_display_name_changed_but_the_user_data_folder_did_not():
     config = json.loads(_read("config/app.json"))
     builder = _read("electron/electron-builder.config.mjs")
-    assert config["productName"] == "VoiceStudio"
+    identity = _read("electron/src/main/app-identity.ts")
+    assert config["productName"] == "eVoice Studio"
+    assert "export const USER_DATA_DIR_NAME = 'VoiceStudio';" in identity, WHY
     assert "productName: PRODUCT_NAME" in builder
     assert "artifactPrefix" in builder
