@@ -32,6 +32,7 @@ metadata and the backend fallback mirror it.
 
 - Karaoke subtitles have three looks in Dub export: Sweep, Highlight (only the spoken word lights up) and Pop (a short bounce); the ASS download uses the same look (#6)
 - Audiobook and Stories can turn part of a finished render into a short audiogram video (waveform, title and cover; square, landscape or vertical) for social posts (#6)
+- Karaoke subtitles on dubbed tracks follow the spoken TTS words: the first karaoke burn measures the track's word timing once and reuses it (#1764)
 - The phone apps have a Report action on every generated result: pick a reason, add an optional note, and it reaches the VoiceStudio team only when you tap Send (#3268, #3276, #3281)
 - The phone apps run speech, dictation, voice cloning and dubbing on the phone itself, offline once you download the models; pairing a computer is optional ([guide](docs/mobile.md)) (#2969)
 - Beta update channel: choose Stable or Beta under Settings → Updates; betas are `-beta.N` prereleases that never reach Stable users, and Docker gets matching `:beta` tags ([guide](docs/update-channels.md)) (#3175)
