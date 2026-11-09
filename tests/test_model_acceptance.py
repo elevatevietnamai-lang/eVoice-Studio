@@ -212,3 +212,38 @@ def test_history_is_bounded(store):
         ma.accept("k2-fsa/OmniVoice", fp)
         ma.revoke("k2-fsa/OmniVoice")
     assert len(ma.details("k2-fsa/OmniVoice")["history"]) == 20
+
+
+def _catalogue_rows():
+    models = importlib.import_module("api.routers.setup.models")
+    models.invalidate_cache()
+    try:
+        return models.list_models()["models"]
+    finally:
+        models.invalidate_cache()
+
+
+def test_accepting_everything_on_the_omnivoice_card_unblocks_generation(store):
+    # First run: the wizard's OmniVoice card is the only licence review a new
+    # user sees. Accepting what it offers must satisfy the generation gate, not
+    # leave the audio tokenizer to a later model_licence_required failure.
+    row = next(m for m in _catalogue_rows() if m["repo_id"] == "k2-fsa/OmniVoice")
+    offered = [row["license_acceptance"], *row.get("license_companions", [])]
+    assert "eustlb/higgs-audio-v2-tokenizer" in {s["repo_id"] for s in offered}
+    for state in offered:
+        if state["required"] and not state["accepted"]:
+            ma.accept(state["repo_id"], state["fingerprint"])
+    ma.ensure_engine_accepted("omnivoice")
+
+
+def test_every_gated_engine_model_without_a_card_rides_on_a_card(store):
+    # Class guard: a registry model an engine gates on but that has no catalogue
+    # card of its own must be offered on that engine's card(s).
+    rows = _catalogue_rows()
+    cards = {m["repo_id"] for m in rows}
+    for row in rows:
+        offered = {s["repo_id"] for s in row.get("license_companions", [])}
+        for engine in row.get("engines") or []:
+            for repo in ma.repos_for_engine(engine):
+                if repo not in cards and ma.status(repo)["required"]:
+                    assert repo in offered, (row["repo_id"], engine, repo)

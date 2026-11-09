@@ -932,6 +932,7 @@ export function ModelLibrary({
           label={model.label}
           info={model.license_info}
           acceptance={model.license_acceptance}
+          companions={model.license_companions}
         />
         {!activeAsrModel &&
           (activeEngineModel || activeDictationModel || activeDiarisationModel) && (
@@ -1111,7 +1112,7 @@ export function ModelLibrary({
           </>
         ) : model.installed ? (
           <>
-            {model.license_acceptance?.required && !model.license_acceptance.accepted ? (
+            {licenceAcceptancePending(model) ? (
               // Downloaded but unusable until its licence is accepted.
               <span className="flex items-center gap-1 rounded-full bg-warning/10 px-2 py-1 text-xs text-warning">
                 <TriangleAlertIcon className="size-3.5" />
@@ -1346,5 +1347,12 @@ export function ModelLibrary({
         }}
       />
     </>
+  );
+}
+
+/** Downloaded but unusable until every licence its engine gates on is accepted. */
+export function licenceAcceptancePending(model: CatalogueModel): boolean {
+  return [model.license_acceptance, ...(model.license_companions ?? [])].some(
+    (state) => state?.required && !state.accepted,
   );
 }

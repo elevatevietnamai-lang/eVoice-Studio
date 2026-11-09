@@ -600,6 +600,24 @@ def _model_licence_acceptance(repo_id: str) -> dict:
     return model_acceptance.status(repo_id)
 
 
+def _model_licence_companions(model: dict, catalogue_repos: list[str]) -> list[dict]:
+    """Gated licences the card's engines also need, reviewed on the same card.
+
+    Without them a first-run user accepts OmniVoice in the wizard and still gets
+    ``model_licence_required`` for its audio tokenizer on the first generation.
+    """
+    from services import model_acceptance
+    try:
+        repos = model_acceptance.companion_repos(
+            model["repo_id"], model.get("engines") or [], catalogue_repos,
+        )
+    except Exception:  # noqa: BLE001 — the generation gate still fails closed
+        logger.warning("model licence registry unreadable", exc_info=True)
+        return []
+    states = [model_acceptance.status(repo) for repo in repos]
+    return [state for state in states if state["required"]]
+
+
 @router.get("/models")
 def list_models():
     """Catalogue every known model + its on-disk install state.
@@ -634,6 +652,7 @@ def list_models():
 
     out = []
     host_tags = set(platform_tags)
+    catalogue_repos = [m["repo_id"] for m in KNOWN_MODELS]
     for m in KNOWN_MODELS:
         cached = cached_by_repo.get(m["repo_id"])
         on_disk = cached is not None and cached["size_on_disk"] > 0
@@ -653,6 +672,7 @@ def list_models():
             "curated": _model_curated(m, host_tags),
             "license_info": _model_license_info(m["repo_id"]),
             "license_acceptance": _model_licence_acceptance(m["repo_id"]),
+            "license_companions": _model_licence_companions(m, catalogue_repos),
         })
     response = {
         "target": "local",

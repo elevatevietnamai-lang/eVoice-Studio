@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQueries } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ExternalLink } from '@/components/external-link';
 import {
@@ -17,6 +18,7 @@ import {
   LICENCE_DIALOG_SURFACE,
   LicenceSection,
   ModelLicenceView,
+  modelLicenceDetailsKey,
   useModelLicenceDetails,
 } from './model-licence-view';
 import {
@@ -25,6 +27,7 @@ import {
   modelLicenseCategoryKey,
   modelLicenseUrl,
   type ModelLicenceAcceptance,
+  type ModelLicenceDetails,
   type ModelLicenseInfo,
   type ModelReviewPlan,
 } from './model-license-contract';
@@ -44,11 +47,14 @@ export function ModelLicense({
   label,
   info,
   acceptance,
+  companions = [],
 }: {
   repoId: string;
   label: string;
   info?: ModelLicenseInfo;
   acceptance?: ModelLicenceAcceptance;
+  /** Other gated models this card's engine loads (OmniVoice's audio tokenizer). */
+  companions?: ModelLicenceAcceptance[];
 }) {
   const { t } = useTranslation();
   const acknowledgementId = useId();
@@ -158,6 +164,20 @@ export function ModelLicense({
   };
 
   const details = useModelLicenceDetails(repoId, open);
+  const companionDetails = useQueries({
+    queries: companions.map((companion) => ({
+      queryKey: modelLicenceDetailsKey(companion.repo_id),
+      queryFn: () =>
+        apiJson<ModelLicenceDetails>(`/models/licenses/details/${encodeURI(companion.repo_id)}`),
+      enabled: open,
+      staleTime: 0,
+    })),
+  });
+  // One review covers everything the engine gates on, so accepting the card
+  // in first-run setup is enough for the first generation to work.
+  const currentCompanions = companions.map(
+    (companion, index) => companionDetails[index]?.data?.acceptance ?? companion,
+  );
   const currentInfo = details.data?.info ?? info;
   const currentAcceptance = details.data?.acceptance ?? acceptance;
   const sourceLink = (url: string | null | undefined, text: string) => {
@@ -284,6 +304,17 @@ export function ModelLicense({
     </LicenceSection>
   );
 
+  const mainView = (
+    <>
+      <ModelLicenceView details={details.data} infoFallback={info} extra={verifiedInstall} />
+      {details.isError && (
+        <p role="alert" className="mt-3 text-sm text-destructive">
+          {t('modelLicense.detailsFailed')}
+        </p>
+      )}
+    </>
+  );
+
   return (
     <>
       <Button
@@ -314,16 +345,40 @@ export function ModelLicense({
             <DialogDescription className="break-all">{repoId}</DialogDescription>
           </DialogHeader>
           <LicenceAcceptanceFooter
-            models={currentAcceptance ? [toAcceptable(label, currentAcceptance)] : []}
+            models={[
+              ...(currentAcceptance ? [toAcceptable(label, currentAcceptance)] : []),
+              ...currentCompanions.map((companion) => toAcceptable(companion.repo_id, companion)),
+            ]}
             onClose={close}
             closeDisabled={busy === 'commit'}
           >
-            <div className="p-4">
-              <ModelLicenceView details={details.data} infoFallback={info} extra={verifiedInstall} />
-              {details.isError && (
-                <p role="alert" className="mt-3 text-sm text-destructive">
-                  {t('modelLicense.detailsFailed')}
-                </p>
+            <div className="space-y-3 p-4">
+              {companions.length === 0 ? (
+                mainView
+              ) : (
+                <>
+                  <LicenceSection title={`1. ${label}`} defaultOpen>
+                    {mainView}
+                  </LicenceSection>
+                  {companions.map((companion, index) => {
+                    const query = companionDetails[index];
+                    return (
+                      <LicenceSection key={companion.repo_id} title={`${index + 2}. ${companion.repo_id}`}>
+                        {query?.isError ? (
+                          <p role="alert" className="text-sm text-destructive">
+                            {t('modelLicense.detailsFailed')}
+                          </p>
+                        ) : query?.data ? (
+                          <ModelLicenceView details={query.data} infoFallback={undefined} />
+                        ) : (
+                          <p role="status" className="text-sm">
+                            {t('common.loading')}
+                          </p>
+                        )}
+                      </LicenceSection>
+                    );
+                  })}
+                </>
               )}
             </div>
           </LicenceAcceptanceFooter>
