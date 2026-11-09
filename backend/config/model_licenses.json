@@ -3250,6 +3250,48 @@
           "Qwen3-1.7B-Q4_K_M.gguf"
         ]
       }
+    },
+    {
+      "id": "ACE-Step/Ace-Step1.5",
+      "license": "mit",
+      "commercial_use": false,
+      "review_status": "unreviewed",
+      "credit": "ACE-Step 1.5 — ACE Studio and StepFun",
+      "source_url": "https://huggingface.co/ACE-Step/Ace-Step1.5",
+      "evidence_url": "https://huggingface.co/ACE-Step/Ace-Step1.5/blob/19671f406d603126926c1b7e2adc169acbcade22/README.md",
+      "revision": "19671f406d603126926c1b7e2adc169acbcade22",
+      "engines": [
+        "music"
+      ],
+      "configured_at": "backend/services/music.py ACESTEP_MODEL_REPO",
+      "notes": "Licence identifier is upstream model-card metadata, not verified permission for this distribution. Optional Music Studio engine; component terms and attribution text require review.",
+      "runtime_revision": "19671f406d603126926c1b7e2adc169acbcade22",
+      "runtime_pin_scope": "external",
+      "runtime_pin_source": "backend/services/music.py",
+      "component_closure": "incomplete",
+      "commercial_inference": "unknown",
+      "commercial_outputs": "unknown",
+      "documents": [],
+      "artifacts": [],
+      "required_components": [],
+      "upstream_access": "unknown",
+      "audit_observations": {
+        "commercial_inference": {
+          "status": "unreviewed",
+          "scope": "Selected weight/component only; not complete workflow clearance."
+        },
+        "output_terms": {
+          "status": "not_assessed",
+          "ownership_or_all_rights_cleared": false
+        },
+        "sources": [],
+        "open_questions": [
+          "Governing terms at installed revision and relevant required components",
+          "Attribution/NOTICE/redistribution duties",
+          "Training-provenance scope of generated music"
+        ],
+        "identified_components": []
+      }
     }
   ],
   "dynamic_assets": [

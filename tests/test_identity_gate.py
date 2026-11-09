@@ -182,3 +182,27 @@ def test_rerun_uses_current_description_instead_of_old_event(repository):
     assert event['pull_request']['body'] == ''
     assert gate.run(gh, event, runner) is False
     assert gh.statuses[-1]['state'] == 'failure'
+
+
+def test_token_authenticates_only_the_pr_fetch(repository, monkeypatch):
+    # A private repository refuses anonymous fetches; the token must reach that fetch through
+    # environment-only git config and never the argv or the checker that judges PR content.
+    gh, event, runner = repository()
+    monkeypatch.setenv('GITHUB_TOKEN', 'ghs_fixture_token')
+    calls = []
+    real_run = gate.subprocess.run
+
+    def recording_run(args, **kwargs):
+        calls.append((list(args), dict(kwargs.get('env') or {})))
+        return real_run(args, **kwargs)
+
+    monkeypatch.setattr(gate.subprocess, 'run', recording_run)
+    assert gate.run(gh, event, runner) is True
+    fetch_env = next(env for args, env in calls if args[:2] == ['git', 'fetch'])
+    assert fetch_env['GIT_CONFIG_KEY_0'] == 'http.https://github.com/.extraheader'
+    assert fetch_env['GIT_CONFIG_VALUE_0'].startswith('AUTHORIZATION: basic ')
+    assert 'GITHUB_TOKEN' not in fetch_env
+    for args, env in calls:
+        assert not any('ghs_fixture_token' in arg or 'extraheader' in arg for arg in args)
+        if args[:2] != ['git', 'fetch']:
+            assert 'GITHUB_TOKEN' not in env and not any(k.startswith('GIT_CONFIG_') for k in env)

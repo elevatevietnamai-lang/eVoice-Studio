@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path';
 import { withApp } from './desktop-harness.mjs';
 import { ROUTES } from './fixtures/routes.mjs';
 import { STAR_COUNT_URL } from './local-first.mjs';
+import { PRODUCT_NAME } from '../../config/app-config.mjs';
 
 const bridgeFacts = (page) =>
   page.evaluate(() => ({
@@ -18,7 +19,7 @@ test('launch: window, title and bridge match the real OS', async (t) => {
   await withApp(t, {}, async ({ page }) => {
     await page.waitForFunction(() => Boolean(window.voicestudio?.files?.saveData));
     const facts = await bridgeFacts(page);
-    assert.match(facts.title, /VoiceStudio/);
+    assert.ok(facts.title.includes(PRODUCT_NAME), `title "${facts.title}" lacks ${PRODUCT_NAME}`);
     assert.equal(facts.platform, process.platform);
     assert.equal(facts.saveData, 'function');
   });

@@ -190,6 +190,12 @@ export const DEFAULT_FIXTURES = {
     },
     ops: {},
   },
+  // Optional engines not installed: Music Studio, dub background music, on-screen subtitles
+  // (the last one is also asked by first-run setup).
+  '/music/status': { installed: false, running: false },
+  '/music/library': { tracks: [] },
+  '/dub/bgm/status': { installed: false, running: false, model_ready: false },
+  '/dub/hardsub/status': { installed: false },
 };
 
 const WEBSOCKET_GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';

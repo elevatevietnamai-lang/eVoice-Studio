@@ -89,6 +89,11 @@ jobs:
   secrets:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-22.04
+    # The action lists the PR's commits through the API; a private repository
+    # denies that to a token without pull-requests: read.
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -100,8 +105,8 @@ jobs:
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GITLEAKS_LICENSE is only required for GitHub *organizations*; this is
-          # a personal public repo, so the action runs free without it.
+          # GITLEAKS_LICENSE is only required for repositories owned by a GitHub
+          # *organization*; a user-owned repository runs free without it.
 
   # ── CodeQL SAST (Python + JS/TS) ─────────────────────────────────────────
   codeql:
@@ -110,6 +115,9 @@ jobs:
     if: ${{ !cancelled() && needs.changes.outputs.code != 'false' }}
     runs-on: ubuntu-22.04
     permissions:
+      # actions: read lets CodeQL read its own workflow run, which a private
+      # repository otherwise refuses ("Resource not accessible by integration").
+      actions: read
       contents: read
       security-events: write
     strategy:
@@ -148,10 +156,25 @@ jobs:
               - "**/*.test.ts"
               - "**/*.test.tsx"
 
+      # Code scanning is unavailable on this private, user-owned repository, so
+      # results are kept as a SARIF artifact. Set the repository variable
+      # CODE_SCANNING_UPLOAD=true once code scanning is enabled to also send
+      # them to the Security tab.
       - name: Analyze
         uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
         with:
           category: "/language:${{ matrix.language }}"
+          upload: ${{ vars.CODE_SCANNING_UPLOAD == 'true' && 'always' || 'never' }}
+          output: codeql-results
+
+      - name: Keep CodeQL results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: codeql-${{ matrix.language }}-sarif
+          path: codeql-results
+          if-no-files-found: ignore
+          retention-days: 30
 
   # ── Python SAST (bandit → SARIF) ─────────────────────────────────────────
   bandit:
@@ -187,9 +210,18 @@ jobs:
 
       # continue-on-error: this job is reporting-only. If bandit can't write a
       # SARIF for any reason (no findings dir, pipx hiccup), don't fail the job.
+      - name: Keep bandit SARIF
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: bandit-sarif
+          path: bandit.sarif
+          if-no-files-found: ignore
+          retention-days: 30
+
       - name: Upload bandit SARIF
         uses: github/codeql-action/upload-sarif@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
-        if: always()
+        if: always() && vars.CODE_SCANNING_UPLOAD == 'true'
         continue-on-error: true
         with:
           sarif_file: bandit.sarif
