@@ -37,7 +37,7 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
-- First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence
+- First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)
 - iPhone Settings → About and licence receipts show the full app version (`0.5.7-beta.2`), like Android, instead of only `0.5.7` (#3273)
 - A voice with no transcript now offers a one-click speech-to-text model install instead of only an error (#3269)
 - Saved voice and recent take rows show their hover actions on a solid background, so the buttons stay visible over long names (#3263)
