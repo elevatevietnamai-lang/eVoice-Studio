@@ -15,6 +15,8 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- Burned-in subtitles use the bundled Inter font, so Latin, Cyrillic and Vietnamese captions look the same on macOS, Windows and Linux (other scripts still use a system font) (#6)
+- Karaoke on translated lines gives longer words more time instead of splitting the line evenly, and Chinese, Japanese and Thai lines highlight per character instead of all at once (#6)
 - The sidebar is a slim icon rail beside each section's own pane: Home and Clone get a Saved voices / Recent takes column, Design gets a Saved voices tab, and the full navigation is one click away (#3234)
 - The GitHub button in the top bar is one Star pill with the live count, and the star fills gold on hover (#3234)
 - Stories, Audiobook and Dubbing show their saved projects in a Projects tab beside the controls, so your files are one tap away wherever you work (#3234)
@@ -28,6 +30,8 @@ metadata and the backend fallback mirror it.
 
 ### Added
 
+- Karaoke subtitles have three looks in Dub export: Sweep, Highlight (only the spoken word lights up) and Pop (a short bounce); the ASS download uses the same look (#6)
+- Audiobook and Stories can turn part of a finished render into a short audiogram video (waveform, title and cover; square, landscape or vertical) for social posts (#6)
 - The phone apps have a Report action on every generated result: pick a reason, add an optional note, and it reaches the VoiceStudio team only when you tap Send (#3268, #3276, #3281)
 - The phone apps run speech, dictation, voice cloning and dubbing on the phone itself, offline once you download the models; pairing a computer is optional ([guide](docs/mobile.md)) (#2969)
 - Beta update channel: choose Stable or Beta under Settings → Updates; betas are `-beta.N` prereleases that never reach Stable users, and Docker gets matching `:beta` tags ([guide](docs/update-channels.md)) (#3175)

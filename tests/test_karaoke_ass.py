@@ -27,8 +27,9 @@ os.environ.setdefault("OMNIVOICE_MODEL", "test")
 
 from services.karaoke_ass import (
     build_ass,
-    even_split_words,
+    estimate_word_times,
     scale_words,
+    split_tokens,
 )
 
 
@@ -93,11 +94,12 @@ class TestKaraokeTags:
         script = build_ass([cue])
         assert "{\\k50}{\\kf50}Hi {\\kf100}there" in script
 
-    def test_even_split_fallback_without_words(self):
+    def test_estimated_split_fallback_without_words(self):
+        # Weights are len+1: "General" 8, "Kenobi" 7 over 200 cs.
         script = build_ass([{"start": 3.0, "end": 5.0, "text": "General Kenobi"}])
-        assert "{\\kf100}General {\\kf100}Kenobi" in script
+        assert "{\\kf107}General {\\kf93}Kenobi" in script
 
-    def test_translated_cue_falls_back_to_even_split(self):
+    def test_translated_cue_falls_back_to_estimated_split(self):
         # Persisted ASR words are SOURCE-language tokens; after translation
         # they no longer spell the display text — display text must win.
         cue = {"start": 0.0, "end": 2.0, "text": "Hallo Welt",
@@ -105,13 +107,29 @@ class TestKaraokeTags:
                          {"text": "world", "start": 0.5, "end": 2.0}]}
         script = build_ass([cue])
         assert "Hello" not in script
-        assert "{\\kf100}Hallo {\\kf100}Welt" in script
+        assert "{\\kf109}Hallo {\\kf91}Welt" in script
 
-    def test_malformed_words_fall_back_to_even_split(self):
+    def test_malformed_words_fall_back_to_estimated_split(self):
+        # "Hi" weighs 3, "there" 6 over 100 cs.
         cue = {"start": 0.0, "end": 1.0, "text": "Hi there",
                "words": [{"text": "Hi"}, {"text": "there", "start": "x", "end": None}]}
         script = build_ass([cue])
-        assert "{\\kf50}Hi {\\kf50}there" in script
+        assert "{\\kf33}Hi {\\kf67}there" in script
+
+    def test_no_space_script_splits_per_character_without_spaces(self):
+        # "Tokyo" in kanji + "2020" + "nen": the Latin digits stay one token,
+        # each ideograph is its own token, and no space is inserted.
+        text = "\u6771\u4eac2020\u5e74"
+        script = build_ass([{"start": 0.0, "end": 1.0, "text": text}])
+        line = next(l for l in script.splitlines() if l.startswith("Dialogue:"))
+        assert line.count("\\kf") == 4
+        assert re.sub(r"\{[^}]*\}", "", line.split(",,0,0,0,,", 1)[1]) == text
+
+    def test_thai_marks_stay_with_their_base_character(self):
+        # Thai "kin" (eat): base + vowel mark + final; the mark is combining.
+        text = "\u0e01\u0e34\u0e19"
+        tokens = [t for t, _ in split_tokens(text)]
+        assert tokens == ["\u0e01\u0e34", "\u0e19"]
 
     def test_words_clamped_into_cue_span(self):
         cue = {"start": 1.0, "end": 2.0, "text": "Hi there",
@@ -131,20 +149,83 @@ class TestKaraokeTags:
         assert "\n" not in line
 
 
+class TestKaraokeStyles:
+    def _events(self, script):
+        out = []
+        for line in script.splitlines():
+            if line.startswith("Dialogue:"):
+                _, start, end, rest = line.split(",", 3)
+                out.append((start, end, rest.split(",,0,0,0,,", 1)[1]))
+        return out
+
+    def test_sweep_is_the_default_and_keeps_the_accent_fill(self):
+        assert build_ass(_cues()) == build_ass(_cues(), style="sweep")
+        assert "Style: Default,Inter Variable,64,&H0000E7FF," in build_ass(_cues())
+
+    @pytest.mark.parametrize("style", ["highlight", "pop"])
+    def test_word_styles_tile_the_cue_without_gaps_or_overlaps(self, style):
+        cue = {"start": 0.0, "end": 2.0, "text": "Hi there friend",
+               "words": [{"text": "Hi", "start": 0.333, "end": 0.6},
+                         {"text": "there", "start": 0.667, "end": 1.2},
+                         {"text": "friend", "start": 1.333, "end": 2.0}]}
+        events = self._events(build_ass([cue], style=style))
+        # Lead-in (no active word) + one event per word.
+        assert len(events) == 4
+        assert events[0][0] == "0:00:00.00" and events[-1][1] == "0:00:02.00"
+        for (_, end, _), (start, _, _) in zip(events, events[1:]):
+            assert end == start
+        assert "\\1c" not in events[0][2]
+        for i, word in enumerate(["Hi", "there", "friend"], start=1):
+            text = events[i][2]
+            assert re.sub(r"\{[^}]*\}", "", text) == "Hi there friend"
+            assert re.search(r"\\1c&H00E7FF&[^}]*\}" + word + r"\{\\r\}", text)
+
+    def test_word_styles_use_a_white_base_line(self):
+        script = build_ass(_cues(), style="highlight")
+        assert "Style: Default,Inter Variable,64,&H00FFFFFF," in script
+
+    def test_pop_only_animates_height_never_width(self):
+        script = build_ass(_cues(), style="pop")
+        assert "\\fscy125" in script and "\\t(0,120,\\fscy100" in script
+        assert "\\fscx" not in script and "\\fsp" not in script
+
+    def test_zero_length_intervals_are_dropped(self):
+        cue = {"start": 0.0, "end": 1.0, "text": "a b",
+               "words": [{"text": "a", "start": 0.0, "end": 0.0},
+                         {"text": "b", "start": 0.0, "end": 1.0}]}
+        events = self._events(build_ass([cue], style="highlight"))
+        assert len(events) == 1 and events[0][:2] == ("0:00:00.00", "0:00:01.00")
+
+    def test_escaping_holds_in_word_styles(self):
+        script = build_ass([{"start": 0.0, "end": 1.0, "text": "{\\b1}x"}], style="pop")
+        body = script.split("[Events]")[1]
+        assert "{\\b1}" not in body.replace("\\{", "")
+
+    def test_unknown_style_raises(self):
+        with pytest.raises(ValueError):
+            build_ass(_cues(), style="wobble")
+
+
 # ---------------------------------------------------------------------------
-# Helpers — even split + Smart Fit word scaling
+# Helpers — estimated split + Smart Fit word scaling
 # ---------------------------------------------------------------------------
 
 class TestWordHelpers:
-    def test_even_split_uniform(self):
-        words = even_split_words("a b c d", 2.0, 4.0)
+    def test_equal_length_words_split_evenly(self):
+        words = estimate_word_times("a b c d", 2.0, 4.0)
         assert [w["text"] for w in words] == ["a", "b", "c", "d"]
+        assert [w["sep"] for w in words] == [" ", " ", " ", ""]
         assert words[0]["start"] == pytest.approx(2.0)
         assert words[1]["start"] == pytest.approx(2.5)
         assert words[-1]["end"] == pytest.approx(4.0)
 
-    def test_even_split_empty_text(self):
-        assert even_split_words("   ", 0.0, 1.0) == []
+    def test_longer_words_get_more_time(self):
+        words = estimate_word_times("a extraordinary", 0.0, 1.0)
+        assert words[1]["end"] - words[1]["start"] > 5 * (words[0]["end"] - words[0]["start"])
+        assert words[-1]["end"] == pytest.approx(1.0)
+
+    def test_estimated_split_empty_text(self):
+        assert estimate_word_times("   ", 0.0, 1.0) == []
 
     def test_scale_words_linear(self):
         words = [{"text": "a", "start": 1.0, "end": 2.0},
@@ -307,7 +388,7 @@ class TestKaraokeBurnEndpoint:
         )
         assert res.status_code == 200, res.text[:500]
         graph = _filter_graph(calls[-1])
-        assert "[0:v]ass='" in graph and ".ass'[vsub]" in graph
+        assert "[0:v]ass='" in graph and ".ass':fontsdir='" in graph and "[vsub]" in graph
         assert "subtitles=" not in graph
         # Windows job dirs are C:\...; doubled backslashes in the quoted
         # filter value are a path ffmpeg cannot open.
@@ -316,9 +397,9 @@ class TestKaraokeBurnEndpoint:
         assert len(ass_files) == 1
         assert ass_files[0].name.isascii()
         content = ass_files[0].read_text(encoding="utf-8")
-        # Persisted words drive segment a; segment b even-splits (old-job path).
+        # Persisted words drive segment a; segment b splits by length (old-job path).
         assert "{\\kf100}Hello {\\kf100}world" in content
-        assert "{\\kf100}General {\\kf100}Kenobi" in content
+        assert "{\\kf107}General {\\kf93}Kenobi" in content
 
     def test_line_burn_stays_srt_when_karaoke_off(self, burn_env):
         client, job_id, job_dir, calls = burn_env
@@ -329,7 +410,7 @@ class TestKaraokeBurnEndpoint:
         )
         assert res.status_code == 200, res.text[:500]
         graph = _filter_graph(calls[-1])
-        assert "[0:v]subtitles='" in graph and ".srt'[vsub]" in graph
+        assert "[0:v]subtitles='" in graph and ".srt':fontsdir='" in graph and "[vsub]" in graph
         assert "ass='" not in graph
         assert list((job_dir / "exports").glob("burn_subs_*.ass")) == []
 
@@ -344,6 +425,42 @@ class TestKaraokeBurnEndpoint:
         graph = _filter_graph(calls[-1])
         assert "subtitles='" in graph
         assert "ass='" not in graph
+
+    def test_karaoke_style_reaches_the_burned_script(self, burn_env):
+        client, job_id, job_dir, calls = burn_env
+        res = client.get(
+            f"/dub/download/{job_id}",
+            params={"default_track": "de", "include_tracks": "de", "preserve_bg": 0,
+                    "burn_subs": 1, "karaoke": 1, "karaoke_style": "pop"},
+        )
+        assert res.status_code == 200, res.text[:500]
+        content = next((job_dir / "exports").glob("burn_subs_*.ass")).read_text(encoding="utf-8")
+        assert "\\fscy125" in content and "\\kf" not in content
+
+    def test_unknown_karaoke_style_is_rejected(self, burn_env):
+        client, job_id, _, calls = burn_env
+        res = client.get(
+            f"/dub/download/{job_id}",
+            params={"default_track": "de", "include_tracks": "de", "preserve_bg": 0,
+                    "burn_subs": 1, "karaoke": 1, "karaoke_style": "wobble"},
+        )
+        assert res.status_code == 422
+        assert calls == []
+
+    def test_every_burn_uses_the_bundled_font(self, burn_env):
+        # Line and karaoke burns both point libass at backend/assets/fonts and
+        # the line burn names the bundled family, so no OS font is guessed.
+        client, job_id, _, calls = burn_env
+        for karaoke in (0, 1):
+            res = client.get(
+                f"/dub/download/{job_id}",
+                params={"default_track": "de", "include_tracks": "de", "preserve_bg": 0,
+                        "burn_subs": 1, "karaoke": karaoke},
+            )
+            assert res.status_code == 200, res.text[:500]
+            graph = _filter_graph(calls[-1])
+            assert ":fontsdir='" in graph and "assets/fonts'" in graph
+        assert "force_style='FontName=Inter Variable'" in _filter_graph(calls[0])
 
     def test_ass_sidecar_endpoint(self, burn_env):
         client, job_id, _, _ = burn_env

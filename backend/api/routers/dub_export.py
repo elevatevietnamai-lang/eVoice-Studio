@@ -25,7 +25,8 @@ from services.ffmpeg_utils import (
     local_inputs_only,
     run_ffmpeg,
 )
-from services.karaoke_ass import build_ass, scale_words
+from services.burn_fonts import BURN_FONT_FAMILY, burn_fonts_dir
+from services.karaoke_ass import KaraokeStyle, build_ass, scale_words
 from services.prosody_mirror import AnalysisBudgetExceeded, SegmentSpan, mirror_file
 from services.video_retime import (
     DRIFT_TOLERANCE_S,
@@ -182,20 +183,43 @@ def _discover_job_artifact(path: Path, job_id: str) -> Path | None:
 
 
 def _hardsub_burn_style(job: dict) -> str:
-    """Place burned subtitles where the removed on-screen subtitles were.
+    """``force_style`` for the SRT line burn.
 
-    libass renders SRT on a 384x288 canvas; MarginV is measured from the bottom
-    edge in that space. Only applies when the job's on-screen subtitles were read.
+    Always names the bundled burn font (``services.burn_fonts``) so the line
+    burn looks the same on every OS. When the job's on-screen subtitles were
+    read, also places burned subtitles where the removed ones were: libass
+    renders SRT on a 384x288 canvas; MarginV is measured from the bottom edge
+    in that space.
     """
+    fields = [f"FontName={BURN_FONT_FAMILY}"]
     region = (job.get("hardsub") or {}).get("region")
     try:
         top, bottom = float(region[0]), float(region[1])
     except (TypeError, ValueError, IndexError):
-        return ""
-    if not (0.0 <= top < bottom <= 1.0):
-        return ""
-    margin = max(4, min(140, int(round((1.0 - bottom) * 288 + 2))))
-    return f":force_style='MarginV={margin},Fontsize=18,Bold=1,Outline=1.6,Shadow=0'"
+        top = bottom = -1.0
+    if 0.0 <= top < bottom <= 1.0:
+        margin = max(4, min(140, int(round((1.0 - bottom) * 288 + 2))))
+        fields.append(f"MarginV={margin},Fontsize=18,Bold=1,Outline=1.6,Shadow=0")
+    return ":force_style='" + ",".join(fields) + "'"
+
+
+def _burn_fonts_opt() -> str:
+    """``:fontsdir=…`` pointing libass at the bundled burn font ("" if absent)."""
+    fonts = burn_fonts_dir()
+    return f":fontsdir='{_ffmpeg_filter_escape(fonts)}'" if fonts else ""
+
+
+def subtitle_burn_filter(src: str, sub_path: str, out: str, *, job: dict, is_ass: bool) -> str:
+    """The one subtitle burn filter every export uses: ``src`` → ``out``.
+
+    ``ass`` for karaoke scripts (they carry their own styles), ``subtitles``
+    with ``force_style`` for the SRT line burn. Both get the bundled font
+    folder.
+    """
+    esc = _ffmpeg_filter_escape(sub_path)
+    if is_ass:
+        return f"{src}ass='{esc}'{_burn_fonts_opt()}{out}"
+    return f"{src}subtitles='{esc}'{_burn_fonts_opt()}{_hardsub_burn_style(job)}{out}"
 
 
 def _dub_artifact(value: object, job_id: str, *, missing_detail: str = "File not found") -> str:
@@ -477,7 +501,8 @@ def _write_burn_srt(job: dict, exports_dir: str, stamp: str, dual: bool,
 
 def _write_burn_ass(job: dict, exports_dir: str, stamp: str,
                     fitted_segments: "list[dict] | None" = None,
-                    lang: "str | None" = None) -> str | None:
+                    lang: "str | None" = None,
+                    style: KaraokeStyle = "sweep") -> str | None:
     """Karaoke variant of ``_write_burn_srt``: word-timed ASS via ``build_ass``.
 
     Same text/timing resolution (``_segments_for_lang`` + fitted-cue overlay,
@@ -492,7 +517,7 @@ def _write_burn_ass(job: dict, exports_dir: str, stamp: str,
         segments = _apply_fitted_times(segments, fitted_segments)
     sub_path = os.path.join(exports_dir, f"burn_subs_{stamp}.ass")
     with open(sub_path, "w", encoding="utf-8") as f:
-        f.write(build_ass(segments))
+        f.write(build_ass(segments, style=style))
     return sub_path
 
 
@@ -693,6 +718,7 @@ async def dub_download(
     burn_subs: bool = Query(False, description="Burn subtitles into the video stream (forces re-encode). Uses dual-subtitle layout when dual=1."),
     dual: bool = Query(False, description="When burn_subs=1, render translated on top of italicised original."),
     karaoke: bool = Query(False, description="When burn_subs=1, burn a word-timed karaoke highlight (ASS) instead of line subtitles. Ignored when dual=1 (dual karaoke is unsupported — the line burn renders instead)."),
+    karaoke_style: KaraokeStyle = Query("sweep", description="Karaoke look: sweep (left-to-right fill), highlight (only the spoken word is coloured) or pop (highlight plus a short bounce). Used only with karaoke=1."),
     out_format: str = Query("m4a", description="Audio-only jobs (#119): output container — wav, m4a, mp3, or flac. Ignored for video jobs."),
 ):
     # Strict allowlist on the path param BEFORE it reaches any filesystem
@@ -853,7 +879,8 @@ async def dub_download(
     sub_is_ass = False
     if burn_subs:
         if karaoke and not dual:
-            sub_path = _write_burn_ass(job, exports_dir, stamp, fitted_segments=fitted_segments, lang=_burn_lang)
+            sub_path = _write_burn_ass(job, exports_dir, stamp, fitted_segments=fitted_segments,
+                                       lang=_burn_lang, style=karaoke_style)
             sub_is_ass = sub_path is not None
         if sub_path is None:
             sub_path = _write_burn_srt(job, exports_dir, stamp, dual, fitted_segments=fitted_segments, lang=_burn_lang)
@@ -952,7 +979,6 @@ async def dub_download(
                 video_map = "[vtpad]"
                 video_reencode = True
     if sub_path:
-        esc = _ffmpeg_filter_escape(sub_path)
         # Burn AFTER any retime so cues (already on the fitted timeline for
         # Smart Fit) land on the retimed video. Without retime this reduces
         # to the legacy `[0:v]subtitles=…[vsub]` graph. Karaoke burns the
@@ -963,9 +989,7 @@ async def dub_download(
             sub_src = f"[{retimed_idx}:v]"
         else:
             sub_src = "[0:v]"
-        _sub_filter = "ass" if sub_is_ass else "subtitles"
-        _style = "" if sub_is_ass else _hardsub_burn_style(job)
-        filter_parts.append(f"{sub_src}{_sub_filter}='{esc}'{_style}[vsub]")
+        filter_parts.append(subtitle_burn_filter(sub_src, sub_path, "[vsub]", job=job, is_ass=sub_is_ass))
         video_map = "[vsub]"
     if stretch_entry:
         orig_dur = float(stretch_entry.get("orig_duration") or job.get("duration") or 0.0)
@@ -2083,6 +2107,7 @@ async def dub_export_vtt(
 async def dub_export_ass(
     job_id: str,
     lang: str = Query(None, description="Track language code. Same text/timing resolution as /dub/srt, rendered as a karaoke (word-highlight) ASS sidecar."),
+    karaoke_style: KaraokeStyle = Query("sweep", description="Karaoke look, as for /dub/download: sweep, highlight or pop."),
 ):
     """Karaoke ASS sidecar — the same script the karaoke burn-in renders.
 
@@ -2116,7 +2141,7 @@ async def dub_export_ass(
     base_name = os.path.splitext(job.get('filename', 'video'))[0]
     dl_name = portable_filename(f"subtitles_{base_name}_karaoke.ass", "subtitles.ass")
     return Response(
-        content=build_ass(segments),
+        content=build_ass(segments, style=karaoke_style),
         media_type="text/plain",
         headers={"Content-Disposition": content_disposition(dl_name)},
     )

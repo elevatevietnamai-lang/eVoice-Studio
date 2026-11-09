@@ -659,6 +659,58 @@
     "title": "AudiobookRequest",
     "type": "object"
    },
+   "AudiogramRequest": {
+    "properties": {
+     "cover_path": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Cover Path"
+     },
+     "duration": {
+      "default": 30.0,
+      "exclusiveMinimum": 0.0,
+      "title": "Duration",
+      "type": "number"
+     },
+     "output": {
+      "title": "Output",
+      "type": "string"
+     },
+     "shape": {
+      "default": "square",
+      "enum": [
+       "square",
+       "landscape",
+       "vertical"
+      ],
+      "title": "Shape",
+      "type": "string"
+     },
+     "start": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Start",
+      "type": "number"
+     },
+     "title": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Title",
+      "type": "string"
+     }
+    },
+    "required": [
+     "output"
+    ],
+    "title": "AudiogramRequest",
+    "type": "object"
+   },
    "AutoExtractRequest": {
     "properties": {
      "max_terms": {
@@ -10341,6 +10393,23 @@
        "title": "Lang",
        "type": "string"
       }
+     },
+     {
+      "description": "Karaoke look, as for /dub/download: sweep, highlight or pop.",
+      "in": "query",
+      "name": "karaoke_style",
+      "required": false,
+      "schema": {
+       "default": "sweep",
+       "description": "Karaoke look, as for /dub/download: sweep, highlight or pop.",
+       "enum": [
+        "sweep",
+        "highlight",
+        "pop"
+       ],
+       "title": "Karaoke Style",
+       "type": "string"
+      }
      }
     ],
     "responses": {
@@ -10388,6 +10457,23 @@
       "schema": {
        "description": "Track language code. Same text/timing resolution as /dub/srt, rendered as a karaoke (word-highlight) ASS sidecar.",
        "title": "Lang",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Karaoke look, as for /dub/download: sweep, highlight or pop.",
+      "in": "query",
+      "name": "karaoke_style",
+      "required": false,
+      "schema": {
+       "default": "sweep",
+       "description": "Karaoke look, as for /dub/download: sweep, highlight or pop.",
+       "enum": [
+        "sweep",
+        "highlight",
+        "pop"
+       ],
+       "title": "Karaoke Style",
        "type": "string"
       }
      }
@@ -11163,6 +11249,23 @@
       }
      },
      {
+      "description": "Karaoke look: sweep (left-to-right fill), highlight (only the spoken word is coloured) or pop (highlight plus a short bounce). Used only with karaoke=1.",
+      "in": "query",
+      "name": "karaoke_style",
+      "required": false,
+      "schema": {
+       "default": "sweep",
+       "description": "Karaoke look: sweep (left-to-right fill), highlight (only the spoken word is coloured) or pop (highlight plus a short bounce). Used only with karaoke=1.",
+       "enum": [
+        "sweep",
+        "highlight",
+        "pop"
+       ],
+       "title": "Karaoke Style",
+       "type": "string"
+      }
+     },
+     {
       "description": "Audio-only jobs (#119): output container \u2014 wav, m4a, mp3, or flac. Ignored for video jobs.",
       "in": "query",
       "name": "out_format",
@@ -11291,6 +11394,23 @@
        "description": "When burn_subs=1, burn a word-timed karaoke highlight (ASS) instead of line subtitles. Ignored when dual=1 (dual karaoke is unsupported \u2014 the line burn renders instead).",
        "title": "Karaoke",
        "type": "boolean"
+      }
+     },
+     {
+      "description": "Karaoke look: sweep (left-to-right fill), highlight (only the spoken word is coloured) or pop (highlight plus a short bounce). Used only with karaoke=1.",
+      "in": "query",
+      "name": "karaoke_style",
+      "required": false,
+      "schema": {
+       "default": "sweep",
+       "description": "Karaoke look: sweep (left-to-right fill), highlight (only the spoken word is coloured) or pop (highlight plus a short bounce). Used only with karaoke=1.",
+       "enum": [
+        "sweep",
+        "highlight",
+        "pop"
+       ],
+       "title": "Karaoke Style",
+       "type": "string"
       }
      },
      {
@@ -15140,6 +15260,47 @@
      }
     },
     "summary": "List Job Events"
+   }
+  },
+  "/longform/audiogram": {
+   "post": {
+    "description": "Render ``duration`` seconds of a finished render, from ``start``, as an\nMP4 audiogram (waveform, optional title and cover) in the outputs folder.\n\nReturns ``{output, start, duration}``; the clip is served from\n``/audio/<output>`` like the render itself. The slice is clamped to the\nprogram and to ``services.audiogram.MAX_CLIP_SECONDS``.",
+    "operationId": "longform_audiogram_longform_audiogram_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/AudiogramRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Longform Audiogram Longform Audiogram Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Longform Audiogram"
    }
   },
   "/longform/jobs": {

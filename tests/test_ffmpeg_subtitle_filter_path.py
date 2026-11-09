@@ -88,3 +88,49 @@ def test_ffmpeg_opens_quoted_caption_filename(tmp_path, filename):
         capture_output=True,
         text=True,
     )
+
+
+@pytest.mark.parametrize(
+    "is_ass,job",
+    [
+        (False, {}),
+        (False, {"hardsub": {"region": [0.8, 0.95]}}),
+        (True, {}),
+    ],
+    ids=["line", "line-in-hardsub-region", "karaoke"],
+)
+def test_every_burn_renders_with_the_bundled_font(tmp_path, is_ass, job):
+    """libass must load the bundled Inter file for every burn kind, not an OS font.
+
+    Runs the exact filter the export builds (escaped ``fontsdir`` included),
+    so a font-folder path ffmpeg cannot parse fails here on every CI OS.
+    """
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        pytest.skip("ffmpeg is not installed")
+    from api.routers.dub_export import subtitle_burn_filter
+    from services.karaoke_ass import build_ass
+
+    text = "Người ấy đã về thật rồi"
+    if is_ass:
+        caption = tmp_path / "burn.ass"
+        caption.write_text(build_ass([{"start": 0.0, "end": 1.0, "text": text}]), encoding="utf-8")
+    else:
+        caption = tmp_path / "burn.srt"
+        caption.write_text(f"1\n00:00:00,000 --> 00:00:01,000\n{text}\n", encoding="utf-8")
+    graph = subtitle_burn_filter("[0:v]", str(caption), "[v]", job=job, is_ass=is_ass)
+    result = subprocess.run(
+        [
+            ffmpeg, "-hide_banner", "-loglevel", "verbose",
+            "-f", "lavfi", "-i", "color=s=320x180:r=1:d=1",
+            "-filter_complex", graph, "-map", "[v]", "-frames:v", "1", "-f", "null", "-",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+    selections = [line for line in result.stderr.splitlines() if "fontselect:" in line]
+    assert selections, result.stderr[-2000:]
+    assert all("(Inter Variable," in line and "-> InterVariable" in line for line in selections), selections
