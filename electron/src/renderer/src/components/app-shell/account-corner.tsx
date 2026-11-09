@@ -12,8 +12,8 @@ const CORNER_GAP = 12;
  * The window's top-right corner, on every page: the account control (photo and
  * name, or Sign in) with the notifications bell to its right.
  *
- * Windows/Linux draw their window buttons over the right 148px (titleBarOverlay),
- * so the corner sits just left of them; on macOS it sits at the edge. While it
+ * Windows/Linux show the app's own window buttons (window-controls.tsx, 138px) on the right,
+ * so the corner sits just left of them (148px); on macOS it sits at the edge. While it
  * shows, `--corner-space` widens every page title bar's right padding
  * (globals.css), so it never covers a page's own buttons.
  */

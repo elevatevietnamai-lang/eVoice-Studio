@@ -36,7 +36,7 @@ function Avatar({ name, url }: { name: string; url: string | null }) {
 }
 
 const ITEM =
-  'flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent';
+  'flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground outline-none transition-colors duration-160 data-highlighted:bg-accent';
 
 /**
  * The account control in the window's top-right corner: the profile photo (or
@@ -71,7 +71,7 @@ export function AccountMenu({ className }: { className?: string }) {
         aria-label={name || t('account.menu_settings')}
         data-slot="account-menu"
         className={cn(
-          'flex h-8 max-w-56 min-w-0 items-center gap-2 rounded-full border border-border/60 bg-background/80 py-0.5 pr-3 pl-0.5 shadow-xs outline-none backdrop-blur-xl hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring',
+          'flex h-8 max-w-56 min-w-0 items-center gap-2 rounded-full border border-border bg-card py-0.5 pr-3 pl-0.5 outline-none transition-colors duration-160 hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring',
           className,
         )}
       >
@@ -80,7 +80,7 @@ export function AccountMenu({ className }: { className?: string }) {
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-          <Menu.Popup className="min-w-52 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+          <Menu.Popup className="min-w-52 origin-(--transform-origin) rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground outline-none transition-[opacity,transform] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:transition-none">
             <Menu.Item
               className={ITEM}
               onClick={() =>

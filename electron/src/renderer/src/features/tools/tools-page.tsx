@@ -239,7 +239,7 @@ function ToolForm({ tool }: { tool: Tool }) {
         <div
           role="region"
           aria-label={t('tools.result')}
-          className="space-y-4 rounded-xl border border-border/50 p-4"
+          className="space-y-4 rounded-(--card-radius) border border-border/50 p-4"
         >
           {Boolean(result.error) && <PipelineFailure fallback={describeError(result.error)} />}
           {tool.id === 'probe' ? (

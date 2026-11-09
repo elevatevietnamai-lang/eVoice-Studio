@@ -92,16 +92,19 @@
     "copied": "Copié"
   },
   "homeUi": {
-    "subtitle": "Votre alternative à ElevenLabs, open source et entièrement locale — clonez et créez des voix, doublez des vidéos, dictez, transcrivez et créez des livres audio dans 646 langues.",
+    "subtitle": "Un studio local pour la voix et la musique.",
     "brand_by": "{{brand}} par",
     "all": "Tous",
     "allContributors": "Tous les contributeurs",
-    "title": "VoiceStudio.sh Code source ouvert",
     "design": "Créez une voix à partir d’une description.",
     "dub": "Traduisez et doublez des fichiers audio ou vidéo.",
     "stories": "Créez des scènes avec plusieurs voix.",
     "audiobook": "Créez des livres audio avec des chapitres.",
-    "transcribe": "Transformez des enregistrements en texte."
+    "transcribe": "Transformez des enregistrements en texte.",
+    "music": "Générez de la musique à partir d'une description.",
+    "saved": "Voix enregistrées à réutiliser.",
+    "batch": "Doublez plusieurs vidéos en une seule fois.",
+    "projects": "Vos doublages, histoires et exports."
   },
   "twilioIntegration": {
     "exposureWarning": "L'activation ouvre un port local distinct que votre tunnel publie sur internet. Seules les requêtes signées avec votre Auth Token Twilio sont acceptées ; le reste de eVoice Studio reste privé.",
@@ -308,7 +311,8 @@
     "dark": "Sombre",
     "system": "Système",
     "default": "Studio",
-    "glass": "Mode verre"
+    "glass": "Mode verre",
+    "glass_flat_hint": "Studio est un thème plat. Choisissez une autre palette pour le verre."
   },
   "cloneFlow": {
     "choose_voice": "Choisir une voix",
@@ -371,6 +375,7 @@
   },
   "paneActions": {
     "collapse": "Réduire le panneau",
+    "expand": "Développer le panneau",
     "edit": "Modifier le profil vocal"
   },
   "modelSettings": {
@@ -1916,7 +1921,8 @@
     "model_credits": "Crédits des modèles",
     "model_credits_hint": "Crédits des modèles pris en charge. Les modèles et composants ont leurs propres conditions ; ces crédits ne confèrent aucun droit d’utilisation commerciale.",
     "model_terms": "Conditions du modèle",
-    "model_related_sources": "Sources associées :"
+    "model_related_sources": "Sources associées :",
+    "built_on": "Basé sur VoiceStudio (AGPL-3.0) et ses contributeurs"
   },
   "privacy": {
     "translator_online": "Le traducteur est en ligne : {{provider}}",
@@ -2223,7 +2229,8 @@
     "design": "Conception vocale",
     "clone": "Clonage vocal",
     "primary": "Navigation principale",
-    "calls": "Appels"
+    "calls": "Appels",
+    "more": "Plus"
   },
   "profiles": {
     "locked": "Voix verrouillée ! L’identité est désormais cohérente à travers toutes les générations.",
@@ -3991,5 +3998,10 @@
     "burn": "Incruster les sous-titres traduits",
     "export": "Exporter la vidéo avec la musique IA",
     "needs_dub": "Générez d'abord un doublage ; l'exportation mixe cette voix avec la musique."
+  },
+  "windowControls": {
+    "minimize": "Réduire",
+    "maximize": "Agrandir",
+    "restore": "Restaurer"
   }
 }

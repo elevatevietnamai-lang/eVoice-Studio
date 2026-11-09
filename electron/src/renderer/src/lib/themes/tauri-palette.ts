@@ -8,7 +8,7 @@ function colors(light: boolean): ThemeColors {
   const chrome = light ? '#eee5f2' : '#191420';
   const surface = light ? '#fffbff' : '#302638';
   const text = light ? '#392c42' : '#eee5f4';
-  const muted = light ? '#796784' : '#b8a5c3';
+  const muted = light ? '#5a4a65' : '#b8a5c3';
   const action = light ? '#8f3f71' : '#d3869b';
   const border = light ? 'rgb(100 65 125 / 15%)' : 'rgb(217 185 237 / 14%)';
   const hover = light ? '#eadff0' : '#403049';
@@ -28,7 +28,7 @@ function colors(light: boolean): ThemeColors {
     text,
     textMuted: muted,
     border,
-    input: border,
+    input: light ? '#8f8c91' : '#6e6978',
     focus: action,
     accent: action,
     accentForeground: light ? '#ffffff' : '#1d2021',
@@ -39,8 +39,8 @@ function colors(light: boolean): ThemeColors {
     placeholder: muted,
     secondaryLabel: muted,
     iconMuted: muted,
-    error: light ? '#9d0006' : '#fb4934',
-    errorForeground: light ? '#9d0006' : '#fb4934',
+    error: light ? '#9d0006' : '#ff6552',
+    errorForeground: light ? '#9d0006' : '#ff6552',
     errorSurface: surface,
     warning: light ? '#af3a03' : '#fabd2f',
     warningForeground: light ? '#af3a03' : '#fabd2f',
@@ -61,9 +61,9 @@ function colors(light: boolean): ThemeColors {
     sidebarForeground: text,
     sidebarMutedForeground: muted,
     sidebarControlSurface: surface,
-    sidebarRowHover: hover,
+    sidebarRowHover: light ? '#dcd3e0' : hover,
     sidebarRowActive: light ? '#e5d3ee' : '#50365c',
-    sidebarRowSelected: surface,
+    sidebarRowSelected: light ? '#d2cad6' : '#302a37',
     sidebarBorder: border,
     terminalBackground: canvas,
     terminalForeground: text,

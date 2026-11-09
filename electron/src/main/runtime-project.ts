@@ -4,6 +4,7 @@ import { clearCtranslate2ExecutableStack } from '../../scripts/native-compat.mjs
 export { clearCtranslate2ExecutableStack } from '../../scripts/native-compat.mjs';
 import { downloadProxyEnv } from './proxy-env';
 import { DIRECTORY_RENAME, renameWithRetry } from './rename-retry';
+import { downloadLockedWheel, findLockedCudaWheel } from './runtime-wheel';
 import { downloadRuntimeInstaller } from './runtime-download';
 import { asciiSafePthFiles } from './pth-ascii';
 import { scrubText } from '../shared/utils/scrub';
@@ -551,6 +552,7 @@ export async function installRuntime(
   signal: AbortSignal,
   phase: (value: RuntimePhase) => void = () => {},
   region: RuntimeRegion = 'auto',
+  log: (line: string) => void = () => {},
 ): Promise<void> {
   signal.throwIfAborted();
   phase('checking');
@@ -692,10 +694,28 @@ export async function installRuntime(
   // A failed native import may leave distribution metadata intact, so uv's
   // ordinary sync would otherwise consider the broken wheel already satisfied.
   const torchPackages: readonly string[] = RUNTIME_REPAIR_PACKAGES;
+  // The CUDA torch wheel is ~3 GB and uv restarts a dropped transfer from byte 0, so it is fetched
+  // separately with HTTP Range (resuming across retries and restarts) and installed from the local
+  // file. The frozen sync then finds it already installed and leaves it alone.
+  const lockedTorch =
+    !cpuTorch && torch.variant === 'default'
+      ? findLockedCudaWheel(await readFile(join(project, 'uv.lock'), 'utf8'), 'torch')
+      : null;
+  let resumableTorch = lockedTorch;
+  if (lockedTorch && existingPython && !repairPackages.includes('torch')) {
+    const installed = await run(
+      runtimePython(project),
+      ['-c', "import importlib.metadata as m; print(m.version('torch'))"],
+      project,
+    ).catch(() => undefined);
+    if (typeof installed === 'string' && installed.trim() === lockedTorch.version) {
+      resumableTorch = null;
+    }
+  }
   // A CPU install never syncs the lock's CUDA torch, so its repair goes through
   // the CPU pip install below instead of `uv sync --reinstall-package`.
   const repairArgs = repairPackages
-    .filter((name) => !cpuTorch || !torchPackages.includes(name))
+    .filter((name) => (!cpuTorch || !torchPackages.includes(name)) && !(resumableTorch && name === 'torch'))
     .flatMap((name) => ['--reinstall-package', name]);
   signal.throwIfAborted();
   if (repairPackages.length) {
@@ -713,7 +733,9 @@ export async function installRuntime(
         ...torchPackages,
         ...cudaOnlyPackages(await readFile(join(project, 'uv.lock'), 'utf8')),
       ].flatMap((name) => ['--no-install-package', name])
-    : [];
+    : resumableTorch
+      ? ['--no-install-package', 'torch']
+      : [];
   await run(
     uv,
     ['sync', '--frozen', '--no-dev', ...pythonArgs, ...repairArgs, ...skipArgs],
@@ -721,6 +743,31 @@ export async function installRuntime(
     env,
   );
   signal.throwIfAborted();
+  if (resumableTorch) {
+    const wheelsDir = join(project, '..', '.wheels');
+    log(`Downloading PyTorch ${resumableTorch.version} (about 3 GB). If the connection drops, setup resumes where it stopped.`);
+    const wheel = await downloadLockedWheel(resumableTorch, wheelsDir, { env, signal, log });
+    signal.throwIfAborted();
+    await run(
+      uv,
+      [
+        'pip',
+        'install',
+        '--python',
+        runtimePython(project),
+        '--no-deps',
+        '--no-index',
+        '--find-links',
+        wheelsDir,
+        ...(repairPackages.includes('torch') ? ['--reinstall'] : []),
+        `torch==${resumableTorch.version}`,
+      ],
+      project,
+      env,
+    );
+    await rm(wheel, { force: true });
+    signal.throwIfAborted();
+  }
   if (cpuTorch) {
     await run(
       uv,

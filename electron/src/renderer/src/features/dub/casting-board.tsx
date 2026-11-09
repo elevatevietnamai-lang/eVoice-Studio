@@ -117,7 +117,7 @@ export function CastingBoard({
   return (
     <details
       open={open}
-      className="group rounded-xl border border-border/60 bg-muted/20 p-3"
+      className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
       onToggle={(event) => {
         setOpen(event.currentTarget.open);
         if (!event.currentTarget.open) setDropTarget(null);
@@ -153,7 +153,7 @@ export function CastingBoard({
                 className="inline-flex h-8 max-w-36 shrink-0 cursor-grab items-center gap-1.5 rounded-lg border border-border/50 bg-background/45 px-2 text-xs shadow-xs active:cursor-grabbing"
                 title={choice.label}
               >
-                <GripVerticalIcon className="size-3 text-muted-foreground/70" />
+                <GripVerticalIcon className="size-3 text-muted-foreground" />
                 <VoiceIcon choice={choice} />
                 <span className="truncate">{choice.label}</span>
               </span>
@@ -173,7 +173,7 @@ export function CastingBoard({
                 className={cn(
                   'rounded-lg border border-border/50 bg-background/25 p-2 transition-[background-color,border-color,box-shadow] duration-150',
                   dropTarget === speaker &&
-                    'border-primary/60 bg-primary/8 shadow-[inset_0_0_0_1px_rgb(255_255_255/5%)]',
+                    'border-primary/60 bg-primary/8',
                 )}
                 onDragOver={(event) => {
                   if (disabled) return;

@@ -46,8 +46,8 @@ export function CallHistory({
               aria-current={call.id === selectedId ? 'true' : undefined}
               onClick={() => onSelect(call)}
               className={cn(
-                'w-full space-y-1 rounded-lg px-3 py-2 text-left outline-none transition-colors hover:bg-accent/55 focus-visible:ring-2 focus-visible:ring-ring',
-                call.id === selectedId && 'bg-accent/80 shadow-[inset_2px_0_0_var(--primary)]',
+                'w-full space-y-1 rounded-lg px-3 py-2 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring',
+                call.id === selectedId && 'bg-accent/80',
               )}
             >
               <span className="flex min-w-0 items-center gap-2">

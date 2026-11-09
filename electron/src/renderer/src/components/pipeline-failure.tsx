@@ -51,7 +51,7 @@ export function PipelineFailure({
     <div
       role="alert"
       className={cn(
-        'rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-sm',
+        'rounded-(--card-radius) border border-destructive/20 bg-destructive/5 p-3 text-sm',
         className,
       )}
     >

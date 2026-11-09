@@ -978,9 +978,6 @@ export function DubPage() {
     <div className="flex h-full min-h-0 flex-col">
       <WorkspaceHeader>
         <h1 className="text-sm font-medium">{t('dubWorkspace.title')}</h1>
-        <Link to="/projects" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
-          {t('projects.title')}
-        </Link>
         <span
           className="min-w-0 flex-1 truncate text-xs text-muted-foreground"
           title={session.filename}
@@ -1029,7 +1026,7 @@ export function DubPage() {
         >
           <section
             className={cn(
-              'space-y-3 rounded-xl border border-border/60 bg-muted/15 p-3 transition-colors',
+              'space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3 transition-colors',
               session.jobId && !['idle', 'preparing'].includes(session.phase) && 'rounded-b-md',
               dragging && 'border-primary/60 bg-primary/5',
             )}
@@ -1286,7 +1283,7 @@ export function DubPage() {
             )}
           </section>
           {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
-            <section className="-mt-1 space-y-3 rounded-xl rounded-t-md border border-border/60 bg-muted/15 p-3">
+            <section className="-mt-1 space-y-3 rounded-(--card-radius) rounded-t-md border border-border/60 bg-muted/15 p-3">
               <h2 className="flex items-center gap-2 text-sm font-medium">
                 <PlayIcon className="size-4 text-muted-foreground" />
                 {t('dub.preview')}
@@ -1363,7 +1360,7 @@ export function DubPage() {
               )}
             </section>
           )}
-          <section className="space-y-3 rounded-xl border border-border/60 bg-muted/15 p-3">
+          <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
             <h2 className="flex items-center gap-2 text-sm font-medium">
               <span className="grid size-5 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
                 2
@@ -1652,7 +1649,7 @@ export function DubPage() {
             disabled={busy || Boolean(session.recovery)}
             onAssign={assignDubSpeakerProfile}
           />
-          <details className="group rounded-xl border border-border/60 bg-muted/20 p-3">
+          <details className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
               <Clock3Icon className="size-4 text-muted-foreground" />
               {t('dub.timing_label')}
@@ -1747,7 +1744,7 @@ export function DubPage() {
               </div>
             </div>
           </details>
-          <details className="group rounded-xl border border-border/60 bg-muted/20 p-3">
+          <details className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
               <SlidersHorizontalIcon className="size-4 text-muted-foreground" />
               {t('clone.production_overrides')}
@@ -1850,7 +1847,7 @@ export function DubPage() {
             )}
           >
             {session.recovery && !busy && (
-              <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-warning/20 bg-warning/5 p-3">
+              <div className="mb-4 flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-warning/20 bg-warning/5 p-3">
                 <div className="mr-auto min-w-48">
                   <p className="text-sm font-medium">
                     {session.asrModelMissing ? t('asr_missing.message') : t('dub.pipeline')}
@@ -1925,7 +1922,7 @@ export function DubPage() {
             )}
             {!session.segments.length && (!session.recovery || busy) && (
               <div className="mx-auto flex min-h-[24rem] w-full max-w-5xl flex-col items-center justify-center px-6 text-center">
-                <div className="mb-3 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   {busy ? (
                     <LoaderCircleIcon className="size-6 animate-spin motion-reduce:animate-none" />
                   ) : (
@@ -2157,7 +2154,7 @@ export function DubPage() {
                       </Menu.Trigger>
                       <Menu.Portal>
                         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                          <Menu.Popup className="min-w-52 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                          <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
                             <Menu.Item
                               disabled={!session.jobId}
                               onClick={() =>
@@ -2322,7 +2319,7 @@ export function DubPage() {
                 />
               )}
               {selectedSegmentIds.size > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-2.5">
+                <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-primary/20 bg-primary/5 p-2.5">
                   <span className="mr-auto flex items-center gap-2 px-1 text-sm font-medium text-primary">
                     <CheckCheckIcon className="size-4" />
                     {t('dub.selected_count', {
@@ -2342,7 +2339,7 @@ export function DubPage() {
                     </Menu.Trigger>
                     <Menu.Portal>
                       <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                        <Menu.Popup className="max-h-72 min-w-52 overflow-y-auto rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                        <Menu.Popup className="max-h-72 min-w-52 overflow-y-auto rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
                           <Menu.Item
                             onClick={() =>
                               editDubSegments(selectedSegmentIds, {
@@ -2465,15 +2462,15 @@ export function DubPage() {
                           data-dub-row-id={segment.id}
                           onFocusCapture={() => setSelectedSegmentId(segment.id)}
                           className={cn(
-                            'group/segment relative isolate grid grid-cols-[3.25rem_minmax(0,1fr)] gap-x-2 px-2 py-3.5 transition-[background-color,box-shadow] after:pointer-events-none after:absolute after:right-2 after:bottom-0 after:left-[4.25rem] after:h-px after:bg-gradient-to-r after:from-border/65 after:via-border/35 after:to-transparent after:transition-opacity hover:bg-muted/[0.12] hover:after:opacity-100 focus-within:bg-muted/[0.16] focus-within:after:from-primary/45',
+                            'group/segment relative isolate grid grid-cols-[3.25rem_minmax(0,1fr)] gap-x-2 px-2 py-3.5 transition-colors after:pointer-events-none after:absolute after:right-2 after:bottom-0 after:left-[4.25rem] after:h-px after:bg-border/50 hover:bg-accent/[0.12] focus-within:bg-muted/[0.16]',
                             selectedSegmentId === segment.id &&
-                              'bg-primary/[0.05] shadow-[inset_2px_0_0_color-mix(in_oklab,var(--primary)_55%,transparent)] after:from-primary/55 after:via-primary/20',
+                              'bg-(--sidebar-row-selected)',
                           )}
                         >
                           <div
                             className={cn(
-                              'flex items-start gap-1.5 pt-1 font-mono text-[11px] text-muted-foreground/55 transition-colors group-hover/segment:text-muted-foreground/75 group-focus-within/segment:text-muted-foreground',
-                              selectedSegmentId === segment.id && 'text-muted-foreground/90',
+                              'flex items-start gap-1.5 pt-1 font-mono text-[11px] text-muted-foreground transition-colors group-hover/segment:text-foreground group-focus-within/segment:text-foreground',
+                              selectedSegmentId === segment.id && 'text-foreground',
                             )}
                           >
                             <input
@@ -2502,8 +2499,8 @@ export function DubPage() {
                                 size="sm"
                                 variant="ghost"
                                 className={cn(
-                                  'h-6 min-w-0 max-w-[14rem] justify-start px-1 text-[11px] font-medium tracking-[0.01em] text-muted-foreground/55 hover:text-foreground group-hover/segment:text-muted-foreground/75 group-focus-within/segment:text-foreground/85',
-                                  selectedSegmentId === segment.id && 'text-foreground/85',
+                                  'h-6 min-w-0 max-w-[14rem] justify-start px-1 text-[11px] font-medium tracking-[0.01em] text-muted-foreground hover:text-foreground group-hover/segment:text-foreground group-focus-within/segment:text-foreground',
+                                  selectedSegmentId === segment.id && 'text-foreground',
                                 )}
                                 aria-expanded={expandedSegmentId === segment.id}
                                 aria-controls={`dub-segment-options-${index}`}
@@ -2534,8 +2531,8 @@ export function DubPage() {
                               {segment.text_original && segment.text_original !== segment.text ? (
                                 <p
                                   className={cn(
-                                    'min-w-0 flex-1 truncate px-1 text-xs text-muted-foreground/50 transition-colors group-hover/segment:text-muted-foreground/70 group-focus-within/segment:text-foreground/70',
-                                    selectedSegmentId === segment.id && 'text-foreground/72',
+                                    'min-w-0 flex-1 truncate px-1 text-xs text-muted-foreground transition-colors group-hover/segment:text-foreground group-focus-within/segment:text-foreground',
+                                    selectedSegmentId === segment.id && 'text-foreground',
                                   )}
                                   title={segment.text_original}
                                 >
@@ -2668,7 +2665,7 @@ export function DubPage() {
                                   </Menu.Trigger>
                                   <Menu.Portal>
                                     <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                                      <Menu.Popup className="min-w-52 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                                      <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
                                         <Menu.Item
                                           disabled={segment.text.trim().length < 2}
                                           onClick={() => splitAtCursor(segment.id, segment.text)}
@@ -3059,7 +3056,7 @@ export function DubPage() {
                         </Menu.Trigger>
                         <Menu.Portal>
                           <Menu.Positioner side="top" sideOffset={6} align="end" className="z-50">
-                            <Menu.Popup className="cn-menu-target cn-menu-translucent min-w-44 rounded-lg p-1 surface-glass text-popover-foreground shadow-lg ring-1 ring-border outline-none">
+                            <Menu.Popup className="cn-menu-target cn-menu-translucent min-w-44 rounded-(--card-radius) p-1 surface-glass text-popover-foreground shadow-lg ring-1 ring-border outline-none">
                               {availableTranslationAgents.map((agent) => (
                                 <Menu.Item
                                   key={agent.id}

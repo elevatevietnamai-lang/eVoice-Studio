@@ -519,7 +519,7 @@ export function ProjectsPage() {
           <div className="mx-auto max-w-6xl space-y-5">
             {session.jobId && (
               <form
-                className="space-y-3 rounded-xl border border-border/50 bg-card/35 p-4"
+                className="space-y-3 rounded-(--card-radius) border border-border/50 bg-card/35 p-4"
                 onSubmit={(event) => {
                   event.preventDefault();
                   void save(false);
@@ -691,7 +691,7 @@ export function ProjectsPage() {
                     key={row.key}
                     className={
                       view === 'grid'
-                        ? 'flex min-w-0 flex-col gap-4 rounded-xl border border-border/50 bg-card/35 p-4'
+                        ? 'flex min-w-0 flex-col gap-4 rounded-(--card-radius) border border-border/50 bg-card/35 p-4'
                         : 'flex min-w-0 flex-wrap items-center gap-3 py-3'
                     }
                   >
@@ -734,7 +734,7 @@ export function ProjectsPage() {
                       <div className="min-w-0 flex-1">
                         {row.projectKind ? (
                           <Button
-                            className="h-auto max-w-full justify-start p-0 text-left font-medium whitespace-normal hover:bg-transparent"
+                            className="h-auto max-w-full justify-start p-0 text-left font-medium whitespace-normal underline-offset-2 hover:bg-transparent hover:underline"
                             variant="ghost"
                             disabled={locked}
                             onClick={() =>

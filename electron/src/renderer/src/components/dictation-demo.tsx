@@ -82,7 +82,7 @@ export function DictationDemo() {
       <p className="text-sm text-muted-foreground">{t('demo.dictation_lede')}</p>
       <div className="space-y-2">
         {DICTATION_SCRIPTS.map((script) => (
-          <article key={script.id} className="space-y-3 rounded-xl border border-border/60 p-4">
+          <article key={script.id} className="space-y-3 rounded-(--card-radius) border border-border/60 p-4">
             <h3 className="text-sm font-medium">{t(script.labelKey)}</h3>
             <p className="text-sm leading-relaxed text-muted-foreground">{script.text}</p>
             <div className="flex items-center gap-2">

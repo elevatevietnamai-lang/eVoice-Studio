@@ -35,6 +35,7 @@ import {
 import { BookSettings } from './book-settings';
 import { duplicateWords } from './book-options';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useWorkspace } from '@/lib/store/workspace';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -125,7 +126,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
         : [],
     [draft.script, draft.voiceCast, mode, profiles],
   );
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const sidebarCollapsed = useWorkspace().panelCollapsed;
   const blocker = generateBlocker({
     mode,
     busyElsewhere: Boolean(session.active) && session.active !== mode,
@@ -241,10 +242,9 @@ export function LongformPage({ mode }: { mode: Mode }) {
             </div>
           }
           libraryLabel={t('projects.title')}
-          onCollapsedChange={setSidebarCollapsed}
-          className="space-y-3 [&>details]:rounded-xl [&>details]:border [&>details]:border-border/60 [&>details]:bg-muted/20 [&>details]:p-3 [&>section]:rounded-xl [&>section]:border [&>section]:border-border/60 [&>section]:bg-muted/20 [&>section]:p-3"
+          className="space-y-3 [&>details]:rounded-(--card-radius) [&>details]:border [&>details]:border-border/60 [&>details]:bg-muted/20 [&>details]:p-3 [&>section]:rounded-(--card-radius) [&>section]:border [&>section]:border-border/60 [&>section]:bg-muted/20 [&>section]:p-3"
         >
-          <div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-3">
+          <div className="space-y-4 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <label className="block space-y-2 text-xs font-medium text-muted-foreground">
               <span className="flex items-center gap-2">
                 <BookOpenTextIcon className="size-4" aria-hidden="true" />
@@ -494,7 +494,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
             )}
             {sidebarCollapsed && (
               // The setup pane is collapsed: keep Generate and the tracker in reach.
-              <div className="sticky bottom-0 z-10 -mx-2 shrink-0 rounded-xl border border-border/60 bg-background/90 p-3 backdrop-blur-xl">
+              <div className="sticky bottom-0 z-10 -mx-2 shrink-0 rounded-(--card-radius) border border-border/60 bg-background p-3">
                 {generatePanel}
               </div>
             )}

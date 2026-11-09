@@ -17,7 +17,7 @@ import {
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { brandIcon } from '@/lib/brand';
+import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { DonationGoal } from './donation-goal';
 import { ReportBug } from '@/components/report-bug';
 import { ExternalLink } from '@/components/external-link';
@@ -62,7 +62,7 @@ export function SupportSettings() {
     <div className="support-studio">
       <header className="support-intro">
         <div className="support-emblem" aria-hidden="true">
-          <img src={brandIcon} alt="" width={100} height={100} />
+          <EVoiceMark size={100} />
         </div>
         <h1>{t('donate.hero_title')}</h1>
         <p>{t('donate.footer')}</p>

@@ -111,7 +111,7 @@ export function UninstallSettings() {
             </Alert>
           )}
           {present.length > 0 && (
-            <div className="overflow-hidden rounded-xl border border-border/60 bg-background/25">
+            <div className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-background/25">
               {present
                 .filter((target) => !target.shared)
                 .map((target) => (
@@ -122,7 +122,7 @@ export function UninstallSettings() {
                   />
                 ))}
               {sharedModels && (
-                <label className="flex cursor-pointer items-start gap-3 border-t border-border/50 px-3 py-3 hover:bg-muted/30">
+                <label className="flex cursor-pointer items-start gap-3 border-t border-border/50 px-3 py-3 hover:bg-accent">
                   <input
                     type="checkbox"
                     checked={includeModels}
@@ -137,7 +137,7 @@ export function UninstallSettings() {
                     <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">
                       {t('settings.uninstall_models_caveat')}
                     </span>
-                    <code className="mt-1 block truncate text-[11px] text-muted-foreground/70">
+                    <code className="mt-1 block truncate text-[11px] text-muted-foreground">
                       {sharedModels.path}
                     </code>
                   </span>
@@ -173,7 +173,7 @@ export function UninstallSettings() {
             <DialogTitle>{t('settings.uninstall_confirm_title')}</DialogTitle>
             <DialogDescription>{t('settings.uninstall_confirm_body')}</DialogDescription>
           </DialogHeader>
-          <ul className="space-y-1 rounded-xl bg-muted/30 p-3">
+          <ul className="space-y-1 rounded-lg bg-muted/30 p-3">
             {selected.map((target) => (
               <li
                 key={`${target.key}:${target.path}`}
@@ -233,7 +233,7 @@ function TargetRow({ target, label }: { target: UninstallTarget; label: string }
       <Icon className="size-4 shrink-0 text-muted-foreground" />
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-medium">{label}</span>
-        <code className="mt-0.5 block truncate text-[11px] text-muted-foreground/70">
+        <code className="mt-0.5 block truncate text-[11px] text-muted-foreground">
           {target.path}
         </code>
       </span>

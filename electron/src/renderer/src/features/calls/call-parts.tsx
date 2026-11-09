@@ -176,7 +176,7 @@ export function ReadinessBanner({
   return (
     <section
       aria-labelledby="calls-readiness-title"
-      className="rounded-xl border border-warning/40 bg-warning-surface p-3"
+      className="rounded-(--card-radius) border border-warning/40 bg-warning-surface p-3"
     >
       <div className="flex flex-wrap items-center gap-2">
         <CircleAlertIcon aria-hidden="true" className="size-4 text-warning-foreground" />
@@ -236,7 +236,7 @@ export function CallsUnavailable({ onRetry }: { onRetry: () => void }) {
   return (
     <section
       aria-labelledby="calls-unavailable-title"
-      className="mx-auto my-10 w-full max-w-xl rounded-2xl border border-border/60 bg-card p-6 text-sm shadow-xs"
+      className="mx-auto my-10 w-full max-w-xl rounded-(--card-radius) border border-border/60 bg-card p-6 text-sm"
     >
       <PhoneOffIcon aria-hidden="true" className="size-6 text-muted-foreground" />
       <h2 id="calls-unavailable-title" className="mt-3 text-base font-semibold">

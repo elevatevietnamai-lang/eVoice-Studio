@@ -101,7 +101,7 @@ export function SaveProfileForm({
 
   return (
     <form
-      className="flex flex-col gap-4 rounded-xl border border-border/60 bg-muted/20 p-5"
+      className="flex flex-col gap-4 rounded-(--card-radius) border border-border/60 bg-muted/20 p-5"
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();

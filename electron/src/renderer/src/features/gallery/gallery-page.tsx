@@ -338,7 +338,7 @@ export function GalleryPage() {
                 {items.map((item) => (
                   <article
                     key={item.id}
-                    className="flex flex-col gap-3 rounded-xl border border-border/50 bg-card/40 p-4"
+                    className="flex flex-col gap-3 rounded-(--card-radius) border border-border/50 bg-card/40 p-4"
                   >
                     <div className="flex items-center gap-3">
                       <ProfileAvatar name={item.name} />

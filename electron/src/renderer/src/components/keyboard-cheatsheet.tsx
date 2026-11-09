@@ -68,7 +68,7 @@ export function KeyboardCheatsheet({
                 {shortcuts.map((shortcut) => (
                   <div
                     key={shortcut.label}
-                    className="flex min-h-8 items-center justify-between gap-3 rounded-lg px-2 hover:bg-accent/45"
+                    className="flex min-h-8 items-center justify-between gap-3 rounded-lg px-2 hover:bg-accent"
                   >
                     <span className="text-xs text-muted-foreground">{shortcut.label}</span>
                     <span className="flex shrink-0 items-center gap-1">

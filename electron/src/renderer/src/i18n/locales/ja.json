@@ -92,16 +92,19 @@
     "copied": "コピーしました"
   },
   "homeUi": {
-    "subtitle": "オープンソースで完全ローカルなElevenLabsの代替 — 声のクローンとデザイン、動画の吹き替え、音声入力、文字起こし、オーディオブック制作を646言語で。",
+    "subtitle": "音声と音楽のためのローカルスタジオ。",
     "brand_by": "{{brand}} 開発者",
     "all": "全員",
     "allContributors": "すべての貢献者",
-    "title": "VoiceStudio.sh オープンソース",
     "design": "説明から声をデザイン。",
     "dub": "音声や動画を翻訳・吹き替え。",
     "stories": "複数の声でシーンを作成。",
     "audiobook": "章立てのオーディオブックを作成。",
-    "transcribe": "録音を文字に起こす。"
+    "transcribe": "録音を文字に起こす。",
+    "music": "テキストの説明から音楽を生成します。",
+    "saved": "再利用のために保存した音声。",
+    "batch": "複数の動画をまとめて吹き替えます。",
+    "projects": "吹き替え、ストーリー、書き出しの一覧。"
   },
   "twilioIntegration": {
     "exposureWarning": "オンにすると、トンネルがインターネットに公開する別のローカルポートが開きます。Twilio Auth Token で署名されたリクエストのみ受け付け、eVoice Studio のその他の部分は非公開のままです。",
@@ -306,7 +309,8 @@
     "dark": "ダーク",
     "system": "システム",
     "default": "Studio",
-    "glass": "ガラスモード"
+    "glass": "ガラスモード",
+    "glass_flat_hint": "Studio はフラットなテーマです。ガラスを使うには別のパレットを選んでください。"
   },
   "cloneFlow": {
     "choose_voice": "音声を選択",
@@ -369,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "パネルを折りたたむ",
+    "expand": "パネルを展開",
     "edit": "音声プロフィールを編集"
   },
   "modelSettings": {
@@ -1914,7 +1919,8 @@
     "model_credits": "モデルのクレジット",
     "model_credits_hint": "対応モデルのクレジットです。モデルと各構成要素にはそれぞれの利用条件が適用されます。この表示は商用利用の権利を付与するものではありません。",
     "model_terms": "モデルの利用条件",
-    "model_related_sources": "関連する出典:"
+    "model_related_sources": "関連する出典:",
+    "built_on": "VoiceStudio (AGPL-3.0) とそのコントリビューターを基に構築"
   },
   "privacy": {
     "translator_online": "翻訳者はオンラインです: {{provider}}",
@@ -2221,7 +2227,8 @@
     "clone": "音声クローン",
     "primary": "メインナビゲーション",
     "dictation": "音声入力",
-    "calls": "通話"
+    "calls": "通話",
+    "more": "その他"
   },
   "profiles": {
     "locked": "音声ロックされてる！アイデンティティはすべての世代にわたって一貫しています。",
@@ -3989,5 +3996,10 @@
     "burn": "翻訳字幕を焼き込む",
     "export": "AI音楽付きで動画を書き出す",
     "needs_dub": "先に吹き替えを生成してください。書き出し時にその音声と音楽がミックスされます。"
+  },
+  "windowControls": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "元に戻す"
   }
 }

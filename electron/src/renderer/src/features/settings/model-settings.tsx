@@ -348,7 +348,7 @@ export function ModelSettings({
                   className={buttonVariants({
                     variant: 'ghost',
                     className:
-                      'glass-panel min-h-20 min-w-0 justify-between rounded-xl border border-border/60 bg-card/40 px-4 py-4 shadow-xs/5 transition-[border-color,background-color,box-shadow] hover:border-primary/25 hover:bg-primary/[0.04]',
+                      'glass-panel min-h-20 min-w-0 justify-between rounded-(--card-radius) border border-border bg-card px-4 py-4 transition-colors hover:border-foreground/25 hover:bg-accent',
                   })}
                 >
                   <span className="flex items-center gap-2.5">

@@ -1,5 +1,4 @@
-import { SupportShortcut } from '@/components/app-shell/support-shortcut';
-import { SidebarToggle } from '@/components/app-shell/sidebar-toggle';
+import { CommandSearch } from '@/components/app-shell/command-search';
 import { EditProfile } from './edit-profile';
 import { ProfileAvatar } from '@/components/profile-avatar';
 import { VoiceSetup } from './voice-setup';
@@ -12,7 +11,7 @@ import { TakeDetails } from './take-details';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
-import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon, SearchIcon } from 'lucide-react';
+import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon, } from 'lucide-react';
 import { isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -141,7 +140,7 @@ export function ClonePage() {
         <section className="flex min-w-0 flex-1 flex-col">
           <header
             className={cn(
-              'workspace-titlebar flex shrink-0 items-center justify-between gap-3 px-5',
+              'workspace-titlebar relative flex shrink-0 items-center justify-between gap-3 px-5',
               !editingProfile &&
                 !selectedTake &&
                 (!panel || choosingVoice) &&
@@ -150,26 +149,16 @@ export function ClonePage() {
             )}
           >
             <div className="flex min-w-0 items-center gap-2">
-              <SidebarToggle />
               <h1 className="truncate text-sm font-medium">{t('clone.title')}</h1>
             </div>
+            <CommandSearch className="ml-auto" />
             <div className="flex shrink-0 items-center gap-1">
-              <SupportShortcut />
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                aria-label={t('preferences.search')}
-                title="Ctrl/Cmd + K"
-                onClick={() => window.dispatchEvent(new Event('voicestudio:commands'))}
-              >
-                <SearchIcon />
-              </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
                   setLibraryTab('takes');
-                  setWorkspace({ libraryOpen: true });
+                  setWorkspace({ panelCollapsed: false });
                 }}
               >
                 <HistoryIcon data-icon="inline-start" />
@@ -208,7 +197,7 @@ export function ClonePage() {
                     variant="ghost"
                     disabled={isGenerating}
                     aria-label={t('cloneFlow.change_voice')}
-                    className="h-12 min-w-0 justify-start gap-2.5 px-0 hover:bg-transparent"
+                    className="-ml-2 h-12 min-w-0 justify-start gap-2.5 px-2"
                     onClick={() => {
                       openTake(null);
                       setChangingVoice(true);
@@ -253,7 +242,7 @@ export function ClonePage() {
           {((!choosingVoice && !savingUpload) || isGenerating) && (
             <SynthesisDock output={<OutputPanel />}>
               <div className="mx-auto w-full max-w-4xl px-6 pb-4">
-                <div className="glass-panel composer-surface rounded-xl border border-border/60 bg-muted/30 p-2.5 shadow-[0_2px_12px_rgb(0_0_0/4%)]">
+                <div className="glass-panel composer-surface rounded-(--card-radius) border border-border/60 bg-muted/30 p-2.5 shadow-[0_2px_12px_rgb(0_0_0/4%)]">
                   <ActionBar />
                 </div>
               </div>

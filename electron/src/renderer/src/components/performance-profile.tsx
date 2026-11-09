@@ -158,7 +158,7 @@ export function PerformanceProfile({
           aria-labelledby={groupId}
           aria-busy={profile.isSaving}
           className={cn(
-            'grid min-w-0 grid-cols-2 gap-1 rounded-xl border border-border/60 bg-muted/45 p-1 sm:grid-flow-col sm:auto-cols-fr',
+            'grid min-w-0 grid-cols-2 gap-1 rounded-(--card-radius) border border-border/60 bg-muted/45 p-1 sm:grid-flow-col sm:auto-cols-fr',
             disabled && 'opacity-50',
           )}
         >
@@ -282,7 +282,7 @@ export function PerformanceProfile({
                   key={name}
                   to="/settings/models/$family"
                   params={{ family: name }}
-                  className="group flex min-h-7 items-center justify-between gap-3 rounded-md px-1 py-1 outline-none hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring"
+                  className="group flex min-h-7 items-center justify-between gap-3 rounded-md px-1 py-1 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <span>{t('sidebarTools.' + name)}</span>
                   <span className="flex items-center gap-1.5 text-end text-[11px] text-muted-foreground">
@@ -341,7 +341,7 @@ export function PerformanceProfile({
                 type="button"
                 data-slot="performance-trigger"
                 aria-label={hardwareSummary || undefined}
-                className="group/hw flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 text-xs whitespace-nowrap text-foreground/85 outline-none hover:bg-sidebar-accent/60 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+                className="group/hw flex min-w-0 items-center gap-1.5 rounded-md px-1.5 py-1 text-xs whitespace-nowrap text-foreground/85 outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
               />
             }
           >

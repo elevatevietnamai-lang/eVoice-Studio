@@ -206,7 +206,7 @@ export function TrimAudio({
         )}
         <div
           ref={container}
-          className="overflow-hidden rounded-xl border border-border/50 p-3 text-muted-foreground"
+          className="overflow-hidden rounded-(--card-radius) border border-border/50 p-3 text-muted-foreground"
         />
         {duration > 0 && (
           <>

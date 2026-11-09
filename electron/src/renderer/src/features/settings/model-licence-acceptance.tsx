@@ -168,7 +168,7 @@ export function LicenceAcceptanceFooter({
                     htmlFor={id}
                     className={cn(
                       'flex cursor-pointer items-start gap-3 px-3 py-2.5 text-sm transition-colors motion-reduce:transition-none',
-                      checkedModel ? 'bg-primary/[0.06]' : 'hover:bg-muted/50',
+                      checkedModel ? 'bg-primary/[0.06]' : 'hover:bg-accent',
                     )}
                   >
                     <input
@@ -290,7 +290,7 @@ export function ModelLicenceGate() {
         className={cn(
           // Tall and wide: the licence text is the content, so give it the room.
           'flex h-[min(48rem,calc(100dvh-2rem))] flex-col gap-0 overflow-hidden p-0 sm:max-w-4xl',
-          platform === 'mac' ? 'rounded-xl' : 'rounded-lg',
+          platform === 'mac' ? 'rounded-(--card-radius)' : 'rounded-lg',
           LICENCE_DIALOG_SURFACE,
         )}
         data-platform={platform}

@@ -39,7 +39,7 @@ function Stat({ label, value, sub }: { label: string; value: string | number; su
     <div className="rounded-lg border border-border/50 bg-muted/30 px-4 py-3">
       <p className="font-mono text-lg font-medium tabular-nums text-foreground">{value}</p>
       <p className="mt-1 text-sm text-muted-foreground">{label}</p>
-      {sub && <p className="mt-0.5 text-xs text-muted-foreground/70">{sub}</p>}
+      {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
     </div>
   );
 }

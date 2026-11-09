@@ -1,12 +1,19 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { FilmIcon } from 'lucide-react';
+import { act } from 'react';
 import { SecondarySidebar } from './workspace-sidebar';
+import { renderHook } from '@testing-library/react';
+import { setWorkspace, usePanelMounted } from '@/lib/store/workspace';
+import { PanelSlotContext } from './panel-slot-context';
+import { WorkspaceHeader } from './app-shell/workspace-header';
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+vi.mock('./app-shell/command-search', () => ({ CommandSearch: () => null }));
 
 afterEach(() => {
   cleanup();
+  setWorkspace({ panelCollapsed: false });
   localStorage.clear();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
@@ -37,7 +44,7 @@ it('allows a 40% wider spacious pane and restores the saved width on remount', (
   expect(screen.getByRole('separator')).toHaveAttribute('aria-valuenow', '436');
 });
 
-it('pins a footer outside the scrolling content and reports collapse so a page can re-home it', () => {
+it('pins a footer outside the scrolling content and follows the shared panel toggle', () => {
   const onCollapsedChange = vi.fn();
   render(
     <SecondarySidebar
@@ -55,9 +62,13 @@ it('pins a footer outside the scrolling content and reports collapse so a page c
   expect(content?.contains(footer)).toBe(false); // never scrolls away with the setup cards
   expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
 
-  fireEvent.click(screen.getByRole('button', { name: /collapse/i }));
-  expect(onCollapsedChange).toHaveBeenLastCalledWith(true);
+  // The rail's panel toggle is the only collapse control; the pane has none of its own.
+  expect(screen.queryByRole('button', { name: /collapse/i })).toBeNull();
+  act(() => setWorkspace({ panelCollapsed: true }));
   expect(document.querySelector('[data-slot="secondary-sidebar-footer"]')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Stories' }));
+  expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
+  expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
 });
 
 it("switches between a page's controls and its section library, hiding the pinned footer in the library", () => {
@@ -150,4 +161,97 @@ it('reports a retained library as inactive when its tab is hidden', () => {
   fireEvent.click(screen.getByRole('tab', { name: 'Projects' }));
   expect(screen.getByRole('textbox', { name: 'Load active' })).toBe(field);
   expect(field).toHaveValue('true');
+});
+
+it('registers itself so the rail offers a panel toggle only while a pane is mounted', () => {
+  const mounted = renderHook(() => usePanelMounted());
+  expect(mounted.result.current).toBe(false);
+  const pane = render(
+    <SecondarySidebar title="Stories" icon={FilmIcon}>
+      <section>Setup</section>
+    </SecondarySidebar>,
+  );
+  mounted.rerender();
+  expect(mounted.result.current).toBe(true);
+  pane.unmount();
+  mounted.rerender();
+  expect(mounted.result.current).toBe(false);
+});
+
+it('renders into the shell panel column, and waits for it to mount', () => {
+  const column = document.createElement('div');
+  document.body.append(column);
+  const pane = (slot: HTMLElement | null) => (
+    <PanelSlotContext.Provider value={slot}>
+      <div data-testid="page">
+        <SecondarySidebar title="Dub" icon={FilmIcon}>
+          <section>Upload</section>
+        </SecondarySidebar>
+      </div>
+    </PanelSlotContext.Provider>
+  );
+  const view = render(pane(null));
+  expect(screen.queryByText('Upload')).toBeNull();
+  view.rerender(pane(column));
+  expect(column).toContainElement(screen.getByText('Upload'));
+  expect(screen.getByTestId('page')).toBeEmptyDOMElement();
+  column.remove();
+});
+
+it('names the page once: the library tabs replace the panel title', () => {
+  render(
+    <SecondarySidebar title="Dubbing" icon={FilmIcon} library={<div />} libraryLabel="Projects">
+      <section>Upload</section>
+    </SecondarySidebar>,
+  );
+  expect(screen.getAllByText('Dubbing')).toHaveLength(1);
+  expect(screen.getByRole('tab', { name: 'Dubbing' })).toBeInTheDocument();
+  expect(screen.getByRole('tab', { name: 'Projects' })).toBeInTheDocument();
+});
+
+it('keeps the page heading for screen readers only while its own panel names the page', () => {
+  const page = (panelTitle: string | null) => (
+    <>
+      <WorkspaceHeader>
+        <h1>Dubbing</h1>
+      </WorkspaceHeader>
+      {panelTitle && (
+        <SecondarySidebar title={panelTitle} icon={FilmIcon}>
+          <section>Upload</section>
+        </SecondarySidebar>
+      )}
+    </>
+  );
+  const view = render(page(null));
+  expect(screen.getByRole('banner')).not.toHaveClass('[&>h1]:sr-only');
+  // Another panel (the voice library beside Home) does not name this page.
+  view.rerender(page('Voice'));
+  expect(screen.getByRole('banner')).not.toHaveClass('[&>h1]:sr-only');
+  view.rerender(page('Dubbing'));
+  expect(screen.getByRole('banner')).toHaveClass('[&>h1]:sr-only');
+  expect(screen.getByRole('heading', { level: 1, name: 'Dubbing' })).toBeInTheDocument();
+});
+
+it('measures its width limit once the shell column arrives', () => {
+  vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(1400);
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      disconnect() {}
+    },
+  );
+  const column = document.createElement('div');
+  document.body.append(column);
+  const pane = (slot: HTMLElement | null) => (
+    <PanelSlotContext.Provider value={slot}>
+      <SecondarySidebar title="Dub" icon={FilmIcon} size="spacious">
+        <section>Preview</section>
+      </SecondarySidebar>
+    </PanelSlotContext.Provider>
+  );
+  const view = render(pane(null));
+  view.rerender(pane(column));
+  expect(screen.getByRole('separator')).toHaveAttribute('aria-valuemax', '750');
+  column.remove();
 });

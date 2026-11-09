@@ -306,7 +306,7 @@ export function DubTimeline({
   return (
     <section
       aria-label={t('segmentEditing.timeline')}
-      className="rounded-xl border border-border/60 bg-card/35 p-3 shadow-sm"
+      className="rounded-(--card-radius) border border-border/60 bg-card/35 p-3"
     >
       <div className="mb-2 flex justify-end gap-1">
         <Button size="icon-sm" variant="ghost" aria-label={t('trimmer.zoom_out')} disabled={zoom <= 1} onClick={() => setZoom((z) => Math.max(1, z / 2))}><ZoomOutIcon /></Button>
@@ -338,7 +338,7 @@ export function DubTimeline({
         {playback.duration > 0 && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-primary shadow-[0_0_8px_color-mix(in_oklch,var(--primary),transparent_20%)]"
+            className="pointer-events-none absolute inset-y-0 z-[1] w-px bg-primary"
             style={{ left: `${(Math.min(playback.time, duration) / duration) * 100}%` }}
           />
         )}

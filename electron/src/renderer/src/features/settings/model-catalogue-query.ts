@@ -27,6 +27,8 @@ export interface CatalogueModel {
   /** Versioned disclosure; absence is unverified, never a permission grant. */
   license_info?: ModelLicenseInfo;
   license_acceptance?: ModelLicenceAcceptance;
+  /** Gated models the card's engine also loads; reviewed and accepted on this card. */
+  license_companions?: ModelLicenceAcceptance[];
 }
 
 export interface ModelCatalogueResponse {

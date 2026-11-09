@@ -50,7 +50,7 @@ export function SettingsSection({
       <div
         className={cn(
           contentVariant === 'rows'
-            ? 'glass-panel rounded-xl border border-border/60 bg-card/40 shadow-xs/5 [&>*+*]:border-t [&>*+*]:border-border/50'
+            ? 'glass-panel overflow-hidden rounded-(--card-radius) border border-border bg-card [&>*+*]:border-t [&>*+*]:border-border/50'
             : 'grid grid-cols-[repeat(auto-fill,minmax(min(100%,20rem),1fr))] gap-3',
         )}
       >
@@ -86,7 +86,7 @@ export function SettingsRow({
       className={cn(
         'px-4 py-3',
         variant === 'card' &&
-          'glass-panel min-h-40 rounded-xl border border-border/60 bg-card/40 shadow-xs/5 transition-[border-color,background-color,box-shadow] duration-200 hover:border-border data-[active]:border-primary/35 data-[active]:bg-primary/[0.055] data-[active]:shadow-[0_0_0_1px_color-mix(in_oklab,var(--primary)_12%,transparent),0_12px_30px_-24px_var(--primary)] motion-reduce:transition-none',
+          'glass-panel min-h-40 rounded-(--card-radius) border border-border bg-card transition-colors duration-200 hover:border-foreground/25 data-[active]:border-foreground/40 motion-reduce:transition-none',
         className,
       )}
     >
@@ -109,7 +109,7 @@ export function SettingsRow({
           {description && (
             <div
               className={cn(
-                'text-[13px] leading-[1.45] text-muted-foreground/80',
+                'text-[13px] leading-[1.45] text-muted-foreground',
                 variant === 'card' && '[overflow-wrap:anywhere]',
               )}
             >

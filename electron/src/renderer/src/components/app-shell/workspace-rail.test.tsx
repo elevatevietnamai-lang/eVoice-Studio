@@ -12,6 +12,7 @@ const layout = vi.hoisted(() => ({
     expandedLibraryContext: null as string | null,
   },
   setWorkspace: vi.fn(),
+  panelMounted: false,
 }));
 vi.mock('@tanstack/react-router', () => ({
   useRouterState: ({ select }: any) => select({ location: { pathname: '/projects' } }),
@@ -25,6 +26,8 @@ vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => k
 vi.mock('@/lib/store/workspace', () => ({
   useWorkspace: () => layout.state,
   setWorkspace: (patch: object) => layout.setWorkspace(patch),
+  usePanelMounted: () => layout.panelMounted,
+  setMenuGroup: () => {},
 }));
 vi.mock('@/components/bridge', () => ({ appVersion: () => '0.5.7', isMac: () => false }));
 vi.mock('@/lib/brand', () => ({ brandIcon: 'icon.png', brandArtwork: 'art.png' }));
@@ -40,6 +43,7 @@ import { WorkspaceSidebar } from './workspace-sidebar';
 
 beforeEach(() => {
   layout.setWorkspace.mockClear();
+  layout.panelMounted = false;
   vi.stubGlobal('matchMedia', () => ({
     matches: true,
     addEventListener() {},
@@ -53,4 +57,24 @@ it('lets the rail reopen the full sidebar on non-macOS', () => {
   expect(layout.setWorkspace).toHaveBeenCalledWith(
     expect.objectContaining({ libraryOpen: true, expandedLibraryContext: '/projects:true' }),
   );
+});
+
+it('shows the panel toggle only while a page has a control panel', () => {
+  const view = render(<WorkspaceSidebar />);
+  expect(screen.queryByRole('button', { name: 'paneActions.collapse' })).toBeNull();
+  layout.panelMounted = true;
+  view.rerender(<WorkspaceSidebar />);
+  fireEvent.click(screen.getByRole('button', { name: 'paneActions.collapse' }));
+  expect(layout.setWorkspace).toHaveBeenCalledWith({ panelCollapsed: true });
+});
+
+it("draws the rail logo with the app icon's own mark, no tile, sized like the rail items", () => {
+  render(<WorkspaceSidebar />);
+  const logo = screen.getByRole('button', { name: 'clone.toggle_sidebar' });
+  expect(logo).toHaveClass('size-10');
+  expect(logo).not.toHaveClass('bg-primary');
+  expect(logo).toHaveAttribute('data-variant', 'ghost');
+  const mark = logo.querySelector('svg')!;
+  expect(mark).toHaveAttribute('width', '26');
+  expect(mark).toHaveAttribute('data-mark', 'full');
 });

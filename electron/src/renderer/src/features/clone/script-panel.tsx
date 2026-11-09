@@ -218,7 +218,7 @@ export function ScriptPanel({
                     autoFocus
                     type="button"
                     role="menuitem"
-                    className="w-full rounded px-3 py-2 text-left text-sm hover:bg-muted focus-visible:bg-muted outline-none"
+                    className="w-full rounded px-3 py-2 text-left text-sm hover:bg-accent focus-visible:bg-muted outline-none"
                     onClick={() => void paste(true)}
                   >
                     {t('scriptEdit.replace')}
@@ -310,7 +310,7 @@ export function ScriptPanel({
                           key={tag}
                           type="button"
                           role="menuitem"
-                          className="rounded-full px-2 py-0.5 text-[length:var(--text-caption)] text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                          className="rounded-full px-2 py-0.5 text-[length:var(--text-caption)] text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
                           onClick={() => edit(tag)}
                         >
                           {tag}

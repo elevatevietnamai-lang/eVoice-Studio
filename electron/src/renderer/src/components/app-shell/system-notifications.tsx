@@ -191,7 +191,7 @@ export function SystemNotifications({
         render={
           <Button
             variant="ghost"
-            size="icon-xs"
+            size="icon"
             className={cn(
               'relative shrink-0 text-muted-foreground hover:text-foreground',
               titlebar && 'app-no-drag',
@@ -200,12 +200,14 @@ export function SystemNotifications({
           />
         }
       >
-        <BellIcon />
+        <BellIcon className="size-[18px]" />
         {visible.length > 0 && (
           <span
             className={cn(
-              'absolute -top-0.5 -right-0.5 min-w-3 rounded-full px-0.5 text-center text-[8px] leading-3 font-semibold text-white',
-              visible.some((note) => note.level === 'error') ? 'bg-destructive' : 'bg-primary',
+              'absolute top-0.5 right-0.5 min-w-4 rounded-full px-1 text-center text-[10px] leading-4 font-semibold ring-2 ring-background',
+              visible.some((note) => note.level === 'error')
+                ? 'bg-destructive text-white'
+                : 'bg-primary text-primary-foreground',
             )}
             aria-hidden="true"
           >

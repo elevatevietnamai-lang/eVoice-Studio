@@ -9,7 +9,7 @@
 Design proposal: [installer plans and recovery review](specs/installer-redesign/readme.md).
 This proposal does not change the implemented behavior described below.
 
-The top bar places a GitHub Star button immediately right of Get Pro: one star icon and label, then the exact star count in a divided segment (the star fills on hover), taken from GitHub's small public endpoint. It refreshes when shown and every 20 minutes while visible; browser caching keeps repeat requests small. A bundled count remains visible if GitHub is unavailable. Requests send no credentials or referrer, and clicking the shortcut opens GitHub in the external browser. Community, donation and follow links live on the Support page (Settings → Support). Get Pro remains in the top bar.
+The header carries no promotional buttons: the GitHub star badge and the Get Pro shortcut were removed. Community, donation and follow links live on the Support page (Settings → Support); the Pro page is reachable from there.
 
 Low-disk warnings in the notification menu open Settings > Storage, where users can inspect disk use and clear temporary files.
 
@@ -97,7 +97,7 @@ Branding remains in a fixed native title row while onboarding status loads, inst
 
 On Windows and Linux, the collapsed workspace sidebar shows the VoiceStudio icon at the top. Use the toggle beside the page title to expand the sidebar. macOS retains its existing sidebar control.
 
-Every main workspace header exposes the same sidebar toggle, including pages that automatically collapse the voice library at narrow widths. The control reflects the visible sidebar state and explicitly expands it for the current workspace.
+Workspace headers carry no sidebar toggle. The rail's logo opens the full menu, and a single panel toggle at the bottom of the rail (and in the full menu's footer) folds or reopens the current page's control panel on every platform. Every navigation reopens the panel, so a page reached from the menu, Home or search always shows its controls.
 
 The shared video player renders Vidstack's poster before playback, including the Dub source thumbnail, and hides it once playback starts. Play requests made while the video is loading wait for the provider to become ready, including timeline preview requests.
 

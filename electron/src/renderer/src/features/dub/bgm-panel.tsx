@@ -124,7 +124,7 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
   };
 
   return (
-    <details className="group rounded-xl border border-border/60 bg-muted/15 p-3">
+    <details className="group rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
         <MusicIcon className="size-4 text-muted-foreground" />
         <span className="mr-auto">{t('dub_bgm.title')}</span>

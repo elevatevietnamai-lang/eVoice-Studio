@@ -64,7 +64,7 @@ export function ErrorRecovery({
   return (
     <div className="flex h-full min-h-64 items-center justify-center p-6">
       <section
-        className="w-full max-w-lg space-y-4 rounded-xl border border-border bg-card p-6"
+        className="w-full max-w-lg space-y-4 rounded-(--card-radius) border border-border bg-card p-6"
         role="alert"
       >
         <CircleAlertIcon className="size-6 text-destructive" aria-hidden="true" />

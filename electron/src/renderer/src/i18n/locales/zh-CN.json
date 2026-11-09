@@ -92,16 +92,19 @@
     "copied": "已复制"
   },
   "homeUi": {
-    "subtitle": "你的开源、完全本地运行的 ElevenLabs 替代方案——克隆与设计声音、视频配音、语音输入、转录和有声书制作，支持 646 种语言。",
+    "subtitle": "面向语音与音乐的本地工作室。",
     "brand_by": "{{brand}} 作者",
     "all": "全部",
     "allContributors": "所有贡献者",
-    "title": "VoiceStudio.sh 开源",
     "design": "根据描述设计声音。",
     "dub": "翻译并配音音频或视频。",
     "stories": "用多种声音创作场景。",
     "audiobook": "制作分章节的有声书。",
-    "transcribe": "将录音转成文字。"
+    "transcribe": "将录音转成文字。",
+    "music": "根据文字描述生成音乐。",
+    "saved": "保存下来可重复使用的声音。",
+    "batch": "一次为多个视频配音。",
+    "projects": "你的配音、故事和导出文件。"
   },
   "twilioIntegration": {
     "exposureWarning": "开启后会打开一个单独的本地端口，由你的隧道发布到互联网。只接受使用你的 Twilio Auth Token 签名的请求；eVoice Studio 的其余部分保持私密。",
@@ -306,7 +309,8 @@
     "dark": "深色",
     "system": "系统",
     "default": "Studio",
-    "glass": "玻璃模式"
+    "glass": "玻璃模式",
+    "glass_flat_hint": "Studio 是扁平主题。请选择其他配色以使用玻璃效果。"
   },
   "cloneFlow": {
     "choose_voice": "选择声音",
@@ -382,6 +386,7 @@
   },
   "paneActions": {
     "collapse": "折叠面板",
+    "expand": "展开面板",
     "edit": "编辑声音档案"
   },
   "modelSettings": {
@@ -1914,7 +1919,8 @@
     "model_credits": "模型致谢",
     "model_credits_hint": "受支持模型的来源与作者。模型和组件分别适用各自的条款；这些致谢不授予商业使用权。",
     "model_terms": "模型条款",
-    "model_related_sources": "相关来源："
+    "model_related_sources": "相关来源：",
+    "built_on": "基于 VoiceStudio (AGPL-3.0) 及其贡献者构建"
   },
   "privacy": {
     "translator_online": "翻译引擎在线：{{provider}}",
@@ -2221,7 +2227,8 @@
     "design": "声音设计",
     "primary": "主导航",
     "dictation": "听写",
-    "calls": "通话"
+    "calls": "通话",
+    "more": "更多"
   },
   "profiles": {
     "locked": "声音已锁定！现在每次生成的身份都一致。",
@@ -3989,5 +3996,10 @@
     "burn": "压制翻译字幕",
     "export": "导出含 AI 音乐的视频",
     "needs_dub": "请先生成配音；导出时会将该配音与音乐混音。"
+  },
+  "windowControls": {
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "还原"
   }
 }

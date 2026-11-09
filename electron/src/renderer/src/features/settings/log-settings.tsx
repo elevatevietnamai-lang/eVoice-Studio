@@ -217,7 +217,7 @@ export function LogSettings() {
                 error: 'border-destructive/70 bg-destructive/8 text-destructive',
                 warning: 'border-warning/70 bg-warning/8 text-warning-foreground',
                 success: 'border-emerald-500/50 text-emerald-500',
-                debug: 'border-transparent text-muted-foreground/65',
+                debug: 'border-transparent text-muted-foreground',
                 info: 'border-transparent text-foreground/85',
               };
               return (

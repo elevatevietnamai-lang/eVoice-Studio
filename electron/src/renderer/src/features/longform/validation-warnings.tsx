@@ -34,7 +34,7 @@ export function ValidationWarnings({
   return (
     <div
       role="status"
-      className="rounded-xl border border-warning/30 bg-warning/5 p-3 shadow-[inset_0_1px_0_rgb(255_255_255/4%)]"
+      className="rounded-(--card-radius) border border-warning/30 bg-warning/5 p-3"
     >
       <div className="flex items-center gap-2">
         <AlertTriangleIcon className="size-4 text-warning" />

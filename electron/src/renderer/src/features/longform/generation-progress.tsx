@@ -47,7 +47,7 @@ export function GenerationProgress({
     <div
       role="status"
       aria-live="polite"
-      className="rounded-xl border border-primary/15 bg-primary/5 p-3 shadow-[inset_0_1px_0_rgb(255_255_255/4%)]"
+      className="rounded-(--card-radius) border border-primary/15 bg-primary/5 p-3"
     >
       <div className="flex items-center justify-between gap-3 text-xs">
         <span className="font-medium">
@@ -88,10 +88,10 @@ export function GenerationProgress({
               <span
                 className={`truncate ${
                   chapter.status === 'pending'
-                    ? 'text-muted-foreground/55'
+                    ? 'text-muted-foreground'
                     : chapter.status === 'rendering'
                       ? 'font-medium'
-                      : 'text-muted-foreground'
+                      : 'text-foreground/90'
                 }`}
               >
                 {chapter.title || t('audiobook.chapter_n', { n: index + 1 })}

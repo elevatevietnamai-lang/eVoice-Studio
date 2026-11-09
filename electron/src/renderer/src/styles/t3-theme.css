@@ -1,9 +1,19 @@
 /* Adapted from T3 Code apps/web/src/index.css (MIT).
- * See electron/T3CODE-LICENSE.txt. */
+ * See electron/T3CODE-LICENSE.txt.
+ *
+ * The default palette is the Elevate brand (see DESIGN.md): monochrome, dark first. The previous
+ * zinc-and-blue default lives on as the "Studio Classic" palette (lib/themes/studio-palette.ts). */
 :root {
   color-scheme: light;
-  --radius: 0.625rem;
-  --background: var(--color-zinc-25);
+  /* Elevate core palette. Components use the semantic tokens below, never these directly. */
+  --brand-black: #030305;
+  --brand-graphite: #15191b;
+  --brand-white: #f6f6f6;
+  --brand-off-white: #f8f8f6;
+  --brand-silver: #a1a3a6;
+  --brand-steel: #575b5f;
+  --radius: 0.5rem;
+  --background: var(--brand-off-white);
   --app-chrome-background: var(--background);
   --toolbar-background: var(--app-chrome-background);
   --toolbar-foreground: var(--foreground);
@@ -12,17 +22,17 @@
   --toolbar-control-foreground: var(--foreground);
   --toolbar-control-hover: var(--accent);
   --surface-raised: color-mix(in srgb, var(--card) 20%, transparent);
-  --foreground: var(--color-zinc-800);
+  --foreground: var(--brand-graphite);
   --card: var(--color-white);
-  --card-foreground: var(--color-zinc-800);
+  --card-foreground: var(--brand-graphite);
   --popover: var(--color-white);
-  --popover-foreground: var(--color-zinc-800);
-  --primary: oklch(0.488 0.217 264);
-  --primary-foreground: var(--color-white);
-  --secondary: var(--color-zinc-50);
-  --secondary-foreground: var(--color-zinc-800);
-  --muted: var(--color-zinc-50);
-  --muted-foreground: var(--color-zinc-500);
+  --popover-foreground: var(--brand-graphite);
+  --primary: var(--brand-graphite);
+  --primary-foreground: var(--brand-white);
+  --secondary: #f0f0ee;
+  --secondary-foreground: var(--brand-graphite);
+  --muted: #f0f0ee;
+  --muted-foreground: var(--brand-steel);
   --placeholder: var(--muted-foreground);
   --secondary-label: var(--muted-foreground);
   --icon-muted: var(--muted-foreground);
@@ -31,70 +41,81 @@
   --message-action: var(--primary);
   --message-action-foreground: var(--primary-foreground);
   --message-action-hover: color-mix(in srgb, var(--primary) 90%, var(--background));
-  --accent: var(--color-zinc-100);
-  --accent-foreground: var(--color-zinc-900);
-  --error: var(--color-red-500);
-  --error-foreground: var(--color-red-700);
+  --accent: #e2e2df;
+  --accent-foreground: var(--brand-graphite);
+  /* Status colours are used as text (text-destructive, text-warning, text-success), so the base
+     tokens reach 4.5:1 on the light canvas; dark mode restores the brighter 500 steps below. */
+  --error: var(--color-red-700);
+  --error-foreground: var(--color-red-800);
   --tool-error-icon: var(--error);
   --error-surface: color-mix(in srgb, var(--error) 8%, transparent);
   --destructive: var(--error);
-  --border: var(--color-zinc-200);
-  --input: var(--color-zinc-300);
-  --ring: var(--primary);
+  --border: --alpha(var(--brand-graphite) / 12%);
+  /* Control borders reach 3:1 on the canvas (WCAG 1.4.11); fills use --control-fill. */
+  --input: #8f8f8d;
+  --control-fill: --alpha(var(--brand-graphite) / 5%);
+  --ring: var(--brand-graphite);
   --destructive-foreground: var(--error-foreground);
-  --info: var(--color-blue-500);
-  --info-foreground: var(--color-blue-700);
-  --success: var(--color-emerald-500);
-  --success-foreground: var(--color-emerald-700);
-  --warning: var(--color-amber-500);
-  --warning-foreground: var(--color-amber-700);
+  --info: var(--color-blue-600);
+  --info-foreground: var(--color-blue-800);
+  --success: var(--color-emerald-700);
+  --success-foreground: var(--color-emerald-800);
+  --warning: var(--color-amber-700);
+  --warning-foreground: var(--color-amber-800);
   --warning-surface: color-mix(in srgb, var(--warning) 8%, transparent);
   --update: var(--primary);
   --update-foreground: var(--primary);
   --update-surface: color-mix(in srgb, var(--update) 12%, transparent);
   /* Keep every sidebar primitive on the same light surface hierarchy, including
      portaled mobile sheets and settings navigation outside the app sidebar. */
-  --sidebar: var(--color-zinc-50);
+  --sidebar: #f0f0ee;
   --sidebar-foreground: var(--foreground);
   --sidebar-muted-foreground: var(--muted-foreground);
-  --sidebar-control-surface: var(--color-zinc-100);
-  --sidebar-row-hover: var(--color-zinc-25);
-  --sidebar-row-active: var(--color-white);
-  --sidebar-row-selected: var(--color-white);
+  --sidebar-control-surface: #e6e6e3;
+  /* Hover and selected rows differ from the sidebar by at least 1.16:1 and 1.28:1 (tested). */
+  --sidebar-row-hover: #dededc;
+  --sidebar-row-active: #d4d4d2;
+  --sidebar-row-selected: #d4d4d2;
   --sidebar-border: var(--border);
   --sidebar-stage-fade: var(--sidebar);
   --code-background: color-mix(in srgb, var(--card) 90%, var(--background));
   --code-foreground: var(--foreground);
   --terminal-background: var(--background);
   --terminal-foreground: var(--foreground);
-  --terminal-cursor: rgb(38 56 78);
-  --terminal-selection-background: rgb(37 63 99 / 20%);
+  --terminal-cursor: var(--brand-graphite);
+  --terminal-selection-background: --alpha(var(--brand-graphite) / 18%);
 
   @variant dark {
     color-scheme: dark;
     /* Keep controls and floating surfaces close to the neutral-black canvas.
        Borders and hover states provide separation without milky gray fills. */
-    --background: var(--color-neutral-950);
-    --surface-raised: color-mix(in srgb, var(--background) 97%, var(--color-white));
-    --foreground: var(--color-neutral-100);
-    --card: color-mix(in srgb, var(--background) 97%, var(--color-white));
-    --card-foreground: var(--color-neutral-100);
-    --popover: color-mix(in srgb, var(--background) 97%, var(--color-white));
-    --popover-foreground: var(--color-neutral-100);
-    --primary: oklch(0.571 0.21 264);
-    --secondary: --alpha(var(--color-white) / 3%);
-    --secondary-foreground: var(--color-neutral-100);
-    --muted: --alpha(var(--color-white) / 3%);
-    --muted-foreground: color-mix(in srgb, var(--color-neutral-500) 90%, var(--color-white));
-    --accent: --alpha(var(--color-white) / 4%);
-    --accent-foreground: var(--color-neutral-100);
+    --background: var(--brand-black);
+    --surface-raised: #0d0e10;
+    --foreground: var(--brand-white);
+    --card: #0d0e10;
+    --card-foreground: var(--brand-white);
+    --popover: #0d0e10;
+    --popover-foreground: var(--brand-white);
+    --primary: var(--brand-white);
+    --primary-foreground: var(--brand-graphite);
+    --secondary: #15171a;
+    --secondary-foreground: var(--brand-white);
+    --muted: #15171a;
+    --muted-foreground: var(--brand-silver);
+    --accent: #202226;
+    --accent-foreground: var(--brand-white);
     --error: color-mix(in srgb, var(--color-red-500) 90%, var(--color-white));
     --error-foreground: var(--color-red-400);
     --tool-error-icon: #fca5a5;
     --error-surface: color-mix(in srgb, var(--error) 16%, transparent);
-    --border: --alpha(var(--color-white) / 6%);
-    --input: --alpha(var(--color-white) / 8%);
+    --border: --alpha(var(--brand-white) / 12%);
+    --input: #5b5b60;
+    --control-fill: --alpha(var(--brand-white) / 6%);
+    --ring: var(--brand-white);
+    --info: var(--color-blue-500);
     --info-foreground: var(--color-blue-400);
+    --success: var(--color-emerald-500);
+    --warning: var(--color-amber-500);
     --success-foreground: var(--color-emerald-400);
     --warning-foreground: var(--color-amber-400);
     --warning-surface: color-mix(in srgb, var(--warning) 16%, transparent);
@@ -102,12 +123,12 @@
     --update-surface: color-mix(in srgb, var(--update) 18%, transparent);
     --sidebar: var(--card);
     --sidebar-control-surface: var(--muted);
-    --sidebar-row-hover: var(--accent);
-    --sidebar-row-active: var(--accent);
-    --sidebar-row-selected: var(--muted);
+    --sidebar-row-hover: #1f2022;
+    --sidebar-row-active: #27282a;
+    --sidebar-row-selected: #27282a;
     --sidebar-stage-fade: var(--card);
-    --terminal-cursor: rgb(180 203 255);
-    --terminal-selection-background: rgb(180 203 255 / 25%);
+    --terminal-cursor: var(--brand-white);
+    --terminal-selection-background: --alpha(var(--brand-white) / 22%);
   }
 }
 
@@ -160,6 +181,7 @@ html[data-theme-id]:not([data-theme-id='']) {
   --update-surface: var(--app-theme-update-surface);
   --border: var(--app-theme-border);
   --input: var(--app-theme-input);
+  --control-fill: color-mix(in srgb, var(--foreground) 6%, transparent);
   --ring: var(--app-theme-focus);
   --sidebar: var(--app-theme-sidebar);
   --sidebar-foreground: var(--app-theme-sidebar-foreground);

@@ -1,109 +1,36 @@
-import { useEffect, useId, useRef, useState } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover';
+import { useEffect, useId, useState } from 'react';
+import { setMenuGroup, setWorkspace, useMenuGroup } from '@/lib/store/workspace';
 import { Link, useRouterState } from '@tanstack/react-router';
 import {
   AudioLinesIcon,
-  FingerprintIcon,
-  BookOpenIcon,
-  FolderIcon,
-  WrenchIcon,
-  LayersIcon,
-  LibraryIcon,
-  FilmIcon,
-  WandSparklesIcon,
-  MicIcon,
-  UsersRoundIcon,
   ChevronRightIcon,
-  BlocksIcon,
-  WorkflowIcon,
-  MusicIcon,
+  FilmIcon,
+  FingerprintIcon,
+  WrenchIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { setWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
+import { inGroup, type DestinationGroup, type WorkspaceDestination } from './destinations';
 import './workspace-menu.css';
 
-type Destination = readonly [
-  to:
-    | '/clone'
-    | '/stories'
-    | '/audiobook'
-    | '/projects'
-    | '/tools'
-    | '/batch'
-    | '/music'
-    | '/gallery'
-    | '/dub'
-    | '/design'
-    | '/transcriptions'
-    | '/personas'
-    | '/calls'
-    | '/integrations',
-  label: string,
-  icon: typeof AudioLinesIcon,
-  activate?: () => void,
-];
-
-const openSaved = () => setWorkspace({ libraryOpen: true, libraryTab: 'voices' });
-
-const voiceDestinations: Destination[] = [
-  ['/clone', 'nav.clone_short', FingerprintIcon, openSaved],
-  ['/design', 'designWorkspace.title', WandSparklesIcon],
-  ['/personas', 'nav.saved', UsersRoundIcon, openSaved],
-  ['/gallery', 'nav.gallery', LibraryIcon],
-];
-const storyDestinations: Destination[] = [
-  ['/stories', 'nav.stories', AudioLinesIcon],
-  ['/audiobook', 'audiobook.title', BookOpenIcon],
-  ['/music', 'musicStudio.title', MusicIcon],
-];
-const dubDestinations: Destination[] = [
-  ['/dub', 'dubWorkspace.title', FilmIcon],
-  ['/batch', 'nav.batch_dub', LayersIcon],
-];
-const laterDestinations: Destination[] = [
-  ['/transcriptions', 'nav.transcribe', MicIcon],
-  ['/calls', 'workflows.title', WorkflowIcon],
-  ['/projects', 'projects.title', FolderIcon],
-  ['/tools', 'tools.title', WrenchIcon],
-  ['/integrations', 'integrationCatalog.title', BlocksIcon],
-];
+type Destination = WorkspaceDestination;
 
 const itemClass =
-  'workspace-nav-item group relative isolate flex h-8 min-w-0 items-center overflow-hidden rounded-md text-sm text-sidebar-foreground/80 outline-none transition-[color,background-color,box-shadow,backdrop-filter] duration-150 before:pointer-events-none before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-gradient-to-r before:from-white/[0.07] before:via-white/[0.025] before:to-transparent before:opacity-0 before:transition-opacity before:duration-150 hover:bg-sidebar-accent/65 hover:text-sidebar-foreground hover:backdrop-blur-xl hover:shadow-[inset_0_1px_0_rgb(255_255_255/9%),0_6px_18px_rgb(0_0_0/10%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 hover:before:opacity-100 focus-visible:ring-2 focus-visible:ring-ring';
+  'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-md text-sm text-(--sidebar-muted-foreground) outline-none transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring';
 const iconClass =
-  'workspace-nav-icon size-4 shrink-0 text-muted-foreground transition-[color,filter] duration-150';
-
-const iconMotion: Record<Destination[0], string> = {
-  '/clone': 'pulse',
-  '/design': 'tilt',
-  '/personas': 'nudge',
-  '/gallery': 'lift',
-  '/stories': 'wave',
-  '/audiobook': 'tilt',
-  '/dub': 'tilt',
-  '/batch': 'lift',
-  '/music': 'wave',
-  '/transcriptions': 'nudge',
-  '/calls': 'pulse',
-  '/projects': 'lift',
-  '/tools': 'tilt',
-  '/integrations': 'turn',
-};
+  'workspace-nav-icon size-5 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160';
 
 function NavigationLink({
-  destination: [to, label, Icon, activate],
+  destination: { to, label, description, icon: Icon, activate },
   compact = false,
-  nested = false,
   flyout = false,
-  onCurrentRoute,
+  onNavigate,
 }: {
   destination: Destination;
   compact?: boolean;
-  nested?: boolean;
   flyout?: boolean;
-  onCurrentRoute?: () => void;
+  onNavigate?: () => void;
 }) {
   const { t } = useTranslation();
   const link = (
@@ -112,31 +39,36 @@ function NavigationLink({
       aria-label={compact ? t(label) : undefined}
       onClick={() => {
         activate?.();
-        onCurrentRoute?.();
+        setWorkspace({ panelCollapsed: false });
+        // Choosing a page, even the one already open, turns the menu column back into its panel.
+        setMenuGroup(null);
+        onNavigate?.();
       }}
       className={cn(
         itemClass,
         compact
-          ? 'h-10 justify-center px-0'
+          ? 'size-10 justify-center'
           : flyout
-            ? 'h-10 gap-2 px-3 text-sm'
-            : nested
-              ? 'h-7 gap-2 px-2 text-xs'
-              : 'gap-2.5 px-2.5',
+            ? 'min-h-12 gap-3 px-2.5 py-2'
+            : 'min-h-11 gap-3 px-2.5 py-1.5',
       )}
       activeProps={{
-        className:
-          'bg-sidebar-accent/80 text-sidebar-foreground shadow-sm ring-1 ring-inset ring-sidebar-border/60',
+        className: 'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground',
         'aria-current': 'page',
       }}
     >
-      <Icon
-        className={cn(iconClass, nested && 'size-3.5')}
-        data-tone={to.slice(1)}
-        data-motion={iconMotion[to]}
-        aria-hidden="true"
-      />
-      {!compact && <span className="truncate">{t(label)}</span>}
+      <Icon className={iconClass} aria-hidden="true" />
+      {!compact && (
+        <span className="min-w-0 flex-1 leading-tight">
+          <span className="block truncate">{t(label)}</span>
+          <span
+            aria-hidden="true"
+            className="mt-0.5 block truncate text-xs font-normal text-(--sidebar-muted-foreground)"
+          >
+            {t(description)}
+          </span>
+        </span>
+      )}
     </Link>
   );
   if (!compact) return link;
@@ -149,12 +81,14 @@ function NavigationLink({
 }
 
 function NavigationGroup({
+  group,
   label,
   icon: Icon,
   children,
   compact,
   pathname,
 }: {
+  group: DestinationGroup;
   label: string;
   icon: typeof AudioLinesIcon;
   children: Destination[];
@@ -162,135 +96,55 @@ function NavigationGroup({
   pathname: string;
 }) {
   const { t } = useTranslation();
-  const active = children.some(([to]) => pathname === to || pathname.startsWith(to + '/'));
-  const groupTone =
-    label === 'nav.stories'
-      ? 'stories-group'
-      : label === 'nav.dub'
-        ? 'dubbing-group'
-        : label.slice(4);
+  const active = children.some(({ to }) => pathname === to || pathname.startsWith(to + '/'));
   const [expanded, setExpanded] = useState(active);
-  const [popupOpen, setPopupOpen] = useState(false);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
-  const openTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const cancelOpen = () => {
-    if (openTimer.current !== null) clearTimeout(openTimer.current);
-    openTimer.current = null;
-  };
-  const cancelClose = () => {
-    if (closeTimer.current !== null) clearTimeout(closeTimer.current);
-    closeTimer.current = null;
-  };
-  const scheduleClose = () => {
-    cancelClose();
-    closeTimer.current = setTimeout(() => setPopupOpen(false), 240);
-  };
+  const open = useMenuGroup() === group;
   const id = useId();
-  useEffect(
-    () => () => {
-      cancelOpen();
-      cancelClose();
-    },
-    [],
-  );
   useEffect(() => {
-    cancelOpen();
-    cancelClose();
     setExpanded(active);
-    setPopupOpen(false);
   }, [pathname, active]);
   const triggerClass = cn(
     itemClass,
     'w-full',
-    compact ? 'h-10 justify-center' : 'gap-2.5 px-2.5 font-medium',
-    active &&
-      'bg-sidebar-accent/65 text-sidebar-foreground ring-1 ring-inset ring-sidebar-border/50',
+    compact
+      ? 'size-10 justify-center'
+      : 'h-7 gap-2 px-2.5 text-xs font-medium uppercase tracking-wide',
+    (active || open) && compact && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
   );
   if (compact)
     return (
-      <Popover
-        open={popupOpen}
-        onOpenChange={(open) => {
-          cancelOpen();
-          cancelClose();
-          setPopupOpen(open);
-        }}
-      >
-        <PopoverTrigger
-          ref={triggerRef}
-          aria-label={t(label)}
-          data-active={active}
-          className={triggerClass}
-          onKeyDown={(event) => {
-            if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
-            event.preventDefault();
-            cancelOpen();
-            setPopupOpen(true);
-            requestAnimationFrame(() => popupRef.current?.querySelector('a')?.focus());
-          }}
-          onPointerEnter={(event) => {
-            if (event.pointerType !== 'mouse') return;
-            cancelClose();
-            if (!popupOpen) {
-              cancelOpen();
-              openTimer.current = setTimeout(() => setPopupOpen(true), 90);
-            }
-          }}
-          onPointerLeave={(event) => {
-            if (event.pointerType === 'mouse') {
-              cancelOpen();
-              if (popupOpen) scheduleClose();
-            }
-          }}
-          onClickCapture={(event) => {
-            // A press on an already hover-open trigger should keep the flyout
-            // available. Keyboard and touch presses retain Base UI's toggle.
-            if (popupOpen && event.detail > 0) event.stopPropagation();
-          }}
+      // Hover names the group; a click fills the panel column with its menu, a second click
+      // gives the column back to the page's panel.
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              aria-label={t(label)}
+              aria-expanded={open}
+              aria-controls={open ? GROUP_MENU_ID : undefined}
+              data-active={active}
+              data-menu-group={group}
+              className={triggerClass}
+              onClick={() => setMenuGroup(open ? null : group)}
+              onKeyDown={(event) => {
+                if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
+                event.preventDefault();
+                setMenuGroup(group);
+                requestAnimationFrame(() =>
+                  document.getElementById(GROUP_MENU_ID)?.querySelector('a')?.focus(),
+                );
+              }}
+            />
+          }
         >
-          <Icon
-            className={iconClass}
-            data-tone={groupTone}
-            data-motion={label === 'nav.stories' ? 'wave' : 'pulse'}
-            aria-hidden="true"
-          />
-        </PopoverTrigger>
-        <PopoverContent
-          ref={popupRef}
-          side="right"
-          sideOffset={0}
-          className="w-52 p-1.5 data-open:zoom-in-100 data-closed:zoom-out-100"
-          onPointerEnter={cancelClose}
-          onPointerLeave={(event) => {
-            if (event.pointerType === 'mouse') scheduleClose();
-          }}
-          onKeyDown={(event) => {
-            if (event.key !== 'ArrowLeft') return;
-            event.preventDefault();
-            setPopupOpen(false);
-            triggerRef.current?.focus();
-          }}
-        >
-          <div className="px-3 pb-1 pt-1.5 text-xs font-medium text-muted-foreground">
-            {t(label)}
-          </div>
-          <div>
-            {children.map((destination) => (
-              <NavigationLink
-                key={destination[0]}
-                destination={destination}
-                flyout
-                onCurrentRoute={pathname === destination[0] ? () => setPopupOpen(false) : undefined}
-              />
-            ))}
-          </div>
-        </PopoverContent>
-      </Popover>
+          <Icon className={iconClass} aria-hidden="true" />
+        </TooltipTrigger>
+        {!open && <TooltipContent side="right">{t(label)}</TooltipContent>}
+      </Tooltip>
     );
   return (
-    <div className="py-0.5">
+    <div className="py-1">
       <button
         type="button"
         aria-expanded={expanded}
@@ -299,17 +153,11 @@ function NavigationGroup({
         onClick={() => setExpanded((value) => !value)}
         className={triggerClass}
       >
-        <Icon
-          className={iconClass}
-          data-tone={groupTone}
-          data-motion={label === 'nav.stories' ? 'wave' : 'pulse'}
-          aria-hidden="true"
-        />
         <span className="truncate">{t(label)}</span>
         <ChevronRightIcon
           aria-hidden="true"
           className={cn(
-            'ml-auto size-3.5 shrink-0 transition-transform duration-200 motion-reduce:transition-none',
+            'ml-auto size-3.5 shrink-0 transition-transform duration-160 motion-reduce:transition-none',
             expanded && 'rotate-90',
           )}
         />
@@ -319,14 +167,14 @@ function NavigationGroup({
         aria-hidden={!expanded}
         inert={!expanded}
         className={cn(
-          'grid transition-[grid-template-rows,opacity] duration-200 motion-reduce:transition-none',
+          'grid transition-[grid-template-rows,opacity] duration-240 motion-reduce:transition-none',
           expanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
         )}
       >
         <div className="overflow-hidden">
-          <div className="ml-[1.08rem] mt-0.5 space-y-0.5 border-l border-sidebar-border/60 pl-2">
+          <div className="mt-0.5 space-y-0.5">
             {children.map((destination) => (
-              <NavigationLink key={destination[0]} destination={destination} nested />
+              <NavigationLink key={destination.to} destination={destination} />
             ))}
           </div>
         </div>
@@ -350,29 +198,92 @@ export function WorkspaceNavigation({ compact = false }: { compact?: boolean }) 
       )}
     >
       <NavigationGroup
+        group="voice"
         label="nav.voice"
         icon={FingerprintIcon}
-        children={voiceDestinations}
+        children={inGroup('voice')}
         compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
+        group="stories"
         label="nav.stories"
         icon={AudioLinesIcon}
-        children={storyDestinations}
+        children={inGroup('stories')}
         compact={compact}
         pathname={pathname}
       />
       <NavigationGroup
+        group="dub"
         label="nav.dub"
         icon={FilmIcon}
-        children={dubDestinations}
+        children={inGroup('dub')}
         compact={compact}
         pathname={pathname}
       />
-      {laterDestinations.map((destination) => (
-        <NavigationLink key={destination[0]} destination={destination} compact={compact} />
+      <NavigationGroup
+        group="more"
+        label="nav.more"
+        icon={WrenchIcon}
+        children={inGroup('more')}
+        compact={compact}
+        pathname={pathname}
+      />
+      {inGroup('library').map((destination) => (
+        <NavigationLink key={destination.to} destination={destination} compact={compact} />
       ))}
     </nav>
+  );
+}
+
+const GROUP_MENU_ID = 'workspace-group-menu';
+
+const GROUPS: Record<Exclude<DestinationGroup, 'library'>, string> = {
+  voice: 'nav.voice',
+  stories: 'nav.stories',
+  dub: 'nav.dub',
+  more: 'nav.more',
+};
+
+/**
+ * The menu of the rail group the user opened, in the panel column: section name, then each page
+ * with its one-line description. Choosing a page closes it, and the column shows that page's panel.
+ */
+export function GroupMenuPanel() {
+  const { t } = useTranslation();
+  const group = useMenuGroup() as keyof typeof GROUPS | null;
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  useEffect(() => setMenuGroup(null), [pathname]);
+  if (!group || !(group in GROUPS)) return null;
+  const close = () => {
+    setMenuGroup(null);
+    document.querySelector<HTMLElement>(`[data-menu-group="${group}"]`)?.focus();
+  };
+  return (
+    <aside
+      id={GROUP_MENU_ID}
+      aria-label={t(GROUPS[group])}
+      data-slot="group-menu"
+      onKeyDown={(event) => {
+        if (event.key !== 'Escape' && event.key !== 'ArrowLeft') return;
+        event.preventDefault();
+        close();
+      }}
+      className="absolute inset-y-0 left-0 z-30 flex w-[max(100%,18rem)] flex-col border-r border-border/55 bg-sidebar duration-200 ease-(--ease-standard) animate-in fade-in-0 motion-reduce:animate-none"
+    >
+      <div className="workspace-titlebar flex h-12 shrink-0 items-center border-b border-border/45 px-4">
+        <span className="truncate text-xs font-medium tracking-[0.12em] text-(--sidebar-muted-foreground) uppercase">
+          {t(GROUPS[group])}
+        </span>
+      </div>
+      <nav
+        aria-label={t(GROUPS[group])}
+        className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain p-2"
+      >
+        {inGroup(group).map((destination) => (
+          <NavigationLink key={destination.to} destination={destination} flyout />
+        ))}
+      </nav>
+    </aside>
   );
 }

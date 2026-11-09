@@ -1,14 +1,13 @@
+import { destinations } from '@/components/app-shell/destinations';
 import { HomeFeatureIcon } from './home-feature-icon';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { getBridge } from '@/components/bridge';
-import { runRendererTask } from '@/lib/global-error-recovery';
-import { HomeContributors } from './home-contributors';
 import './home-page.css';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { ProfileAvatar } from '@/components/profile-avatar';
 import { Button } from '@/components/ui/button';
 import { useProfiles } from '@/hooks/use-profiles';
-import { brandArtwork } from '@/lib/brand';
+import { EVoiceMark } from '@/components/brand/evoice-mark';
+import { FadeIn, Stagger, StaggerItem } from '@/components/motion';
+import { PRODUCT_NAME } from '@/lib/brand';
 import { patchCloneSettings } from '@/lib/store/clone-settings';
 import { selectCloneProfile } from '@/lib/store/reference';
 import { blankLongformDraft, editLongform } from '@/features/longform/longform-session';
@@ -33,12 +32,6 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-interface Destination {
-  to: string;
-  label: string;
-  description: string;
-}
-
 interface ExportRecord {
   id: string;
   filename: string;
@@ -46,26 +39,7 @@ interface ExportRecord {
   mode?: string;
 }
 
-const iconTones: Record<string, string> = {
-  '/clone':
-    'bg-sky-100 text-sky-700 ring-sky-300/60 dark:bg-sky-400/15 dark:text-sky-300 dark:ring-sky-300/30',
-  '/design':
-    'bg-violet-100 text-violet-700 ring-violet-300/60 dark:bg-violet-400/15 dark:text-violet-300 dark:ring-violet-300/30',
-  '/dub':
-    'bg-teal-100 text-teal-700 ring-teal-300/60 dark:bg-teal-400/15 dark:text-teal-300 dark:ring-teal-300/30',
-  '/stories':
-    'bg-rose-100 text-rose-700 ring-rose-300/60 dark:bg-rose-400/15 dark:text-rose-300 dark:ring-rose-300/30',
-  '/audiobook':
-    'bg-amber-100 text-amber-800 ring-amber-300/60 dark:bg-amber-400/15 dark:text-amber-200 dark:ring-amber-300/30',
-  '/gallery':
-    'bg-fuchsia-100 text-fuchsia-700 ring-fuchsia-300/60 dark:bg-fuchsia-400/15 dark:text-fuchsia-300 dark:ring-fuchsia-300/30',
-  '/transcriptions':
-    'bg-cyan-100 text-cyan-700 ring-cyan-300/60 dark:bg-cyan-400/15 dark:text-cyan-200 dark:ring-cyan-300/30',
-  '/calls':
-    'bg-indigo-100 text-indigo-700 ring-indigo-300/60 dark:bg-indigo-400/15 dark:text-indigo-300 dark:ring-indigo-300/30',
-  '/tools':
-    'bg-slate-100 text-slate-700 ring-slate-300/60 dark:bg-slate-300/15 dark:text-slate-200 dark:ring-slate-300/30',
-};
+const PRIMARY_ROUTES = ['/clone', '/design', '/dub'];
 
 export function HomePage() {
   const { t } = useTranslation();
@@ -84,53 +58,17 @@ export function HomePage() {
     queryKey: ['longform-projects'],
     queryFn: projectLibrary.list,
   });
-  const destinations: Destination[] = [
-    {
-      to: '/clone',
-      label: t('nav.clone'),
-      description: t('clone.reference_hint'),
-    },
-    {
-      to: '/design',
-      label: t('designWorkspace.title'),
-      description: t('homeUi.design'),
-    },
-    {
-      to: '/dub',
-      label: t('dubWorkspace.title'),
-      description: t('homeUi.dub'),
-    },
-    {
-      to: '/stories',
-      label: t('nav.stories'),
-      description: t('homeUi.stories'),
-    },
-    {
-      to: '/audiobook',
-      label: t('audiobook.title'),
-      description: t('homeUi.audiobook'),
-    },
-    {
-      to: '/gallery',
-      label: t('nav.gallery'),
-      description: t('gallery.subtitle'),
-    },
-    {
-      to: '/transcriptions',
-      label: t('nav.transcribe'),
-      description: t('homeUi.transcribe'),
-    },
-    {
-      to: '/calls',
-      label: t('workflows.title'),
-      description: t('workflows.description'),
-    },
-    {
-      to: '/tools',
-      label: t('tools.title'),
-      description: t('tools.desc'),
-    },
-  ];
+  const primary = PRIMARY_ROUTES.map((to) => destinations.find((entry) => entry.to === to)!);
+  const homeDestinations = [
+    primary,
+    destinations.filter((entry) => entry.home && !PRIMARY_ROUTES.includes(entry.to)),
+  ].map((group) =>
+    group.map((entry) => ({
+      to: entry.to,
+      label: t(entry.title ?? entry.label),
+      description: t(entry.description),
+    })),
+  );
   const recentProjects = [
     ...dubProjects.map((project) => ({
       kind: 'dub' as const,
@@ -198,67 +136,27 @@ export function HomePage() {
       <div className="min-h-0 flex-1 overflow-y-auto">
         <div className="home-content mx-auto w-full max-w-6xl">
           <section aria-labelledby="home-new-projects">
-            <div className="home-heading relative isolate overflow-hidden">
-              <img
-                src={brandArtwork}
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-y-0 right-0 -z-10 h-full w-1/2 object-cover object-right opacity-25 [mask-image:linear-gradient(90deg,transparent,black)]"
-              />
-              <div className="home-heading-row">
-                <div className="home-heading-copy">
-                  <h2
-                    id="home-new-projects"
-                    className="flex flex-wrap items-center gap-x-3 gap-y-2 text-3xl font-semibold tracking-[-0.035em]"
-                  >
-                    <Tooltip>
-                      <TooltipTrigger
-                        render={
-                          <a
-                            href="https://voicestudio.sh"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="rounded-md transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-ring"
-                            onClick={(event) => {
-                              const browser = getBridge()?.browser;
-                              if (!browser) return;
-                              event.preventDefault();
-                              event.currentTarget.focus();
-                              runRendererTask('Preview official website', () =>
-                                browser.open('https://voicestudio.sh'),
-                              );
-                            }}
-                          />
-                        }
-                      >
-                        {t('homeUi.title')}
-                      </TooltipTrigger>
-                      <TooltipContent surface="theme" side="bottom">
-                        {t('siteBrowser.preview')}
-                      </TooltipContent>
-                    </Tooltip>
-                  </h2>
-                  <p className="mt-3 max-w-[80ch] text-sm leading-relaxed text-foreground/65">
-                    {t('homeUi.subtitle')}
-                  </p>
-                </div>
-                <HomeContributors />
-              </div>
-            </div>
-            {[destinations.slice(0, 3), destinations.slice(3)].map((group, groupIndex) => (
-              <div
+            <FadeIn className="home-heading">
+              <EVoiceMark size={56} className="home-heading-mark" />
+              <h2 id="home-new-projects" className="home-heading-title" translate="no">
+                {PRODUCT_NAME}
+              </h2>
+              <p className="home-heading-tagline">{t('homeUi.subtitle')}</p>
+            </FadeIn>
+            {homeDestinations.map((group, groupIndex) => (
+              <Stagger
                 key={groupIndex}
                 className={`home-destinations grid grid-cols-1 gap-3 @xl:grid-cols-2 @3xl:grid-cols-3 ${groupIndex === 0 ? 'home-destinations--primary' : 'home-destinations--secondary'}`}
               >
                 {group.map(({ to, label, description }) => (
+                  <StaggerItem key={to} className="min-w-0">
                   <Link
-                    key={to}
                     to={to}
                     data-destination={to}
                     className={`home-destination group ${groupIndex === 0 ? 'home-destination--primary' : 'home-destination--secondary'}`}
                   >
                     <div
-                      className={`home-destination-icon flex size-10 items-center justify-center rounded-xl ring-1 ring-inset shadow-[inset_0_1px_0_rgb(255_255_255/10%)] ${iconTones[to]}`}
+                      className="home-destination-icon flex size-10 items-center justify-center rounded-lg bg-secondary text-foreground"
                     >
                       <HomeFeatureIcon destination={to} />
                     </div>
@@ -292,8 +190,9 @@ export function HomePage() {
                     </div>
                     <ArrowRightIcon className="home-destination-arrow" aria-hidden="true" />
                   </Link>
+                  </StaggerItem>
                 ))}
-              </div>
+              </Stagger>
             ))}
           </section>
 
@@ -316,7 +215,7 @@ export function HomePage() {
                   <Link
                     key={record.id}
                     to="/projects"
-                    className="group flex min-w-0 items-center gap-3 rounded-xl border border-border/50 bg-card/20 px-3 py-2.5 outline-none transition-colors hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <FolderOpenIcon className="size-4 shrink-0 text-primary" />
                     <span className="min-w-0 flex-1">
@@ -368,7 +267,7 @@ export function HomePage() {
                     <button
                       key={item.kind + ':' + item.project.id}
                       type="button"
-                      className="group flex min-w-0 items-center gap-3 rounded-xl border border-border/50 bg-card/20 px-3 py-2.5 text-left outline-none transition-colors hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring"
+                      className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
                       onClick={() => void openProject(item)}
                     >
                       <Icon className="size-4 shrink-0 text-primary" />
@@ -401,11 +300,11 @@ export function HomePage() {
                       {t('projects.all')}
                     </Link>
                   </div>
-                  <div className="grid gap-1 rounded-2xl border border-border/70 bg-card/30 p-2 @3xl:grid-cols-2">
+                  <div className="grid gap-1 rounded-(--card-radius) border border-border/70 bg-card/30 p-2 @3xl:grid-cols-2">
                     {profiles.slice(0, 4).map((profile) => (
                       <div
                         key={profile.id}
-                        className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-accent/50"
+                        className="flex min-w-0 items-center gap-3 rounded-lg px-2.5 py-2 hover:bg-accent"
                       >
                         <ProfileAvatar name={profile.name} imageUrl={profile.image_url} />
                         <span className="min-w-0 flex-1 truncate text-sm font-medium">

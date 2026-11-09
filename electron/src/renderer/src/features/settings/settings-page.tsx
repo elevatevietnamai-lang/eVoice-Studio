@@ -89,11 +89,11 @@ const fieldKey = (key: string) =>
       : `preferences.${key}`;
 
 const settingsNavItemClass =
-  'group h-9 min-w-0 rounded-lg font-normal transition-[color,background-color,box-shadow,backdrop-filter] duration-150 hover:bg-[var(--sidebar-row-hover)] hover:backdrop-blur-xl hover:shadow-[inset_0_1px_0_rgb(255_255_255/8%),0_5px_15px_rgb(0_0_0/9%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 aria-[current=page]:bg-[var(--sidebar-row-active)] aria-[current=page]:font-medium aria-[current=page]:shadow-[inset_2px_0_0_var(--primary)]';
+  'group h-9 min-w-0 rounded-md font-normal text-(--sidebar-muted-foreground) transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground aria-[current=page]:bg-(--sidebar-row-selected) aria-[current=page]:font-medium aria-[current=page]:text-sidebar-foreground';
 const settingsNavIconClass =
-  'size-4 shrink-0 text-muted-foreground transition-[color,filter] duration-150 group-hover:text-sidebar-foreground group-hover:drop-shadow-[0_1px_3px_rgb(0_0_0/20%)]';
+  'size-4 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160 group-hover:text-sidebar-foreground group-aria-[current=page]:text-sidebar-foreground';
 const settingsNavActiveClass =
-  'bg-[var(--sidebar-row-active)] font-medium shadow-[inset_2px_0_0_var(--primary)]';
+  'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground';
 
 const extraSettings = [
   {
@@ -263,7 +263,9 @@ export function SettingsPage() {
       setTarget(null);
     }
   }, [pathname, target]);
-  const { mode, setTheme, updateTheme } = useTheme();
+  const { mode, paletteId, setTheme, updateTheme } = useTheme();
+  // The default Studio theme is flat; glass only applies to named palettes.
+  const flatTheme = paletteId === 'default';
   const appearance = useAppearance();
   const workspace = useWorkspace();
   const reviewMode = useReviewMode();
@@ -290,10 +292,10 @@ export function SettingsPage() {
   return (
     <div className="flex h-full min-h-0">
       <aside className="flex w-[clamp(11rem,20vw,17rem)] shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar text-sidebar-foreground shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--foreground)_2%,transparent)]">
-        <header className="workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-sidebar-border/45 bg-background/25 px-3.5 backdrop-blur-xl">
+        <header className="workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-sidebar-border/45 bg-background px-3.5">
           {/* The brand and window controls live in the main sidebar to the
               left; this column is the Settings section list. */}
-          <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-sidebar-border/45 bg-background/45 text-primary shadow-[inset_0_1px_0_rgb(255_255_255/7%)]">
+          <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-sidebar-border/45 bg-background/45 text-primary">
             <SettingsIcon aria-hidden="true" className="size-4" />
           </span>
           <span className="truncate text-sm font-semibold tracking-[-0.014em]">
@@ -301,7 +303,7 @@ export function SettingsPage() {
           </span>
         </header>
         <div className="studio-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain p-3 [scrollbar-gutter:stable]">
-          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar/90 px-2.5 shadow-xs backdrop-blur-xl transition-[border-color,background-color,box-shadow] focus-within:border-primary/30 focus-within:bg-background/55 focus-within:ring-2 focus-within:ring-ring/20">
+          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar px-2.5 transition-[border-color,background-color,box-shadow] focus-within:border-primary/30 focus-within:bg-background focus-within:ring-2 focus-within:ring-ring/20">
             <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
             <Input
               type="search"
@@ -491,12 +493,12 @@ export function SettingsPage() {
             title={t('donate.title')}
             aria-current={extra?.to === '/settings/support' ? 'page' : undefined}
             className={cn(
-              buttonVariants({ variant: 'ghost' }),
-              'group relative w-full justify-start overflow-hidden border border-primary/20 bg-gradient-to-r from-primary/15 via-primary/8 to-transparent text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/10%)] transition-[border-color,background-color,box-shadow] hover:border-primary/35 hover:from-primary/20 hover:shadow-[0_8px_24px_-16px_var(--primary)]',
-              extra?.to === '/settings/support' && 'border-primary/40 bg-primary/15',
+              buttonVariants({ variant: 'outline' }),
+              'w-full justify-start',
+              extra?.to === '/settings/support' && 'bg-accent text-foreground',
             )}
           >
-            <HeartHandshakeIcon className="size-4 shrink-0 text-primary transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none" />
+            <HeartHandshakeIcon className="size-4 shrink-0" />
             <span data-slot="settings-nav-label" className="min-w-0 flex-1 truncate text-left">
               {t('donate.title')}
             </span>
@@ -525,7 +527,7 @@ export function SettingsPage() {
           )}
         >
           <span className="text-muted-foreground">{t('nav.settings')}</span>
-          <ChevronRightIcon aria-hidden="true" className="size-3.5 text-muted-foreground/60" />
+          <ChevronRightIcon aria-hidden="true" className="size-3.5 text-muted-foreground" />
           <h1 className="font-medium">
             {extra
               ? t(extra.label)
@@ -550,8 +552,8 @@ export function SettingsPage() {
                 });
                 updateTheme({
                   mode: 'dark',
-                  light: 'signal',
-                  dark: 'signal',
+                  light: 'default',
+                  dark: 'default',
                 });
               }}
             >
@@ -614,10 +616,15 @@ export function SettingsPage() {
                       {t('themeAppearance.system')}
                     </Button>
                   </SettingsRow>
-                  <SettingsRow id="glass-label" title={t('themeAppearance.glass')}>
+                  <SettingsRow
+                    id="glass-label"
+                    title={t('themeAppearance.glass')}
+                    description={flatTheme ? t('themeAppearance.glass_flat_hint') : undefined}
+                  >
                     <Switch
                       aria-labelledby="glass-label"
-                      checked={appearance.glass}
+                      disabled={flatTheme}
+                      checked={appearance.glass && !flatTheme}
                       onCheckedChange={(glass) => appearance.update({ glass })}
                     />
                   </SettingsRow>

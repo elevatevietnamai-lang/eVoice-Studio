@@ -390,7 +390,7 @@ export function ActionBar() {
               <Button
                 variant="ghost"
                 size="xs"
-                onClick={() => setWorkspace({ libraryOpen: true, libraryTab: 'voices' })}
+                onClick={() => setWorkspace({ panelCollapsed: false, libraryTab: 'voices' })}
               >
                 {t('clone.saved_profiles')}
               </Button>

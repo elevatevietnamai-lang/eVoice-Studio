@@ -184,7 +184,7 @@ export function MusicPage() {
           className="space-y-3"
         >
           {!installed ? (
-            <section className="space-y-2 rounded-xl border border-border/60 bg-muted/15 p-3">
+            <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
               <h2 className="text-sm font-medium">{t('musicStudio.engine_title')}</h2>
               <p className="text-xs leading-5 text-muted-foreground">
                 {t('musicStudio.engine_help')}
@@ -328,7 +328,7 @@ export function MusicPage() {
 
         <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
           {selected && (
-            <section className="space-y-2 rounded-xl border border-border/60 bg-muted/15 p-3">
+            <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
               <h2 className="truncate text-sm font-medium">{selected.title}</h2>
               <WaveformPlayer
                 key={selected.id}

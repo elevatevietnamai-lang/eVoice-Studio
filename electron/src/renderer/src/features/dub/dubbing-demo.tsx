@@ -78,7 +78,7 @@ export function DubbingDemo({
   if (failed) return null;
   if (!manifest)
     return (
-      <div className="flex h-24 items-center justify-center rounded-xl border border-border/50 bg-muted/20 text-xs text-muted-foreground">
+      <div className="flex h-24 items-center justify-center rounded-(--card-radius) border border-border/50 bg-muted/20 text-xs text-muted-foreground">
         <LoaderCircleIcon className="mr-2 size-4 animate-spin motion-reduce:animate-none" />
         {t('demo.dubbing_loading')}
       </div>
@@ -117,7 +117,7 @@ export function DubbingDemo({
     const value = scripts[code] ?? script;
     const edited = value !== script;
     return (
-      <article className="min-w-0 overflow-hidden rounded-2xl border border-border/55 bg-background/25 shadow-[inset_0_1px_0_color-mix(in_oklab,var(--foreground)_4%,transparent)]">
+      <article className="min-w-0 overflow-hidden rounded-(--card-radius) border border-border/55 bg-background/25">
         <div className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-medium">
           <span className="grid size-6 shrink-0 place-items-center rounded-md bg-primary/12 font-mono text-[10px] font-semibold text-primary">
             {channel}
@@ -211,14 +211,14 @@ export function DubbingDemo({
             const nextValue = event.currentTarget.value;
             setScripts((current) => ({ ...current, [code]: nextValue }));
           }}
-          className="m-2.5 mt-3 h-24 min-h-20 max-h-40 w-[calc(100%-1.25rem)] resize-y rounded-xl border-border/45 bg-background/45 text-xs leading-5 text-muted-foreground [field-sizing:fixed] focus-visible:text-foreground"
+          className="m-2.5 mt-3 h-24 min-h-20 max-h-40 w-[calc(100%-1.25rem)] resize-y rounded-(--card-radius) border-border/45 bg-background/45 text-xs leading-5 text-muted-foreground [field-sizing:fixed] focus-visible:text-foreground"
         />
       </article>
     );
   };
 
   return (
-    <section className="glass-panel @container/dubbing-demo w-full space-y-3 rounded-2xl border border-border/60 bg-card/35 p-4 text-left shadow-sm">
+    <section className="glass-panel @container/dubbing-demo w-full space-y-3 rounded-(--card-radius) border border-border/60 bg-card/35 p-4 text-left">
       <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
         <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <FilmIcon className="size-4" />
@@ -250,7 +250,7 @@ export function DubbingDemo({
       <div
         role="group"
         aria-label={t('demo.dubbing_picker')}
-        className="flex flex-wrap items-center gap-1.5 rounded-xl border border-border/45 bg-background/30 p-1.5"
+        className="flex flex-wrap items-center gap-1.5 rounded-(--card-radius) border border-border/45 bg-background/30 p-1.5"
       >
         {manifest.dubbed.map((item) => (
           <Button

@@ -58,7 +58,7 @@ function Transcript({ lines, live }: { lines: LiveLine[]; live: boolean }) {
             <p
               className={cn(
                 // Cap the bubble, not the page: long lines stay readable on 4K.
-                'max-w-[min(42rem,85%)] rounded-2xl px-3.5 py-2 text-sm leading-6 whitespace-pre-wrap break-words',
+                'max-w-[min(42rem,85%)] rounded-(--card-radius) px-3.5 py-2 text-sm leading-6 whitespace-pre-wrap break-words',
                 agent
                   ? 'rounded-br-md bg-primary text-primary-foreground'
                   : 'rounded-bl-md bg-muted text-foreground',
@@ -208,7 +208,7 @@ export function CallView({
         <Transcript lines={state.lines} live={active} />
       </div>
       {active && (
-        <div className="shrink-0 border-t border-border/50 bg-background/80 px-4 py-3 backdrop-blur sm:px-6">
+        <div className="shrink-0 border-t border-border/50 bg-background px-4 py-3 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <LiveControls callId={call.id} live={live} />
           </div>

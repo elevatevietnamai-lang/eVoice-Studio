@@ -141,7 +141,7 @@ export function QualityControls({
             })}
           </div>
           <p className="mt-2 px-1 text-xs text-muted-foreground">{t(`cloneQuality.hint${bits}`)}</p>
-          <p id={`${id}-size`} className="mt-0.5 px-1 text-[11px] text-muted-foreground/80 tabular-nums">
+          <p id={`${id}-size`} className="mt-0.5 px-1 text-[11px] text-muted-foreground tabular-nums">
             {estimatedSize
               ? t('cloneQuality.size', { size: estimatedSize })
               : t('cloneQuality.sizeUnknown')}

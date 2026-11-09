@@ -6,7 +6,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { REPO_URL, X_URL } from '@shared/utils/contactLinks';
-import { homeContributors } from './home-contributors-data';
+import './credits-contributors.css';
+import { homeContributors } from './credits-contributors-data';
 
 function openProfile(event: MouseEvent<HTMLAnchorElement>) {
   const bridge = getBridge();
@@ -17,7 +18,7 @@ function openProfile(event: MouseEvent<HTMLAnchorElement>) {
 }
 
 /** Home contributor credits: every qualifying avatar, then the All link. */
-export function HomeContributors() {
+export function CreditsContributors() {
   const { t } = useTranslation();
   // Fill three tapered rows from the right edge, ending with All.
   const items = [...homeContributors, { login: 'all', avatar: '' }];

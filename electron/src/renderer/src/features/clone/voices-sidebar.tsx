@@ -192,7 +192,7 @@ export function SavedVoices({
   if (allItems.length === 0) {
     return (
       <div className="mx-auto flex min-h-72 max-w-md flex-col items-center justify-center px-6 py-10 text-center">
-        <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <FingerprintIcon className="size-5" aria-hidden="true" />
         </div>
         <p className="text-[length:var(--text-label)] leading-relaxed text-muted-foreground">
@@ -226,7 +226,7 @@ export function SavedVoices({
   return (
     <>
       {showLibraryTools ? (
-        <div className="sticky top-0 z-20 space-y-2 bg-sidebar/95 px-2 pt-1 pb-2 backdrop-blur-xl">
+        <div className="sticky top-0 z-20 space-y-2 bg-sidebar px-2 pt-1 pb-2">
           <div className="relative">
             <SearchIcon
               className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
@@ -295,7 +295,7 @@ export function SavedVoices({
               <li
                 key={profile.id}
                 className={cn(
-                  'group/profile relative flex items-center gap-2 rounded-lg px-2 transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-sidebar-accent/70 hover:shadow-[inset_0_1px_0_rgb(255_255_255/8%),0_6px_18px_rgb(0_0_0/10%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/60 hover:backdrop-blur-xl',
+                  'group/profile relative flex items-center gap-2 rounded-lg px-2 transition-colors duration-150 hover:bg-(--sidebar-row-hover)',
                   library ? 'py-3' : 'h-9',
                   row && 'absolute right-2 left-2 top-0',
                   active &&
@@ -419,7 +419,7 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
   return (
     <div
       className={cn(
-        'group relative flex h-9 min-w-0 items-center rounded-lg px-2 transition-[background-color,box-shadow,backdrop-filter] duration-150 hover:bg-sidebar-accent/60 hover:shadow-[inset_0_1px_0_rgb(255_255_255/7%),0_6px_18px_rgb(0_0_0/9%)] hover:ring-1 hover:ring-inset hover:ring-sidebar-border/50 hover:backdrop-blur-xl',
+        'group relative flex h-9 min-w-0 items-center rounded-lg px-2 transition-colors duration-150 hover:bg-(--sidebar-row-hover)',
         selected?.id === item.id && 'bg-sidebar-accent',
       )}
     >
@@ -677,7 +677,7 @@ export function VoicesSidebar({
               value="voices"
               title={t('clone.saved_profiles')}
               aria-label={t('clone.saved_profiles')}
-              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-sidebar-accent/50 data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
+              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-(--sidebar-row-hover) data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
             >
               <span className="min-w-0 truncate">{t('clone.saved_profiles')}</span>
             </TabsTrigger>
@@ -685,7 +685,7 @@ export function VoicesSidebar({
               value="takes"
               title={t('clone.history_title')}
               aria-label={t('clone.history_title')}
-              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-sidebar-accent/50 data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
+              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-(--sidebar-row-hover) data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
             >
               <span className="min-w-0 truncate">{t('clone.history_title')}</span>
             </TabsTrigger>

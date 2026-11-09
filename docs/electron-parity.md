@@ -90,7 +90,7 @@ The expanded sidebar is a slim 216px column: workspace navigation sits immediate
 
 Saved voices and Recent takes live in a context sidebar beside the navigation on Home and Clone (and as a Saved voices tab in the Design pane), so the navigation never carries a library. Any section that brings its own pane keeps navigation as the icon rail below, as in VS Code, Slack and Linear, so the window does not show two wide sidebars. The rail's gauge button opens the same speed/quality popover.
 
-In the compact rail, Voice, Stories and Dubbing open flyouts on mouse hover or click, with full-row click targets. Hover uses a short opening delay and a pointer transit delay into the flyout; touch users can click, and keyboard users can press Enter or Arrow Right/Down to open it, then Arrow Left or Escape to return to the trigger. Choosing a destination keeps its flyout mounted until the route changes; choosing the current destination closes it immediately. Outside clicks close flyouts. Double-clicking the compact rail expands the full sidebar; the header button remains the single-click control. The flyout appears beside its icon without a scale shift while the pointer moves into it.
+In the compact rail, each group icon (Voice, Stories, Dubbing, More) names itself in a tooltip on hover and opens a menu on click. Menu items show icon, name and description. Keyboard users press Enter or Arrow Right/Down to open it, then Arrow Left or Escape to return to the trigger. Choosing a destination closes the menu and opens that page with its control panel expanded.
 
 ## Sidebar expansion preference
 

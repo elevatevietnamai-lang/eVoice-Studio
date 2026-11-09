@@ -20,6 +20,8 @@ export function usePaneResize({
 }) {
   const host = useRef<HTMLElement>(null);
   const drag = useRef<{ x: number; width: number } | null>(null);
+  // True while the handle is dragged, so width transitions can switch off and follow the pointer.
+  const [resizing, setResizing] = useState(false);
   const [limit, setLimit] = useState(initial);
   const [preferred, setPreferred] = useState(() => {
     try {
@@ -34,15 +36,26 @@ export function usePaneResize({
     let parent = host.current?.parentElement ?? null;
     while (
       parent &&
-      (parent.clientWidth === 0 || window.getComputedStyle(parent).display === 'contents')
+      (parent.clientWidth === 0 ||
+        // The shell's panel column is as wide as the panel itself; measure the window row instead.
+        parent.hasAttribute('data-panel-slot') ||
+        window.getComputedStyle(parent).display === 'contents')
     )
       parent = parent.parentElement;
-    if (!enabled || !parent) return;
-    const measure = () =>
-      setLimit(Math.max(minimum, Math.min(maximum, parent.clientWidth - reserve)));
+    const pane = host.current;
+    if (!enabled || !parent || !pane) return;
+    // Room from the pane's own left edge to the row's right edge: in the shell row that leaves out
+    // the rail and the main sidebar, so the pane never eats the content's reserved width.
+    const measure = () => {
+      const offset = pane.getBoundingClientRect().left - parent.getBoundingClientRect().left;
+      setLimit(Math.max(minimum, Math.min(maximum, parent.clientWidth - offset - reserve)));
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(parent);
+    // Dragging the main sidebar moves the pane without resizing the row; the content sees it.
+    const content = document.querySelector('[data-slot="workspace-content"]');
+    if (content) observer.observe(content);
     return () => observer.disconnect();
   }, [enabled, maximum, minimum, reserve]);
   const resize = (value: number) => {
@@ -65,6 +78,7 @@ export function usePaneResize({
       if (event.button !== 0) return;
       event.preventDefault();
       drag.current = { x: event.clientX, width };
+      setResizing(true);
       event.currentTarget.setPointerCapture(event.pointerId);
     },
     onPointerMove: (event) => {
@@ -73,14 +87,17 @@ export function usePaneResize({
     },
     onPointerUp: (event) => {
       drag.current = null;
+      setResizing(false);
       if (event.currentTarget.hasPointerCapture(event.pointerId))
         event.currentTarget.releasePointerCapture(event.pointerId);
     },
     onPointerCancel: () => {
       drag.current = null;
+      setResizing(false);
     },
     onLostPointerCapture: () => {
       drag.current = null;
+      setResizing(false);
     },
     onDoubleClick: () => resize(initial),
     onKeyDown: (event) => {
@@ -90,5 +107,5 @@ export function usePaneResize({
       }
     },
   };
-  return { host, width, separatorProps };
+  return { host, width, resizing, separatorProps };
 }

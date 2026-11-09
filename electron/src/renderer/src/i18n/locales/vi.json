@@ -92,16 +92,19 @@
     "copied": "Đã sao chép"
   },
   "homeUi": {
-    "subtitle": "Giải pháp thay thế ElevenLabs mã nguồn mở, chạy hoàn toàn trên máy — nhân bản và thiết kế giọng nói, lồng tiếng video, nhập liệu bằng giọng nói, phiên âm và tạo sách nói bằng 646 ngôn ngữ.",
+    "subtitle": "Xưởng cục bộ cho giọng nói và âm nhạc.",
     "brand_by": "{{brand}} bởi",
     "all": "Tất cả",
     "allContributors": "Tất cả người đóng góp",
-    "title": "VoiceStudio.sh Mã nguồn mở",
     "design": "Thiết kế giọng nói từ mô tả.",
     "dub": "Dịch và lồng tiếng âm thanh hoặc video.",
     "stories": "Tạo cảnh với nhiều giọng nói.",
     "audiobook": "Tạo sách nói có chương.",
-    "transcribe": "Chuyển bản ghi âm thành văn bản."
+    "transcribe": "Chuyển bản ghi âm thành văn bản.",
+    "music": "Tạo nhạc từ mô tả bằng văn bản.",
+    "saved": "Giọng đã lưu để dùng lại.",
+    "batch": "Lồng tiếng nhiều video trong một lần chạy.",
+    "projects": "Bản lồng tiếng, truyện và tệp xuất của bạn."
   },
   "twilioIntegration": {
     "exposureWarning": "Bật tính năng này sẽ mở một cổng cục bộ riêng mà đường hầm của bạn công bố ra internet. Chỉ các yêu cầu được ký bằng Auth Token Twilio của bạn mới được chấp nhận; phần còn lại của eVoice Studio vẫn riêng tư.",
@@ -306,7 +309,8 @@
     "dark": "Tối",
     "system": "Hệ thống",
     "default": "Studio",
-    "glass": "Chế độ kính"
+    "glass": "Chế độ kính",
+    "glass_flat_hint": "Studio là theme phẳng. Chọn bảng màu khác để dùng hiệu ứng kính."
   },
   "cloneFlow": {
     "choose_voice": "Chọn một giọng nói",
@@ -369,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "Thu gọn bảng",
+    "expand": "Mở rộng bảng",
     "edit": "Chỉnh sửa hồ sơ giọng nói"
   },
   "modelSettings": {
@@ -1914,7 +1919,8 @@
     "model_credits": "Ghi công mô hình",
     "model_credits_hint": "Ghi công các mô hình được hỗ trợ. Mô hình và thành phần có điều khoản riêng; phần ghi công này không cấp quyền sử dụng thương mại.",
     "model_terms": "Điều khoản mô hình",
-    "model_related_sources": "Nguồn liên quan:"
+    "model_related_sources": "Nguồn liên quan:",
+    "built_on": "Xây dựng trên VoiceStudio (AGPL-3.0) và những người đóng góp"
   },
   "privacy": {
     "translator_online": "Người dịch đang trực tuyến: {{provider}}",
@@ -2221,7 +2227,8 @@
     "clone": "Nhân bản giọng nói",
     "primary": "Điều hướng chính",
     "dictation": "Nhập liệu bằng giọng nói",
-    "calls": "Cuộc gọi"
+    "calls": "Cuộc gọi",
+    "more": "Thêm"
   },
   "profiles": {
     "locked": "Giọng nói bị khóa! Bản sắc bây giờ nhất quán qua tất cả các thế hệ.",
@@ -3989,5 +3996,10 @@
     "burn": "Chèn phụ đề đã dịch",
     "export": "Xuất video kèm nhạc AI",
     "needs_dub": "Hãy tạo lồng tiếng trước; bản xuất sẽ trộn giọng đó với nhạc."
+  },
+  "windowControls": {
+    "minimize": "Thu nhỏ",
+    "maximize": "Phóng to",
+    "restore": "Khôi phục"
   }
 }

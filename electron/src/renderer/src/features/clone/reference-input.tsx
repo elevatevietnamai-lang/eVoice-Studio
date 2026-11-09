@@ -117,7 +117,7 @@ export function UploadZone({
       <label
         htmlFor={id}
         className={cn(
-          'flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed bg-muted/30 px-4 py-6 text-center transition-colors hover:border-primary/60 hover:bg-muted/50 focus-within:ring-3 focus-within:ring-ring/50',
+          'flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed bg-muted/30 px-4 py-6 text-center transition-colors hover:border-primary/60 hover:bg-accent focus-within:ring-3 focus-within:ring-ring/50',
           dragging && 'border-primary bg-primary/10',
         )}
         onDragOver={(event) => {

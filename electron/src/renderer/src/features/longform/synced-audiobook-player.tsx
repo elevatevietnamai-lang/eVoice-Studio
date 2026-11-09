@@ -56,7 +56,7 @@ export function SyncedAudiobookPlayer({
       src={audioSource(src)}
       viewType="audio"
       load="eager"
-      className="overflow-hidden rounded-xl border border-border/60 bg-muted/20 shadow-[inset_0_1px_0_rgb(255_255_255/4%)]"
+      className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-muted/20"
     >
       <MediaProvider loaders={audioLoaders} className="hidden" />
       <SyncedPlayerContent player={player} script={script} chapters={chapters} />
@@ -196,7 +196,7 @@ const LyricsChapter = memo(function LyricsChapter({
     <section>
       <button
         type="button"
-        className="mb-1 rounded-md px-1 py-0.5 text-left text-xs font-medium text-foreground outline-none transition-colors hover:bg-accent/60 focus-visible:ring-2 focus-visible:ring-ring"
+        className="mb-1 rounded-md px-1 py-0.5 text-left text-xs font-medium text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
         onClick={() => onSeek(chapter.start)}
       >
         {title}

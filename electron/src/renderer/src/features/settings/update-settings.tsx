@@ -16,6 +16,7 @@ import {
 import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { MarkdownLite } from '@/components/markdown-lite';
 import { appVersion, getBridge } from '@/components/bridge';
 import { dubSession, flushDubDraft, useDubSession } from '@/features/dub/dub-session';
@@ -204,10 +205,6 @@ export function UpdateSettings() {
     <>
       <SettingsSection icon={RefreshCwIcon} title={t('updates.tab')}>
         <div className="relative flex flex-col gap-4 overflow-hidden px-4 py-4 @2xl:flex-row @2xl:items-center">
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-linear-to-b from-primary/7 to-transparent"
-            aria-hidden="true"
-          />
           <div className="flex min-w-0 flex-1 items-start gap-3">
             <span className="relative mt-0.5 shrink-0" aria-hidden="true">
               {statusIcon}
@@ -328,22 +325,23 @@ export function UpdateSettings() {
                 </p>
               )}
             </div>
-            <div role="group" aria-labelledby="update-channel-label" className="flex gap-1">
+            <ToggleGroup
+              aria-labelledby="update-channel-label"
+              size="sm"
+              value={[state.channel]}
+              disabled={action || ['checking', 'downloading', 'downloaded'].includes(state.status)}
+              onValueChange={(value) => {
+                const next = value[0];
+                if ((next === 'stable' || next === 'beta') && next !== state.channel)
+                  switchChannel(next);
+              }}
+            >
               {(['stable', 'beta'] as const).map((channel) => (
-                <Button
-                  key={channel}
-                  size="sm"
-                  variant={state.channel === channel ? 'secondary' : 'outline'}
-                  aria-pressed={state.channel === channel}
-                  disabled={
-                    action || ['checking', 'downloading', 'downloaded'].includes(state.status)
-                  }
-                  onClick={() => switchChannel(channel)}
-                >
+                <ToggleGroupItem key={channel} value={channel}>
                   {t(`update.channel_${channel}`)}
-                </Button>
+                </ToggleGroupItem>
               ))}
-            </div>
+            </ToggleGroup>
           </div>
         )}
         <div className="flex items-center gap-2 px-4 py-2.5 text-[11px] text-muted-foreground">

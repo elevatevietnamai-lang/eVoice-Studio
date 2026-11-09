@@ -232,7 +232,7 @@ export function PerformanceModelPacks({ compact = false }: { compact?: boolean }
             if (next) setSelectedTier(next);
           }}
           disabled={busy}
-          className="grid w-full grid-cols-2 rounded-xl border border-border/60 bg-muted/45 p-1 sm:grid-cols-4"
+          className="grid w-full grid-cols-2 rounded-(--card-radius) border border-border/60 bg-muted/45 p-1 sm:grid-cols-4"
         >
           {performanceTiers.map((candidate) => (
             <ToggleGroupItem key={candidate} value={candidate}>
@@ -249,7 +249,7 @@ export function PerformanceModelPacks({ compact = false }: { compact?: boolean }
             return (
               <div
                 key={model.repo_id}
-                className="flex min-w-0 items-center gap-2.5 rounded-xl border border-border/55 bg-background/25 px-3 py-2.5"
+                className="flex min-w-0 items-center gap-2.5 rounded-(--card-radius) border border-border/55 bg-background/25 px-3 py-2.5"
               >
                 <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-muted/55 text-muted-foreground">
                   <Icon className="size-3.5" aria-hidden="true" />
@@ -932,6 +932,7 @@ export function ModelLibrary({
           label={model.label}
           info={model.license_info}
           acceptance={model.license_acceptance}
+          companions={model.license_companions}
         />
         {!activeAsrModel &&
           (activeEngineModel || activeDictationModel || activeDiarisationModel) && (
@@ -1111,7 +1112,7 @@ export function ModelLibrary({
           </>
         ) : model.installed ? (
           <>
-            {model.license_acceptance?.required && !model.license_acceptance.accepted ? (
+            {licenceAcceptancePending(model) ? (
               // Downloaded but unusable until its licence is accepted.
               <span className="flex items-center gap-1 rounded-full bg-warning/10 px-2 py-1 text-xs text-warning">
                 <TriangleAlertIcon className="size-3.5" />
@@ -1262,7 +1263,7 @@ export function ModelLibrary({
         contentVariant="cards"
       >
         {!setup && (
-          <div className="glass-panel col-span-full flex items-center gap-2 rounded-xl border border-border/60 bg-card/40 px-4 py-3 shadow-xs/5">
+          <div className="glass-panel col-span-full flex items-center gap-2 rounded-(--card-radius) border border-border bg-card px-4 py-3">
             <SearchIcon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
             <Input
               type="search"
@@ -1288,7 +1289,7 @@ export function ModelLibrary({
             {primary?.map(renderModel)}
             {optional.length > 0 && (
               <details className="group/models col-span-full">
-                <summary className="glass-panel cursor-pointer rounded-xl border border-border/60 bg-card/40 px-4 py-3 text-sm text-muted-foreground shadow-xs/5 focus-visible:outline-ring">
+                <summary className="glass-panel cursor-pointer rounded-(--card-radius) border border-border bg-card px-4 py-3 text-sm text-muted-foreground focus-visible:outline-ring">
                   {t('firstrun.lib_show_all', { count: optional.length })}
                 </summary>
                 <div className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,20rem),1fr))] gap-3">
@@ -1298,7 +1299,7 @@ export function ModelLibrary({
             )}
             {incompatible.length > 0 && (
               <details className="group/models col-span-full">
-                <summary className="glass-panel cursor-pointer rounded-xl border border-border/60 bg-card/40 px-4 py-3 text-sm text-muted-foreground shadow-xs/5 focus-visible:outline-ring">
+                <summary className="glass-panel cursor-pointer rounded-(--card-radius) border border-border bg-card px-4 py-3 text-sm text-muted-foreground focus-visible:outline-ring">
                   {t('modelSettings.unavailable')} ({incompatible.length})
                 </summary>
                 <div className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(min(100%,20rem),1fr))] gap-3">
@@ -1346,5 +1347,12 @@ export function ModelLibrary({
         }}
       />
     </>
+  );
+}
+
+/** Downloaded but unusable until every licence its engine gates on is accepted. */
+export function licenceAcceptancePending(model: CatalogueModel): boolean {
+  return [model.license_acceptance, ...(model.license_companions ?? [])].some(
+    (state) => state?.required && !state.accepted,
   );
 }

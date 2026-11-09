@@ -24,7 +24,8 @@ import { Button } from '@/components/ui/button';
 import { getBridge } from '@/components/bridge';
 import { apiJson, describeError } from '@/lib/api/client';
 import type { SystemInfo } from '@/lib/api/types';
-import { brandIcon } from '@/lib/brand';
+import { CreditsContributors } from './credits-contributors';
+import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { SettingsActionError } from './settings-action-error';
 import { ModelCredits } from './model-credits';
 import { SettingsRow, SettingsSection } from './settings-layout';
@@ -158,12 +159,15 @@ export function DiagnosticsSettings() {
       <SettingsSection icon={InfoIcon} title={t('about.title')}>
         <SettingsRow id="diagnostics-app" title={t('about.app')}>
           <span className="inline-flex items-center gap-2 text-sm font-medium" translate="no">
-            <img src={brandIcon} alt="" className="size-5" />
+            <EVoiceMark size={20} />
             eVoice Studio
           </span>
         </SettingsRow>
         <SettingsRow id="diagnostics-version" title={t('about.version')}>
           <span className="font-mono text-xs">{bridge?.app.version ?? __APP_VERSION__}</span>
+        </SettingsRow>
+        <SettingsRow id="diagnostics-built-on" title={t('about.built_on')}>
+          <CreditsContributors />
         </SettingsRow>
         <SettingsRow id="diagnostics-platform" title={t('about.platform')}>
           <span className="max-w-xl text-right font-mono text-xs">{platform}</span>

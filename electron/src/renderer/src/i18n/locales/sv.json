@@ -92,16 +92,19 @@
     "copied": "Kopierat"
   },
   "homeUi": {
-    "subtitle": "Ditt alternativ till ElevenLabs med öppen källkod, helt lokalt — klona och skapa röster, dubba videor, diktera, transkribera och skapa ljudböcker på 646 språk.",
+    "subtitle": "En lokal studio för röst och musik.",
     "brand_by": "{{brand}} av",
     "all": "Alla",
     "allContributors": "Alla bidragsgivare",
-    "title": "VoiceStudio.sh Öppen källkod",
     "design": "Skapa en röst utifrån en beskrivning.",
     "dub": "Översätt och dubba ljud eller video.",
     "stories": "Skapa scener med flera röster.",
     "audiobook": "Skapa ljudböcker med kapitel.",
-    "transcribe": "Omvandla inspelningar till text."
+    "transcribe": "Omvandla inspelningar till text.",
+    "music": "Skapa musik från en textbeskrivning.",
+    "saved": "Sparade röster att återanvända.",
+    "batch": "Dubba många videor i en körning.",
+    "projects": "Dina dubbningar, berättelser och exporter."
   },
   "twilioIntegration": {
     "exposureWarning": "När detta slås på öppnas en separat lokal port som din tunnel publicerar på internet. Endast förfrågningar signerade med din Twilio Auth Token accepteras; resten av eVoice Studio förblir privat.",
@@ -306,7 +309,8 @@
     "dark": "Mörk",
     "system": "System",
     "default": "Studio",
-    "glass": "Glasläge"
+    "glass": "Glasläge",
+    "glass_flat_hint": "Studio är ett platt tema. Välj en annan palett för glas."
   },
   "cloneFlow": {
     "choose_voice": "Välj en röst",
@@ -369,6 +373,7 @@
   },
   "paneActions": {
     "collapse": "Fäll ihop panelen",
+    "expand": "Expandera panel",
     "edit": "Redigera röstprofil"
   },
   "modelSettings": {
@@ -1914,7 +1919,8 @@
     "model_credits": "Modellernas upphovspersoner",
     "model_credits_hint": "Upphovsuppgifter för modeller som stöds. Modeller och komponenter har separata villkor; dessa uppgifter ger inga rättigheter till kommersiell användning.",
     "model_terms": "Modellvillkor",
-    "model_related_sources": "Relaterade källor:"
+    "model_related_sources": "Relaterade källor:",
+    "built_on": "Byggd på VoiceStudio (AGPL-3.0) och dess bidragsgivare"
   },
   "privacy": {
     "translator_online": "Översättaren är online: {{provider}}",
@@ -2221,7 +2227,8 @@
     "design": "Röstdesign",
     "clone": "Röstkloning",
     "primary": "Huvudnavigering",
-    "calls": "Samtal"
+    "calls": "Samtal",
+    "more": "Mer"
   },
   "profiles": {
     "locked": "Rösten låst! Identiteten är nu konsekvent över alla generationer.",
@@ -3989,5 +3996,10 @@
     "burn": "Bränn in översatta undertexter",
     "export": "Exportera video med AI-musik",
     "needs_dub": "Generera en dubbning först; exporten mixar den rösten med musiken."
+  },
+  "windowControls": {
+    "minimize": "Minimera",
+    "maximize": "Maximera",
+    "restore": "Återställ"
   }
 }

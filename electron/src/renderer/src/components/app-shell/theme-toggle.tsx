@@ -1,6 +1,7 @@
-import { MoonIcon, SunIcon } from 'lucide-react';
+import { Moon, Sun } from 'lucide';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -22,7 +23,7 @@ export function ThemeToggle() {
           />
         }
       >
-        {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        <MorphIcon icon={theme === 'dark' ? Sun : Moon} />
       </TooltipTrigger>
       <TooltipContent side="top">{label}</TooltipContent>
     </Tooltip>

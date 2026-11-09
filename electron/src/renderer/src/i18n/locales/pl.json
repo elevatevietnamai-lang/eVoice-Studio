@@ -92,16 +92,19 @@
     "copied": "Skopiowano"
   },
   "homeUi": {
-    "subtitle": "Twoja otwartoźródłowa, w pełni lokalna alternatywa dla ElevenLabs — klonuj i projektuj głosy, dubbinguj filmy, dyktuj, transkrybuj i twórz audiobooki w 646 językach.",
+    "subtitle": "Lokalne studio dla głosu i muzyki.",
     "brand_by": "{{brand}} autorstwa",
     "all": "Wszyscy",
     "allContributors": "Wszyscy współtwórcy",
-    "title": "VoiceStudio.sh Otwarty kod źródłowy",
     "design": "Zaprojektuj głos na podstawie opisu.",
     "dub": "Tłumacz i dubbinguj dźwięk lub wideo.",
     "stories": "Twórz sceny z wieloma głosami.",
     "audiobook": "Twórz audiobooki z rozdziałami.",
-    "transcribe": "Zamieniaj nagrania na tekst."
+    "transcribe": "Zamieniaj nagrania na tekst.",
+    "music": "Twórz muzykę na podstawie opisu tekstowego.",
+    "saved": "Zapisane głosy do ponownego użycia.",
+    "batch": "Dubbinguj wiele filmów naraz.",
+    "projects": "Twoje dubbingi, historie i eksporty."
   },
   "twilioIntegration": {
     "exposureWarning": "Włączenie otwiera osobny port lokalny, który Twój tunel publikuje w internecie. Akceptowane są tylko żądania podpisane Twoim Auth Token Twilio; reszta eVoice Studio pozostaje prywatna.",
@@ -310,7 +313,8 @@
     "dark": "Ciemny",
     "system": "Systemowy",
     "default": "Studio",
-    "glass": "Tryb szkła"
+    "glass": "Tryb szkła",
+    "glass_flat_hint": "Studio to płaski motyw. Wybierz inną paletę, aby użyć szkła."
   },
   "cloneFlow": {
     "choose_voice": "Wybierz głos",
@@ -373,6 +377,7 @@
   },
   "paneActions": {
     "collapse": "Zwiń panel",
+    "expand": "Rozwiń panel",
     "edit": "Edytuj profil głosu"
   },
   "modelSettings": {
@@ -1918,7 +1923,8 @@
     "model_credits": "Autorzy modeli",
     "model_credits_hint": "Informacje o autorach obsługiwanych modeli. Modele i komponenty podlegają odrębnym warunkom; te informacje nie przyznają praw do użytku komercyjnego.",
     "model_terms": "Warunki modelu",
-    "model_related_sources": "Powiązane źródła:"
+    "model_related_sources": "Powiązane źródła:",
+    "built_on": "Zbudowano na VoiceStudio (AGPL-3.0) i jego współtwórcach"
   },
   "privacy": {
     "translator_online": "Tłumacz jest online: {{provider}}",
@@ -2225,7 +2231,8 @@
     "clone": "Klonowanie głosu",
     "primary": "Nawigacja główna",
     "dictation": "Dyktowanie",
-    "calls": "Połączenia"
+    "calls": "Połączenia",
+    "more": "Więcej"
   },
   "profiles": {
     "locked": "Głos zablokowany! Tożsamość jest teraz spójna we wszystkich pokoleniach.",
@@ -3995,5 +4002,10 @@
     "burn": "Wypal przetłumaczone napisy",
     "export": "Eksportuj wideo z muzyką AI",
     "needs_dub": "Najpierw wygeneruj dubbing; eksport łączy ten głos z muzyką."
+  },
+  "windowControls": {
+    "minimize": "Minimalizuj",
+    "maximize": "Maksymalizuj",
+    "restore": "Przywróć"
   }
 }

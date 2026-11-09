@@ -321,6 +321,23 @@ def repos_for_engine(engine_id: str, identity: str | None = None) -> list[str]:
     return [row["id"] for row in rows if engine_id in (row.get("engines") or [])]
 
 
+def companion_repos(repo_id: str, engines: Iterable[str], catalogue_repos: Iterable[str]) -> list[str]:
+    """Registry models a catalogue card's engines also load and gate on.
+
+    ``ensure_engine_accepted`` checks every registry model of an engine, so a
+    card that offered only its own licence left the rest (OmniVoice's audio
+    tokenizer) unaccepted until a generation failed. Models that have a
+    catalogue card of their own keep their own licence button and are left out.
+    """
+    skip = {repo_id, *catalogue_repos}
+    rows = _registry()["models"]
+    wanted = set(engines)
+    return list(dict.fromkeys(
+        row["id"] for row in rows
+        if row["id"] not in skip and wanted.intersection(row.get("engines") or [])
+    ))
+
+
 def ensure_engine_accepted(engine_id: str, identity: str | None = None) -> None:
     try:
         repos = repos_for_engine(engine_id, identity)
