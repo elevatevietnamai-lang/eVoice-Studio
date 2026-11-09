@@ -247,3 +247,24 @@ def test_every_gated_engine_model_without_a_card_rides_on_a_card(store):
             for repo in ma.repos_for_engine(engine):
                 if repo not in cards and ma.status(repo)["required"]:
                     assert repo in offered, (row["repo_id"], engine, repo)
+
+
+def test_accept_and_revoke_refresh_the_cached_catalogue(store):
+    # /models caches for 10 s; the card refetches right after Accept and must
+    # not get the pre-acceptance copy back.
+    models = importlib.import_module("api.routers.setup.models")
+    router = importlib.import_module("api.routers.model_licenses")
+    models.invalidate_cache()
+    try:
+        def omnivoice():
+            return next(m for m in models.list_models()["models"] if m["repo_id"] == "k2-fsa/OmniVoice")
+        state = omnivoice()["license_acceptance"]
+        assert state["accepted"] is False
+        router.accept_model_licence(router.AcceptRequest(
+            repo_id="k2-fsa/OmniVoice", fingerprint=state["fingerprint"], accepted=True,
+        ))
+        assert omnivoice()["license_acceptance"]["accepted"] is True
+        router.revoke_model_licence(router.RevokeRequest(repo_id="k2-fsa/OmniVoice"))
+        assert omnivoice()["license_acceptance"]["accepted"] is False
+    finally:
+        models.invalidate_cache()
