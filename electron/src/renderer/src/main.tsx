@@ -11,8 +11,10 @@ import './hooks/use-appearance';
 import { App } from './app';
 import { installPreloadRecovery } from './lib/preload-recovery';
 import { installGlobalErrorRecovery } from './lib/global-error-recovery';
+import { installDetailsMotion } from './lib/details-motion';
 
 installConsoleCapture();
+installDetailsMotion();
 installGlobalErrorRecovery();
 installPreloadRecovery();
 

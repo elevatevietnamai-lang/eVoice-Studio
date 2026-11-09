@@ -207,7 +207,7 @@ Display hierarchy (dense desktop: hierarchy comes from face, weight and colour, 
 - **Feature stylesheets** follow the same rules as components: radius is the control, card or surface token (corners of 5 px or less, circles and pills aside), no blurred shadows or glows except floating layers (the in-app browser dialog, the narrow inspector sheet), no backdrop blur, no surface gradients, and no lift or scale on hover. Only the Pro page's feature-card illustrations draw with gradients and animate. `no-decorative-css.test.ts` enforces this.
 - **Pane headers, footers and sticky bars** are solid (`bg-background`, `bg-sidebar`), never frosted. Backdrop blur stays on layers that float over content: the analytics consent banner, the backend recovery veil and the video controls.
 - **Selected rows** use a flat surface (`--sidebar-row-selected` in sidebars, `bg-accent` elsewhere; a selected card adds `border-foreground/30`). No 2 px accent bar, inset highlight, glow or primary tint; `globals.css` included (`globals.test.ts`).
-- **Expanding cards**: every `<details>` opens and closes by height and opacity over 240 ms (`::details-content` with `interpolate-size`, Electron 44), like the Collapsible primitive; summary chevrons rotate over 160 ms.
+- **Expanding cards**: every `<details>` opens (280 ms, `--ease-standard`) and closes (220 ms) in one continuous height animation run by `lib/details-motion.ts`, a single delegated listener installed in `main.tsx`; a click mid-way reverses from the current height, reduced motion toggles at once, `data-motion="none"` opts a card out, and controls inside a summary keep their own clicks. Do not add a `::details-content` transition: it closes in two steps. Summary chevrons rotate over 160 ms.
 - **Hover means clickable**: panel sections, cards and static rows get no hover or focus-within effect; only controls and clickable rows do (`globals.test.ts` checks the shared CSS).
 - **Chips are buttons**: clickable text controls (filter chips, example chips, insert-token chips, removable language chips, the Auto toggle, the sign-in button) keep the 8 px control corner of the main Button, never a pill. Only square icon controls (play, record, avatar) are circles; static badges stay pills (`control-corners.test.ts` enforces this).
 - **Nested corners are concentric**: an inner corner equals the outer corner minus the inset (segmented frames and chip trays alike: 12 px frame, 4 px inset, 8 px items, so items keep the control corner and never read as square inside a rounded frame). Groups built from Buttons use `segmentedFrameClass` or `chipTrayClass` (`components/segmented.ts`), never their own frame.
@@ -267,7 +267,7 @@ Motion tokens (`globals.css` `--motion-*`, `--ease-standard`; `motionTokens` in 
 |---|---|---|
 | `--motion-fast` / `motionTokens.fast` | 160 ms | Hover, focus ring, colour and icon-button state |
 | Overlay in / out | 200 ms / 150 ms | Popovers, selects, tooltips, dropdown menus (`menuPopupClass`), fade plus scale from 97% |
-| `--motion-base` / `motionTokens.base` | 240 ms | `<details>` cards opening by height, panel content, `FadeIn` |
+| `--motion-base` / `motionTokens.base` | 240 ms | panel content, `FadeIn` |
 | Route settle | 120 ms | Page switch from 60% opacity (`RouteFade`, `.secondary-sidebar`) |
 | Group menu | 280 ms open, 180 ms close; items 320 ms, 60 ms apart | Rail group menu surface wipe and item cascade |
 | `--motion-slow` / `motionTokens.slow` | 480 ms | Large reveals only (first-run steps, empty-state hero) |

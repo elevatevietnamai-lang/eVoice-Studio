@@ -99,11 +99,10 @@ it('never restyles input, textarea or select surfaces from the shared CSS', () =
   expect(restyled).toEqual([]);
 });
 
-/** Expanding cards (<details>) open by height like the Collapsible primitive, never snap. */
-it('animates every details element open and closed', () => {
-  expect(css).toContain('interpolate-size: allow-keywords;');
-  expect(css).toMatch(/details::details-content\s*\{[^}]*transition:[^}]*block-size/);
-  expect(css).toMatch(/details\[open\]::details-content\s*\{[^}]*block-size:\s*auto/);
+/** Expanding cards (<details>) are animated by lib/details-motion.ts; a ::details-content
+ * transition would fight it and close in two steps. */
+it('leaves details height to the script controller', () => {
+  expect(css).not.toMatch(/::details-content\s*\{[^}]*transition/);
 });
 
 /** Elevate: success is monochrome in the default theme; only warnings and errors carry a hue. */
