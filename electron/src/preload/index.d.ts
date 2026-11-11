@@ -330,6 +330,39 @@ export interface AccountPublicState {
   } | null;
 }
 
+/** Chrome Headless Shell for animated promo templates (see main/promo-browser.ts). */
+export type PromoBrowserState =
+  | { state: 'unsupported' }
+  | { state: 'missing'; downloadMegabytes: number }
+  | { state: 'installing'; downloaded: number; total: number }
+  | { state: 'ready'; executablePath: string }
+  | { state: 'failed'; message: string; downloadMegabytes: number };
+
+export interface PromoOverlayInput {
+  template: 'glow_title';
+  title: string;
+  subtitle: string;
+  color: string;
+  glow: string;
+  duration: number;
+  width: number;
+  height: number;
+}
+
+export interface PromoOverlayMedia {
+  id: string;
+  kind: 'video' | 'image' | 'audio';
+  name: string;
+  duration: number | null;
+  width: number | null;
+  height: number | null;
+  url: string;
+}
+
+export type PromoOverlayResult =
+  | { ok: true; media: PromoOverlayMedia }
+  | { ok: false; code: string; detail?: string };
+
 export interface VoiceStudioBridge {
   /** VoiceStudio Cloud account; never carries a token. */
   account: {
@@ -396,6 +429,16 @@ export interface VoiceStudioBridge {
     isFullScreen(): Promise<boolean>;
     onFullScreen(callback: (fullscreen: boolean) => void): () => void;
     onPersistenceFlush(callback: () => void | Promise<void>): () => void;
+  };
+  /** Animated promo templates; desktop only. */
+  promo: {
+    browserState(): Promise<PromoBrowserState>;
+    /** Downloads Chrome Headless Shell; only after the user confirmed the size. */
+    installBrowser(): Promise<PromoBrowserState>;
+    onBrowserState(callback: (state: PromoBrowserState) => void): () => void;
+    renderOverlay(input: PromoOverlayInput, fps: number): Promise<PromoOverlayResult>;
+    cancelRender(): Promise<void>;
+    onRenderProgress(callback: (percent: number) => void): () => void;
   };
   backend: {
     getStatus(): Promise<BackendStatus>;

@@ -9,6 +9,7 @@ import type {
   VoiceStudioBridge,
   RepairAgentEvent,
   AccountPublicState,
+  PromoBrowserState,
 } from './index.d';
 
 function subscribe<T>(channel: string, cb: (payload: T) => void): () => void {
@@ -94,6 +95,14 @@ const bridge: VoiceStudioBridge = {
     updateProfile: (patch) =>
       ipcRenderer.invoke('account:update-profile', patch) as Promise<AccountPublicState>,
     onState: (cb) => subscribe<AccountPublicState>('account:state', cb),
+  },
+  promo: {
+    browserState: () => ipcRenderer.invoke('promo:browserState'),
+    installBrowser: () => ipcRenderer.invoke('promo:browserInstall'),
+    onBrowserState: (cb) => subscribe<PromoBrowserState>('promo:browserChanged', cb),
+    renderOverlay: (input, fps) => ipcRenderer.invoke('promo:renderOverlay', input, fps),
+    cancelRender: () => ipcRenderer.invoke('promo:renderCancel'),
+    onRenderProgress: (cb) => subscribe<number>('promo:renderProgress', cb),
   },
   backend: {
     getStatus: () => ipcRenderer.invoke('backend:getStatus') as Promise<BackendStatus>,

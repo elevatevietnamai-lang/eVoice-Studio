@@ -8,7 +8,8 @@ import { fileURLToPath } from 'node:url';
 import { app, BrowserWindow, ipcMain, Menu, nativeImage, session, shell, Tray } from 'electron';
 import { electronApp, is, optimizer } from '@electron-toolkit/utils';
 import { BackendSupervisor, backendRoot } from './backend';
-import { registerIpc, wireWindowMaximizeEvents } from './ipc';
+import { assertTrustedMainFrame, registerIpc, wireWindowMaximizeEvents } from './ipc';
+import { registerPromoIpc } from './promo-ipc';
 import { APP_ORIGIN, installAppProtocol, registerAppScheme } from './protocol';
 import { electronProxyPort, startDevBackendProxy } from './dev-backend-proxy';
 import { DesktopUpdater, registerUpdateIpc } from './updater';
@@ -266,6 +267,7 @@ if (process.env.VOICESTUDIO_ALLOW_MULTIPLE_INSTANCES !== '1' && !app.requestSing
           app.exit(0);
         },
       );
+      registerPromoIpc(backend, () => mainWindow, assertTrustedMainFrame, backendRoot);
       // Before backend.start(): the backend inherits the token-bridge env.
       closeAccount = await startAccount({
         getMainWindow: () => mainWindow,
