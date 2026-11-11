@@ -86,6 +86,15 @@ The font used for burned-in subtitles, `backend/assets/fonts/InterVariable.ttf`
 (Inter, by The Inter Project Authors), is licensed under the SIL Open Font
 License 1.1; its text ships beside it as `backend/assets/fonts/OFL.txt`.
 
+Animated promo titles are rendered with HyperFrames (`@hyperframes/producer`
+and its `@hyperframes/*` packages, by HeyGen, Apache License 2.0), which pulls
+in `sharp` (Apache License 2.0) and its prebuilt libvips binaries
+(`@img/sharp-*`, LGPL-3.0-or-later, shipped as separate dynamically linked
+libraries). Chrome Headless Shell is not shipped with the app: it is downloaded
+from Google's Chrome for Testing storage only when the user turns animated
+titles on, under Google's own terms. Templates use CSS and Web Animations only,
+never GSAP.
+
 The locked PyAV 15.1.0 wheels bundle FFmpeg and x264/x265 libraries. PyAV's source
 licence alone does not describe those binaries' terms. The
 [wheel audit](docs/licensing/pyav-15.1.0-audit.md) records their hashes, build flags,

@@ -429,6 +429,15 @@ hard rules from the first prompt.
     the user (`electron/src/main/updater.ts`).
   - **yt-dlp updates** from PyPI, only when the user clicks update
     (`backend/services/media_tools.py`).
+  - **Chrome Headless Shell for animated promo titles**, only after the user
+    turns them on in the desktop app's Promo video page and confirms the size
+    shown: one pinned build from Google's Chrome for Testing storage
+    (`storage.googleapis.com`) into the app's data folder
+    (`electron/src/main/promo-browser.ts`). Rendering itself makes no outbound
+    connection: the render process allows only loopback sockets, lookups and
+    fetches (`electron/src/main/promo-network-guard.ts`), every template ships
+    its fonts and has no remote URL (`promo-templates.test.ts`), and a render
+    that tried to reach the network is discarded.
   - **VoiceStudio Cloud account features, only after the user turns them on**
     (first-run setup or Settings → Account; off by default, skipping = off):
     browser sign-in against `voicestudio.sh/identity` and the account API at
