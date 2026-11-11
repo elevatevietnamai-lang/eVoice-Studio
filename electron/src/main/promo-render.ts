@@ -163,6 +163,12 @@ export async function renderPromoOverlay(
     );
     return await upload(deps, outputPath);
   } finally {
-    rmSync(sandbox, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 });
+    try {
+      rmSync(sandbox, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 });
+    } catch (error) {
+      // A file Chrome still holds on Windows must not turn a finished overlay
+      // into an error; the OS temp cleanup removes the folder later.
+      console.warn('[promo] could not remove render folder', error);
+    }
   }
 }
