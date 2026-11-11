@@ -102,6 +102,7 @@ const bridge: VoiceStudioBridge = {
     onBrowserState: (cb) => subscribe<PromoBrowserState>('promo:browserChanged', cb),
     renderOverlay: (input, fps) => ipcRenderer.invoke('promo:renderOverlay', input, fps),
     cancelRender: () => ipcRenderer.invoke('promo:renderCancel'),
+    previewTemplate: (input) => ipcRenderer.invoke('promo:previewTemplate', input),
     onRenderProgress: (cb) => subscribe<number>('promo:renderProgress', cb),
   },
   backend: {

@@ -158,7 +158,7 @@ describe('templateHtml', () => {
     )) {
       const families = match[1].split(',').map((part) => part.trim());
       for (const family of families) {
-        if (/^"/.test(family)) expect(shipped).toContain(family.replace(/"/g, ''));
+        if (family.startsWith('"')) expect(shipped).toContain(family.replace(/"/g, ''));
         else expect(family).not.toMatch(/^(sans-serif|serif|system-ui|monospace|cursive)$/);
       }
     }
@@ -202,7 +202,7 @@ describe('bundled fonts', () => {
   it.each(Object.entries(TEMPLATE_FONTS))('%s ships with its licence', (_id, font) => {
     const dir = join(ASSETS, font.source, '..');
     expect(readdirSync(dir)).toContain(font.source.split('/').pop());
-    expect(readdirSync(dir).some((name) => /OFL\.txt$/.test(name))).toBe(true);
+    expect(readdirSync(dir).some((name) => name.endsWith('OFL.txt'))).toBe(true);
   });
 });
 

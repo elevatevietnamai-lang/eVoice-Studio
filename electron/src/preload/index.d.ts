@@ -364,6 +364,10 @@ export interface PromoOverlayMedia {
   url: string;
 }
 
+export type PromoPreviewResult =
+  | { ok: true; html: string }
+  | { ok: false; code: string; detail?: string };
+
 export type PromoOverlayResult =
   | { ok: true; media: PromoOverlayMedia }
   | { ok: false; code: string; detail?: string };
@@ -443,6 +447,8 @@ export interface VoiceStudioBridge {
     onBrowserState(callback: (state: PromoBrowserState) => void): () => void;
     renderOverlay(input: PromoOverlayInput, fps: number): Promise<PromoOverlayResult>;
     cancelRender(): Promise<void>;
+    /** A self-contained page of the template for a sandboxed srcdoc frame. */
+    previewTemplate(input: PromoOverlayInput): Promise<PromoPreviewResult>;
     onRenderProgress(callback: (percent: number) => void): () => void;
   };
   backend: {

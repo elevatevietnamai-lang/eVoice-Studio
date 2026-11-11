@@ -9,8 +9,8 @@ import {
 } from 'electron';
 import type { BackendSupervisor } from './backend';
 import { PromoBrowser, promoBrowserCacheDir, type PromoBrowserState } from './promo-browser';
-import { PromoRenderError, renderPromoOverlay, type RenderChild } from './promo-render';
-import { parseTemplateInput, TemplateInputError } from './promo-templates';
+import { fetchLogo, PromoRenderError, renderPromoOverlay, type RenderChild } from './promo-render';
+import { parseTemplateInput, previewHtml, TemplateInputError } from './promo-templates';
 import { sendToLiveWindow } from './window-safety';
 
 export const PROMO_CHANNELS = {
@@ -20,10 +20,15 @@ export const PROMO_CHANNELS = {
   renderOverlay: 'promo:renderOverlay',
   renderCancel: 'promo:renderCancel',
   renderProgress: 'promo:renderProgress',
+  previewTemplate: 'promo:previewTemplate',
 } as const;
 
 export type PromoOverlayResult =
   | { ok: true; media: import('./promo-render').PromoMediaResult }
+  | { ok: false; code: string; detail?: string };
+
+export type PromoPreviewResult =
+  | { ok: true; html: string }
   | { ok: false; code: string; detail?: string };
 
 const ALLOWED_FPS = new Set([30, 60]);
@@ -50,6 +55,31 @@ export function registerPromoIpc(
     trusted(event);
     return browser.install();
   });
+  ipcMain.handle(
+    PROMO_CHANNELS.previewTemplate,
+    async (event, raw: unknown): Promise<PromoPreviewResult> => {
+      trusted(event);
+      try {
+        const input = parseTemplateInput(raw);
+        const logo = input.logoId
+          ? await fetchLogo(
+              { baseUrl: supervisor.baseUrl, headers: supervisor.requestHeaders() },
+              input.logoId,
+            )
+          : undefined;
+        return {
+          ok: true,
+          html: previewHtml(input, join(backendRoot(), 'backend', 'assets'), logo),
+        };
+      } catch (error) {
+        if (error instanceof TemplateInputError) {
+          return { ok: false, code: 'invalid_input', detail: error.field };
+        }
+        if (error instanceof PromoRenderError) return { ok: false, code: error.code };
+        return { ok: false, code: 'preview_failed', detail: String(error) };
+      }
+    },
+  );
   ipcMain.handle(PROMO_CHANNELS.renderCancel, (event) => {
     trusted(event);
     rendering?.abort();
