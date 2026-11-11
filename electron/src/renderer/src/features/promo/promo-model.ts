@@ -43,6 +43,7 @@ export const MAX_SHOTS = 40;
 export const MAX_PROGRAM_SECONDS = 300;
 export const MAX_TRANSITION_SECONDS = 2;
 export const MAX_OUTRO_SECONDS = 10;
+export const MAX_OVERLAYS = 12;
 const TRANSITION_SHARE = 0.45;
 const OUTRO_FADE_SECONDS = 0.6;
 
@@ -67,6 +68,23 @@ export interface PromoShot {
   transitionSeconds: number;
 }
 
+/** A transparent animated layer (rendered on the desktop) laid over the shots. */
+export interface PromoOverlay {
+  key: string;
+  media: PromoMedia;
+  /** Seconds into the finished video. */
+  start: number;
+  /** The title it shows, so the list stays readable. */
+  label: string;
+}
+
+/** Output size per format; mirrors SHAPES in services/promo_video.py. */
+export const SHAPE_SIZE: Record<PromoShape, { width: number; height: number }> = {
+  vertical: { width: 1080, height: 1920 },
+  square: { width: 1080, height: 1080 },
+  landscape: { width: 1920, height: 1080 },
+};
+
 export interface PromoDraft {
   shots: PromoShot[];
   shape: PromoShape;
@@ -80,6 +98,7 @@ export interface PromoDraft {
   watermark: PromoCorner;
   outroSeconds: number;
   outroColor: string;
+  overlays: PromoOverlay[];
 }
 
 export const DRAFT_KEY = 'voicestudio.promo.v1';
@@ -97,6 +116,7 @@ export const emptyDraft = (): PromoDraft => ({
   watermark: 'none',
   outroSeconds: 2,
   outroColor: '#0b0b0b',
+  overlays: [],
 });
 
 const clamp = (value: number, min: number, max: number) =>
@@ -178,6 +198,10 @@ export function renderRequest(draft: PromoDraft) {
     music_volume: clamp(draft.musicVolume, 0, 2),
     narration_id: draft.narration?.id ?? null,
     snap_to_beats: !!draft.music && draft.snapToBeats,
+    overlays: draft.overlays.slice(0, MAX_OVERLAYS).map((overlay) => ({
+      media_id: overlay.media.id,
+      start: clamp(overlay.start, 0, MAX_PROGRAM_SECONDS),
+    })),
   };
 }
 
@@ -200,6 +224,9 @@ export function loadDraft(storage: Pick<Storage, 'getItem'> | null = safeStorage
       ...base,
       ...saved,
       shots: Array.isArray(saved.shots) ? saved.shots.slice(0, MAX_SHOTS) : [],
+      overlays: Array.isArray(saved.overlays)
+        ? saved.overlays.filter(isOverlay).slice(0, MAX_OVERLAYS)
+        : [],
       shape: SHAPES.includes(saved.shape as PromoShape) ? (saved.shape as PromoShape) : base.shape,
       fps: saved.fps === 60 ? 60 : 30,
       look: LOOKS.includes(saved.look as PromoLook) ? (saved.look as PromoLook) : base.look,
@@ -210,6 +237,19 @@ export function loadDraft(storage: Pick<Storage, 'getItem'> | null = safeStorage
   } catch {
     return emptyDraft();
   }
+}
+
+function isOverlay(value: unknown): value is PromoOverlay {
+  if (!value || typeof value !== 'object') return false;
+  const overlay = value as Partial<PromoOverlay>;
+  return (
+    typeof overlay.key === 'string' &&
+    typeof overlay.label === 'string' &&
+    typeof overlay.start === 'number' &&
+    Number.isFinite(overlay.start) &&
+    !!overlay.media &&
+    typeof overlay.media.id === 'string'
+  );
 }
 
 export function saveDraft(

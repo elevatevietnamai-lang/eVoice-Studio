@@ -27,7 +27,7 @@ export function isLoopbackHost(host: string): boolean {
   const name = host.replace(/^\[|\]$/g, '').toLowerCase();
   if (name === 'localhost' || name.endsWith('.localhost')) return true;
   if (net.isIPv4(name)) return name.startsWith('127.');
-  if (net.isIPv6(name)) return name === '::1' || /^::ffff:127\./.test(name);
+  if (net.isIPv6(name)) return name === '::1' || name.startsWith('::ffff:127.');
   return false;
 }
 

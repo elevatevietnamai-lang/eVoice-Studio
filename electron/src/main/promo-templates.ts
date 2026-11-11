@@ -58,7 +58,7 @@ export class TemplateInputError extends Error {
 
 function text(value: unknown, field: string, required: boolean): string {
   if (typeof value !== 'string') throw new TemplateInputError(field);
-  const clean = value.replace(/[\u0000-\u001f\u007f]/g, ' ').trim();
+  const clean = value.replace(/\p{Cc}/gu, ' ').trim();
   if ((required && !clean) || [...clean].length > MAX_TEMPLATE_TEXT) {
     throw new TemplateInputError(field);
   }
@@ -163,9 +163,14 @@ export function templateHtml(input: PromoTemplateInput): string {
 }
 
 /** Writes index.html, fonts.css and the fonts into an empty project directory. */
-export function writeTemplateProject(dir: string, input: PromoTemplateInput, fontsDir: string): void {
+export function writeTemplateProject(
+  dir: string,
+  input: PromoTemplateInput,
+  fontsDir: string,
+): void {
   mkdirSync(join(dir, 'fonts'), { recursive: true });
-  for (const { file } of TEMPLATE_FONTS) copyFileSync(join(fontsDir, file), join(dir, 'fonts', file));
+  for (const { file } of TEMPLATE_FONTS)
+    copyFileSync(join(fontsDir, file), join(dir, 'fonts', file));
   writeFileSync(join(dir, 'fonts.css'), `${FONTS_CSS}\n`);
   writeFileSync(join(dir, 'index.html'), templateHtml(input));
 }

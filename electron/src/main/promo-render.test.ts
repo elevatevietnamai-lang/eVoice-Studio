@@ -64,7 +64,15 @@ function fakeChild(script: Script) {
   return child;
 }
 
-const media = { id: 'abc.webm', kind: 'video', name: 'overlay.webm', duration: 2, width: 720, height: 1280, url: '/promo/media/abc.webm' };
+const media = {
+  id: 'abc.webm',
+  kind: 'video',
+  name: 'overlay.webm',
+  duration: 2,
+  width: 720,
+  height: 1280,
+  url: '/promo/media/abc.webm',
+};
 
 function deps(script: Script, statusBody: unknown = null) {
   const child = fakeChild(script);
@@ -72,7 +80,10 @@ function deps(script: Script, statusBody: unknown = null) {
     if (url.endsWith('/media-tools/status')) {
       return Response.json(
         statusBody ?? {
-          tools: { ffmpeg: { ok: true, path: '/bin/ffmpeg' }, ffprobe: { ok: true, path: '/bin/ffprobe' } },
+          tools: {
+            ffmpeg: { ok: true, path: '/bin/ffmpeg' },
+            ffprobe: { ok: true, path: '/bin/ffprobe' },
+          },
         },
       );
     }
@@ -103,7 +114,10 @@ describe('renderPromoOverlay', () => {
   it('renders in the worker, uploads the WebM and cleans up', async () => {
     const { value, child, fetchImpl } = deps(writeOutput);
     const progress: number[] = [];
-    const result = await renderPromoOverlay(input, value, { fps: 30, onProgress: (p) => progress.push(p) });
+    const result = await renderPromoOverlay(input, value, {
+      fps: 30,
+      onProgress: (p) => progress.push(p),
+    });
     expect(result).toEqual(media);
     expect(progress).toEqual([50]);
     expect(child.killed).toBe(true);

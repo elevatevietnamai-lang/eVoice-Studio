@@ -9,6 +9,8 @@ import {
   saveDraft,
   shotFor,
   draftProblem,
+  MAX_OVERLAYS,
+  SHAPE_SIZE,
   type PromoMedia,
 } from './promo-model';
 
@@ -96,5 +98,42 @@ describe('promo model', () => {
     store.set(DRAFT_KEY, JSON.stringify({ shape: 'round', fps: 24, look: 'sepia' }));
     const repaired = loadDraft(storage);
     expect([repaired.shape, repaired.fps, repaired.look]).toEqual(['vertical', 30, 'none']);
+  });
+
+  it('sends animated overlays with their start, capped like the backend', () => {
+    const draft = emptyDraft();
+    draft.shots = [shotFor(video, 'a')];
+    const overlay = { ...video, id: 'aaaaaaaaaaaaaaaa.webm', name: 'overlay.webm' };
+    draft.overlays = Array.from({ length: MAX_OVERLAYS + 3 }, (_, index) => ({
+      key: `o${index}`,
+      media: overlay,
+      start: index === 0 ? -2 : index,
+      label: 'SALE',
+    }));
+    const body = renderRequest(draft);
+    expect(body.overlays).toHaveLength(MAX_OVERLAYS);
+    expect(body.overlays[0]).toEqual({ media_id: overlay.id, start: 0 });
+    expect(body.overlays[1]).toEqual({ media_id: overlay.id, start: 1 });
+    expect(renderRequest(emptyDraft()).overlays).toEqual([]);
+  });
+
+  it('keeps only well-formed saved overlays', () => {
+    const store = new Map<string, string>();
+    const storage = { getItem: (key: string) => store.get(key) ?? null };
+    const good = { key: 'a', media: video, start: 1.5, label: 'SALE' };
+    store.set(
+      DRAFT_KEY,
+      JSON.stringify({
+        overlays: [good, { key: 'b', start: 'x' }, null, { ...good, media: null }],
+      }),
+    );
+    expect(loadDraft(storage).overlays).toEqual([good]);
+    store.set(DRAFT_KEY, JSON.stringify({ overlays: 'nope' }));
+    expect(loadDraft(storage).overlays).toEqual([]);
+  });
+
+  it('sizes overlays like the backend output', () => {
+    expect(SHAPE_SIZE.vertical).toEqual({ width: 1080, height: 1920 });
+    expect(SHAPE_SIZE.landscape).toEqual({ width: 1920, height: 1080 });
   });
 });

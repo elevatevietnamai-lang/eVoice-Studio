@@ -9,7 +9,11 @@ const cacheDir = promoBrowserCacheDir(join('/data', 'VoiceStudio'));
 
 describe('PromoBrowser', () => {
   it('keeps the shell in the app data folder, never the shared Puppeteer cache', () => {
-    const browser = new PromoBrowser({ cacheDir, platform: BrowserPlatform.WIN64, exists: () => false });
+    const browser = new PromoBrowser({
+      cacheDir,
+      platform: BrowserPlatform.WIN64,
+      exists: () => false,
+    });
     const path = browser.executablePath()!;
     expect(path.startsWith(cacheDir)).toBe(true);
     expect(path).toContain(BUILD_ID);
@@ -74,7 +78,9 @@ describe('PromoBrowser', () => {
   it('pins the same headless shell build as the puppeteer-core HyperFrames uses', () => {
     // Bun's isolated layout puts producer's puppeteer-core beside it; a hoisted
     // layout puts it at the top. Either way the test must find it.
-    const producer = realpathSync(join(__dirname, '..', '..', 'node_modules', '@hyperframes', 'producer'));
+    const producer = realpathSync(
+      join(__dirname, '..', '..', 'node_modules', '@hyperframes', 'producer'),
+    );
     const candidates = [
       join(producer, '..', '..', 'puppeteer-core'),
       join(__dirname, '..', '..', '..', 'node_modules', 'puppeteer-core'),

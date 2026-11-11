@@ -1,5 +1,11 @@
 import { join } from 'node:path';
-import { app, ipcMain, utilityProcess, type BrowserWindow, type IpcMainInvokeEvent } from 'electron';
+import {
+  app,
+  ipcMain,
+  utilityProcess,
+  type BrowserWindow,
+  type IpcMainInvokeEvent,
+} from 'electron';
 import type { BackendSupervisor } from './backend';
 import { PromoBrowser, promoBrowserCacheDir, type PromoBrowserState } from './promo-browser';
 import { PromoRenderError, renderPromoOverlay, type RenderChild } from './promo-render';

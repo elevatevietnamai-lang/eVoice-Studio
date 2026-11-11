@@ -50,6 +50,7 @@ import {
   type PromoMedia,
   type PromoShot,
 } from './promo-model';
+import { AnimatedOverlays } from './animated-overlays';
 
 interface RenderResult {
   output: string;
@@ -354,10 +355,11 @@ export function PromoPage() {
   const [draft, setDraft] = useState<PromoDraft>(() => loadDraft());
   const [uploading, setUploading] = useState(false);
   const [rendering, setRendering] = useState(false);
+  const [overlayBusy, setOverlayBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RenderResult | null>(null);
   const shotInput = useRef<HTMLInputElement>(null);
-  const busy = uploading || rendering;
+  const busy = uploading || rendering || overlayBusy;
   const total = programLength(draft);
   const problem = draftProblem(draft);
 
@@ -689,6 +691,28 @@ export function PromoPage() {
               </ul>
             )}
           </section>
+          <AnimatedOverlays
+            draft={draft}
+            busy={busy}
+            onBusy={setOverlayBusy}
+            onAdd={(overlay) =>
+              setDraft((current) => ({ ...current, overlays: [...current.overlays, overlay] }))
+            }
+            onChange={(key, patch) =>
+              setDraft((current) => ({
+                ...current,
+                overlays: current.overlays.map((item) =>
+                  item.key === key ? { ...item, ...patch } : item,
+                ),
+              }))
+            }
+            onRemove={(key) =>
+              setDraft((current) => ({
+                ...current,
+                overlays: current.overlays.filter((item) => item.key !== key),
+              }))
+            }
+          />
         </main>
       </div>
     </div>
