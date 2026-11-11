@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   app,
   ipcMain,
@@ -73,6 +74,7 @@ export function registerPromoIpc(
       const controller = new AbortController();
       rendering = controller;
       const owner = getMainWindow();
+      let stderrTail = '';
       try {
         const media = await renderPromoOverlay(
           input,
@@ -82,12 +84,22 @@ export function registerPromoIpc(
             chromePath: state.executablePath,
             fontsDir: join(backendRoot(), 'backend', 'assets', 'fonts'),
             tempRoot: join(app.getPath('temp'), 'voicestudio-promo'),
-            spawn: (env) =>
-              utilityProcess.fork(
-                join(app.getAppPath(), 'out', 'main', 'promo-render-worker.js'),
+            spawn: (env) => {
+              // Beside the main bundle in dev, preview and the packaged asar alike.
+              const child = utilityProcess.fork(
+                fileURLToPath(new URL('./promo-render-worker.js', import.meta.url)),
                 [],
-                { env, serviceName: 'Promo template renderer', stdio: 'ignore' },
-              ) as unknown as RenderChild,
+                {
+                  env,
+                  serviceName: 'Promo template renderer',
+                  stdio: ['ignore', 'ignore', 'pipe'],
+                },
+              );
+              child.stderr?.on('data', (chunk: Buffer) => {
+                stderrTail = (stderrTail + chunk.toString()).slice(-4000);
+              });
+              return child as unknown as RenderChild;
+            },
           },
           {
             fps: typeof fps === 'number' && ALLOWED_FPS.has(fps) ? fps : 30,
@@ -98,6 +110,7 @@ export function registerPromoIpc(
         );
         return { ok: true, media };
       } catch (error) {
+        if (stderrTail) console.warn('[promo] render worker stderr:\n' + stderrTail);
         if (error instanceof PromoRenderError) {
           if (error.blocked.length) {
             console.warn('[promo] blocked network attempts', JSON.stringify(error.blocked));
