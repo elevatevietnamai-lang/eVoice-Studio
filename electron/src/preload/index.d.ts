@@ -339,9 +339,14 @@ export type PromoBrowserState =
   | { state: 'failed'; message: string; downloadMegabytes: number };
 
 export interface PromoOverlayInput {
-  template: 'glow_title';
+  /** Must match PROMO_TEMPLATES in main/promo-templates.ts (a test checks). */
+  template: 'glow_title' | 'handwriting' | 'search_bar' | 'contact_card' | 'logo_reveal';
   title: string;
   subtitle: string;
+  /** Contact card rows, at most 3. */
+  lines?: string[];
+  /** Promo media id of the logo, for the logo reveal. */
+  logoId?: string;
   color: string;
   glow: string;
   duration: number;

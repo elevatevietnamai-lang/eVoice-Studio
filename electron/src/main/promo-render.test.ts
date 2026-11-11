@@ -1,9 +1,11 @@
 // @vitest-environment node
-import { mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  fetchLogo,
+  MAX_LOGO_BYTES,
   PromoRenderError,
   renderPromoOverlay,
   workerEnvironment,
@@ -27,8 +29,10 @@ const input = parseTemplateInput({
 let root: string;
 beforeEach(() => {
   root = mkdtempSync(join(tmpdir(), 'promo-render-'));
-  mkdirSync(join(root, 'fonts'));
-  for (const { file } of TEMPLATE_FONTS) writeFileSync(join(root, 'fonts', file), 'font');
+  for (const { source } of Object.values(TEMPLATE_FONTS)) {
+    mkdirSync(join(root, 'assets', source, '..'), { recursive: true });
+    writeFileSync(join(root, 'assets', source), 'font');
+  }
 });
 afterEach(() => rmSync(root, { recursive: true, force: true }));
 
@@ -87,13 +91,14 @@ function deps(script: Script, statusBody: unknown = null) {
         },
       );
     }
+    if (url.includes('/audio/promo_media/')) return new Response(new Uint8Array([137, 80, 78, 71]));
     return Response.json(media);
   });
   const value: PromoRenderDeps = {
     baseUrl: 'http://127.0.0.1:3900',
     headers: { 'X-Test': '1' },
     chromePath: '/app/promo-browser/shell',
-    fontsDir: join(root, 'fonts'),
+    assetsDir: join(root, 'assets'),
     tempRoot: join(root, 'tmp'),
     spawn: (env) => {
       child.env = env;
@@ -168,6 +173,47 @@ describe('renderPromoOverlay', () => {
       message: 'render_failed: exit 3',
     });
     expect(readdirSync(join(root, 'tmp'))).toEqual([]);
+  });
+});
+
+describe('logos', () => {
+  it('copies the logo into the project for a logo reveal', async () => {
+    let project = '';
+    const { value, fetchImpl } = deps((request, reply) => {
+      project = request.projectDir;
+      expect(readFileSync(join(project, 'logo.png'))).toEqual(Buffer.from([137, 80, 78, 71]));
+      expect(readFileSync(join(project, 'index.html'), 'utf8')).toContain('src="logo.png"');
+      writeFileSync(request.outputPath, 'webm');
+      reply({ type: 'done', blocked: [] });
+    });
+    const reveal = parseTemplateInput({
+      template: 'logo_reveal',
+      title: '',
+      subtitle: '',
+      logoId: '0123456789abcdef.png',
+      color: '#ffffff',
+      glow: '#ffd400',
+      duration: 3,
+      width: 1080,
+      height: 1080,
+    });
+    await renderPromoOverlay(reveal, value, { fps: 30 });
+    expect(project).not.toBe('');
+    expect(fetchImpl.mock.calls[1][0]).toBe(
+      'http://127.0.0.1:3900/audio/promo_media/0123456789abcdef.png',
+    );
+  });
+
+  it('refuses a logo larger than the cap', async () => {
+    const big = vi.fn(
+      async () => new Response('x', { headers: { 'content-length': String(MAX_LOGO_BYTES + 1) } }),
+    );
+    await expect(
+      fetchLogo(
+        { baseUrl: 'http://127.0.0.1:1', headers: {}, fetchImpl: big as unknown as typeof fetch },
+        '0123456789abcdef.png',
+      ),
+    ).rejects.toMatchObject({ code: 'logo_too_large' });
   });
 });
 

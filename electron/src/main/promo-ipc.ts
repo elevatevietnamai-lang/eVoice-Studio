@@ -82,7 +82,7 @@ export function registerPromoIpc(
             baseUrl: supervisor.baseUrl,
             headers: supervisor.requestHeaders(),
             chromePath: state.executablePath,
-            fontsDir: join(backendRoot(), 'backend', 'assets', 'fonts'),
+            assetsDir: join(backendRoot(), 'backend', 'assets'),
             tempRoot: join(app.getPath('temp'), 'voicestudio-promo'),
             spawn: (env) => {
               // Beside the main bundle in dev, preview and the packaged asar alike.

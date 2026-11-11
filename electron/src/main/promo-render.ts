@@ -2,7 +2,11 @@ import { mkdirSync, mkdtempSync, openAsBlob, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import type { BlockedAttempt } from './promo-network-guard';
 import type { WorkerReply, WorkerRequest } from './promo-render-worker';
-import { writeTemplateProject, type PromoTemplateInput } from './promo-templates';
+import {
+  writeTemplateProject,
+  type PromoTemplateInput,
+  type TemplateLogo,
+} from './promo-templates';
 
 /**
  * Renders an animated template to a transparent WebM in a utility process,
@@ -23,7 +27,8 @@ export interface PromoRenderDeps {
   baseUrl: string;
   headers: Record<string, string>;
   chromePath: string;
-  fontsDir: string;
+  /** The backend's `assets` folder (bundled fonts). */
+  assetsDir: string;
   tempRoot: string;
   spawn: (env: Record<string, string>) => RenderChild;
   fetchImpl?: typeof fetch;
@@ -127,6 +132,29 @@ function runChild(
   });
 }
 
+/** Largest logo the templates accept; promo uploads allow far more. */
+export const MAX_LOGO_BYTES = 20 * 1024 * 1024;
+
+/**
+ * Reads a logo from the backend's promo media over loopback. The id was
+ * checked against LOGO_ID, so it can name only a stored image.
+ */
+export async function fetchLogo(
+  deps: Pick<PromoRenderDeps, 'baseUrl' | 'headers' | 'fetchImpl'>,
+  logoId: string,
+): Promise<TemplateLogo> {
+  const res = await (deps.fetchImpl ?? fetch)(
+    `${deps.baseUrl}/audio/promo_media/${encodeURIComponent(logoId)}`,
+    { headers: deps.headers },
+  );
+  if (!res.ok) throw new PromoRenderError('logo_missing', `status ${res.status}`);
+  const declared = Number(res.headers.get('content-length') ?? 0);
+  if (declared > MAX_LOGO_BYTES) throw new PromoRenderError('logo_too_large');
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  if (bytes.byteLength > MAX_LOGO_BYTES) throw new PromoRenderError('logo_too_large');
+  return { bytes, extension: logoId.split('.').pop()! };
+}
+
 async function upload(deps: PromoRenderDeps, path: string): Promise<PromoMediaResult> {
   const form = new FormData();
   form.append('file', await openAsBlob(path, { type: 'video/webm' }), 'overlay.webm');
@@ -151,7 +179,8 @@ export async function renderPromoOverlay(
     const projectDir = join(sandbox, 'project');
     const outputPath = join(sandbox, 'overlay.webm');
     mkdirSync(join(sandbox, 'home'), { recursive: true });
-    writeTemplateProject(projectDir, input, deps.fontsDir);
+    const logo = input.logoId ? await fetchLogo(deps, input.logoId) : undefined;
+    writeTemplateProject(projectDir, input, deps.assetsDir, logo);
     const child = deps.spawn(
       workerEnvironment(process.env, { ...tools, chromePath: deps.chromePath, sandbox }),
     );
