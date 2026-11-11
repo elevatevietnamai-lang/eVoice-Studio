@@ -115,6 +115,27 @@ class TestGraph:
             pv.validate_plan(_plan(shots=shots))
 
 
+class TestOldFfmpeg:
+    HELP = """Filter xfade
+  transition        <int>        ..FV....... set cross fade transition (from -1 to 31) (default fade)
+     custom          -1           ..FV....... custom transition
+     fade            0            ..FV....... fade transition
+     slideleft       5            ..FV....... slide left transition
+     fadewhite       13           ..FV....... fadewhite transition
+"""
+
+    def test_parses_listed_transitions(self):
+        assert pv.xfade_transitions(self.HELP) >= {"fade", "slideleft", "fadewhite"}
+        assert pv.xfade_transitions("Unknown filter 'xfade'.") == set()
+
+    def test_missing_transition_falls_back(self):
+        available = pv.xfade_transitions(self.HELP)
+        assert pv.usable_transition("slide", available) == "slide"
+        assert pv.usable_transition("zoom", available) == "fade"
+        assert pv.usable_transition("cut", set()) == "cut"
+        assert pv.usable_transition("fade", set()) == "cut"
+
+
 class TestBeats:
     @staticmethod
     def _clicks(bpm: float, offset: float, seconds: float = 20.0, rate: int = 22050):
@@ -237,3 +258,23 @@ class TestRoute:
         assert int(kinds["video"]["nb_read_frames"]) == pytest.approx(round(6.9 * 30), abs=1)
         assert "audio" in kinds
         assert float(probe["format"]["duration"]) == pytest.approx(6.9, abs=0.1)
+
+        # Narration only, a start past the clip's end, a silent "music" file.
+        voice = upload(make("v.wav", "-f", "lavfi", "-i", "sine=f=500:d=1"))["id"]
+        res = client.post("/promo/render", json={
+            "shots": [{"media_id": ids[0]["id"], "duration": 2.0, "start": 99}],
+            "narration_id": voice,
+        })
+        assert res.status_code == 200, res.text[:1200]
+        narrated = outputs / res.json()["output"]
+        probe = json.loads(subprocess.run(
+            [ffprobe, "-v", "error", "-show_entries", "stream=codec_type:format=duration",
+             "-of", "json", str(narrated)], check=True, capture_output=True, text=True,
+        ).stdout)
+        assert {s["codec_type"] for s in probe["streams"]} == {"video", "audio"}
+        assert float(probe["format"]["duration"]) == pytest.approx(2.0, abs=0.1)
+        res = client.post("/promo/render", json={
+            "shots": [{"media_id": ids[0]["id"], "duration": 2.0}],
+            "music_id": ids[1]["id"], "narration_id": voice,
+        })
+        assert res.status_code == 422

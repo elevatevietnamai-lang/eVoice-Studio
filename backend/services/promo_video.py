@@ -113,6 +113,28 @@ class PromoPlan:
     audio: AudioPlan = field(default_factory=AudioPlan)
 
 
+def xfade_transitions(help_text: str) -> set[str]:
+    """Transition names an ffmpeg build's ``-h filter=xfade`` lists.
+
+    Older builds (the Ubuntu 22.04 apt ffmpeg is 4.4) lack some of the
+    newer transitions, and builds before 4.3 lack ``xfade`` entirely
+    (empty set).
+    """
+    import re
+
+    if "xfade" not in help_text:
+        return set()
+    return set(re.findall(r"^\s+([a-z]+)\s+-?\d+\s", help_text, flags=re.MULTILINE))
+
+
+def usable_transition(name: str, available: set[str]) -> str:
+    """``name`` if this ffmpeg can draw it, else ``fade``, else a cut."""
+    xfade = TRANSITIONS.get(name)
+    if xfade is None or xfade in available:
+        return name
+    return "fade" if "fade" in available else "cut"
+
+
 def clamp_transition(seconds: float, before: float, after: float) -> float:
     """A transition never longer than ``TRANSITION_SHARE`` of either shot."""
     limit = min(MAX_TRANSITION_SECONDS, TRANSITION_SHARE * min(before, after))

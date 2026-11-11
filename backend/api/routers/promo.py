@@ -195,6 +195,29 @@ class PromoRenderRequest(BaseModel):
     snap_to_beats: bool = False
 
 
+_XFADE_CACHE: dict[str, set[str]] = {}
+
+
+async def _available_transitions() -> set[str]:
+    """xfade transitions the installed ffmpeg supports (probed once)."""
+    from services.ffmpeg_utils import find_ffmpeg, run_ffmpeg
+
+    ffmpeg = find_ffmpeg()
+    if ffmpeg not in _XFADE_CACHE:
+        rc, stdout, stderr = await run_ffmpeg(
+            [ffmpeg, "-hide_banner", "-h", "filter=xfade"], timeout=30.0,
+        )
+        text = (stdout or b"").decode(errors="replace") + (stderr or b"").decode(errors="replace")
+        _XFADE_CACHE[ffmpeg] = promo_video.xfade_transitions(text) if rc == 0 else set()
+    return _XFADE_CACHE[ffmpeg]
+
+
+async def _require_audio(path: str) -> str:
+    if not (await _probe(path)).get("has_audio"):
+        raise HTTPException(status_code=422, detail="This file has no sound to use as music or narration")
+    return path
+
+
 async def _beat_grid(music_path: str, start: float) -> tuple[float, float]:
     """``(period, phase)`` of the music from ``start``; ``(0, 0)`` if unknown."""
     import numpy as np
@@ -222,21 +245,34 @@ async def promo_render(req: PromoRenderRequest) -> dict:
 
     if req.look not in promo_video.LOOKS:
         raise HTTPException(status_code=422, detail=f"Unknown look: {req.look}")
+    available = await _available_transitions()
     shots = []
     for shot in req.shots:
         if shot.transition not in promo_video.TRANSITIONS:
             raise HTTPException(status_code=422, detail=f"Unknown transition: {shot.transition}")
         path = resolve_media(shot.media_id, kinds=("video", "image"))
+        kind = "image" if _kind_for(os.path.splitext(path)[1]) == "image" else "video"
+        start = shot.start
+        if kind == "video" and start > 0:
+            # A start at or past the end yields no frames at all; keep at
+            # least the shortest shot of footage.
+            length = (await _probe(path)).get("duration")
+            if length:
+                start = max(0.0, min(start, length - promo_video.MIN_SHOT_SECONDS))
         shots.append(promo_video.Shot(
-            path=path,
-            kind="image" if _kind_for(os.path.splitext(path)[1]) == "image" else "video",
-            duration=shot.duration, start=shot.start, fit=shot.fit, motion=shot.motion,
-            transition=shot.transition, transition_seconds=shot.transition_seconds,
+            path=path, kind=kind,
+            duration=shot.duration, start=start, fit=shot.fit, motion=shot.motion,
+            transition=promo_video.usable_transition(shot.transition, available),
+            transition_seconds=shot.transition_seconds,
         ))
     logo = resolve_media(req.logo_id, kinds=("image",)) if req.logo_id else None
-    music = resolve_media(req.music_id, kinds=("audio", "video")) if req.music_id else None
+    music = (
+        await _require_audio(resolve_media(req.music_id, kinds=("audio", "video")))
+        if req.music_id else None
+    )
     narration = (
-        resolve_media(req.narration_id, kinds=("audio", "video")) if req.narration_id else None
+        await _require_audio(resolve_media(req.narration_id, kinds=("audio", "video")))
+        if req.narration_id else None
     )
 
     music_start = req.music_start
