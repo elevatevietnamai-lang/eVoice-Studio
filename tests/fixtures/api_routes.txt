@@ -310,6 +310,8 @@ POST /profiles/{profile_id}/consent
 POST /profiles/{profile_id}/lock
 POST /profiles/{profile_id}/unlock
 POST /projects
+POST /promo/media
+POST /promo/render
 POST /pronunciation
 POST /pronunciation/import
 POST /pronunciation/test
