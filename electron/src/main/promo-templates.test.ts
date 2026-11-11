@@ -14,6 +14,7 @@ import {
   graphemes,
   parseTemplateInput,
   previewHtml,
+  templateFit,
   templateHtml,
   writeTemplateProject,
   type PromoTemplateId,
@@ -196,6 +197,53 @@ describe('templateHtml', () => {
     expect(page).toContain('0909 123 456');
     expect(page).toContain('27 Nguyễn Huệ, Q.1');
     expect(page.match(/class="row"/g)).toHaveLength(3);
+  });
+});
+
+describe('layout', () => {
+  const longest =
+    'Ưu đãi khai trương đặc biệt giảm giá toàn bộ sản phẩm nội thất nhiệt đới cao cấp tháng'.slice(
+      0,
+      80,
+    );
+  const shapes = [
+    [1080, 1920],
+    [1080, 1080],
+    [1920, 1080],
+  ] as const;
+  it.each(PROMO_TEMPLATES.flatMap((template) => shapes.map(([w, h]) => [template, w, h] as const)))(
+    '%s fits the frame at %ix%i with every field at its longest',
+    (template, width, height) => {
+      const input = parseTemplateInput({
+        ...fixture(template),
+        title: longest,
+        subtitle: longest,
+        lines: TEMPLATE_SPECS[template].lines ? [longest, longest, longest] : undefined,
+        width,
+        height,
+      });
+      const fit = templateFit(input);
+      expect(fit.height).toBeLessThanOrEqual(fit.available + 1);
+    },
+  );
+
+  it('keeps short text at its full size', () => {
+    const page = templateHtml(parseTemplateInput({ ...valid, title: 'SALE', subtitle: '' }), {
+      fontsCss: '',
+    });
+    expect(page).toContain(`font:900 ${Math.round(1080 * 0.13)}px/1.05`);
+  });
+
+  it('sets a long title smaller than a short one', () => {
+    const size = (title: string) =>
+      Number(
+        /#title\{font:900 (\d+)px/.exec(
+          templateHtml(parseTemplateInput({ ...valid, title, width: 1080, height: 1080 }), {
+            fontsCss: '',
+          }),
+        )![1],
+      );
+    expect(size(longest)).toBeLessThan(size('SALE'));
   });
 });
 

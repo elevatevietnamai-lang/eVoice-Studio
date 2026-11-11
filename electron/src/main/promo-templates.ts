@@ -184,6 +184,67 @@ interface Frame {
   exit: number;
 }
 
+/** Average glyph advance in em per text style; enough to estimate wrapping. */
+const GLYPH_EM = { heavy: 0.64, body: 0.58, script: 0.52, caps: 0.62, wideCaps: 0.78 } as const;
+/** Share of a box a line really fills before it wraps. */
+const LINE_FILL = 0.88;
+
+export interface TextBlock {
+  text: string;
+  /** Size at which short text is shown. */
+  preferred: number;
+  /** Lines the text may take before it is set smaller. */
+  maxLines: number;
+  glyph: number;
+  lineHeight: number;
+  /** Width the text wraps in. */
+  box: number;
+}
+
+const count = (text: string) => graphemes(text).length;
+
+function linesAt(block: TextBlock, size: number): number {
+  if (!block.text) return 0;
+  return Math.max(1, Math.ceil((count(block.text) * block.glyph * size) / (block.box * LINE_FILL)));
+}
+
+/**
+ * Sizes for a column of text: each block at its preferred size, smaller when
+ * it would need more than `maxLines` lines, then all scaled down together
+ * (with `extra`, the fixed spacing and images that scale with them) until the
+ * column fits `available` height. Returns the sizes and the scale applied.
+ */
+export function fitColumn(
+  blocks: TextBlock[],
+  extra: number,
+  available: number,
+): { sizes: number[]; scale: number; height: number } {
+  const sizes = blocks.map((block) =>
+    block.text
+      ? Math.min(
+          block.preferred,
+          (block.box * LINE_FILL * block.maxLines) / (count(block.text) * block.glyph),
+        )
+      : block.preferred,
+  );
+  const textHeight = blocks.reduce(
+    (sum, block, index) => sum + linesAt(block, sizes[index]) * sizes[index] * block.lineHeight,
+    0,
+  );
+  const scale = Math.min(1, available / Math.max(1, textHeight + extra));
+  // Scaling down never adds lines, so the scaled column fits too.
+  return {
+    sizes: sizes.map((size) => size * scale),
+    scale,
+    height: (textHeight + extra) * scale,
+  };
+}
+
+/** Height the column may use: the frame less a margin above and below. */
+const usable = (input: PromoTemplateInput) => input.height * 0.86;
+/** Width text wraps in inside the centred column (6 % padding each side). */
+const columnBox = (input: PromoTemplateInput) => input.width * 0.88;
+
 /**
  * One full-length clip holding a centred column; templates fill it. Each
  * template's own CSS goes in `css`, its markup in `body`.
@@ -213,8 +274,32 @@ ${body}
 }
 
 function glowTitle({ input, base }: Frame) {
-  const size = base * 0.13;
-  const sub = base * 0.055;
+  const box = columnBox(input);
+  const fit = fitColumn(
+    [
+      {
+        text: input.title,
+        preferred: base * 0.13,
+        maxLines: 3,
+        glyph: GLYPH_EM.heavy,
+        lineHeight: 1.05,
+        box,
+      },
+      {
+        text: input.subtitle,
+        preferred: base * 0.055,
+        maxLines: 3,
+        glyph: GLYPH_EM.body,
+        lineHeight: 1.2,
+        box,
+      },
+    ],
+    input.subtitle ? base * 0.03 : 0,
+    usable(input),
+  );
+  const size = fit.sizes[0];
+  // The second line never outgrows the title, however long the title is.
+  const sub = Math.min(fit.sizes[1], size * 0.55);
   const css = `
 #title{font:900 ${px(size)}/1.05 ${family('inter')};letter-spacing:0.02em;color:${input.color};
   animation:rise 0.9s cubic-bezier(.2,.8,.2,1) both,pulse 1.6s 0.9s ease-in-out infinite alternate}
@@ -228,12 +313,37 @@ function glowTitle({ input, base }: Frame) {
   const body =
     `<div id="title">${escapeHtml(input.title)}</div>` +
     (input.subtitle ? `\n<div id="sub">${escapeHtml(input.subtitle)}</div>` : '');
-  return { css, body };
+  return { css, body, height: fit.height };
 }
 
 function handwriting({ input, base, exit }: Frame) {
-  const size = base * 0.15;
-  const sub = base * 0.05;
+  const box = columnBox(input) * 0.92;
+  const fit = fitColumn(
+    [
+      {
+        text: input.title,
+        preferred: base * 0.15,
+        maxLines: 3,
+        glyph: GLYPH_EM.script,
+        lineHeight: 1.25,
+        box,
+      },
+      {
+        text: input.subtitle,
+        preferred: base * 0.05,
+        maxLines: 3,
+        glyph: GLYPH_EM.body,
+        lineHeight: 1.25,
+        box,
+      },
+    ],
+    // The underline under the title, and the gap before the second line.
+    base * 0.15 * 0.22 + (input.subtitle ? base * 0.03 : 0),
+    usable(input),
+  );
+  const size = fit.sizes[0];
+  // The second line never outgrows the title, however long the title is.
+  const sub = Math.min(fit.sizes[1], size * 0.5);
   const write = Math.min(2.2, Math.max(0.6, exit - 0.6));
   const css = `
 #write{position:relative;display:inline-block;padding:0 ${px(size * 0.15)}}
@@ -253,11 +363,36 @@ function handwriting({ input, base, exit }: Frame) {
     `<div id="write"><div id="title">${escapeHtml(input.title)}</div>` +
     '<svg id="line" viewBox="0 0 1000 60" preserveAspectRatio="none"><path pathLength="1000" d="M20 40 C 260 10, 520 55, 980 22"/></svg></div>' +
     (input.subtitle ? `\n<div id="sub">${escapeHtml(input.subtitle)}</div>` : '');
-  return { css, body };
+  return { css, body, height: fit.height };
 }
 
 function searchBar({ input, base, exit }: Frame) {
-  const size = base * 0.055;
+  // The query wraps inside the bar, less the icon and padding.
+  const barBox = input.width * 0.78 - base * 0.055 * 3.5;
+  const fit = fitColumn(
+    [
+      {
+        text: input.title,
+        preferred: base * 0.055,
+        maxLines: 3,
+        glyph: GLYPH_EM.body,
+        lineHeight: 1.3,
+        box: barBox,
+      },
+      {
+        text: input.subtitle,
+        preferred: base * 0.047,
+        maxLines: 2,
+        glyph: GLYPH_EM.body,
+        lineHeight: 1.3,
+        box: columnBox(input),
+      },
+    ],
+    base * 0.055 * 1.4 + (input.subtitle ? base * 0.03 : 0),
+    usable(input),
+  );
+  const size = fit.sizes[0];
+  const sub = Math.min(fit.sizes[1], size * 0.9);
   const chars = graphemes(input.title);
   const typingStart = 0.7;
   // Typing always ends before the fade-out, however long the text.
@@ -274,28 +409,50 @@ function searchBar({ input, base, exit }: Frame) {
   animation:pop 0.5s cubic-bezier(.2,1.4,.4,1) both}
 #icon{flex:none;width:${px(size * 1.1)};height:${px(size * 1.1)}}
 #icon circle,#icon line{fill:none;stroke:${input.glow};stroke-width:3;stroke-linecap:round}
-#query{flex:1;min-width:0;text-align:left;white-space:pre;overflow:hidden;
+#query{flex:1;min-width:0;text-align:left;white-space:pre-wrap;
   font:500 ${px(size)}/1.3 ${family('inter')};color:${input.color}}
-.k{opacity:0;animation:key 0.01s steps(1) forwards}
+.k{font-size:0;animation:key 0.01s steps(1) forwards}
 #caret{display:inline-block;width:${px(size * 0.08)};height:${px(size * 1.1)};margin-left:${px(size * 0.05)};
   vertical-align:middle;background:${input.glow};animation:blink 1s steps(1) infinite}
-#sub{font:500 ${px(size * 0.85)}/1.3 ${family('inter')};color:#ffffff;
+#sub{font:500 ${px(sub)}/1.3 ${family('inter')};color:#ffffff;
   text-shadow:0 ${px(size * 0.06)} ${px(size * 0.3)} rgba(0,0,0,.6);
   animation:fade 0.6s ${s(typingStart + chars.length * step + 0.2)} ease-out both}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
-@keyframes key{to{opacity:1}}
+@keyframes key{to{font-size:${px(size)}}}
 @keyframes blink{50%{opacity:0}}
 @keyframes fade{from{opacity:0;transform:translateY(${px(size * 0.5)})}to{opacity:1;transform:none}}`;
   const body =
     '<div id="bar"><svg id="icon" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/></svg>' +
     `<div id="query">${typed}<span id="caret"></span></div></div>` +
     (input.subtitle ? `\n<div id="sub">${escapeHtml(input.subtitle)}</div>` : '');
-  return { css, body };
+  return { css, body, height: fit.height };
 }
 
 function contactCard({ input, base }: Frame) {
-  const size = base * 0.065;
-  const line = base * 0.042;
+  // Text wraps inside the card, less its padding and accent bar.
+  const box = input.width * 0.76 - base * 0.065 * 2;
+  const text = (
+    value: string,
+    preferred: number,
+    maxLines: number,
+    glyph: number,
+    lineHeight: number,
+  ) => ({ text: value, preferred, maxLines, glyph, lineHeight, box }) satisfies TextBlock;
+  const fit = fitColumn(
+    [
+      text(input.title, base * 0.065, 3, GLYPH_EM.caps, 1.1),
+      text(input.subtitle, base * 0.042, 2, GLYPH_EM.body, 1.3),
+      ...input.lines.map((row) => text(row, base * 0.042, 2, GLYPH_EM.body, 1.3)),
+    ],
+    // Card padding, and the space above the second line and each row.
+    base * 0.065 * 1.6 +
+      base * 0.042 * 0.45 * input.lines.length +
+      (input.subtitle ? base * 0.013 : 0),
+    usable(input),
+  );
+  const size = fit.sizes[0];
+  // Rows share one size, the smallest any of them needed.
+  const line = Math.min(base * 0.042 * fit.scale, size * 0.75, ...fit.sizes.slice(1));
   const rows = input.lines
     .map(
       (row, index) =>
@@ -320,14 +477,40 @@ function contactCard({ input, base }: Frame) {
     `<div id="card"><div id="title">${escapeHtml(input.title)}</div>` +
     (input.subtitle ? `<div id="sub">${escapeHtml(input.subtitle)}</div>` : '') +
     `${rows}</div>`;
-  return { css, body };
+  return { css, body, height: fit.height };
 }
 
 function logoReveal({ input, base, exit }: Frame, logoSrc: string) {
-  const size = base * 0.09;
-  const sub = base * 0.042;
+  const box = columnBox(input);
+  const logoHeight = input.height * 0.28;
+  const fit = fitColumn(
+    [
+      // Letters spread to 0.18 em at the end of the animation.
+      {
+        text: input.title,
+        preferred: base * 0.09,
+        maxLines: 3,
+        glyph: GLYPH_EM.wideCaps,
+        lineHeight: 1.1,
+        box,
+      },
+      {
+        text: input.subtitle,
+        preferred: base * 0.042,
+        maxLines: 2,
+        glyph: GLYPH_EM.body,
+        lineHeight: 1.3,
+        box,
+      },
+    ],
+    logoHeight + base * 0.03 * ((input.title ? 1 : 0) + (input.subtitle ? 1 : 0)),
+    usable(input),
+  );
+  const size = fit.sizes[0];
+  // The second line never outgrows the title, however long the title is.
+  const sub = Math.min(fit.sizes[1], size * 0.6);
   const css = `
-#logo{display:block;max-width:${px(input.width * 0.5)};max-height:${px(input.height * 0.28)};object-fit:contain;
+#logo{display:block;max-width:${px(input.width * 0.5)};max-height:${px(logoHeight * fit.scale)};object-fit:contain;
   filter:drop-shadow(0 0 ${px(size * 0.35)} ${input.glow});animation:logo 1.1s cubic-bezier(.2,.9,.2,1) both}
 #title{font:600 ${px(size)}/1.1 ${family('oswald')};text-transform:uppercase;color:${input.color};
   animation:spread ${s(Math.min(1.6, Math.max(0.6, exit - 0.6)))} 0.5s cubic-bezier(.2,.8,.2,1) both}
@@ -341,7 +524,7 @@ function logoReveal({ input, base, exit }: Frame, logoSrc: string) {
     `<img id="logo" src="${escapeHtml(logoSrc)}" alt="">` +
     (input.title ? `\n<div id="title">${escapeHtml(input.title)}</div>` : '') +
     (input.subtitle ? `\n<div id="sub">${escapeHtml(input.subtitle)}</div>` : '');
-  return { css, body };
+  return { css, body, height: fit.height };
 }
 
 export interface TemplateAssets {
@@ -351,7 +534,7 @@ export interface TemplateAssets {
   logoSrc?: string;
 }
 
-export function templateHtml(input: PromoTemplateInput, assets: TemplateAssets): string {
+function build(input: PromoTemplateInput, logoSrc: string) {
   const frame: Frame = {
     input,
     base: Math.min(input.width, input.height),
@@ -368,9 +551,19 @@ export function templateHtml(input: PromoTemplateInput, assets: TemplateAssets):
       case 'contact_card':
         return contactCard(frame);
       case 'logo_reveal':
-        return logoReveal(frame, assets.logoSrc ?? '');
+        return logoReveal(frame, logoSrc);
     }
   })();
+  return { frame, part };
+}
+
+/** Estimated height of the laid-out column and the height it may use. */
+export function templateFit(input: PromoTemplateInput): { height: number; available: number } {
+  return { height: build(input, '').part.height, available: usable(input) };
+}
+
+export function templateHtml(input: PromoTemplateInput, assets: TemplateAssets): string {
+  const { frame, part } = build(input, assets.logoSrc ?? '');
   return page(frame, part.css, part.body, assets.fontsCss);
 }
 
@@ -431,6 +624,18 @@ const MIME: Record<string, string> = {
   webp: 'image/webp',
 };
 
+/** Fonts as data URIs, read once: the preview rebuilds on every edit. */
+const fontUris = new Map<string, string>();
+function fontDataUri(assetsDir: string, id: FontId): string {
+  const path = join(assetsDir, TEMPLATE_FONTS[id].source);
+  let uri = fontUris.get(path);
+  if (!uri) {
+    uri = `data:font/ttf;base64,${readFileSync(path).toString('base64')}`;
+    fontUris.set(path, uri);
+  }
+  return uri;
+}
+
 /**
  * One self-contained page for the live preview: fonts and logo as data URIs,
  * so it works inside a sandboxed `srcdoc` frame with no origin.
@@ -440,11 +645,7 @@ export function previewHtml(
   assetsDir: string,
   logo?: TemplateLogo,
 ): string {
-  const faces = fontFaces(
-    input.template,
-    (id) =>
-      `data:font/ttf;base64,${readFileSync(join(assetsDir, TEMPLATE_FONTS[id].source)).toString('base64')}`,
-  );
+  const faces = fontFaces(input.template, (id) => fontDataUri(assetsDir, id));
   const logoSrc = logo
     ? `data:${MIME[logo.extension] ?? 'image/png'};base64,${Buffer.from(logo.bytes).toString('base64')}`
     : undefined;

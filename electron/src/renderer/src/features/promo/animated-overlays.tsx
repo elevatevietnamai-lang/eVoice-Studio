@@ -22,20 +22,24 @@ import {
 
 type TemplateId = PromoOverlayInput['template'];
 
-/** Mirrors TEMPLATE_SPECS in main/promo-templates.ts, plus starting colours. */
-export const TEMPLATES: readonly {
-  id: TemplateId;
-  lines: boolean;
-  logo: boolean;
-  color: string;
-  accent: string;
-}[] = [
-  { id: 'glow_title', lines: false, logo: false, color: '#ffffff', accent: '#ffd400' },
-  { id: 'handwriting', lines: false, logo: false, color: '#ffffff', accent: '#ffd400' },
-  { id: 'search_bar', lines: false, logo: false, color: '#202124', accent: '#1a73e8' },
-  { id: 'contact_card', lines: true, logo: false, color: '#ffffff', accent: '#ffb000' },
-  { id: 'logo_reveal', lines: false, logo: true, color: '#ffffff', accent: '#ffd400' },
-];
+/**
+ * Mirrors TEMPLATE_SPECS in main/promo-templates.ts, plus starting colours.
+ * A Record, so a template added to the preload type must be listed here too.
+ */
+const TEMPLATE_INFO: Record<
+  TemplateId,
+  { lines: boolean; logo: boolean; color: string; accent: string }
+> = {
+  glow_title: { lines: false, logo: false, color: '#ffffff', accent: '#ffd400' },
+  handwriting: { lines: false, logo: false, color: '#ffffff', accent: '#ffd400' },
+  search_bar: { lines: false, logo: false, color: '#202124', accent: '#1a73e8' },
+  contact_card: { lines: true, logo: false, color: '#ffffff', accent: '#ffb000' },
+  logo_reveal: { lines: false, logo: true, color: '#ffffff', accent: '#ffd400' },
+};
+export const TEMPLATES = (Object.keys(TEMPLATE_INFO) as TemplateId[]).map((id) => ({
+  id,
+  ...TEMPLATE_INFO[id],
+}));
 const LINE_COUNT = 3;
 
 /** Error codes from main/promo-ipc.ts that get their own sentence. */

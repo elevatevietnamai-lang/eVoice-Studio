@@ -46,7 +46,9 @@ layer is transparent):
 | Contact card | A name, a second line and up to three rows (phone, address, website) | Oswald, Inter |
 | Logo reveal | The logo from the **Logo** section, with an optional brand name and line | Oswald, Inter |
 
-All fonts cover Vietnamese. The logo reveal and the logo ending both show the
+All fonts cover Vietnamese. Long text is set smaller, so every field at its
+80-character limit still fits a 9:16, 1:1 or 16:9 frame, and a second line
+never outgrows its title. The logo reveal and the logo ending both show the
 logo, so place the reveal before the ending. Titles are rendered on your
 computer; the browser UI and Docker say they need the desktop app.
 
