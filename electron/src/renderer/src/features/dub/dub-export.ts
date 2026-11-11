@@ -1,4 +1,7 @@
 export type DubExportFormat = 'mp4' | 'wav' | 'mp3' | 'srt' | 'vtt' | 'ass' | 'stems' | 'clips';
+/** Karaoke look: the backend's `karaoke_style` (backend/services/karaoke_ass.py). */
+export type KaraokeStyle = 'sweep' | 'highlight' | 'pop';
+export const KARAOKE_STYLES: readonly KaraokeStyle[] = ['sweep', 'highlight', 'pop'];
 export interface DubExportOptions {
   jobId: string;
   format: DubExportFormat;
@@ -8,10 +11,12 @@ export interface DubExportOptions {
   burn: boolean;
   dual: boolean;
   karaoke: boolean;
+  karaokeStyle?: KaraokeStyle;
   bitrate: string;
 }
 export function dubExportRequest(options: DubExportOptions) {
   const { jobId, format, track, tracks, preserveBg, burn, dual, karaoke, bitrate } = options;
+  const karaokeStyle = options.karaokeStyle ?? 'sweep';
   if (!jobId || !track || (format === 'mp4' && (!tracks.length || !tracks.includes(track))))
     throw new Error('No export track selected');
   const query = new URLSearchParams({ lang: track });
@@ -26,6 +31,8 @@ export function dubExportRequest(options: DubExportOptions) {
     query.set('burn_subs', String(burn));
     query.set('dual', String(burn && dual));
     query.set('karaoke', String(burn && karaoke && !dual));
+    if (burn && karaoke && !dual && karaokeStyle !== 'sweep')
+      query.set('karaoke_style', karaokeStyle);
   } else if (format === 'wav' || format === 'mp3') {
     endpoint = format === 'wav' ? 'download-audio' : 'download-mp3';
     query.set('preserve_bg', String(preserveBg));
@@ -37,6 +44,7 @@ export function dubExportRequest(options: DubExportOptions) {
   } else {
     endpoint = format;
     if (format !== 'ass') query.set('dual', String(dual));
+    else if (karaokeStyle !== 'sweep') query.set('karaoke_style', karaokeStyle);
   }
   return {
     path: `/dub/${endpoint}/${encodeURIComponent(jobId)}?${query}`,
@@ -52,6 +60,7 @@ export interface DubExportPreferences {
   burn?: boolean;
   dual?: boolean;
   karaoke?: boolean;
+  karaokeStyle?: KaraokeStyle;
   bitrate?: string;
 }
 export function restoreExportPreferences(raw: unknown): DubExportPreferences {
@@ -65,6 +74,8 @@ export function restoreExportPreferences(raw: unknown): DubExportPreferences {
     result.excluded = value.excluded.filter((code): code is string => typeof code === 'string');
   for (const key of ['preserveBg', 'burn', 'dual', 'karaoke'] as const)
     if (typeof value[key] === 'boolean') result[key] = value[key];
+  if (KARAOKE_STYLES.includes(value.karaokeStyle as KaraokeStyle))
+    result.karaokeStyle = value.karaokeStyle as KaraokeStyle;
   if (['128', '192', '256', '320'].includes(String(value.bitrate)))
     result.bitrate = String(value.bitrate);
   return result;

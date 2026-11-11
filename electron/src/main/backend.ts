@@ -562,7 +562,9 @@ function childEnv(
   // while the binary sat inside the app bundle. findUv() knows where to look;
   // hand the answer over instead of keeping it. An explicit override from the
   // environment still wins.
-  if (!env.OMNIVOICE_BUNDLED_UV) {
+  if (!env.OMNIVOICE_BUNDLED_UV?.trim()) {
+    // A blank inherited value must not reach the backend as if it named a uv.
+    delete env.OMNIVOICE_BUNDLED_UV;
     const uv = findUv();
     if (uv) env.OMNIVOICE_BUNDLED_UV = uv;
   }

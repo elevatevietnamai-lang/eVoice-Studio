@@ -61,8 +61,12 @@ VoiceStudio runs **100% locally** by default. The primary attack surface is:
 Every pull request and push to `main` runs [`.github/workflows/security.yml`](workflows/security.yml):
 
 - **gitleaks** — secret scanning (fails CI on a leaked credential)
-- **CodeQL** — Python + JavaScript/TypeScript static analysis → Security tab
-- **bandit** — Python static analysis → Security tab
+- **CodeQL** — Python + JavaScript/TypeScript static analysis → SARIF artifact on the run
+- **bandit** — Python static analysis → SARIF artifact on the run
+
+Code scanning is not available on this private repository, so the SARIF files are kept as
+workflow artifacts for 30 days. Once code scanning is enabled, set the repository variable
+`CODE_SCANNING_UPLOAD` to `true` to also send results to the Security tab.
 - **pip-audit** / **bun audit** — dependency advisory checks (reporting)
 
 Pull requests are additionally reviewed by the **CodeRabbit** and **Greptile**

@@ -173,9 +173,21 @@ def accept_model_licence(body: AcceptRequest) -> dict:
     except ValueError as exc:
         # The terms changed since the user saw them: show the new terms first.
         raise HTTPException(status_code=409, detail={"code": "terms_changed"}) from exc
+    finally:
+        _invalidate_catalogue()
 
 
 @router.post("/models/licenses/revoke", dependencies=[Depends(require_admin)])
 def revoke_model_licence(body: RevokeRequest) -> dict:
     from services import model_acceptance
-    return model_acceptance.revoke(body.repo_id)
+    try:
+        return model_acceptance.revoke(body.repo_id)
+    finally:
+        _invalidate_catalogue()
+
+
+def _invalidate_catalogue() -> None:
+    """The ``/models`` catalogue caches acceptance state; a stale copy kept the
+    card on "Accept licence to use" for seconds after the user accepted."""
+    from api.routers.setup.models import invalidate_cache
+    invalidate_cache()

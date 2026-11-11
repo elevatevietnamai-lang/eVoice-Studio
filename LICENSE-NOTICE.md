@@ -82,6 +82,10 @@ model currently has the complete evidence needed for this reviewed workflow.
 Third-party dependencies retain their own licenses. See `bun.lock`, `uv.lock`,
 and `native/desktop-bridge/Cargo.lock` for the resolved set.
 
+The font used for burned-in subtitles, `backend/assets/fonts/InterVariable.ttf`
+(Inter, by The Inter Project Authors), is licensed under the SIL Open Font
+License 1.1; its text ships beside it as `backend/assets/fonts/OFL.txt`.
+
 The locked PyAV 15.1.0 wheels bundle FFmpeg and x264/x265 libraries. PyAV's source
 licence alone does not describe those binaries' terms. The
 [wheel audit](docs/licensing/pyav-15.1.0-audit.md) records their hashes, build flags,

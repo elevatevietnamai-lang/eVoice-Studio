@@ -398,6 +398,61 @@ describe('versioned model notices', () => {
   });
 });
 
+describe('engine companion licences', () => {
+  // OmniVoice gates generation on its audio tokenizer as well; the card the
+  // first-run wizard shows must review and accept both in one go.
+  const companionFingerprint = `v2:${'f'.repeat(64)}`;
+  const mainFingerprint = `v2:${'c'.repeat(64)}`;
+  const state = (repo_id: string, fp: string) => ({
+    repo_id,
+    license: info.license,
+    category: 'noncommercial',
+    required: true,
+    accepted: false,
+    state: 'not_accepted' as const,
+    fingerprint: fp,
+  });
+
+  it('offers the companion tokenizer beside the model and accepts both together', async () => {
+    mock.details.mockImplementation(async (path: string) => {
+      const repo = decodeURI(path.replace('/models/licenses/details/', ''));
+      const fp = repo === 'test/model' ? mainFingerprint : companionFingerprint;
+      return { repo_id: repo, info, acceptance: state(repo, fp), history: [] };
+    });
+    mock.api.mockResolvedValue({ accepted: true });
+    await act(async () =>
+      root.render(
+        <QueryClientProvider client={queryClient}>
+          <ModelLicense
+            repoId="test/model"
+            label="Test model"
+            info={info}
+            acceptance={state('test/model', mainFingerprint)}
+            companions={[state('test/tokenizer', companionFingerprint)]}
+          />
+        </QueryClientProvider>,
+      ),
+    );
+    await open();
+    await vi.waitFor(() => expect(text()).toContain('2. test/tokenizer'));
+    const boxes = Array.from(
+      document.querySelectorAll('[role="dialog"] input[type="checkbox"]'),
+    ) as HTMLInputElement[];
+    expect(boxes).toHaveLength(2);
+    const acceptAll = button(en.modelLicense.acceptAll.replace('{{count}}', '2'));
+    expect(acceptAll.disabled).toBe(true);
+    for (const box of boxes) await click(box);
+    await click(acceptAll);
+    const accepted = mock.api.mock.calls
+      .filter(([path]) => path === '/models/licenses/accept')
+      .map(([, init]) => JSON.parse((init as { body: string }).body));
+    expect(accepted).toEqual([
+      { repo_id: 'test/model', fingerprint: mainFingerprint, accepted: true },
+      { repo_id: 'test/tokenizer', fingerprint: companionFingerprint, accepted: true },
+    ]);
+  });
+});
+
 describe('conservative model notice contract', () => {
   it('never derives commercial permission from an unknown status or engine licence', () => {
     for (const status of [

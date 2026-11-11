@@ -13,7 +13,10 @@ access or rights. Every model whose licence category is not **Commercial use
 allowed** (MIT, Apache-2.0, BSD, ISC, CC0, CC-BY) must be accepted before it can
 be used, including models that are already downloaded. That covers
 non-commercial, conditional and unidentified licences, so the default OmniVoice
-model needs one acceptance. Accepting confirms that you have the rights the
+model needs two acceptances: the model and its audio tokenizer
+(`eustlb/higgs-audio-v2-tokenizer`). Both are listed on the OmniVoice card's
+licence dialog, in first-run setup and in Settings, and one **Accept 2
+licences** records each. Accepting confirms that you have the rights the
 model's licence requires for your use, for example non-commercial use only or a
 separate licence from the rights holder for commercial use.
 

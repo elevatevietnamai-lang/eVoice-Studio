@@ -278,6 +278,7 @@ POST /gallery/voices/{voice_id}/to-profile
 POST /generate
 POST /glossary/{project_id}
 POST /glossary/{project_id}/auto-extract
+POST /longform/audiogram
 POST /longform/render
 POST /marketplace/export/{profile_id}
 POST /marketplace/import
