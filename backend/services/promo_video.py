@@ -67,6 +67,7 @@ MAX_TRANSITION_SECONDS = 2.0
 #: A transition may use at most this share of either neighbouring shot.
 TRANSITION_SHARE = 0.45
 MAX_OUTRO_SECONDS = 10.0
+MAX_OVERLAYS = 12
 #: Images are zoomed by at most this factor over the shot.
 KEN_BURNS_ZOOM = 0.12
 
@@ -104,6 +105,17 @@ class AudioPlan:
 
 
 @dataclass(frozen=True)
+class Overlay:
+    """A layer drawn over the video from ``start`` for ``duration`` seconds:
+    a template rendered with transparency (WebM VP9 alpha, MOV ProRes 4444)
+    or a still image. Fitted inside the frame and centred."""
+    path: str
+    start: float
+    duration: float
+    kind: Literal["video", "image"] = "video"
+
+
+@dataclass(frozen=True)
 class PromoPlan:
     shots: Sequence[Shot]
     shape: str = "vertical"
@@ -111,6 +123,7 @@ class PromoPlan:
     look: str = "none"
     brand: Brand = field(default_factory=Brand)
     audio: AudioPlan = field(default_factory=AudioPlan)
+    overlays: Sequence[Overlay] = ()
 
 
 def xfade_transitions(help_text: str) -> set[str]:
@@ -220,6 +233,13 @@ def validate_plan(plan: PromoPlan) -> None:
             raise ValueError(f"Unknown motion: {shot.motion}")
     if program_length(plan) > MAX_PROGRAM_SECONDS:
         raise ValueError(f"The video may last at most {MAX_PROGRAM_SECONDS:g} s")
+    if len(plan.overlays) > MAX_OVERLAYS:
+        raise ValueError(f"A promo video can hold at most {MAX_OVERLAYS} overlays")
+    for overlay in plan.overlays:
+        if overlay.start < 0 or overlay.duration <= 0:
+            raise ValueError("An overlay needs a start of 0 s or later and a length")
+        if overlay.start >= program_length(plan):
+            raise ValueError("An overlay starts after the end of the video")
 
 
 def _color(value: str) -> str:
@@ -301,7 +321,8 @@ def _watermark_xy(corner: str, margin: int) -> tuple[str, str]:
 
 
 def build_filter_graph(plan: PromoPlan, *, logo_input: Optional[int], music_input: Optional[int],
-                       narration_input: Optional[int]) -> tuple[str, bool]:
+                       narration_input: Optional[int],
+                       overlay_inputs: Sequence[int] = ()) -> tuple[str, bool]:
     """The ``-filter_complex`` graph → ``[vout]`` (and ``[aout]`` when audio).
 
     Inputs ``0..n-1`` are the shots in order; the logo, music and narration
@@ -347,6 +368,21 @@ def build_filter_graph(plan: PromoPlan, *, logo_input: Optional[int], music_inpu
             )
             length += duration - overlap
         current = joined
+
+    # Overlays sit above the shots and below the watermark. Each one's
+    # timestamps are shifted to its start, and it shows only in its window.
+    for n, (overlay, index) in enumerate(zip(plan.overlays, overlay_inputs)):
+        end = min(program_length(plan), overlay.start + overlay.duration)
+        parts.append(
+            f"[{index}:v]format=rgba,"
+            f"scale={width}:{height}:force_original_aspect_ratio=decrease,"
+            f"setpts=PTS-STARTPTS+{overlay.start:.3f}/TB[ov{n}]"
+        )
+        parts.append(
+            f"{current}[ov{n}]overlay=(W-w)/2:(H-h)/2:eof_action=pass:"
+            f"enable='between(t,{overlay.start:.3f},{end:.3f})'[ovd{n}]"
+        )
+        current = f"[ovd{n}]"
 
     if watermark:
         margin = round(min(width, height) * 0.04)
@@ -415,9 +451,22 @@ def build_promo_cmd(ffmpeg: str, plan: PromoPlan, out_path: str) -> list[str]:
     if plan.audio.narration_path:
         cmd += ["-i", str(plan.audio.narration_path)]
         narration_input, next_input = next_input, next_input + 1
+    overlay_inputs = []
+    for overlay in plan.overlays:
+        if overlay.kind == "image":
+            cmd += ["-loop", "1", "-framerate", str(plan.fps),
+                    "-t", f"{overlay.duration:.3f}", "-i", str(overlay.path)]
+        else:
+            if str(overlay.path).lower().endswith(".webm"):
+                # ffmpeg's native VP9 decoder drops the alpha plane; libvpx keeps it.
+                cmd += ["-c:v", "libvpx-vp9"]
+            cmd += ["-t", f"{overlay.duration:.3f}", "-i", str(overlay.path)]
+        overlay_inputs.append(next_input)
+        next_input += 1
 
     graph, has_audio = build_filter_graph(
         plan, logo_input=logo_input, music_input=music_input, narration_input=narration_input,
+        overlay_inputs=overlay_inputs,
     )
     total = program_length(plan)
     cmd += ["-filter_complex", graph, "-map", "[vout]"]

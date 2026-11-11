@@ -278,3 +278,50 @@ class TestRoute:
             "music_id": ids[1]["id"], "narration_id": voice,
         })
         assert res.status_code == 422
+
+
+def test_alpha_overlay_shows_only_where_opaque_and_only_in_its_window(client_and_outputs, tmp_path_factory):
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        pytest.skip("ffmpeg is not installed")
+    client, outputs = client_and_outputs
+    src = tmp_path_factory.mktemp("overlay_src")
+    base = src / "blue.mp4"
+    subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi", "-i",
+                    "color=c=blue:s=1080x1080:r=30:d=4", str(base)], check=True)
+    # Left half opaque red, right half fully transparent, 1 s long.
+    layer = src / "layer.webm"
+    subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi", "-i",
+                    "color=c=red:s=1080x1080:r=30:d=1,format=yuva420p,"
+                    "geq=lum='lum(X,Y)':cb='cb(X,Y)':cr='cr(X,Y)':a='if(lt(X,540),255,0)'",
+                    "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p", "-auto-alt-ref", "0",
+                    str(layer)], check=True)
+
+    def upload(path):
+        with open(path, "rb") as fh:
+            res = client.post("/promo/media", files={"file": (path.name, fh)})
+        assert res.status_code == 200, res.text[:400]
+        return res.json()["id"]
+
+    res = client.post("/promo/render", json={
+        "shape": "square",
+        "shots": [{"media_id": upload(base), "duration": 3.0}],
+        "overlays": [{"media_id": upload(layer), "start": 1.0}],
+    })
+    assert res.status_code == 200, res.text[:1200]
+    video = outputs / res.json()["output"]
+
+    def pixel(t, x):
+        raw = subprocess.run(
+            [ffmpeg, "-hide_banner", "-loglevel", "error", "-ss", str(t), "-i", str(video),
+             "-frames:v", "1", "-vf", f"crop=1:1:{x}:540,format=rgb24", "-f", "rawvideo", "-"],
+            check=True, capture_output=True,
+        ).stdout
+        return tuple(raw[:3])
+
+    red, blue = pixel(1.5, 200), pixel(1.5, 900)
+    assert red[0] > 180 and red[2] < 80, red          # opaque half covers the clip
+    assert blue[2] > 180 and blue[0] < 80, blue       # transparent half shows it
+    before = pixel(0.5, 200)
+    after = pixel(2.5, 200)
+    assert before[2] > 180 and after[2] > 180, (before, after)  # only inside 1–2 s

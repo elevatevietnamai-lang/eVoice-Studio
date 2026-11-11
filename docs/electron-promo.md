@@ -42,6 +42,11 @@ Limits: 40 shots, 0.5–60 s per shot, 5 minutes in total, 10 s of logo ending,
   size, given the output frame rate, pixel format and timebase, then joined
   with `xfade` (or `concat` for a cut). The video length is the sum of the shot
   lengths minus each transition, plus the logo ending.
+- `overlays` in the render request lay transparent layers over the video
+  from a start time: a WebM (VP9 with alpha, decoded with libvpx so the alpha
+  survives), a MOV (ProRes 4444) or a still image, fitted inside the frame and
+  centred, above the shots and below the watermark. This is where animated
+  templates rendered on the desktop will be composited.
 - Beat detection is plain numpy (spectral-flux onsets and their
   autocorrelation); no audio-analysis package is installed.
 - The finished file is `outputs/promo_<id>.mp4`, served at `/audio/<name>`.

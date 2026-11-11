@@ -3395,6 +3395,37 @@
     "title": "ProjectSaveRequest",
     "type": "object"
    },
+   "PromoOverlayRequest": {
+    "properties": {
+     "duration": {
+      "anyOf": [
+       {
+        "exclusiveMinimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration"
+     },
+     "media_id": {
+      "title": "Media Id",
+      "type": "string"
+     },
+     "start": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Start",
+      "type": "number"
+     }
+    },
+    "required": [
+     "media_id"
+    ],
+    "title": "PromoOverlayRequest",
+    "type": "object"
+   },
    "PromoRenderRequest": {
     "properties": {
      "fps": {
@@ -3469,6 +3500,14 @@
       "minimum": 0.0,
       "title": "Outro Seconds",
       "type": "number"
+     },
+     "overlays": {
+      "items": {
+       "$ref": "#/components/schemas/PromoOverlayRequest"
+      },
+      "maxItems": 12,
+      "title": "Overlays",
+      "type": "array"
      },
      "shape": {
       "default": "vertical",

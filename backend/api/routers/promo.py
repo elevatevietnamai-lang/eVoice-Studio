@@ -177,6 +177,14 @@ class PromoShotRequest(BaseModel):
     transition_seconds: float = Field(0.5, ge=0, le=promo_video.MAX_TRANSITION_SECONDS)
 
 
+class PromoOverlayRequest(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+    media_id: str
+    start: float = Field(0.0, ge=0)
+    #: Seconds to show; a video overlay defaults to its own length.
+    duration: Optional[float] = Field(None, gt=0)
+
+
 class PromoRenderRequest(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     shots: list[PromoShotRequest] = Field(..., min_length=1, max_length=promo_video.MAX_SHOTS)
@@ -193,6 +201,7 @@ class PromoRenderRequest(BaseModel):
     music_volume: float = Field(0.8, ge=0, le=2)
     narration_id: Optional[str] = None
     snap_to_beats: bool = False
+    overlays: list[PromoOverlayRequest] = Field(default_factory=list, max_length=promo_video.MAX_OVERLAYS)
 
 
 _XFADE_CACHE: dict[str, set[str]] = {}
@@ -275,6 +284,17 @@ async def promo_render(req: PromoRenderRequest) -> dict:
         if req.narration_id else None
     )
 
+    overlays = []
+    for item in req.overlays:
+        path = resolve_media(item.media_id, kinds=("video", "image"))
+        kind = "image" if _kind_for(os.path.splitext(path)[1]) == "image" else "video"
+        duration = item.duration
+        if duration is None:
+            duration = (await _probe(path)).get("duration") if kind == "video" else None
+        if not duration:
+            raise HTTPException(status_code=422, detail="Give the overlay a length")
+        overlays.append(promo_video.Overlay(path=path, start=item.start, duration=duration, kind=kind))
+
     music_start = req.music_start
     period = 0.0
     if music and req.snap_to_beats and len(shots) > 1:
@@ -298,6 +318,7 @@ async def promo_render(req: PromoRenderRequest) -> dict:
             music_path=music, music_start=music_start, music_volume=req.music_volume,
             narration_path=narration,
         ),
+        overlays=overlays,
     )
     try:
         promo_video.validate_plan(plan)
