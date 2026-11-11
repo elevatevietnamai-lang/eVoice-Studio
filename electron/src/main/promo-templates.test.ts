@@ -1,4 +1,5 @@
 // @vitest-environment node
+import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -199,6 +200,20 @@ describe('templateHtml', () => {
 });
 
 describe('bundled fonts', () => {
+  it('match the hashes recorded in LICENSE-NOTICE.md', () => {
+    const notice = readFileSync(join(ASSETS, '..', '..', 'LICENSE-NOTICE.md'), 'utf8');
+    for (const font of Object.values(TEMPLATE_FONTS)) {
+      if (!font.source.startsWith('promo-fonts/')) continue;
+      const name = font.source.split('/').pop()!;
+      const hash = createHash('sha256')
+        .update(readFileSync(join(ASSETS, font.source)))
+        .digest('hex');
+      const row = notice.split(/\r?\n/).find((line) => line.includes(`\`${name}\``));
+      expect(row, name).toBeDefined();
+      expect(row).toContain(hash);
+    }
+  });
+
   it.each(Object.entries(TEMPLATE_FONTS))('%s ships with its licence', (_id, font) => {
     const dir = join(ASSETS, font.source, '..');
     expect(readdirSync(dir)).toContain(font.source.split('/').pop());

@@ -86,6 +86,16 @@ The font used for burned-in subtitles, `backend/assets/fonts/InterVariable.ttf`
 (Inter, by The Inter Project Authors), is licensed under the SIL Open Font
 License 1.1; its text ships beside it as `backend/assets/fonts/OFL.txt`.
 
+The animated promo templates also use two unmodified fonts from `google/fonts`
+at commit `c30b221beb0c1da59d563feb91ec8656a1fa972a`, each licensed under the
+SIL Open Font License 1.1 with its licence text beside it in
+`backend/assets/promo-fonts/`:
+
+| File | Font | Copyright | SHA-256 |
+|---|---|---|---|
+| `Oswald-Variable.ttf` (`ofl/oswald/Oswald[wght].ttf`) | Oswald | The Oswald Project Authors | `5b38c246e255a12f5712d640d56bcced0472466fc68983d2d0410ec0457c2817` |
+| `DancingScript-Variable.ttf` (`ofl/dancingscript/DancingScript[wght].ttf`) | Dancing Script | The Dancing Script Project Authors, Reserved Font Name "Dancing Script" | `21808625578fe8d8cd10cb684be546dca077b27cd03a53a2f1ec11dc743c924c` |
+
 Animated promo titles are rendered with HyperFrames (`@hyperframes/producer`
 and its `@hyperframes/*` packages, by HeyGen, Apache License 2.0), which pulls
 in `sharp` (Apache License 2.0) and its prebuilt libvips binaries

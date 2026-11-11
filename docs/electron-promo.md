@@ -33,10 +33,22 @@ Limits: 40 shots, 0.5–60 s per shot, 5 minutes in total, 10 s of logo ending,
 
 ## Animated titles (desktop app only)
 
-The **Animated titles** section adds a glowing title and an optional second
-line over the video, from a chosen second, in the video's format. Titles are
-rendered on your computer; the browser UI and Docker say they need the desktop
-app.
+The **Animated titles** section lays an animated layer over the video, from a
+chosen second, in the video's format. Pick a template, fill in its fields and
+colours, and watch the live preview (it loops, on a checkerboard where the
+layer is transparent):
+
+| Template | Shows | Fonts |
+|---|---|---|
+| Glowing title | A title rising in with a pulsing glow, and a second line | Inter |
+| Handwriting | A title written left to right with an underline drawn under it | Dancing Script, Inter |
+| Search bar | A search box that types the text letter by letter | Inter |
+| Contact card | A name, a second line and up to three rows (phone, address, website) | Oswald, Inter |
+| Logo reveal | The logo from the **Logo** section, with an optional brand name and line | Oswald, Inter |
+
+All fonts cover Vietnamese. The logo reveal and the logo ending both show the
+logo, so place the reveal before the ending. Titles are rendered on your
+computer; the browser UI and Docker say they need the desktop app.
 
 The first time, **Turn on animated titles** shows the download size and asks
 before fetching Chrome Headless Shell (about 271 MB, one pinned build from
@@ -52,10 +64,18 @@ since the render uses the backend's ffmpeg.
 
 ### How animated titles are rendered
 
-- Electron main writes a small project (`index.html`, `fonts.css` and the
-  bundled Inter font) from a template in `electron/src/main/promo-templates.ts`.
-  Text is HTML-escaped and colours must be `#rrggbb`. Templates use CSS
-  animation only (GSAP's licence does not fit AGPL).
+- Electron main writes a small project (`index.html`, `fonts.css`, the fonts
+  that template names and, for the logo reveal, the logo) from
+  `electron/src/main/promo-templates.ts`. Fonts come from `backend/assets`
+  (Oswald and Dancing Script live in `backend/assets/promo-fonts`, apart from
+  the subtitle-burning fonts). Text is NFC-normalized and HTML-escaped, the
+  search bar types by grapheme so Vietnamese marks stay on their letters, and
+  colours must be `#rrggbb`. The logo is fetched from promo media over loopback
+  by its id (20 MB at most); the renderer never passes a path or URL. Templates
+  use CSS animation only (GSAP's licence does not fit AGPL).
+- The preview is the same page with fonts and logo inlined, shown in a
+  sandboxed `srcdoc` frame without scripts in the app window, so it needs no
+  download.
 - A utility process (`promo-render-worker.ts`) renders it with HyperFrames
   (`@hyperframes/producer`, pinned) to VP9 WebM with alpha, using the app's
   Chrome Headless Shell and the backend's ffmpeg. Its `HOME` and caches point
