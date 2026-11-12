@@ -11,6 +11,7 @@ renders. CPU only (ffmpeg), so no GPU lock.
 from __future__ import annotations
 
 import asyncio
+import math
 import contextlib
 import json
 import logging
@@ -248,6 +249,22 @@ async def _beat_grid(music_path: str, start: float) -> tuple[float, float]:
         return 0.0, 0.0
     samples = np.frombuffer(stdout, dtype=np.float32)
     return await asyncio.to_thread(promo_video.detect_beats, samples, _BEAT_SAMPLE_RATE)
+
+
+@router.get("/promo/beats/{media_id}")
+async def promo_beats(media_id: str, start: float = 0.0) -> dict:
+    """Beat grid of a music file, as ``/promo/render`` uses it.
+
+    ``period`` is the beat length in seconds (0 when no steady beat is
+    found). With **Cut on the beat** the render starts the music on a beat,
+    so in the finished video beats fall at multiples of ``period`` from 0;
+    the timeline draws them there and snaps edits to them.
+    """
+    if not math.isfinite(start) or start < 0:
+        raise HTTPException(status_code=422, detail="start must be zero or more")
+    path = await _require_audio(resolve_media(media_id, kinds=("audio", "video")))
+    period, phase = await _beat_grid(path, start)
+    return {"period": round(period, 4), "phase": round(phase, 4)}
 
 
 @router.post("/promo/render")

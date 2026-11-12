@@ -18039,6 +18039,58 @@
     "summary": "Update Project"
    }
   },
+  "/promo/beats/{media_id}": {
+   "get": {
+    "description": "Beat grid of a music file, as ``/promo/render`` uses it.\n\n``period`` is the beat length in seconds (0 when no steady beat is\nfound). With **Cut on the beat** the render starts the music on a beat,\nso in the finished video beats fall at multiples of ``period`` from 0;\nthe timeline draws them there and snaps edits to them.",
+    "operationId": "promo_beats_promo_beats__media_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "media_id",
+      "required": true,
+      "schema": {
+       "title": "Media Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "start",
+      "required": false,
+      "schema": {
+       "default": 0.0,
+       "title": "Start",
+       "type": "number"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Beats Promo Beats  Media Id  Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Promo Beats"
+   }
+  },
   "/promo/media": {
    "post": {
     "description": "Store one clip, still, logo or music file for the promo builder.\n\nReturns ``{id, kind, name, duration, width, height, has_audio, url}``;\n``url`` serves the stored file for previews.",

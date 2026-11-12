@@ -183,6 +183,16 @@ class TestBeats:
     def test_silence_has_no_grid(self):
         assert pv.detect_beats(np.zeros(22050 * 5, dtype=np.float32), 22050) == (0.0, 0.0)
 
+    def test_snapping_is_stable_on_cuts_already_on_the_grid(self):
+        """The timeline draws the grid and snaps edits to it; a second snap at
+        render time must leave such cuts where they are."""
+        plan = _plan()
+        once = pv.snap_to_beats(plan, 0.5, 0.0)
+        snapped = pv.PromoPlan(shots=[
+            pv.Shot(**{**s.__dict__, "duration": d}) for s, d in zip(plan.shots, once)
+        ])
+        assert pv.snap_to_beats(snapped, 0.5, 0.0) == once
+
     def test_snapped_cuts_land_on_beats(self):
         plan = _plan()
         durations = pv.snap_to_beats(plan, 0.5, 0.0)
@@ -284,6 +294,25 @@ class TestRoute:
         body["overlays"] = [{"media_id": badge, "shot": 3, "duration": 1.0}]
         body["snap_to_beats"] = False
         assert client.post("/promo/render", json=body).status_code == 422
+
+    def test_beats_endpoint_finds_a_steady_tempo(self, client_and_outputs, tmp_path_factory):
+        ffmpeg = shutil.which("ffmpeg")
+        if not ffmpeg or not shutil.which("ffprobe"):
+            pytest.skip("ffmpeg/ffprobe are not installed")
+        client, _ = client_and_outputs
+        path = tmp_path_factory.mktemp("beats") / "click.wav"
+        # A click every 0.5 s (120 BPM).
+        subprocess.run([
+            ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi", "-i",
+            "aevalsrc='if(lt(mod(t,0.5),0.03),sin(2*PI*1000*t),0)':s=22050:d=12", str(path),
+        ], check=True)
+        with open(path, "rb") as fh:
+            media = client.post("/promo/media", files={"file": ("click.wav", fh)}).json()
+        res = client.get(f"/promo/beats/{media['id']}")
+        assert res.status_code == 200, res.text
+        assert res.json()["period"] == pytest.approx(0.5, abs=0.02)
+        assert client.get(f"/promo/beats/{media['id']}", params={"start": -1}).status_code == 422
+        assert client.get("/promo/beats/0123456789abcdef.wav").status_code == 404
 
     def test_renders_a_real_promo(self, client_and_outputs, tmp_path_factory):
         ffmpeg = shutil.which("ffmpeg")
