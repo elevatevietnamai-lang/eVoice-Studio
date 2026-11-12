@@ -9,15 +9,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { ALL_FORMATS, BlobSource, CanvasSink, Input } from 'mediabunny';
 import { apiPath } from '@/lib/api/client';
-import { buildScene } from './vendor/services/renderer/scene-builder';
-import { CanvasRenderer } from './vendor/services/renderer/canvas-renderer';
-import { SceneExporter } from './vendor/services/renderer/scene-exporter';
-import { initializeGpuRenderer, isGpuAvailable } from './vendor/services/renderer/gpu-renderer';
-import { buildDefaultParamValues, getBuiltInElementParams } from './vendor/params/registry';
-import { ZERO_MEDIA_TIME, mediaTimeFromSeconds, type MediaTime } from './vendor/wasm';
-import type { SceneTracks, TextElement, VideoElement } from './vendor/timeline/types';
-import type { MediaAsset } from './vendor/media/types';
-import type { RootNode } from './vendor/services/renderer/nodes/root-node';
+import { buildScene } from '@/lib/opencut/vendor/services/renderer/scene-builder';
+import { CanvasRenderer } from '@/lib/opencut/vendor/services/renderer/canvas-renderer';
+import { SceneExporter } from '@/lib/opencut/vendor/services/renderer/scene-exporter';
+import { initializeGpuRenderer, isGpuAvailable } from '@/lib/opencut/vendor/services/renderer/gpu-renderer';
+import { buildDefaultParamValues, getBuiltInElementParams } from '@/lib/opencut/vendor/params/registry';
+import { ZERO_MEDIA_TIME, mediaTimeFromSeconds, type MediaTime } from '@/lib/opencut/vendor/wasm';
+import type { SceneTracks, TextElement, VideoElement } from '@/lib/opencut/vendor/timeline/types';
+import type { MediaAsset } from '@/lib/opencut/vendor/media/types';
+import type { RootNode } from '@/lib/opencut/vendor/services/renderer/nodes/root-node';
 
 const WIDTH = 1080;
 const HEIGHT = 1920;
