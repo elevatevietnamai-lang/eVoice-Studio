@@ -4212,6 +4212,27 @@
     "scene_added_shot": "Ditambahkan sebagai shot terakhir.",
     "scene_rendering": "Merender… {{percent}}%",
     "scene_needs_browser": "Untuk menjadikan adegan sebagai video, aktifkan dulu judul animasi di bagian bawah.",
-    "anim_error_render_timeout": "Render terlalu lama sehingga dihentikan. Mungkin ada skrip adegan yang macet."
+    "anim_error_render_timeout": "Render terlalu lama sehingga dihentikan. Mungkin ada skrip adegan yang macet.",
+    "scene_builtin_intro": "Pembuka",
+    "scene_builtin_outro": "Penutup",
+    "scene_builtin_slide": "Slide teks",
+    "scene_label_background": "Latar",
+    "scene_label_accent": "Aksen",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Merek",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Ajakan bertindak",
+    "scene_label_contact": "Kontak",
+    "scene_label_heading": "Judul",
+    "scene_label_point": "Poin {{number}}",
+    "scene_default_brand": "Merek Anda",
+    "scene_default_tagline": "Dibuat untuk Anda",
+    "scene_default_cta": "Pesan hari ini",
+    "scene_default_contact": "tokoanda.id",
+    "scene_default_heading": "Mengapa kami",
+    "scene_default_point_1": "Pengiriman cepat",
+    "scene_default_point_2": "Harga wajar",
+    "scene_default_point_3": "Layanan ramah",
+    "scene_warn_shape": "Dirender untuk format lain; render ulang adegan untuk format ini."
   }
 }

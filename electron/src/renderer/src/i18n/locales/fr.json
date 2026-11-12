@@ -4214,6 +4214,27 @@
     "scene_added_shot": "Ajoutée comme dernier plan.",
     "scene_rendering": "Rendu en cours… {{percent}} %",
     "scene_needs_browser": "Pour transformer les scènes en vidéo, activez d'abord les titres animés dans la section ci-dessous.",
-    "anim_error_render_timeout": "Le rendu a pris trop de temps et a été arrêté. Un script de la scène est peut-être bloqué."
+    "anim_error_render_timeout": "Le rendu a pris trop de temps et a été arrêté. Un script de la scène est peut-être bloqué.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Conclusion",
+    "scene_builtin_slide": "Diapositive de texte",
+    "scene_label_background": "Arrière-plan",
+    "scene_label_accent": "Accent",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Marque",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Appel à l'action",
+    "scene_label_contact": "Contact",
+    "scene_label_heading": "Titre",
+    "scene_label_point": "Point {{number}}",
+    "scene_default_brand": "Votre marque",
+    "scene_default_tagline": "Pensé pour vous",
+    "scene_default_cta": "Commandez dès aujourd'hui",
+    "scene_default_contact": "votreboutique.fr",
+    "scene_default_heading": "Pourquoi nous",
+    "scene_default_point_1": "Livraison rapide",
+    "scene_default_point_2": "Prix justes",
+    "scene_default_point_3": "Support à l'écoute",
+    "scene_warn_shape": "Rendue pour un autre format ; refaites le rendu de la scène pour celui-ci."
   }
 }

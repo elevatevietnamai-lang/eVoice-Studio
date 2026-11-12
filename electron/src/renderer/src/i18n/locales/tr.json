@@ -4212,6 +4212,27 @@
     "scene_added_shot": "Son çekim olarak eklendi.",
     "scene_rendering": "İşleniyor… %{{percent}}",
     "scene_needs_browser": "Sahneleri videoya dönüştürmek için önce aşağıdaki bölümde animasyonlu başlıkları açın.",
-    "anim_error_render_timeout": "İşleme çok uzun sürdü ve durduruldu. Sahnedeki bir betik takılmış olabilir."
+    "anim_error_render_timeout": "İşleme çok uzun sürdü ve durduruldu. Sahnedeki bir betik takılmış olabilir.",
+    "scene_builtin_intro": "Giriş",
+    "scene_builtin_outro": "Kapanış",
+    "scene_builtin_slide": "Metin slaytı",
+    "scene_label_background": "Arka plan",
+    "scene_label_accent": "Vurgu",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Marka",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Eylem çağrısı",
+    "scene_label_contact": "İletişim",
+    "scene_label_heading": "Başlık",
+    "scene_label_point": "Madde {{number}}",
+    "scene_default_brand": "Markanız",
+    "scene_default_tagline": "Sizin için",
+    "scene_default_cta": "Bugün sipariş verin",
+    "scene_default_contact": "magazaniz.com",
+    "scene_default_heading": "Neden biz",
+    "scene_default_point_1": "Hızlı teslimat",
+    "scene_default_point_2": "Uygun fiyatlar",
+    "scene_default_point_3": "Güler yüzlü destek",
+    "scene_warn_shape": "Başka bir biçim için işlendi; sahneyi bu biçim için yeniden işleyin."
   }
 }

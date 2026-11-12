@@ -4212,6 +4212,27 @@
     "scene_added_shot": "Đã thêm làm shot cuối.",
     "scene_rendering": "Đang dựng… {{percent}}%",
     "scene_needs_browser": "Để dựng cảnh thành video, hãy bật tiêu đề hoạt hình ở phần bên dưới trước.",
-    "anim_error_render_timeout": "Dựng quá lâu nên đã dừng. Có thể một script trong cảnh bị treo."
+    "anim_error_render_timeout": "Dựng quá lâu nên đã dừng. Có thể một script trong cảnh bị treo.",
+    "scene_builtin_intro": "Mở đầu",
+    "scene_builtin_outro": "Kết thúc",
+    "scene_builtin_slide": "Slide chữ",
+    "scene_label_background": "Nền",
+    "scene_label_accent": "Màu nhấn",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Thương hiệu",
+    "scene_label_tagline": "Khẩu hiệu",
+    "scene_label_cta": "Lời kêu gọi",
+    "scene_label_contact": "Liên hệ",
+    "scene_label_heading": "Tiêu đề",
+    "scene_label_point": "Ý {{number}}",
+    "scene_default_brand": "Thương hiệu của bạn",
+    "scene_default_tagline": "Dành riêng cho bạn",
+    "scene_default_cta": "Đặt hàng ngay hôm nay",
+    "scene_default_contact": "cuahangcuaban.vn",
+    "scene_default_heading": "Vì sao chọn chúng tôi",
+    "scene_default_point_1": "Giao hàng nhanh",
+    "scene_default_point_2": "Giá hợp lý",
+    "scene_default_point_3": "Hỗ trợ tận tình",
+    "scene_warn_shape": "Cảnh này được dựng cho khổ khác; hãy dựng lại cho khổ hiện tại."
   }
 }

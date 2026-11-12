@@ -4212,6 +4212,27 @@
     "scene_added_shot": "Toegevoegd als laatste shot.",
     "scene_rendering": "Renderen… {{percent}}%",
     "scene_needs_browser": "Zet eerst geanimeerde titels aan in het gedeelte hieronder om scènes als video te renderen.",
-    "anim_error_render_timeout": "Renderen duurde te lang en is gestopt. Misschien hangt een script in de scène."
+    "anim_error_render_timeout": "Renderen duurde te lang en is gestopt. Misschien hangt een script in de scène.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Outro",
+    "scene_builtin_slide": "Tekstdia",
+    "scene_label_background": "Achtergrond",
+    "scene_label_accent": "Accent",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Merk",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Oproep tot actie",
+    "scene_label_contact": "Contact",
+    "scene_label_heading": "Kop",
+    "scene_label_point": "Punt {{number}}",
+    "scene_default_brand": "Jouw merk",
+    "scene_default_tagline": "Gemaakt voor jou",
+    "scene_default_cta": "Bestel vandaag",
+    "scene_default_contact": "jouwwinkel.nl",
+    "scene_default_heading": "Waarom wij",
+    "scene_default_point_1": "Snelle levering",
+    "scene_default_point_2": "Eerlijke prijzen",
+    "scene_default_point_3": "Vriendelijke service",
+    "scene_warn_shape": "Gerenderd voor een ander formaat; render de scène opnieuw voor dit formaat."
   }
 }

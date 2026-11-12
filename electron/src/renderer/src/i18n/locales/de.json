@@ -4212,6 +4212,27 @@
     "scene_added_shot": "Als letzte Einstellung hinzugefügt.",
     "scene_rendering": "Wird gerendert … {{percent}} %",
     "scene_needs_browser": "Um Szenen als Video zu rendern, schalte zuerst unten animierte Titel ein.",
-    "anim_error_render_timeout": "Das Rendern dauerte zu lange und wurde abgebrochen. Vielleicht hängt ein Skript der Szene."
+    "anim_error_render_timeout": "Das Rendern dauerte zu lange und wurde abgebrochen. Vielleicht hängt ein Skript der Szene.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Outro",
+    "scene_builtin_slide": "Textfolie",
+    "scene_label_background": "Hintergrund",
+    "scene_label_accent": "Akzent",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Marke",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Handlungsaufruf",
+    "scene_label_contact": "Kontakt",
+    "scene_label_heading": "Überschrift",
+    "scene_label_point": "Punkt {{number}}",
+    "scene_default_brand": "Deine Marke",
+    "scene_default_tagline": "Für dich gemacht",
+    "scene_default_cta": "Jetzt bestellen",
+    "scene_default_contact": "deinshop.de",
+    "scene_default_heading": "Warum wir",
+    "scene_default_point_1": "Schnelle Lieferung",
+    "scene_default_point_2": "Faire Preise",
+    "scene_default_point_3": "Freundlicher Support",
+    "scene_warn_shape": "Für ein anderes Format gerendert; rendere die Szene für dieses neu."
   }
 }

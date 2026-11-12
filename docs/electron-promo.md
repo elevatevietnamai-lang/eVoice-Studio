@@ -144,6 +144,20 @@ JavaScript and use it as an animated layer (**Add as overlay**, a transparent
 WebM like the animated titles) or as a full-frame shot of its own
 (**Add as shot**, an MP4 as long as the scene; where the scene paints nothing
 the shot is black). Scenes run in the video's format, 1 to 60 seconds long.
+A scene shot rendered for another format is flagged in the shot list, since
+filling the frame would crop most of it; render it again for the new format.
+
+Built-in scenes open in your language and are edited as a copy:
+
+| Scene | Shows | Use |
+|---|---|---|
+| Simple title | A title and a second line rising in | Overlay |
+| Intro | The logo, a brand name, an accent bar and a tagline on a painted background, fading out at the end | Shot |
+| Outro | The logo, a call to action and a contact pill, with a bar that fills over the scene | Shot |
+| Text slide | A heading and up to three points appearing one by one (empty points are hidden) | Shot |
+
+The full-frame scenes take the brand logo from the **Logo** section when it is
+a PNG, JPEG or WebP image.
 
 - **Parameters** are the scene's fields: text, a colour or an image (the brand
   logo or one of the scene's files). Write a parameter's key in double braces

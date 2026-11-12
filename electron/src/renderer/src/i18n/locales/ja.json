@@ -4212,6 +4212,27 @@
     "scene_added_shot": "最後のショットとして追加しました。",
     "scene_rendering": "レンダリング中… {{percent}}%",
     "scene_needs_browser": "シーンを動画にするには、まず下のセクションでアニメーションタイトルを有効にしてください。",
-    "anim_error_render_timeout": "レンダリングに時間がかかりすぎたため停止しました。シーンのスクリプトが止まっている可能性があります。"
+    "anim_error_render_timeout": "レンダリングに時間がかかりすぎたため停止しました。シーンのスクリプトが止まっている可能性があります。",
+    "scene_builtin_intro": "イントロ",
+    "scene_builtin_outro": "エンディング",
+    "scene_builtin_slide": "テキストスライド",
+    "scene_label_background": "背景",
+    "scene_label_accent": "アクセント",
+    "scene_label_logo": "ロゴ",
+    "scene_label_brand": "ブランド",
+    "scene_label_tagline": "キャッチコピー",
+    "scene_label_cta": "行動の呼びかけ",
+    "scene_label_contact": "連絡先",
+    "scene_label_heading": "見出し",
+    "scene_label_point": "項目 {{number}}",
+    "scene_default_brand": "あなたのブランド",
+    "scene_default_tagline": "あなたのために",
+    "scene_default_cta": "今すぐ注文",
+    "scene_default_contact": "yourshop.jp",
+    "scene_default_heading": "選ばれる理由",
+    "scene_default_point_1": "スピード配送",
+    "scene_default_point_2": "納得の価格",
+    "scene_default_point_3": "丁寧なサポート",
+    "scene_warn_shape": "別の形式用に作られています。この形式でシーンを作り直してください。"
   }
 }

@@ -4220,6 +4220,27 @@
     "scene_added_shot": "أُضيف كآخر لقطة.",
     "scene_rendering": "جارٍ التصيير… {{percent}}%",
     "scene_needs_browser": "لتحويل المشاهد إلى فيديو، فعّل العناوين المتحركة في القسم أدناه أولًا.",
-    "anim_error_render_timeout": "استغرق التصيير وقتًا طويلًا فتوقف. ربما علق برنامج نصي في المشهد."
+    "anim_error_render_timeout": "استغرق التصيير وقتًا طويلًا فتوقف. ربما علق برنامج نصي في المشهد.",
+    "scene_builtin_intro": "مقدمة",
+    "scene_builtin_outro": "خاتمة",
+    "scene_builtin_slide": "شريحة نصية",
+    "scene_label_background": "الخلفية",
+    "scene_label_accent": "لون التمييز",
+    "scene_label_logo": "الشعار",
+    "scene_label_brand": "العلامة",
+    "scene_label_tagline": "الشعار النصي",
+    "scene_label_cta": "دعوة إلى الإجراء",
+    "scene_label_contact": "التواصل",
+    "scene_label_heading": "العنوان",
+    "scene_label_point": "النقطة {{number}}",
+    "scene_default_brand": "علامتك",
+    "scene_default_tagline": "صُنع لك",
+    "scene_default_cta": "اطلب اليوم",
+    "scene_default_contact": "yourshop.com",
+    "scene_default_heading": "لماذا نحن",
+    "scene_default_point_1": "توصيل سريع",
+    "scene_default_point_2": "أسعار عادلة",
+    "scene_default_point_3": "دعم ودود",
+    "scene_warn_shape": "صُيّر لتنسيق آخر؛ صيّر المشهد من جديد لهذا التنسيق."
   }
 }

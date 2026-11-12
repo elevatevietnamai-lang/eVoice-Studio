@@ -15,6 +15,7 @@ import {
   assetName,
   assetProblem,
   newParam,
+  sceneShapeMismatch,
   sceneShot,
   starterScene,
   undeclaredKeys,
@@ -66,6 +67,28 @@ describe('scene model', () => {
       'name',
     );
     expect(assetProblem(starter, 'ok.woff2', 1000)).toBeNull();
+  });
+
+  it('flags a scene shot made for another format', () => {
+    const media = {
+      id: 'a.mp4',
+      kind: 'video' as const,
+      name: 'scene.mp4',
+      duration: 4,
+      width: 1080,
+      height: 1920,
+      url: '/x',
+    };
+    const shot = sceneShot(media, 'k', 4);
+    expect(sceneShapeMismatch({ shape: 'vertical' }, shot)).toBe(false);
+    expect(sceneShapeMismatch({ shape: 'landscape' }, shot)).toBe(true);
+    // Uploaded clips are cropped on purpose; only rendered scenes are flagged.
+    expect(
+      sceneShapeMismatch(
+        { shape: 'landscape' },
+        { ...shot, media: { ...media, name: 'clip.mp4' } },
+      ),
+    ).toBe(false);
   });
 
   it('turns a rendered scene into a shot as long as the scene', () => {

@@ -4212,6 +4212,27 @@
     "scene_added_shot": "已新增為最後一個鏡頭。",
     "scene_rendering": "正在算繪… {{percent}}%",
     "scene_needs_browser": "要把場景算繪成影片，請先在下方區塊開啟動畫標題。",
-    "anim_error_render_timeout": "算繪耗時過長，已停止。場景中的腳本可能卡住了。"
+    "anim_error_render_timeout": "算繪耗時過長，已停止。場景中的腳本可能卡住了。",
+    "scene_builtin_intro": "片頭",
+    "scene_builtin_outro": "片尾",
+    "scene_builtin_slide": "文字頁",
+    "scene_label_background": "背景",
+    "scene_label_accent": "強調色",
+    "scene_label_logo": "標誌",
+    "scene_label_brand": "品牌",
+    "scene_label_tagline": "標語",
+    "scene_label_cta": "行動呼籲",
+    "scene_label_contact": "聯絡方式",
+    "scene_label_heading": "標題",
+    "scene_label_point": "要點 {{number}}",
+    "scene_default_brand": "你的品牌",
+    "scene_default_tagline": "為你而做",
+    "scene_default_cta": "立即訂購",
+    "scene_default_contact": "yourshop.tw",
+    "scene_default_heading": "為什麼選我們",
+    "scene_default_point_1": "快速配送",
+    "scene_default_point_2": "價格公道",
+    "scene_default_point_3": "貼心服務",
+    "scene_warn_shape": "這是為其他畫幅算繪的；請為目前畫幅重新算繪場景。"
   }
 }

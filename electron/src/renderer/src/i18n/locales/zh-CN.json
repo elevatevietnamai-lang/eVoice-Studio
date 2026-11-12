@@ -4212,6 +4212,27 @@
     "scene_added_shot": "已添加为最后一个镜头。",
     "scene_rendering": "正在渲染… {{percent}}%",
     "scene_needs_browser": "要把场景渲染成视频，请先在下方区域开启动画标题。",
-    "anim_error_render_timeout": "渲染耗时过长，已停止。场景中的脚本可能卡住了。"
+    "anim_error_render_timeout": "渲染耗时过长，已停止。场景中的脚本可能卡住了。",
+    "scene_builtin_intro": "片头",
+    "scene_builtin_outro": "片尾",
+    "scene_builtin_slide": "文字页",
+    "scene_label_background": "背景",
+    "scene_label_accent": "强调色",
+    "scene_label_logo": "标志",
+    "scene_label_brand": "品牌",
+    "scene_label_tagline": "标语",
+    "scene_label_cta": "行动号召",
+    "scene_label_contact": "联系方式",
+    "scene_label_heading": "标题",
+    "scene_label_point": "要点 {{number}}",
+    "scene_default_brand": "你的品牌",
+    "scene_default_tagline": "为你而做",
+    "scene_default_cta": "立即下单",
+    "scene_default_contact": "yourshop.cn",
+    "scene_default_heading": "为什么选我们",
+    "scene_default_point_1": "快速配送",
+    "scene_default_point_2": "价格公道",
+    "scene_default_point_3": "贴心服务",
+    "scene_warn_shape": "这是为其他画幅渲染的；请为当前画幅重新渲染场景。"
   }
 }

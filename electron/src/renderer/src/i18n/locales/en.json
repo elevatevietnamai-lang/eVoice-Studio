@@ -4212,6 +4212,27 @@
     "scene_added_shot": "Added as the last shot.",
     "scene_rendering": "Rendering… {{percent}}%",
     "scene_needs_browser": "To turn scenes into video, turn on animated titles in the section below first.",
-    "anim_error_render_timeout": "Rendering took too long and was stopped. A script in the scene may be stuck."
+    "anim_error_render_timeout": "Rendering took too long and was stopped. A script in the scene may be stuck.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Outro",
+    "scene_builtin_slide": "Text slide",
+    "scene_label_background": "Background",
+    "scene_label_accent": "Accent",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Brand",
+    "scene_label_tagline": "Tagline",
+    "scene_label_cta": "Call to action",
+    "scene_label_contact": "Contact",
+    "scene_label_heading": "Heading",
+    "scene_label_point": "Point {{number}}",
+    "scene_default_brand": "Your brand",
+    "scene_default_tagline": "Made for you",
+    "scene_default_cta": "Order today",
+    "scene_default_contact": "yourshop.com",
+    "scene_default_heading": "Why us",
+    "scene_default_point_1": "Fast delivery",
+    "scene_default_point_2": "Fair prices",
+    "scene_default_point_3": "Friendly support",
+    "scene_warn_shape": "Rendered for another format; render the scene again for this one."
   }
 }

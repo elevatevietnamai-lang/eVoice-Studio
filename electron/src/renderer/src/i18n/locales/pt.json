@@ -4214,6 +4214,27 @@
     "scene_added_shot": "Adicionada como última tomada.",
     "scene_rendering": "Renderizando… {{percent}}%",
     "scene_needs_browser": "Para transformar cenas em vídeo, ative primeiro os títulos animados na seção abaixo.",
-    "anim_error_render_timeout": "A renderização demorou demais e foi interrompida. Talvez um script da cena esteja travado."
+    "anim_error_render_timeout": "A renderização demorou demais e foi interrompida. Talvez um script da cena esteja travado.",
+    "scene_builtin_intro": "Abertura",
+    "scene_builtin_outro": "Encerramento",
+    "scene_builtin_slide": "Slide de texto",
+    "scene_label_background": "Fundo",
+    "scene_label_accent": "Destaque",
+    "scene_label_logo": "Logotipo",
+    "scene_label_brand": "Marca",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Chamada para ação",
+    "scene_label_contact": "Contato",
+    "scene_label_heading": "Título",
+    "scene_label_point": "Item {{number}}",
+    "scene_default_brand": "Sua marca",
+    "scene_default_tagline": "Feito para você",
+    "scene_default_cta": "Peça hoje",
+    "scene_default_contact": "sualoja.com",
+    "scene_default_heading": "Por que nós",
+    "scene_default_point_1": "Entrega rápida",
+    "scene_default_point_2": "Preços justos",
+    "scene_default_point_3": "Atendimento atencioso",
+    "scene_warn_shape": "Renderizada para outro formato; renderize a cena de novo para este."
   }
 }

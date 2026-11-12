@@ -4212,6 +4212,27 @@
     "scene_added_shot": "เพิ่มเป็นช็อตสุดท้ายแล้ว",
     "scene_rendering": "กำลังเรนเดอร์… {{percent}}%",
     "scene_needs_browser": "หากต้องการทำฉากเป็นวิดีโอ ให้เปิดหัวเรื่องเคลื่อนไหวในส่วนด้านล่างก่อน",
-    "anim_error_render_timeout": "เรนเดอร์นานเกินไปจึงหยุดไว้ สคริปต์ในฉากอาจค้าง"
+    "anim_error_render_timeout": "เรนเดอร์นานเกินไปจึงหยุดไว้ สคริปต์ในฉากอาจค้าง",
+    "scene_builtin_intro": "เปิดเรื่อง",
+    "scene_builtin_outro": "ปิดท้าย",
+    "scene_builtin_slide": "สไลด์ข้อความ",
+    "scene_label_background": "พื้นหลัง",
+    "scene_label_accent": "สีเน้น",
+    "scene_label_logo": "โลโก้",
+    "scene_label_brand": "แบรนด์",
+    "scene_label_tagline": "สโลแกน",
+    "scene_label_cta": "คำกระตุ้นให้ลงมือ",
+    "scene_label_contact": "ติดต่อ",
+    "scene_label_heading": "หัวข้อ",
+    "scene_label_point": "ข้อ {{number}}",
+    "scene_default_brand": "แบรนด์ของคุณ",
+    "scene_default_tagline": "ทำมาเพื่อคุณ",
+    "scene_default_cta": "สั่งซื้อวันนี้",
+    "scene_default_contact": "yourshop.co.th",
+    "scene_default_heading": "ทำไมต้องเรา",
+    "scene_default_point_1": "จัดส่งรวดเร็ว",
+    "scene_default_point_2": "ราคาเป็นธรรม",
+    "scene_default_point_3": "บริการเป็นกันเอง",
+    "scene_warn_shape": "เรนเดอร์ไว้สำหรับรูปแบบอื่น ให้เรนเดอร์ฉากใหม่สำหรับรูปแบบนี้"
   }
 }

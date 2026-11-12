@@ -37,6 +37,7 @@ import {
 } from './promo-model';
 import { BUILTIN_SCENES, builtinScene, type BuiltinScene } from './scene-builtins';
 import {
+  LOGO_ID,
   assetName,
   assetProblem,
   blockingProblems,
@@ -269,7 +270,9 @@ export function SceneEditor({
 }) {
   const { t } = useTranslation();
   const bridge = getBridge();
-  const [scene, setScene] = useState<PromoScene>(() => builtinScene('starter', t));
+  // Built-ins show the brand logo when it is an image main accepts for a scene.
+  const logoId = draft.logo && LOGO_ID.test(draft.logo.id) ? draft.logo.id : null;
+  const [scene, setScene] = useState<PromoScene>(() => builtinScene('starter', t, { logoId }));
   const [source, setSource] = useState<Source>('builtin:starter');
   const [savedCopy, setSavedCopy] = useState<PromoScene | null>(null);
   const [saved, setSaved] = useState<PromoSceneSummary[]>([]);
@@ -369,7 +372,7 @@ export function SceneEditor({
 
   const pick = async (value: string) => {
     if (value.startsWith('builtin:')) {
-      load(builtinScene(value.slice(8) as BuiltinScene, t), value as Source);
+      load(builtinScene(value.slice(8) as BuiltinScene, t, { logoId }), value as Source);
     } else if (value.startsWith('saved:')) {
       const found = await bridge.promo.scenes.get(value.slice(6));
       if (found) load(found, value as Source);
@@ -520,7 +523,7 @@ export function SceneEditor({
           size="sm"
           variant="ghost"
           disabled={locked}
-          onClick={() => load(builtinScene('starter', t), 'builtin:starter')}
+          onClick={() => load(builtinScene('starter', t, { logoId }), 'builtin:starter')}
         >
           <FilePlusIcon />
           {t('promo.scene_new')}
@@ -664,7 +667,7 @@ export function SceneEditor({
               key={index}
               param={param}
               scene={scene}
-              logoId={draft.logo?.kind === 'image' ? draft.logo.id : null}
+              logoId={logoId}
               disabled={locked}
               onChange={(patch) => editParam(index, patch)}
               onRemove={() => edit({ params: scene.params.filter((_, at) => at !== index) })}

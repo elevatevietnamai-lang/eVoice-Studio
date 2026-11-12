@@ -4218,6 +4218,27 @@
     "scene_added_shot": "Додано останнім кадром.",
     "scene_rendering": "Рендеринг… {{percent}}%",
     "scene_needs_browser": "Щоб перетворювати сцени на відео, спершу ввімкніть анімовані титри в розділі нижче.",
-    "anim_error_render_timeout": "Рендеринг тривав надто довго й був зупинений. Можливо, скрипт сцени завис."
+    "anim_error_render_timeout": "Рендеринг тривав надто довго й був зупинений. Можливо, скрипт сцени завис.",
+    "scene_builtin_intro": "Заставка",
+    "scene_builtin_outro": "Кінцівка",
+    "scene_builtin_slide": "Текстовий слайд",
+    "scene_label_background": "Тло",
+    "scene_label_accent": "Акцент",
+    "scene_label_logo": "Логотип",
+    "scene_label_brand": "Бренд",
+    "scene_label_tagline": "Слоган",
+    "scene_label_cta": "Заклик до дії",
+    "scene_label_contact": "Контакт",
+    "scene_label_heading": "Заголовок",
+    "scene_label_point": "Пункт {{number}}",
+    "scene_default_brand": "Ваш бренд",
+    "scene_default_tagline": "Створено для вас",
+    "scene_default_cta": "Замовте сьогодні",
+    "scene_default_contact": "vashmagazyn.ua",
+    "scene_default_heading": "Чому ми",
+    "scene_default_point_1": "Швидка доставка",
+    "scene_default_point_2": "Чесні ціни",
+    "scene_default_point_3": "Привітна підтримка",
+    "scene_warn_shape": "Відрендерено для іншого формату; відрендерте сцену знову для цього."
   }
 }

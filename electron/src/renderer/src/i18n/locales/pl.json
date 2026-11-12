@@ -4218,6 +4218,27 @@
     "scene_added_shot": "Dodano jako ostatnie ujęcie.",
     "scene_rendering": "Renderowanie… {{percent}}%",
     "scene_needs_browser": "Aby zamienić sceny w wideo, najpierw włącz animowane tytuły w sekcji poniżej.",
-    "anim_error_render_timeout": "Renderowanie trwało zbyt długo i zostało przerwane. Skrypt sceny mógł się zawiesić."
+    "anim_error_render_timeout": "Renderowanie trwało zbyt długo i zostało przerwane. Skrypt sceny mógł się zawiesić.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Zakończenie",
+    "scene_builtin_slide": "Slajd z tekstem",
+    "scene_label_background": "Tło",
+    "scene_label_accent": "Akcent",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Marka",
+    "scene_label_tagline": "Hasło",
+    "scene_label_cta": "Wezwanie do działania",
+    "scene_label_contact": "Kontakt",
+    "scene_label_heading": "Nagłówek",
+    "scene_label_point": "Punkt {{number}}",
+    "scene_default_brand": "Twoja marka",
+    "scene_default_tagline": "Stworzone dla Ciebie",
+    "scene_default_cta": "Zamów dziś",
+    "scene_default_contact": "twojsklep.pl",
+    "scene_default_heading": "Dlaczego my",
+    "scene_default_point_1": "Szybka dostawa",
+    "scene_default_point_2": "Uczciwe ceny",
+    "scene_default_point_3": "Życzliwa pomoc",
+    "scene_warn_shape": "Wyrenderowano dla innego formatu; wyrenderuj scenę ponownie dla tego."
   }
 }

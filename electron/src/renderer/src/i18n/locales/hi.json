@@ -4212,6 +4212,27 @@
     "scene_added_shot": "आख़िरी शॉट के रूप में जोड़ा गया।",
     "scene_rendering": "रेंडर हो रहा है… {{percent}}%",
     "scene_needs_browser": "दृश्यों को वीडियो बनाने के लिए पहले नीचे के भाग में एनिमेटेड शीर्षक चालू करें।",
-    "anim_error_render_timeout": "रेंडर में बहुत समय लगा, इसलिए रोक दिया गया। शायद दृश्य की कोई स्क्रिप्ट अटकी है।"
+    "anim_error_render_timeout": "रेंडर में बहुत समय लगा, इसलिए रोक दिया गया। शायद दृश्य की कोई स्क्रिप्ट अटकी है।",
+    "scene_builtin_intro": "परिचय",
+    "scene_builtin_outro": "समापन",
+    "scene_builtin_slide": "टेक्स्ट स्लाइड",
+    "scene_label_background": "पृष्ठभूमि",
+    "scene_label_accent": "एक्सेंट",
+    "scene_label_logo": "लोगो",
+    "scene_label_brand": "ब्रांड",
+    "scene_label_tagline": "टैगलाइन",
+    "scene_label_cta": "कॉल टू एक्शन",
+    "scene_label_contact": "संपर्क",
+    "scene_label_heading": "शीर्षक",
+    "scene_label_point": "बिंदु {{number}}",
+    "scene_default_brand": "आपका ब्रांड",
+    "scene_default_tagline": "आपके लिए बना",
+    "scene_default_cta": "आज ही ऑर्डर करें",
+    "scene_default_contact": "yourshop.com",
+    "scene_default_heading": "हम ही क्यों",
+    "scene_default_point_1": "तेज़ डिलीवरी",
+    "scene_default_point_2": "उचित दाम",
+    "scene_default_point_3": "दोस्ताना सहायता",
+    "scene_warn_shape": "दूसरे फ़ॉर्मैट के लिए रेंडर हुआ; इस फ़ॉर्मैट के लिए दृश्य फिर से रेंडर करें।"
   }
 }

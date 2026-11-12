@@ -4218,6 +4218,27 @@
     "scene_added_shot": "Добавлено последним кадром.",
     "scene_rendering": "Рендеринг… {{percent}}%",
     "scene_needs_browser": "Чтобы превращать сцены в видео, сначала включите анимированные титры в разделе ниже.",
-    "anim_error_render_timeout": "Рендеринг занял слишком много времени и был остановлен. Возможно, скрипт сцены завис."
+    "anim_error_render_timeout": "Рендеринг занял слишком много времени и был остановлен. Возможно, скрипт сцены завис.",
+    "scene_builtin_intro": "Заставка",
+    "scene_builtin_outro": "Концовка",
+    "scene_builtin_slide": "Текстовый слайд",
+    "scene_label_background": "Фон",
+    "scene_label_accent": "Акцент",
+    "scene_label_logo": "Логотип",
+    "scene_label_brand": "Бренд",
+    "scene_label_tagline": "Слоган",
+    "scene_label_cta": "Призыв к действию",
+    "scene_label_contact": "Контакт",
+    "scene_label_heading": "Заголовок",
+    "scene_label_point": "Пункт {{number}}",
+    "scene_default_brand": "Ваш бренд",
+    "scene_default_tagline": "Создано для вас",
+    "scene_default_cta": "Закажите сегодня",
+    "scene_default_contact": "vashmagazin.ru",
+    "scene_default_heading": "Почему мы",
+    "scene_default_point_1": "Быстрая доставка",
+    "scene_default_point_2": "Честные цены",
+    "scene_default_point_3": "Дружелюбная поддержка",
+    "scene_warn_shape": "Отрисовано для другого формата; пересоздайте сцену для этого."
   }
 }

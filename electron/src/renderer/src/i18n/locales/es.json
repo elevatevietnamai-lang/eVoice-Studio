@@ -4214,6 +4214,27 @@
     "scene_added_shot": "Añadida como última toma.",
     "scene_rendering": "Renderizando… {{percent}} %",
     "scene_needs_browser": "Para convertir escenas en vídeo, activa primero los títulos animados en la sección de abajo.",
-    "anim_error_render_timeout": "El renderizado tardó demasiado y se detuvo. Puede que un script de la escena esté bloqueado."
+    "anim_error_render_timeout": "El renderizado tardó demasiado y se detuvo. Puede que un script de la escena esté bloqueado.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Cierre",
+    "scene_builtin_slide": "Diapositiva de texto",
+    "scene_label_background": "Fondo",
+    "scene_label_accent": "Acento",
+    "scene_label_logo": "Logotipo",
+    "scene_label_brand": "Marca",
+    "scene_label_tagline": "Eslogan",
+    "scene_label_cta": "Llamada a la acción",
+    "scene_label_contact": "Contacto",
+    "scene_label_heading": "Encabezado",
+    "scene_label_point": "Punto {{number}}",
+    "scene_default_brand": "Tu marca",
+    "scene_default_tagline": "Hecho para ti",
+    "scene_default_cta": "Pide hoy",
+    "scene_default_contact": "tutienda.com",
+    "scene_default_heading": "Por qué nosotros",
+    "scene_default_point_1": "Entrega rápida",
+    "scene_default_point_2": "Precios justos",
+    "scene_default_point_3": "Atención cercana",
+    "scene_warn_shape": "Renderizada para otro formato; vuelve a renderizar la escena para este."
   }
 }

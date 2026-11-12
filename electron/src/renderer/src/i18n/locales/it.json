@@ -4214,6 +4214,27 @@
     "scene_added_shot": "Aggiunta come ultima inquadratura.",
     "scene_rendering": "Rendering… {{percent}}%",
     "scene_needs_browser": "Per trasformare le scene in video, attiva prima i titoli animati nella sezione qui sotto.",
-    "anim_error_render_timeout": "Il rendering ha richiesto troppo tempo ed è stato fermato. Forse uno script della scena è bloccato."
+    "anim_error_render_timeout": "Il rendering ha richiesto troppo tempo ed è stato fermato. Forse uno script della scena è bloccato.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Chiusura",
+    "scene_builtin_slide": "Slide di testo",
+    "scene_label_background": "Sfondo",
+    "scene_label_accent": "Accento",
+    "scene_label_logo": "Logo",
+    "scene_label_brand": "Marchio",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Invito all'azione",
+    "scene_label_contact": "Contatto",
+    "scene_label_heading": "Titolo",
+    "scene_label_point": "Punto {{number}}",
+    "scene_default_brand": "Il tuo marchio",
+    "scene_default_tagline": "Fatto per te",
+    "scene_default_cta": "Ordina oggi",
+    "scene_default_contact": "iltuonegozio.it",
+    "scene_default_heading": "Perché noi",
+    "scene_default_point_1": "Consegna rapida",
+    "scene_default_point_2": "Prezzi onesti",
+    "scene_default_point_3": "Assistenza cordiale",
+    "scene_warn_shape": "Renderizzata per un altro formato; esegui di nuovo il rendering per questo."
   }
 }

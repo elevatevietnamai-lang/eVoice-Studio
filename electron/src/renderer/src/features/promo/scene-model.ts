@@ -1,5 +1,12 @@
 import type { PromoScene, PromoSceneParam, PromoSceneProblem } from '../../../../preload/index.d';
-import { MAX_SHOT_SECONDS, shotFor, type PromoMedia, type PromoShot } from './promo-model';
+import {
+  MAX_SHOT_SECONDS,
+  SHAPE_SIZE,
+  shotFor,
+  type PromoDraft,
+  type PromoMedia,
+  type PromoShot,
+} from './promo-model';
 
 /**
  * Custom HTML scenes on the renderer side. main/promo-scenes.ts checks every
@@ -21,6 +28,11 @@ export const SCENE_LIMITS = {
   name: 60,
   text: 200,
 } as const;
+
+/** Promo media ids main accepts for an image param (LOGO_ID in main/promo-templates.ts). */
+export const LOGO_ID = /^[0-9a-f]{16}\.(png|jpe?g|webp)$/;
+/** Upload name of a rendered full-frame scene (main/promo-render.ts). */
+export const SCENE_SHOT_NAME = 'scene.mp4';
 
 export const ASSET_EXTENSIONS = [
   'png',
@@ -160,3 +172,14 @@ export const blockingProblems = (problems: readonly PromoSceneProblem[]) =>
 /** Same scene content, ignoring the saved id: used to tell unsaved edits. */
 export const sameScene = (a: PromoScene | null, b: PromoScene | null) =>
   !!a && !!b && JSON.stringify({ ...a, id: null }) === JSON.stringify({ ...b, id: null });
+
+/**
+ * A scene shot rendered for another format than the draft's: `cover` would
+ * crop most of it, so the shot list says to render it again.
+ */
+export function sceneShapeMismatch(draft: Pick<PromoDraft, 'shape'>, shot: PromoShot): boolean {
+  const { width, height } = shot.media;
+  if (shot.media.name !== SCENE_SHOT_NAME || !width || !height) return false;
+  const frame = SHAPE_SIZE[draft.shape];
+  return Math.abs(width / height - frame.width / frame.height) > 0.01;
+}

@@ -4212,6 +4212,27 @@
     "scene_added_shot": "Tillagd som sista klipp.",
     "scene_rendering": "Renderar … {{percent}} %",
     "scene_needs_browser": "Slå först på animerade titlar i avsnittet nedan för att göra video av scener.",
-    "anim_error_render_timeout": "Renderingen tog för lång tid och stoppades. Ett skript i scenen kan ha fastnat."
+    "anim_error_render_timeout": "Renderingen tog för lång tid och stoppades. Ett skript i scenen kan ha fastnat.",
+    "scene_builtin_intro": "Intro",
+    "scene_builtin_outro": "Avslutning",
+    "scene_builtin_slide": "Textbild",
+    "scene_label_background": "Bakgrund",
+    "scene_label_accent": "Accent",
+    "scene_label_logo": "Logga",
+    "scene_label_brand": "Varumärke",
+    "scene_label_tagline": "Slogan",
+    "scene_label_cta": "Uppmaning",
+    "scene_label_contact": "Kontakt",
+    "scene_label_heading": "Rubrik",
+    "scene_label_point": "Punkt {{number}}",
+    "scene_default_brand": "Ditt varumärke",
+    "scene_default_tagline": "Gjort för dig",
+    "scene_default_cta": "Beställ i dag",
+    "scene_default_contact": "dinbutik.se",
+    "scene_default_heading": "Varför vi",
+    "scene_default_point_1": "Snabb leverans",
+    "scene_default_point_2": "Rimliga priser",
+    "scene_default_point_3": "Vänlig support",
+    "scene_warn_shape": "Renderad för ett annat format; rendera scenen igen för det här."
   }
 }
