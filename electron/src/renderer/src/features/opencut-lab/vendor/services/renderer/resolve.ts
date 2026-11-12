@@ -437,6 +437,7 @@ async function resolveBackdropSource({
 			source: frame.canvas,
 			width: frame.canvas.width,
 			height: frame.canvas.height,
+			revision: frame.timestamp,
 		};
 	}
 

@@ -19,6 +19,8 @@ export type BackdropSource = {
 	source: CanvasImageSource;
 	width: number;
 	height: number;
+	/** Changes when a reused source (a pooled video canvas) holds a new frame. */
+	revision?: number;
 };
 
 export interface ResolvedBlurBackgroundNodeState {
