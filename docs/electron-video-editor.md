@@ -32,6 +32,10 @@ computer; nothing is uploaded.
      on the preview moves the selected picture or title.
    - **Colour:** a look (original, vivid, warm, cool, black & white, vintage) plus
      brightness, contrast and saturation, per clip or still.
+   - **Mask:** a rectangle, a circle or a horizontal band, placed relative to the
+     clip, with its position, size, rotation and softness (each keyframable
+     with the diamond, so a mask can follow something) and **Invert mask** to
+     keep the outside instead.
    - **Chroma key:** turn on **Remove a background color** to make a colour
      (green by default, or blue, or any colour you pick) see-through, so the
      tracks below show. **Strength** sets how far from the colour a pixel may be
@@ -110,7 +114,9 @@ a frame reaches the compositor. Transitions are per-frame adjustments
 (`lib/opencut/frame-adjust.ts`) on the clips' opacity, position, scale and a
 canvas band for the wipe, plus a black layer that fades in and out over the
 main track for a fade through black; two clips of one file on screen at once
-get their own decoders. The chroma key runs after the colour look, in one
+get their own decoders. Masks use OpenCut's own mask shapes; their params animate under the paths
+`mask.<param>` in the clip's keyframes and are resolved per frame before the
+mask is drawn (`lib/opencut/mask-keyframes.ts`). The chroma key runs after the colour look, in one
 shared WebGL2 context (`lib/opencut/chroma-key.ts`), or with the same formula
 on the CPU where WebGL2 is missing. Stickers, Iconify icons and audio time-stretch
 (`soundtouchjs`, LGPL) are stubbed out. See `LICENSE-NOTICE.md`.

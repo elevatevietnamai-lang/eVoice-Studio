@@ -4165,7 +4165,19 @@
     "chroma_blue": "Biru",
     "chroma_threshold": "Kekuatan",
     "chroma_softness": "Kelembutan tepi",
-    "chroma_spill": "Hapus pantulan warna"
+    "chroma_spill": "Hapus pantulan warna",
+    "mask": "Mask",
+    "mask_none": "Tidak ada",
+    "mask_rectangle": "Persegi panjang",
+    "mask_ellipse": "Lingkaran",
+    "mask_band": "Pita",
+    "mask_centerX": "Posisi horizontal mask",
+    "mask_centerY": "Posisi vertikal mask",
+    "mask_width": "Lebar mask",
+    "mask_height": "Tinggi mask",
+    "mask_rotation": "Rotasi mask",
+    "mask_feather": "Kelembutan mask",
+    "mask_invert": "Balik mask"
   },
   "promo": {
     "title": "Video promosi",

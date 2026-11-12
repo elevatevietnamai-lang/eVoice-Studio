@@ -1,6 +1,7 @@
 import { applyColorFilter } from "../../../../color-filter";
 import { applyChromaKey, chromaKeyId } from "../../../../chroma-key";
 import { drawClipMask } from "../../../../frame-adjust";
+import { resolveMaskAtTime } from "../../../../mask-keyframes";
 import { drawCssBackground } from "../../../gradients";
 import { getMaskDefinition } from "../../../masks";
 import { incrementCounter } from "../../../diagnostics/render-perf";
@@ -410,7 +411,12 @@ function buildMaskArtifacts({
 	mask: LayerMaskDescriptor | null;
 	strokeLayer: FrameItemDescriptor | null;
 } {
-	const mask = node.params.masks?.[0];
+	// eVoice Studio: keyframed mask params are resolved for this frame first.
+	const savedMask = node.params.masks?.[0];
+	const mask =
+		savedMask && node.resolved
+			? resolveMaskAtTime(savedMask, node.params.animations, node.resolved.localTime)
+			: savedMask;
 	// eVoice Studio: a wipe transition shows only a band of the canvas.
 	const clip = node.resolved?.clip;
 	const definition = mask ? getMaskDefinition(mask.type) : null;

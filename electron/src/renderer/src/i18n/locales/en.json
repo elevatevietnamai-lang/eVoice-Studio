@@ -4165,7 +4165,19 @@
     "chroma_blue": "Blue",
     "chroma_threshold": "Strength",
     "chroma_softness": "Edge softness",
-    "chroma_spill": "Remove color spill"
+    "chroma_spill": "Remove color spill",
+    "mask": "Mask",
+    "mask_none": "None",
+    "mask_rectangle": "Rectangle",
+    "mask_ellipse": "Circle",
+    "mask_band": "Band",
+    "mask_centerX": "Mask horizontal position",
+    "mask_centerY": "Mask vertical position",
+    "mask_width": "Mask width",
+    "mask_height": "Mask height",
+    "mask_rotation": "Mask rotation",
+    "mask_feather": "Mask softness",
+    "mask_invert": "Invert mask"
   },
   "promo": {
     "title": "Promo video",

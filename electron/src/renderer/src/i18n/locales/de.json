@@ -4165,7 +4165,19 @@
     "chroma_blue": "Blau",
     "chroma_threshold": "Stärke",
     "chroma_softness": "Kantenweichheit",
-    "chroma_spill": "Farbsaum entfernen"
+    "chroma_spill": "Farbsaum entfernen",
+    "mask": "Maske",
+    "mask_none": "Keine",
+    "mask_rectangle": "Rechteck",
+    "mask_ellipse": "Kreis",
+    "mask_band": "Streifen",
+    "mask_centerX": "Horizontale Position der Maske",
+    "mask_centerY": "Vertikale Position der Maske",
+    "mask_width": "Maskenbreite",
+    "mask_height": "Maskenhöhe",
+    "mask_rotation": "Maskendrehung",
+    "mask_feather": "Weiche Maskenkante",
+    "mask_invert": "Maske umkehren"
   },
   "promo": {
     "title": "Werbevideo",

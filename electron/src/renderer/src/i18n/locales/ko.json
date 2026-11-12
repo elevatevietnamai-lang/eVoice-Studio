@@ -4165,7 +4165,19 @@
     "chroma_blue": "파랑",
     "chroma_threshold": "강도",
     "chroma_softness": "가장자리 부드럽게",
-    "chroma_spill": "색 번짐 제거"
+    "chroma_spill": "색 번짐 제거",
+    "mask": "마스크",
+    "mask_none": "없음",
+    "mask_rectangle": "사각형",
+    "mask_ellipse": "원",
+    "mask_band": "띠",
+    "mask_centerX": "마스크 가로 위치",
+    "mask_centerY": "마스크 세로 위치",
+    "mask_width": "마스크 너비",
+    "mask_height": "마스크 높이",
+    "mask_rotation": "마스크 회전",
+    "mask_feather": "마스크 부드럽게",
+    "mask_invert": "마스크 반전"
   },
   "promo": {
     "title": "홍보 영상",

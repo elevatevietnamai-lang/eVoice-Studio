@@ -4171,7 +4171,19 @@
     "chroma_blue": "Синій",
     "chroma_threshold": "Сила",
     "chroma_softness": "М’якість краю",
-    "chroma_spill": "Прибрати кольоровий ореол"
+    "chroma_spill": "Прибрати кольоровий ореол",
+    "mask": "Маска",
+    "mask_none": "Немає",
+    "mask_rectangle": "Прямокутник",
+    "mask_ellipse": "Коло",
+    "mask_band": "Смуга",
+    "mask_centerX": "Положення маски по горизонталі",
+    "mask_centerY": "Положення маски по вертикалі",
+    "mask_width": "Ширина маски",
+    "mask_height": "Висота маски",
+    "mask_rotation": "Поворот маски",
+    "mask_feather": "М’якість маски",
+    "mask_invert": "Інвертувати маску"
   },
   "promo": {
     "title": "Рекламне відео",

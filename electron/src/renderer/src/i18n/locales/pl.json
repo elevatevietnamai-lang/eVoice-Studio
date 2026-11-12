@@ -4171,7 +4171,19 @@
     "chroma_blue": "Niebieski",
     "chroma_threshold": "Siła",
     "chroma_softness": "Miękkość krawędzi",
-    "chroma_spill": "Usuń poświatę koloru"
+    "chroma_spill": "Usuń poświatę koloru",
+    "mask": "Maska",
+    "mask_none": "Brak",
+    "mask_rectangle": "Prostokąt",
+    "mask_ellipse": "Koło",
+    "mask_band": "Pas",
+    "mask_centerX": "Pozycja pozioma maski",
+    "mask_centerY": "Pozycja pionowa maski",
+    "mask_width": "Szerokość maski",
+    "mask_height": "Wysokość maski",
+    "mask_rotation": "Obrót maski",
+    "mask_feather": "Miękkość maski",
+    "mask_invert": "Odwróć maskę"
   },
   "promo": {
     "title": "Film reklamowy",

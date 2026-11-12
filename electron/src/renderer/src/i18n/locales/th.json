@@ -4165,7 +4165,19 @@
     "chroma_blue": "น้ำเงิน",
     "chroma_threshold": "ความแรง",
     "chroma_softness": "ความนุ่มของขอบ",
-    "chroma_spill": "ลบสีที่ล้นเข้ามา"
+    "chroma_spill": "ลบสีที่ล้นเข้ามา",
+    "mask": "มาสก์",
+    "mask_none": "ไม่มี",
+    "mask_rectangle": "สี่เหลี่ยม",
+    "mask_ellipse": "วงกลม",
+    "mask_band": "แถบ",
+    "mask_centerX": "ตำแหน่งแนวนอนของมาสก์",
+    "mask_centerY": "ตำแหน่งแนวตั้งของมาสก์",
+    "mask_width": "ความกว้างมาสก์",
+    "mask_height": "ความสูงมาสก์",
+    "mask_rotation": "การหมุนมาสก์",
+    "mask_feather": "ความนุ่มของมาสก์",
+    "mask_invert": "กลับด้านมาสก์"
   },
   "promo": {
     "title": "วิดีโอโปรโมต",

@@ -17,6 +17,8 @@ export function isAnimationPath(
 	return (
 		isAnimationPropertyPath(propertyPath) ||
 		isGraphicParamPath(propertyPath) ||
-		isEffectParamPath(propertyPath)
+		isEffectParamPath(propertyPath) ||
+		// eVoice Studio: keyframed mask params (see lib/opencut/mask-keyframes).
+		propertyPath.startsWith("mask.")
 	);
 }

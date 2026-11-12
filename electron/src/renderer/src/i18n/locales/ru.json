@@ -4171,7 +4171,19 @@
     "chroma_blue": "Синий",
     "chroma_threshold": "Сила",
     "chroma_softness": "Мягкость края",
-    "chroma_spill": "Убрать цветной ореол"
+    "chroma_spill": "Убрать цветной ореол",
+    "mask": "Маска",
+    "mask_none": "Нет",
+    "mask_rectangle": "Прямоугольник",
+    "mask_ellipse": "Круг",
+    "mask_band": "Полоса",
+    "mask_centerX": "Положение маски по горизонтали",
+    "mask_centerY": "Положение маски по вертикали",
+    "mask_width": "Ширина маски",
+    "mask_height": "Высота маски",
+    "mask_rotation": "Поворот маски",
+    "mask_feather": "Мягкость маски",
+    "mask_invert": "Инвертировать маску"
   },
   "promo": {
     "title": "Рекламное видео",

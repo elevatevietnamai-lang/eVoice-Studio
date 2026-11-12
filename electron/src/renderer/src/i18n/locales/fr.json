@@ -4167,7 +4167,19 @@
     "chroma_blue": "Bleu",
     "chroma_threshold": "Intensité",
     "chroma_softness": "Douceur des bords",
-    "chroma_spill": "Retirer le débordement de couleur"
+    "chroma_spill": "Retirer le débordement de couleur",
+    "mask": "Masque",
+    "mask_none": "Aucun",
+    "mask_rectangle": "Rectangle",
+    "mask_ellipse": "Cercle",
+    "mask_band": "Bande",
+    "mask_centerX": "Position horizontale du masque",
+    "mask_centerY": "Position verticale du masque",
+    "mask_width": "Largeur du masque",
+    "mask_height": "Hauteur du masque",
+    "mask_rotation": "Rotation du masque",
+    "mask_feather": "Douceur du masque",
+    "mask_invert": "Inverser le masque"
   },
   "promo": {
     "title": "Vidéo promo",

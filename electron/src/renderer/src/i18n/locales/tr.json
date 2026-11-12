@@ -4165,7 +4165,19 @@
     "chroma_blue": "Mavi",
     "chroma_threshold": "Güç",
     "chroma_softness": "Kenar yumuşaklığı",
-    "chroma_spill": "Renk taşmasını gider"
+    "chroma_spill": "Renk taşmasını gider",
+    "mask": "Maske",
+    "mask_none": "Yok",
+    "mask_rectangle": "Dikdörtgen",
+    "mask_ellipse": "Daire",
+    "mask_band": "Şerit",
+    "mask_centerX": "Maskenin yatay konumu",
+    "mask_centerY": "Maskenin dikey konumu",
+    "mask_width": "Maske genişliği",
+    "mask_height": "Maske yüksekliği",
+    "mask_rotation": "Maske dönüşü",
+    "mask_feather": "Maske yumuşaklığı",
+    "mask_invert": "Maskeyi ters çevir"
   },
   "promo": {
     "title": "Tanıtım videosu",

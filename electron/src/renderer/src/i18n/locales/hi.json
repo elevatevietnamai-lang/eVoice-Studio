@@ -4165,7 +4165,19 @@
     "chroma_blue": "नीला",
     "chroma_threshold": "तीव्रता",
     "chroma_softness": "किनारे की नरमी",
-    "chroma_spill": "रंग का फैलाव हटाएँ"
+    "chroma_spill": "रंग का फैलाव हटाएँ",
+    "mask": "मास्क",
+    "mask_none": "कोई नहीं",
+    "mask_rectangle": "आयत",
+    "mask_ellipse": "वृत्त",
+    "mask_band": "पट्टी",
+    "mask_centerX": "मास्क की क्षैतिज स्थिति",
+    "mask_centerY": "मास्क की ऊर्ध्वाधर स्थिति",
+    "mask_width": "मास्क की चौड़ाई",
+    "mask_height": "मास्क की ऊँचाई",
+    "mask_rotation": "मास्क का घुमाव",
+    "mask_feather": "मास्क की नरमी",
+    "mask_invert": "मास्क उलटें"
   },
   "promo": {
     "title": "प्रोमो वीडियो",

@@ -4165,7 +4165,19 @@
     "chroma_blue": "Blauw",
     "chroma_threshold": "Sterkte",
     "chroma_softness": "Zachtheid van de rand",
-    "chroma_spill": "Kleurzweem verwijderen"
+    "chroma_spill": "Kleurzweem verwijderen",
+    "mask": "Masker",
+    "mask_none": "Geen",
+    "mask_rectangle": "Rechthoek",
+    "mask_ellipse": "Cirkel",
+    "mask_band": "Band",
+    "mask_centerX": "Horizontale positie van het masker",
+    "mask_centerY": "Verticale positie van het masker",
+    "mask_width": "Breedte van het masker",
+    "mask_height": "Hoogte van het masker",
+    "mask_rotation": "Rotatie van het masker",
+    "mask_feather": "Zachtheid van het masker",
+    "mask_invert": "Masker omkeren"
   },
   "promo": {
     "title": "Promovideo",

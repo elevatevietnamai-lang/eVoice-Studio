@@ -4165,7 +4165,19 @@
     "chroma_blue": "ブルー",
     "chroma_threshold": "強さ",
     "chroma_softness": "エッジのぼかし",
-    "chroma_spill": "色かぶりを除去"
+    "chroma_spill": "色かぶりを除去",
+    "mask": "マスク",
+    "mask_none": "なし",
+    "mask_rectangle": "長方形",
+    "mask_ellipse": "円",
+    "mask_band": "帯",
+    "mask_centerX": "マスクの水平位置",
+    "mask_centerY": "マスクの垂直位置",
+    "mask_width": "マスクの幅",
+    "mask_height": "マスクの高さ",
+    "mask_rotation": "マスクの回転",
+    "mask_feather": "マスクのぼかし",
+    "mask_invert": "マスクを反転"
   },
   "promo": {
     "title": "プロモーション動画",

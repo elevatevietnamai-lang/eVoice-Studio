@@ -50,6 +50,7 @@ import {
   type ElementRef,
 } from './project';
 import { TRANSITION_KEYS, overlapTicks } from './transitions';
+import { MASK_PARAMS, maskKeyOf, maskValue, withMaskParam, withMaskShape, type MaskShape } from './masks';
 
 export const DEFAULT_STILL_SECONDS = 3;
 export const DEFAULT_TEXT_SECONDS = 3;
@@ -557,7 +558,29 @@ export function deleteElement(project: EditorProject, ref: ElementRef): EditorPr
   return pruneTracks(ref.trackId === MAIN_TRACK_ID ? packMain(next) : next);
 }
 
+/** A number param's value as saved, before keyframes (mask params included). */
+export function baseNumber(element: TimelineElement, path: string): number {
+  const maskKey = maskKeyOf(path);
+  if (maskKey) return maskValue(element, maskKey);
+  const value = element.params[path];
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
+function mapElement(project: EditorProject, ref: ElementRef, map: (element: TimelineElement) => TimelineElement) {
+  return mapTrack(project, ref.trackId, (track) => ({
+    ...track,
+    elements: track.elements.map((element) => (element.id === ref.elementId ? map(element) : element)),
+  }) as TimelineTrack);
+}
+
+/** Gives a clip or still a mask of `shape` (`none` removes it). */
+export function setMaskShape(project: EditorProject, ref: ElementRef, shape: MaskShape): EditorProject {
+  return mapElement(project, ref, (element) => withMaskShape(element, shape));
+}
+
 export function setParam(project: EditorProject, ref: ElementRef, key: string, value: ParamValue): EditorProject {
+  const maskKey = key === 'mask.inverted' ? 'inverted' : maskKeyOf(key);
+  if (maskKey) return mapElement(project, ref, (element) => withMaskParam(element, maskKey, value as number | boolean));
   return mapTrack(project, ref.trackId, (track) => ({
     ...track,
     elements: track.elements.map((element) =>
@@ -648,7 +671,8 @@ export function setKeyframe(
     ...track,
     elements: track.elements.map((element) => {
       if (element.id !== ref.elementId) return element;
-      const param = getElementParam({ element, key: path });
+      const maskKey = maskKeyOf(path);
+      const param = maskKey ? MASK_PARAMS[maskKey] : getElementParam({ element, key: path });
       if (!param) return element;
       return {
         ...element,

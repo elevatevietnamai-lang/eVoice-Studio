@@ -34,6 +34,7 @@ import {
 } from './project';
 import {
   TEXT_FONTS,
+  baseNumber,
   hasKeyframes,
   keyframeAt,
   localTicks,
@@ -41,10 +42,12 @@ import {
   removeKeyframe,
   setKeyframe,
   setParam,
+  setMaskShape,
   setSourceAudio,
   setSpeed,
   setTransition,
 } from './timeline-ops';
+import { MASK_PARAMS, MASK_SHAPES, maskShapeOf } from './masks';
 import {
   DEFAULT_TRANSITION_SECONDS,
   MAX_TRANSITION_SECONDS,
@@ -106,7 +109,7 @@ function KeyframedNumber({
   const { t } = useTranslation();
   const [path] = paths;
   const value = resolveNumberAtTime({
-    baseValue: number(element.params[path]),
+    baseValue: baseNumber(element, path),
     animations: element.animations,
     propertyPath: path as never,
     localTime: localTicks(element, playhead),
@@ -416,6 +419,55 @@ export function PropertiesPanel({
               />
             </Row>
           ))}
+        </Section>
+      )}
+
+      {(element.type === 'video' || element.type === 'image') && (
+        <Section title={t('editor.mask')}>
+          <div className="flex flex-wrap gap-1">
+            {MASK_SHAPES.map((shape) => {
+              const active = maskShapeOf(element) === shape;
+              return (
+                <Button
+                  key={shape}
+                  size="xs"
+                  variant={active ? 'secondary' : 'ghost'}
+                  aria-pressed={active}
+                  onClick={() => apply((current) => setMaskShape(current, selection, shape))}
+                >
+                  {t(`editor.mask_${shape}`)}
+                </Button>
+              );
+            })}
+          </div>
+          {maskShapeOf(element) !== 'none' && (
+            <>
+              {(['centerX', 'centerY', 'width', 'height', 'rotation', 'feather'] as const)
+                .filter((key) => !(key === 'width' && maskShapeOf(element) === 'band'))
+                .map((key) => (
+                  <KeyframedNumber
+                    key={key}
+                    {...common}
+                    label={t(`editor.mask_${key}`)}
+                    paths={[`mask.${key}`]}
+                    min={MASK_PARAMS[key].min}
+                    max={MASK_PARAMS[key].max!}
+                    step={key === 'rotation' || key === 'feather' ? 1 : 0.01}
+                    display={(value) =>
+                      key === 'rotation' ? `${Math.round(value)}°` : key === 'feather' ? `${Math.round(value)} px` : `${Math.round(value * 100)}%`
+                    }
+                  />
+                ))}
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="text-muted-foreground">{t('editor.mask_invert')}</span>
+                <Switch
+                  aria-label={t('editor.mask_invert')}
+                  checked={'masks' in element && element.masks?.[0]?.params.inverted === true}
+                  onCheckedChange={(on) => param('mask.inverted', on, false)}
+                />
+              </div>
+            </>
+          )}
         </Section>
       )}
 

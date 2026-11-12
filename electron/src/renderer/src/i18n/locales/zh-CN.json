@@ -4165,7 +4165,19 @@
     "chroma_blue": "蓝色",
     "chroma_threshold": "强度",
     "chroma_softness": "边缘柔和度",
-    "chroma_spill": "去除溢色"
+    "chroma_spill": "去除溢色",
+    "mask": "蒙版",
+    "mask_none": "无",
+    "mask_rectangle": "矩形",
+    "mask_ellipse": "圆形",
+    "mask_band": "横条",
+    "mask_centerX": "蒙版水平位置",
+    "mask_centerY": "蒙版垂直位置",
+    "mask_width": "蒙版宽度",
+    "mask_height": "蒙版高度",
+    "mask_rotation": "蒙版旋转",
+    "mask_feather": "蒙版羽化",
+    "mask_invert": "反转蒙版"
   },
   "promo": {
     "title": "宣传视频",

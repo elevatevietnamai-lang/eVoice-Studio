@@ -4165,7 +4165,19 @@
     "chroma_blue": "藍色",
     "chroma_threshold": "強度",
     "chroma_softness": "邊緣柔和度",
-    "chroma_spill": "去除溢色"
+    "chroma_spill": "去除溢色",
+    "mask": "遮罩",
+    "mask_none": "無",
+    "mask_rectangle": "矩形",
+    "mask_ellipse": "圓形",
+    "mask_band": "橫條",
+    "mask_centerX": "遮罩水平位置",
+    "mask_centerY": "遮罩垂直位置",
+    "mask_width": "遮罩寬度",
+    "mask_height": "遮罩高度",
+    "mask_rotation": "遮罩旋轉",
+    "mask_feather": "遮罩羽化",
+    "mask_invert": "反轉遮罩"
   },
   "promo": {
     "title": "宣傳影片",

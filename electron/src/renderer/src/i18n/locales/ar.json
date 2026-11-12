@@ -4173,7 +4173,19 @@
     "chroma_blue": "أزرق",
     "chroma_threshold": "الشدة",
     "chroma_softness": "نعومة الحواف",
-    "chroma_spill": "إزالة انعكاس اللون"
+    "chroma_spill": "إزالة انعكاس اللون",
+    "mask": "قناع",
+    "mask_none": "بلا",
+    "mask_rectangle": "مستطيل",
+    "mask_ellipse": "دائرة",
+    "mask_band": "شريط",
+    "mask_centerX": "الموضع الأفقي للقناع",
+    "mask_centerY": "الموضع العمودي للقناع",
+    "mask_width": "عرض القناع",
+    "mask_height": "ارتفاع القناع",
+    "mask_rotation": "دوران القناع",
+    "mask_feather": "نعومة القناع",
+    "mask_invert": "عكس القناع"
   },
   "promo": {
     "title": "فيديو ترويجي",

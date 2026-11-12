@@ -4165,7 +4165,19 @@
     "chroma_blue": "Xanh dương",
     "chroma_threshold": "Độ ngưỡng",
     "chroma_softness": "Độ mềm viền",
-    "chroma_spill": "Khử viền màu"
+    "chroma_spill": "Khử viền màu",
+    "mask": "Mask",
+    "mask_none": "Không",
+    "mask_rectangle": "Chữ nhật",
+    "mask_ellipse": "Tròn",
+    "mask_band": "Dải ngang",
+    "mask_centerX": "Vị trí ngang của mask",
+    "mask_centerY": "Vị trí dọc của mask",
+    "mask_width": "Chiều rộng mask",
+    "mask_height": "Chiều cao mask",
+    "mask_rotation": "Xoay mask",
+    "mask_feather": "Độ mềm mask",
+    "mask_invert": "Đảo ngược mask"
   },
   "promo": {
     "title": "Video quảng cáo",
