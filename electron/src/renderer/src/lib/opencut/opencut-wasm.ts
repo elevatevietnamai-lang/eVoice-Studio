@@ -13,10 +13,32 @@ import wasmUrl from 'opencut-wasm/opencut_wasm_bg.wasm?url';
 export type * from 'opencut-wasm';
 type Api = typeof import('opencut-wasm');
 
-const response = await fetch(wasmUrl);
-const { instance } = await WebAssembly.instantiateStreaming(response, {
-  './opencut_wasm_bg.js': glue,
-});
+const imports = { './opencut_wasm_bg.js': glue };
+
+async function instantiate(): Promise<WebAssembly.Instance> {
+  if (import.meta.env.MODE === 'test') {
+    // Vitest runs on Node, where the bundled URL is not fetchable: read the file.
+    const node = (
+      globalThis as unknown as {
+        process: {
+          getBuiltinModule(id: 'node:module'): {
+            createRequire(from: string): { resolve(id: string): string };
+          };
+          getBuiltinModule(id: 'node:fs'): { readFileSync(path: string): Uint8Array<ArrayBuffer> };
+        };
+      }
+    ).process;
+    const path = node
+      .getBuiltinModule('node:module')
+      .createRequire(import.meta.url)
+      .resolve('opencut-wasm/opencut_wasm_bg.wasm');
+    const bytes = node.getBuiltinModule('node:fs').readFileSync(path);
+    return (await WebAssembly.instantiate(bytes, imports)).instance;
+  }
+  return (await WebAssembly.instantiateStreaming(fetch(wasmUrl), imports)).instance;
+}
+
+const instance = await instantiate();
 glue.__wbg_set_wasm(instance.exports);
 (instance.exports.__wbindgen_start as () => void)();
 
