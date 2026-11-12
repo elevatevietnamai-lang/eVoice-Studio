@@ -235,8 +235,42 @@ export function overlayProblem(
   return clash ? 'overlaps' : null;
 }
 
-export function draftProblem(draft: PromoDraft): 'empty' | 'too_long' | 'too_many' | null {
+/** Every uploaded file the draft points at, each id once. */
+export function draftMedia(draft: PromoDraft): PromoMedia[] {
+  const all = [
+    ...draft.shots.map((shot) => shot.media),
+    ...draft.overlays.map((overlay) => overlay.media),
+    draft.music,
+    draft.narration,
+    draft.logo,
+  ].filter((media): media is PromoMedia => !!media);
+  return [...new Map(all.map((media) => [media.id, media])).values()];
+}
+
+/**
+ * The draft without the files that are gone. A saved draft outlives its uploads
+ * (another data folder, a cleared cache), and a render that names a missing file
+ * fails, so the page offers this instead of a black preview and a failed render.
+ */
+export function withoutMissing(draft: PromoDraft, missing: ReadonlySet<string>): PromoDraft {
+  if (!missing.size) return draft;
+  const gone = (media: PromoMedia | null) => !!media && missing.has(media.id);
+  return {
+    ...draft,
+    shots: draft.shots.filter((shot) => !gone(shot.media)),
+    overlays: draft.overlays.filter((overlay) => !gone(overlay.media)),
+    music: gone(draft.music) ? null : draft.music,
+    narration: gone(draft.narration) ? null : draft.narration,
+    logo: gone(draft.logo) ? null : draft.logo,
+  };
+}
+
+export function draftProblem(
+  draft: PromoDraft,
+  missing: ReadonlySet<string> = new Set(),
+): 'empty' | 'missing_media' | 'too_long' | 'too_many' | null {
   if (!draft.shots.length) return 'empty';
+  if (draftMedia(draft).some((media) => missing.has(media.id))) return 'missing_media';
   if (draft.shots.length > MAX_SHOTS) return 'too_many';
   if (programLength(draft) > MAX_PROGRAM_SECONDS) return 'too_long';
   return null;
