@@ -4093,7 +4093,9 @@
     "contrast": "Kontras",
     "saturation": "Saturasi",
     "duck": "Pelankan saat ada suara",
-    "duck_hint": "Memelankan klip ini saat klip lain bersuara, misalnya musik di bawah narasi."
+    "duck_hint": "Memelankan klip ini saat klip lain bersuara, misalnya musik di bawah narasi.",
+    "media_missing": "File hilang",
+    "problem_missing": "Beberapa klip memakai file yang sudah tidak ada di komputer ini. Hapus klip itu atau impor file lagi."
   },
   "promo": {
     "title": "Video promosi",

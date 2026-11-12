@@ -4095,7 +4095,9 @@
     "contrast": "Contraste",
     "saturation": "Saturação",
     "duck": "Abaixar sob vozes",
-    "duck_hint": "Abaixa este clipe enquanto outro clipe tem som, como música sob uma narração."
+    "duck_hint": "Abaixa este clipe enquanto outro clipe tem som, como música sob uma narração.",
+    "media_missing": "Arquivo ausente",
+    "problem_missing": "Alguns clipes usam arquivos que não estão mais neste computador. Exclua esses clipes ou importe os arquivos novamente."
   },
   "promo": {
     "title": "Vídeo promocional",

@@ -4093,7 +4093,9 @@
     "contrast": "Tương phản",
     "saturation": "Độ bão hoà",
     "duck": "Giảm khi có giọng",
-    "duck_hint": "Hạ âm lượng clip này khi clip khác có tiếng, ví dụ nhạc nền dưới lời thuyết minh."
+    "duck_hint": "Hạ âm lượng clip này khi clip khác có tiếng, ví dụ nhạc nền dưới lời thuyết minh.",
+    "media_missing": "Mất tệp",
+    "problem_missing": "Một số clip dùng tệp không còn trên máy. Hãy xoá các clip đó hoặc nhập lại tệp."
   },
   "promo": {
     "title": "Video quảng cáo",

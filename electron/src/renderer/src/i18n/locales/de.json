@@ -4093,7 +4093,9 @@
     "contrast": "Kontrast",
     "saturation": "Sättigung",
     "duck": "Unter Stimmen absenken",
-    "duck_hint": "Senkt diesen Clip, während ein anderer Clip Ton hat, etwa Musik unter einer Erzählung."
+    "duck_hint": "Senkt diesen Clip, während ein anderer Clip Ton hat, etwa Musik unter einer Erzählung.",
+    "media_missing": "Datei fehlt",
+    "problem_missing": "Einige Clips nutzen Dateien, die nicht mehr auf diesem Computer sind. Lösche diese Clips oder importiere die Dateien erneut."
   },
   "promo": {
     "title": "Werbevideo",

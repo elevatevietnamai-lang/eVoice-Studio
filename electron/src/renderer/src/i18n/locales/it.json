@@ -4095,7 +4095,9 @@
     "contrast": "Contrasto",
     "saturation": "Saturazione",
     "duck": "Abbassa sotto le voci",
-    "duck_hint": "Abbassa questa clip mentre un'altra ha audio, come la musica sotto una narrazione."
+    "duck_hint": "Abbassa questa clip mentre un'altra ha audio, come la musica sotto una narrazione.",
+    "media_missing": "File mancante",
+    "problem_missing": "Alcune clip usano file che non sono più su questo computer. Elimina quelle clip o importa di nuovo i file."
   },
   "promo": {
     "title": "Video promozionale",

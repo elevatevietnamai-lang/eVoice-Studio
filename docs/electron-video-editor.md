@@ -46,7 +46,12 @@ computer; nothing is uploaded.
    lines are spread over the stretch where there is speech. If no speech model
    is installed, the message says how to add one.
 6. **Export** renders the video at the project's size and frame rate with the
-   sound mixed in, then asks where to save the MP4. Up to 5 minutes.
+   sound mixed in, then asks where to save the MP4 (the browser UI downloads
+   it). Up to 5 minutes.
+
+A file the project uses that is no longer on the computer (another data
+folder, a deleted file) shows **File missing** in the Media column, and Export
+is blocked until those clips are deleted or the file is imported again.
 
 The project is saved in the browser storage of the app (`voicestudio.editor.v1`)
 as you edit.

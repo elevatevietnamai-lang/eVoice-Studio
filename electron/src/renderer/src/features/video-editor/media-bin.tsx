@@ -32,7 +32,9 @@ export function MediaBin({
   onAddText,
   captioning,
   onCaptions,
+  missing,
 }: {
+  missing: ReadonlySet<string>;
   project: EditorProject;
   uploading: boolean;
   onUpload: (files: File[]) => void;
@@ -84,7 +86,13 @@ export function MediaBin({
               <div className="min-w-0 flex-1 text-xs">
                 <p className="truncate font-medium">{media.name}</p>
                 <p className="text-muted-foreground tabular-nums">
-                  {media.kind === 'image' ? t('editor.still') : formatTime(media.duration ?? 0)}
+                  {missing.has(media.id) ? (
+                    <span className="text-destructive">{t('editor.media_missing')}</span>
+                  ) : media.kind === 'image' ? (
+                    t('editor.still')
+                  ) : (
+                    formatTime(media.duration ?? 0)
+                  )}
                 </p>
               </div>
               {media.kind !== 'audio' && (

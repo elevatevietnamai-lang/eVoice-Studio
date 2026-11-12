@@ -4093,7 +4093,9 @@
     "contrast": "Contrast",
     "saturation": "Verzadiging",
     "duck": "Zachter onder stemmen",
-    "duck_hint": "Zet deze clip zachter terwijl een andere clip geluid heeft, zoals muziek onder een voice-over."
+    "duck_hint": "Zet deze clip zachter terwijl een andere clip geluid heeft, zoals muziek onder een voice-over.",
+    "media_missing": "Bestand ontbreekt",
+    "problem_missing": "Sommige clips gebruiken bestanden die niet meer op deze computer staan. Verwijder die clips of importeer de bestanden opnieuw."
   },
   "promo": {
     "title": "Promovideo",
