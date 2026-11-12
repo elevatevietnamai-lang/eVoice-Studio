@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { createPlayhead } from './playhead';
 import { beatSyncActive, musicOffset, useBeatGrid } from './beat-grid';
 import { PromoPreview } from './promo-preview';
@@ -195,7 +196,7 @@ function ShotRow({
     Math.min(max, Math.max(min, Number(value) || min));
   return (
     <li className="flex gap-3 rounded-(--card-radius) border border-border/60 bg-background/35 p-2.5">
-      <div className="h-24 w-16 shrink-0 overflow-hidden rounded-md bg-muted">
+      <div className="h-24 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
         {shot.media.kind === 'image' ? (
           <img src={preview} alt="" className="size-full object-cover" />
         ) : (
@@ -627,13 +628,15 @@ export function PromoPage() {
         </SecondarySidebar>
 
         <main className="@container flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
-          {error && (
-            <PipelineFailure
-              fallback={error}
-              onDismiss={() => setError(null)}
-              className="text-xs"
-            />
-          )}
+          <Reveal>
+            {error && (
+              <PipelineFailure
+                fallback={error}
+                onDismiss={() => setError(null)}
+                className="text-xs"
+              />
+            )}
+          </Reveal>
           {result && (
             <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
               <div className="flex items-center gap-2">

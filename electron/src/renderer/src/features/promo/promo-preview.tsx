@@ -148,7 +148,7 @@ export function PromoPreview({
   return (
     <div className="space-y-1">
       <div
-        className="relative overflow-hidden rounded-md bg-black"
+        className="relative overflow-hidden rounded-lg bg-black"
         style={{ width, height }}
         aria-label={t('promo.timeline_preview')}
       >

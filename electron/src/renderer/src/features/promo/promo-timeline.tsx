@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Pause as PauseShape, Play as PlayShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import {
   MagnetIcon,
-  PauseIcon,
-  PlayIcon,
   Redo2Icon,
   ScissorsIcon,
   Trash2Icon,
@@ -190,7 +190,7 @@ function PlayButton({ playhead }: { playhead: Playhead }) {
       aria-label={t(playing ? 'promo.timeline_pause' : 'promo.timeline_play')}
       onClick={() => playhead.setPlaying(!playing)}
     >
-      {playing ? <PauseIcon /> : <PlayIcon />}
+      <MorphIcon icon={playing ? PauseShape : PlayShape} />
     </Button>
   );
 }
@@ -485,7 +485,7 @@ export function PromoTimeline({
         tabIndex={0}
         onKeyDown={onKeyDown}
         onWheel={onWheel}
-        className="relative overflow-x-auto overflow-y-hidden rounded-md border border-border/60 bg-muted/20 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="relative overflow-x-auto overflow-y-hidden rounded-lg border border-border/60 bg-muted/20 outline-none focus-visible:ring-2 focus-visible:ring-ring"
         style={{ height }}
       >
         <div className="relative" style={{ width: Math.max(width - 2, length * pps + 24), height }}>
@@ -515,7 +515,7 @@ export function PromoTimeline({
           {beats.map((at) => (
             <div
               key={at}
-              className="pointer-events-none absolute w-px bg-primary/15"
+              className="pointer-events-none absolute w-px bg-muted-foreground/20"
               style={{ left: at * pps, top: RULER, bottom: 0 }}
             />
           ))}
