@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import fixtures from './snap-fixtures.json';
 import {
   emptyDraft,
   MAX_PROGRAM_SECONDS,
@@ -25,6 +26,7 @@ import {
   resizeShot,
   shotAt,
   snap,
+  snapToBeats,
   splitShotAt,
   trimShotStart,
   undo,
@@ -224,5 +226,50 @@ describe('history', () => {
     history = record(back.history, b);
     expect(history.future).toEqual([]);
     expect(undo({ past: [], future: [] }, a)).toBeNull();
+  });
+});
+
+describe('snapToBeats', () => {
+  // Expected values come from services/promo_video.py snap_to_beats on the same plans.
+  it('matches the backend', () => {
+    const lengths = (period: number, value = draft()) =>
+      snapToBeats(value, period).shots.map((shot) => shot.duration);
+    expect(lengths(0.5)).toEqual([3, 2, 2.5]);
+    expect(lengths(0.37)).toEqual([3.09, 1.85, 2.5]);
+    const mixed = emptyDraft();
+    mixed.shots = [
+      { ...shotFor(clip, 'a'), duration: 1.2, transition: 'cut' },
+      { ...shotFor(clip, 'b'), duration: 0.7, transition: 'slide', transitionSeconds: 0.6 },
+      { ...shotFor(still, 'c'), duration: 1.9, transition: 'fade', transitionSeconds: 0.4 },
+      { ...shotFor(clip, 'd'), duration: 2, transition: 'cut' },
+    ];
+    expect(lengths(0.522, mixed)).toEqual([1.459, 0.922, 1.566, 2]);
+  });
+
+  // scripts/export_promo_snap_fixtures.py records the backend on 40 random
+  // plans, every transition and many clamps; the port must agree exactly.
+  it.each(fixtures.map((fixture, index) => [index, fixture] as const))(
+    'agrees with the backend on random plan %i',
+    (_index, fixture) => {
+      const value = emptyDraft();
+      value.shots = fixture.shots.map((shot, k) => ({
+        ...shotFor(clip, `k${k}`),
+        duration: shot.duration,
+        transition: shot.transition as PromoDraft['shots'][number]['transition'],
+        transitionSeconds: shot.transitionSeconds,
+      }));
+      const once = snapToBeats(value, fixture.period);
+      expect(once.shots.map((shot) => shot.duration)).toEqual(fixture.snapped);
+      expect(snapToBeats(once, fixture.period).shots.map((shot) => shot.duration)).toEqual(
+        fixture.again,
+      );
+      expect(fixture.again).toEqual(fixture.snapped);
+    },
+  );
+
+  it('is stable, so the render leaves a snapped timeline alone', () => {
+    const once = snapToBeats(draft(), 0.37);
+    expect(snapToBeats(once, 0.37)).toBe(once);
+    expect(snapToBeats(draft(), 0)).toEqual(draft());
   });
 });

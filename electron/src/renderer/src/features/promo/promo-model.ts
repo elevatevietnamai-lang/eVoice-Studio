@@ -156,7 +156,9 @@ export function shotFor(media: PromoMedia, key: string): PromoShot {
 
 export function clampTransition(seconds: number, before: number, after: number): number {
   const limit = Math.min(MAX_TRANSITION_SECONDS, TRANSITION_SHARE * Math.min(before, after));
-  return Math.max(0, Math.min(seconds, limit));
+  // Rounded to the millisecond like clamp_transition in services/promo_video.py,
+  // so start times and beat snapping match the render exactly.
+  return Number(Math.max(0, Math.min(seconds, limit)).toFixed(3));
 }
 
 /**

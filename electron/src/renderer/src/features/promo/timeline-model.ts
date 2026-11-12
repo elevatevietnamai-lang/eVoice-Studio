@@ -6,6 +6,7 @@
  */
 import {
   anchorIndex,
+  clampTransition,
   MAX_SHOT_SECONDS,
   MAX_SHOTS,
   MIN_SHOT_SECONDS,
@@ -43,7 +44,12 @@ export interface TimelineLayout {
   length: number;
 }
 
-const round = (value: number) => Math.round(value * 1000) / 1000;
+/**
+ * Milliseconds, rounded like Python's round(x, 3): on the exact binary value
+ * (5 × 0.5221 is 2.61049…, so 2.61), not after multiplying by 1000 (2.611).
+ * The backend's beat snapping must come out identical.
+ */
+const round = (value: number) => Number(value.toFixed(3));
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
 /** Absolute start of an overlay in the finished video. */
@@ -220,6 +226,67 @@ export function removeShot(draft: PromoDraft, key: string): PromoDraft {
 
 export function removeOverlay(draft: PromoDraft, key: string): PromoDraft {
   return { ...draft, overlays: draft.overlays.filter((overlay) => overlay.key !== key) };
+}
+
+/** Python's round(): halves go to the even neighbour. */
+function roundHalfEven(value: number): number {
+  const floor = Math.floor(value);
+  const diff = value - floor;
+  if (Math.abs(diff - 0.5) > 1e-9) return Math.round(value);
+  return floor % 2 === 0 ? floor : floor + 1;
+}
+
+/**
+ * The shot lengths `/promo/render` gives the draft with **Cut on the beat**:
+ * a port of snap_to_beats in services/promo_video.py (each cut moves to the
+ * nearest beat that keeps every shot at least MIN_SHOT_SECONDS; the last shot
+ * keeps its length). Applying it while editing makes the timeline show what
+ * renders: the backend leaves cuts already on the grid where they are.
+ */
+export function snapToBeats(draft: PromoDraft, period: number): PromoDraft {
+  const durations = draft.shots.map((shot) => shot.duration);
+  if (!(period > 0) || durations.length < 2) return draft;
+  const overlaps = draft.shots.map((shot, index) =>
+    index === 0 || shot.transition === 'cut'
+      ? 0
+      : clampTransition(shot.transitionSeconds, durations[index - 1], shot.duration),
+  );
+  const offsets = [0];
+  let length = durations[0];
+  for (let k = 1; k < durations.length; k++) {
+    offsets.push(length - overlaps[k]);
+    length += durations[k] - overlaps[k];
+  }
+  const snapped = [0];
+  for (let k = 1; k < durations.length; k++) {
+    const earliest = snapped[k - 1] + MIN_SHOT_SECONDS;
+    const beat = Math.max(Math.ceil(earliest / period), roundHalfEven(offsets[k] / period));
+    snapped.push(round(beat * period));
+  }
+  // Solve the lengths that put every cut on its beat, as the backend does:
+  // overlaps depend on the lengths (the 45 % clamp), so iterate from none.
+  const count = durations.length;
+  const overlapsOf = (lengths: number[]) =>
+    draft.shots.map((shot, index) =>
+      index === 0 || shot.transition === 'cut'
+        ? 0
+        : clampTransition(shot.transitionSeconds, lengths[index - 1], lengths[index]),
+    );
+  let next = new Array<number>(count).fill(0);
+  for (let round_ = 0; round_ < 4 * count + 8; round_++) {
+    const overlap = next.some(Boolean) ? overlapsOf(next) : new Array<number>(count).fill(0);
+    const solved = durations.map((duration, k) =>
+      k === count - 1
+        ? duration
+        : round(
+            clamp(snapped[k + 1] - snapped[k] + overlap[k + 1], MIN_SHOT_SECONDS, MAX_SHOT_SECONDS),
+          ),
+    );
+    if (solved.every((value, k) => value === next[k])) break;
+    next = solved;
+  }
+  if (next.every((duration, k) => duration === durations[k])) return draft;
+  return { ...draft, shots: draft.shots.map((shot, k) => ({ ...shot, duration: next[k] })) };
 }
 
 /** Beat times in the finished video: multiples of `period` from 0. */

@@ -183,6 +183,32 @@ class TestBeats:
     def test_silence_has_no_grid(self):
         assert pv.detect_beats(np.zeros(22050 * 5, dtype=np.float32), 22050) == (0.0, 0.0)
 
+    def test_snapped_cuts_land_on_beats_whatever_the_transitions(self):
+        """Regression: transitions clamped to 45 % of a shortened neighbour used
+        to push cuts off the beat (29 of 40 random plans, by up to 0.37 s)."""
+        import random
+
+        rng = random.Random(7)
+        names = list(pv.TRANSITIONS)
+        for _ in range(200):
+            shots = [
+                pv.Shot("x", "video", round(rng.uniform(pv.MIN_SHOT_SECONDS, 4.0), 3),
+                        transition=rng.choice(names),
+                        transition_seconds=round(rng.uniform(0, 1.2), 2))
+                for _ in range(rng.randint(2, 9))
+            ]
+            period = round(rng.uniform(0.25, 0.9), 4)
+            plan = pv.PromoPlan(shots=shots)
+            durations = pv.snap_to_beats(plan, period, 0.0)
+            snapped = pv.PromoPlan(shots=[
+                pv.Shot(**{**s.__dict__, "duration": d}) for s, d in zip(shots, durations)
+            ])
+            for start in pv.segment_starts(snapped)[1:]:
+                assert abs(start / period - round(start / period)) * period < 0.003, (period, durations)
+            # Snapping again (as /promo/render does for a timeline that already
+            # snapped) leaves it alone.
+            assert pv.snap_to_beats(snapped, period, 0.0) == durations
+
     def test_snapping_is_stable_on_cuts_already_on_the_grid(self):
         """The timeline draws the grid and snaps edits to it; a second snap at
         render time must leave such cuts where they are."""

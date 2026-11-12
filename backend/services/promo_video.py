@@ -582,11 +582,32 @@ def snap_to_beats(plan: PromoPlan, period: float, phase: float) -> list[float]:
         earliest = snapped[-1] + MIN_SHOT_SECONDS
         beat = max(math.ceil(earliest / period), round(offsets[k] / period))
         snapped.append(round(beat * period, 3))
-    out = []
-    for k in range(len(durations)):
-        if k == len(durations) - 1:
-            out.append(durations[k])
-            continue
-        duration = snapped[k + 1] - snapped[k] + overlaps[k + 1]
-        out.append(round(min(MAX_SHOT_SECONDS, max(MIN_SHOT_SECONDS, duration)), 3))
-    return out
+    # Solve the lengths that put every cut on its beat. A transition is held
+    # to TRANSITION_SHARE of its shorter neighbour, so the overlap depends on
+    # the lengths being solved for: the overlaps of the original lengths miss
+    # the beat whenever the clamp changes. Iterate from no overlap; lengths
+    # and overlaps only grow from there, so this settles on the smallest
+    # consistent answer, and snapping that answer again changes nothing.
+    count = len(durations)
+
+    def overlaps_of(lengths: list[float]) -> list[float]:
+        return [0.0] + [
+            clamp_transition(s.transition_seconds, lengths[i - 1], lengths[i])
+            if TRANSITIONS[s.transition] else 0.0
+            for i, s in enumerate(plan.shots) if i > 0
+        ]
+
+    solved = [0.0] * count
+    for _ in range(4 * count + 8):
+        overlap = overlaps_of(solved) if any(solved) else [0.0] * count
+        out = [
+            durations[k] if k == count - 1 else round(
+                min(MAX_SHOT_SECONDS, max(MIN_SHOT_SECONDS, snapped[k + 1] - snapped[k] + overlap[k + 1])),
+                3,
+            )
+            for k in range(count)
+        ]
+        if out == solved:
+            break
+        solved = out
+    return solved

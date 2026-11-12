@@ -264,7 +264,8 @@ async def promo_beats(media_id: str, start: float = 0.0) -> dict:
         raise HTTPException(status_code=422, detail="start must be zero or more")
     path = await _require_audio(resolve_media(media_id, kinds=("audio", "video")))
     period, phase = await _beat_grid(path, start)
-    return {"period": round(period, 4), "phase": round(phase, 4)}
+    # Full precision: the timeline snaps with the exact period the render uses.
+    return {"period": period, "phase": phase}
 
 
 @router.post("/promo/render")
