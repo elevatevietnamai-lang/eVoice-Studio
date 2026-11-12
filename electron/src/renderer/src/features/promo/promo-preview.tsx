@@ -44,10 +44,13 @@ function sync(element: HTMLMediaElement | null, at: number, playing: boolean, vi
 export function PromoPreview({
   draft,
   playhead,
+  musicStart,
   width,
 }: {
   draft: PromoDraft;
   playhead: Playhead;
+  /** Seconds into the music file at video time 0, as the render starts it. */
+  musicStart: number;
   width: number;
 }) {
   const { t } = useTranslation();
@@ -115,7 +118,8 @@ export function PromoPreview({
     }
     const audio = music.current;
     if (audio) audio.volume = Math.min(1, draft.musicVolume);
-    if (audio && audio.duration > 0) sync(audio, time % audio.duration, playing, true);
+    if (audio && audio.duration > 0)
+      sync(audio, (time + musicStart) % audio.duration, playing, true);
     sync(narration.current, time, playing, true);
   });
 

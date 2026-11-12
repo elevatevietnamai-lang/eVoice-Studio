@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPlayhead } from './playhead';
+import { beatSyncActive, musicOffset, useBeatGrid } from './beat-grid';
 import { PromoPreview } from './promo-preview';
 import { PromoTimeline, type Selection } from './promo-timeline';
-import { record, redo, undo, type History } from './timeline-model';
+import { record, redo, snapToBeats, undo, type History } from './timeline-model';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDownIcon,
@@ -390,6 +391,13 @@ export function PromoPage() {
     setDraft(result.draft);
   };
   const [playhead] = useState(createPlayhead);
+  // With Cut on the beat, the preview and the overlay warnings use the cut
+  // lengths the render will use; the list inputs keep editing the raw draft.
+  const grid = useBeatGrid(draft.music);
+  const effective = useMemo(
+    () => (beatSyncActive(draft, grid) ? snapToBeats(draft, grid.period) : draft),
+    [draft, grid],
+  );
   const [selection, setSelection] = useState<Selection>(null);
   const previewWidth = draft.shape === 'vertical' ? 200 : draft.shape === 'square' ? 260 : 340;
 
@@ -646,7 +654,12 @@ export function PromoPage() {
           )}
           {draft.shots.length > 0 && (
             <section className="flex flex-wrap items-start gap-4">
-              <PromoPreview draft={draft} playhead={playhead} width={previewWidth} />
+              <PromoPreview
+                draft={effective}
+                playhead={playhead}
+                width={previewWidth}
+                musicStart={musicOffset(draft, grid)}
+              />
               <div className="min-w-[18rem] flex-1">
                 <PromoTimeline
                   draft={draft}
@@ -660,6 +673,7 @@ export function PromoPage() {
                   onUndo={() => travel(undo)}
                   onRedo={() => travel(redo)}
                   newKey={nextKey}
+                  grid={grid}
                 />
               </div>
             </section>
@@ -740,7 +754,7 @@ export function PromoPage() {
             )}
           </section>
           <AnimatedOverlays
-            draft={draft}
+            draft={effective}
             busy={busy}
             onBusy={setOverlayBusy}
             onAdd={(overlay) =>

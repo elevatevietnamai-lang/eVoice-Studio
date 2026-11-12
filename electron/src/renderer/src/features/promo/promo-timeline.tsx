@@ -12,7 +12,8 @@ import {
   ZoomOutIcon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { apiJson, apiPath } from '@/lib/api/client';
+import { apiPath } from '@/lib/api/client';
+import { beatSyncActive, musicOffset, type BeatGrid } from './beat-grid';
 import { cn } from '@/lib/utils';
 import type { PromoDraft } from './promo-model';
 import { usePlayhead, type Playhead } from './playhead';
@@ -94,7 +95,18 @@ function loadPeaks(url: string, id: string) {
   return pending;
 }
 
-function Waveform({ draft, pps, length }: { draft: PromoDraft; pps: number; length: number }) {
+function Waveform({
+  draft,
+  pps,
+  length,
+  offset,
+}: {
+  draft: PromoDraft;
+  pps: number;
+  length: number;
+  /** Seconds into the file at video time 0 (the render starts the music on a beat). */
+  offset: number;
+}) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [wave, setWave] = useState<{ peaks: number[]; duration: number } | null>(null);
   const music = draft.music;
@@ -126,12 +138,12 @@ function Waveform({ draft, pps, length }: { draft: PromoDraft; pps: number; leng
     const perSecond = wave.peaks.length / wave.duration;
     // The music loops when it is shorter than the video, as in the render.
     for (let x = 0; x < element.width; x += 2) {
-      const t = (x / dpr / pps) % wave.duration;
+      const t = (x / dpr / pps + offset) % wave.duration;
       const peak = wave.peaks[Math.min(wave.peaks.length - 1, Math.floor(t * perSecond))] ?? 0;
       const h = Math.max(1, peak * middle * 0.9);
       context.fillRect(x, middle - h, 1.5 * dpr, h * 2);
     }
-  }, [wave, pps, length]);
+  }, [wave, pps, length, offset]);
   if (!music) return null;
   return (
     <canvas ref={canvas} className="pointer-events-none absolute left-0 top-0 text-primary/50" />
@@ -195,6 +207,7 @@ export function PromoTimeline({
   onUndo,
   onRedo,
   newKey,
+  grid,
 }: {
   draft: PromoDraft;
   busy: boolean;
@@ -207,6 +220,8 @@ export function PromoTimeline({
   onUndo: () => void;
   onRedo: () => void;
   newKey: () => string;
+  /** The music's beat grid, fetched once by the page. */
+  grid: BeatGrid;
 }) {
   const { t } = useTranslation();
   const viewport = useRef<HTMLDivElement>(null);
@@ -216,7 +231,6 @@ export function PromoTimeline({
   const [zoom, setZoom] = useState(1);
   const [width, setWidth] = useState(800);
   const [snapOn, setSnapOn] = useState(true);
-  const [period, setPeriod] = useState(0);
 
   useEffect(() => {
     const element = viewport.current;
@@ -228,22 +242,11 @@ export function PromoTimeline({
   }, []);
 
   const music = draft.music;
-  useEffect(() => {
-    setPeriod(0);
-    if (!music) return;
-    let active = true;
-    apiJson<{ period: number }>(`/promo/beats/${encodeURIComponent(music.id)}`).then(
-      (grid) => active && setPeriod(grid.period),
-      () => {},
-    );
-    return () => {
-      active = false;
-    };
-  }, [music]);
+  const period = grid.period;
 
   // With Cut on the beat the render moves cuts onto the music's beats; apply
   // the same snapping here so the timeline shows what renders.
-  const beatSync = draft.snapToBeats && !!music && period > 0;
+  const beatSync = beatSyncActive(draft, grid);
   const settle = (value: PromoDraft) => (beatSync ? snapToBeats(value, period) : value);
   const commit = (next: PromoDraft) => onCommit(settle(next));
 
@@ -657,7 +660,7 @@ export function PromoTimeline({
               className="absolute inset-x-0 border-t border-border/40"
               style={{ top: RULER + TRACK + layout.lanes * LANE, height: MUSIC }}
             >
-              <Waveform draft={draft} pps={pps} length={length} />
+              <Waveform draft={draft} pps={pps} length={length} offset={musicOffset(draft, grid)} />
               <span className="absolute left-1 top-0.5 text-[10px] text-muted-foreground">
                 {music.name}
               </span>

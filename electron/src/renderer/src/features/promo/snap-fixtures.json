@@ -1,1902 +1,1382 @@
 [
- {
-  "period": 0.2665,
-  "shots": [
-   {
-    "duration": 3.264,
-    "transition": "dip",
-    "transitionSeconds": 0.46
-   },
-   {
-    "duration": 3.07,
-    "transition": "dip",
-    "transitionSeconds": 1.15
-   },
-   {
-    "duration": 3.922,
-    "transition": "dip",
-    "transitionSeconds": 0.52
-   },
-   {
-    "duration": 1.116,
-    "transition": "zoom",
-    "transitionSeconds": 0.65
-   },
-   {
-    "duration": 3.879,
-    "transition": "zoom",
-    "transitionSeconds": 0.52
-   }
-  ],
-  "snapped": [
-   3.282,
-   3.185,
-   3.792,
-   1.32,
-   3.879
-  ],
-  "again": [
-   3.282,
-   3.185,
-   3.792,
-   1.32,
-   3.879
-  ]
- },
- {
-  "period": 0.2938,
-  "shots": [
-   {
-    "duration": 3.851,
-    "transition": "circle",
-    "transitionSeconds": 0.83
-   },
-   {
-    "duration": 3.516,
-    "transition": "fade",
-    "transitionSeconds": 0.41
-   },
-   {
-    "duration": 3.438,
-    "transition": "circle",
-    "transitionSeconds": 0.02
-   },
-   {
-    "duration": 2.679,
-    "transition": "push",
-    "transitionSeconds": 1.16
-   },
-   {
-    "duration": 1.162,
-    "transition": "wipe",
-    "transitionSeconds": 0.35
-   },
-   {
-    "duration": 0.691,
-    "transition": "slide",
-    "transitionSeconds": 0.21
-   }
-  ],
-  "snapped": [
-   3.936,
-   3.545,
-   3.217,
-   2.7,
-   1.385,
-   0.691
-  ],
-  "again": [
-   3.936,
-   3.545,
-   3.217,
-   2.7,
-   1.385,
-   0.691
-  ]
- },
- {
-  "period": 0.6433,
-  "shots": [
-   {
-    "duration": 1.678,
-    "transition": "wipe",
-    "transitionSeconds": 0.32
-   },
-   {
-    "duration": 1.485,
-    "transition": "flash",
-    "transitionSeconds": 0.76
-   },
-   {
-    "duration": 0.514,
-    "transition": "circle",
-    "transitionSeconds": 0.64
-   }
-  ],
-  "snapped": [
-   1.97,
-   1.517,
-   0.514
-  ],
-  "again": [
-   1.97,
-   1.517,
-   0.514
-  ]
- },
- {
-  "period": 0.5924,
-  "shots": [
-   {
-    "duration": 2.162,
-    "transition": "cut",
-    "transitionSeconds": 0.52
-   },
-   {
-    "duration": 2.941,
-    "transition": "slide",
-    "transitionSeconds": 0.78
-   },
-   {
-    "duration": 2.461,
-    "transition": "wipe",
-    "transitionSeconds": 0.16
-   },
-   {
-    "duration": 0.954,
-    "transition": "zoom",
-    "transitionSeconds": 0.87
-   },
-   {
-    "duration": 3.596,
-    "transition": "flash",
-    "transitionSeconds": 0.85
-   },
-   {
-    "duration": 0.772,
-    "transition": "flash",
-    "transitionSeconds": 1.03
-   },
-   {
-    "duration": 1.37,
-    "transition": "slide",
-    "transitionSeconds": 0.54
-   },
-   {
-    "duration": 1.001,
-    "transition": "cut",
-    "transitionSeconds": 0.59
-   },
-   {
-    "duration": 3.937,
-    "transition": "dip",
-    "transitionSeconds": 1.15
-   }
-  ],
-  "snapped": [
-   1.965,
-   3.122,
-   2.261,
-   1.076,
-   4.039,
-   1.076,
-   1.185,
-   1.076,
-   3.937
-  ],
-  "again": [
-   1.965,
-   3.122,
-   2.261,
-   1.076,
-   4.039,
-   1.076,
-   1.185,
-   1.076,
-   3.937
-  ]
- },
- {
-  "period": 0.4729,
-  "shots": [
-   {
-    "duration": 3.623,
-    "transition": "circle",
-    "transitionSeconds": 0.1
-   },
-   {
-    "duration": 1.7,
-    "transition": "zoom",
-    "transitionSeconds": 0.69
-   }
-  ],
-  "snapped": [
-   3.527,
-   1.7
-  ],
-  "again": [
-   3.527,
-   1.7
-  ]
- },
- {
-  "period": 0.523,
-  "shots": [
-   {
-    "duration": 3.805,
-    "transition": "fade",
-    "transitionSeconds": 0.58
-   },
-   {
-    "duration": 2.882,
-    "transition": "cut",
-    "transitionSeconds": 1.13
-   },
-   {
-    "duration": 3.703,
-    "transition": "zoom",
-    "transitionSeconds": 0.35
-   },
-   {
-    "duration": 1.752,
-    "transition": "push",
-    "transitionSeconds": 0.63
-   },
-   {
-    "duration": 1.622,
-    "transition": "cut",
-    "transitionSeconds": 0.69
-   },
-   {
-    "duration": 3.664,
-    "transition": "zoom",
-    "transitionSeconds": 0.37
-   },
-   {
-    "duration": 3.303,
-    "transition": "flash",
-    "transitionSeconds": 0.95
-   },
-   {
-    "duration": 0.636,
-    "transition": "fade",
-    "transitionSeconds": 0.59
-   },
-   {
-    "duration": 1.799,
-    "transition": "zoom",
-    "transitionSeconds": 0.57
-   }
-  ],
-  "snapped": [
-   3.661,
-   2.965,
-   3.768,
-   1.569,
-   1.939,
-   3.565,
-   3.565,
-   0.95,
-   1.799
-  ],
-  "again": [
-   3.661,
-   2.965,
-   3.768,
-   1.569,
-   1.939,
-   3.565,
-   3.565,
-   0.95,
-   1.799
-  ]
- },
- {
-  "period": 0.3815,
-  "shots": [
-   {
-    "duration": 3.19,
-    "transition": "slide",
-    "transitionSeconds": 0.7
-   },
-   {
-    "duration": 3.997,
-    "transition": "push",
-    "transitionSeconds": 0.61
-   },
-   {
-    "duration": 3.388,
-    "transition": "push",
-    "transitionSeconds": 0.32
-   },
-   {
-    "duration": 2.751,
-    "transition": "blur",
-    "transitionSeconds": 0.07
-   },
-   {
-    "duration": 2.848,
-    "transition": "push",
-    "transitionSeconds": 0.32
-   },
-   {
-    "duration": 3.258,
-    "transition": "dip",
-    "transitionSeconds": 0.13
-   },
-   {
-    "duration": 1.926,
-    "transition": "zoom",
-    "transitionSeconds": 0.53
-   }
-  ],
-  "snapped": [
-   3.281,
-   3.753,
-   3.503,
-   2.609,
-   3.183,
-   3.2,
-   1.926
-  ],
-  "again": [
-   3.281,
-   3.753,
-   3.503,
-   2.609,
-   3.183,
-   3.2,
-   1.926
-  ]
- },
- {
-  "period": 0.6953,
-  "shots": [
-   {
-    "duration": 3.981,
-    "transition": "wipe",
-    "transitionSeconds": 0.68
-   },
-   {
-    "duration": 0.689,
-    "transition": "cut",
-    "transitionSeconds": 0.18
-   },
-   {
-    "duration": 2.421,
-    "transition": "flash",
-    "transitionSeconds": 0.57
-   },
-   {
-    "duration": 0.527,
-    "transition": "push",
-    "transitionSeconds": 0.19
-   },
-   {
-    "duration": 3.139,
-    "transition": "cut",
-    "transitionSeconds": 0.02
-   }
-  ],
-  "snapped": [
-   4.172,
-   1.263,
-   1.581,
-   0.695,
-   3.139
-  ],
-  "again": [
-   4.172,
-   1.263,
-   1.581,
-   0.695,
-   3.139
-  ]
- },
- {
-  "period": 0.7776,
-  "shots": [
-   {
-    "duration": 2.212,
-    "transition": "circle",
-    "transitionSeconds": 0.65
-   },
-   {
-    "duration": 2.074,
-    "transition": "cut",
-    "transitionSeconds": 0.16
-   },
-   {
-    "duration": 2.782,
-    "transition": "push",
-    "transitionSeconds": 0.45
-   }
-  ],
-  "snapped": [
-   2.333,
-   2.005,
-   2.782
-  ],
-  "again": [
-   2.333,
-   2.005,
-   2.782
-  ]
- },
- {
-  "period": 0.6542,
-  "shots": [
-   {
-    "duration": 3.698,
-    "transition": "flash",
-    "transitionSeconds": 0.29
-   },
-   {
-    "duration": 2.9,
-    "transition": "flash",
-    "transitionSeconds": 0.06
-   },
-   {
-    "duration": 3.595,
-    "transition": "dip",
-    "transitionSeconds": 0.34
-   },
-   {
-    "duration": 2.488,
-    "transition": "push",
-    "transitionSeconds": 1.17
-   },
-   {
-    "duration": 1.302,
-    "transition": "wipe",
-    "transitionSeconds": 0.45
-   }
-  ],
-  "snapped": [
-   3.985,
-   2.303,
-   3.702,
-   2.412,
-   1.302
-  ],
-  "again": [
-   3.985,
-   2.303,
-   3.702,
-   2.412,
-   1.302
-  ]
- },
- {
-  "period": 0.2719,
-  "shots": [
-   {
-    "duration": 2.843,
-    "transition": "zoom",
-    "transitionSeconds": 0.21
-   },
-   {
-    "duration": 3.476,
-    "transition": "dip",
-    "transitionSeconds": 1.13
-   },
-   {
-    "duration": 2.312,
-    "transition": "push",
-    "transitionSeconds": 0.52
-   },
-   {
-    "duration": 1.308,
-    "transition": "slide",
-    "transitionSeconds": 0.95
-   },
-   {
-    "duration": 3.9,
-    "transition": "fade",
-    "transitionSeconds": 0.81
-   }
-  ],
-  "snapped": [
-   2.761,
-   3.511,
-   2.348,
-   0.987,
-   3.9
-  ],
-  "again": [
-   2.761,
-   3.511,
-   2.348,
-   0.987,
-   3.9
-  ]
- },
- {
-  "period": 0.3899,
-  "shots": [
-   {
-    "duration": 3.457,
-    "transition": "fade",
-    "transitionSeconds": 1.17
-   },
-   {
-    "duration": 3.619,
-    "transition": "push",
-    "transitionSeconds": 0.85
-   },
-   {
-    "duration": 1.41,
-    "transition": "flash",
-    "transitionSeconds": 0.11
-   },
-   {
-    "duration": 2.884,
-    "transition": "cut",
-    "transitionSeconds": 0.63
-   },
-   {
-    "duration": 0.595,
-    "transition": "wipe",
-    "transitionSeconds": 1.1
-   },
-   {
-    "duration": 1.187,
-    "transition": "wipe",
-    "transitionSeconds": 0.92
-   },
-   {
-    "duration": 0.952,
-    "transition": "fade",
-    "transitionSeconds": 0.89
-   },
-   {
-    "duration": 0.643,
-    "transition": "zoom",
-    "transitionSeconds": 0.34
-   }
-  ],
-  "snapped": [
-   3.579,
-   3.619,
-   1.17,
-   3.335,
-   1.347,
-   1.261,
-   1.069,
-   0.643
-  ],
-  "again": [
-   3.579,
-   3.619,
-   1.17,
-   3.335,
-   1.347,
-   1.261,
-   1.069,
-   0.643
-  ]
- },
- {
-  "period": 0.349,
-  "shots": [
-   {
-    "duration": 1.179,
-    "transition": "cut",
-    "transitionSeconds": 1.12
-   },
-   {
-    "duration": 2.058,
-    "transition": "wipe",
-    "transitionSeconds": 0.2
-   },
-   {
-    "duration": 0.521,
-    "transition": "flash",
-    "transitionSeconds": 0.24
-   },
-   {
-    "duration": 2.21,
-    "transition": "zoom",
-    "transitionSeconds": 0.48
-   }
-  ],
-  "snapped": [
-   1.247,
-   1.985,
-   1.178,
-   2.21
-  ],
-  "again": [
-   1.247,
-   1.985,
-   1.178,
-   2.21
-  ]
- },
- {
-  "period": 0.4599,
-  "shots": [
-   {
-    "duration": 3.188,
-    "transition": "cut",
-    "transitionSeconds": 0.14
-   },
-   {
-    "duration": 1.717,
-    "transition": "push",
-    "transitionSeconds": 0.09
-   },
-   {
-    "duration": 3.821,
-    "transition": "push",
-    "transitionSeconds": 0.46
-   },
-   {
-    "duration": 1.895,
-    "transition": "fade",
-    "transitionSeconds": 0.77
-   },
-   {
-    "duration": 2.778,
-    "transition": "zoom",
-    "transitionSeconds": 0.73
-   },
-   {
-    "duration": 1.936,
-    "transition": "dip",
-    "transitionSeconds": 0.24
-   }
-  ],
-  "snapped": [
-   3.309,
-   1.38,
-   3.989,
-   2.11,
-   2.54,
-   1.936
-  ],
-  "again": [
-   3.309,
-   1.38,
-   3.989,
-   2.11,
-   2.54,
-   1.936
-  ]
- },
- {
-  "period": 0.6017,
-  "shots": [
-   {
-    "duration": 0.931,
-    "transition": "wipe",
-    "transitionSeconds": 0.38
-   },
-   {
-    "duration": 3.438,
-    "transition": "zoom",
-    "transitionSeconds": 0.54
-   },
-   {
-    "duration": 0.807,
-    "transition": "circle",
-    "transitionSeconds": 0.76
-   },
-   {
-    "duration": 2.905,
-    "transition": "cut",
-    "transitionSeconds": 0.29
-   },
-   {
-    "duration": 3.349,
-    "transition": "push",
-    "transitionSeconds": 0.05
-   },
-   {
-    "duration": 1.205,
-    "transition": "slide",
-    "transitionSeconds": 0.32
-   },
-   {
-    "duration": 1.307,
-    "transition": "push",
-    "transitionSeconds": 0.45
-   },
-   {
-    "duration": 3.463,
-    "transition": "circle",
-    "transitionSeconds": 0.07
-   },
-   {
-    "duration": 0.523,
-    "transition": "flash",
-    "transitionSeconds": 0.94
-   }
-  ],
-  "snapped": [
-   1.094,
-   3.279,
-   0.602,
-   3.058,
-   3.329,
-   1.052,
-   1.273,
-   3.845,
-   0.523
-  ],
-  "again": [
-   1.094,
-   3.279,
-   0.602,
-   3.058,
-   3.329,
-   1.052,
-   1.273,
-   3.845,
-   0.523
-  ]
- },
- {
-  "period": 0.5372,
-  "shots": [
-   {
-    "duration": 1.898,
-    "transition": "zoom",
-    "transitionSeconds": 0.67
-   },
-   {
-    "duration": 3.108,
-    "transition": "fade",
-    "transitionSeconds": 0.92
-   },
-   {
-    "duration": 0.541,
-    "transition": "circle",
-    "transitionSeconds": 1.04
-   },
-   {
-    "duration": 3.396,
-    "transition": "zoom",
-    "transitionSeconds": 0.73
-   },
-   {
-    "duration": 1.666,
-    "transition": "blur",
-    "transitionSeconds": 0.43
-   },
-   {
-    "duration": 2.686,
-    "transition": "push",
-    "transitionSeconds": 0.48
-   },
-   {
-    "duration": 1.83,
-    "transition": "zoom",
-    "transitionSeconds": 0.71
-   },
-   {
-    "duration": 2.087,
-    "transition": "dip",
-    "transitionSeconds": 0.29
-   }
-  ],
-  "snapped": [
-   1.952,
-   3.126,
-   0.978,
-   3.116,
-   2.091,
-   2.322,
-   1.901,
-   2.087
-  ],
-  "again": [
-   1.952,
-   3.126,
-   0.978,
-   3.116,
-   2.091,
-   2.322,
-   1.901,
-   2.087
-  ]
- },
- {
-  "period": 0.4688,
-  "shots": [
-   {
-    "duration": 1.432,
-    "transition": "cut",
-    "transitionSeconds": 0.31
-   },
-   {
-    "duration": 1.247,
-    "transition": "blur",
-    "transitionSeconds": 1.03
-   }
-  ],
-  "snapped": [
-   1.499,
-   1.247
-  ],
-  "again": [
-   1.499,
-   1.247
-  ]
- },
- {
-  "period": 0.7247,
-  "shots": [
-   {
-    "duration": 1.253,
-    "transition": "wipe",
-    "transitionSeconds": 0.65
-   },
-   {
-    "duration": 0.989,
-    "transition": "cut",
-    "transitionSeconds": 0.12
-   }
-  ],
-  "snapped": [
-   1.449,
-   0.989
-  ],
-  "again": [
-   1.449,
-   0.989
-  ]
- },
- {
-  "period": 0.5659,
-  "shots": [
-   {
-    "duration": 2.514,
-    "transition": "dip",
-    "transitionSeconds": 0.97
-   },
-   {
-    "duration": 1.641,
-    "transition": "fade",
-    "transitionSeconds": 0.71
-   },
-   {
-    "duration": 1.66,
-    "transition": "blur",
-    "transitionSeconds": 0.82
-   },
-   {
-    "duration": 2.689,
-    "transition": "slide",
-    "transitionSeconds": 0.41
-   },
-   {
-    "duration": 3.899,
-    "transition": "cut",
-    "transitionSeconds": 0.4
-   },
-   {
-    "duration": 3.535,
-    "transition": "blur",
-    "transitionSeconds": 0.56
-   },
-   {
-    "duration": 1.87,
-    "transition": "blur",
-    "transitionSeconds": 1.05
-   }
-  ],
-  "snapped": [
-   2.408,
-   1.825,
-   1.542,
-   2.83,
-   3.955,
-   3.106,
-   1.87
-  ],
-  "again": [
-   2.408,
-   1.825,
-   1.542,
-   2.83,
-   3.955,
-   3.106,
-   1.87
-  ]
- },
- {
-  "period": 0.7827,
-  "shots": [
-   {
-    "duration": 0.975,
-    "transition": "slide",
-    "transitionSeconds": 0.33
-   },
-   {
-    "duration": 0.679,
-    "transition": "cut",
-    "transitionSeconds": 0.77
-   }
-  ],
-  "snapped": [
-   0.783,
-   0.679
-  ],
-  "again": [
-   0.783,
-   0.679
-  ]
- },
- {
-  "period": 0.4755,
-  "shots": [
-   {
-    "duration": 2.31,
-    "transition": "flash",
-    "transitionSeconds": 0.06
-   },
-   {
-    "duration": 2.076,
-    "transition": "dip",
-    "transitionSeconds": 0.72
-   },
-   {
-    "duration": 1.038,
-    "transition": "zoom",
-    "transitionSeconds": 0.04
-   },
-   {
-    "duration": 2.691,
-    "transition": "fade",
-    "transitionSeconds": 0.14
-   },
-   {
-    "duration": 0.884,
-    "transition": "cut",
-    "transitionSeconds": 1.02
-   },
-   {
-    "duration": 2.975,
-    "transition": "dip",
-    "transitionSeconds": 1.1
-   }
-  ],
-  "snapped": [
-   2.146,
-   2.418,
-   1.091,
-   2.377,
-   1.729,
-   2.975
-  ],
-  "again": [
-   2.146,
-   2.418,
-   1.091,
-   2.377,
-   1.729,
-   2.975
-  ]
- },
- {
-  "period": 0.8177,
-  "shots": [
-   {
-    "duration": 1.27,
-    "transition": "dip",
-    "transitionSeconds": 0.13
-   },
-   {
-    "duration": 3.795,
-    "transition": "flash",
-    "transitionSeconds": 0.95
-   },
-   {
-    "duration": 2.324,
-    "transition": "dip",
-    "transitionSeconds": 0.49
-   }
-  ],
-  "snapped": [
-   1.487,
-   3.76,
-   2.324
-  ],
-  "again": [
-   1.487,
-   3.76,
-   2.324
-  ]
- },
- {
-  "period": 0.3,
-  "shots": [
-   {
-    "duration": 0.697,
-    "transition": "slide",
-    "transitionSeconds": 0.11
-   },
-   {
-    "duration": 2.744,
-    "transition": "fade",
-    "transitionSeconds": 0.36
-   },
-   {
-    "duration": 1.592,
-    "transition": "cut",
-    "transitionSeconds": 0.31
-   },
-   {
-    "duration": 1.915,
-    "transition": "cut",
-    "transitionSeconds": 0.85
-   },
-   {
-    "duration": 3.865,
-    "transition": "cut",
-    "transitionSeconds": 0.8
-   }
-  ],
-  "snapped": [
-   0.96,
-   2.4,
-   1.8,
-   1.8,
-   3.865
-  ],
-  "again": [
-   0.96,
-   2.4,
-   1.8,
-   1.8,
-   3.865
-  ]
- },
- {
-  "period": 0.455,
-  "shots": [
-   {
-    "duration": 3.466,
-    "transition": "fade",
-    "transitionSeconds": 0.82
-   },
-   {
-    "duration": 2.742,
-    "transition": "slide",
-    "transitionSeconds": 0.56
-   },
-   {
-    "duration": 1.904,
-    "transition": "slide",
-    "transitionSeconds": 1.08
-   },
-   {
-    "duration": 0.799,
-    "transition": "blur",
-    "transitionSeconds": 0.83
-   },
-   {
-    "duration": 3.895,
-    "transition": "slide",
-    "transitionSeconds": 0.66
-   },
-   {
-    "duration": 2.2,
-    "transition": "zoom",
-    "transitionSeconds": 0.6
-   },
-   {
-    "duration": 2.772,
-    "transition": "dip",
-    "transitionSeconds": 0.09
-   },
-   {
-    "duration": 1.055,
-    "transition": "blur",
-    "transitionSeconds": 0.47
-   }
-  ],
-  "snapped": [
-   3.29,
-   3.207,
-   2.072,
-   1.57,
-   3.33,
-   2.365,
-   2.745,
-   1.055
-  ],
-  "again": [
-   3.29,
-   3.207,
-   2.072,
-   1.57,
-   3.33,
-   2.365,
-   2.745,
-   1.055
-  ]
- },
- {
-  "period": 0.4147,
-  "shots": [
-   {
-    "duration": 0.645,
-    "transition": "circle",
-    "transitionSeconds": 0.84
-   },
-   {
-    "duration": 1.773,
-    "transition": "wipe",
-    "transitionSeconds": 0.36
-   },
-   {
-    "duration": 3.561,
-    "transition": "slide",
-    "transitionSeconds": 1.1
-   },
-   {
-    "duration": 1.653,
-    "transition": "cut",
-    "transitionSeconds": 0.31
-   },
-   {
-    "duration": 3.092,
-    "transition": "cut",
-    "transitionSeconds": 0.29
-   }
-  ],
-  "snapped": [
-   1.189,
-   1.509,
-   3.317,
-   1.659,
-   3.092
-  ],
-  "again": [
-   1.189,
-   1.509,
-   3.317,
-   1.659,
-   3.092
-  ]
- },
- {
-  "period": 0.6391,
-  "shots": [
-   {
-    "duration": 0.587,
-    "transition": "dip",
-    "transitionSeconds": 0.46
-   },
-   {
-    "duration": 1.875,
-    "transition": "slide",
-    "transitionSeconds": 0.29
-   },
-   {
-    "duration": 1.669,
-    "transition": "blur",
-    "transitionSeconds": 0.83
-   },
-   {
-    "duration": 2.058,
-    "transition": "flash",
-    "transitionSeconds": 0.89
-   },
-   {
-    "duration": 3.267,
-    "transition": "slide",
-    "transitionSeconds": 0.25
-   },
-   {
-    "duration": 2.105,
-    "transition": "push",
-    "transitionSeconds": 0.59
-   },
-   {
-    "duration": 1.566,
-    "transition": "wipe",
-    "transitionSeconds": 0.04
-   }
-  ],
-  "snapped": [
-   0.929,
-   1.161,
-   2.168,
-   2.168,
-   3.146,
-   1.957,
-   1.566
-  ],
-  "again": [
-   0.929,
-   1.161,
-   2.168,
-   2.168,
-   3.146,
-   1.957,
-   1.566
-  ]
- },
- {
-  "period": 0.313,
-  "shots": [
-   {
-    "duration": 3.192,
-    "transition": "blur",
-    "transitionSeconds": 0.21
-   },
-   {
-    "duration": 2.596,
-    "transition": "slide",
-    "transitionSeconds": 0.1
-   },
-   {
-    "duration": 1.275,
-    "transition": "blur",
-    "transitionSeconds": 1.17
-   },
-   {
-    "duration": 3.578,
-    "transition": "wipe",
-    "transitionSeconds": 0.37
-   },
-   {
-    "duration": 0.553,
-    "transition": "wipe",
-    "transitionSeconds": 0.19
-   },
-   {
-    "duration": 3.401,
-    "transition": "dip",
-    "transitionSeconds": 0.8
-   },
-   {
-    "duration": 0.736,
-    "transition": "zoom",
-    "transitionSeconds": 1.19
-   },
-   {
-    "duration": 3.855,
-    "transition": "flash",
-    "transitionSeconds": 0.43
-   },
-   {
-    "duration": 0.685,
-    "transition": "flash",
-    "transitionSeconds": 0.81
-   }
-  ],
-  "snapped": [
-   3.23,
-   2.467,
-   1.309,
-   3.633,
-   1.138,
-   3.292,
-   1.056,
-   3.438,
-   0.685
-  ],
-  "again": [
-   3.23,
-   2.467,
-   1.309,
-   3.633,
-   1.138,
-   3.292,
-   1.056,
-   3.438,
-   0.685
-  ]
- },
- {
-  "period": 0.8435,
-  "shots": [
-   {
-    "duration": 3.719,
-    "transition": "cut",
-    "transitionSeconds": 0.26
-   },
-   {
-    "duration": 0.794,
-    "transition": "dip",
-    "transitionSeconds": 1.07
-   },
-   {
-    "duration": 1.06,
-    "transition": "zoom",
-    "transitionSeconds": 0.9
-   },
-   {
-    "duration": 2.939,
-    "transition": "push",
-    "transitionSeconds": 0.46
-   },
-   {
-    "duration": 3.227,
-    "transition": "wipe",
-    "transitionSeconds": 0.24
-   },
-   {
-    "duration": 2.424,
-    "transition": "zoom",
-    "transitionSeconds": 0.11
-   }
-  ],
-  "snapped": [
-   4.017,
-   1.43,
-   1.303,
-   1.927,
-   3.484,
-   2.424
-  ],
-  "again": [
-   4.017,
-   1.43,
-   1.303,
-   1.927,
-   3.484,
-   2.424
-  ]
- },
- {
-  "period": 0.7079,
-  "shots": [
-   {
-    "duration": 3.307,
-    "transition": "wipe",
-    "transitionSeconds": 0.45
-   },
-   {
-    "duration": 2.169,
-    "transition": "dip",
-    "transitionSeconds": 0.72
-   },
-   {
-    "duration": 2.131,
-    "transition": "cut",
-    "transitionSeconds": 0.96
-   },
-   {
-    "duration": 1.852,
-    "transition": "slide",
-    "transitionSeconds": 0.42
-   },
-   {
-    "duration": 3.216,
-    "transition": "blur",
-    "transitionSeconds": 0.88
-   },
-   {
-    "duration": 1.59,
-    "transition": "fade",
-    "transitionSeconds": 1.15
-   },
-   {
-    "duration": 3.145,
-    "transition": "circle",
-    "transitionSeconds": 0.06
-   }
-  ],
-  "snapped": [
-   3.552,
-   2.123,
-   1.836,
-   2.296,
-   2.788,
-   1.475,
-   3.145
-  ],
-  "again": [
-   3.552,
-   2.123,
-   1.836,
-   2.296,
-   2.788,
-   1.475,
-   3.145
-  ]
- },
- {
-  "period": 0.5838,
-  "shots": [
-   {
-    "duration": 1.094,
-    "transition": "push",
-    "transitionSeconds": 0.64
-   },
-   {
-    "duration": 2.128,
-    "transition": "circle",
-    "transitionSeconds": 0.1
-   }
-  ],
-  "snapped": [
-   1.268,
-   2.128
-  ],
-  "again": [
-   1.268,
-   2.128
-  ]
- },
- {
-  "period": 0.4106,
-  "shots": [
-   {
-    "duration": 2.616,
-    "transition": "fade",
-    "transitionSeconds": 0.84
-   },
-   {
-    "duration": 1.74,
-    "transition": "dip",
-    "transitionSeconds": 0.24
-   },
-   {
-    "duration": 1.612,
-    "transition": "cut",
-    "transitionSeconds": 0.9
-   },
-   {
-    "duration": 1.561,
-    "transition": "flash",
-    "transitionSeconds": 0.77
-   },
-   {
-    "duration": 2.373,
-    "transition": "dip",
-    "transitionSeconds": 0.31
-   }
-  ],
-  "snapped": [
-   2.704,
-   1.642,
-   1.492,
-   1.542,
-   2.373
-  ],
-  "again": [
-   2.704,
-   1.642,
-   1.492,
-   1.542,
-   2.373
-  ]
- },
- {
-  "period": 0.3923,
-  "shots": [
-   {
-    "duration": 1.42,
-    "transition": "wipe",
-    "transitionSeconds": 1.04
-   },
-   {
-    "duration": 2.38,
-    "transition": "cut",
-    "transitionSeconds": 0.69
-   },
-   {
-    "duration": 3.837,
-    "transition": "fade",
-    "transitionSeconds": 0.43
-   },
-   {
-    "duration": 3.729,
-    "transition": "circle",
-    "transitionSeconds": 0.66
-   },
-   {
-    "duration": 3.6,
-    "transition": "cut",
-    "transitionSeconds": 0.56
-   },
-   {
-    "duration": 2.192,
-    "transition": "zoom",
-    "transitionSeconds": 1.16
-   },
-   {
-    "duration": 0.901,
-    "transition": "slide",
-    "transitionSeconds": 0.05
-   },
-   {
-    "duration": 2.73,
-    "transition": "cut",
-    "transitionSeconds": 1.06
-   }
-  ],
-  "snapped": [
-   1.569,
-   2.392,
-   3.798,
-   3.531,
-   3.651,
-   2.011,
-   1.177,
-   2.73
-  ],
-  "again": [
-   1.569,
-   2.392,
-   3.798,
-   3.531,
-   3.651,
-   2.011,
-   1.177,
-   2.73
-  ]
- },
- {
-  "period": 0.8716,
-  "shots": [
-   {
-    "duration": 3.534,
-    "transition": "circle",
-    "transitionSeconds": 0.23
-   },
-   {
-    "duration": 1.709,
-    "transition": "push",
-    "transitionSeconds": 0.71
-   },
-   {
-    "duration": 1.785,
-    "transition": "flash",
-    "transitionSeconds": 0.79
-   },
-   {
-    "duration": 3.009,
-    "transition": "flash",
-    "transitionSeconds": 0.59
-   },
-   {
-    "duration": 3.586,
-    "transition": "fade",
-    "transitionSeconds": 0.85
-   }
-  ],
-  "snapped": [
-   3.325,
-   1.583,
-   2.334,
-   2.593,
-   3.586
-  ],
-  "again": [
-   3.325,
-   1.583,
-   2.334,
-   2.593,
-   3.586
-  ]
- },
- {
-  "period": 0.7497,
-  "shots": [
-   {
-    "duration": 1.289,
-    "transition": "wipe",
-    "transitionSeconds": 0.8
-   },
-   {
-    "duration": 2.959,
-    "transition": "wipe",
-    "transitionSeconds": 0.85
-   }
-  ],
-  "snapped": [
-   1.363,
-   2.959
-  ],
-  "again": [
-   1.363,
-   2.959
-  ]
- },
- {
-  "period": 0.3209,
-  "shots": [
-   {
-    "duration": 2.97,
-    "transition": "flash",
-    "transitionSeconds": 0.0
-   },
-   {
-    "duration": 1.58,
-    "transition": "circle",
-    "transitionSeconds": 0.79
-   },
-   {
-    "duration": 3.128,
-    "transition": "wipe",
-    "transitionSeconds": 0.89
-   },
-   {
-    "duration": 1.292,
-    "transition": "fade",
-    "transitionSeconds": 0.12
-   },
-   {
-    "duration": 1.431,
-    "transition": "dip",
-    "transitionSeconds": 0.17
-   }
-  ],
-  "snapped": [
-   3.033,
-   1.75,
-   3.008,
-   1.454,
-   1.431
-  ],
-  "again": [
-   3.033,
-   1.75,
-   3.008,
-   1.454,
-   1.431
-  ]
- },
- {
-  "period": 0.7791,
-  "shots": [
-   {
-    "duration": 3.897,
-    "transition": "circle",
-    "transitionSeconds": 0.67
-   },
-   {
-    "duration": 2.499,
-    "transition": "wipe",
-    "transitionSeconds": 0.45
-   },
-   {
-    "duration": 2.516,
-    "transition": "dip",
-    "transitionSeconds": 0.51
-   },
-   {
-    "duration": 1.192,
-    "transition": "cut",
-    "transitionSeconds": 0.9
-   },
-   {
-    "duration": 1.665,
-    "transition": "push",
-    "transitionSeconds": 0.27
-   },
-   {
-    "duration": 0.608,
-    "transition": "blur",
-    "transitionSeconds": 0.42
-   },
-   {
-    "duration": 0.597,
-    "transition": "fade",
-    "transitionSeconds": 0.44
-   },
-   {
-    "duration": 1.156,
-    "transition": "circle",
-    "transitionSeconds": 0.83
-   }
-  ],
-  "snapped": [
-   3.566,
-   2.848,
-   2.337,
-   1.049,
-   1.978,
-   1.219,
-   1.3,
-   1.156
-  ],
-  "again": [
-   3.566,
-   2.848,
-   2.337,
-   1.049,
-   1.978,
-   1.219,
-   1.3,
-   1.156
-  ]
- },
- {
-  "period": 0.6807,
-  "shots": [
-   {
-    "duration": 1.188,
-    "transition": "zoom",
-    "transitionSeconds": 0.64
-   },
-   {
-    "duration": 3.648,
-    "transition": "flash",
-    "transitionSeconds": 0.5
-   },
-   {
-    "duration": 0.814,
-    "transition": "circle",
-    "transitionSeconds": 0.48
-   },
-   {
-    "duration": 2.383,
-    "transition": "flash",
-    "transitionSeconds": 0.43
-   },
-   {
-    "duration": 1.633,
-    "transition": "fade",
-    "transitionSeconds": 0.01
-   },
-   {
-    "duration": 0.918,
-    "transition": "zoom",
-    "transitionSeconds": 0.03
-   },
-   {
-    "duration": 1.241,
-    "transition": "slide",
-    "transitionSeconds": 0.02
-   },
-   {
-    "duration": 0.567,
-    "transition": "slide",
-    "transitionSeconds": 0.95
-   }
-  ],
-  "snapped": [
-   1.181,
-   3.883,
-   1.111,
-   2.052,
-   1.391,
-   1.382,
-   0.935,
-   0.567
-  ],
-  "again": [
-   1.181,
-   3.883,
-   1.111,
-   2.052,
-   1.391,
-   1.382,
-   0.935,
-   0.567
-  ]
- },
- {
-  "period": 0.5727,
-  "shots": [
-   {
-    "duration": 3.837,
-    "transition": "cut",
-    "transitionSeconds": 0.27
-   },
-   {
-    "duration": 1.263,
-    "transition": "push",
-    "transitionSeconds": 0.03
-   },
-   {
-    "duration": 0.634,
-    "transition": "zoom",
-    "transitionSeconds": 0.62
-   }
-  ],
-  "snapped": [
-   4.039,
-   0.858,
-   0.634
-  ],
-  "again": [
-   4.039,
-   0.858,
-   0.634
-  ]
- },
- {
-  "period": 0.8608,
-  "shots": [
-   {
-    "duration": 1.637,
-    "transition": "dip",
-    "transitionSeconds": 0.99
-   },
-   {
-    "duration": 3.535,
-    "transition": "push",
-    "transitionSeconds": 0.79
-   },
-   {
-    "duration": 3.552,
-    "transition": "flash",
-    "transitionSeconds": 1.04
-   },
-   {
-    "duration": 0.538,
-    "transition": "blur",
-    "transitionSeconds": 0.84
-   },
-   {
-    "duration": 2.514,
-    "transition": "push",
-    "transitionSeconds": 0.07
-   }
-  ],
-  "snapped": [
-   1.565,
-   3.622,
-   3.862,
-   0.931,
-   2.514
-  ],
-  "again": [
-   1.565,
-   3.622,
-   3.862,
-   0.931,
-   2.514
-  ]
- },
- {
-  "period": 0.8253,
-  "shots": [
-   {
-    "duration": 2.861,
-    "transition": "zoom",
-    "transitionSeconds": 0.77
-   },
-   {
-    "duration": 0.845,
-    "transition": "cut",
-    "transitionSeconds": 0.43
-   },
-   {
-    "duration": 2.636,
-    "transition": "slide",
-    "transitionSeconds": 0.34
-   },
-   {
-    "duration": 2.871,
-    "transition": "circle",
-    "transitionSeconds": 0.45
-   },
-   {
-    "duration": 2.969,
-    "transition": "zoom",
-    "transitionSeconds": 0.16
-   },
-   {
-    "duration": 2.093,
-    "transition": "fade",
-    "transitionSeconds": 0.04
-   }
-  ],
-  "snapped": [
-   2.476,
-   1.165,
-   2.926,
-   2.636,
-   3.341,
-   2.093
-  ],
-  "again": [
-   2.476,
-   1.165,
-   2.926,
-   2.636,
-   3.341,
-   2.093
-  ]
- }
+  {
+    "period": 0.2665,
+    "shots": [
+      {
+        "duration": 3.264,
+        "transition": "dip",
+        "transitionSeconds": 0.46
+      },
+      {
+        "duration": 3.07,
+        "transition": "dip",
+        "transitionSeconds": 1.15
+      },
+      {
+        "duration": 3.922,
+        "transition": "dip",
+        "transitionSeconds": 0.52
+      },
+      {
+        "duration": 1.116,
+        "transition": "zoom",
+        "transitionSeconds": 0.65
+      },
+      {
+        "duration": 3.879,
+        "transition": "zoom",
+        "transitionSeconds": 0.52
+      }
+    ],
+    "snapped": [3.282, 3.185, 3.792, 1.32, 3.879],
+    "again": [3.282, 3.185, 3.792, 1.32, 3.879]
+  },
+  {
+    "period": 0.2938,
+    "shots": [
+      {
+        "duration": 3.851,
+        "transition": "circle",
+        "transitionSeconds": 0.83
+      },
+      {
+        "duration": 3.516,
+        "transition": "fade",
+        "transitionSeconds": 0.41
+      },
+      {
+        "duration": 3.438,
+        "transition": "circle",
+        "transitionSeconds": 0.02
+      },
+      {
+        "duration": 2.679,
+        "transition": "push",
+        "transitionSeconds": 1.16
+      },
+      {
+        "duration": 1.162,
+        "transition": "wipe",
+        "transitionSeconds": 0.35
+      },
+      {
+        "duration": 0.691,
+        "transition": "slide",
+        "transitionSeconds": 0.21
+      }
+    ],
+    "snapped": [3.936, 3.545, 3.217, 2.7, 1.385, 0.691],
+    "again": [3.936, 3.545, 3.217, 2.7, 1.385, 0.691]
+  },
+  {
+    "period": 0.6433,
+    "shots": [
+      {
+        "duration": 1.678,
+        "transition": "wipe",
+        "transitionSeconds": 0.32
+      },
+      {
+        "duration": 1.485,
+        "transition": "flash",
+        "transitionSeconds": 0.76
+      },
+      {
+        "duration": 0.514,
+        "transition": "circle",
+        "transitionSeconds": 0.64
+      }
+    ],
+    "snapped": [1.97, 1.517, 0.514],
+    "again": [1.97, 1.517, 0.514]
+  },
+  {
+    "period": 0.5924,
+    "shots": [
+      {
+        "duration": 2.162,
+        "transition": "cut",
+        "transitionSeconds": 0.52
+      },
+      {
+        "duration": 2.941,
+        "transition": "slide",
+        "transitionSeconds": 0.78
+      },
+      {
+        "duration": 2.461,
+        "transition": "wipe",
+        "transitionSeconds": 0.16
+      },
+      {
+        "duration": 0.954,
+        "transition": "zoom",
+        "transitionSeconds": 0.87
+      },
+      {
+        "duration": 3.596,
+        "transition": "flash",
+        "transitionSeconds": 0.85
+      },
+      {
+        "duration": 0.772,
+        "transition": "flash",
+        "transitionSeconds": 1.03
+      },
+      {
+        "duration": 1.37,
+        "transition": "slide",
+        "transitionSeconds": 0.54
+      },
+      {
+        "duration": 1.001,
+        "transition": "cut",
+        "transitionSeconds": 0.59
+      },
+      {
+        "duration": 3.937,
+        "transition": "dip",
+        "transitionSeconds": 1.15
+      }
+    ],
+    "snapped": [1.965, 3.122, 2.261, 1.076, 4.039, 1.076, 1.185, 1.076, 3.937],
+    "again": [1.965, 3.122, 2.261, 1.076, 4.039, 1.076, 1.185, 1.076, 3.937]
+  },
+  {
+    "period": 0.4729,
+    "shots": [
+      {
+        "duration": 3.623,
+        "transition": "circle",
+        "transitionSeconds": 0.1
+      },
+      {
+        "duration": 1.7,
+        "transition": "zoom",
+        "transitionSeconds": 0.69
+      }
+    ],
+    "snapped": [3.527, 1.7],
+    "again": [3.527, 1.7]
+  },
+  {
+    "period": 0.523,
+    "shots": [
+      {
+        "duration": 3.805,
+        "transition": "fade",
+        "transitionSeconds": 0.58
+      },
+      {
+        "duration": 2.882,
+        "transition": "cut",
+        "transitionSeconds": 1.13
+      },
+      {
+        "duration": 3.703,
+        "transition": "zoom",
+        "transitionSeconds": 0.35
+      },
+      {
+        "duration": 1.752,
+        "transition": "push",
+        "transitionSeconds": 0.63
+      },
+      {
+        "duration": 1.622,
+        "transition": "cut",
+        "transitionSeconds": 0.69
+      },
+      {
+        "duration": 3.664,
+        "transition": "zoom",
+        "transitionSeconds": 0.37
+      },
+      {
+        "duration": 3.303,
+        "transition": "flash",
+        "transitionSeconds": 0.95
+      },
+      {
+        "duration": 0.636,
+        "transition": "fade",
+        "transitionSeconds": 0.59
+      },
+      {
+        "duration": 1.799,
+        "transition": "zoom",
+        "transitionSeconds": 0.57
+      }
+    ],
+    "snapped": [3.661, 2.965, 3.768, 1.569, 1.939, 3.565, 3.565, 0.95, 1.799],
+    "again": [3.661, 2.965, 3.768, 1.569, 1.939, 3.565, 3.565, 0.95, 1.799]
+  },
+  {
+    "period": 0.3815,
+    "shots": [
+      {
+        "duration": 3.19,
+        "transition": "slide",
+        "transitionSeconds": 0.7
+      },
+      {
+        "duration": 3.997,
+        "transition": "push",
+        "transitionSeconds": 0.61
+      },
+      {
+        "duration": 3.388,
+        "transition": "push",
+        "transitionSeconds": 0.32
+      },
+      {
+        "duration": 2.751,
+        "transition": "blur",
+        "transitionSeconds": 0.07
+      },
+      {
+        "duration": 2.848,
+        "transition": "push",
+        "transitionSeconds": 0.32
+      },
+      {
+        "duration": 3.258,
+        "transition": "dip",
+        "transitionSeconds": 0.13
+      },
+      {
+        "duration": 1.926,
+        "transition": "zoom",
+        "transitionSeconds": 0.53
+      }
+    ],
+    "snapped": [3.281, 3.753, 3.503, 2.609, 3.183, 3.2, 1.926],
+    "again": [3.281, 3.753, 3.503, 2.609, 3.183, 3.2, 1.926]
+  },
+  {
+    "period": 0.6953,
+    "shots": [
+      {
+        "duration": 3.981,
+        "transition": "wipe",
+        "transitionSeconds": 0.68
+      },
+      {
+        "duration": 0.689,
+        "transition": "cut",
+        "transitionSeconds": 0.18
+      },
+      {
+        "duration": 2.421,
+        "transition": "flash",
+        "transitionSeconds": 0.57
+      },
+      {
+        "duration": 0.527,
+        "transition": "push",
+        "transitionSeconds": 0.19
+      },
+      {
+        "duration": 3.139,
+        "transition": "cut",
+        "transitionSeconds": 0.02
+      }
+    ],
+    "snapped": [4.172, 1.263, 1.581, 0.695, 3.139],
+    "again": [4.172, 1.263, 1.581, 0.695, 3.139]
+  },
+  {
+    "period": 0.7776,
+    "shots": [
+      {
+        "duration": 2.212,
+        "transition": "circle",
+        "transitionSeconds": 0.65
+      },
+      {
+        "duration": 2.074,
+        "transition": "cut",
+        "transitionSeconds": 0.16
+      },
+      {
+        "duration": 2.782,
+        "transition": "push",
+        "transitionSeconds": 0.45
+      }
+    ],
+    "snapped": [2.333, 2.005, 2.782],
+    "again": [2.333, 2.005, 2.782]
+  },
+  {
+    "period": 0.6542,
+    "shots": [
+      {
+        "duration": 3.698,
+        "transition": "flash",
+        "transitionSeconds": 0.29
+      },
+      {
+        "duration": 2.9,
+        "transition": "flash",
+        "transitionSeconds": 0.06
+      },
+      {
+        "duration": 3.595,
+        "transition": "dip",
+        "transitionSeconds": 0.34
+      },
+      {
+        "duration": 2.488,
+        "transition": "push",
+        "transitionSeconds": 1.17
+      },
+      {
+        "duration": 1.302,
+        "transition": "wipe",
+        "transitionSeconds": 0.45
+      }
+    ],
+    "snapped": [3.985, 2.303, 3.702, 2.412, 1.302],
+    "again": [3.985, 2.303, 3.702, 2.412, 1.302]
+  },
+  {
+    "period": 0.2719,
+    "shots": [
+      {
+        "duration": 2.843,
+        "transition": "zoom",
+        "transitionSeconds": 0.21
+      },
+      {
+        "duration": 3.476,
+        "transition": "dip",
+        "transitionSeconds": 1.13
+      },
+      {
+        "duration": 2.312,
+        "transition": "push",
+        "transitionSeconds": 0.52
+      },
+      {
+        "duration": 1.308,
+        "transition": "slide",
+        "transitionSeconds": 0.95
+      },
+      {
+        "duration": 3.9,
+        "transition": "fade",
+        "transitionSeconds": 0.81
+      }
+    ],
+    "snapped": [2.761, 3.511, 2.348, 0.987, 3.9],
+    "again": [2.761, 3.511, 2.348, 0.987, 3.9]
+  },
+  {
+    "period": 0.3899,
+    "shots": [
+      {
+        "duration": 3.457,
+        "transition": "fade",
+        "transitionSeconds": 1.17
+      },
+      {
+        "duration": 3.619,
+        "transition": "push",
+        "transitionSeconds": 0.85
+      },
+      {
+        "duration": 1.41,
+        "transition": "flash",
+        "transitionSeconds": 0.11
+      },
+      {
+        "duration": 2.884,
+        "transition": "cut",
+        "transitionSeconds": 0.63
+      },
+      {
+        "duration": 0.595,
+        "transition": "wipe",
+        "transitionSeconds": 1.1
+      },
+      {
+        "duration": 1.187,
+        "transition": "wipe",
+        "transitionSeconds": 0.92
+      },
+      {
+        "duration": 0.952,
+        "transition": "fade",
+        "transitionSeconds": 0.89
+      },
+      {
+        "duration": 0.643,
+        "transition": "zoom",
+        "transitionSeconds": 0.34
+      }
+    ],
+    "snapped": [3.579, 3.619, 1.17, 3.335, 1.347, 1.261, 1.069, 0.643],
+    "again": [3.579, 3.619, 1.17, 3.335, 1.347, 1.261, 1.069, 0.643]
+  },
+  {
+    "period": 0.349,
+    "shots": [
+      {
+        "duration": 1.179,
+        "transition": "cut",
+        "transitionSeconds": 1.12
+      },
+      {
+        "duration": 2.058,
+        "transition": "wipe",
+        "transitionSeconds": 0.2
+      },
+      {
+        "duration": 0.521,
+        "transition": "flash",
+        "transitionSeconds": 0.24
+      },
+      {
+        "duration": 2.21,
+        "transition": "zoom",
+        "transitionSeconds": 0.48
+      }
+    ],
+    "snapped": [1.247, 1.985, 1.178, 2.21],
+    "again": [1.247, 1.985, 1.178, 2.21]
+  },
+  {
+    "period": 0.4599,
+    "shots": [
+      {
+        "duration": 3.188,
+        "transition": "cut",
+        "transitionSeconds": 0.14
+      },
+      {
+        "duration": 1.717,
+        "transition": "push",
+        "transitionSeconds": 0.09
+      },
+      {
+        "duration": 3.821,
+        "transition": "push",
+        "transitionSeconds": 0.46
+      },
+      {
+        "duration": 1.895,
+        "transition": "fade",
+        "transitionSeconds": 0.77
+      },
+      {
+        "duration": 2.778,
+        "transition": "zoom",
+        "transitionSeconds": 0.73
+      },
+      {
+        "duration": 1.936,
+        "transition": "dip",
+        "transitionSeconds": 0.24
+      }
+    ],
+    "snapped": [3.309, 1.38, 3.989, 2.11, 2.54, 1.936],
+    "again": [3.309, 1.38, 3.989, 2.11, 2.54, 1.936]
+  },
+  {
+    "period": 0.6017,
+    "shots": [
+      {
+        "duration": 0.931,
+        "transition": "wipe",
+        "transitionSeconds": 0.38
+      },
+      {
+        "duration": 3.438,
+        "transition": "zoom",
+        "transitionSeconds": 0.54
+      },
+      {
+        "duration": 0.807,
+        "transition": "circle",
+        "transitionSeconds": 0.76
+      },
+      {
+        "duration": 2.905,
+        "transition": "cut",
+        "transitionSeconds": 0.29
+      },
+      {
+        "duration": 3.349,
+        "transition": "push",
+        "transitionSeconds": 0.05
+      },
+      {
+        "duration": 1.205,
+        "transition": "slide",
+        "transitionSeconds": 0.32
+      },
+      {
+        "duration": 1.307,
+        "transition": "push",
+        "transitionSeconds": 0.45
+      },
+      {
+        "duration": 3.463,
+        "transition": "circle",
+        "transitionSeconds": 0.07
+      },
+      {
+        "duration": 0.523,
+        "transition": "flash",
+        "transitionSeconds": 0.94
+      }
+    ],
+    "snapped": [1.094, 3.279, 0.602, 3.058, 3.329, 1.052, 1.273, 3.845, 0.523],
+    "again": [1.094, 3.279, 0.602, 3.058, 3.329, 1.052, 1.273, 3.845, 0.523]
+  },
+  {
+    "period": 0.5372,
+    "shots": [
+      {
+        "duration": 1.898,
+        "transition": "zoom",
+        "transitionSeconds": 0.67
+      },
+      {
+        "duration": 3.108,
+        "transition": "fade",
+        "transitionSeconds": 0.92
+      },
+      {
+        "duration": 0.541,
+        "transition": "circle",
+        "transitionSeconds": 1.04
+      },
+      {
+        "duration": 3.396,
+        "transition": "zoom",
+        "transitionSeconds": 0.73
+      },
+      {
+        "duration": 1.666,
+        "transition": "blur",
+        "transitionSeconds": 0.43
+      },
+      {
+        "duration": 2.686,
+        "transition": "push",
+        "transitionSeconds": 0.48
+      },
+      {
+        "duration": 1.83,
+        "transition": "zoom",
+        "transitionSeconds": 0.71
+      },
+      {
+        "duration": 2.087,
+        "transition": "dip",
+        "transitionSeconds": 0.29
+      }
+    ],
+    "snapped": [1.952, 3.126, 0.978, 3.116, 2.091, 2.322, 1.901, 2.087],
+    "again": [1.952, 3.126, 0.978, 3.116, 2.091, 2.322, 1.901, 2.087]
+  },
+  {
+    "period": 0.4688,
+    "shots": [
+      {
+        "duration": 1.432,
+        "transition": "cut",
+        "transitionSeconds": 0.31
+      },
+      {
+        "duration": 1.247,
+        "transition": "blur",
+        "transitionSeconds": 1.03
+      }
+    ],
+    "snapped": [1.499, 1.247],
+    "again": [1.499, 1.247]
+  },
+  {
+    "period": 0.7247,
+    "shots": [
+      {
+        "duration": 1.253,
+        "transition": "wipe",
+        "transitionSeconds": 0.65
+      },
+      {
+        "duration": 0.989,
+        "transition": "cut",
+        "transitionSeconds": 0.12
+      }
+    ],
+    "snapped": [1.449, 0.989],
+    "again": [1.449, 0.989]
+  },
+  {
+    "period": 0.5659,
+    "shots": [
+      {
+        "duration": 2.514,
+        "transition": "dip",
+        "transitionSeconds": 0.97
+      },
+      {
+        "duration": 1.641,
+        "transition": "fade",
+        "transitionSeconds": 0.71
+      },
+      {
+        "duration": 1.66,
+        "transition": "blur",
+        "transitionSeconds": 0.82
+      },
+      {
+        "duration": 2.689,
+        "transition": "slide",
+        "transitionSeconds": 0.41
+      },
+      {
+        "duration": 3.899,
+        "transition": "cut",
+        "transitionSeconds": 0.4
+      },
+      {
+        "duration": 3.535,
+        "transition": "blur",
+        "transitionSeconds": 0.56
+      },
+      {
+        "duration": 1.87,
+        "transition": "blur",
+        "transitionSeconds": 1.05
+      }
+    ],
+    "snapped": [2.408, 1.825, 1.542, 2.83, 3.955, 3.106, 1.87],
+    "again": [2.408, 1.825, 1.542, 2.83, 3.955, 3.106, 1.87]
+  },
+  {
+    "period": 0.7827,
+    "shots": [
+      {
+        "duration": 0.975,
+        "transition": "slide",
+        "transitionSeconds": 0.33
+      },
+      {
+        "duration": 0.679,
+        "transition": "cut",
+        "transitionSeconds": 0.77
+      }
+    ],
+    "snapped": [0.783, 0.679],
+    "again": [0.783, 0.679]
+  },
+  {
+    "period": 0.4755,
+    "shots": [
+      {
+        "duration": 2.31,
+        "transition": "flash",
+        "transitionSeconds": 0.06
+      },
+      {
+        "duration": 2.076,
+        "transition": "dip",
+        "transitionSeconds": 0.72
+      },
+      {
+        "duration": 1.038,
+        "transition": "zoom",
+        "transitionSeconds": 0.04
+      },
+      {
+        "duration": 2.691,
+        "transition": "fade",
+        "transitionSeconds": 0.14
+      },
+      {
+        "duration": 0.884,
+        "transition": "cut",
+        "transitionSeconds": 1.02
+      },
+      {
+        "duration": 2.975,
+        "transition": "dip",
+        "transitionSeconds": 1.1
+      }
+    ],
+    "snapped": [2.146, 2.418, 1.091, 2.377, 1.729, 2.975],
+    "again": [2.146, 2.418, 1.091, 2.377, 1.729, 2.975]
+  },
+  {
+    "period": 0.8177,
+    "shots": [
+      {
+        "duration": 1.27,
+        "transition": "dip",
+        "transitionSeconds": 0.13
+      },
+      {
+        "duration": 3.795,
+        "transition": "flash",
+        "transitionSeconds": 0.95
+      },
+      {
+        "duration": 2.324,
+        "transition": "dip",
+        "transitionSeconds": 0.49
+      }
+    ],
+    "snapped": [1.487, 3.76, 2.324],
+    "again": [1.487, 3.76, 2.324]
+  },
+  {
+    "period": 0.3,
+    "shots": [
+      {
+        "duration": 0.697,
+        "transition": "slide",
+        "transitionSeconds": 0.11
+      },
+      {
+        "duration": 2.744,
+        "transition": "fade",
+        "transitionSeconds": 0.36
+      },
+      {
+        "duration": 1.592,
+        "transition": "cut",
+        "transitionSeconds": 0.31
+      },
+      {
+        "duration": 1.915,
+        "transition": "cut",
+        "transitionSeconds": 0.85
+      },
+      {
+        "duration": 3.865,
+        "transition": "cut",
+        "transitionSeconds": 0.8
+      }
+    ],
+    "snapped": [0.96, 2.4, 1.8, 1.8, 3.865],
+    "again": [0.96, 2.4, 1.8, 1.8, 3.865]
+  },
+  {
+    "period": 0.455,
+    "shots": [
+      {
+        "duration": 3.466,
+        "transition": "fade",
+        "transitionSeconds": 0.82
+      },
+      {
+        "duration": 2.742,
+        "transition": "slide",
+        "transitionSeconds": 0.56
+      },
+      {
+        "duration": 1.904,
+        "transition": "slide",
+        "transitionSeconds": 1.08
+      },
+      {
+        "duration": 0.799,
+        "transition": "blur",
+        "transitionSeconds": 0.83
+      },
+      {
+        "duration": 3.895,
+        "transition": "slide",
+        "transitionSeconds": 0.66
+      },
+      {
+        "duration": 2.2,
+        "transition": "zoom",
+        "transitionSeconds": 0.6
+      },
+      {
+        "duration": 2.772,
+        "transition": "dip",
+        "transitionSeconds": 0.09
+      },
+      {
+        "duration": 1.055,
+        "transition": "blur",
+        "transitionSeconds": 0.47
+      }
+    ],
+    "snapped": [3.29, 3.207, 2.072, 1.57, 3.33, 2.365, 2.745, 1.055],
+    "again": [3.29, 3.207, 2.072, 1.57, 3.33, 2.365, 2.745, 1.055]
+  },
+  {
+    "period": 0.4147,
+    "shots": [
+      {
+        "duration": 0.645,
+        "transition": "circle",
+        "transitionSeconds": 0.84
+      },
+      {
+        "duration": 1.773,
+        "transition": "wipe",
+        "transitionSeconds": 0.36
+      },
+      {
+        "duration": 3.561,
+        "transition": "slide",
+        "transitionSeconds": 1.1
+      },
+      {
+        "duration": 1.653,
+        "transition": "cut",
+        "transitionSeconds": 0.31
+      },
+      {
+        "duration": 3.092,
+        "transition": "cut",
+        "transitionSeconds": 0.29
+      }
+    ],
+    "snapped": [1.189, 1.509, 3.317, 1.659, 3.092],
+    "again": [1.189, 1.509, 3.317, 1.659, 3.092]
+  },
+  {
+    "period": 0.6391,
+    "shots": [
+      {
+        "duration": 0.587,
+        "transition": "dip",
+        "transitionSeconds": 0.46
+      },
+      {
+        "duration": 1.875,
+        "transition": "slide",
+        "transitionSeconds": 0.29
+      },
+      {
+        "duration": 1.669,
+        "transition": "blur",
+        "transitionSeconds": 0.83
+      },
+      {
+        "duration": 2.058,
+        "transition": "flash",
+        "transitionSeconds": 0.89
+      },
+      {
+        "duration": 3.267,
+        "transition": "slide",
+        "transitionSeconds": 0.25
+      },
+      {
+        "duration": 2.105,
+        "transition": "push",
+        "transitionSeconds": 0.59
+      },
+      {
+        "duration": 1.566,
+        "transition": "wipe",
+        "transitionSeconds": 0.04
+      }
+    ],
+    "snapped": [0.929, 1.161, 2.168, 2.168, 3.146, 1.957, 1.566],
+    "again": [0.929, 1.161, 2.168, 2.168, 3.146, 1.957, 1.566]
+  },
+  {
+    "period": 0.313,
+    "shots": [
+      {
+        "duration": 3.192,
+        "transition": "blur",
+        "transitionSeconds": 0.21
+      },
+      {
+        "duration": 2.596,
+        "transition": "slide",
+        "transitionSeconds": 0.1
+      },
+      {
+        "duration": 1.275,
+        "transition": "blur",
+        "transitionSeconds": 1.17
+      },
+      {
+        "duration": 3.578,
+        "transition": "wipe",
+        "transitionSeconds": 0.37
+      },
+      {
+        "duration": 0.553,
+        "transition": "wipe",
+        "transitionSeconds": 0.19
+      },
+      {
+        "duration": 3.401,
+        "transition": "dip",
+        "transitionSeconds": 0.8
+      },
+      {
+        "duration": 0.736,
+        "transition": "zoom",
+        "transitionSeconds": 1.19
+      },
+      {
+        "duration": 3.855,
+        "transition": "flash",
+        "transitionSeconds": 0.43
+      },
+      {
+        "duration": 0.685,
+        "transition": "flash",
+        "transitionSeconds": 0.81
+      }
+    ],
+    "snapped": [3.23, 2.467, 1.309, 3.633, 1.138, 3.292, 1.056, 3.438, 0.685],
+    "again": [3.23, 2.467, 1.309, 3.633, 1.138, 3.292, 1.056, 3.438, 0.685]
+  },
+  {
+    "period": 0.8435,
+    "shots": [
+      {
+        "duration": 3.719,
+        "transition": "cut",
+        "transitionSeconds": 0.26
+      },
+      {
+        "duration": 0.794,
+        "transition": "dip",
+        "transitionSeconds": 1.07
+      },
+      {
+        "duration": 1.06,
+        "transition": "zoom",
+        "transitionSeconds": 0.9
+      },
+      {
+        "duration": 2.939,
+        "transition": "push",
+        "transitionSeconds": 0.46
+      },
+      {
+        "duration": 3.227,
+        "transition": "wipe",
+        "transitionSeconds": 0.24
+      },
+      {
+        "duration": 2.424,
+        "transition": "zoom",
+        "transitionSeconds": 0.11
+      }
+    ],
+    "snapped": [4.017, 1.43, 1.303, 1.927, 3.484, 2.424],
+    "again": [4.017, 1.43, 1.303, 1.927, 3.484, 2.424]
+  },
+  {
+    "period": 0.7079,
+    "shots": [
+      {
+        "duration": 3.307,
+        "transition": "wipe",
+        "transitionSeconds": 0.45
+      },
+      {
+        "duration": 2.169,
+        "transition": "dip",
+        "transitionSeconds": 0.72
+      },
+      {
+        "duration": 2.131,
+        "transition": "cut",
+        "transitionSeconds": 0.96
+      },
+      {
+        "duration": 1.852,
+        "transition": "slide",
+        "transitionSeconds": 0.42
+      },
+      {
+        "duration": 3.216,
+        "transition": "blur",
+        "transitionSeconds": 0.88
+      },
+      {
+        "duration": 1.59,
+        "transition": "fade",
+        "transitionSeconds": 1.15
+      },
+      {
+        "duration": 3.145,
+        "transition": "circle",
+        "transitionSeconds": 0.06
+      }
+    ],
+    "snapped": [3.552, 2.123, 1.836, 2.296, 2.788, 1.475, 3.145],
+    "again": [3.552, 2.123, 1.836, 2.296, 2.788, 1.475, 3.145]
+  },
+  {
+    "period": 0.5838,
+    "shots": [
+      {
+        "duration": 1.094,
+        "transition": "push",
+        "transitionSeconds": 0.64
+      },
+      {
+        "duration": 2.128,
+        "transition": "circle",
+        "transitionSeconds": 0.1
+      }
+    ],
+    "snapped": [1.268, 2.128],
+    "again": [1.268, 2.128]
+  },
+  {
+    "period": 0.4106,
+    "shots": [
+      {
+        "duration": 2.616,
+        "transition": "fade",
+        "transitionSeconds": 0.84
+      },
+      {
+        "duration": 1.74,
+        "transition": "dip",
+        "transitionSeconds": 0.24
+      },
+      {
+        "duration": 1.612,
+        "transition": "cut",
+        "transitionSeconds": 0.9
+      },
+      {
+        "duration": 1.561,
+        "transition": "flash",
+        "transitionSeconds": 0.77
+      },
+      {
+        "duration": 2.373,
+        "transition": "dip",
+        "transitionSeconds": 0.31
+      }
+    ],
+    "snapped": [2.704, 1.642, 1.492, 1.542, 2.373],
+    "again": [2.704, 1.642, 1.492, 1.542, 2.373]
+  },
+  {
+    "period": 0.3923,
+    "shots": [
+      {
+        "duration": 1.42,
+        "transition": "wipe",
+        "transitionSeconds": 1.04
+      },
+      {
+        "duration": 2.38,
+        "transition": "cut",
+        "transitionSeconds": 0.69
+      },
+      {
+        "duration": 3.837,
+        "transition": "fade",
+        "transitionSeconds": 0.43
+      },
+      {
+        "duration": 3.729,
+        "transition": "circle",
+        "transitionSeconds": 0.66
+      },
+      {
+        "duration": 3.6,
+        "transition": "cut",
+        "transitionSeconds": 0.56
+      },
+      {
+        "duration": 2.192,
+        "transition": "zoom",
+        "transitionSeconds": 1.16
+      },
+      {
+        "duration": 0.901,
+        "transition": "slide",
+        "transitionSeconds": 0.05
+      },
+      {
+        "duration": 2.73,
+        "transition": "cut",
+        "transitionSeconds": 1.06
+      }
+    ],
+    "snapped": [1.569, 2.392, 3.798, 3.531, 3.651, 2.011, 1.177, 2.73],
+    "again": [1.569, 2.392, 3.798, 3.531, 3.651, 2.011, 1.177, 2.73]
+  },
+  {
+    "period": 0.8716,
+    "shots": [
+      {
+        "duration": 3.534,
+        "transition": "circle",
+        "transitionSeconds": 0.23
+      },
+      {
+        "duration": 1.709,
+        "transition": "push",
+        "transitionSeconds": 0.71
+      },
+      {
+        "duration": 1.785,
+        "transition": "flash",
+        "transitionSeconds": 0.79
+      },
+      {
+        "duration": 3.009,
+        "transition": "flash",
+        "transitionSeconds": 0.59
+      },
+      {
+        "duration": 3.586,
+        "transition": "fade",
+        "transitionSeconds": 0.85
+      }
+    ],
+    "snapped": [3.325, 1.583, 2.334, 2.593, 3.586],
+    "again": [3.325, 1.583, 2.334, 2.593, 3.586]
+  },
+  {
+    "period": 0.7497,
+    "shots": [
+      {
+        "duration": 1.289,
+        "transition": "wipe",
+        "transitionSeconds": 0.8
+      },
+      {
+        "duration": 2.959,
+        "transition": "wipe",
+        "transitionSeconds": 0.85
+      }
+    ],
+    "snapped": [1.363, 2.959],
+    "again": [1.363, 2.959]
+  },
+  {
+    "period": 0.3209,
+    "shots": [
+      {
+        "duration": 2.97,
+        "transition": "flash",
+        "transitionSeconds": 0.0
+      },
+      {
+        "duration": 1.58,
+        "transition": "circle",
+        "transitionSeconds": 0.79
+      },
+      {
+        "duration": 3.128,
+        "transition": "wipe",
+        "transitionSeconds": 0.89
+      },
+      {
+        "duration": 1.292,
+        "transition": "fade",
+        "transitionSeconds": 0.12
+      },
+      {
+        "duration": 1.431,
+        "transition": "dip",
+        "transitionSeconds": 0.17
+      }
+    ],
+    "snapped": [3.033, 1.75, 3.008, 1.454, 1.431],
+    "again": [3.033, 1.75, 3.008, 1.454, 1.431]
+  },
+  {
+    "period": 0.7791,
+    "shots": [
+      {
+        "duration": 3.897,
+        "transition": "circle",
+        "transitionSeconds": 0.67
+      },
+      {
+        "duration": 2.499,
+        "transition": "wipe",
+        "transitionSeconds": 0.45
+      },
+      {
+        "duration": 2.516,
+        "transition": "dip",
+        "transitionSeconds": 0.51
+      },
+      {
+        "duration": 1.192,
+        "transition": "cut",
+        "transitionSeconds": 0.9
+      },
+      {
+        "duration": 1.665,
+        "transition": "push",
+        "transitionSeconds": 0.27
+      },
+      {
+        "duration": 0.608,
+        "transition": "blur",
+        "transitionSeconds": 0.42
+      },
+      {
+        "duration": 0.597,
+        "transition": "fade",
+        "transitionSeconds": 0.44
+      },
+      {
+        "duration": 1.156,
+        "transition": "circle",
+        "transitionSeconds": 0.83
+      }
+    ],
+    "snapped": [3.566, 2.848, 2.337, 1.049, 1.978, 1.219, 1.3, 1.156],
+    "again": [3.566, 2.848, 2.337, 1.049, 1.978, 1.219, 1.3, 1.156]
+  },
+  {
+    "period": 0.6807,
+    "shots": [
+      {
+        "duration": 1.188,
+        "transition": "zoom",
+        "transitionSeconds": 0.64
+      },
+      {
+        "duration": 3.648,
+        "transition": "flash",
+        "transitionSeconds": 0.5
+      },
+      {
+        "duration": 0.814,
+        "transition": "circle",
+        "transitionSeconds": 0.48
+      },
+      {
+        "duration": 2.383,
+        "transition": "flash",
+        "transitionSeconds": 0.43
+      },
+      {
+        "duration": 1.633,
+        "transition": "fade",
+        "transitionSeconds": 0.01
+      },
+      {
+        "duration": 0.918,
+        "transition": "zoom",
+        "transitionSeconds": 0.03
+      },
+      {
+        "duration": 1.241,
+        "transition": "slide",
+        "transitionSeconds": 0.02
+      },
+      {
+        "duration": 0.567,
+        "transition": "slide",
+        "transitionSeconds": 0.95
+      }
+    ],
+    "snapped": [1.181, 3.883, 1.111, 2.052, 1.391, 1.382, 0.935, 0.567],
+    "again": [1.181, 3.883, 1.111, 2.052, 1.391, 1.382, 0.935, 0.567]
+  },
+  {
+    "period": 0.5727,
+    "shots": [
+      {
+        "duration": 3.837,
+        "transition": "cut",
+        "transitionSeconds": 0.27
+      },
+      {
+        "duration": 1.263,
+        "transition": "push",
+        "transitionSeconds": 0.03
+      },
+      {
+        "duration": 0.634,
+        "transition": "zoom",
+        "transitionSeconds": 0.62
+      }
+    ],
+    "snapped": [4.039, 0.858, 0.634],
+    "again": [4.039, 0.858, 0.634]
+  },
+  {
+    "period": 0.8608,
+    "shots": [
+      {
+        "duration": 1.637,
+        "transition": "dip",
+        "transitionSeconds": 0.99
+      },
+      {
+        "duration": 3.535,
+        "transition": "push",
+        "transitionSeconds": 0.79
+      },
+      {
+        "duration": 3.552,
+        "transition": "flash",
+        "transitionSeconds": 1.04
+      },
+      {
+        "duration": 0.538,
+        "transition": "blur",
+        "transitionSeconds": 0.84
+      },
+      {
+        "duration": 2.514,
+        "transition": "push",
+        "transitionSeconds": 0.07
+      }
+    ],
+    "snapped": [1.565, 3.622, 3.862, 0.931, 2.514],
+    "again": [1.565, 3.622, 3.862, 0.931, 2.514]
+  },
+  {
+    "period": 0.8253,
+    "shots": [
+      {
+        "duration": 2.861,
+        "transition": "zoom",
+        "transitionSeconds": 0.77
+      },
+      {
+        "duration": 0.845,
+        "transition": "cut",
+        "transitionSeconds": 0.43
+      },
+      {
+        "duration": 2.636,
+        "transition": "slide",
+        "transitionSeconds": 0.34
+      },
+      {
+        "duration": 2.871,
+        "transition": "circle",
+        "transitionSeconds": 0.45
+      },
+      {
+        "duration": 2.969,
+        "transition": "zoom",
+        "transitionSeconds": 0.16
+      },
+      {
+        "duration": 2.093,
+        "transition": "fade",
+        "transitionSeconds": 0.04
+      }
+    ],
+    "snapped": [2.476, 1.165, 2.926, 2.636, 3.341, 2.093],
+    "again": [2.476, 1.165, 2.926, 2.636, 3.341, 2.093]
+  }
 ]
