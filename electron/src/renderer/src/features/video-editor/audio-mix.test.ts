@@ -9,6 +9,7 @@ const segment = (patch: Partial<AudioSegment>): AudioSegment => ({
   duration: 10,
   offset: 0,
   rate: 1,
+  keepPitch: false,
   volumeDb: 0,
   fadeIn: 0,
   fadeOut: 0,

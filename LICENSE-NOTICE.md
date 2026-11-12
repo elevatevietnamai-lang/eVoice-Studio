@@ -112,7 +112,8 @@ MIT License). The vendored sources live in
 them; eVoice Studio changes there are marked in comments (texture revisions for
 pooled video frames, colour looks), and the parts that reach the network or
 non-MIT code are replaced by stubs (stickers, Iconify icons, and audio
-time-stretch through `soundtouchjs`, which is LGPL-2.1 and not shipped). The
+time-stretch through `soundtouchjs`, which is LGPL-2.1 and not shipped; the
+editor's Keep pitch uses its own WSOLA time-stretch instead). The
 compositor is the unmodified `opencut-wasm` 0.2.10 package (MIT). Video is
 encoded and decoded with `mediabunny` 1.29.1 (Mozilla Public License 2.0, used
 unmodified as a library; its source is at github.com/Vanilagy/mediabunny), and

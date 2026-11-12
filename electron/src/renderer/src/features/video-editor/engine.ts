@@ -21,7 +21,8 @@ import {
   type EditorMedia,
   type EditorProject,
 } from './project';
-import { audioSegments, scheduleSegments, soundActivity, type AudioSegment } from './audio-mix';
+import { audioSegments, bufferKey, scheduleSegments, soundActivity, type AudioSegment } from './audio-mix';
+import { stretchAudioBuffer } from './time-stretch';
 import { TEXT_FONTS } from './timeline-ops';
 import { mainForRender, placedTransitions, shadeOpacity } from './transitions';
 
@@ -74,6 +75,26 @@ function decodedAudio(media: EditorMedia): Promise<AudioBuffer | null> {
       .then(async (file) => sharedAudioContext().decodeAudioData(await file.arrayBuffer()))
       .catch(() => null);
     decoded.set(media.id, buffer);
+  }
+  return buffer;
+}
+
+const stretchedCache = new Map<string, Promise<AudioBuffer | null>>();
+
+/** The file's sound played `rate` times as fast at the same pitch, made once per speed. */
+function stretchedAudio(media: EditorMedia, rate: number): Promise<AudioBuffer | null> {
+  const key = `${media.id}@${rate}`;
+  let buffer = stretchedCache.get(key);
+  if (!buffer) {
+    buffer = decodedAudio(media).then((decoded) =>
+      decoded
+        ? stretchAudioBuffer(decoded, rate, (channels, length, sampleRate) =>
+            sharedAudioContext().createBuffer(channels, length, sampleRate),
+          )
+        : null,
+    );
+    buffer.catch(() => stretchedCache.delete(key));
+    stretchedCache.set(key, buffer);
   }
   return buffer;
 }
@@ -150,11 +171,14 @@ export async function loadMedia(project: EditorProject): Promise<LoadedMedia> {
         }
       }),
   );
+  // Every buffer the schedule plays, a stretched copy included, is ready before
+  // anything plays, so the preview and the export never fall back to a pitch shift.
   const buffers = new Map<string, AudioBuffer | null>();
   await Promise.all(
-    [...new Set(segments.map((segment) => segment.mediaId))].map(async (id) => {
-      const media = project.media.find((item) => item.id === id);
-      buffers.set(id, media ? await decodedAudio(media) : null);
+    [...new Map(segments.map((segment) => [bufferKey(segment), segment])).values()].map(async (segment) => {
+      const media = project.media.find((item) => item.id === segment.mediaId);
+      const buffer = !media ? null : segment.keepPitch ? await stretchedAudio(media, segment.rate) : await decodedAudio(media);
+      buffers.set(bufferKey(segment), buffer);
     }),
   );
   let activity: LoadedMedia['activity'] = null;

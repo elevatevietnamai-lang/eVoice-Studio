@@ -13,7 +13,7 @@ import {
   saveLibraryProject,
 } from './library';
 import { PROJECT_KEY, emptyProject, saveProject, type EditorMedia, type EditorProject } from './project';
-import { addCaptions, insertMedia, setKeyframe, setSpeed } from './timeline-ops';
+import { addCaptions, insertMedia, setKeepPitch, setKeyframe, setSpeed } from './timeline-ops';
 
 function memoryStorage(initial: Record<string, string> = {}) {
   const store = new Map(Object.entries(initial));
@@ -40,7 +40,8 @@ const clip: EditorMedia = {
 function firstReleaseProject(): EditorProject {
   const placed = insertMedia({ ...emptyProject(), name: 'Holiday' }, clip, 0);
   let project = setKeyframe(placed.project, placed.ref, 'opacity', 1, 0.5);
-  project = setSpeed(project, placed.ref, 2);
+  // The first release sped clips up without keeping their pitch.
+  project = setKeepPitch(setSpeed(project, placed.ref, 2), placed.ref, false);
   return addCaptions(project, [{ start: 0.5, end: 1.5, text: 'Hello there' }], { width: 1080, height: 1920 });
 }
 

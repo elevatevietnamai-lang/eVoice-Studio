@@ -4183,7 +4183,9 @@
     "mask_height": "Wysokość maski",
     "mask_rotation": "Obrót maski",
     "mask_feather": "Miękkość maski",
-    "mask_invert": "Odwróć maskę"
+    "mask_invert": "Odwróć maskę",
+    "keep_pitch": "Zachowaj wysokość dźwięku",
+    "keep_pitch_hint": "Dźwięk jest rozciągany w czasie, więc głosy zachowują wysokość przy nowej prędkości."
   },
   "promo": {
     "title": "Film reklamowy",

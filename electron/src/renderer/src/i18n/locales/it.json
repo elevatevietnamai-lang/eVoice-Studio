@@ -4179,7 +4179,9 @@
     "mask_height": "Altezza della maschera",
     "mask_rotation": "Rotazione della maschera",
     "mask_feather": "Morbidezza della maschera",
-    "mask_invert": "Inverti maschera"
+    "mask_invert": "Inverti maschera",
+    "keep_pitch": "Mantieni l'intonazione",
+    "keep_pitch_hint": "Il suono viene allungato nel tempo, così le voci mantengono l'intonazione alla nuova velocità."
   },
   "promo": {
     "title": "Video promozionale",

@@ -4177,7 +4177,9 @@
     "mask_height": "Maske yüksekliği",
     "mask_rotation": "Maske dönüşü",
     "mask_feather": "Maske yumuşaklığı",
-    "mask_invert": "Maskeyi ters çevir"
+    "mask_invert": "Maskeyi ters çevir",
+    "keep_pitch": "Perdeyi koru",
+    "keep_pitch_hint": "Ses zamanda esnetilir, böylece sesler yeni hızda perdelerini korur."
   },
   "promo": {
     "title": "Tanıtım videosu",

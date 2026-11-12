@@ -4177,7 +4177,9 @@
     "mask_height": "Chiều cao mask",
     "mask_rotation": "Xoay mask",
     "mask_feather": "Độ mềm mask",
-    "mask_invert": "Đảo ngược mask"
+    "mask_invert": "Đảo ngược mask",
+    "keep_pitch": "Giữ cao độ",
+    "keep_pitch_hint": "Âm thanh được kéo giãn theo thời gian nên giọng nói giữ nguyên cao độ ở tốc độ mới."
   },
   "promo": {
     "title": "Video quảng cáo",

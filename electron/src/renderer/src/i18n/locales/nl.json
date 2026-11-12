@@ -4177,7 +4177,9 @@
     "mask_height": "Hoogte van het masker",
     "mask_rotation": "Rotatie van het masker",
     "mask_feather": "Zachtheid van het masker",
-    "mask_invert": "Masker omkeren"
+    "mask_invert": "Masker omkeren",
+    "keep_pitch": "Toonhoogte behouden",
+    "keep_pitch_hint": "Het geluid wordt in de tijd uitgerekt, zodat stemmen hun toonhoogte houden bij de nieuwe snelheid."
   },
   "promo": {
     "title": "Promovideo",

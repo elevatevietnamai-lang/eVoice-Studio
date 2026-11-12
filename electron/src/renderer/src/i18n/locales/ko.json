@@ -4177,7 +4177,9 @@
     "mask_height": "마스크 높이",
     "mask_rotation": "마스크 회전",
     "mask_feather": "마스크 부드럽게",
-    "mask_invert": "마스크 반전"
+    "mask_invert": "마스크 반전",
+    "keep_pitch": "음높이 유지",
+    "keep_pitch_hint": "소리를 시간 방향으로 늘이거나 줄여 새 속도에서도 목소리의 음높이가 유지됩니다."
   },
   "promo": {
     "title": "홍보 영상",

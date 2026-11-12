@@ -4177,7 +4177,9 @@
     "mask_height": "遮罩高度",
     "mask_rotation": "遮罩旋轉",
     "mask_feather": "遮罩羽化",
-    "mask_invert": "反轉遮罩"
+    "mask_invert": "反轉遮罩",
+    "keep_pitch": "保持音高",
+    "keep_pitch_hint": "聲音依時間伸縮，因此在新速度下人聲保持原本的音高。"
   },
   "promo": {
     "title": "宣傳影片",

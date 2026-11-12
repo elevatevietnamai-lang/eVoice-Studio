@@ -4177,7 +4177,9 @@
     "mask_height": "Maskens höjd",
     "mask_rotation": "Maskens rotation",
     "mask_feather": "Maskens mjukhet",
-    "mask_invert": "Invertera masken"
+    "mask_invert": "Invertera masken",
+    "keep_pitch": "Behåll tonhöjden",
+    "keep_pitch_hint": "Ljudet sträcks ut i tid, så röster behåller sin tonhöjd i den nya hastigheten."
   },
   "promo": {
     "title": "Reklamvideo",

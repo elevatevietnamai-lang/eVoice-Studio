@@ -4177,7 +4177,9 @@
     "mask_height": "Tinggi mask",
     "mask_rotation": "Rotasi mask",
     "mask_feather": "Kelembutan mask",
-    "mask_invert": "Balik mask"
+    "mask_invert": "Balik mask",
+    "keep_pitch": "Pertahankan nada",
+    "keep_pitch_hint": "Suara diregangkan dalam waktu, jadi nada suara tetap sama pada kecepatan baru."
   },
   "promo": {
     "title": "Video promosi",

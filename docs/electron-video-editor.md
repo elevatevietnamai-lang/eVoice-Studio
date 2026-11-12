@@ -46,7 +46,10 @@ computer; nothing is uploaded.
    - **Sound:** the clip's own sound on or off, volume (keyframable), fade in and
      out, speed from 0.25× to 4×, and for audio clips **Lower under voices**,
      which turns the clip down by about 12 dB while another clip has sound.
-     Speed changes also change pitch.
+     With a speed other than 1×, **Keep pitch** (on for clips you speed up or
+     slow down) keeps voices at their pitch; off, the sound plays faster or
+     slower and its pitch moves with it. Clips sped up in projects from before
+     Keep pitch keep sounding as they did until you turn it on.
    - **Transition to the next clip** (main-track clips that have one after
      them): dissolve, fade through black, slide, push, zoom or wipe, 0.1 to 2
      seconds. The two clips overlap for the transition, so the video gets
@@ -118,13 +121,19 @@ get their own decoders. Masks use OpenCut's own mask shapes; their params animat
 `mask.<param>` in the clip's keyframes and are resolved per frame before the
 mask is drawn (`lib/opencut/mask-keyframes.ts`). The chroma key runs after the colour look, in one
 shared WebGL2 context (`lib/opencut/chroma-key.ts`), or with the same formula
-on the CPU where WebGL2 is missing. Stickers, Iconify icons and audio time-stretch
-(`soundtouchjs`, LGPL) are stubbed out. See `LICENSE-NOTICE.md`.
+on the CPU where WebGL2 is missing. Keep pitch stretches the clip's sound in
+time with the editor's own WSOLA (`features/video-editor/time-stretch.ts`),
+once per file and speed, in chunks that yield to the page; the preview and the
+export wait for the stretched copy and play the same one. Stickers, Iconify
+icons and OpenCut's audio time-stretch (`soundtouchjs`, LGPL) are stubbed out.
+See `LICENSE-NOTICE.md`.
 
 ## Limits
 
 - Export length is capped at 5 minutes because the encoder keeps the file in
   memory until it is saved.
-- Speed changes shift the pitch of the clip's sound.
+- The first time a clip plays at a new speed with Keep pitch, its sound is
+  stretched before the preview updates (about 3 seconds for 5 minutes of
+  stereo sound on a desktop CPU).
 - The preview renders at the project's full size; a slow GPU may skip frames
   while playing (the export never does).

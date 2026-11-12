@@ -42,6 +42,7 @@ import {
   removeKeyframe,
   setKeyframe,
   setParam,
+  setKeepPitch,
   setMaskShape,
   setSourceAudio,
   setSpeed,
@@ -600,7 +601,21 @@ export function PropertiesPanel({
               </SelectContent>
             </Select>
           </Row>
-          {rateOf(element) !== 1 && <p className="text-xs text-muted-foreground">{t('editor.speed_pitch')}</p>}
+          {rateOf(element) !== 1 && 'retime' in element && (
+            <div className="space-y-1 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">{t('editor.keep_pitch')}</span>
+                <Switch
+                  aria-label={t('editor.keep_pitch')}
+                  checked={element.retime?.maintainPitch === true}
+                  onCheckedChange={(on) => apply((current) => setKeepPitch(current, selection, on))}
+                />
+              </div>
+              <p className="text-muted-foreground">
+                {t(element.retime?.maintainPitch === true ? 'editor.keep_pitch_hint' : 'editor.speed_pitch')}
+              </p>
+            </div>
+          )}
         </Section>
       )}
     </div>

@@ -4177,7 +4177,9 @@
     "mask_height": "Mask height",
     "mask_rotation": "Mask rotation",
     "mask_feather": "Mask softness",
-    "mask_invert": "Invert mask"
+    "mask_invert": "Invert mask",
+    "keep_pitch": "Keep pitch",
+    "keep_pitch_hint": "The sound is stretched in time, so voices keep their pitch at the new speed."
   },
   "promo": {
     "title": "Promo video",

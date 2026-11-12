@@ -4177,7 +4177,9 @@
     "mask_height": "蒙版高度",
     "mask_rotation": "蒙版旋转",
     "mask_feather": "蒙版羽化",
-    "mask_invert": "反转蒙版"
+    "mask_invert": "反转蒙版",
+    "keep_pitch": "保持音调",
+    "keep_pitch_hint": "声音按时间拉伸，因此在新速度下人声保持原有音调。"
   },
   "promo": {
     "title": "宣传视频",

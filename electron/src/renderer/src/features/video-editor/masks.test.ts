@@ -67,7 +67,7 @@ describe('masks', () => {
     const split = splitElement(next, ref, 2);
     const [left, right] = split.project.tracks.main.elements;
     const width = (element: typeof left, seconds: number) =>
-      resolveMaskAtTime('masks' in element ? element.masks![0] : (null as never), element.animations, ticks(seconds)).params.width;
+      (resolveMaskAtTime('masks' in element ? element.masks![0] : (null as never), element.animations, ticks(seconds)).params as { width: number }).width;
     expect(width(left, 1)).toBeCloseTo(0.4);
     expect(width(right, 1)).toBeCloseTo(0.8);
   });

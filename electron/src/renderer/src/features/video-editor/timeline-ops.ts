@@ -606,7 +606,9 @@ export function setSourceAudio(project: EditorProject, ref: ElementRef, enabled:
 
 /**
  * Plays a clip faster or slower. The clip shows the same stretch of source,
- * so it gets shorter or longer on the timeline. Audio changes pitch with speed.
+ * so it gets shorter or longer on the timeline. A clip given a speed for the
+ * first time keeps its pitch; one that already has a speed keeps its Keep
+ * pitch setting (clips from before Keep pitch stay pitch-shifted).
  */
 export function setSpeed(project: EditorProject, ref: ElementRef, rate: number): EditorProject {
   const found = findElement(project, ref);
@@ -626,10 +628,11 @@ export function setSpeed(project: EditorProject, ref: ElementRef, rate: number):
       time: at(key.time * scale),
     });
   }
+  const keepPitch = 'retime' in element && element.retime ? element.retime.maintainPitch !== false : true;
   const next = {
     ...element,
     duration,
-    retime: speed === 1 ? undefined : { rate: speed, maintainPitch: false },
+    retime: speed === 1 ? undefined : { rate: speed, maintainPitch: keepPitch },
     animations,
   } as TimelineElement;
   if (track.id === MAIN_TRACK_ID)
@@ -644,6 +647,13 @@ export function setSpeed(project: EditorProject, ref: ElementRef, rate: number):
   if (next.startTime + next.duration <= ceiling)
     return putOnTrack(removed, track.id, next);
   return pruneTracks(placeFree(removed, track.id, next).project);
+}
+
+/** Turns Keep pitch on or off for a sped-up or slowed clip. */
+export function setKeepPitch(project: EditorProject, ref: ElementRef, keep: boolean): EditorProject {
+  return mapElement(project, ref, (element) =>
+    'retime' in element && element.retime ? ({ ...element, retime: { ...element.retime, maintainPitch: keep } } as TimelineElement) : element,
+  );
 }
 
 /** Time inside the clip, in ticks, for a playhead at `seconds` (clamped to the clip). */

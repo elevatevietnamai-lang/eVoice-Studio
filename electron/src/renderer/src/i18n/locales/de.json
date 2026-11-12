@@ -4177,7 +4177,9 @@
     "mask_height": "Maskenhöhe",
     "mask_rotation": "Maskendrehung",
     "mask_feather": "Weiche Maskenkante",
-    "mask_invert": "Maske umkehren"
+    "mask_invert": "Maske umkehren",
+    "keep_pitch": "Tonhöhe beibehalten",
+    "keep_pitch_hint": "Der Ton wird zeitlich gedehnt, sodass Stimmen bei der neuen Geschwindigkeit ihre Tonhöhe behalten."
   },
   "promo": {
     "title": "Werbevideo",
