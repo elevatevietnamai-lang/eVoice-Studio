@@ -309,7 +309,7 @@ const WORDS_PER_CAPTION = 7;
  */
 export function captionsFromText(text: string, start: number, end: number): CaptionSegment[] {
   const lines: string[] = [];
-  for (const sentence of text.split(/(?<=[.!?…。！？])\s+|(?<=[,;:，；])\s+/)) {
+  for (const sentence of text.split(/(?<=[.!?\u2026\u3002\uff01\uff1f])\s+|(?<=[,;:\uff0c\uff1b])\s+/)) {
     const words = sentence.trim().split(/\s+/).filter(Boolean);
     for (let i = 0; i < words.length; i += WORDS_PER_CAPTION) lines.push(words.slice(i, i + WORDS_PER_CAPTION).join(' '));
   }

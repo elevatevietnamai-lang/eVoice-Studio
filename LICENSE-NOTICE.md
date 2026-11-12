@@ -105,6 +105,19 @@ from Google's Chrome for Testing storage only when the user turns animated
 titles on, under Google's own terms. Templates use CSS and Web Animations only,
 never GSAP.
 
+The Video editor's renderer is adapted from OpenCut classic
+(`opencut-app/opencut-classic` at commit `cf5e79e`, Copyright 2025-2026 OpenCut,
+MIT License). The vendored sources live in
+`electron/src/renderer/src/lib/opencut/vendor/` with the MIT licence text beside
+them; eVoice Studio changes there are marked in comments (texture revisions for
+pooled video frames, colour looks), and the parts that reach the network or
+non-MIT code are replaced by stubs (stickers, Iconify icons, and audio
+time-stretch through `soundtouchjs`, which is LGPL-2.1 and not shipped). The
+compositor is the unmodified `opencut-wasm` 0.2.10 package (MIT). Video is
+encoded and decoded with `mediabunny` 1.29.1 (Mozilla Public License 2.0, used
+unmodified as a library; its source is at github.com/Vanilagy/mediabunny), and
+colours are parsed with `culori` (MIT) and events with `eventemitter3` (MIT).
+
 The locked PyAV 15.1.0 wheels bundle FFmpeg and x264/x265 libraries. PyAV's source
 licence alone does not describe those binaries' terms. The
 [wheel audit](docs/licensing/pyav-15.1.0-audit.md) records their hashes, build flags,

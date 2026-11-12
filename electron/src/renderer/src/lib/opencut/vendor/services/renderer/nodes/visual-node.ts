@@ -31,7 +31,7 @@ export interface ResolvedVisualSourceNodeState extends ResolvedVisualNodeState {
 	source: CanvasImageSource;
 	sourceWidth: number;
 	sourceHeight: number;
-	/** Changes when a reused source (a pooled video canvas) holds a new frame. */
+	/** eVoice Studio: changes when a reused source (a pooled video canvas) holds a new frame. */
 	sourceRevision?: number;
 }
 

@@ -139,7 +139,7 @@ async function collectNode({
 		const textureId = `${path}:blur-background`;
 		const { width, height } = renderer;
 		const { backdropSource, passes } = node.resolved;
-		// Decoded video frames come from a recycled canvas pool, so the source
+		// eVoice Studio: decoded video frames come from a recycled canvas pool, so the source
 		// reference alone does not identify a frame: the frame timestamp
 		// (revision) is part of the hash too.
 		const contentHash = `blur:${identityKey(backdropSource.source)}:${backdropSource.revision ?? ''}:${backdropSource.width}x${backdropSource.height}:${width}x${height}`;
