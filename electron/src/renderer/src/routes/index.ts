@@ -26,6 +26,11 @@ const AudiobookPage = lazyRouteComponent(
   'AudiobookPage',
 );
 const PromoPage = lazyRouteComponent(() => import('@/features/promo/promo-page'), 'PromoPage');
+// Spike only: OpenCut renderer lab, reachable by URL, not listed in navigation.
+const OpencutLabPage = lazyRouteComponent(
+  () => import('@/features/opencut-lab/opencut-lab-page'),
+  'OpencutLabPage',
+);
 const ProjectsPage = lazyRouteComponent(
   () => import('@/features/projects/projects-page'),
   'ProjectsPage',
@@ -195,6 +200,11 @@ export const promoRoute = createRoute({
   path: '/promo',
   component: PromoPage,
 });
+export const opencutLabRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/opencut-lab',
+  component: OpencutLabPage,
+});
 export const audiobookRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/audiobook',
@@ -294,6 +304,7 @@ export const routeTree = rootRoute.addChildren([
   storiesRoute,
   audiobookRoute,
   promoRoute,
+  opencutLabRoute,
   projectsRoute,
   indexRoute,
   cloneRoute,
