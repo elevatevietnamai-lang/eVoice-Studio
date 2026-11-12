@@ -6,12 +6,9 @@
  */
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  EyeIcon,
-  EyeOffIcon,
-  Volume2Icon,
-  VolumeXIcon,
-} from 'lucide-react';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { Volume2 as Volume2Shape, VolumeX as VolumeXShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import type { TimelineElement, TimelineTrack } from '@/lib/opencut/vendor/timeline/types';
 import { getElementKeyframes } from '@/lib/opencut/vendor/animation/keyframe-query';
 import { cn } from '@/lib/utils';
@@ -317,7 +314,7 @@ export function EditorTimeline({
                   aria-pressed={track.muted}
                   onClick={() => edits.toggleTrack(track.id, 'muted', !track.muted)}
                 >
-                  {track.muted ? <VolumeXIcon className="size-3.5" /> : <Volume2Icon className="size-3.5" />}
+                  <MorphIcon className="size-3.5" icon={track.muted ? VolumeXShape : Volume2Shape} />
                 </button>
               )}
               {'hidden' in track && (
