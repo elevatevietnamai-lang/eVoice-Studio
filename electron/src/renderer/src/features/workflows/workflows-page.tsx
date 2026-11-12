@@ -379,40 +379,6 @@ function WorkflowCanvas({
           </div>
         )}
       </Reveal>
-      <div className="workflow-intro">
-        <div>
-          <h2>{t('workflows.heading')}</h2>
-          <p>{t('workflowRun.hint')}</p>
-        </div>
-        <div className="workflow-intro__actions">
-          <Button
-            size="sm"
-            onClick={() => {
-              setSelectedId(null);
-              setRunnerOpen(true);
-            }}
-          >
-            <PlayIcon size={15} />
-            {t('workflowRun.run')}
-          </Button>
-          <Button size="sm" variant="outline" disabled={running} onClick={duplicateWorkflow}>
-            <CopyIcon size={15} />
-            {t('workflows.duplicate')}
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => {
-              setDeleteError('');
-              setDeletingId(document.id);
-            }}
-            disabled={running || library.documents.length === 1}
-          >
-            <Trash2Icon size={15} />
-            {t('workflows.delete')}
-          </Button>
-        </div>
-      </div>
       <div className={`workflow-workspace${selected || runnerOpen ? ' has-selection' : ''}`}>
         <aside className="workflow-rail studio-scrollbar" aria-label={t('workflows.library')}>
           <div className="workflow-panel-heading">
@@ -562,6 +528,35 @@ function WorkflowCanvas({
                 }))
               }
             />
+            {/* Page actions sit with the workflow they act on; the header keeps only the page title. */}
+            <div data-slot="workflow-actions" className="ml-auto flex items-center gap-2">
+              <Button
+                size="sm"
+                onClick={() => {
+                  setSelectedId(null);
+                  setRunnerOpen(true);
+                }}
+              >
+                <PlayIcon size={15} />
+                {t('workflowRun.run')}
+              </Button>
+              <Button size="sm" variant="outline" disabled={running} onClick={duplicateWorkflow}>
+                <CopyIcon size={15} />
+                {t('workflows.duplicate')}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setDeleteError('');
+                  setDeletingId(document.id);
+                }}
+                disabled={running || library.documents.length === 1}
+              >
+                <Trash2Icon size={15} />
+                {t('workflows.delete')}
+              </Button>
+            </div>
           </div>
           <ReactFlow
             key={document.id}

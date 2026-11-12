@@ -116,7 +116,7 @@ try {
   await page.locator('.react-flow__node').filter({ hasText: 'Speak' }).click();
   await page.getByRole('button', { name: 'Target voice', exact: true }).click();
   await page.getByRole('option').filter({ hasText: 'Demo voice' }).click();
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Run workflow' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Run workflow' }).click();
   await page
     .locator('.workflow-runner')
     .getByRole('button', { name: 'Run workflow', exact: true })
@@ -125,7 +125,7 @@ try {
   assert.equal(generated, 1);
   assert.equal(normalized, 1);
   await page.reload();
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Run workflow' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Run workflow' }).click();
   await page.getByText('Test normalization unavailable', { exact: true }).waitFor();
   failNormalization = false;
   await page
@@ -145,7 +145,7 @@ try {
     .click();
   assert((await download).suggestedFilename().endsWith('-01-1.wav'));
   await page.reload();
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Run workflow' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Run workflow' }).click();
   await page.getByText('2 / 2 clips ready', { exact: true }).waitFor();
   assert.equal(generated, 2, 'reopening never reruns inference');
   // An ASR-only recipe must not require a working TTS engine.
@@ -157,7 +157,7 @@ try {
     .setInputFiles({ name: 'lesson.wav', mimeType: 'audio/wav', buffer: wav });
   await page.getByText('lesson.wav', { exact: true }).waitFor();
   await page.reload(); // The source file must survive a reload before any run.
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Run workflow' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Run workflow' }).click();
   await page
     .locator('.workflow-runner')
     .getByRole('button', { name: 'Run workflow', exact: true })
@@ -182,7 +182,7 @@ try {
   await page.locator('.react-flow__node').filter({ hasText: 'Convert' }).click();
   await page.getByRole('button', { name: 'Target voice', exact: true }).click();
   await page.getByRole('option').filter({ hasText: 'Demo voice' }).click();
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Run workflow' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Run workflow' }).click();
   await page
     .locator('.workflow-runner')
     .getByRole('button', { name: 'Run workflow', exact: true })
@@ -198,7 +198,7 @@ try {
   await page.locator('.react-flow__node').filter({ hasText: 'Speak' }).click();
   await page.getByRole('button', { name: 'Target voice', exact: true }).click();
   await page.getByRole('option').filter({ hasText: 'Demo voice' }).click();
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Run workflow' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Run workflow' }).click();
   await page
     .locator('.workflow-runner')
     .getByRole('button', { name: 'Run workflow', exact: true })
@@ -244,7 +244,7 @@ try {
     );
   await page.getByRole('button', { name: 'Duplicate', exact: true }).click();
   await page
-    .locator('.workflow-intro')
+    .locator('[data-slot="workflow-actions"]')
     .getByRole('button', { name: 'Delete', exact: true })
     .click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click();
@@ -299,7 +299,7 @@ try {
     return library.documents.find((item) => item.id === library.activeId).steps[0].media[0].id;
   });
   await page
-    .locator('.workflow-intro')
+    .locator('[data-slot="workflow-actions"]')
     .getByRole('button', { name: 'Delete', exact: true })
     .click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click();

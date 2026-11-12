@@ -564,7 +564,7 @@ export function DesignPage() {
             <div className="glass-panel relative grid min-h-16 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-(--card-radius) border border-border/60 bg-muted/30 p-3 max-md:grid-cols-[1fr_auto]">
               <div className="min-w-0 justify-self-start">
                 <div className="flex items-center gap-1">
-                  <EngineLanguagePicker operation="tts" />
+                  <EngineLanguagePicker operation="tts" size="sm" />
                   <QualityControls size="sm" disabled={generation.isGenerating} />
                   <VoiceControls size="icon-sm" />
                 </div>

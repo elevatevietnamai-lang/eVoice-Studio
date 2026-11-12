@@ -21,6 +21,8 @@ export interface LanguagePickerProps {
   modelLabel?: string;
   capabilityState?: 'known' | 'unknown' | 'loading' | 'error';
   recentsScope?: string;
+  /** `sm` (24 px) for toolbars, beside other small selects. */
+  size?: 'default' | 'sm';
 }
 
 export function LanguagePicker({
@@ -33,6 +35,7 @@ export function LanguagePicker({
   modelLabel,
   capabilityState,
   recentsScope = 'language',
+  size = 'default',
 }: LanguagePickerProps = {}) {
   const { t, i18n } = useTranslation();
   const saved = useCloneSetting('language');
@@ -89,6 +92,7 @@ export function LanguagePicker({
       disabled={disabled}
       ariaLabel={t('clone.language')}
       buttonClassName={className}
+      size={size}
       unavailableLabel={unavailable}
       recentsKey={`voicestudio.language-recents.${recentsScope}.v1`}
       onChange={(next: string) => {
