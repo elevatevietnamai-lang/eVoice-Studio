@@ -1,3 +1,4 @@
+import { applyColorFilter } from "../../../../color-filter";
 import { drawCssBackground } from "../../../gradients";
 import { getMaskDefinition } from "../../../masks";
 import { incrementCounter } from "../../../diagnostics/render-perf";
@@ -240,16 +241,20 @@ async function collectVisualSourceNode({
 			: (node.resolved as ResolvedVisualSourceNodeState).sourceHeight;
 
 	const textureId = `${path}:source`;
+	// eVoice Studio: a colour look is drawn into a per-texture canvas first, so
+	// the revision carries the filter as well as the frame.
+	const colorFilter = node instanceof GraphicNode ? undefined : node.params.colorFilter;
+	const sourceRevision =
+		node instanceof GraphicNode
+			? undefined
+			: (node.resolved as ResolvedVisualSourceNodeState).sourceRevision;
 	textures.set(textureId, {
 		kind: "external",
 		id: textureId,
-		source,
+		source: applyColorFilter(textureId, source, sourceWidth, sourceHeight, colorFilter),
 		width: sourceWidth,
 		height: sourceHeight,
-		revision:
-			node instanceof GraphicNode
-				? undefined
-				: (node.resolved as ResolvedVisualSourceNodeState).sourceRevision,
+		revision: colorFilter ? `${sourceRevision ?? ""}|${colorFilter}` : sourceRevision,
 	});
 
 	const transform = computeVisualTransform({

@@ -4083,7 +4083,19 @@
     "captions_hint": "I sottotitoli nascono dal parlato del progetto, trascritto su questo computer.",
     "captions_no_sound": "Il progetto non ha audio da sottotitolare.",
     "captions_none": "Nessun parlato trovato.",
-    "captions_added": "Aggiunti {{n}} sottotitoli."
+    "captions_added": "Aggiunti {{n}} sottotitoli.",
+    "color": "Colore",
+    "filter_none": "Originale",
+    "filter_vivid": "Vivace",
+    "filter_warm": "Caldo",
+    "filter_cool": "Freddo",
+    "filter_mono": "Bianco e nero",
+    "filter_vintage": "Vintage",
+    "brightness": "Luminosità",
+    "contrast": "Contrasto",
+    "saturation": "Saturazione",
+    "duck": "Abbassa sotto le voci",
+    "duck_hint": "Abbassa questa clip mentre un'altra ha audio, come la musica sotto una narrazione."
   },
   "promo": {
     "title": "Video promozionale",

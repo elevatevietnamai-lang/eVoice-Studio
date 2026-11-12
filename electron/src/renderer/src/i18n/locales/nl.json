@@ -4081,7 +4081,19 @@
     "captions_hint": "Ondertitels komen uit de spraak in je project, herkend op deze computer.",
     "captions_no_sound": "Het project heeft geen geluid om te ondertitelen.",
     "captions_none": "Geen spraak gevonden.",
-    "captions_added": "{{n}} ondertitels toegevoegd."
+    "captions_added": "{{n}} ondertitels toegevoegd.",
+    "color": "Kleur",
+    "filter_none": "Origineel",
+    "filter_vivid": "Levendig",
+    "filter_warm": "Warm",
+    "filter_cool": "Koel",
+    "filter_mono": "Zwart-wit",
+    "filter_vintage": "Vintage",
+    "brightness": "Helderheid",
+    "contrast": "Contrast",
+    "saturation": "Verzadiging",
+    "duck": "Zachter onder stemmen",
+    "duck_hint": "Zet deze clip zachter terwijl een andere clip geluid heeft, zoals muziek onder een voice-over."
   },
   "promo": {
     "title": "Promovideo",

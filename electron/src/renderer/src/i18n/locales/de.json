@@ -4081,7 +4081,19 @@
     "captions_hint": "Untertitel entstehen aus der Sprache im Projekt, erkannt auf diesem Computer.",
     "captions_no_sound": "Das Projekt hat keinen Ton für Untertitel.",
     "captions_none": "Keine Sprache gefunden.",
-    "captions_added": "{{n}} Untertitel hinzugefügt."
+    "captions_added": "{{n}} Untertitel hinzugefügt.",
+    "color": "Farbe",
+    "filter_none": "Original",
+    "filter_vivid": "Lebendig",
+    "filter_warm": "Warm",
+    "filter_cool": "Kühl",
+    "filter_mono": "Schwarzweiß",
+    "filter_vintage": "Vintage",
+    "brightness": "Helligkeit",
+    "contrast": "Kontrast",
+    "saturation": "Sättigung",
+    "duck": "Unter Stimmen absenken",
+    "duck_hint": "Senkt diesen Clip, während ein anderer Clip Ton hat, etwa Musik unter einer Erzählung."
   },
   "promo": {
     "title": "Werbevideo",

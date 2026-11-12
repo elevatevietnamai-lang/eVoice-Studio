@@ -4083,7 +4083,19 @@
     "captions_hint": "Les sous-titres viennent de la parole du projet, transcrite sur cet ordinateur.",
     "captions_no_sound": "Le projet n'a pas de son à sous-titrer.",
     "captions_none": "Aucune parole trouvée.",
-    "captions_added": "{{n}} sous-titres ajoutés."
+    "captions_added": "{{n}} sous-titres ajoutés.",
+    "color": "Couleur",
+    "filter_none": "Original",
+    "filter_vivid": "Éclatant",
+    "filter_warm": "Chaud",
+    "filter_cool": "Froid",
+    "filter_mono": "Noir et blanc",
+    "filter_vintage": "Rétro",
+    "brightness": "Luminosité",
+    "contrast": "Contraste",
+    "saturation": "Saturation",
+    "duck": "Baisser sous les voix",
+    "duck_hint": "Baisse ce clip quand un autre clip a du son, comme la musique sous une narration."
   },
   "promo": {
     "title": "Vidéo promo",

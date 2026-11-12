@@ -4081,7 +4081,19 @@
     "captions_hint": "Captions come from your project's speech, transcribed on this computer.",
     "captions_no_sound": "The project has no sound to caption.",
     "captions_none": "No speech was found.",
-    "captions_added": "Added {{n}} captions."
+    "captions_added": "Added {{n}} captions.",
+    "color": "Color",
+    "filter_none": "Original",
+    "filter_vivid": "Vivid",
+    "filter_warm": "Warm",
+    "filter_cool": "Cool",
+    "filter_mono": "Black & white",
+    "filter_vintage": "Vintage",
+    "brightness": "Brightness",
+    "contrast": "Contrast",
+    "saturation": "Saturation",
+    "duck": "Lower under voices",
+    "duck_hint": "Turns this clip down while another clip has sound, such as music under narration."
   },
   "promo": {
     "title": "Promo video",

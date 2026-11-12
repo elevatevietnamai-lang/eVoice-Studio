@@ -4081,7 +4081,19 @@
     "captions_hint": "Undertexterna kommer från talet i projektet, igenkänt på den här datorn.",
     "captions_no_sound": "Projektet har inget ljud att texta.",
     "captions_none": "Inget tal hittades.",
-    "captions_added": "{{n}} undertexter lades till."
+    "captions_added": "{{n}} undertexter lades till.",
+    "color": "Färg",
+    "filter_none": "Original",
+    "filter_vivid": "Livfull",
+    "filter_warm": "Varm",
+    "filter_cool": "Kall",
+    "filter_mono": "Svartvit",
+    "filter_vintage": "Vintage",
+    "brightness": "Ljusstyrka",
+    "contrast": "Kontrast",
+    "saturation": "Mättnad",
+    "duck": "Sänk under röster",
+    "duck_hint": "Sänker klippet medan ett annat klipp har ljud, till exempel musik under en berättarröst."
   },
   "promo": {
     "title": "Reklamvideo",

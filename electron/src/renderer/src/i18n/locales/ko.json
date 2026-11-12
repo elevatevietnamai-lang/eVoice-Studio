@@ -4081,7 +4081,19 @@
     "captions_hint": "자막은 프로젝트의 음성을 이 컴퓨터에서 받아 적어 만듭니다.",
     "captions_no_sound": "자막을 만들 소리가 없습니다.",
     "captions_none": "음성을 찾지 못했습니다.",
-    "captions_added": "자막 {{n}}개를 추가했습니다."
+    "captions_added": "자막 {{n}}개를 추가했습니다.",
+    "color": "색상",
+    "filter_none": "원본",
+    "filter_vivid": "선명하게",
+    "filter_warm": "따뜻하게",
+    "filter_cool": "차갑게",
+    "filter_mono": "흑백",
+    "filter_vintage": "빈티지",
+    "brightness": "밝기",
+    "contrast": "대비",
+    "saturation": "채도",
+    "duck": "목소리 아래에서 줄이기",
+    "duck_hint": "다른 클립에 소리가 있을 때 이 클립의 볼륨을 줄입니다. 예: 내레이션 아래의 음악."
   },
   "promo": {
     "title": "홍보 영상",

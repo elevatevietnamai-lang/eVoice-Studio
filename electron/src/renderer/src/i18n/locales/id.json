@@ -4081,7 +4081,19 @@
     "captions_hint": "Teks berasal dari ucapan di proyek, ditranskripsi di komputer ini.",
     "captions_no_sound": "Proyek tidak punya suara untuk diberi teks.",
     "captions_none": "Tidak ada ucapan yang ditemukan.",
-    "captions_added": "{{n}} teks ditambahkan."
+    "captions_added": "{{n}} teks ditambahkan.",
+    "color": "Warna",
+    "filter_none": "Asli",
+    "filter_vivid": "Cerah",
+    "filter_warm": "Hangat",
+    "filter_cool": "Sejuk",
+    "filter_mono": "Hitam putih",
+    "filter_vintage": "Vintage",
+    "brightness": "Kecerahan",
+    "contrast": "Kontras",
+    "saturation": "Saturasi",
+    "duck": "Pelankan saat ada suara",
+    "duck_hint": "Memelankan klip ini saat klip lain bersuara, misalnya musik di bawah narasi."
   },
   "promo": {
     "title": "Video promosi",

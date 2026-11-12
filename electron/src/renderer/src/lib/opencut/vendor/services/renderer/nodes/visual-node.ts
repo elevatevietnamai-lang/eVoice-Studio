@@ -16,6 +16,8 @@ export interface VisualNodeParams {
 	blendMode?: BlendMode;
 	effects?: Effect[];
 	masks?: Mask[];
+	/** eVoice Studio: a canvas filter for the colour look (see lib/opencut/color-filter). */
+	colorFilter?: string;
 }
 
 export interface ResolvedVisualNodeState {

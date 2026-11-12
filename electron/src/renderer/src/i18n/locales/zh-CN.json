@@ -4081,7 +4081,19 @@
     "captions_hint": "字幕来自项目中的语音，在这台电脑上转写。",
     "captions_no_sound": "项目中没有可生成字幕的声音。",
     "captions_none": "未找到语音。",
-    "captions_added": "已添加 {{n}} 条字幕。"
+    "captions_added": "已添加 {{n}} 条字幕。",
+    "color": "颜色",
+    "filter_none": "原始",
+    "filter_vivid": "鲜艳",
+    "filter_warm": "暖色",
+    "filter_cool": "冷色",
+    "filter_mono": "黑白",
+    "filter_vintage": "复古",
+    "brightness": "亮度",
+    "contrast": "对比度",
+    "saturation": "饱和度",
+    "duck": "人声时降低",
+    "duck_hint": "其他片段有声音时自动调低此片段，例如旁白下的音乐。"
   },
   "promo": {
     "title": "宣传视频",

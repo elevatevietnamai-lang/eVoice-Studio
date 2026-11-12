@@ -4081,7 +4081,19 @@
     "captions_hint": "字幕來自專案中的語音，在這台電腦上轉寫。",
     "captions_no_sound": "專案中沒有可產生字幕的聲音。",
     "captions_none": "找不到語音。",
-    "captions_added": "已新增 {{n}} 則字幕。"
+    "captions_added": "已新增 {{n}} 則字幕。",
+    "color": "色彩",
+    "filter_none": "原始",
+    "filter_vivid": "鮮豔",
+    "filter_warm": "暖色",
+    "filter_cool": "冷色",
+    "filter_mono": "黑白",
+    "filter_vintage": "復古",
+    "brightness": "亮度",
+    "contrast": "對比",
+    "saturation": "飽和度",
+    "duck": "人聲時降低",
+    "duck_hint": "其他片段有聲音時自動調低此片段，例如旁白下的音樂。"
   },
   "promo": {
     "title": "宣傳影片",

@@ -18,6 +18,8 @@ import {
 	readOpacityFromParams,
 } from "../../rendering";
 
+import { colorFilterFor } from "../../../color-filter";
+
 const PREVIEW_MAX_IMAGE_SIZE = 2048;
 
 function getVisibleSortedElements({ track }: { track: TimelineTrack }) {
@@ -82,6 +84,7 @@ function buildTrackNodes({
 							blendMode: readBlendModeFromParams({ params: element.params }),
 							effects: element.effects ?? [],
 							masks: element.masks ?? [],
+							colorFilter: colorFilterFor(element.params),
 						}),
 					);
 				}
@@ -99,6 +102,7 @@ function buildTrackNodes({
 							blendMode: readBlendModeFromParams({ params: element.params }),
 							effects: element.effects ?? [],
 							masks: element.masks ?? [],
+							colorFilter: colorFilterFor(element.params),
 							...(isPreview && {
 								maxSourceSize: PREVIEW_MAX_IMAGE_SIZE,
 							}),

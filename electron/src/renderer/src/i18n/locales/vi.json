@@ -4081,7 +4081,19 @@
     "captions_hint": "Phụ đề lấy từ lời nói trong dự án, nhận dạng ngay trên máy này.",
     "captions_no_sound": "Dự án không có âm thanh để tạo phụ đề.",
     "captions_none": "Không tìm thấy lời nói.",
-    "captions_added": "Đã thêm {{n}} phụ đề."
+    "captions_added": "Đã thêm {{n}} phụ đề.",
+    "color": "Màu",
+    "filter_none": "Gốc",
+    "filter_vivid": "Rực rỡ",
+    "filter_warm": "Ấm",
+    "filter_cool": "Lạnh",
+    "filter_mono": "Đen trắng",
+    "filter_vintage": "Hoài cổ",
+    "brightness": "Độ sáng",
+    "contrast": "Tương phản",
+    "saturation": "Độ bão hoà",
+    "duck": "Giảm khi có giọng",
+    "duck_hint": "Hạ âm lượng clip này khi clip khác có tiếng, ví dụ nhạc nền dưới lời thuyết minh."
   },
   "promo": {
     "title": "Video quảng cáo",

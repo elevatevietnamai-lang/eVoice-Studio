@@ -4081,7 +4081,19 @@
     "captions_hint": "字幕はプロジェクト内の音声から、このコンピューター上で文字起こしして作成します。",
     "captions_no_sound": "字幕にする音声がありません。",
     "captions_none": "音声が見つかりませんでした。",
-    "captions_added": "{{n}} 件の字幕を追加しました。"
+    "captions_added": "{{n}} 件の字幕を追加しました。",
+    "color": "カラー",
+    "filter_none": "オリジナル",
+    "filter_vivid": "鮮やか",
+    "filter_warm": "暖色",
+    "filter_cool": "寒色",
+    "filter_mono": "モノクロ",
+    "filter_vintage": "ビンテージ",
+    "brightness": "明るさ",
+    "contrast": "コントラスト",
+    "saturation": "彩度",
+    "duck": "声の下で下げる",
+    "duck_hint": "ほかのクリップに音があるあいだ、このクリップの音量を下げます（ナレーション下の音楽など）。"
   },
   "promo": {
     "title": "プロモーション動画",

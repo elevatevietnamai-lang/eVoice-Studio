@@ -19,7 +19,7 @@ import {
   type EditorMedia,
   type EditorProject,
 } from './project';
-import { audioSegments, scheduleSegments, type AudioSegment } from './audio-mix';
+import { audioSegments, scheduleSegments, soundActivity, type AudioSegment } from './audio-mix';
 import { TEXT_FONTS } from './timeline-ops';
 
 export const SAMPLE_RATE = 48_000;
@@ -108,6 +108,8 @@ export interface LoadedMedia {
   assets: MediaAsset[];
   buffers: Map<string, AudioBuffer | null>;
   segments: AudioSegment[];
+  /** When any clip is ducked: whether something else is heard at a timeline second. */
+  activity: ((t: number) => boolean) | null;
 }
 
 /** Fetches every file the project uses; a file that fails is left out of the scene. */
@@ -152,7 +154,18 @@ export async function loadMedia(project: EditorProject): Promise<LoadedMedia> {
       buffers.set(id, media ? await decodedAudio(media) : null);
     }),
   );
-  return { assets, buffers, segments };
+  let activity: LoadedMedia['activity'] = null;
+  if (segments.some((segment) => segment.duck)) {
+    const peaks = new Map<string, Float32Array | null>();
+    await Promise.all(
+      [...new Set(segments.map((segment) => segment.mediaId))].map(async (id) => {
+        const media = project.media.find((item) => item.id === id);
+        peaks.set(id, media ? await mediaPeaks(media) : null);
+      }),
+    );
+    activity = soundActivity(segments, peaks, PEAKS_PER_SECOND);
+  }
+  return { assets, buffers, segments, activity };
 }
 
 export function buildEditorScene(project: EditorProject, assets: MediaAsset[], isPreview = false): RootNode {
@@ -247,7 +260,7 @@ export class EditorPlayer {
     const context = sharedAudioContext();
     const when = context.currentTime + 0.05;
     this.clock = { position: from, at: when };
-    this.sources = this.loaded ? scheduleSegments(context, this.loaded.segments, this.loaded.buffers, from, when) : [];
+    this.sources = this.loaded ? scheduleSegments(context, this.loaded.segments, this.loaded.buffers, from, when, context.destination, this.loaded.activity) : [];
   }
 
   private stopSound(): void {
@@ -331,7 +344,7 @@ export async function mixdownForSpeech(
   const seconds = projectSeconds(project);
   if (!loaded.segments.length || seconds <= 0) return null;
   const offline = new OfflineAudioContext(1, Math.ceil(seconds * SPEECH_SAMPLE_RATE), SPEECH_SAMPLE_RATE);
-  scheduleSegments(offline, loaded.segments, loaded.buffers, 0, 0);
+  scheduleSegments(offline, loaded.segments, loaded.buffers, 0, 0, offline.destination, loaded.activity);
   const samples = (await offline.startRendering()).getChannelData(0);
   return { wav: wav(samples, SPEECH_SAMPLE_RATE), voiced: voicedSpan(samples, SPEECH_SAMPLE_RATE) };
 }
@@ -393,7 +406,7 @@ export async function exportProject(
   let audioBuffer: AudioBuffer | undefined;
   if (loaded.segments.length) {
     const offline = new OfflineAudioContext(2, Math.ceil(seconds * SAMPLE_RATE), SAMPLE_RATE);
-    scheduleSegments(offline, loaded.segments, loaded.buffers, 0, 0);
+    scheduleSegments(offline, loaded.segments, loaded.buffers, 0, 0, offline.destination, loaded.activity);
     audioBuffer = await offline.startRendering();
   }
   const format = await exportFormat(project);

@@ -4087,7 +4087,19 @@
     "captions_hint": "Napisy powstają z mowy w projekcie, rozpoznanej na tym komputerze.",
     "captions_no_sound": "Projekt nie ma dźwięku do napisów.",
     "captions_none": "Nie znaleziono mowy.",
-    "captions_added": "Dodano napisy: {{n}}."
+    "captions_added": "Dodano napisy: {{n}}.",
+    "color": "Kolor",
+    "filter_none": "Oryginał",
+    "filter_vivid": "Żywy",
+    "filter_warm": "Ciepły",
+    "filter_cool": "Chłodny",
+    "filter_mono": "Czarno-biały",
+    "filter_vintage": "Retro",
+    "brightness": "Jasność",
+    "contrast": "Kontrast",
+    "saturation": "Nasycenie",
+    "duck": "Ściszaj pod głosem",
+    "duck_hint": "Ścisza ten klip, gdy inny klip ma dźwięk, np. muzykę pod narracją."
   },
   "promo": {
     "title": "Film reklamowy",

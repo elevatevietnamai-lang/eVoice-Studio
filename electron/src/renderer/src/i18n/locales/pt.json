@@ -4083,7 +4083,19 @@
     "captions_hint": "As legendas vêm da fala do projeto, transcrita neste computador.",
     "captions_no_sound": "O projeto não tem som para legendar.",
     "captions_none": "Nenhuma fala encontrada.",
-    "captions_added": "{{n}} legendas adicionadas."
+    "captions_added": "{{n}} legendas adicionadas.",
+    "color": "Cor",
+    "filter_none": "Original",
+    "filter_vivid": "Vívido",
+    "filter_warm": "Quente",
+    "filter_cool": "Frio",
+    "filter_mono": "Preto e branco",
+    "filter_vintage": "Vintage",
+    "brightness": "Brilho",
+    "contrast": "Contraste",
+    "saturation": "Saturação",
+    "duck": "Abaixar sob vozes",
+    "duck_hint": "Abaixa este clipe enquanto outro clipe tem som, como música sob uma narração."
   },
   "promo": {
     "title": "Vídeo promocional",

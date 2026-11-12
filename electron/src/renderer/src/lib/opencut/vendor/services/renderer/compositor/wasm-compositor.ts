@@ -37,7 +37,7 @@ type ExternalCacheEntry = {
 	source: CanvasImageSource;
 	width: number;
 	height: number;
-	revision?: number;
+	revision?: number | string;
 };
 
 class WasmCompositor {

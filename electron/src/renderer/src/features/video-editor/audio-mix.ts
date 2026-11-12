@@ -25,6 +25,53 @@ export interface AudioSegment {
   fadeIn: number;
   fadeOut: number;
   animations: ElementAnimations | undefined;
+  /** Lower this clip while another clip has sound (music under a voice). */
+  duck: boolean;
+}
+
+/** How far a ducked clip drops while something else is heard: about −12 dB. */
+export const DUCK_GAIN = 0.25;
+const DUCK_ATTACK_SECONDS = 0.15;
+const DUCK_RELEASE_SECONDS = 0.5;
+/** Level (0..1 peak) above which a clip counts as being heard. */
+const ACTIVITY_LEVEL = 0.04;
+
+/**
+ * Whether any clip that is not itself ducked has sound at timeline second
+ * `t`, read from each file's waveform peaks.
+ */
+export function soundActivity(
+  segments: AudioSegment[],
+  peaks: ReadonlyMap<string, Float32Array | null>,
+  peaksPerSecond: number,
+): (t: number) => boolean {
+  const voices = segments.filter((segment) => !segment.duck);
+  return (t) =>
+    voices.some((segment) => {
+      if (t < segment.start || t >= segment.start + segment.duration) return false;
+      const levels = peaks.get(segment.mediaId);
+      if (!levels) return false;
+      const index = Math.floor((segment.offset + (t - segment.start) * segment.rate) * peaksPerSecond);
+      return (levels[index] ?? 0) * dbToGain(segment.volumeDb) > ACTIVITY_LEVEL;
+    });
+}
+
+/**
+ * The duck multiplier at evenly spaced times from `from` over `seconds`,
+ * easing down when sound starts and back up after it stops.
+ */
+export function duckCurve(active: (t: number) => boolean, from: number, seconds: number, steps: number): Float32Array {
+  const curve = new Float32Array(steps);
+  const step = steps > 1 ? seconds / (steps - 1) : 0;
+  let level = active(from) ? DUCK_GAIN : 1;
+  for (let i = 0; i < steps; i++) {
+    const target = active(from + i * step) ? DUCK_GAIN : 1;
+    const span = target < level ? DUCK_ATTACK_SECONDS : DUCK_RELEASE_SECONDS;
+    const move = step / span;
+    level = target < level ? Math.max(target, level - move) : Math.min(target, level + move);
+    curve[i] = level;
+  }
+  return curve;
 }
 
 /** Gain curve resolution: enough for keyframed volume and fades. */
@@ -47,6 +94,7 @@ function segmentFor(element: TimelineElement): AudioSegment | null {
     fadeIn: Math.max(0, number(element.params.fadeIn)),
     fadeOut: Math.max(0, number(element.params.fadeOut)),
     animations: element.animations,
+    duck: element.params.duck === true,
   };
 }
 
@@ -95,6 +143,7 @@ export function scheduleSegments(
   from: number,
   when: number,
   destination: AudioNode = context.destination,
+  active: ((t: number) => boolean) | null = null,
 ): AudioBufferSourceNode[] {
   const sources: AudioBufferSourceNode[] = [];
   for (const segment of segments) {
@@ -111,7 +160,9 @@ export function scheduleSegments(
     const gain = context.createGain();
     const steps = Math.max(2, Math.ceil(remaining * CURVE_STEPS_PER_SECOND) + 1);
     const curve = new Float32Array(steps);
-    for (let i = 0; i < steps; i++) curve[i] = gainAt(segment, local + (remaining * i) / (steps - 1));
+    const duck = segment.duck && active ? duckCurve(active, segment.start + local, remaining, steps) : null;
+    for (let i = 0; i < steps; i++)
+      curve[i] = gainAt(segment, local + (remaining * i) / (steps - 1)) * (duck ? duck[i] : 1);
     gain.gain.setValueCurveAtTime(curve, startAt, remaining);
     source.connect(gain).connect(destination);
     source.start(startAt, segment.offset + local * segment.rate, remaining * segment.rate);

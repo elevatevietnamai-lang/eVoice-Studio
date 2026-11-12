@@ -15,6 +15,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { FILTER_PRESETS } from '@/lib/opencut/color-filter';
 import {
   EDITOR_FPS,
   EDITOR_SHAPES,
@@ -321,6 +322,39 @@ export function PropertiesPanel({
         </Section>
       )}
 
+      {(element.type === 'video' || element.type === 'image') && (
+        <Section title={t('editor.color')}>
+          <div className="flex flex-wrap gap-1">
+            {FILTER_PRESETS.map((preset) => {
+              const active = (element.params['filter.preset'] ?? 'none') === preset;
+              return (
+                <Button
+                  key={preset}
+                  size="xs"
+                  variant={active ? 'secondary' : 'ghost'}
+                  aria-pressed={active}
+                  onClick={() => param('filter.preset', preset, false)}
+                >
+                  {t(`editor.filter_${preset}`)}
+                </Button>
+              );
+            })}
+          </div>
+          {(['brightness', 'contrast', 'saturation'] as const).map((key) => (
+            <Row key={key} label={`${t(`editor.${key}`)} ${Math.round(number(element.params[`filter.${key}`], 1) * 100)}%`}>
+              <Slider
+                min={key === 'saturation' ? 0 : 0.5}
+                max={key === 'saturation' ? 2 : 1.5}
+                step={0.01}
+                value={[number(element.params[`filter.${key}`], 1)]}
+                aria-label={t(`editor.${key}`)}
+                onValueChange={(value) => param(`filter.${key}`, single(value))}
+              />
+            </Row>
+          ))}
+        </Section>
+      )}
+
       {sounding && (
         <Section title={t('editor.audio')}>
           {element.type === 'video' && (
@@ -331,6 +365,19 @@ export function PropertiesPanel({
                 checked={element.isSourceAudioEnabled !== false}
                 onCheckedChange={(on) => apply((current) => setSourceAudio(current, selection, on))}
               />
+            </div>
+          )}
+          {element.type === 'audio' && (
+            <div className="space-y-1 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">{t('editor.duck')}</span>
+                <Switch
+                  aria-label={t('editor.duck')}
+                  checked={element.params.duck === true}
+                  onCheckedChange={(on) => param('duck', on, false)}
+                />
+              </div>
+              <p className="text-muted-foreground">{t('editor.duck_hint')}</p>
             </div>
           )}
           <KeyframedNumber
