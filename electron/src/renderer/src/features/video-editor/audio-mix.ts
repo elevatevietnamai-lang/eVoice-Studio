@@ -12,6 +12,7 @@ import type { ElementAnimations } from '@/lib/opencut/vendor/animation/types';
 import type { TimelineElement } from '@/lib/opencut/vendor/timeline/types';
 import { findMedia, secondsOf, ticks, type EditorProject } from './project';
 import { rateOf } from './timeline-ops';
+import { crossfadeGain, placedTransitions } from './transitions';
 
 export interface AudioSegment {
   mediaId: string;
@@ -27,6 +28,9 @@ export interface AudioSegment {
   animations: ElementAnimations | undefined;
   /** Lower this clip while another clip has sound (music under a voice). */
   duck: boolean;
+  /** Seconds this clip crossfades with the clip before and after it (main-track transitions). */
+  crossIn: number;
+  crossOut: number;
 }
 
 /** How far a ducked clip drops while something else is heard: about −12 dB. */
@@ -95,6 +99,8 @@ function segmentFor(element: TimelineElement): AudioSegment | null {
     fadeOut: Math.max(0, number(element.params.fadeOut)),
     animations: element.animations,
     duck: element.params.duck === true,
+    crossIn: 0,
+    crossOut: 0,
   };
 }
 
@@ -102,11 +108,16 @@ function segmentFor(element: TimelineElement): AudioSegment | null {
 export function audioSegments(project: EditorProject): AudioSegment[] {
   const segments: AudioSegment[] = [];
   const tracks = [project.tracks.main, ...project.tracks.overlay, ...project.tracks.audio];
+  const transitions = placedTransitions(project.tracks.main.elements);
+  const crossIn = new Map(transitions.map((item) => [item.toId, item.seconds]));
+  const crossOut = new Map(transitions.map((item) => [item.fromId, item.seconds]));
   for (const track of tracks) {
     if ('muted' in track && track.muted) continue;
     for (const element of track.elements) {
       const segment = segmentFor(element);
       if (!segment) continue;
+      segment.crossIn = crossIn.get(element.id) ?? 0;
+      segment.crossOut = crossOut.get(element.id) ?? 0;
       const media = findMedia(project, segment.mediaId);
       if (!media || media.kind === 'image' || media.has_audio === false) continue;
       segments.push(segment);
@@ -128,7 +139,8 @@ export function gainAt(segment: AudioSegment, local: number): number {
   let fade = 1;
   if (segment.fadeIn > 0) fade = Math.min(fade, local / segment.fadeIn);
   if (segment.fadeOut > 0) fade = Math.min(fade, (segment.duration - local) / segment.fadeOut);
-  return dbToGain(db) * Math.max(0, Math.min(1, fade));
+  const cross = crossfadeGain(local, segment.duration, segment.crossIn, segment.crossOut);
+  return dbToGain(db) * Math.max(0, Math.min(1, fade)) * cross;
 }
 
 /**

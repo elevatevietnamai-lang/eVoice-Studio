@@ -4144,7 +4144,19 @@
     "project_delete_body": "ไทม์ไลน์ของโปรเจกต์จะถูกลบ ไฟล์ที่นำเข้าจะยังอยู่ เพราะโปรเจกต์อื่นอาจใช้อยู่",
     "delete_label": "ลบ",
     "project_copy_name": "{{name}} (สำเนา)",
-    "save_failed": "บันทึกโปรเจกต์ไม่ได้ พื้นที่จัดเก็บอาจเต็ม: ลบโปรเจกต์ที่ไม่ต้องการแล้ว"
+    "save_failed": "บันทึกโปรเจกต์ไม่ได้ พื้นที่จัดเก็บอาจเต็ม: ลบโปรเจกต์ที่ไม่ต้องการแล้ว",
+    "transition": "ทรานซิชันไปคลิปถัดไป",
+    "transition_hint": "สองคลิปจะซ้อนกันระหว่างทรานซิชัน วิดีโอจึงสั้นลงเท่ากับความยาวของทรานซิชัน",
+    "transition_none": "ไม่มี",
+    "transition_fade": "ละลาย",
+    "transition_black": "ผ่านสีดำ",
+    "transition_slide": "เลื่อน",
+    "transition_push": "ดัน",
+    "transition_zoom": "ซูม",
+    "transition_wipe": "กวาด",
+    "transition_duration": "ความยาว: {{seconds}} วิ",
+    "transition_duration_label": "ความยาวทรานซิชัน",
+    "transition_marker": "ทรานซิชัน {{name}}"
   },
   "promo": {
     "title": "วิดีโอโปรโมต",

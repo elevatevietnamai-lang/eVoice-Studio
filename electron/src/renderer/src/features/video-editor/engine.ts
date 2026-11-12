@@ -11,6 +11,8 @@ import { initializeGpuRenderer } from '@/lib/opencut/vendor/services/renderer/gp
 import type { RootNode } from '@/lib/opencut/vendor/services/renderer/nodes/root-node';
 import type { MediaAsset } from '@/lib/opencut/vendor/media/types';
 import type { SceneTracks } from '@/lib/opencut/vendor/timeline/types';
+import { ColorNode } from '@/lib/opencut/vendor/services/renderer/nodes/color-node';
+import type { AnyBaseNode } from '@/lib/opencut/vendor/services/renderer/nodes/base-node';
 import {
   MAX_EXPORT_SECONDS,
   SHAPE_SIZE,
@@ -21,6 +23,7 @@ import {
 } from './project';
 import { audioSegments, scheduleSegments, soundActivity, type AudioSegment } from './audio-mix';
 import { TEXT_FONTS } from './timeline-ops';
+import { mainForRender, placedTransitions, shadeOpacity } from './transitions';
 
 export const SAMPLE_RATE = 48_000;
 
@@ -168,19 +171,41 @@ export async function loadMedia(project: EditorProject): Promise<LoadedMedia> {
   return { assets, buffers, segments, activity };
 }
 
+/** The black a fade through black passes through, over the main track. */
+function shadeNodes(project: EditorProject): AnyBaseNode[] {
+  return placedTransitions(project.tracks.main.elements)
+    .filter((item) => item.type === 'black')
+    .map(
+      (item) =>
+        new ColorNode({
+          color: '#000000',
+          opacityAt: (seconds) =>
+            seconds < item.start || seconds >= item.start + item.seconds ? 0 : shadeOpacity((seconds - item.start) / item.seconds),
+        }),
+    );
+}
+
 export function buildEditorScene(project: EditorProject, assets: MediaAsset[], isPreview = false): RootNode {
+  const canvasSize = SHAPE_SIZE[project.shape];
   const tracks: SceneTracks = {
-    main: project.tracks.main,
-    overlay: project.tracks.overlay,
+    main: mainForRender(project.tracks.main, canvasSize.width),
+    // Overlays are free tracks: one decoder per track and file.
+    overlay: project.tracks.overlay.map((track) => ({
+      ...track,
+      elements: track.elements.map((element) =>
+        'mediaId' in element ? { ...element, cacheKey: `${element.mediaId}#${track.id}` } : element,
+      ),
+    })) as SceneTracks['overlay'],
     audio: [],
   };
   return buildScene({
-    canvasSize: SHAPE_SIZE[project.shape],
+    canvasSize,
     tracks,
     mediaAssets: assets,
     duration: ticks(Math.max(projectSeconds(project), 0.04)),
     background: { type: 'color', color: project.background },
     isPreview,
+    afterMain: project.tracks.main.hidden ? [] : shadeNodes(project),
   });
 }
 

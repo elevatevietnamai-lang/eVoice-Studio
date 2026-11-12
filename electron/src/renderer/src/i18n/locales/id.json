@@ -4144,7 +4144,19 @@
     "project_delete_body": "Timeline proyek akan dihapus. File yang diimpor tetap ada karena proyek lain mungkin memakainya.",
     "delete_label": "Hapus",
     "project_copy_name": "{{name}} (salinan)",
-    "save_failed": "Proyek tidak dapat disimpan. Penyimpanan mungkin penuh: hapus proyek yang tidak lagi diperlukan."
+    "save_failed": "Proyek tidak dapat disimpan. Penyimpanan mungkin penuh: hapus proyek yang tidak lagi diperlukan.",
+    "transition": "Transisi ke klip berikutnya",
+    "transition_hint": "Dua klip saling tumpang tindih selama transisi, jadi video menjadi lebih pendek sepanjang transisi.",
+    "transition_none": "Tidak ada",
+    "transition_fade": "Larut",
+    "transition_black": "Lewat hitam",
+    "transition_slide": "Geser",
+    "transition_push": "Dorong",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Sapu",
+    "transition_duration": "Durasi: {{seconds}} dtk",
+    "transition_duration_label": "Durasi transisi",
+    "transition_marker": "Transisi {{name}}"
   },
   "promo": {
     "title": "Video promosi",

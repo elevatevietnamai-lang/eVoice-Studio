@@ -4150,7 +4150,19 @@
     "project_delete_body": "Oś czasu projektu zostanie usunięta. Zaimportowane pliki zostają, bo mogą ich używać inne projekty.",
     "delete_label": "Usuń",
     "project_copy_name": "{{name}} (kopia)",
-    "save_failed": "Nie udało się zapisać projektu. Pamięć może być pełna: usuń projekty, których już nie potrzebujesz."
+    "save_failed": "Nie udało się zapisać projektu. Pamięć może być pełna: usuń projekty, których już nie potrzebujesz.",
+    "transition": "Przejście do następnego klipu",
+    "transition_hint": "Oba klipy nakładają się podczas przejścia, więc film skraca się o jego długość.",
+    "transition_none": "Brak",
+    "transition_fade": "Przenikanie",
+    "transition_black": "Przez czerń",
+    "transition_slide": "Wsunięcie",
+    "transition_push": "Wypchnięcie",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Wymazanie",
+    "transition_duration": "Długość: {{seconds}} s",
+    "transition_duration_label": "Długość przejścia",
+    "transition_marker": "Przejście: {{name}}"
   },
   "promo": {
     "title": "Film reklamowy",

@@ -4144,7 +4144,19 @@
     "project_delete_body": "Projektets tidslinje tas bort. Importerade filer finns kvar eftersom andra projekt kan använda dem.",
     "delete_label": "Ta bort",
     "project_copy_name": "{{name}} (kopia)",
-    "save_failed": "Projektet kunde inte sparas. Lagringen kan vara full: ta bort projekt du inte längre behöver."
+    "save_failed": "Projektet kunde inte sparas. Lagringen kan vara full: ta bort projekt du inte längre behöver.",
+    "transition": "Övergång till nästa klipp",
+    "transition_hint": "Klippen överlappar under övergången, så videon blir kortare med dess längd.",
+    "transition_none": "Ingen",
+    "transition_fade": "Övertoning",
+    "transition_black": "Via svart",
+    "transition_slide": "Glid",
+    "transition_push": "Skjut",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Svep",
+    "transition_duration": "Längd: {{seconds}} s",
+    "transition_duration_label": "Övergångens längd",
+    "transition_marker": "Övergång: {{name}}"
   },
   "promo": {
     "title": "Reklamvideo",

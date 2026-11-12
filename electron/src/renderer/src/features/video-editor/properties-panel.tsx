@@ -19,6 +19,7 @@ import { FILTER_PRESETS } from '@/lib/opencut/color-filter';
 import {
   EDITOR_FPS,
   EDITOR_SHAPES,
+  MAIN_TRACK_ID,
   MAX_SPEED,
   MIN_SPEED,
   findElement,
@@ -36,7 +37,16 @@ import {
   setParam,
   setSourceAudio,
   setSpeed,
+  setTransition,
 } from './timeline-ops';
+import {
+  DEFAULT_TRANSITION_SECONDS,
+  MAX_TRANSITION_SECONDS,
+  MIN_TRANSITION_SECONDS,
+  TRANSITIONS,
+  placedTransitions,
+  transitionOf,
+} from './transitions';
 
 export type Apply = (edit: (project: EditorProject) => EditorProject, mergeKey?: string) => void;
 
@@ -142,6 +152,49 @@ function KeyframedNumber({
   );
 }
 
+/** The transition from a main-track clip into the next one. */
+function TransitionSettings({ project, selection, apply }: { project: EditorProject; selection: ElementRef; apply: Apply }) {
+  const { t } = useTranslation();
+  const found = findElement(project, selection);
+  if (!found) return null;
+  const chosen = transitionOf(found.element);
+  const type = chosen?.type ?? 'none';
+  const seconds = chosen?.seconds ?? DEFAULT_TRANSITION_SECONDS;
+  const placed = placedTransitions(project.tracks.main.elements).find((item) => item.fromId === selection.elementId);
+  const set = (nextType: string, nextSeconds: number, merge?: string) =>
+    apply((current) => setTransition(current, selection, nextType, nextSeconds), merge);
+  return (
+    <Section title={t('editor.transition')}>
+      <p className="text-xs text-muted-foreground">{t('editor.transition_hint')}</p>
+      <div className="flex flex-wrap gap-1">
+        {TRANSITIONS.map((item) => (
+          <Button
+            key={item}
+            size="xs"
+            variant={type === item ? 'secondary' : 'ghost'}
+            aria-pressed={type === item}
+            onClick={() => set(item, seconds)}
+          >
+            {t(`editor.transition_${item}`)}
+          </Button>
+        ))}
+      </div>
+      {type !== 'none' && (
+        <Row label={t('editor.transition_duration', { seconds: (placed?.seconds ?? seconds).toFixed(1) })}>
+          <Slider
+            min={MIN_TRANSITION_SECONDS}
+            max={MAX_TRANSITION_SECONDS}
+            step={0.1}
+            value={[seconds]}
+            aria-label={t('editor.transition_duration_label')}
+            onValueChange={(value) => set(type, single(value), `${selection.elementId}:transition`)}
+          />
+        </Row>
+      )}
+    </Section>
+  );
+}
+
 function ProjectSettings({ project, apply }: { project: EditorProject; apply: Apply }) {
   const { t } = useTranslation();
   return (
@@ -215,6 +268,9 @@ export function PropertiesPanel({
   const visual = element.type !== 'audio';
   const sounding = element.type === 'video' || element.type === 'audio';
   const common = { element, selection, playhead, apply };
+  const main = [...project.tracks.main.elements].sort((a, b) => a.startTime - b.startTime);
+  const hasNext =
+    selection.trackId === MAIN_TRACK_ID && main.findIndex((item) => item.id === element.id) < main.length - 1;
   const param = (key: string, value: string | number | boolean, merge = true) =>
     apply((current) => setParam(current, selection, key, value), merge ? `${selection.elementId}:${key}` : undefined);
 
@@ -321,6 +377,8 @@ export function PropertiesPanel({
           />
         </Section>
       )}
+
+      {hasNext && <TransitionSettings project={project} selection={selection} apply={apply} />}
 
       {(element.type === 'video' || element.type === 'image') && (
         <Section title={t('editor.color')}>

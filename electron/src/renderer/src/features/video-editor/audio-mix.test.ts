@@ -14,6 +14,8 @@ const segment = (patch: Partial<AudioSegment>): AudioSegment => ({
   fadeOut: 0,
   animations: undefined,
   duck: false,
+  crossIn: 0,
+  crossOut: 0,
   ...patch,
 });
 

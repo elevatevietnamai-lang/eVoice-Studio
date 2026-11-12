@@ -4152,7 +4152,19 @@
     "project_delete_body": "سيُحذف الخط الزمني للمشروع. تبقى الملفات المستوردة لأن مشاريع أخرى قد تستخدمها.",
     "delete_label": "حذف",
     "project_copy_name": "{{name}} (نسخة)",
-    "save_failed": "تعذّر حفظ المشروع. قد تكون مساحة التخزين ممتلئة: احذف المشاريع التي لم تعد تحتاجها."
+    "save_failed": "تعذّر حفظ المشروع. قد تكون مساحة التخزين ممتلئة: احذف المشاريع التي لم تعد تحتاجها.",
+    "transition": "الانتقال إلى المقطع التالي",
+    "transition_hint": "يتداخل المقطعان أثناء الانتقال، لذا يقصر الفيديو بمقدار مدته.",
+    "transition_none": "بلا",
+    "transition_fade": "ذوبان",
+    "transition_black": "عبر الأسود",
+    "transition_slide": "انزلاق",
+    "transition_push": "دفع",
+    "transition_zoom": "تكبير",
+    "transition_wipe": "مسح",
+    "transition_duration": "المدة: {{seconds}} ث",
+    "transition_duration_label": "مدة الانتقال",
+    "transition_marker": "انتقال {{name}}"
   },
   "promo": {
     "title": "فيديو ترويجي",

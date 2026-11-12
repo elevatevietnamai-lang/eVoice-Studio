@@ -4144,7 +4144,19 @@
     "project_delete_body": "Timeline của dự án sẽ bị xoá. Các tệp đã nhập vẫn được giữ vì dự án khác có thể đang dùng.",
     "delete_label": "Xoá",
     "project_copy_name": "{{name}} (bản sao)",
-    "save_failed": "Không lưu được dự án. Bộ nhớ có thể đã đầy: hãy xoá những dự án không còn cần."
+    "save_failed": "Không lưu được dự án. Bộ nhớ có thể đã đầy: hãy xoá những dự án không còn cần.",
+    "transition": "Chuyển cảnh sang clip sau",
+    "transition_hint": "Hai clip chồng lên nhau trong lúc chuyển cảnh, nên video ngắn đi đúng bằng độ dài chuyển cảnh.",
+    "transition_none": "Không",
+    "transition_fade": "Mờ dần",
+    "transition_black": "Mờ qua đen",
+    "transition_slide": "Trượt",
+    "transition_push": "Đẩy",
+    "transition_zoom": "Thu phóng",
+    "transition_wipe": "Xoá ngang",
+    "transition_duration": "Độ dài: {{seconds}} giây",
+    "transition_duration_label": "Độ dài chuyển cảnh",
+    "transition_marker": "Chuyển cảnh {{name}}"
   },
   "promo": {
     "title": "Video quảng cáo",

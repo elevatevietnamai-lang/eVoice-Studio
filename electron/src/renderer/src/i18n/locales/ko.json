@@ -4144,7 +4144,19 @@
     "project_delete_body": "프로젝트의 타임라인이 삭제됩니다. 가져온 파일은 다른 프로젝트에서 사용할 수 있으므로 남아 있습니다.",
     "delete_label": "삭제",
     "project_copy_name": "{{name}} (사본)",
-    "save_failed": "프로젝트를 저장하지 못했습니다. 저장 공간이 가득 찼을 수 있습니다. 더 이상 필요 없는 프로젝트를 삭제하세요."
+    "save_failed": "프로젝트를 저장하지 못했습니다. 저장 공간이 가득 찼을 수 있습니다. 더 이상 필요 없는 프로젝트를 삭제하세요.",
+    "transition": "다음 클립으로 전환",
+    "transition_hint": "전환하는 동안 두 클립이 겹치므로 동영상이 전환 길이만큼 짧아집니다.",
+    "transition_none": "없음",
+    "transition_fade": "디졸브",
+    "transition_black": "검정 경유",
+    "transition_slide": "슬라이드",
+    "transition_push": "밀기",
+    "transition_zoom": "확대/축소",
+    "transition_wipe": "와이프",
+    "transition_duration": "길이: {{seconds}}초",
+    "transition_duration_label": "전환 길이",
+    "transition_marker": "{{name}} 전환"
   },
   "promo": {
     "title": "홍보 영상",

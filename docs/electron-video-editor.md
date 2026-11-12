@@ -38,6 +38,13 @@ computer; nothing is uploaded.
      out, speed from 0.25× to 4×, and for audio clips **Lower under voices**,
      which turns the clip down by about 12 dB while another clip has sound.
      Speed changes also change pitch.
+   - **Transition to the next clip** (main-track clips that have one after
+     them): dissolve, fade through black, slide, push, zoom or wipe, 0.1 to 2
+     seconds. The two clips overlap for the transition, so the video gets
+     shorter by its length, and their sound crossfades. A transition lasts at
+     most half of the shorter of the two clips; it shows on the timeline as a
+     marker over the overlap, which selects the clip it leaves. Splitting a clip
+     keeps its transition at the end, on the right-hand part.
    - With nothing selected, the project's name, format (9:16, 1:1, 16:9), frame
      rate (30 or 60 fps) and background colour.
 5. **Auto captions** mixes the project's sound, transcribes it with the local
@@ -94,7 +101,11 @@ every frame with the same renderer, so the preview shows the exported frames.
 Changes to the vendored OpenCut code are marked `eVoice Studio:` in comments:
 pooled video frames carry their timestamp as a texture revision (OpenCut showed
 a stale frame after a seek), and colour looks are drawn with a canvas filter as
-a frame reaches the compositor. Stickers, Iconify icons and audio time-stretch
+a frame reaches the compositor. Transitions are per-frame adjustments
+(`lib/opencut/frame-adjust.ts`) on the clips' opacity, position, scale and a
+canvas band for the wipe, plus a black layer that fades in and out over the
+main track for a fade through black; two clips of one file on screen at once
+get their own decoders. Stickers, Iconify icons and audio time-stretch
 (`soundtouchjs`, LGPL) are stubbed out. See `LICENSE-NOTICE.md`.
 
 ## Limits

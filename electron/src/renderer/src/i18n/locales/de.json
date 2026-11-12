@@ -4144,7 +4144,19 @@
     "project_delete_body": "Die Zeitleiste des Projekts wird entfernt. Importierte Dateien bleiben erhalten, da andere Projekte sie nutzen können.",
     "delete_label": "Löschen",
     "project_copy_name": "{{name}} (Kopie)",
-    "save_failed": "Das Projekt konnte nicht gespeichert werden. Der Speicher ist möglicherweise voll: Lösche Projekte, die du nicht mehr brauchst."
+    "save_failed": "Das Projekt konnte nicht gespeichert werden. Der Speicher ist möglicherweise voll: Lösche Projekte, die du nicht mehr brauchst.",
+    "transition": "Übergang zum nächsten Clip",
+    "transition_hint": "Die beiden Clips überlappen sich für den Übergang, daher wird das Video um seine Länge kürzer.",
+    "transition_none": "Keiner",
+    "transition_fade": "Überblenden",
+    "transition_black": "Über Schwarz blenden",
+    "transition_slide": "Schieben",
+    "transition_push": "Verdrängen",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Wischen",
+    "transition_duration": "Länge: {{seconds}} s",
+    "transition_duration_label": "Übergangslänge",
+    "transition_marker": "Übergang: {{name}}"
   },
   "promo": {
     "title": "Werbevideo",

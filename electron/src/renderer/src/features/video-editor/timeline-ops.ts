@@ -49,6 +49,7 @@ import {
   type EditorProject,
   type ElementRef,
 } from './project';
+import { TRANSITION_KEYS, overlapTicks } from './transitions';
 
 export const DEFAULT_STILL_SECONDS = 3;
 export const DEFAULT_TEXT_SECONDS = 3;
@@ -94,16 +95,18 @@ function mapTrack(project: EditorProject, trackId: string, map: (track: Timeline
   });
 }
 
-/** Clips on the main track end to end from 0:00, in their current order. */
+/**
+ * Clips on the main track end to end from 0:00, in their current order; a
+ * transition overlaps a clip's end with the next clip's start.
+ */
 function packMain(project: EditorProject): EditorProject {
   let cursor = 0;
-  const elements = [...project.tracks.main.elements]
-    .sort((a, b) => a.startTime - b.startTime)
-    .map((element) => {
-      const placed = { ...element, startTime: at(cursor) };
-      cursor += element.duration;
-      return placed;
-    });
+  const sorted = [...project.tracks.main.elements].sort((a, b) => a.startTime - b.startTime);
+  const elements = sorted.map((element, index) => {
+    const placed = { ...element, startTime: at(cursor) };
+    cursor += element.duration - overlapTicks(element, sorted[index + 1]);
+    return placed;
+  });
   return withTracks(project, { ...project.tracks, main: { ...project.tracks.main, elements } });
 }
 
@@ -511,8 +514,12 @@ export function splitElement(
     animations: element.animations,
     splitTime: at(cut),
   });
+  // The transition into the next clip stays at the end, with the right-hand part.
+  const leftParams = { ...element.params };
+  for (const key of TRANSITION_KEYS) delete leftParams[key];
   const left = {
     ...element,
+    params: leftParams,
     duration: at(cut),
     trimEnd: source !== null ? at(source - element.trimStart - cut * rate) : element.trimEnd,
     animations: leftAnimations,
@@ -530,6 +537,19 @@ export function splitElement(
     elements: current.elements.flatMap((item) => (item.id === element.id ? [left, right] : [item])),
   }) as TimelineTrack);
   return { project: next, ref: { trackId: track.id, elementId: right.id } };
+}
+
+/** Sets the transition from a main-track clip into the next one (`none` removes it). */
+export function setTransition(
+  project: EditorProject,
+  ref: ElementRef,
+  type: string,
+  seconds: number,
+): EditorProject {
+  if (ref.trackId !== MAIN_TRACK_ID || !findElement(project, ref)) return project;
+  let next = setParam(project, ref, 'transition.type', type);
+  next = setParam(next, ref, 'transition.duration', seconds);
+  return packMain(next);
 }
 
 export function deleteElement(project: EditorProject, ref: ElementRef): EditorProject {

@@ -4146,7 +4146,19 @@
     "project_delete_body": "La timeline del progetto viene rimossa. I file importati restano, perché altri progetti potrebbero usarli.",
     "delete_label": "Elimina",
     "project_copy_name": "{{name}} (copia)",
-    "save_failed": "Impossibile salvare il progetto. Lo spazio potrebbe essere pieno: elimina i progetti che non ti servono più."
+    "save_failed": "Impossibile salvare il progetto. Lo spazio potrebbe essere pieno: elimina i progetti che non ti servono più.",
+    "transition": "Transizione alla clip successiva",
+    "transition_hint": "Le due clip si sovrappongono durante la transizione, quindi il video si accorcia della sua durata.",
+    "transition_none": "Nessuna",
+    "transition_fade": "Dissolvenza",
+    "transition_black": "Dissolvenza al nero",
+    "transition_slide": "Scorri",
+    "transition_push": "Spingi",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Tendina",
+    "transition_duration": "Durata: {{seconds}} s",
+    "transition_duration_label": "Durata della transizione",
+    "transition_marker": "Transizione: {{name}}"
   },
   "promo": {
     "title": "Video promozionale",

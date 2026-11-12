@@ -4144,7 +4144,19 @@
     "project_delete_body": "项目的时间线将被删除。导入的文件会保留，因为其他项目可能在使用。",
     "delete_label": "删除",
     "project_copy_name": "{{name}}（副本）",
-    "save_failed": "无法保存项目。存储空间可能已满：请删除不再需要的项目。"
+    "save_failed": "无法保存项目。存储空间可能已满：请删除不再需要的项目。",
+    "transition": "转场到下一个片段",
+    "transition_hint": "转场期间两个片段会重叠，因此视频会缩短转场的时长。",
+    "transition_none": "无",
+    "transition_fade": "叠化",
+    "transition_black": "黑场过渡",
+    "transition_slide": "滑入",
+    "transition_push": "推入",
+    "transition_zoom": "缩放",
+    "transition_wipe": "擦除",
+    "transition_duration": "时长：{{seconds}} 秒",
+    "transition_duration_label": "转场时长",
+    "transition_marker": "{{name}}转场"
   },
   "promo": {
     "title": "宣传视频",

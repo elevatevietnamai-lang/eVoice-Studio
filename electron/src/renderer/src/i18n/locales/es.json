@@ -4146,7 +4146,19 @@
     "project_delete_body": "Se elimina la línea de tiempo del proyecto. Los archivos importados se conservan, porque otros proyectos pueden usarlos.",
     "delete_label": "Eliminar",
     "project_copy_name": "{{name}} (copia)",
-    "save_failed": "No se pudo guardar el proyecto. Puede que el almacenamiento esté lleno: elimina los proyectos que ya no necesites."
+    "save_failed": "No se pudo guardar el proyecto. Puede que el almacenamiento esté lleno: elimina los proyectos que ya no necesites.",
+    "transition": "Transición al siguiente clip",
+    "transition_hint": "Los dos clips se superponen durante la transición, así que el vídeo se acorta en su duración.",
+    "transition_none": "Ninguna",
+    "transition_fade": "Disolver",
+    "transition_black": "Fundido a negro",
+    "transition_slide": "Deslizar",
+    "transition_push": "Empujar",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Barrido",
+    "transition_duration": "Duración: {{seconds}} s",
+    "transition_duration_label": "Duración de la transición",
+    "transition_marker": "Transición: {{name}}"
   },
   "promo": {
     "title": "Vídeo promocional",

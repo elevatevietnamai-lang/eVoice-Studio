@@ -4144,7 +4144,19 @@
     "project_delete_body": "The project's timeline is removed. Imported files stay, since other projects may use them.",
     "delete_label": "Delete",
     "project_copy_name": "{{name}} (copy)",
-    "save_failed": "The project could not be saved. Storage may be full: delete projects you no longer need."
+    "save_failed": "The project could not be saved. Storage may be full: delete projects you no longer need.",
+    "transition": "Transition to the next clip",
+    "transition_hint": "The two clips overlap for the transition, so the video gets shorter by its length.",
+    "transition_none": "None",
+    "transition_fade": "Dissolve",
+    "transition_black": "Fade through black",
+    "transition_slide": "Slide",
+    "transition_push": "Push",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Wipe",
+    "transition_duration": "Length: {{seconds}} s",
+    "transition_duration_label": "Transition length",
+    "transition_marker": "{{name}} transition"
   },
   "promo": {
     "title": "Promo video",

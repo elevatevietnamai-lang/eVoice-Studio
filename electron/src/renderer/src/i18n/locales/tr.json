@@ -4144,7 +4144,19 @@
     "project_delete_body": "Projenin zaman çizelgesi silinir. İçe aktarılan dosyalar kalır, çünkü başka projeler bunları kullanıyor olabilir.",
     "delete_label": "Sil",
     "project_copy_name": "{{name}} (kopya)",
-    "save_failed": "Proje kaydedilemedi. Depolama alanı dolu olabilir: artık gerekmeyen projeleri silin."
+    "save_failed": "Proje kaydedilemedi. Depolama alanı dolu olabilir: artık gerekmeyen projeleri silin.",
+    "transition": "Sonraki klibe geçiş",
+    "transition_hint": "Geçiş sırasında iki klip üst üste biner, bu yüzden video geçiş süresi kadar kısalır.",
+    "transition_none": "Yok",
+    "transition_fade": "Çözülme",
+    "transition_black": "Siyahtan geçiş",
+    "transition_slide": "Kaydır",
+    "transition_push": "İt",
+    "transition_zoom": "Yakınlaştır",
+    "transition_wipe": "Silme",
+    "transition_duration": "Süre: {{seconds}} sn",
+    "transition_duration_label": "Geçiş süresi",
+    "transition_marker": "Geçiş: {{name}}"
   },
   "promo": {
     "title": "Tanıtım videosu",

@@ -4144,7 +4144,19 @@
     "project_delete_body": "專案的時間軸將被刪除。匯入的檔案會保留，因為其他專案可能正在使用。",
     "delete_label": "刪除",
     "project_copy_name": "{{name}}（副本）",
-    "save_failed": "無法儲存專案。儲存空間可能已滿：請刪除不再需要的專案。"
+    "save_failed": "無法儲存專案。儲存空間可能已滿：請刪除不再需要的專案。",
+    "transition": "轉場到下一個片段",
+    "transition_hint": "轉場期間兩個片段會重疊，因此影片會縮短轉場的長度。",
+    "transition_none": "無",
+    "transition_fade": "溶接",
+    "transition_black": "經黑場",
+    "transition_slide": "滑入",
+    "transition_push": "推入",
+    "transition_zoom": "縮放",
+    "transition_wipe": "擦除",
+    "transition_duration": "長度：{{seconds}} 秒",
+    "transition_duration_label": "轉場長度",
+    "transition_marker": "{{name}}轉場"
   },
   "promo": {
     "title": "宣傳影片",

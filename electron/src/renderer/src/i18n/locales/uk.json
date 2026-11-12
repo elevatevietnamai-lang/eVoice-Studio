@@ -4150,7 +4150,19 @@
     "project_delete_body": "Часову шкалу проєкту буде видалено. Імпортовані файли залишаться, бо їх можуть використовувати інші проєкти.",
     "delete_label": "Видалити",
     "project_copy_name": "{{name}} (копія)",
-    "save_failed": "Не вдалося зберегти проєкт. Можливо, сховище заповнене: видаліть непотрібні проєкти."
+    "save_failed": "Не вдалося зберегти проєкт. Можливо, сховище заповнене: видаліть непотрібні проєкти.",
+    "transition": "Перехід до наступного кліпу",
+    "transition_hint": "Під час переходу кліпи накладаються, тож відео коротшає на його довжину.",
+    "transition_none": "Немає",
+    "transition_fade": "Розчинення",
+    "transition_black": "Через чорний",
+    "transition_slide": "Зсув",
+    "transition_push": "Виштовхування",
+    "transition_zoom": "Масштаб",
+    "transition_wipe": "Шторка",
+    "transition_duration": "Довжина: {{seconds}} с",
+    "transition_duration_label": "Довжина переходу",
+    "transition_marker": "Перехід: {{name}}"
   },
   "promo": {
     "title": "Рекламне відео",

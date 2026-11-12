@@ -4144,7 +4144,19 @@
     "project_delete_body": "De tijdlijn van het project wordt verwijderd. Geïmporteerde bestanden blijven, omdat andere projecten ze kunnen gebruiken.",
     "delete_label": "Verwijderen",
     "project_copy_name": "{{name}} (kopie)",
-    "save_failed": "Het project kon niet worden opgeslagen. De opslag is mogelijk vol: verwijder projecten die je niet meer nodig hebt."
+    "save_failed": "Het project kon niet worden opgeslagen. De opslag is mogelijk vol: verwijder projecten die je niet meer nodig hebt.",
+    "transition": "Overgang naar de volgende clip",
+    "transition_hint": "De twee clips overlappen tijdens de overgang, dus de video wordt even veel korter.",
+    "transition_none": "Geen",
+    "transition_fade": "Overvloeien",
+    "transition_black": "Via zwart",
+    "transition_slide": "Schuiven",
+    "transition_push": "Duwen",
+    "transition_zoom": "Zoom",
+    "transition_wipe": "Veeg",
+    "transition_duration": "Lengte: {{seconds}} s",
+    "transition_duration_label": "Lengte van de overgang",
+    "transition_marker": "Overgang: {{name}}"
   },
   "promo": {
     "title": "Promovideo",
