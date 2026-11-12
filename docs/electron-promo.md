@@ -158,3 +158,6 @@ since the render uses the backend's ffmpeg.
 
 The page keeps its draft in `localStorage` (`voicestudio.promo.v1`); uploaded
 files stay in `outputs/promo_media` until you delete them from the data folder.
+When the draft names a file that is gone (another data folder, or one you
+deleted), that shot, title, music, narration or logo shows **File missing** and
+Render is blocked until you add it again or press **Remove missing files**.

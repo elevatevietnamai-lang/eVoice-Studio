@@ -8,7 +8,9 @@ import {
   renderRequest,
   saveDraft,
   shotFor,
+  draftMedia,
   draftProblem,
+  withoutMissing,
   MAX_OVERLAYS,
   overlayProblem,
   timeline,
@@ -26,6 +28,44 @@ const video: PromoMedia = {
   url: '/audio/promo_media/0123456789abcdef.mp4',
 };
 const image: PromoMedia = { ...video, id: 'fedcba9876543210.png', kind: 'image', duration: null };
+
+describe('missing uploads', () => {
+  const audio: PromoMedia = { ...video, id: 'aaaa000000000000.mp3', kind: 'audio' };
+  const title: PromoMedia = { ...video, id: 'bbbb000000000000.webm' };
+  const draft = () => ({
+    ...emptyDraft(),
+    shots: [shotFor(video, 'a'), shotFor(image, 'b'), shotFor(video, 'c')],
+    overlays: [{ key: 'o', media: title, start: 0, label: 'Hi' }],
+    music: audio,
+    logo: image,
+  });
+
+  it('lists every file the draft uses once', () => {
+    expect(draftMedia(draft()).map((media) => media.id)).toEqual([
+      video.id,
+      image.id,
+      title.id,
+      audio.id,
+    ]);
+  });
+
+  it('blocks the render while a file is missing', () => {
+    expect(draftProblem(draft())).toBeNull();
+    expect(draftProblem(draft(), new Set([audio.id]))).toBe('missing_media');
+    expect(draftProblem(draft(), new Set(['unrelated.mp4']))).toBeNull();
+  });
+
+  it('drops exactly the shots, titles, music and logo whose file is gone', () => {
+    const kept = withoutMissing(draft(), new Set([video.id, audio.id, title.id]));
+    expect(kept.shots.map((shot) => shot.key)).toEqual(['b']);
+    expect(kept.overlays).toEqual([]);
+    expect(kept.music).toBeNull();
+    expect(kept.logo).toEqual(image);
+    expect(draftProblem(kept, new Set([video.id, audio.id, title.id]))).toBeNull();
+    const same = draft();
+    expect(withoutMissing(same, new Set())).toBe(same);
+  });
+});
 
 describe('promo model', () => {
   it('matches the backend timeline: each transition overlaps two shots', () => {

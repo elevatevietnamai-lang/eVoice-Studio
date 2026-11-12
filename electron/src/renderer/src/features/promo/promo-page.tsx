@@ -11,6 +11,7 @@ import {
   ArrowUpIcon,
   ClapperboardIcon,
   DownloadIcon,
+  FileXIcon,
   ImagePlusIcon,
   LoaderCircleIcon,
   MusicIcon,
@@ -45,8 +46,10 @@ import {
   MIN_SHOT_SECONDS,
   SHAPES,
   TRANSITIONS,
+  draftMedia,
   draftProblem,
   loadDraft,
+  withoutMissing,
   moveShot,
   programLength,
   renderRequest,
@@ -57,6 +60,7 @@ import {
   type PromoShot,
 } from './promo-model';
 import { AnimatedOverlays } from './animated-overlays';
+import { useMissingMedia } from './missing-media';
 
 interface RenderResult {
   output: string;
@@ -120,6 +124,7 @@ function MediaPicker({
   label,
   accept,
   media,
+  missing = false,
   busy,
   onPick,
   onClear,
@@ -128,6 +133,7 @@ function MediaPicker({
   label: string;
   accept: string;
   media: PromoMedia | null;
+  missing?: boolean;
   busy: boolean;
   onPick: (file: File) => void;
   onClear: () => void;
@@ -155,8 +161,11 @@ function MediaPicker({
         disabled={busy}
         onClick={() => input.current?.click()}
       >
-        <Icon />
+        {missing ? <FileXIcon className="text-destructive" /> : <Icon />}
         <span className="truncate">{media ? media.name : label}</span>
+        {missing && (
+          <span className="shrink-0 text-destructive">{t('promo.media_missing')}</span>
+        )}
       </Button>
       {media && (
         <Button
@@ -177,6 +186,7 @@ function ShotRow({
   shot,
   index,
   count,
+  missing,
   busy,
   onChange,
   onMove,
@@ -185,6 +195,7 @@ function ShotRow({
   shot: PromoShot;
   index: number;
   count: number;
+  missing: boolean;
   busy: boolean;
   onChange: (patch: Partial<PromoShot>) => void;
   onMove: (step: -1 | 1) => void;
@@ -196,8 +207,10 @@ function ShotRow({
     Math.min(max, Math.max(min, Number(value) || min));
   return (
     <li className="flex gap-3 rounded-(--card-radius) border border-border/60 bg-background/35 p-2.5">
-      <div className="h-24 w-16 shrink-0 overflow-hidden rounded-lg bg-muted">
-        {shot.media.kind === 'image' ? (
+      <div className="flex h-24 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
+        {missing ? (
+          <FileXIcon className="size-5 text-destructive" aria-hidden />
+        ) : shot.media.kind === 'image' ? (
           <img src={preview} alt="" className="size-full object-cover" />
         ) : (
           <video
@@ -211,7 +224,12 @@ function ShotRow({
       <div className="min-w-0 flex-1 space-y-2">
         <div className="flex items-center gap-1">
           <span className="text-xs tabular-nums text-muted-foreground">{index + 1}.</span>
-          <span className="min-w-0 flex-1 truncate text-sm">{shot.media.name}</span>
+          <span className="min-w-0 flex-1 truncate text-sm">
+            {shot.media.name}
+            {missing && (
+              <span className="ml-2 text-xs text-destructive">{t('promo.media_missing')}</span>
+            )}
+          </span>
           <Button
             size="icon-sm"
             variant="ghost"
@@ -367,7 +385,8 @@ export function PromoPage() {
   const shotInput = useRef<HTMLInputElement>(null);
   const busy = uploading || rendering || overlayBusy;
   const total = programLength(draft);
-  const problem = draftProblem(draft);
+  const missing = useMissingMedia(draftMedia(draft));
+  const problem = draftProblem(draft, missing);
 
   useEffect(() => saveDraft(draft), [draft]);
 
@@ -514,6 +533,7 @@ export function PromoPage() {
               label={t('promo.music_add')}
               accept="audio/*,video/*"
               media={draft.music}
+              missing={!!draft.music && missing.has(draft.music.id)}
               busy={busy}
               icon={MusicIcon}
               onPick={(file) => upload([file], ([music]) => update({ music }))}
@@ -549,6 +569,7 @@ export function PromoPage() {
               label={t('promo.narration_add')}
               accept="audio/*"
               media={draft.narration}
+              missing={!!draft.narration && missing.has(draft.narration.id)}
               busy={busy}
               icon={MusicIcon}
               onPick={(file) => upload([file], ([narration]) => update({ narration }))}
@@ -562,6 +583,7 @@ export function PromoPage() {
               label={t('promo.logo_add')}
               accept="image/png,image/webp,image/jpeg"
               media={draft.logo}
+              missing={!!draft.logo && missing.has(draft.logo.id)}
               busy={busy}
               icon={ImagePlusIcon}
               onPick={(file) => upload([file], ([logo]) => update({ logo }))}
@@ -615,6 +637,18 @@ export function PromoPage() {
             </p>
             {problem && problem !== 'empty' && (
               <p className="text-xs text-destructive">{t(`promo.problem_${problem}`)}</p>
+            )}
+            {problem === 'missing_media' && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full"
+                disabled={busy}
+                onClick={() => setDraft((current) => withoutMissing(current, missing))}
+              >
+                <Trash2Icon />
+                {t('promo.remove_missing')}
+              </Button>
             )}
             <Button className="w-full" disabled={!!problem || busy} onClick={() => void render()}>
               {rendering ? (
@@ -737,6 +771,7 @@ export function PromoPage() {
                     shot={shot}
                     index={index}
                     count={draft.shots.length}
+                    missing={missing.has(shot.media.id)}
                     busy={busy}
                     onChange={(patch) => updateShot(shot.key, patch)}
                     onMove={(step) =>
