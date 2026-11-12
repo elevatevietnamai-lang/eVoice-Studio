@@ -83,6 +83,31 @@ class TestGraph:
         assert f"enable='lt(t,{outro_start:.3f})'" in graph
         assert "[3:v]format=rgba,split[lw][lo]" in graph and not has_audio
 
+    @pytest.mark.parametrize("corner,x,y", [
+        ("bottom_center", "(W-w)/2", "H-h-"),
+        ("top_center", "(W-w)/2", None),
+        ("top_right", "W-w-", None),
+    ])
+    def test_watermark_can_sit_in_the_middle_of_an_edge(self, corner, x, y):
+        plan = _plan(brand=pv.Brand(logo_path="l.png", watermark=corner))
+        graph, _ = pv.build_filter_graph(plan, logo_input=3, music_input=None, narration_input=None)
+        assert f"overlay={x}" in graph
+        if y:
+            assert f"overlay={x}:{y}" in graph
+
+    def test_overlay_anchor_follows_its_shot_after_beat_snapping(self):
+        plan = _plan()
+        snapped = pv.PromoPlan(shots=[
+            pv.Shot(**{**s.__dict__, "duration": d})
+            for s, d in zip(plan.shots, pv.snap_to_beats(plan, 0.5, 0.0))
+        ])
+        for index in range(len(plan.shots)):
+            assert pv.anchored_start(snapped, index, 0.25) == pytest.approx(
+                pv.segment_starts(snapped)[index] + 0.25
+            )
+        with pytest.raises(ValueError):
+            pv.anchored_start(plan, 3, 0.0)
+
     def test_music_is_trimmed_and_faded_to_the_program(self):
         plan = _plan(audio=pv.AudioPlan(music_path="m.wav"))
         graph, has_audio = pv.build_filter_graph(plan, logo_input=None, music_input=3,
@@ -192,6 +217,73 @@ class TestRoute:
         client, _ = client_and_outputs
         res = client.post("/promo/render", json={"shots": [{"media_id": media_id, "duration": 2}]})
         assert res.status_code == 404
+
+    def test_overlays_anchored_to_shots_land_on_the_snapped_cuts(
+        self, client_and_outputs, tmp_path_factory, monkeypatch
+    ):
+        ffmpeg = shutil.which("ffmpeg")
+        if not ffmpeg or not shutil.which("ffprobe"):
+            pytest.skip("ffmpeg/ffprobe are not installed")
+        from api.routers import promo as promo_router
+
+        client, _ = client_and_outputs
+        src = tmp_path_factory.mktemp("anchor_src")
+
+        def upload(name, *args):
+            path = src / name
+            subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-y", *args, str(path)],
+                           check=True)
+            with open(path, "rb") as fh:
+                res = client.post("/promo/media", files={"file": (name, fh)})
+            assert res.status_code == 200, res.text[:400]
+            return res.json()["id"]
+
+        still = upload("s.png", "-f", "lavfi", "-i", "color=c=blue:s=320x240", "-frames:v", "1")
+        badge = upload("b.png", "-f", "lavfi", "-i", "color=c=red:s=64x64", "-frames:v", "1")
+        music = upload("m.wav", "-f", "lavfi", "-i", "sine=f=220:d=12")
+
+        async def grid(_path, _start):
+            return 0.6, 0.0
+
+        captured = {}
+
+        class Captured(Exception):
+            pass
+
+        def capture(_ffmpeg, plan, _out):
+            captured["plan"] = plan
+            raise Captured
+
+        monkeypatch.setattr(promo_router, "_beat_grid", grid)
+        monkeypatch.setattr(pv, "build_promo_cmd", capture)
+        body = {
+            "shots": [
+                {"media_id": still, "duration": 2.0, "transition": "cut"},
+                {"media_id": still, "duration": 2.3, "transition": "fade", "transition_seconds": 0.4},
+                {"media_id": still, "duration": 1.7, "transition": "cut"},
+            ],
+            "music_id": music,
+            "snap_to_beats": True,
+            "overlays": [
+                {"media_id": badge, "shot": 1, "start": 0.2, "duration": 1.0},
+                {"media_id": badge, "shot": 2, "start": 0.0, "duration": 1.0},
+                {"media_id": badge, "start": 1.0, "duration": 1.0},
+            ],
+        }
+        with pytest.raises(Captured):
+            client.post("/promo/render", json=body)
+        plan = captured["plan"]
+        starts = pv.segment_starts(plan)
+        # Snapping moved the cuts off the requested lengths...
+        assert [s.duration for s in plan.shots] != [2.0, 2.3, 1.7]
+        # ...and anchored overlays moved with them; the absolute one did not.
+        assert [o.start for o in plan.overlays] == [
+            pytest.approx(starts[1] + 0.2), pytest.approx(starts[2]), 1.0,
+        ]
+
+        body["overlays"] = [{"media_id": badge, "shot": 3, "duration": 1.0}]
+        body["snap_to_beats"] = False
+        assert client.post("/promo/render", json=body).status_code == 422
 
     def test_renders_a_real_promo(self, client_and_outputs, tmp_path_factory):
         ffmpeg = shutil.which("ffmpeg")

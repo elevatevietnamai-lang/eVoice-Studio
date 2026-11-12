@@ -180,7 +180,11 @@ class PromoShotRequest(BaseModel):
 class PromoOverlayRequest(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     media_id: str
+    #: Seconds into the video, or into shot ``shot`` when that is given.
     start: float = Field(0.0, ge=0)
+    #: Shot (0-based) the overlay is anchored to. Resolved after beat snapping,
+    #: so the overlay stays on its shot when the cuts move.
+    shot: Optional[int] = Field(None, ge=0, lt=promo_video.MAX_SHOTS)
     #: Seconds to show; a video overlay defaults to its own length.
     duration: Optional[float] = Field(None, gt=0)
 
@@ -192,7 +196,9 @@ class PromoRenderRequest(BaseModel):
     fps: Literal[30, 60] = 30
     look: str = "none"
     logo_id: Optional[str] = None
-    watermark: Literal["none", "top_left", "top_right", "bottom_left", "bottom_right"] = "none"
+    watermark: Literal[
+        "none", "top_left", "top_center", "top_right", "bottom_left", "bottom_center", "bottom_right"
+    ] = "none"
     watermark_opacity: float = Field(0.8, ge=0.1, le=1.0)
     outro_seconds: float = Field(0.0, ge=0, le=promo_video.MAX_OUTRO_SECONDS)
     outro_color: str = Field("#0b0b0b", max_length=9)
@@ -284,8 +290,12 @@ async def promo_render(req: PromoRenderRequest) -> dict:
         if req.narration_id else None
     )
 
-    overlays = []
+    overlay_sources = []
     for item in req.overlays:
+        if item.shot is not None and item.shot >= len(req.shots):
+            raise HTTPException(
+                status_code=422, detail=f"Overlay is anchored to shot {item.shot + 1}, which does not exist"
+            )
         path = resolve_media(item.media_id, kinds=("video", "image"))
         kind = "image" if _kind_for(os.path.splitext(path)[1]) == "image" else "video"
         duration = item.duration
@@ -293,7 +303,7 @@ async def promo_render(req: PromoRenderRequest) -> dict:
             duration = (await _probe(path)).get("duration") if kind == "video" else None
         if not duration:
             raise HTTPException(status_code=422, detail="Give the overlay a length")
-        overlays.append(promo_video.Overlay(path=path, start=item.start, duration=duration, kind=kind))
+        overlay_sources.append((path, kind, duration, item.shot, item.start))
 
     music_start = req.music_start
     period = 0.0
@@ -307,6 +317,17 @@ async def promo_render(req: PromoRenderRequest) -> dict:
             shots = [
                 promo_video.Shot(**{**s.__dict__, "duration": d}) for s, d in zip(shots, durations)
             ]
+
+    timeline = promo_video.PromoPlan(shots=shots)
+    overlays = [
+        promo_video.Overlay(
+            path=path,
+            start=start if shot is None else promo_video.anchored_start(timeline, shot, start),
+            duration=duration,
+            kind=kind,
+        )
+        for path, kind, duration, shot, start in overlay_sources
+    ]
 
     plan = promo_video.PromoPlan(
         shots=shots, shape=req.shape, fps=req.fps, look=req.look,

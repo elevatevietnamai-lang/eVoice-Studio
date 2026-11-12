@@ -57,7 +57,9 @@ LOOKS: dict[str, str] = {
 }
 FITS = ("cover", "contain")
 MOTIONS = ("none", "zoom_in", "zoom_out")
-CORNERS = ("none", "top_left", "top_right", "bottom_left", "bottom_right")
+CORNERS = (
+    "none", "top_left", "top_center", "top_right", "bottom_left", "bottom_center", "bottom_right",
+)
 
 MAX_SHOTS = 40
 MIN_SHOT_SECONDS = 0.5
@@ -202,6 +204,18 @@ def segment_starts(plan: PromoPlan) -> list[float]:
     return starts
 
 
+def anchored_start(plan: PromoPlan, shot: int, offset: float) -> float:
+    """Program time ``offset`` seconds after shot ``shot`` starts to show.
+
+    Overlays anchored to a shot are resolved with this after the shots have
+    their final lengths (beat snapping moves the cuts), so they stay on the
+    shot they were placed on.
+    """
+    if not 0 <= shot < len(plan.shots):
+        raise ValueError(f"Overlay is anchored to shot {shot + 1}, which does not exist")
+    return round(segment_starts(plan)[shot] + max(0.0, offset), 3)
+
+
 def validate_plan(plan: PromoPlan) -> None:
     """Raise ``ValueError`` with a user-facing reason for an unusable plan."""
     if not plan.shots:
@@ -315,7 +329,10 @@ def _outro_chain(
 
 
 def _watermark_xy(corner: str, margin: int) -> tuple[str, str]:
-    x = f"{margin}" if corner.endswith("left") else f"W-w-{margin}"
+    if corner.endswith("center"):
+        x = "(W-w)/2"
+    else:
+        x = f"{margin}" if corner.endswith("left") else f"W-w-{margin}"
     y = f"{margin}" if corner.startswith("top") else f"H-h-{margin}"
     return x, y
 

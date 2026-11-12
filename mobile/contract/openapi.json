@@ -3413,6 +3413,19 @@
       "title": "Media Id",
       "type": "string"
      },
+     "shot": {
+      "anyOf": [
+       {
+        "exclusiveMaximum": 40.0,
+        "minimum": 0.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Shot"
+     },
      "start": {
       "default": 0.0,
       "minimum": 0.0,
@@ -3538,8 +3551,10 @@
       "enum": [
        "none",
        "top_left",
+       "top_center",
        "top_right",
        "bottom_left",
+       "bottom_center",
        "bottom_right"
       ],
       "title": "Watermark",
