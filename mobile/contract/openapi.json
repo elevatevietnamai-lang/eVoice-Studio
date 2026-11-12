@@ -1508,6 +1508,20 @@
     "title": "Body_preview_upload_preview_upload_post",
     "type": "object"
    },
+   "Body_promo_media_promo_media_post": {
+    "properties": {
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "title": "Body_promo_media_promo_media_post",
+    "type": "object"
+   },
    "Body_record_consent_profiles__profile_id__consent_post": {
     "properties": {
      "consent_audio": {
@@ -3379,6 +3393,241 @@
      "state"
     ],
     "title": "ProjectSaveRequest",
+    "type": "object"
+   },
+   "PromoOverlayRequest": {
+    "properties": {
+     "duration": {
+      "anyOf": [
+       {
+        "exclusiveMinimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration"
+     },
+     "media_id": {
+      "title": "Media Id",
+      "type": "string"
+     },
+     "shot": {
+      "anyOf": [
+       {
+        "exclusiveMaximum": 40.0,
+        "minimum": 0.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Shot"
+     },
+     "start": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Start",
+      "type": "number"
+     }
+    },
+    "required": [
+     "media_id"
+    ],
+    "title": "PromoOverlayRequest",
+    "type": "object"
+   },
+   "PromoRenderRequest": {
+    "properties": {
+     "fps": {
+      "default": 30,
+      "enum": [
+       30,
+       60
+      ],
+      "title": "Fps",
+      "type": "integer"
+     },
+     "logo_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Logo Id"
+     },
+     "look": {
+      "default": "none",
+      "title": "Look",
+      "type": "string"
+     },
+     "music_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Music Id"
+     },
+     "music_start": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Music Start",
+      "type": "number"
+     },
+     "music_volume": {
+      "default": 0.8,
+      "maximum": 2.0,
+      "minimum": 0.0,
+      "title": "Music Volume",
+      "type": "number"
+     },
+     "narration_id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Narration Id"
+     },
+     "outro_color": {
+      "default": "#0b0b0b",
+      "maxLength": 9,
+      "title": "Outro Color",
+      "type": "string"
+     },
+     "outro_seconds": {
+      "default": 0.0,
+      "maximum": 10.0,
+      "minimum": 0.0,
+      "title": "Outro Seconds",
+      "type": "number"
+     },
+     "overlays": {
+      "items": {
+       "$ref": "#/components/schemas/PromoOverlayRequest"
+      },
+      "maxItems": 12,
+      "title": "Overlays",
+      "type": "array"
+     },
+     "shape": {
+      "default": "vertical",
+      "enum": [
+       "vertical",
+       "square",
+       "landscape"
+      ],
+      "title": "Shape",
+      "type": "string"
+     },
+     "shots": {
+      "items": {
+       "$ref": "#/components/schemas/PromoShotRequest"
+      },
+      "maxItems": 40,
+      "minItems": 1,
+      "title": "Shots",
+      "type": "array"
+     },
+     "snap_to_beats": {
+      "default": false,
+      "title": "Snap To Beats",
+      "type": "boolean"
+     },
+     "watermark": {
+      "default": "none",
+      "enum": [
+       "none",
+       "top_left",
+       "top_center",
+       "top_right",
+       "bottom_left",
+       "bottom_center",
+       "bottom_right"
+      ],
+      "title": "Watermark",
+      "type": "string"
+     },
+     "watermark_opacity": {
+      "default": 0.8,
+      "maximum": 1.0,
+      "minimum": 0.1,
+      "title": "Watermark Opacity",
+      "type": "number"
+     }
+    },
+    "required": [
+     "shots"
+    ],
+    "title": "PromoRenderRequest",
+    "type": "object"
+   },
+   "PromoShotRequest": {
+    "properties": {
+     "duration": {
+      "exclusiveMinimum": 0.0,
+      "title": "Duration",
+      "type": "number"
+     },
+     "fit": {
+      "default": "cover",
+      "enum": [
+       "cover",
+       "contain"
+      ],
+      "title": "Fit",
+      "type": "string"
+     },
+     "media_id": {
+      "title": "Media Id",
+      "type": "string"
+     },
+     "motion": {
+      "default": "none",
+      "enum": [
+       "none",
+       "zoom_in",
+       "zoom_out"
+      ],
+      "title": "Motion",
+      "type": "string"
+     },
+     "start": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Start",
+      "type": "number"
+     },
+     "transition": {
+      "default": "fade",
+      "title": "Transition",
+      "type": "string"
+     },
+     "transition_seconds": {
+      "default": 0.5,
+      "maximum": 2.0,
+      "minimum": 0.0,
+      "title": "Transition Seconds",
+      "type": "number"
+     }
+    },
+    "required": [
+     "media_id",
+     "duration"
+    ],
+    "title": "PromoShotRequest",
     "type": "object"
    },
    "PronEntry": {
@@ -17788,6 +18037,140 @@
      }
     },
     "summary": "Update Project"
+   }
+  },
+  "/promo/beats/{media_id}": {
+   "get": {
+    "description": "Beat grid of a music file, as ``/promo/render`` uses it.\n\n``period`` is the beat length in seconds (0 when no steady beat is\nfound). With **Cut on the beat** the render starts the music on a beat,\nso in the finished video beats fall at multiples of ``period`` from 0;\nthe timeline draws them there and snaps edits to them.",
+    "operationId": "promo_beats_promo_beats__media_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "media_id",
+      "required": true,
+      "schema": {
+       "title": "Media Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "start",
+      "required": false,
+      "schema": {
+       "default": 0.0,
+       "title": "Start",
+       "type": "number"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Beats Promo Beats  Media Id  Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Promo Beats"
+   }
+  },
+  "/promo/media": {
+   "post": {
+    "description": "Store one clip, still, logo or music file for the promo builder.\n\nReturns ``{id, kind, name, duration, width, height, has_audio, url}``;\n``url`` serves the stored file for previews.",
+    "operationId": "promo_media_promo_media_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_promo_media_promo_media_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Media Promo Media Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Promo Media"
+   }
+  },
+  "/promo/render": {
+   "post": {
+    "description": "Render the promo video. Returns ``{output, duration, durations, beat}``:\n``durations`` are the shot lengths used (changed by ``snap_to_beats``) and\n``beat`` the detected beat period in seconds (0 when not analysed).",
+    "operationId": "promo_render_promo_render_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PromoRenderRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Render Promo Render Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Promo Render"
    }
   },
   "/pronunciation": {

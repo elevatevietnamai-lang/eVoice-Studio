@@ -46,6 +46,7 @@ export default defineConfig({
         input: {
           index: resolve(__dirname, 'src/main/index.ts'),
           'repair-mcp-server': resolve(__dirname, 'src/main/repair-mcp-server.ts'),
+          'promo-render-worker': resolve(__dirname, 'src/main/promo-render-worker.ts'),
         },
       },
     },

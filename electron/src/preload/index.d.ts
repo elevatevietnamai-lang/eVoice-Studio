@@ -330,6 +330,65 @@ export interface AccountPublicState {
   } | null;
 }
 
+/** Chrome Headless Shell for animated promo templates (see main/promo-browser.ts). */
+export type PromoBrowserState =
+  | { state: 'unsupported' }
+  | { state: 'missing'; downloadMegabytes: number }
+  | { state: 'installing'; downloaded: number; total: number }
+  | { state: 'ready'; executablePath: string }
+  | { state: 'failed'; message: string; downloadMegabytes: number };
+
+export interface PromoOverlayInput {
+  /** Must match PROMO_TEMPLATES in main/promo-templates.ts (a test checks). */
+  template:
+    | 'glow_title'
+    | 'handwriting'
+    | 'search_bar'
+    | 'contact_card'
+    | 'logo_reveal'
+    | 'keyword';
+  /** 3×3 grid, see POSITIONS in main/promo-templates.ts. Default centre. */
+  position?:
+    | 'top_left'
+    | 'top_center'
+    | 'top_right'
+    | 'middle_left'
+    | 'center'
+    | 'middle_right'
+    | 'bottom_left'
+    | 'bottom_center'
+    | 'bottom_right';
+  title: string;
+  subtitle: string;
+  /** Contact card rows, at most 3. */
+  lines?: string[];
+  /** Promo media id of the logo, for the logo reveal. */
+  logoId?: string;
+  color: string;
+  glow: string;
+  duration: number;
+  width: number;
+  height: number;
+}
+
+export interface PromoOverlayMedia {
+  id: string;
+  kind: 'video' | 'image' | 'audio';
+  name: string;
+  duration: number | null;
+  width: number | null;
+  height: number | null;
+  url: string;
+}
+
+export type PromoPreviewResult =
+  | { ok: true; html: string }
+  | { ok: false; code: string; detail?: string };
+
+export type PromoOverlayResult =
+  | { ok: true; media: PromoOverlayMedia }
+  | { ok: false; code: string; detail?: string };
+
 export interface VoiceStudioBridge {
   /** VoiceStudio Cloud account; never carries a token. */
   account: {
@@ -396,6 +455,18 @@ export interface VoiceStudioBridge {
     isFullScreen(): Promise<boolean>;
     onFullScreen(callback: (fullscreen: boolean) => void): () => void;
     onPersistenceFlush(callback: () => void | Promise<void>): () => void;
+  };
+  /** Animated promo templates; desktop only. */
+  promo: {
+    browserState(): Promise<PromoBrowserState>;
+    /** Downloads Chrome Headless Shell; only after the user confirmed the size. */
+    installBrowser(): Promise<PromoBrowserState>;
+    onBrowserState(callback: (state: PromoBrowserState) => void): () => void;
+    renderOverlay(input: PromoOverlayInput, fps: number): Promise<PromoOverlayResult>;
+    cancelRender(): Promise<void>;
+    /** A self-contained page of the template for a sandboxed srcdoc frame. */
+    previewTemplate(input: PromoOverlayInput): Promise<PromoPreviewResult>;
+    onRenderProgress(callback: (percent: number) => void): () => void;
   };
   backend: {
     getStatus(): Promise<BackendStatus>;
