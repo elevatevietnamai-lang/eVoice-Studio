@@ -23,7 +23,7 @@ export const SHAPE_SIZE: Record<EditorShape, { width: number; height: number }> 
 };
 
 /** Longest video the editor exports; the encoder keeps the whole file in memory. */
-export const MAX_EXPORT_SECONDS = 600;
+export const MAX_EXPORT_SECONDS = 300;
 export const MIN_CLIP_SECONDS = 0.1;
 export const MAX_SPEED = 4;
 export const MIN_SPEED = 0.25;

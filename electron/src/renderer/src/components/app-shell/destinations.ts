@@ -10,6 +10,7 @@ import {
   LibraryIcon,
   MicIcon,
   MusicIcon,
+  SquarePlayIcon,
   UsersRoundIcon,
   WandSparklesIcon,
   WorkflowIcon,
@@ -107,6 +108,13 @@ export const destinations: readonly WorkspaceDestination[] = [
     icon: FilmIcon,
     group: 'dub',
     home: true,
+  },
+  {
+    to: '/editor',
+    label: 'editor.title',
+    description: 'editor.description',
+    icon: SquarePlayIcon,
+    group: 'dub',
   },
   {
     to: '/promo',

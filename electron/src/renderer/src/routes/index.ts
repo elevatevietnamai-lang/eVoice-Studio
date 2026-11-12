@@ -31,6 +31,10 @@ const OpencutLabPage = lazyRouteComponent(
   () => import('@/features/opencut-lab/opencut-lab-page'),
   'OpencutLabPage',
 );
+const VideoEditorPage = lazyRouteComponent(
+  () => import('@/features/video-editor/editor-page'),
+  'VideoEditorPage',
+);
 const ProjectsPage = lazyRouteComponent(
   () => import('@/features/projects/projects-page'),
   'ProjectsPage',
@@ -200,6 +204,11 @@ export const promoRoute = createRoute({
   path: '/promo',
   component: PromoPage,
 });
+export const videoEditorRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/editor',
+  component: VideoEditorPage,
+});
 export const opencutLabRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/opencut-lab',
@@ -304,6 +313,7 @@ export const routeTree = rootRoute.addChildren([
   storiesRoute,
   audiobookRoute,
   promoRoute,
+  videoEditorRoute,
   opencutLabRoute,
   projectsRoute,
   indexRoute,
