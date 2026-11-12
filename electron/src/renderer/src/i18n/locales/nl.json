@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "Het shot is verwijderd, dus de laag telt nu vanaf het begin van de video.",
     "anim_warn_after_end": "De laag begint na het einde van de video en wordt niet getoond.",
     "corner_top_center": "Midden boven",
-    "corner_bottom_center": "Midden onder"
+    "corner_bottom_center": "Midden onder",
+    "anim_warn_overlaps": "Deze laag is tegelijk met een andere laag te zien."
   }
 }

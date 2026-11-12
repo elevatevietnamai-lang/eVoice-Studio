@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "Cảnh của lớp phủ đã bị xoá nên giờ nó tính từ đầu video.",
     "anim_warn_after_end": "Lớp phủ bắt đầu sau khi video kết thúc nên sẽ không hiện.",
     "corner_top_center": "Trên giữa",
-    "corner_bottom_center": "Dưới giữa"
+    "corner_bottom_center": "Dưới giữa",
+    "anim_warn_overlaps": "Lớp phủ này hiện cùng lúc với một lớp phủ khác."
   }
 }

@@ -4134,6 +4134,7 @@
     "anim_warn_shot_removed": "Jego ujęcie usunięto, więc liczy się teraz od początku filmu.",
     "anim_warn_after_end": "Zaczyna się po końcu filmu, więc się nie pojawi.",
     "corner_top_center": "Góra, środek",
-    "corner_bottom_center": "Dół, środek"
+    "corner_bottom_center": "Dół, środek",
+    "anim_warn_overlaps": "Ta warstwa jest widoczna w tym samym czasie co inna."
   }
 }

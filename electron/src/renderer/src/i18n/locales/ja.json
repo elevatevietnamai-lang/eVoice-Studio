@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "ショットが削除されたため、動画の最初から数えます。",
     "anim_warn_after_end": "動画の終了後に始まるため、表示されません。",
     "corner_top_center": "上中央",
-    "corner_bottom_center": "下中央"
+    "corner_bottom_center": "下中央",
+    "anim_warn_overlaps": "このレイヤーは別のレイヤーと同時に表示されます。"
   }
 }

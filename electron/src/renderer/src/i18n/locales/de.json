@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "Die Einstellung wurde entfernt, daher zählt die Ebene jetzt ab Videobeginn.",
     "anim_warn_after_end": "Die Ebene beginnt nach dem Videoende und wird nicht angezeigt.",
     "corner_top_center": "Oben mittig",
-    "corner_bottom_center": "Unten mittig"
+    "corner_bottom_center": "Unten mittig",
+    "anim_warn_overlaps": "Diese Ebene ist gleichzeitig mit einer anderen zu sehen."
   }
 }

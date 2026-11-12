@@ -4130,6 +4130,7 @@
     "anim_warn_shot_removed": "Se quitó su plano, así que ahora cuenta desde el inicio del vídeo.",
     "anim_warn_after_end": "Empieza después de que termina el vídeo, así que no se verá.",
     "corner_top_center": "Arriba al centro",
-    "corner_bottom_center": "Abajo al centro"
+    "corner_bottom_center": "Abajo al centro",
+    "anim_warn_overlaps": "Se ve al mismo tiempo que otra capa."
   }
 }

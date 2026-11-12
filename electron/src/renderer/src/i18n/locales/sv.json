@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "Tagningen togs bort, så lagret räknas nu från videons början.",
     "anim_warn_after_end": "Lagret börjar efter att videon slutat och visas inte.",
     "corner_top_center": "Uppe i mitten",
-    "corner_bottom_center": "Nere i mitten"
+    "corner_bottom_center": "Nere i mitten",
+    "anim_warn_overlaps": "Lagret visas samtidigt som ett annat lager."
   }
 }

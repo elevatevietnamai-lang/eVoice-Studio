@@ -4130,6 +4130,7 @@
     "anim_warn_shot_removed": "A cena foi removida, então agora conta desde o início do vídeo.",
     "anim_warn_after_end": "Começa depois do fim do vídeo, então não vai aparecer.",
     "corner_top_center": "Superior central",
-    "corner_bottom_center": "Inferior central"
+    "corner_bottom_center": "Inferior central",
+    "anim_warn_overlaps": "Aparece ao mesmo tempo que outra camada."
   }
 }

@@ -55,6 +55,8 @@ export const MAX_OUTRO_SECONDS = 10;
 export const MAX_OVERLAYS = 12;
 const TRANSITION_SHARE = 0.45;
 const OUTRO_FADE_SECONDS = 0.6;
+/** Every animated template fades out over its last half second (promo-templates.ts). */
+const OVERLAY_FADE_SECONDS = 0.5;
 
 export interface PromoMedia {
   id: string;
@@ -207,12 +209,28 @@ export function anchorIndex(draft: PromoDraft, overlay: PromoOverlay): number {
 export function overlayProblem(
   draft: PromoDraft,
   overlay: PromoOverlay,
-): 'shot_removed' | 'after_end' | null {
+): 'shot_removed' | 'after_end' | 'overlaps' | null {
   const index = anchorIndex(draft, overlay);
   if (overlay.shotKey && index < 0) return 'shot_removed';
   const { starts, length } = timeline(draft);
-  const at = index >= 0 ? starts[index] + overlay.start : overlay.start;
-  return draft.shots.length && at >= length ? 'after_end' : null;
+  const at = (item: PromoOverlay) => {
+    const shot = anchorIndex(draft, item);
+    return shot >= 0 ? starts[shot] + item.start : item.start;
+  };
+  const start = at(overlay);
+  if (draft.shots.length && start >= length) return 'after_end';
+  // Two layers on screen at once usually means one covers the other. Every
+  // template fades out over its last OVERLAY_FADE_SECONDS, so a shorter
+  // overlap is a hand-over, not a clash. The planned times are a guide,
+  // since beat snapping can still move the cuts.
+  const end = start + (overlay.media.duration ?? 0);
+  const clash = draft.overlays.some((other) => {
+    if (other.key === overlay.key) return false;
+    const from = at(other);
+    const shared = Math.min(end, from + (other.media.duration ?? 0)) - Math.max(start, from);
+    return shared > OVERLAY_FADE_SECONDS;
+  });
+  return clash ? 'overlaps' : null;
 }
 
 export function draftProblem(draft: PromoDraft): 'empty' | 'too_long' | 'too_many' | null {

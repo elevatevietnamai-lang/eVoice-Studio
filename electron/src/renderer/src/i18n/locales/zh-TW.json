@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "所屬鏡頭已刪除，現在從影片開頭計算。",
     "anim_warn_after_end": "它在影片結束後才開始，因此不會顯示。",
     "corner_top_center": "上方置中",
-    "corner_bottom_center": "下方置中"
+    "corner_bottom_center": "下方置中",
+    "anim_warn_overlaps": "此圖層與另一個圖層同時顯示。"
   }
 }

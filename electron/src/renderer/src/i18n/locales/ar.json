@@ -4136,6 +4136,7 @@
     "anim_warn_shot_removed": "أُزيلت لقطتها، لذا تُحسب الآن من بداية الفيديو.",
     "anim_warn_after_end": "تبدأ بعد انتهاء الفيديو، لذا لن تظهر.",
     "corner_top_center": "أعلى الوسط",
-    "corner_bottom_center": "أسفل الوسط"
+    "corner_bottom_center": "أسفل الوسط",
+    "anim_warn_overlaps": "تظهر هذه الطبقة في الوقت نفسه مع طبقة أخرى."
   }
 }

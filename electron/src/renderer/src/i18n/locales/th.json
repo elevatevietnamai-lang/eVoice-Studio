@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "ช็อตของเลเยอร์ถูกลบ จึงนับจากต้นวิดีโอแทน",
     "anim_warn_after_end": "เลเยอร์เริ่มหลังวิดีโอจบ จึงจะไม่แสดง",
     "corner_top_center": "บนกลาง",
-    "corner_bottom_center": "ล่างกลาง"
+    "corner_bottom_center": "ล่างกลาง",
+    "anim_warn_overlaps": "เลเยอร์นี้แสดงพร้อมกับเลเยอร์อื่น"
   }
 }

@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "샷이 삭제되어 이제 영상 시작부터 계산합니다.",
     "anim_warn_after_end": "영상이 끝난 뒤에 시작하므로 표시되지 않습니다.",
     "corner_top_center": "가운데 위",
-    "corner_bottom_center": "가운데 아래"
+    "corner_bottom_center": "가운데 아래",
+    "anim_warn_overlaps": "이 레이어는 다른 레이어와 동시에 표시됩니다."
   }
 }

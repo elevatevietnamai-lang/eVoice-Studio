@@ -24,7 +24,8 @@ desktop app and in the browser UI alike.
    onto the nearest beat; the shot lengths in the list update to the values
    used.
 5. **Add a logo.** A PNG with transparency works best. It can sit in a corner
-   as a watermark (left off during the ending) and close the video on a
+   or the middle of the top or bottom edge as a watermark (left off during the
+   ending) and close the video on a
    coloured background for the chosen number of seconds.
 6. **Render video**, then **Save video**.
 
@@ -40,6 +41,7 @@ layer is transparent):
 
 | Template | Shows | Fonts |
 |---|---|---|
+| Keyword | A bold uppercase word with a handwritten line over its lower edge ("QUY TRÌNH / thi công"), on one line when it stays readable | Inter, Dancing Script |
 | Glowing title | A title rising in with a pulsing glow, and a second line | Inter |
 | Handwriting | A title written left to right with an underline drawn under it | Dancing Script, Inter |
 | Search bar | A search box that types the text letter by letter | Inter |
@@ -51,6 +53,15 @@ All fonts cover Vietnamese. Long text is set smaller, so every field at its
 never outgrows its title. The logo reveal and the logo ending both show the
 logo, so place the reveal before the ending. Titles are rendered on your
 computer; the browser UI and Docker say they need the desktop app.
+
+**Position** places the layer in a 3×3 grid inside safe margins (a bottom
+position can meet a bottom watermark). **Show with** ties it to a shot: its
+time then counts from that shot's start, it moves with the shot when you
+reorder, and with **Cut on the beat** it stays on its shot when the cuts move.
+**From the video start** uses a time from the beginning instead. The list
+warns when an overlay's shot was removed, when it starts after the video ends,
+and when two overlays are on screen together for more than the half-second
+fade-out.
 
 The first time, **Turn on animated titles** shows the download size and asks
 before fetching Chrome Headless Shell (about 271 MB, one pinned build from
@@ -89,7 +100,7 @@ since the render uses the backend's ffmpeg.
   every template must carry its fonts and contain no remote URL; a test checks
   both.
 - Main uploads the WebM to `POST /promo/media`; the page sends it in
-  `overlays` with its start time.
+  `overlays` with its start time and, when tied to a shot, the shot's index.
 
 ## How it works
 
@@ -103,7 +114,8 @@ since the render uses the backend's ffmpeg.
   with `xfade` (or `concat` for a cut). The video length is the sum of the shot
   lengths minus each transition, plus the logo ending.
 - `overlays` in the render request lay transparent layers over the video
-  from a start time: a WebM (VP9 with alpha, decoded with libvpx so the alpha
+  from a start time, counted from the video start or, when `shot` is given,
+  from that shot's start after beat snapping: a WebM (VP9 with alpha, decoded with libvpx so the alpha
   survives), a MOV (ProRes 4444) or a still image, fitted inside the frame and
   centred, above the shots and below the watermark. Animated titles rendered
   on the desktop arrive this way.

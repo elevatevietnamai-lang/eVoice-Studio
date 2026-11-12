@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "Çekimi kaldırıldı, bu yüzden artık video başından sayılıyor.",
     "anim_warn_after_end": "Video bittikten sonra başlıyor, bu yüzden görünmeyecek.",
     "corner_top_center": "Üst orta",
-    "corner_bottom_center": "Alt orta"
+    "corner_bottom_center": "Alt orta",
+    "anim_warn_overlaps": "Başka bir katmanla aynı anda ekranda."
   }
 }

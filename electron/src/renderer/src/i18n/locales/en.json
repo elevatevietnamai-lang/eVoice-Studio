@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "Its shot was removed, so it now counts from the video start.",
     "anim_warn_after_end": "It starts after the video ends, so it will not show.",
     "corner_top_center": "Top centre",
-    "corner_bottom_center": "Bottom centre"
+    "corner_bottom_center": "Bottom centre",
+    "anim_warn_overlaps": "It is on screen at the same time as another overlay."
   }
 }

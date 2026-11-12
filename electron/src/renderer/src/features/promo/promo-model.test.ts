@@ -185,4 +185,21 @@ describe('promo model', () => {
     }).overlays[0];
     expect(fallback).toEqual({ media_id: media.id, start: 1 });
   });
+
+  it('flags overlays that are on screen at the same time', () => {
+    const draft = emptyDraft();
+    draft.shots = [shotFor(video, 'a'), shotFor(video, 'b')];
+    const media = { ...video, id: 'aaaaaaaaaaaaaaaa.webm', duration: 1.5 };
+    const first = { key: 'o1', media, start: 0, label: '' };
+    const second = { key: 'o2', media, start: 0.8, label: '' };
+    const later = { key: 'o3', media, start: 0, label: '', shotKey: 'b' };
+    draft.overlays = [first, second, later];
+    expect(overlayProblem(draft, first)).toBe('overlaps');
+    expect(overlayProblem(draft, second)).toBe('overlaps');
+    // Shot b starts at 3 s, after both have ended.
+    expect(overlayProblem(draft, later)).toBeNull();
+    // Starting during the last half second (the fade-out) is a hand-over.
+    draft.overlays = [first, { ...second, start: 1.2 }];
+    expect(overlayProblem(draft, first)).toBeNull();
+  });
 });

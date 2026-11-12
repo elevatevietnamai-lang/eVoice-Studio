@@ -4130,6 +4130,7 @@
     "anim_warn_shot_removed": "La sua inquadratura è stata rimossa, quindi ora conta dall’inizio del video.",
     "anim_warn_after_end": "Inizia dopo la fine del video, quindi non sarà visibile.",
     "corner_top_center": "In alto al centro",
-    "corner_bottom_center": "In basso al centro"
+    "corner_bottom_center": "In basso al centro",
+    "anim_warn_overlaps": "È visibile insieme a un altro livello."
   }
 }

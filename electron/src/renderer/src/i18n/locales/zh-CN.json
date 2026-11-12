@@ -4128,6 +4128,7 @@
     "anim_warn_shot_removed": "所属镜头已删除，现在从视频开头计算。",
     "anim_warn_after_end": "它在视频结束后才开始，因此不会显示。",
     "corner_top_center": "上方居中",
-    "corner_bottom_center": "下方居中"
+    "corner_bottom_center": "下方居中",
+    "anim_warn_overlaps": "此图层与另一个图层同时显示。"
   }
 }
