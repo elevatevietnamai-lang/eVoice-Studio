@@ -4133,7 +4133,18 @@
     "duck": "Zachter onder stemmen",
     "duck_hint": "Zet deze clip zachter terwijl een andere clip geluid heeft, zoals muziek onder een voice-over.",
     "media_missing": "Bestand ontbreekt",
-    "problem_missing": "Sommige clips gebruiken bestanden die niet meer op deze computer staan. Verwijder die clips of importeer de bestanden opnieuw."
+    "problem_missing": "Sommige clips gebruiken bestanden die niet meer op deze computer staan. Verwijder die clips of importeer de bestanden opnieuw.",
+    "projects": "Projecten",
+    "projects_hint": "Elk project heeft een eigen tijdlijn, opgeslagen op deze computer.",
+    "project_new": "Nieuw project",
+    "project_rename": "{{name}} hernoemen",
+    "project_duplicate": "{{name}} dupliceren",
+    "project_delete": "{{name}} verwijderen",
+    "project_delete_title": "{{name}} verwijderen?",
+    "project_delete_body": "De tijdlijn van het project wordt verwijderd. Geïmporteerde bestanden blijven, omdat andere projecten ze kunnen gebruiken.",
+    "delete_label": "Verwijderen",
+    "project_copy_name": "{{name}} (kopie)",
+    "save_failed": "Het project kon niet worden opgeslagen. De opslag is mogelijk vol: verwijder projecten die je niet meer nodig hebt."
   },
   "promo": {
     "title": "Promovideo",

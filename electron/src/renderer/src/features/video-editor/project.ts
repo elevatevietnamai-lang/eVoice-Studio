@@ -112,13 +112,13 @@ export function projectSeconds(project: EditorProject): number {
   return secondsOf(end);
 }
 
-export function loadProject(storage: Pick<Storage, 'getItem'> | null = safeStorage()): EditorProject {
+/** A saved project, or null when `raw` is missing or not a project this version reads. */
+export function parseProject(raw: string | null | undefined): EditorProject | null {
+  if (!raw) return null;
   try {
-    const raw = storage?.getItem(PROJECT_KEY);
-    if (!raw) return emptyProject();
     const saved = JSON.parse(raw) as Partial<EditorProject>;
     const base = emptyProject();
-    if (saved.version !== 1 || !saved.tracks?.main) return base;
+    if (saved.version !== 1 || !saved.tracks?.main) return null;
     return {
       ...base,
       ...saved,
@@ -132,6 +132,19 @@ export function loadProject(storage: Pick<Storage, 'getItem'> | null = safeStora
       },
     };
   } catch {
+    return null;
+  }
+}
+
+/** The project as stored: decoded audio buffers never belong in storage. */
+export const serializeProject = (project: EditorProject): string =>
+  JSON.stringify(project, (key, value) => (key === 'buffer' ? undefined : value));
+
+/** The single project of the first editor release (before the project library). */
+export function loadProject(storage: Pick<Storage, 'getItem'> | null = safeStorage()): EditorProject {
+  try {
+    return parseProject(storage?.getItem(PROJECT_KEY)) ?? emptyProject();
+  } catch {
     return emptyProject();
   }
 }
@@ -141,14 +154,13 @@ export function saveProject(
   storage: Pick<Storage, 'setItem'> | null = safeStorage(),
 ): void {
   try {
-    // Decoded audio buffers never belong in storage.
-    storage?.setItem(PROJECT_KEY, JSON.stringify(project, (key, value) => (key === 'buffer' ? undefined : value)));
+    storage?.setItem(PROJECT_KEY, serializeProject(project));
   } catch {
     // Storage full or blocked: the project stays in memory for this session.
   }
 }
 
-function safeStorage(): Storage | null {
+export function safeStorage(): Storage | null {
   try {
     return globalThis.localStorage ?? null;
   } catch {

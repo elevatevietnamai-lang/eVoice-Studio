@@ -4133,7 +4133,18 @@
     "duck": "人聲時降低",
     "duck_hint": "其他片段有聲音時自動調低此片段，例如旁白下的音樂。",
     "media_missing": "檔案遺失",
-    "problem_missing": "部分片段使用的檔案已不在這台電腦上。請刪除這些片段或重新匯入檔案。"
+    "problem_missing": "部分片段使用的檔案已不在這台電腦上。請刪除這些片段或重新匯入檔案。",
+    "projects": "專案",
+    "projects_hint": "每個專案都有自己的時間軸，儲存在這台電腦上。",
+    "project_new": "新增專案",
+    "project_rename": "重新命名 {{name}}",
+    "project_duplicate": "複製 {{name}}",
+    "project_delete": "刪除 {{name}}",
+    "project_delete_title": "刪除 {{name}}？",
+    "project_delete_body": "專案的時間軸將被刪除。匯入的檔案會保留，因為其他專案可能正在使用。",
+    "delete_label": "刪除",
+    "project_copy_name": "{{name}}（副本）",
+    "save_failed": "無法儲存專案。儲存空間可能已滿：請刪除不再需要的專案。"
   },
   "promo": {
     "title": "宣傳影片",

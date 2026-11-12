@@ -4133,7 +4133,18 @@
     "duck": "Lower under voices",
     "duck_hint": "Turns this clip down while another clip has sound, such as music under narration.",
     "media_missing": "File missing",
-    "problem_missing": "Some clips use files that are no longer on this computer. Delete those clips or import the files again."
+    "problem_missing": "Some clips use files that are no longer on this computer. Delete those clips or import the files again.",
+    "projects": "Projects",
+    "projects_hint": "Each project keeps its own timeline, saved on this computer.",
+    "project_new": "New project",
+    "project_rename": "Rename {{name}}",
+    "project_duplicate": "Duplicate {{name}}",
+    "project_delete": "Delete {{name}}",
+    "project_delete_title": "Delete {{name}}?",
+    "project_delete_body": "The project's timeline is removed. Imported files stay, since other projects may use them.",
+    "delete_label": "Delete",
+    "project_copy_name": "{{name}} (copy)",
+    "save_failed": "The project could not be saved. Storage may be full: delete projects you no longer need."
   },
   "promo": {
     "title": "Promo video",

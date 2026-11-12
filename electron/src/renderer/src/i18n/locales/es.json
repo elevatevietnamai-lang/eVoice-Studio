@@ -4135,7 +4135,18 @@
     "duck": "Bajar bajo las voces",
     "duck_hint": "Baja este clip mientras otro clip tiene sonido, como la música bajo una narración.",
     "media_missing": "Falta el archivo",
-    "problem_missing": "Algunos clips usan archivos que ya no están en este equipo. Elimina esos clips o vuelve a importar los archivos."
+    "problem_missing": "Algunos clips usan archivos que ya no están en este equipo. Elimina esos clips o vuelve a importar los archivos.",
+    "projects": "Proyectos",
+    "projects_hint": "Cada proyecto tiene su propia línea de tiempo, guardada en este equipo.",
+    "project_new": "Proyecto nuevo",
+    "project_rename": "Cambiar el nombre de {{name}}",
+    "project_duplicate": "Duplicar {{name}}",
+    "project_delete": "Eliminar {{name}}",
+    "project_delete_title": "¿Eliminar {{name}}?",
+    "project_delete_body": "Se elimina la línea de tiempo del proyecto. Los archivos importados se conservan, porque otros proyectos pueden usarlos.",
+    "delete_label": "Eliminar",
+    "project_copy_name": "{{name}} (copia)",
+    "save_failed": "No se pudo guardar el proyecto. Puede que el almacenamiento esté lleno: elimina los proyectos que ya no necesites."
   },
   "promo": {
     "title": "Vídeo promocional",

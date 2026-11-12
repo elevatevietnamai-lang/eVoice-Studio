@@ -4133,7 +4133,18 @@
     "duck": "Giảm khi có giọng",
     "duck_hint": "Hạ âm lượng clip này khi clip khác có tiếng, ví dụ nhạc nền dưới lời thuyết minh.",
     "media_missing": "Mất tệp",
-    "problem_missing": "Một số clip dùng tệp không còn trên máy. Xoá các clip đó hoặc nhập lại tệp."
+    "problem_missing": "Một số clip dùng tệp không còn trên máy. Xoá các clip đó hoặc nhập lại tệp.",
+    "projects": "Dự án",
+    "projects_hint": "Mỗi dự án có timeline riêng, lưu trên máy này.",
+    "project_new": "Dự án mới",
+    "project_rename": "Đổi tên {{name}}",
+    "project_duplicate": "Nhân bản {{name}}",
+    "project_delete": "Xoá {{name}}",
+    "project_delete_title": "Xoá {{name}}?",
+    "project_delete_body": "Timeline của dự án sẽ bị xoá. Các tệp đã nhập vẫn được giữ vì dự án khác có thể đang dùng.",
+    "delete_label": "Xoá",
+    "project_copy_name": "{{name}} (bản sao)",
+    "save_failed": "Không lưu được dự án. Bộ nhớ có thể đã đầy: hãy xoá những dự án không còn cần."
   },
   "promo": {
     "title": "Video quảng cáo",

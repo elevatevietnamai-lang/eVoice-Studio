@@ -53,8 +53,23 @@ A file the project uses that is no longer on the computer (another data
 folder, a deleted file) shows **File missing** in the Media column, and Export
 is blocked until those clips are deleted or the file is imported again.
 
-The project is saved in the browser storage of the app (`voicestudio.editor.v1`)
-as you edit.
+## Projects
+
+**Projects** (top bar) lists every editor project, most recently opened first.
+Open one, start a **New project**, or rename, duplicate or delete one. Each
+project keeps its own timeline, undo history (for the session) and settings,
+and is saved in the app's browser storage as you edit: the library index under
+`voicestudio.editor.library.v1` and each project under
+`voicestudio.editor.project.<id>`. If storage refuses a save (it is full), the
+editor says so.
+
+Deleting or duplicating a project never touches the imported files: projects
+share them, so a file stays on the computer while any project may still use it.
+
+The first editor release kept a single project under `voicestudio.editor.v1`.
+The first time the library opens, that project is copied in as the first
+project, with its keyframes, captions and speeds as they were; the old entry is
+left untouched.
 
 ## How it works
 

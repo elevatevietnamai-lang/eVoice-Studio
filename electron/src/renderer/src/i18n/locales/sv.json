@@ -4133,7 +4133,18 @@
     "duck": "Sänk under röster",
     "duck_hint": "Sänker klippet medan ett annat klipp har ljud, till exempel musik under en berättarröst.",
     "media_missing": "Filen saknas",
-    "problem_missing": "Vissa klipp använder filer som inte längre finns på datorn. Ta bort klippen eller importera filerna igen."
+    "problem_missing": "Vissa klipp använder filer som inte längre finns på datorn. Ta bort klippen eller importera filerna igen.",
+    "projects": "Projekt",
+    "projects_hint": "Varje projekt har en egen tidslinje som sparas på den här datorn.",
+    "project_new": "Nytt projekt",
+    "project_rename": "Byt namn på {{name}}",
+    "project_duplicate": "Duplicera {{name}}",
+    "project_delete": "Ta bort {{name}}",
+    "project_delete_title": "Ta bort {{name}}?",
+    "project_delete_body": "Projektets tidslinje tas bort. Importerade filer finns kvar eftersom andra projekt kan använda dem.",
+    "delete_label": "Ta bort",
+    "project_copy_name": "{{name}} (kopia)",
+    "save_failed": "Projektet kunde inte sparas. Lagringen kan vara full: ta bort projekt du inte längre behöver."
   },
   "promo": {
     "title": "Reklamvideo",

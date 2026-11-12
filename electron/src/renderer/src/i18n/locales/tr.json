@@ -4133,7 +4133,18 @@
     "duck": "Seslerin altında kıs",
     "duck_hint": "Başka bir klipte ses varken bu klibi kısar; örneğin anlatımın altındaki müzik.",
     "media_missing": "Dosya eksik",
-    "problem_missing": "Bazı klipler artık bu bilgisayarda olmayan dosyaları kullanıyor. Bu klipleri silin veya dosyaları yeniden içe aktarın."
+    "problem_missing": "Bazı klipler artık bu bilgisayarda olmayan dosyaları kullanıyor. Bu klipleri silin veya dosyaları yeniden içe aktarın.",
+    "projects": "Projeler",
+    "projects_hint": "Her projenin bu bilgisayarda kayıtlı kendi zaman çizelgesi vardır.",
+    "project_new": "Yeni proje",
+    "project_rename": "{{name}} adını değiştir",
+    "project_duplicate": "{{name}} kopyala",
+    "project_delete": "{{name}} sil",
+    "project_delete_title": "{{name}} silinsin mi?",
+    "project_delete_body": "Projenin zaman çizelgesi silinir. İçe aktarılan dosyalar kalır, çünkü başka projeler bunları kullanıyor olabilir.",
+    "delete_label": "Sil",
+    "project_copy_name": "{{name}} (kopya)",
+    "save_failed": "Proje kaydedilemedi. Depolama alanı dolu olabilir: artık gerekmeyen projeleri silin."
   },
   "promo": {
     "title": "Tanıtım videosu",

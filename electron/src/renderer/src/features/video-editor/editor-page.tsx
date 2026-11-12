@@ -31,15 +31,27 @@ import { resolveNumberAtTime } from '@/lib/opencut/vendor/animation/values';
 import { cn } from '@/lib/utils';
 import { EditorTimeline } from './editor-timeline';
 import { MediaBin } from './media-bin';
+import {
+  createProject,
+  deleteProject,
+  duplicateProject,
+  openProject,
+  readLibrary,
+  readProject,
+  renameProject,
+  saveLibraryProject,
+  type Library,
+  type OpenProject,
+} from './library';
+import { ProjectLibrary } from './project-library';
 import { PropertiesPanel, type Apply } from './properties-panel';
 import { formatTime, record, redo, undo, type History } from './format';
 import {
   SHAPE_SIZE,
   allTracks,
   findElement,
-  loadProject,
   projectSeconds,
-  saveProject,
+  safeStorage,
   secondsOf,
   ticks,
   type EditorMedia,
@@ -96,7 +108,11 @@ const isTyping = (target: EventTarget | null) =>
 
 export function VideoEditorPage() {
   const { t } = useTranslation();
-  const [project, setProject] = useState<EditorProject>(() => loadProject());
+  const [library, setLibrary] = useState<Library>(() => readLibrary());
+  // The open project carries its id, so a save always lands on the project it came from.
+  const [doc, setDoc] = useState<OpenProject>(() => openProject().opened);
+  const project = doc.project;
+  const setProject = useCallback((next: EditorProject) => setDoc((current) => ({ ...current, project: next })), []);
   const [history, setHistory] = useState<History<EditorProject>>({ past: [], future: [] });
   const merge = useRef<{ key: string; at: number } | null>(null);
   const [selection, setSelection] = useState<ElementRef | null>(null);
@@ -121,8 +137,13 @@ export function VideoEditorPage() {
   const { width, height } = SHAPE_SIZE[project.shape];
   const busy = exporting !== null;
 
+  const [saveFailed, setSaveFailed] = useState(false);
   useEffect(() => {
-    saveProject(project);
+    const result = saveLibraryProject(safeStorage(), doc);
+    setLibrary(result.library);
+    setSaveFailed(!result.saved);
+  }, [doc]);
+  useEffect(() => {
     player.current?.setProject(project).catch((cause) => setError(describeError(cause)));
   }, [project]);
   useEffect(() => () => player.current?.dispose(), []);
@@ -162,6 +183,47 @@ export function VideoEditorPage() {
     setHistory(result.history);
     setProject(result.value);
     if (!findElement(result.value, selection)) setSelection(null);
+  };
+
+  /** Shows another project: a fresh undo history, nothing selected, back to the start. */
+  const switchTo = (opened: OpenProject, next: Library) => {
+    player.current?.pause();
+    merge.current = null;
+    latest.current = opened.project;
+    setDoc(opened);
+    setLibrary(next);
+    setHistory({ past: [], future: [] });
+    setSelection(null);
+    setError(null);
+    setNotice(null);
+    player.current?.show(0);
+    setPlayhead(0);
+  };
+  const libraryActions = {
+    open: (id: string) => {
+      if (id === doc.id) return;
+      const result = openProject(safeStorage(), id);
+      switchTo(result.opened, result.library);
+    },
+    create: () => {
+      const result = createProject(safeStorage());
+      switchTo(result.opened, result.library);
+    },
+    rename: (id: string, name: string) => {
+      if (id === doc.id) apply((current) => ({ ...current, name }));
+      else setLibrary(renameProject(safeStorage(), id, name));
+    },
+    duplicate: (id: string) => {
+      const source = id === doc.id ? project : readProject(safeStorage(), id);
+      const name = t('editor.project_copy_name', { name: source?.name.trim() || t('editor.untitled') });
+      setLibrary(duplicateProject(safeStorage(), id, name).library);
+    },
+    remove: (id: string) => {
+      const next = deleteProject(safeStorage(), id);
+      if (id !== doc.id) return setLibrary(next);
+      const result = openProject(safeStorage(), next.current);
+      switchTo(result.opened, result.library);
+    },
   };
 
   const seek = useCallback((seconds: number) => {
@@ -364,6 +426,8 @@ export function VideoEditorPage() {
     <div className="flex h-full min-h-0 flex-col">
       <WorkspaceHeader>
         <h1 className="text-sm font-medium">{t('editor.title')}</h1>
+        <span className="min-w-0 truncate text-sm text-muted-foreground">{project.name.trim() || t('editor.untitled')}</span>
+        <ProjectLibrary library={library} currentId={doc.id} actions={libraryActions} />
       </WorkspaceHeader>
       <div className="flex min-h-0 flex-1">
         <SecondarySidebar title={t('editor.media')} icon={SquarePlayIcon} size="wide" variant="controls">
@@ -388,6 +452,7 @@ export function VideoEditorPage() {
         <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-4">
           <Notice message={error} tone="error" onDismiss={() => setError(null)} />
           <Notice message={notice} tone="info" onDismiss={() => setNotice(null)} />
+          <Notice message={saveFailed ? t('editor.save_failed') : null} tone="error" onDismiss={() => setSaveFailed(false)} />
           <div className="flex min-h-0 flex-1 gap-4">
             <div className="flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-2">
               <canvas

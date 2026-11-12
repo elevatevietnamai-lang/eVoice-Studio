@@ -4135,7 +4135,18 @@
     "duck": "Abbassa sotto le voci",
     "duck_hint": "Abbassa questa clip mentre un'altra ha audio, come la musica sotto una narrazione.",
     "media_missing": "File mancante",
-    "problem_missing": "Alcune clip usano file che non sono più su questo computer. Elimina quelle clip o importa di nuovo i file."
+    "problem_missing": "Alcune clip usano file che non sono più su questo computer. Elimina quelle clip o importa di nuovo i file.",
+    "projects": "Progetti",
+    "projects_hint": "Ogni progetto ha la sua timeline, salvata su questo computer.",
+    "project_new": "Nuovo progetto",
+    "project_rename": "Rinomina {{name}}",
+    "project_duplicate": "Duplica {{name}}",
+    "project_delete": "Elimina {{name}}",
+    "project_delete_title": "Eliminare {{name}}?",
+    "project_delete_body": "La timeline del progetto viene rimossa. I file importati restano, perché altri progetti potrebbero usarli.",
+    "delete_label": "Elimina",
+    "project_copy_name": "{{name}} (copia)",
+    "save_failed": "Impossibile salvare il progetto. Lo spazio potrebbe essere pieno: elimina i progetti che non ti servono più."
   },
   "promo": {
     "title": "Video promozionale",

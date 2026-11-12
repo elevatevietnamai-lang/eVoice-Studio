@@ -4139,7 +4139,18 @@
     "duck": "Ściszaj pod głosem",
     "duck_hint": "Ścisza ten klip, gdy inny klip ma dźwięk, np. muzykę pod narracją.",
     "media_missing": "Brak pliku",
-    "problem_missing": "Niektóre klipy używają plików, których nie ma już na tym komputerze. Usuń te klipy lub zaimportuj pliki ponownie."
+    "problem_missing": "Niektóre klipy używają plików, których nie ma już na tym komputerze. Usuń te klipy lub zaimportuj pliki ponownie.",
+    "projects": "Projekty",
+    "projects_hint": "Każdy projekt ma własną oś czasu, zapisaną na tym komputerze.",
+    "project_new": "Nowy projekt",
+    "project_rename": "Zmień nazwę: {{name}}",
+    "project_duplicate": "Duplikuj: {{name}}",
+    "project_delete": "Usuń: {{name}}",
+    "project_delete_title": "Usunąć {{name}}?",
+    "project_delete_body": "Oś czasu projektu zostanie usunięta. Zaimportowane pliki zostają, bo mogą ich używać inne projekty.",
+    "delete_label": "Usuń",
+    "project_copy_name": "{{name}} (kopia)",
+    "save_failed": "Nie udało się zapisać projektu. Pamięć może być pełna: usuń projekty, których już nie potrzebujesz."
   },
   "promo": {
     "title": "Film reklamowy",

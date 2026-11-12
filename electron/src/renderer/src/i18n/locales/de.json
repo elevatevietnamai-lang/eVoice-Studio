@@ -4133,7 +4133,18 @@
     "duck": "Unter Stimmen absenken",
     "duck_hint": "Senkt diesen Clip, während ein anderer Clip Ton hat, etwa Musik unter einer Erzählung.",
     "media_missing": "Datei fehlt",
-    "problem_missing": "Einige Clips nutzen Dateien, die nicht mehr auf diesem Computer sind. Lösche diese Clips oder importiere die Dateien erneut."
+    "problem_missing": "Einige Clips nutzen Dateien, die nicht mehr auf diesem Computer sind. Lösche diese Clips oder importiere die Dateien erneut.",
+    "projects": "Projekte",
+    "projects_hint": "Jedes Projekt hat seine eigene Zeitleiste und wird auf diesem Computer gespeichert.",
+    "project_new": "Neues Projekt",
+    "project_rename": "{{name}} umbenennen",
+    "project_duplicate": "{{name}} duplizieren",
+    "project_delete": "{{name}} löschen",
+    "project_delete_title": "{{name}} löschen?",
+    "project_delete_body": "Die Zeitleiste des Projekts wird entfernt. Importierte Dateien bleiben erhalten, da andere Projekte sie nutzen können.",
+    "delete_label": "Löschen",
+    "project_copy_name": "{{name}} (Kopie)",
+    "save_failed": "Das Projekt konnte nicht gespeichert werden. Der Speicher ist möglicherweise voll: Lösche Projekte, die du nicht mehr brauchst."
   },
   "promo": {
     "title": "Werbevideo",

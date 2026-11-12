@@ -4133,7 +4133,18 @@
     "duck": "Pelankan saat ada suara",
     "duck_hint": "Memelankan klip ini saat klip lain bersuara, misalnya musik di bawah narasi.",
     "media_missing": "File hilang",
-    "problem_missing": "Beberapa klip memakai file yang sudah tidak ada di komputer ini. Hapus klip itu atau impor file lagi."
+    "problem_missing": "Beberapa klip memakai file yang sudah tidak ada di komputer ini. Hapus klip itu atau impor file lagi.",
+    "projects": "Proyek",
+    "projects_hint": "Setiap proyek punya timeline sendiri yang disimpan di komputer ini.",
+    "project_new": "Proyek baru",
+    "project_rename": "Ganti nama {{name}}",
+    "project_duplicate": "Duplikat {{name}}",
+    "project_delete": "Hapus {{name}}",
+    "project_delete_title": "Hapus {{name}}?",
+    "project_delete_body": "Timeline proyek akan dihapus. File yang diimpor tetap ada karena proyek lain mungkin memakainya.",
+    "delete_label": "Hapus",
+    "project_copy_name": "{{name}} (salinan)",
+    "save_failed": "Proyek tidak dapat disimpan. Penyimpanan mungkin penuh: hapus proyek yang tidak lagi diperlukan."
   },
   "promo": {
     "title": "Video promosi",

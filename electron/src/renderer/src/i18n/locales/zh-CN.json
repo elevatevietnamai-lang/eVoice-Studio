@@ -4133,7 +4133,18 @@
     "duck": "人声时降低",
     "duck_hint": "其他片段有声音时自动调低此片段，例如旁白下的音乐。",
     "media_missing": "文件缺失",
-    "problem_missing": "部分片段使用的文件已不在这台电脑上。请删除这些片段或重新导入文件。"
+    "problem_missing": "部分片段使用的文件已不在这台电脑上。请删除这些片段或重新导入文件。",
+    "projects": "项目",
+    "projects_hint": "每个项目都有自己的时间线，保存在这台电脑上。",
+    "project_new": "新建项目",
+    "project_rename": "重命名 {{name}}",
+    "project_duplicate": "复制 {{name}}",
+    "project_delete": "删除 {{name}}",
+    "project_delete_title": "删除 {{name}}？",
+    "project_delete_body": "项目的时间线将被删除。导入的文件会保留，因为其他项目可能在使用。",
+    "delete_label": "删除",
+    "project_copy_name": "{{name}}（副本）",
+    "save_failed": "无法保存项目。存储空间可能已满：请删除不再需要的项目。"
   },
   "promo": {
     "title": "宣传视频",
