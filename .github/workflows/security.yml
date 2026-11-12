@@ -112,7 +112,9 @@ jobs:
   codeql:
     name: CodeQL (${{ matrix.language }})
     needs: changes
-    if: ${{ !cancelled() && needs.changes.outputs.code != 'false' }}
+    # Code scanning on a private repository needs GitHub Advanced Security, so
+    # forks skip it unless FULL_CI is 'true'.
+    if: ${{ !cancelled() && needs.changes.outputs.code != 'false' && (github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') }}
     runs-on: ubuntu-22.04
     permissions:
       # actions: read lets CodeQL read its own workflow run, which a private
