@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "它在视频结束后才开始，因此不会显示。",
     "corner_top_center": "上方居中",
     "corner_bottom_center": "下方居中",
-    "anim_warn_overlaps": "此图层与另一个图层同时显示。"
+    "anim_warn_overlaps": "此图层与另一个图层同时显示。",
+    "timeline_title": "时间线",
+    "timeline_play": "播放",
+    "timeline_pause": "暂停",
+    "timeline_split": "在播放头处分割 (S)",
+    "timeline_delete": "删除所选",
+    "timeline_undo": "撤销 (Ctrl+Z)",
+    "timeline_redo": "重做 (Ctrl+Shift+Z)",
+    "timeline_snap": "吸附到节拍和剪辑点",
+    "timeline_zoom_in": "放大",
+    "timeline_zoom_out": "缩小",
+    "timeline_hint": "拖动边缘修剪，拖动镜头调整顺序，拖动标题移动位置。",
+    "timeline_keys": "时间线。空格播放，S 分割，方向键微移所选项，Delete 删除。",
+    "timeline_outro": "标志结尾",
+    "timeline_preview": "预览",
+    "timeline_preview_note": "预览为近似效果，渲染出的视频才准确。"
   }
 }

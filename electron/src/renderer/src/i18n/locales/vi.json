@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "Lớp phủ bắt đầu sau khi video kết thúc nên sẽ không hiện.",
     "corner_top_center": "Trên giữa",
     "corner_bottom_center": "Dưới giữa",
-    "anim_warn_overlaps": "Lớp phủ này hiện cùng lúc với một lớp phủ khác."
+    "anim_warn_overlaps": "Lớp phủ này hiện cùng lúc với một lớp phủ khác.",
+    "timeline_title": "Timeline",
+    "timeline_play": "Phát",
+    "timeline_pause": "Tạm dừng",
+    "timeline_split": "Cắt tại đầu phát (S)",
+    "timeline_delete": "Xoá mục đang chọn",
+    "timeline_undo": "Hoàn tác (Ctrl+Z)",
+    "timeline_redo": "Làm lại (Ctrl+Shift+Z)",
+    "timeline_snap": "Bám theo nhịp và điểm cắt",
+    "timeline_zoom_in": "Phóng to",
+    "timeline_zoom_out": "Thu nhỏ",
+    "timeline_hint": "Kéo mép để cắt, kéo cảnh để đổi thứ tự, kéo tiêu đề để dời.",
+    "timeline_keys": "Timeline. Phím cách để phát, S để cắt, phím mũi tên để nhích mục đang chọn, Delete để xoá.",
+    "timeline_outro": "Logo kết thúc",
+    "timeline_preview": "Xem trước",
+    "timeline_preview_note": "Xem trước chỉ gần đúng; video dựng ra mới chính xác."
   }
 }

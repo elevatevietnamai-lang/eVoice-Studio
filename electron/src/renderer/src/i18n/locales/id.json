@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "Dimulai setelah video berakhir, jadi tidak akan tampil.",
     "corner_top_center": "Tengah atas",
     "corner_bottom_center": "Tengah bawah",
-    "anim_warn_overlaps": "Lapisan ini tampil bersamaan dengan lapisan lain."
+    "anim_warn_overlaps": "Lapisan ini tampil bersamaan dengan lapisan lain.",
+    "timeline_title": "Linimasa",
+    "timeline_play": "Putar",
+    "timeline_pause": "Jeda",
+    "timeline_split": "Potong di playhead (S)",
+    "timeline_delete": "Hapus pilihan",
+    "timeline_undo": "Urungkan (Ctrl+Z)",
+    "timeline_redo": "Ulangi (Ctrl+Shift+Z)",
+    "timeline_snap": "Tempel ke ketukan dan potongan",
+    "timeline_zoom_in": "Perbesar",
+    "timeline_zoom_out": "Perkecil",
+    "timeline_hint": "Seret tepi untuk memangkas, seret adegan untuk mengurutkan, seret judul untuk memindahkan.",
+    "timeline_keys": "Linimasa. Spasi memutar, S memotong, tombol panah menggeser pilihan, Delete menghapusnya.",
+    "timeline_outro": "Penutup logo",
+    "timeline_preview": "Pratinjau",
+    "timeline_preview_note": "Pratinjau hanya perkiraan; video hasil render yang akurat."
   }
 }

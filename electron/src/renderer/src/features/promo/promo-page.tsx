@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPlayhead } from './playhead';
+import { PromoPreview } from './promo-preview';
+import { PromoTimeline, type Selection } from './promo-timeline';
+import { record, redo, undo, type History } from './timeline-model';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDownIcon,
@@ -365,6 +369,30 @@ export function PromoPage() {
 
   useEffect(() => saveDraft(draft), [draft]);
 
+  // Undo and redo cover every change to the draft, from the timeline and the lists alike.
+  const [history, setHistory] = useState<History>({ past: [], future: [] });
+  const previous = useRef(draft);
+  const travelling = useRef(false);
+  useEffect(() => {
+    if (previous.current === draft) return;
+    if (!travelling.current) {
+      const before = previous.current;
+      setHistory((current) => record(current, before));
+    }
+    travelling.current = false;
+    previous.current = draft;
+  }, [draft]);
+  const travel = (step: typeof undo) => {
+    const result = step(history, draft);
+    if (!result) return;
+    travelling.current = true;
+    setHistory(result.history);
+    setDraft(result.draft);
+  };
+  const [playhead] = useState(createPlayhead);
+  const [selection, setSelection] = useState<Selection>(null);
+  const previewWidth = draft.shape === 'vertical' ? 200 : draft.shape === 'square' ? 260 : 340;
+
   const update = (patch: Partial<PromoDraft>) => setDraft((current) => ({ ...current, ...patch }));
   const updateShot = (key: string, patch: Partial<PromoShot>) =>
     setDraft((current) => ({
@@ -612,6 +640,26 @@ export function PromoPage() {
                   key={result.output}
                   src={apiPath('/audio/' + encodeURIComponent(result.output))}
                   controls="compact"
+                />
+              </div>
+            </section>
+          )}
+          {draft.shots.length > 0 && (
+            <section className="flex flex-wrap items-start gap-4">
+              <PromoPreview draft={draft} playhead={playhead} width={previewWidth} />
+              <div className="min-w-[18rem] flex-1">
+                <PromoTimeline
+                  draft={draft}
+                  busy={busy}
+                  playhead={playhead}
+                  selection={selection}
+                  canUndo={history.past.length > 0}
+                  canRedo={history.future.length > 0}
+                  onSelect={setSelection}
+                  onCommit={setDraft}
+                  onUndo={() => travel(undo)}
+                  onRedo={() => travel(redo)}
+                  newKey={nextKey}
                 />
               </div>
             </section>

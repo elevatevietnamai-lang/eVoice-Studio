@@ -32,6 +32,39 @@ desktop app and in the browser UI alike.
 Limits: 40 shots, 0.5–60 s per shot, 5 minutes in total, 10 s of logo ending,
 4 GB per uploaded file, 12 animated titles.
 
+## Timeline and preview
+
+Once there are shots, a timeline and a live preview sit above the shot list
+(desktop app and browser UI alike). The timeline is another view of the same
+shots and titles: edits show in the lists below and the other way round.
+
+- **Tracks:** shots (overlapping where a transition joins them), animated
+  titles (stacked when they overlap, red when the list would warn about one),
+  the music waveform, and the logo ending. Beat lines run across all tracks.
+- **Edit by dragging:** the right edge of a shot sets its length (up to what
+  the clip has left), the left edge of a video trims where the clip starts,
+  dragging the shot reorders it, and dragging a title moves it; a title
+  dropped on a shot rides on that shot. Edges snap to beats, cuts and the
+  playhead (the magnet button turns beat snapping off).
+- **Keys** (with the timeline focused): Space plays, **S** splits the shot at
+  the playhead, Delete removes the selected shot or title, arrow keys nudge it
+  (Shift for whole seconds), Ctrl+Z and Ctrl+Shift+Z undo and redo any change
+  to the draft. Ctrl+wheel zooms; click or drag the ruler to move the playhead.
+- **Split** gives a cut that continues the same clip; it is refused where it
+  would shorten a transition and move later cuts.
+- **Cut on the beat:** with it on, the timeline shows each cut where the render
+  puts it (the same snapping, `GET /promo/beats/{media_id}` gives the grid),
+  so the rendered video matches what you see; a shot nudged with the arrows
+  moves a whole beat.
+- **Preview** plays the shots, titles, watermark, logo ending, music and
+  narration at the playhead. Looks, still zooms, the blurred background behind
+  "whole picture" and the shape of each transition (all shown as fades) are
+  approximate; the rendered video is exact. Clip sound is left out, as in the
+  render.
+
+Not in this timeline: a second video track (B-roll), keyframes, speed changes,
+moving or trimming the music, and clip sound.
+
 ## Animated titles (desktop app only)
 
 The **Animated titles** section lays an animated layer over the video, from a

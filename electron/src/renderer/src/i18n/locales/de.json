@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "Die Ebene beginnt nach dem Videoende und wird nicht angezeigt.",
     "corner_top_center": "Oben mittig",
     "corner_bottom_center": "Unten mittig",
-    "anim_warn_overlaps": "Diese Ebene ist gleichzeitig mit einer anderen zu sehen."
+    "anim_warn_overlaps": "Diese Ebene ist gleichzeitig mit einer anderen zu sehen.",
+    "timeline_title": "Zeitleiste",
+    "timeline_play": "Abspielen",
+    "timeline_pause": "Pause",
+    "timeline_split": "Am Abspielkopf teilen (S)",
+    "timeline_delete": "Auswahl löschen",
+    "timeline_undo": "Rückgängig (Strg+Z)",
+    "timeline_redo": "Wiederholen (Strg+Umschalt+Z)",
+    "timeline_snap": "An Beats und Schnitten ausrichten",
+    "timeline_zoom_in": "Vergrößern",
+    "timeline_zoom_out": "Verkleinern",
+    "timeline_hint": "Ränder ziehen zum Trimmen, Einstellung ziehen zum Umsortieren, Titel ziehen zum Verschieben.",
+    "timeline_keys": "Zeitleiste. Leertaste spielt ab, S teilt, Pfeiltasten verschieben die Auswahl, Entf löscht sie.",
+    "timeline_outro": "Logo-Abspann",
+    "timeline_preview": "Vorschau",
+    "timeline_preview_note": "Die Vorschau ist ungefähr; das gerenderte Video ist genau."
   }
 }

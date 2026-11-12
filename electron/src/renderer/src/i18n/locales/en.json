@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "It starts after the video ends, so it will not show.",
     "corner_top_center": "Top centre",
     "corner_bottom_center": "Bottom centre",
-    "anim_warn_overlaps": "It is on screen at the same time as another overlay."
+    "anim_warn_overlaps": "It is on screen at the same time as another overlay.",
+    "timeline_title": "Timeline",
+    "timeline_play": "Play",
+    "timeline_pause": "Pause",
+    "timeline_split": "Split at the playhead (S)",
+    "timeline_delete": "Delete selected",
+    "timeline_undo": "Undo (Ctrl+Z)",
+    "timeline_redo": "Redo (Ctrl+Shift+Z)",
+    "timeline_snap": "Snap to beats and cuts",
+    "timeline_zoom_in": "Zoom in",
+    "timeline_zoom_out": "Zoom out",
+    "timeline_hint": "Drag edges to trim, drag a shot to reorder, drag a title to move it.",
+    "timeline_keys": "Timeline. Space plays, S splits, arrow keys nudge the selected item, Delete removes it.",
+    "timeline_outro": "Logo ending",
+    "timeline_preview": "Preview",
+    "timeline_preview_note": "Preview is approximate; the rendered video is exact."
   }
 }

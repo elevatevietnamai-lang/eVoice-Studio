@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "Video bittikten sonra başlıyor, bu yüzden görünmeyecek.",
     "corner_top_center": "Üst orta",
     "corner_bottom_center": "Alt orta",
-    "anim_warn_overlaps": "Başka bir katmanla aynı anda ekranda."
+    "anim_warn_overlaps": "Başka bir katmanla aynı anda ekranda.",
+    "timeline_title": "Zaman çizelgesi",
+    "timeline_play": "Oynat",
+    "timeline_pause": "Duraklat",
+    "timeline_split": "Oynatma başlığında böl (S)",
+    "timeline_delete": "Seçileni sil",
+    "timeline_undo": "Geri al (Ctrl+Z)",
+    "timeline_redo": "Yinele (Ctrl+Shift+Z)",
+    "timeline_snap": "Vuruşlara ve kesmelere yapış",
+    "timeline_zoom_in": "Yakınlaştır",
+    "timeline_zoom_out": "Uzaklaştır",
+    "timeline_hint": "Kırpmak için kenarları, sıralamak için çekimi, taşımak için başlığı sürükleyin.",
+    "timeline_keys": "Zaman çizelgesi. Boşluk oynatır, S böler, ok tuşları seçileni kaydırır, Delete siler.",
+    "timeline_outro": "Logolu kapanış",
+    "timeline_preview": "Önizleme",
+    "timeline_preview_note": "Önizleme yaklaşıktır; oluşturulan video kesindir."
   }
 }

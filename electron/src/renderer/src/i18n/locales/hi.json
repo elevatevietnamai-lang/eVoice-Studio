@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "यह वीडियो खत्म होने के बाद शुरू होता है, इसलिए नहीं दिखेगा।",
     "corner_top_center": "ऊपर बीच में",
     "corner_bottom_center": "नीचे बीच में",
-    "anim_warn_overlaps": "यह लेयर किसी दूसरी लेयर के साथ एक ही समय पर दिखती है।"
+    "anim_warn_overlaps": "यह लेयर किसी दूसरी लेयर के साथ एक ही समय पर दिखती है।",
+    "timeline_title": "टाइमलाइन",
+    "timeline_play": "चलाएँ",
+    "timeline_pause": "रोकें",
+    "timeline_split": "प्लेहेड पर काटें (S)",
+    "timeline_delete": "चुना हुआ हटाएँ",
+    "timeline_undo": "पूर्ववत करें (Ctrl+Z)",
+    "timeline_redo": "फिर से करें (Ctrl+Shift+Z)",
+    "timeline_snap": "बीट और कट पर चिपकाएँ",
+    "timeline_zoom_in": "ज़ूम इन",
+    "timeline_zoom_out": "ज़ूम आउट",
+    "timeline_hint": "काटने के लिए किनारे, क्रम बदलने के लिए शॉट और खिसकाने के लिए शीर्षक खींचें।",
+    "timeline_keys": "टाइमलाइन। स्पेस चलाता है, S काटता है, तीर कुंजियाँ चुने हुए को खिसकाती हैं, Delete हटाता है।",
+    "timeline_outro": "लोगो वाला अंत",
+    "timeline_preview": "पूर्वावलोकन",
+    "timeline_preview_note": "पूर्वावलोकन अनुमानित है; रेंडर हुआ वीडियो सटीक होता है।"
   }
 }

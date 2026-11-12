@@ -4135,6 +4135,21 @@
     "anim_warn_after_end": "Zaczyna się po końcu filmu, więc się nie pojawi.",
     "corner_top_center": "Góra, środek",
     "corner_bottom_center": "Dół, środek",
-    "anim_warn_overlaps": "Ta warstwa jest widoczna w tym samym czasie co inna."
+    "anim_warn_overlaps": "Ta warstwa jest widoczna w tym samym czasie co inna.",
+    "timeline_title": "Oś czasu",
+    "timeline_play": "Odtwórz",
+    "timeline_pause": "Wstrzymaj",
+    "timeline_split": "Podziel przy głowicy (S)",
+    "timeline_delete": "Usuń zaznaczenie",
+    "timeline_undo": "Cofnij (Ctrl+Z)",
+    "timeline_redo": "Ponów (Ctrl+Shift+Z)",
+    "timeline_snap": "Przyciągaj do rytmu i cięć",
+    "timeline_zoom_in": "Powiększ",
+    "timeline_zoom_out": "Pomniejsz",
+    "timeline_hint": "Przeciągnij krawędzie, by przyciąć, ujęcie, by zmienić kolejność, tytuł, by go przesunąć.",
+    "timeline_keys": "Oś czasu. Spacja odtwarza, S dzieli, strzałki przesuwają zaznaczenie, Delete je usuwa.",
+    "timeline_outro": "Zakończenie z logo",
+    "timeline_preview": "Podgląd",
+    "timeline_preview_note": "Podgląd jest przybliżony; wyrenderowany film jest dokładny."
   }
 }

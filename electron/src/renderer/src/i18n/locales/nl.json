@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "De laag begint na het einde van de video en wordt niet getoond.",
     "corner_top_center": "Midden boven",
     "corner_bottom_center": "Midden onder",
-    "anim_warn_overlaps": "Deze laag is tegelijk met een andere laag te zien."
+    "anim_warn_overlaps": "Deze laag is tegelijk met een andere laag te zien.",
+    "timeline_title": "Tijdlijn",
+    "timeline_play": "Afspelen",
+    "timeline_pause": "Pauzeren",
+    "timeline_split": "Splitsen bij de afspeelkop (S)",
+    "timeline_delete": "Selectie verwijderen",
+    "timeline_undo": "Ongedaan maken (Ctrl+Z)",
+    "timeline_redo": "Opnieuw (Ctrl+Shift+Z)",
+    "timeline_snap": "Uitlijnen op beats en knippen",
+    "timeline_zoom_in": "Inzoomen",
+    "timeline_zoom_out": "Uitzoomen",
+    "timeline_hint": "Sleep randen om in te korten, een shot om te herschikken, een titel om te verplaatsen.",
+    "timeline_keys": "Tijdlijn. Spatie speelt af, S splitst, pijltjes verschuiven de selectie, Delete verwijdert die.",
+    "timeline_outro": "Afsluiter met logo",
+    "timeline_preview": "Voorbeeld",
+    "timeline_preview_note": "Het voorbeeld is bij benadering; de gerenderde video is exact."
   }
 }

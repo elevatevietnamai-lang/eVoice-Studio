@@ -272,9 +272,9 @@ export function snapToBeats(draft: PromoDraft, period: number): PromoDraft {
         ? 0
         : clampTransition(shot.transitionSeconds, lengths[index - 1], lengths[index]),
     );
-  let next = new Array<number>(count).fill(0);
+  let next = Array.from({ length: count }, () => 0);
   for (let round_ = 0; round_ < 4 * count + 8; round_++) {
-    const overlap = next.some(Boolean) ? overlapsOf(next) : new Array<number>(count).fill(0);
+    const overlap = next.some(Boolean) ? overlapsOf(next) : Array.from({ length: count }, () => 0);
     const solved = durations.map((duration, k) =>
       k === count - 1
         ? duration

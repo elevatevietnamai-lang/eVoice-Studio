@@ -4131,6 +4131,21 @@
     "anim_warn_after_end": "Il commence après la fin de la vidéo et ne s’affichera pas.",
     "corner_top_center": "En haut au centre",
     "corner_bottom_center": "En bas au centre",
-    "anim_warn_overlaps": "Ce calque est affiché en même temps qu’un autre."
+    "anim_warn_overlaps": "Ce calque est affiché en même temps qu’un autre.",
+    "timeline_title": "Timeline",
+    "timeline_play": "Lire",
+    "timeline_pause": "Pause",
+    "timeline_split": "Couper à la tête de lecture (S)",
+    "timeline_delete": "Supprimer la sélection",
+    "timeline_undo": "Annuler (Ctrl+Z)",
+    "timeline_redo": "Rétablir (Ctrl+Maj+Z)",
+    "timeline_snap": "Aimanter aux temps et aux coupes",
+    "timeline_zoom_in": "Zoom avant",
+    "timeline_zoom_out": "Zoom arrière",
+    "timeline_hint": "Faites glisser les bords pour couper, un plan pour le déplacer dans l’ordre, un titre pour le décaler.",
+    "timeline_keys": "Timeline. Espace lit, S coupe, les flèches décalent l’élément choisi, Suppr le retire.",
+    "timeline_outro": "Fin avec logo",
+    "timeline_preview": "Aperçu",
+    "timeline_preview_note": "L’aperçu est approximatif ; la vidéo générée est exacte."
   }
 }

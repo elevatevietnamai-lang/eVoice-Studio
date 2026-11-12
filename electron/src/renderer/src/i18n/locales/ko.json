@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "영상이 끝난 뒤에 시작하므로 표시되지 않습니다.",
     "corner_top_center": "가운데 위",
     "corner_bottom_center": "가운데 아래",
-    "anim_warn_overlaps": "이 레이어는 다른 레이어와 동시에 표시됩니다."
+    "anim_warn_overlaps": "이 레이어는 다른 레이어와 동시에 표시됩니다.",
+    "timeline_title": "타임라인",
+    "timeline_play": "재생",
+    "timeline_pause": "일시정지",
+    "timeline_split": "재생 헤드에서 자르기 (S)",
+    "timeline_delete": "선택 항목 삭제",
+    "timeline_undo": "실행 취소 (Ctrl+Z)",
+    "timeline_redo": "다시 실행 (Ctrl+Shift+Z)",
+    "timeline_snap": "박자와 컷에 맞추기",
+    "timeline_zoom_in": "확대",
+    "timeline_zoom_out": "축소",
+    "timeline_hint": "가장자리를 끌어 다듬고, 샷을 끌어 순서를 바꾸고, 제목을 끌어 옮기세요.",
+    "timeline_keys": "타임라인. 스페이스는 재생, S는 자르기, 화살표는 선택 항목 이동, Delete는 삭제입니다.",
+    "timeline_outro": "로고 엔딩",
+    "timeline_preview": "미리보기",
+    "timeline_preview_note": "미리보기는 근사치이며, 렌더링된 영상이 정확합니다."
   }
 }

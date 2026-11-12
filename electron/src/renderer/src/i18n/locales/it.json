@@ -4131,6 +4131,21 @@
     "anim_warn_after_end": "Inizia dopo la fine del video, quindi non sarà visibile.",
     "corner_top_center": "In alto al centro",
     "corner_bottom_center": "In basso al centro",
-    "anim_warn_overlaps": "È visibile insieme a un altro livello."
+    "anim_warn_overlaps": "È visibile insieme a un altro livello.",
+    "timeline_title": "Timeline",
+    "timeline_play": "Riproduci",
+    "timeline_pause": "Pausa",
+    "timeline_split": "Dividi alla testina (S)",
+    "timeline_delete": "Elimina selezione",
+    "timeline_undo": "Annulla (Ctrl+Z)",
+    "timeline_redo": "Ripeti (Ctrl+Maiusc+Z)",
+    "timeline_snap": "Aggancia a battiti e tagli",
+    "timeline_zoom_in": "Ingrandisci",
+    "timeline_zoom_out": "Riduci",
+    "timeline_hint": "Trascina i bordi per tagliare, un’inquadratura per riordinarla, un titolo per spostarlo.",
+    "timeline_keys": "Timeline. Spazio riproduce, S divide, le frecce spostano l’elemento scelto, Canc lo rimuove.",
+    "timeline_outro": "Chiusura con logo",
+    "timeline_preview": "Anteprima",
+    "timeline_preview_note": "L’anteprima è approssimativa; il video creato è esatto."
   }
 }

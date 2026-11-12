@@ -4137,6 +4137,21 @@
     "anim_warn_after_end": "تبدأ بعد انتهاء الفيديو، لذا لن تظهر.",
     "corner_top_center": "أعلى الوسط",
     "corner_bottom_center": "أسفل الوسط",
-    "anim_warn_overlaps": "تظهر هذه الطبقة في الوقت نفسه مع طبقة أخرى."
+    "anim_warn_overlaps": "تظهر هذه الطبقة في الوقت نفسه مع طبقة أخرى.",
+    "timeline_title": "المخطط الزمني",
+    "timeline_play": "تشغيل",
+    "timeline_pause": "إيقاف مؤقت",
+    "timeline_split": "القص عند مؤشر التشغيل (S)",
+    "timeline_delete": "حذف المحدد",
+    "timeline_undo": "تراجع (Ctrl+Z)",
+    "timeline_redo": "إعادة (Ctrl+Shift+Z)",
+    "timeline_snap": "الالتصاق بالإيقاعات ونقاط القطع",
+    "timeline_zoom_in": "تكبير",
+    "timeline_zoom_out": "تصغير",
+    "timeline_hint": "اسحب الحواف للقص، واسحب اللقطة لإعادة ترتيبها، واسحب العنوان لتحريكه.",
+    "timeline_keys": "المخطط الزمني. المسافة للتشغيل، وS للقص، والأسهم لتحريك المحدد، وDelete لحذفه.",
+    "timeline_outro": "خاتمة بالشعار",
+    "timeline_preview": "معاينة",
+    "timeline_preview_note": "المعاينة تقريبية؛ الفيديو الناتج دقيق."
   }
 }

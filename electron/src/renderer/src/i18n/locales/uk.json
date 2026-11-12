@@ -4135,6 +4135,21 @@
     "anim_warn_after_end": "Шар починається після кінця відео і не буде показаний.",
     "corner_top_center": "Угорі по центру",
     "corner_bottom_center": "Унизу по центру",
-    "anim_warn_overlaps": "Цей шар показується одночасно з іншим."
+    "anim_warn_overlaps": "Цей шар показується одночасно з іншим.",
+    "timeline_title": "Таймлайн",
+    "timeline_play": "Відтворити",
+    "timeline_pause": "Пауза",
+    "timeline_split": "Розрізати біля курсора (S)",
+    "timeline_delete": "Видалити вибране",
+    "timeline_undo": "Скасувати (Ctrl+Z)",
+    "timeline_redo": "Повторити (Ctrl+Shift+Z)",
+    "timeline_snap": "Прив’язка до долей і склейок",
+    "timeline_zoom_in": "Збільшити",
+    "timeline_zoom_out": "Зменшити",
+    "timeline_hint": "Тягніть краї, щоб обрізати, кадр — щоб переставити, титр — щоб зсунути.",
+    "timeline_keys": "Таймлайн. Пробіл — відтворення, S — розріз, стрілки зсувають вибране, Delete видаляє.",
+    "timeline_outro": "Фінал із логотипом",
+    "timeline_preview": "Попередній перегляд",
+    "timeline_preview_note": "Попередній перегляд приблизний; зібране відео точне."
   }
 }

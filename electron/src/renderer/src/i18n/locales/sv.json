@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "Lagret börjar efter att videon slutat och visas inte.",
     "corner_top_center": "Uppe i mitten",
     "corner_bottom_center": "Nere i mitten",
-    "anim_warn_overlaps": "Lagret visas samtidigt som ett annat lager."
+    "anim_warn_overlaps": "Lagret visas samtidigt som ett annat lager.",
+    "timeline_title": "Tidslinje",
+    "timeline_play": "Spela",
+    "timeline_pause": "Pausa",
+    "timeline_split": "Dela vid spelhuvudet (S)",
+    "timeline_delete": "Ta bort markerat",
+    "timeline_undo": "Ångra (Ctrl+Z)",
+    "timeline_redo": "Gör om (Ctrl+Skift+Z)",
+    "timeline_snap": "Fäst mot takt och klipp",
+    "timeline_zoom_in": "Zooma in",
+    "timeline_zoom_out": "Zooma ut",
+    "timeline_hint": "Dra kanter för att trimma, en tagning för att flytta i ordningen, en titel för att flytta den.",
+    "timeline_keys": "Tidslinje. Mellanslag spelar, S delar, piltangenter flyttar det markerade, Delete tar bort det.",
+    "timeline_outro": "Avslutning med logotyp",
+    "timeline_preview": "Förhandsvisning",
+    "timeline_preview_note": "Förhandsvisningen är ungefärlig; den renderade videon är exakt."
   }
 }

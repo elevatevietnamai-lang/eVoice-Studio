@@ -4129,6 +4129,21 @@
     "anim_warn_after_end": "它在影片結束後才開始，因此不會顯示。",
     "corner_top_center": "上方置中",
     "corner_bottom_center": "下方置中",
-    "anim_warn_overlaps": "此圖層與另一個圖層同時顯示。"
+    "anim_warn_overlaps": "此圖層與另一個圖層同時顯示。",
+    "timeline_title": "時間軸",
+    "timeline_play": "播放",
+    "timeline_pause": "暫停",
+    "timeline_split": "在播放頭處分割 (S)",
+    "timeline_delete": "刪除所選",
+    "timeline_undo": "復原 (Ctrl+Z)",
+    "timeline_redo": "重做 (Ctrl+Shift+Z)",
+    "timeline_snap": "吸附到節拍和剪接點",
+    "timeline_zoom_in": "放大",
+    "timeline_zoom_out": "縮小",
+    "timeline_hint": "拖曳邊緣修剪，拖曳鏡頭調整順序，拖曳標題移動位置。",
+    "timeline_keys": "時間軸。空白鍵播放，S 分割，方向鍵微移所選項目，Delete 刪除。",
+    "timeline_outro": "標誌結尾",
+    "timeline_preview": "預覽",
+    "timeline_preview_note": "預覽為近似效果，算繪出的影片才準確。"
   }
 }

@@ -4135,6 +4135,21 @@
     "anim_warn_after_end": "Слой начинается после конца видео и не будет показан.",
     "corner_top_center": "Сверху по центру",
     "corner_bottom_center": "Снизу по центру",
-    "anim_warn_overlaps": "Этот слой показывается одновременно с другим."
+    "anim_warn_overlaps": "Этот слой показывается одновременно с другим.",
+    "timeline_title": "Таймлайн",
+    "timeline_play": "Воспроизвести",
+    "timeline_pause": "Пауза",
+    "timeline_split": "Разрезать по курсору (S)",
+    "timeline_delete": "Удалить выбранное",
+    "timeline_undo": "Отменить (Ctrl+Z)",
+    "timeline_redo": "Повторить (Ctrl+Shift+Z)",
+    "timeline_snap": "Привязка к долям и склейкам",
+    "timeline_zoom_in": "Увеличить",
+    "timeline_zoom_out": "Уменьшить",
+    "timeline_hint": "Тяните края, чтобы обрезать, кадр — чтобы переставить, титр — чтобы сдвинуть.",
+    "timeline_keys": "Таймлайн. Пробел — воспроизведение, S — разрез, стрелки сдвигают выбранное, Delete удаляет.",
+    "timeline_outro": "Финал с логотипом",
+    "timeline_preview": "Предпросмотр",
+    "timeline_preview_note": "Предпросмотр приблизительный; собранное видео точное."
   }
 }

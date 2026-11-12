@@ -4131,6 +4131,21 @@
     "anim_warn_after_end": "Começa depois do fim do vídeo, então não vai aparecer.",
     "corner_top_center": "Superior central",
     "corner_bottom_center": "Inferior central",
-    "anim_warn_overlaps": "Aparece ao mesmo tempo que outra camada."
+    "anim_warn_overlaps": "Aparece ao mesmo tempo que outra camada.",
+    "timeline_title": "Linha do tempo",
+    "timeline_play": "Reproduzir",
+    "timeline_pause": "Pausar",
+    "timeline_split": "Dividir na agulha (S)",
+    "timeline_delete": "Excluir seleção",
+    "timeline_undo": "Desfazer (Ctrl+Z)",
+    "timeline_redo": "Refazer (Ctrl+Shift+Z)",
+    "timeline_snap": "Encaixar em batidas e cortes",
+    "timeline_zoom_in": "Aproximar",
+    "timeline_zoom_out": "Afastar",
+    "timeline_hint": "Arraste as bordas para aparar, uma cena para reordenar e um título para movê-lo.",
+    "timeline_keys": "Linha do tempo. Espaço reproduz, S divide, as setas movem o item selecionado e Delete o remove.",
+    "timeline_outro": "Encerramento com logotipo",
+    "timeline_preview": "Pré-visualização",
+    "timeline_preview_note": "A pré-visualização é aproximada; o vídeo renderizado é exato."
   }
 }
