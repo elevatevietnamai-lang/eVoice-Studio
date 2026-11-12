@@ -35,8 +35,13 @@ jobs:
   # do); ci.yml and electron-*.yml are not. pyproject.toml is not either (the
   # packaging contract parses its `readme =` key), and neither is backend/assets/
   # (the renderer smokes play its sample WAV).
+  # Private forks are billed per runner-minute: there this workflow runs only from
+  # a manual dispatch or with the repository variable FULL_CI set to 'true'.
+  # Every other job hangs off `changes` (directly or through `test`) and skips
+  # when it was skipped; a failed `changes` still runs everything.
   changes:
     name: Changed paths
+    if: ${{ github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -90,6 +95,7 @@ jobs:
 
   installer:
     name: Electron installer contracts
+    if: ${{ github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -119,7 +125,7 @@ jobs:
     name: Tests (Python)
     needs: changes
     # Must report even if `changes` failed, so a detection error never skips the gate.
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' }}
     runs-on: ubuntu-22.04
     env:
       # Same restricted-network resilience the smoke matrix already sets. This
@@ -229,7 +235,7 @@ jobs:
   test-electron:
     name: Tests (Electron)
     needs: changes
-    if: ${{ !cancelled() && needs.changes.outputs.electron != 'false' }}
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.electron != 'false' }}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -316,7 +322,7 @@ jobs:
   test:
     name: Tests (backend + frontend)
     needs: [changes, test-python, test-electron]
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     env:
@@ -343,7 +349,7 @@ jobs:
   ui-crawler:
     name: UI crawler
     needs: changes
-    if: ${{ !cancelled() && needs.changes.outputs.electron != 'false' }}
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.electron != 'false' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -396,7 +402,7 @@ jobs:
   linux-native-package:
     name: Linux native package
     needs: changes
-    if: ${{ !cancelled() && needs.changes.outputs.electron != 'false' }}
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.electron != 'false' }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -427,7 +433,7 @@ jobs:
   electron-ui:
     name: Desktop UI (${{ matrix.label }})
     needs: changes
-    if: ${{ !cancelled() && needs.changes.outputs.electron != 'false' }}
+    if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.electron != 'false' }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     strategy:
