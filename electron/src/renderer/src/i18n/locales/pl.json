@@ -4099,7 +4099,9 @@
     "contrast": "Kontrast",
     "saturation": "Nasycenie",
     "duck": "Ściszaj pod głosem",
-    "duck_hint": "Ścisza ten klip, gdy inny klip ma dźwięk, np. muzykę pod narracją."
+    "duck_hint": "Ścisza ten klip, gdy inny klip ma dźwięk, np. muzykę pod narracją.",
+    "media_missing": "Brak pliku",
+    "problem_missing": "Niektóre klipy używają plików, których nie ma już na tym komputerze. Usuń te klipy lub zaimportuj pliki ponownie."
   },
   "promo": {
     "title": "Film reklamowy",

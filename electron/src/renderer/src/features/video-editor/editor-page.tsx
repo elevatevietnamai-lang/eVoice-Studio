@@ -24,7 +24,9 @@ import { MorphIcon } from '@/components/ui/morph-icon';
 import { Progress } from '@/components/ui/progress';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { saveExport } from '@/lib/export-history';
+import { getBridge } from '@/components/bridge';
 import { EditorPlayer, exportProblem, exportProject, mixdownForSpeech } from './engine';
+import { useMissingMedia } from './missing-media';
 import { resolveNumberAtTime } from '@/lib/opencut/vendor/animation/values';
 import { cn } from '@/lib/utils';
 import { EditorTimeline } from './editor-timeline';
@@ -33,6 +35,7 @@ import { PropertiesPanel, type Apply } from './properties-panel';
 import { formatTime, record, redo, undo, type History } from './format';
 import {
   SHAPE_SIZE,
+  allTracks,
   findElement,
   loadProject,
   projectSeconds,
@@ -301,8 +304,18 @@ export function VideoEditorPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ media_id: media.id }),
         });
-      const saved = await saveExport(apiPath(media.url), `${base}.mp4`);
-      if (saved) setNotice(t('editor.export_saved'));
+      const url = apiPath(media.url);
+      if (getBridge()) {
+        const saved = await saveExport(url, `${base}.mp4`);
+        if (saved) setNotice(t('editor.export_saved'));
+      } else {
+        // The browser UI has no native save dialog: download the file instead.
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${base}.mp4`;
+        link.click();
+        setNotice(t('editor.export_saved'));
+      }
     } catch (cause) {
       const message = cause instanceof Error ? cause.message : '';
       setError(message === 'too_long' || message === 'empty' ? t(`editor.problem_${message}`) : describeError(cause));
@@ -341,7 +354,11 @@ export function VideoEditorPage() {
     return () => window.removeEventListener('keydown', onKey);
   });
 
-  const problem = exportProblem(project);
+  const missing = useMissingMedia(project.media);
+  const usedMissing = allTracks(project).some((track) =>
+    track.elements.some((element) => 'mediaId' in element && missing.has(element.mediaId)),
+  );
+  const problem = exportProblem(project) ?? (usedMissing ? 'missing' : null);
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -355,6 +372,7 @@ export function VideoEditorPage() {
             uploading={uploading}
             onUpload={(files) => void upload(files)}
             onAddText={() => applySelecting((current) => addText(current, playhead, t('editor.text_default')))}
+            missing={missing}
             captioning={captioning}
             onCaptions={() => void autoCaptions()}
             onAdd={(media, placement) => {
@@ -450,6 +468,7 @@ export function VideoEditorPage() {
               }}
             />
           </div>
+          {usedMissing && <p className="text-xs text-destructive">{t('editor.problem_missing')}</p>}
           {project.tracks.main.elements.length === 0 && (
             <p className="text-xs text-muted-foreground">{t('editor.empty_hint')}</p>
           )}

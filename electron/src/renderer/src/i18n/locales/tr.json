@@ -4093,7 +4093,9 @@
     "contrast": "Kontrast",
     "saturation": "Doygunluk",
     "duck": "Seslerin altında kıs",
-    "duck_hint": "Başka bir klipte ses varken bu klibi kısar; örneğin anlatımın altındaki müzik."
+    "duck_hint": "Başka bir klipte ses varken bu klibi kısar; örneğin anlatımın altındaki müzik.",
+    "media_missing": "Dosya eksik",
+    "problem_missing": "Bazı klipler artık bu bilgisayarda olmayan dosyaları kullanıyor. Bu klipleri silin veya dosyaları yeniden içe aktarın."
   },
   "promo": {
     "title": "Tanıtım videosu",

@@ -4093,7 +4093,9 @@
     "contrast": "Contrast",
     "saturation": "Saturation",
     "duck": "Lower under voices",
-    "duck_hint": "Turns this clip down while another clip has sound, such as music under narration."
+    "duck_hint": "Turns this clip down while another clip has sound, such as music under narration.",
+    "media_missing": "File missing",
+    "problem_missing": "Some clips use files that are no longer on this computer. Delete those clips or import the files again."
   },
   "promo": {
     "title": "Promo video",
