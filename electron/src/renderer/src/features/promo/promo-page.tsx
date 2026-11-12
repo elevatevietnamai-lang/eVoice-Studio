@@ -59,6 +59,7 @@ import {
   type PromoShot,
 } from './promo-model';
 import { AnimatedOverlays } from './animated-overlays';
+import { SceneEditor } from './scene-editor';
 import { useMissingMedia } from './missing-media';
 
 interface RenderResult {
@@ -788,6 +789,17 @@ export function PromoPage() {
               </ul>
             )}
           </section>
+          <SceneEditor
+            draft={effective}
+            busy={busy}
+            onBusy={setOverlayBusy}
+            onAddOverlay={(overlay) =>
+              setDraft((current) => ({ ...current, overlays: [...current.overlays, overlay] }))
+            }
+            onAddShot={(shot) =>
+              setDraft((current) => ({ ...current, shots: [...current.shots, shot] }))
+            }
+          />
           <AnimatedOverlays
             draft={effective}
             busy={busy}

@@ -104,6 +104,16 @@ const bridge: VoiceStudioBridge = {
     cancelRender: () => ipcRenderer.invoke('promo:renderCancel'),
     previewTemplate: (input) => ipcRenderer.invoke('promo:previewTemplate', input),
     onRenderProgress: (cb) => subscribe<number>('promo:renderProgress', cb),
+    scenes: {
+      list: () => ipcRenderer.invoke('promo:sceneList'),
+      get: (id) => ipcRenderer.invoke('promo:sceneGet', id),
+      save: (scene) => ipcRenderer.invoke('promo:sceneSave', scene),
+      remove: (id) => ipcRenderer.invoke('promo:sceneDelete', id),
+      importFile: () => ipcRenderer.invoke('promo:sceneImport'),
+      exportFile: (scene) => ipcRenderer.invoke('promo:sceneExport', scene),
+      preview: (request) => ipcRenderer.invoke('promo:scenePreview', request),
+      render: (request, fps) => ipcRenderer.invoke('promo:sceneRender', request, fps),
+    },
   },
   backend: {
     getStatus: () => ipcRenderer.invoke('backend:getStatus') as Promise<BackendStatus>,

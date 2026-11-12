@@ -389,6 +389,51 @@ export type PromoOverlayResult =
   | { ok: true; media: PromoOverlayMedia }
   | { ok: false; code: string; detail?: string };
 
+/** A custom HTML scene; mirrors PromoScene in main/promo-scenes.ts. */
+export interface PromoSceneParam {
+  key: string;
+  type: 'text' | 'color' | 'image';
+  label: string;
+  /** Text; `#rrggbb`; or for an image a promo media id, `asset:<name>` or ''. */
+  value: string;
+}
+
+export interface PromoScene {
+  id: string | null;
+  name: string;
+  html: string;
+  css: string;
+  js: string;
+  params: PromoSceneParam[];
+  /** Files the scene references as `assets/<name>`; `data` is base64. */
+  assets: { name: string; data: string }[];
+  duration: number;
+}
+
+export interface PromoSceneSummary {
+  id: string;
+  name: string;
+  duration: number;
+  updatedAt: number;
+}
+
+/** Mirrors SceneProblem in main/promo-scenes.ts. */
+export type PromoSceneProblem =
+  | { code: 'remote_url'; detail: string }
+  | { code: 'css_import' }
+  | { code: 'unknown_font'; detail: string }
+  | { code: 'timer_animation' };
+
+export interface PromoSceneRequest {
+  scene: PromoScene;
+  width: number;
+  height: number;
+  /** A transparent layer over the shots, or a full-frame shot of its own. */
+  mode?: 'overlay' | 'shot';
+}
+
+type PromoSceneFailure = { ok: false; code: string; detail?: string; problems?: PromoSceneProblem[] };
+
 export interface VoiceStudioBridge {
   /** VoiceStudio Cloud account; never carries a token. */
   account: {
@@ -467,6 +512,26 @@ export interface VoiceStudioBridge {
     /** A self-contained page of the template for a sandboxed srcdoc frame. */
     previewTemplate(input: PromoOverlayInput): Promise<PromoPreviewResult>;
     onRenderProgress(callback: (percent: number) => void): () => void;
+    /** Custom HTML scenes: saved copies, files, a sandboxed preview and renders. */
+    scenes: {
+      list(): Promise<PromoSceneSummary[]>;
+      get(id: string): Promise<PromoScene | null>;
+      save(scene: PromoScene): Promise<{ ok: true; scene: PromoScene } | PromoSceneFailure>;
+      remove(id: string): Promise<void>;
+      /** Opens a file dialog for a `.html` or `.zip` scene; nothing is saved. */
+      importFile(): Promise<
+        { ok: true; scene: PromoScene; problems: PromoSceneProblem[] } | PromoSceneFailure
+      >;
+      exportFile(scene: PromoScene): Promise<{ ok: true } | PromoSceneFailure>;
+      /** A `promo-scene:` URL for an `<iframe sandbox="allow-scripts">`. */
+      preview(
+        request: PromoSceneRequest,
+      ): Promise<{ ok: true; url: string; problems: PromoSceneProblem[] } | PromoSceneFailure>;
+      render(
+        request: PromoSceneRequest,
+        fps: number,
+      ): Promise<{ ok: true; media: PromoOverlayMedia } | PromoSceneFailure>;
+    };
   };
   backend: {
     getStatus(): Promise<BackendStatus>;

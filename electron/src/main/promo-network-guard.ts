@@ -1,6 +1,70 @@
+import childProcess from 'node:child_process';
 import dns from 'node:dns';
 import { syncBuiltinESMExports } from 'node:module';
 import net from 'node:net';
+import { normalize } from 'node:path';
+
+/**
+ * Chrome flags that keep the page itself offline. Page scripts run inside
+ * Chrome, outside this process's guard: a refusing proxy fails every
+ * non-loopback request and navigation (Chrome always bypasses the proxy for
+ * loopback, where the producer serves the project and drives the browser),
+ * the resolver answers no name but localhost, and WebRTC may not send UDP
+ * outside the proxy. The page's own CSP (promo-scenes.ts) is a second layer.
+ */
+export const CHROME_OFFLINE_FLAGS = [
+  '--proxy-server=http://127.0.0.1:9',
+  '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1',
+  '--force-webrtc-ip-handling-policy=disable_non_proxied_udp',
+] as const;
+
+const samePath = (a: string, b: string) => {
+  const left = normalize(a);
+  const right = normalize(b);
+  return process.platform === 'win32' ? left.toLowerCase() === right.toLowerCase() : left === right;
+};
+
+/**
+ * Appends CHROME_OFFLINE_FLAGS to every launch of `chromePath` in this
+ * process. Puppeteer starts Chrome with `child_process.spawn`; patching it
+ * (and syncing the ESM named exports) reaches every copy of Puppeteer the
+ * producer may load. `launches()` counts the patched starts, so a producer
+ * that stopped using spawn shows up as zero instead of an unguarded render.
+ */
+export function installChromeOfflineFlags(chromePath: string): {
+  launches: () => number;
+  remove: () => void;
+} {
+  const original = childProcess.spawn;
+  let launches = 0;
+  childProcess.spawn = function guardedSpawn(this: unknown, command: unknown, ...rest: unknown[]) {
+    if (typeof command === 'string' && samePath(command, chromePath)) {
+      launches += 1;
+      const args = Array.isArray(rest[0]) ? (rest[0] as string[]) : [];
+      const options = Array.isArray(rest[0]) ? rest[1] : rest[0];
+      return (original as (...a: unknown[]) => unknown).call(
+        this,
+        command,
+        [
+          ...args.filter(
+            (arg) => !/^--(proxy-server|host-resolver-rules|proxy-bypass-list)=/.test(arg),
+          ),
+          ...CHROME_OFFLINE_FLAGS,
+        ],
+        options,
+      );
+    }
+    return (original as (...a: unknown[]) => unknown).call(this, command, ...rest);
+  } as typeof childProcess.spawn;
+  syncBuiltinESMExports();
+  return {
+    launches: () => launches,
+    remove: () => {
+      childProcess.spawn = original;
+      syncBuiltinESMExports();
+    },
+  };
+}
 
 /**
  * Keeps the animated-template renderer on this machine (CLAUDE.md, Local-first).

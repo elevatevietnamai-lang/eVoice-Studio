@@ -1,7 +1,15 @@
-import { mkdirSync, mkdtempSync, openAsBlob, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, openAsBlob, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { BlockedAttempt } from './promo-network-guard';
 import type { WorkerReply, WorkerRequest } from './promo-render-worker';
+import {
+  assetsFontUri,
+  logoDataUri,
+  sceneDocument,
+  sceneMediaIds,
+  type PromoScene,
+  type SceneFrame,
+} from './promo-scenes';
 import {
   writeTemplateProject,
   type PromoTemplateInput,
@@ -102,12 +110,16 @@ function runChild(
   request: WorkerRequest,
   signal: AbortSignal | undefined,
   onProgress: (progress: number) => void,
+  timeoutMs: number,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     let settled = false;
+    // A scene stuck in a loop must not hold the renderer forever.
+    const timer = setTimeout(() => finish(new PromoRenderError('render_timeout')), timeoutMs);
     const finish = (error?: PromoRenderError) => {
       if (settled) return;
       settled = true;
+      clearTimeout(timer);
       signal?.removeEventListener('abort', abort);
       child.kill();
       if (error) reject(error);
@@ -155,9 +167,14 @@ export async function fetchLogo(
   return { bytes, extension: logoId.split('.').pop()! };
 }
 
-async function upload(deps: PromoRenderDeps, path: string): Promise<PromoMediaResult> {
+async function upload(
+  deps: PromoRenderDeps,
+  path: string,
+  format: 'webm' | 'mp4',
+): Promise<PromoMediaResult> {
   const form = new FormData();
-  form.append('file', await openAsBlob(path, { type: 'video/webm' }), 'overlay.webm');
+  const name = format === 'mp4' ? 'scene.mp4' : 'overlay.webm';
+  form.append('file', await openAsBlob(path, { type: `video/${format}` }), name);
   const res = await (deps.fetchImpl ?? fetch)(`${deps.baseUrl}/promo/media`, {
     method: 'POST',
     headers: deps.headers,
@@ -167,30 +184,45 @@ async function upload(deps: PromoRenderDeps, path: string): Promise<PromoMediaRe
   return (await res.json()) as PromoMediaResult;
 }
 
-export async function renderPromoOverlay(
-  input: PromoTemplateInput,
+export interface RenderOptions {
+  fps: number;
+  signal?: AbortSignal;
+  onProgress?: (progress: number) => void;
+}
+
+/** Longest a render may take: generous per frame, so only a stuck page hits it. */
+export function renderTimeoutMs(duration: number, fps: number): number {
+  return 120_000 + Math.ceil(duration * fps) * 500;
+}
+
+/**
+ * Renders a project that `write` lays out in an empty folder, uploads the
+ * result and removes every temporary file.
+ */
+async function renderProject(
+  write: (projectDir: string) => Promise<void> | void,
   deps: PromoRenderDeps,
-  options: { fps: number; signal?: AbortSignal; onProgress?: (progress: number) => void },
+  options: RenderOptions & { format: 'webm' | 'mp4'; duration: number },
 ): Promise<PromoMediaResult> {
   const tools = await mediaTools(deps);
   mkdirSync(deps.tempRoot, { recursive: true });
   const sandbox = mkdtempSync(join(deps.tempRoot, 'render-'));
   try {
     const projectDir = join(sandbox, 'project');
-    const outputPath = join(sandbox, 'overlay.webm');
+    const outputPath = join(sandbox, `out.${options.format}`);
     mkdirSync(join(sandbox, 'home'), { recursive: true });
-    const logo = input.logoId ? await fetchLogo(deps, input.logoId) : undefined;
-    writeTemplateProject(projectDir, input, deps.assetsDir, logo);
+    await write(projectDir);
     const child = deps.spawn(
       workerEnvironment(process.env, { ...tools, chromePath: deps.chromePath, sandbox }),
     );
     await runChild(
       child,
-      { type: 'render', projectDir, outputPath, fps: options.fps },
+      { type: 'render', projectDir, outputPath, fps: options.fps, format: options.format },
       options.signal,
       options.onProgress ?? (() => {}),
+      renderTimeoutMs(options.duration, options.fps),
     );
-    return await upload(deps, outputPath);
+    return await upload(deps, outputPath, options.format);
   } finally {
     try {
       rmSync(sandbox, { recursive: true, force: true, maxRetries: 3, retryDelay: 200 });
@@ -200,4 +232,61 @@ export async function renderPromoOverlay(
       console.warn('[promo] could not remove render folder', error);
     }
   }
+}
+
+export async function renderPromoOverlay(
+  input: PromoTemplateInput,
+  deps: PromoRenderDeps,
+  options: RenderOptions,
+): Promise<PromoMediaResult> {
+  return renderProject(
+    async (projectDir) => {
+      const logo = input.logoId ? await fetchLogo(deps, input.logoId) : undefined;
+      writeTemplateProject(projectDir, input, deps.assetsDir, logo);
+    },
+    deps,
+    { ...options, format: 'webm', duration: input.duration },
+  );
+}
+
+/** Images the scene's params point at, as data URIs. */
+export async function sceneImages(
+  deps: Pick<PromoRenderDeps, 'baseUrl' | 'headers' | 'fetchImpl'>,
+  scene: PromoScene,
+): Promise<Map<string, string>> {
+  const images = new Map<string, string>();
+  for (const id of sceneMediaIds(scene)) images.set(id, logoDataUri(await fetchLogo(deps, id)));
+  return images;
+}
+
+/**
+ * Renders a custom scene: a transparent WebM to lay over the shots, or an
+ * opaque MP4 that is a shot of its own. The page is one self-contained file
+ * (fonts and images inlined) under the scene's no-network policy.
+ */
+export async function renderPromoScene(
+  scene: PromoScene,
+  frame: SceneFrame & { mode: 'overlay' | 'shot' },
+  deps: PromoRenderDeps,
+  options: RenderOptions,
+): Promise<PromoMediaResult> {
+  return renderProject(
+    async (projectDir) => {
+      const images = await sceneImages(deps, scene);
+      mkdirSync(projectDir, { recursive: true });
+      writeFileSync(
+        join(projectDir, 'index.html'),
+        sceneDocument(scene, {
+          width: frame.width,
+          height: frame.height,
+          mode: 'render',
+          fontUri: assetsFontUri(deps.assetsDir),
+          images,
+          backdrop: frame.mode === 'shot' ? '#000000' : undefined,
+        }),
+      );
+    },
+    deps,
+    { ...options, format: frame.mode === 'shot' ? 'mp4' : 'webm', duration: scene.duration },
+  );
 }

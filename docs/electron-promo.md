@@ -129,11 +129,83 @@ since the render uses the backend's ffmpeg.
 - **No network.** The render process blocks every socket, name lookup and
   `fetch` that is not loopback (`promo-network-guard.ts`), and a render that
   tried one is discarded. HyperFrames would otherwise fetch Google Fonts for a
-  font without a local `@font-face`. Chrome itself runs outside that guard, so
-  every template must carry its fonts and contain no remote URL; a test checks
-  both.
+  font without a local `@font-face`. Chrome runs outside that guard, so the
+  worker starts it with a proxy that refuses everything but loopback, a name
+  resolver that answers only `localhost` and WebRTC limited to that proxy; a
+  render where Chrome did not start with those flags fails. Every template
+  also carries its fonts and contains no remote URL; a test checks both.
 - Main uploads the WebM to `POST /promo/media`; the page sends it in
   `overlays` with its start time and, when tied to a shot, the shot's index.
+
+## Custom HTML scenes (desktop app only)
+
+The **Custom HTML scenes** section lets you write a scene in HTML, CSS and
+JavaScript and use it as an animated layer (**Add as overlay**, a transparent
+WebM like the animated titles) or as a full-frame shot of its own
+(**Add as shot**, an MP4 as long as the scene; where the scene paints nothing
+the shot is black). Scenes run in the video's format, 1 to 60 seconds long.
+
+- **Parameters** are the scene's fields: text, a colour or an image (the brand
+  logo or one of the scene's files). Write a parameter's key in double braces
+  in the HTML or CSS to insert its value; text is HTML-escaped, and in CSS only
+  colours and images are inserted. JavaScript reads `scene.params`,
+  `scene.width`, `scene.height` and `scene.duration`.
+- **Motion.** CSS animations, the Web Animations API and
+  `scene.onFrame(time => …)` are frame-exact in the video (HyperFrames seeks
+  them on every frame). Animation driven by `setTimeout`, `setInterval` or
+  `requestAnimationFrame` may stutter, and the editor says so.
+- **Files** are images and fonts the scene carries (16 at most, 4 MB each,
+  8 MB per scene), referenced as `assets/` plus the file name. Fonts: Inter,
+  Oswald and Dancing Script are bundled; any other family needs its file and an
+  `@font-face` rule, or the editor flags it.
+- **Save** keeps the scene on this computer (in the app's data folder,
+  `promo-scenes`) to use again; **Import** reads a `.html` or `.zip` scene and
+  **Export** writes one: `.html` when the scene has no files, else a `.zip`
+  with `index.html` and an `assets/` folder. A zip may also hold `style.css`,
+  `script.js` and `scene.json` (name, length, parameters).
+- The live preview needs no download. Rendering needs Chrome Headless Shell,
+  which you turn on in the **Animated titles** section; this section never
+  downloads it.
+
+### How scenes are kept offline and contained
+
+A scene, and above all an imported or AI-written one, is treated as untrusted:
+
+- Main checks every scene (`promo-scenes.ts`): code at most 256 KB per part, at
+  most 12 parameters, colours `#rrggbb`, images only a promo media id or one of
+  the scene's own files, file names letters, digits, `.`, `_` and `-` with an
+  image or font extension.
+- Imports are read through `promo-zip.ts` on Node's zlib: at most 12 MB per
+  file and 22 entries, sizes capped before and during inflation (a zip bomb
+  stops at the cap), and ZIP64, encryption, symbolic links, `..`, absolute
+  paths, drive letters, backslashes and names that collide are refused. Entry
+  names never become paths: files are kept inside the scene's JSON, and
+  nothing outside the layout above is read.
+- The page that runs a scene starts with a Content Security Policy allowing no
+  network, no frames, no forms, no base URL and no file access; fonts and
+  images are inlined as data URIs. Scene text comes after that policy, so it
+  can only add restrictions. Remote URLs, `@import` and fonts that are not
+  bundled are flagged before a preview or render.
+- **Preview.** Main serves the page on its own `promo-scene:` scheme with that
+  policy as a header, and the app shows it in an
+  `<iframe sandbox="allow-scripts">`: scripts run with no origin, so they
+  cannot reach the app, the bridge, popups, forms or the top window. The app's
+  own policy lets frames load from that scheme alone (besides the existing
+  Google Forms frames), main refuses any navigation that would take a preview
+  frame elsewhere, and WebRTC UDP is turned off for that window. The frame runs
+  in its own process; a scene that stops answering (a script stuck in a loop)
+  is removed after three seconds with a note.
+- **Render.** The same page goes through the guarded worker above (Chrome
+  offline flags, Node network guard), with a time limit of two minutes plus
+  half a second per frame.
+- Checked on Windows with a hostile scene that tried `fetch` to the LAN, to
+  another loopback port and to the backend, an image, a WebSocket, a beacon, a
+  popup, a form, a `<meta refresh>`, `location` and `top.location` changes and
+  a WebRTC STUN request: listeners on the LAN address and loopback received
+  nothing in the desktop preview (the navigations ended on a blocked page). A
+  render of the same requests with the worker's Chrome flags and page policy
+  reached nothing either, while the same render without them reached all of
+  the listeners.
 
 ## How it works
 
