@@ -125,6 +125,16 @@ it('shows an opaque menu surface from the first frame, with no fade on the surfa
   expect(menu).toHaveClass('bg-sidebar');
 });
 
+it('leads the rail with a Home link, lit only on Home', () => {
+  route.pathname = '/';
+  render(<Shell />);
+  const nav = document.querySelector('[data-slot="workspace-navigation"]')!;
+  const home = screen.getByRole('link', { name: 'nav.home' });
+  expect(home).toHaveAttribute('href', '/');
+  expect(nav.firstElementChild).toBe(home);
+  expect(home).toHaveAttribute('aria-current', 'page');
+});
+
 it('lights one rail item: the open menu group, not the current page', () => {
   route.pathname = '/projects';
   render(<Shell />);

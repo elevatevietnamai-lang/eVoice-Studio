@@ -1,7 +1,13 @@
 import { useEffect } from 'react';
 import { setMenuGroup, useMenuGroup } from '@/lib/store/workspace';
 import { Link, useRouterState } from '@tanstack/react-router';
-import { AudioLinesIcon, FilmIcon, FingerprintIcon, WrenchIcon } from 'lucide-react';
+import {
+  AudioLinesIcon,
+  FilmIcon,
+  FingerprintIcon,
+  LayoutDashboardIcon,
+  WrenchIcon,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
@@ -12,6 +18,15 @@ import './workspace-menu.css';
 
 type Destination = WorkspaceDestination;
 
+/** Home leads the rail; it is not a menu group, so it stays out of `destinations`. */
+const HOME: Destination = {
+  to: '/',
+  label: 'nav.home',
+  description: 'homeUi.subtitle',
+  icon: LayoutDashboardIcon,
+  group: 'library',
+};
+
 const itemClass =
   'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-lg text-sm text-(--sidebar-muted-foreground) outline-none transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
 const iconClass =
@@ -21,11 +36,14 @@ function NavigationLink({
   destination: { to, label, description, icon: Icon, activate },
   compact = false,
   flyout = false,
+  exact = false,
   onNavigate,
 }: {
   destination: Destination;
   compact?: boolean;
   flyout?: boolean;
+  /** Lit only on this exact path (Home's `/` is a prefix of every route). */
+  exact?: boolean;
   onNavigate?: () => void;
 }) {
   const { t } = useTranslation();
@@ -36,6 +54,7 @@ function NavigationLink({
     <Link
       to={to}
       aria-label={compact ? t(label) : undefined}
+      activeOptions={exact ? { exact: true } : undefined}
       onClick={() => {
         activate?.();
         // Choosing a page, even the one already open, turns the menu column back into its panel.
@@ -153,6 +172,7 @@ export function WorkspaceNavigation() {
         'flex flex-col items-center justify-center-safe gap-0.5 px-1.5',
       )}
     >
+      <NavigationLink destination={HOME} compact exact />
       <NavigationGroup
         group="voice"
         label="nav.voice"
