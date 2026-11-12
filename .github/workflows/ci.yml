@@ -433,10 +433,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { os: macos-15, label: macOS }
-          - { os: windows-2022, label: Windows }
-          - { os: ubuntu-24.04, label: Linux }
+        # Private forks pay 10x for macOS and 2x for Windows minutes, so they run
+        # the Linux leg only unless the repository variable FULL_CI is 'true'.
+        include: ${{ fromJSON((github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') && '[{"os":"macos-15","label":"macOS"},{"os":"windows-2022","label":"Windows"},{"os":"ubuntu-24.04","label":"Linux"}]' || '[{"os":"ubuntu-24.04","label":"Linux"}]') }}
     defaults:
       run:
         shell: bash
@@ -509,19 +508,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: macos-14
-            label: macOS
-            backend_supported: true
-          - os: macos-15-intel
-            label: macOS Intel
-            backend_supported: false
-          - os: windows-2022
-            label: Windows
-            backend_supported: true
-          - os: ubuntu-22.04
-            label: Linux
-            backend_supported: true
+        # Linux only on private forks unless FULL_CI is 'true' (see Desktop UI above).
+        include: ${{ fromJSON((github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') && '[{"os":"macos-14","label":"macOS","backend_supported":true},{"os":"macos-15-intel","label":"macOS Intel","backend_supported":false},{"os":"windows-2022","label":"Windows","backend_supported":true},{"os":"ubuntu-22.04","label":"Linux","backend_supported":true}]' || '[{"os":"ubuntu-22.04","label":"Linux","backend_supported":true}]') }}
     runs-on: ${{ matrix.os }}
     # Priced for a COLD `uv sync`, on every platform.
     #

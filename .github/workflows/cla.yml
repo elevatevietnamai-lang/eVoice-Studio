@@ -29,10 +29,12 @@ permissions:
 jobs:
   cla:
     name: CLA gate
+    # The CLA belongs to the upstream project; forks skip it.
     if: >-
+      (github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') && (
       github.event_name == 'pull_request_target' ||
       contains(github.event.comment.body, 'VoiceStudio CLA') ||
-      (github.event.issue.pull_request && contains(github.event.comment.body, 'recheck'))
+      (github.event.issue.pull_request && contains(github.event.comment.body, 'recheck')))
     runs-on: ubuntu-24.04
     # Job level, so comments the `if` skips never take the queue slot. Each run
     # rescans all comments, so a queued run GitHub cancels loses nothing.
