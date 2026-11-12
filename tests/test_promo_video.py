@@ -179,6 +179,8 @@ class TestBeats:
         period, phase = pv.detect_beats(samples, rate)
         assert period == pytest.approx(0.5, abs=0.03)
         assert phase == pytest.approx(0.21, abs=0.04)
+        # numpy floats round differently; snapping must see plain floats.
+        assert type(period) is float and type(phase) is float
 
     def test_silence_has_no_grid(self):
         assert pv.detect_beats(np.zeros(22050 * 5, dtype=np.float32), 22050) == (0.0, 0.0)

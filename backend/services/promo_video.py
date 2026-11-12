@@ -551,7 +551,10 @@ def detect_beats(samples, sample_rate: int, *, min_bpm: float = 70.0,
     candidates = np.arange(0.0, period, hop / sample_rate)
     scores = [np.interp(beats + phase, times, positive, right=0.0).sum() for phase in candidates]
     phase = float(candidates[int(np.argmax(scores))])
-    return round(period, 4), round(phase % period, 4)
+    # Plain floats: round() on a numpy float multiplies then rounds, so the
+    # snapped lengths would differ from the timeline's (and from round() on a
+    # float) by a millisecond whenever a beat time sits near a half.
+    return float(round(float(period), 4)), float(round(float(phase % period), 4))
 
 
 def snap_to_beats(plan: PromoPlan, period: float, phase: float) -> list[float]:
