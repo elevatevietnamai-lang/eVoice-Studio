@@ -2193,6 +2193,20 @@
     "title": "DubSegment",
     "type": "object"
    },
+   "EditorFinalizeRequest": {
+    "properties": {
+     "media_id": {
+      "maxLength": 32,
+      "title": "Media Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "media_id"
+    ],
+    "title": "EditorFinalizeRequest",
+    "type": "object"
+   },
    "EffectPresetEntry": {
     "additionalProperties": true,
     "description": "One DSP effect preset.",
@@ -13354,6 +13368,47 @@
      }
     },
     "summary": "Dub Export Vtt"
+   }
+  },
+  "/editor/finalize": {
+   "post": {
+    "description": "Turn a video editor export into an MP4 (H.264 + AAC).\n\nThe editor encodes in the app with WebCodecs; where the system has no\nH.264 encoder it writes WebM (VP9 + Opus) instead, and this converts it so\nevery platform saves the same MP4. Returns the new media like\n``/promo/media``.",
+    "operationId": "editor_finalize_editor_finalize_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EditorFinalizeRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Editor Finalize Editor Finalize Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Editor Finalize"
    }
   },
   "/engines": {

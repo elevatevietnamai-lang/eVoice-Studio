@@ -81,7 +81,7 @@ it('names the feature Dubbing consistently while preserving the existing route',
   expect(screen.getByRole('link', { name: /dubWorkspace.title/ })).toHaveAttribute('href', '/dub');
 });
 
-it('separates three primary creation actions and describes all ten destinations', () => {
+it('separates three primary creation actions and describes all twelve destinations', () => {
   render(<HomePage />);
   const clone = screen.getByRole('link', { name: /nav.clone/ });
   const primary = clone.closest('.home-destinations')!;
@@ -90,9 +90,13 @@ it('separates three primary creation actions and describes all ten destinations'
     '/design',
     '/dub',
   ]);
-  expect(primary.nextElementSibling?.querySelectorAll('a')).toHaveLength(7);
+  const secondary = primary.nextElementSibling!;
+  expect(secondary.querySelectorAll('a')).toHaveLength(9);
+  for (const to of ['/editor', '/promo']) {
+    expect(secondary.querySelector(`a[href="${to}"]`)).not.toBeNull();
+  }
   const icons = document.querySelectorAll('svg.home-feature-svg');
-  expect(icons).toHaveLength(10);
+  expect(icons).toHaveLength(12);
   icons.forEach((icon) => expect(icon).toHaveAttribute('aria-hidden', 'true'));
   for (const key of ['design', 'dub', 'stories', 'audiobook', 'transcribe']) {
     expect(screen.getByText('homeUi.' + key)).toBeInTheDocument();

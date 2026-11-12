@@ -243,6 +243,52 @@ def client_and_outputs(tmp_path, monkeypatch):
         yield client, tmp_path
 
 
+class TestEditorFinalize:
+    @pytest.mark.parametrize("media_id", ["../x.webm", "0123456789abcdef.webm", "nope"])
+    def test_unknown_media_is_not_found(self, client_and_outputs, media_id):
+        client, _ = client_and_outputs
+        assert client.post("/editor/finalize", json={"media_id": media_id}).status_code == 404
+
+    def test_turns_a_webm_export_into_an_mp4(self, client_and_outputs, tmp_path_factory):
+        ffmpeg = shutil.which("ffmpeg")
+        if not ffmpeg or not shutil.which("ffprobe"):
+            pytest.skip("ffmpeg/ffprobe are not installed")
+        client, outputs = client_and_outputs
+        src = tmp_path_factory.mktemp("finalize") / "export.webm"
+        made = subprocess.run(
+            [ffmpeg, "-hide_banner", "-loglevel", "error", "-y",
+             "-f", "lavfi", "-i", "testsrc2=size=320x240:rate=30:duration=1",
+             "-f", "lavfi", "-i", "sine=f=440:d=1",
+             "-c:v", "libvpx-vp9", "-c:a", "libopus", "-shortest", str(src)],
+            capture_output=True,
+        )
+        if made.returncode != 0:
+            pytest.skip("this ffmpeg cannot write VP9/Opus")
+        with open(src, "rb") as fh:
+            uploaded = client.post("/promo/media", files={"file": ("export.webm", fh)}).json()
+        res = client.post("/editor/finalize", json={"media_id": uploaded["id"]})
+        assert res.status_code == 200, res.text[:400]
+        body = res.json()
+        assert body["id"].endswith(".mp4") and body["has_audio"] is True
+        assert (body["width"], body["height"]) == (320, 240)
+        media_dir = outputs / "promo_media"
+        assert (media_dir / body["id"]).is_file()
+        # The intermediate WebM is not kept.
+        assert not (media_dir / uploaded["id"]).exists()
+
+    def test_refuses_audio(self, client_and_outputs, tmp_path_factory):
+        ffmpeg = shutil.which("ffmpeg")
+        if not ffmpeg or not shutil.which("ffprobe"):
+            pytest.skip("ffmpeg/ffprobe are not installed")
+        client, _ = client_and_outputs
+        src = tmp_path_factory.mktemp("finalize_audio") / "a.wav"
+        subprocess.run([ffmpeg, "-hide_banner", "-loglevel", "error", "-y", "-f", "lavfi",
+                        "-i", "sine=f=220:d=1", str(src)], check=True)
+        with open(src, "rb") as fh:
+            uploaded = client.post("/promo/media", files={"file": ("a.wav", fh)}).json()
+        assert client.post("/editor/finalize", json={"media_id": uploaded["id"]}).status_code == 422
+
+
 class TestRoute:
     def test_refuses_non_media_uploads(self, client_and_outputs):
         client, outputs = client_and_outputs
