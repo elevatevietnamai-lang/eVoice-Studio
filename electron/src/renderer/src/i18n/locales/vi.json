@@ -4108,6 +4108,26 @@
     "anim_replay": "Phát lại",
     "anim_logo_needed": "Hãy thêm logo ở mục Logo trước.",
     "anim_error_logo_missing": "Không đọc được logo. Hãy thêm lại ở mục Logo.",
-    "anim_error_logo_too_large": "Logo lớn hơn 20 MB."
+    "anim_error_logo_too_large": "Logo lớn hơn 20 MB.",
+    "anim_template_keyword": "Chữ khoá",
+    "anim_text_keyword": "Chữ khoá",
+    "anim_position": "Vị trí",
+    "anim_pos_top_left": "Trên trái",
+    "anim_pos_top_center": "Trên giữa",
+    "anim_pos_top_right": "Trên phải",
+    "anim_pos_middle_left": "Giữa trái",
+    "anim_pos_center": "Chính giữa",
+    "anim_pos_middle_right": "Giữa phải",
+    "anim_pos_bottom_left": "Dưới trái",
+    "anim_pos_bottom_center": "Dưới giữa",
+    "anim_pos_bottom_right": "Dưới phải",
+    "anim_anchor": "Hiện cùng",
+    "anim_anchor_free": "Tính từ đầu video",
+    "anim_anchor_shot": "Cảnh {{number}}",
+    "anim_offset": "Giây thứ trong cảnh",
+    "anim_warn_shot_removed": "Cảnh của lớp phủ đã bị xoá nên giờ nó tính từ đầu video.",
+    "anim_warn_after_end": "Lớp phủ bắt đầu sau khi video kết thúc nên sẽ không hiện.",
+    "corner_top_center": "Trên giữa",
+    "corner_bottom_center": "Dưới giữa"
   }
 }

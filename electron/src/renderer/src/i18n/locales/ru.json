@@ -4114,6 +4114,26 @@
     "anim_replay": "Повторить",
     "anim_logo_needed": "Сначала добавьте логотип в разделе «Логотип».",
     "anim_error_logo_missing": "Не удалось прочитать логотип. Добавьте его снова в разделе «Логотип».",
-    "anim_error_logo_too_large": "Логотип больше 20 МБ."
+    "anim_error_logo_too_large": "Логотип больше 20 МБ.",
+    "anim_template_keyword": "Ключевое слово",
+    "anim_text_keyword": "Ключевое слово",
+    "anim_position": "Положение",
+    "anim_pos_top_left": "Слева сверху",
+    "anim_pos_top_center": "Сверху по центру",
+    "anim_pos_top_right": "Справа сверху",
+    "anim_pos_middle_left": "Слева посередине",
+    "anim_pos_center": "По центру",
+    "anim_pos_middle_right": "Справа посередине",
+    "anim_pos_bottom_left": "Слева снизу",
+    "anim_pos_bottom_center": "Снизу по центру",
+    "anim_pos_bottom_right": "Справа снизу",
+    "anim_anchor": "Показать с",
+    "anim_anchor_free": "С начала видео",
+    "anim_anchor_shot": "Кадр {{number}}",
+    "anim_offset": "Секунды от начала кадра",
+    "anim_warn_shot_removed": "Его кадр удалён, поэтому слой теперь отсчитывается от начала видео.",
+    "anim_warn_after_end": "Слой начинается после конца видео и не будет показан.",
+    "corner_top_center": "Сверху по центру",
+    "corner_bottom_center": "Снизу по центру"
   }
 }

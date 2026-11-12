@@ -23,6 +23,7 @@ export const PROMO_TEMPLATES = [
   'search_bar',
   'contact_card',
   'logo_reveal',
+  'keyword',
 ] as const;
 export type PromoTemplateId = (typeof PROMO_TEMPLATES)[number];
 
@@ -50,6 +51,7 @@ export const TEMPLATE_SPECS: Record<
   search_bar: { fonts: ['inter'], lines: false, logo: false },
   contact_card: { fonts: ['oswald', 'inter'], lines: true, logo: false },
   logo_reveal: { fonts: ['oswald', 'inter'], lines: false, logo: true },
+  keyword: { fonts: ['inter', 'dancing'], lines: false, logo: false },
 };
 
 export interface PromoTemplateInput {
@@ -66,7 +68,23 @@ export interface PromoTemplateInput {
   duration: number;
   width: number;
   height: number;
+  /** Where the text sits in the frame. */
+  position: PromoPosition;
 }
+
+/** A 3×3 grid: row (top, middle, bottom) by column (left, center, right). */
+export const POSITIONS = [
+  'top_left',
+  'top_center',
+  'top_right',
+  'middle_left',
+  'center',
+  'middle_right',
+  'bottom_left',
+  'bottom_center',
+  'bottom_right',
+] as const;
+export type PromoPosition = (typeof POSITIONS)[number];
 
 export const MAX_TEMPLATE_TEXT = 80;
 export const MAX_TEMPLATE_LINES = 3;
@@ -155,6 +173,29 @@ export function parseTemplateInput(raw: unknown): PromoTemplateInput {
     duration: Math.round(duration * 100) / 100,
     width: side(input.width, 'width'),
     height: side(input.height, 'height'),
+    position: position(input.position),
+  };
+}
+
+function position(value: unknown): PromoPosition {
+  if (value === undefined) return 'center';
+  if (!POSITIONS.includes(value as PromoPosition)) throw new TemplateInputError('position');
+  return value as PromoPosition;
+}
+
+/** Flex placement and text alignment of the column for a grid position. */
+function placement(at: PromoPosition) {
+  const [row, column] = at === 'center' ? ['middle', 'center'] : at.split('_');
+  const flex = (side: string) =>
+    side === 'top' || side === 'left'
+      ? 'flex-start'
+      : side === 'bottom' || side === 'right'
+        ? 'flex-end'
+        : 'center';
+  return {
+    justify: flex(row),
+    align: flex(column),
+    text: column === 'left' ? 'left' : column === 'right' ? 'right' : 'center',
   };
 }
 
@@ -185,7 +226,14 @@ interface Frame {
 }
 
 /** Average glyph advance in em per text style; enough to estimate wrapping. */
-const GLYPH_EM = { heavy: 0.64, body: 0.58, script: 0.52, caps: 0.62, wideCaps: 0.78 } as const;
+const GLYPH_EM = {
+  heavyCaps: 0.74,
+  heavy: 0.64,
+  body: 0.58,
+  script: 0.52,
+  caps: 0.62,
+  wideCaps: 0.78,
+} as const;
 /** Share of a box a line really fills before it wraps. */
 const LINE_FILL = 0.88;
 
@@ -251,14 +299,15 @@ const columnBox = (input: PromoTemplateInput) => input.width * 0.88;
  */
 function page(frame: Frame, css: string, body: string, fontsCss: string): string {
   const { width, height, duration } = frame.input;
+  const at = placement(frame.input.position);
   return `<!doctype html>
 <html><head><meta charset="utf-8">
 ${fontsCss}
 <style>
 html,body{margin:0;padding:0;background:transparent}
 #stage{position:relative;width:${px(width)};height:${px(height)};overflow:hidden}
-#column{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:${px(frame.base * 0.03)};padding:0 6%;box-sizing:border-box;text-align:center;
+#column{position:absolute;inset:0;display:flex;flex-direction:column;align-items:${at.align};justify-content:${at.justify};
+  gap:${px(frame.base * 0.03)};padding:${px(height * 0.07)} 6%;box-sizing:border-box;text-align:${at.text};
   overflow-wrap:anywhere;animation:out 0.5s ${s(frame.exit)} ease-in forwards}
 @keyframes out{to{opacity:0}}
 ${css}
@@ -527,6 +576,60 @@ function logoReveal({ input, base, exit }: Frame, logoSrc: string) {
   return { css, body, height: fit.height };
 }
 
+/**
+ * A bold uppercase keyword with a handwritten line over its lower edge, the
+ * caption style of architecture and lifestyle ads ("QUY TRÌNH / thi công").
+ */
+function keyword({ input, base, exit }: Frame) {
+  const box = columnBox(input);
+  // A keyword reads best on one line; it wraps (up to four lines) only when
+  // one line would set it smaller than ONE_LINE_FLOOR of the frame.
+  const ONE_LINE_FLOOR = 0.09;
+  const column = (maxLines: number) =>
+    fitColumn(
+      [
+        {
+          text: input.title.toUpperCase(),
+          preferred: base * 0.16,
+          maxLines,
+          glyph: GLYPH_EM.heavyCaps,
+          lineHeight: 0.95,
+          box,
+        },
+        {
+          text: input.subtitle,
+          preferred: base * 0.085,
+          maxLines: 2,
+          glyph: GLYPH_EM.script,
+          lineHeight: 1,
+          box,
+        },
+      ],
+      0,
+      usable(input),
+    );
+  const single = column(1);
+  const fit = single.sizes[0] >= base * ONE_LINE_FLOOR ? single : column(4);
+  const size = fit.sizes[0];
+  const accent = Math.min(fit.sizes[1], size * 0.6);
+  const write = Math.min(1, Math.max(0.4, exit - 0.9));
+  const css = `
+#word{font:900 ${px(size)}/0.95 ${family('inter')};text-transform:uppercase;letter-spacing:0.01em;color:${input.color};
+  text-shadow:0 ${px(size * 0.03)} ${px(size * 0.18)} rgba(0,0,0,.35);animation:pop 0.6s cubic-bezier(.2,1.3,.4,1) both}
+#accent{font:700 ${px(accent)}/1 ${family('dancing')};color:${input.glow};margin-top:${px(-accent * 0.42)};
+  padding:0 ${px(accent * 0.3)};text-shadow:0 ${px(accent * 0.04)} ${px(accent * 0.2)} rgba(0,0,0,.45);
+  animation:reveal ${s(write)} 0.35s cubic-bezier(.45,.05,.55,.95) both}
+@keyframes pop{from{transform:scale(1.25);opacity:0;filter:blur(${px(size * 0.08)})}to{transform:none;opacity:1;filter:none}}
+@keyframes reveal{from{clip-path:inset(-30% 100% -30% 0)}to{clip-path:inset(-30% -10% -30% 0)}}`;
+  const body =
+    `<div id="word">${escapeHtml(input.title)}</div>` +
+    (input.subtitle
+      ? `
+<div id="accent">${escapeHtml(input.subtitle)}</div>`
+      : '');
+  return { css, body, height: fit.height };
+}
+
 export interface TemplateAssets {
   /** `<link>` or inline `<style>` with the template's `@font-face` rules. */
   fontsCss: string;
@@ -552,6 +655,8 @@ function build(input: PromoTemplateInput, logoSrc: string) {
         return contactCard(frame);
       case 'logo_reveal':
         return logoReveal(frame, logoSrc);
+      case 'keyword':
+        return keyword(frame);
     }
   })();
   return { frame, part };

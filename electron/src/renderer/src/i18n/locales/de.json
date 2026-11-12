@@ -4108,6 +4108,26 @@
     "anim_replay": "Erneut abspielen",
     "anim_logo_needed": "Füge zuerst im Bereich Logo ein Logo hinzu.",
     "anim_error_logo_missing": "Das Logo konnte nicht gelesen werden. Füge es im Bereich Logo erneut hinzu.",
-    "anim_error_logo_too_large": "Das Logo ist größer als 20 MB."
+    "anim_error_logo_too_large": "Das Logo ist größer als 20 MB.",
+    "anim_template_keyword": "Schlagwort",
+    "anim_text_keyword": "Schlagwort",
+    "anim_position": "Position",
+    "anim_pos_top_left": "Oben links",
+    "anim_pos_top_center": "Oben mittig",
+    "anim_pos_top_right": "Oben rechts",
+    "anim_pos_middle_left": "Mitte links",
+    "anim_pos_center": "Mitte",
+    "anim_pos_middle_right": "Mitte rechts",
+    "anim_pos_bottom_left": "Unten links",
+    "anim_pos_bottom_center": "Unten mittig",
+    "anim_pos_bottom_right": "Unten rechts",
+    "anim_anchor": "Zeigen mit",
+    "anim_anchor_free": "Ab Videobeginn",
+    "anim_anchor_shot": "Einstellung {{number}}",
+    "anim_offset": "Sekunden in der Einstellung",
+    "anim_warn_shot_removed": "Die Einstellung wurde entfernt, daher zählt die Ebene jetzt ab Videobeginn.",
+    "anim_warn_after_end": "Die Ebene beginnt nach dem Videoende und wird nicht angezeigt.",
+    "corner_top_center": "Oben mittig",
+    "corner_bottom_center": "Unten mittig"
   }
 }

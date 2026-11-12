@@ -4108,6 +4108,26 @@
     "anim_replay": "Yeniden oynat",
     "anim_logo_needed": "Önce Logo bölümünde bir logo ekleyin.",
     "anim_error_logo_missing": "Logo okunamadı. Logo bölümünde yeniden ekleyin.",
-    "anim_error_logo_too_large": "Logo 20 MB'tan büyük."
+    "anim_error_logo_too_large": "Logo 20 MB'tan büyük.",
+    "anim_template_keyword": "Anahtar kelime",
+    "anim_text_keyword": "Anahtar kelime",
+    "anim_position": "Konum",
+    "anim_pos_top_left": "Sol üst",
+    "anim_pos_top_center": "Üst orta",
+    "anim_pos_top_right": "Sağ üst",
+    "anim_pos_middle_left": "Orta sol",
+    "anim_pos_center": "Orta",
+    "anim_pos_middle_right": "Orta sağ",
+    "anim_pos_bottom_left": "Sol alt",
+    "anim_pos_bottom_center": "Alt orta",
+    "anim_pos_bottom_right": "Sağ alt",
+    "anim_anchor": "Birlikte göster",
+    "anim_anchor_free": "Video başından itibaren",
+    "anim_anchor_shot": "Çekim {{number}}",
+    "anim_offset": "Çekim içindeki saniye",
+    "anim_warn_shot_removed": "Çekimi kaldırıldı, bu yüzden artık video başından sayılıyor.",
+    "anim_warn_after_end": "Video bittikten sonra başlıyor, bu yüzden görünmeyecek.",
+    "corner_top_center": "Üst orta",
+    "corner_bottom_center": "Alt orta"
   }
 }

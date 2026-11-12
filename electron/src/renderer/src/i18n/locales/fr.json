@@ -4110,6 +4110,26 @@
     "anim_replay": "Rejouer",
     "anim_logo_needed": "Ajoutez d’abord un logo dans la section Logo.",
     "anim_error_logo_missing": "Impossible de lire le logo. Ajoutez-le de nouveau dans la section Logo.",
-    "anim_error_logo_too_large": "Le logo dépasse 20 Mo."
+    "anim_error_logo_too_large": "Le logo dépasse 20 Mo.",
+    "anim_template_keyword": "Mot clé",
+    "anim_text_keyword": "Mot clé",
+    "anim_position": "Position",
+    "anim_pos_top_left": "En haut à gauche",
+    "anim_pos_top_center": "En haut au centre",
+    "anim_pos_top_right": "En haut à droite",
+    "anim_pos_middle_left": "Au milieu à gauche",
+    "anim_pos_center": "Centre",
+    "anim_pos_middle_right": "Au milieu à droite",
+    "anim_pos_bottom_left": "En bas à gauche",
+    "anim_pos_bottom_center": "En bas au centre",
+    "anim_pos_bottom_right": "En bas à droite",
+    "anim_anchor": "Afficher avec",
+    "anim_anchor_free": "Depuis le début de la vidéo",
+    "anim_anchor_shot": "Plan {{number}}",
+    "anim_offset": "Secondes dans le plan",
+    "anim_warn_shot_removed": "Son plan a été retiré : il compte maintenant depuis le début de la vidéo.",
+    "anim_warn_after_end": "Il commence après la fin de la vidéo et ne s’affichera pas.",
+    "corner_top_center": "En haut au centre",
+    "corner_bottom_center": "En bas au centre"
   }
 }

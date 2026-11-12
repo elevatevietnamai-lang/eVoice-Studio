@@ -4116,6 +4116,26 @@
     "anim_replay": "إعادة التشغيل",
     "anim_logo_needed": "أضف شعارًا في قسم الشعار أولًا.",
     "anim_error_logo_missing": "تعذّرت قراءة الشعار. أضفه مجددًا في قسم الشعار.",
-    "anim_error_logo_too_large": "حجم الشعار أكبر من 20 ميغابايت."
+    "anim_error_logo_too_large": "حجم الشعار أكبر من 20 ميغابايت.",
+    "anim_template_keyword": "كلمة مفتاحية",
+    "anim_text_keyword": "كلمة مفتاحية",
+    "anim_position": "الموضع",
+    "anim_pos_top_left": "أعلى اليسار",
+    "anim_pos_top_center": "أعلى الوسط",
+    "anim_pos_top_right": "أعلى اليمين",
+    "anim_pos_middle_left": "وسط اليسار",
+    "anim_pos_center": "الوسط",
+    "anim_pos_middle_right": "وسط اليمين",
+    "anim_pos_bottom_left": "أسفل اليسار",
+    "anim_pos_bottom_center": "أسفل الوسط",
+    "anim_pos_bottom_right": "أسفل اليمين",
+    "anim_anchor": "الإظهار مع",
+    "anim_anchor_free": "من بداية الفيديو",
+    "anim_anchor_shot": "اللقطة {{number}}",
+    "anim_offset": "الثواني داخل اللقطة",
+    "anim_warn_shot_removed": "أُزيلت لقطتها، لذا تُحسب الآن من بداية الفيديو.",
+    "anim_warn_after_end": "تبدأ بعد انتهاء الفيديو، لذا لن تظهر.",
+    "corner_top_center": "أعلى الوسط",
+    "corner_bottom_center": "أسفل الوسط"
   }
 }

@@ -13,7 +13,16 @@ import { getBridge } from '@/components/bridge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  anchorIndex,
   MAX_OVERLAYS,
+  overlayProblem,
   MAX_PROGRAM_SECONDS,
   SHAPE_SIZE,
   type PromoDraft,
@@ -21,6 +30,22 @@ import {
 } from './promo-model';
 
 type TemplateId = PromoOverlayInput['template'];
+type Position = NonNullable<PromoOverlayInput['position']>;
+
+/** Row by row, as the 3×3 picker shows them. */
+const POSITIONS: readonly Position[] = [
+  'top_left',
+  'top_center',
+  'top_right',
+  'middle_left',
+  'center',
+  'middle_right',
+  'bottom_left',
+  'bottom_center',
+  'bottom_right',
+];
+/** Select value for an overlay timed from the video start. */
+const FREE = '__free';
 
 /**
  * Mirrors TEMPLATE_SPECS in main/promo-templates.ts, plus starting colours.
@@ -30,6 +55,7 @@ const TEMPLATE_INFO: Record<
   TemplateId,
   { lines: boolean; logo: boolean; color: string; accent: string }
 > = {
+  keyword: { lines: false, logo: false, color: '#ffffff', accent: '#ffffff' },
   glow_title: { lines: false, logo: false, color: '#ffffff', accent: '#ffd400' },
   handwriting: { lines: false, logo: false, color: '#ffffff', accent: '#ffd400' },
   search_bar: { lines: false, logo: false, color: '#202124', accent: '#1a73e8' },
@@ -74,6 +100,81 @@ const PREVIEW_WIDTH = { vertical: 180, square: 260, landscape: 320 } as const;
  * Live preview: the template page in a sandboxed frame with no scripts and
  * no origin. Fonts and logo are inlined by main, so it needs nothing else.
  */
+function PositionPicker({
+  value,
+  disabled,
+  onChange,
+}: {
+  value: Position;
+  disabled: boolean;
+  onChange: (position: Position) => void;
+}) {
+  const { t } = useTranslation();
+  return (
+    <div className="space-y-1 text-xs">
+      <span className="text-muted-foreground">{t('promo.anim_position')}</span>
+      <div
+        className="grid w-fit grid-cols-3 gap-0.5"
+        role="group"
+        aria-label={t('promo.anim_position')}
+      >
+        {POSITIONS.map((position) => (
+          <button
+            key={position}
+            type="button"
+            aria-label={t(`promo.anim_pos_${position}`)}
+            aria-pressed={value === position}
+            disabled={disabled}
+            onClick={() => onChange(position)}
+            className={`size-6 rounded-sm border border-border/60 ${value === position ? 'bg-primary' : 'bg-muted/40 hover:bg-muted'}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Which shot an overlay rides on, or the video start. */
+function AnchorSelect({
+  draft,
+  value,
+  disabled,
+  onChange,
+}: {
+  draft: PromoDraft;
+  value: string;
+  disabled: boolean;
+  onChange: (value: string) => void;
+}) {
+  const { t } = useTranslation();
+  const items = [
+    { value: FREE, label: t('promo.anim_anchor_free') },
+    ...draft.shots.map((shot, index) => ({
+      value: shot.key,
+      label: t('promo.anim_anchor_shot', { number: index + 1 }),
+    })),
+  ];
+  return (
+    <Select
+      items={items}
+      value={items.some((item) => item.value === value) ? value : FREE}
+      disabled={disabled}
+      onValueChange={(next) => onChange(String(next))}
+    >
+      <SelectTrigger aria-label={t('promo.anim_anchor')} className="h-8 w-full">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {items.map((item) => (
+          <SelectItem key={item.value} value={item.value}>
+            {item.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
 function TemplatePreview({
   html,
   duration,
@@ -150,12 +251,14 @@ export function AnimatedOverlays({
   const bridge = getBridge();
   const [browser, setBrowser] = useState<PromoBrowserState | null>(null);
   const [confirming, setConfirming] = useState(false);
-  const [template, setTemplate] = useState<TemplateId>('glow_title');
+  const [template, setTemplate] = useState<TemplateId>('keyword');
+  const [position, setPosition] = useState<Position>('center');
+  const [anchor, setAnchor] = useState<string>(FREE);
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
   const [lines, setLines] = useState<string[]>(['', '', '']);
-  const [color, setColor] = useState('#ffffff');
-  const [glow, setGlow] = useState('#ffd400');
+  const [color, setColor] = useState(TEMPLATE_INFO.keyword.color);
+  const [glow, setGlow] = useState(TEMPLATE_INFO.keyword.accent);
   const [duration, setDuration] = useState(3);
   const [start, setStart] = useState(0);
   const [progress, setProgress] = useState<number | null>(null);
@@ -178,8 +281,9 @@ export function AnimatedOverlays({
       glow,
       duration,
       ...size,
+      position,
     }),
-    [template, title, subtitle, lines, logoId, color, glow, duration, size, spec.lines],
+    [template, title, subtitle, lines, logoId, color, glow, duration, size, spec.lines, position],
   );
 
   useEffect(() => {
@@ -253,6 +357,7 @@ export function AnimatedOverlays({
           key: nextKey(),
           media: result.media,
           start,
+          shotKey: draft.shots.some((shot) => shot.key === anchor) ? anchor : null,
           label: input.title || t(`promo.anim_template_${template}`),
         });
       } else if (result.code !== 'cancelled') {
@@ -409,7 +514,10 @@ export function AnimatedOverlays({
               onChange={(event) => setDuration(clampNumber(event.target.value, 1, 30))}
             />
           </Field>
-          <Field label={t('promo.anim_start')}>
+          <Field label={t('promo.anim_anchor')}>
+            <AnchorSelect draft={draft} value={anchor} disabled={busy} onChange={setAnchor} />
+          </Field>
+          <Field label={t(anchor === FREE ? 'promo.anim_start' : 'promo.anim_offset')}>
             <Input
               type="number"
               min={0}
@@ -422,6 +530,9 @@ export function AnimatedOverlays({
               }
             />
           </Field>
+          <div className="col-span-2">
+            <PositionPicker value={position} disabled={busy} onChange={setPosition} />
+          </div>
           {spec.logo && !draft.logo && (
             <p className="col-span-2 text-xs text-muted-foreground">
               {t('promo.anim_logo_needed')}
@@ -467,35 +578,52 @@ export function AnimatedOverlays({
         <div className="space-y-1">
           <h3 className="text-xs font-medium">{t('promo.anim_overlays')}</h3>
           <ul className="space-y-1">
-            {draft.overlays.map((overlay) => (
-              <li key={overlay.key} className="flex items-center gap-2 text-xs">
-                <span className="min-w-0 flex-1 truncate">{overlay.label}</span>
-                <Input
-                  type="number"
-                  min={0}
-                  max={MAX_PROGRAM_SECONDS}
-                  step={0.1}
-                  value={overlay.start}
-                  disabled={busy}
-                  aria-label={t('promo.anim_start')}
-                  className="h-7 w-20"
-                  onChange={(event) =>
-                    onChange(overlay.key, {
-                      start: clampNumber(event.target.value, 0, MAX_PROGRAM_SECONDS),
-                    })
-                  }
-                />
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  aria-label={t('promo.remove')}
-                  disabled={busy}
-                  onClick={() => onRemove(overlay.key)}
-                >
-                  <Trash2Icon />
-                </Button>
-              </li>
-            ))}
+            {draft.overlays.map((overlay) => {
+              const anchored = anchorIndex(draft, overlay) >= 0;
+              const problem = overlayProblem(draft, overlay);
+              return (
+                <li key={overlay.key} className="space-y-0.5 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="min-w-0 flex-1 truncate">{overlay.label}</span>
+                    <div className="w-32">
+                      <AnchorSelect
+                        draft={draft}
+                        value={anchored ? (overlay.shotKey ?? FREE) : FREE}
+                        disabled={busy}
+                        onChange={(value) =>
+                          onChange(overlay.key, { shotKey: value === FREE ? null : value })
+                        }
+                      />
+                    </div>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={MAX_PROGRAM_SECONDS}
+                      step={0.1}
+                      value={overlay.start}
+                      disabled={busy}
+                      aria-label={t(anchored ? 'promo.anim_offset' : 'promo.anim_start')}
+                      className="h-7 w-20"
+                      onChange={(event) =>
+                        onChange(overlay.key, {
+                          start: clampNumber(event.target.value, 0, MAX_PROGRAM_SECONDS),
+                        })
+                      }
+                    />
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={t('promo.remove')}
+                      disabled={busy}
+                      onClick={() => onRemove(overlay.key)}
+                    >
+                      <Trash2Icon />
+                    </Button>
+                  </div>
+                  {problem && <p className="text-destructive">{t(`promo.anim_warn_${problem}`)}</p>}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

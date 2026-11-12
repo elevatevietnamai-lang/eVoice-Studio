@@ -4114,6 +4114,26 @@
     "anim_replay": "Повторити",
     "anim_logo_needed": "Спершу додайте логотип у розділі «Логотип».",
     "anim_error_logo_missing": "Не вдалося прочитати логотип. Додайте його знову в розділі «Логотип».",
-    "anim_error_logo_too_large": "Логотип більший за 20 МБ."
+    "anim_error_logo_too_large": "Логотип більший за 20 МБ.",
+    "anim_template_keyword": "Ключове слово",
+    "anim_text_keyword": "Ключове слово",
+    "anim_position": "Розташування",
+    "anim_pos_top_left": "Ліворуч угорі",
+    "anim_pos_top_center": "Угорі по центру",
+    "anim_pos_top_right": "Праворуч угорі",
+    "anim_pos_middle_left": "Ліворуч посередині",
+    "anim_pos_center": "По центру",
+    "anim_pos_middle_right": "Праворуч посередині",
+    "anim_pos_bottom_left": "Ліворуч унизу",
+    "anim_pos_bottom_center": "Унизу по центру",
+    "anim_pos_bottom_right": "Праворуч унизу",
+    "anim_anchor": "Показати з",
+    "anim_anchor_free": "Від початку відео",
+    "anim_anchor_shot": "Кадр {{number}}",
+    "anim_offset": "Секунди від початку кадру",
+    "anim_warn_shot_removed": "Його кадр вилучено, тому шар тепер рахується від початку відео.",
+    "anim_warn_after_end": "Шар починається після кінця відео і не буде показаний.",
+    "corner_top_center": "Угорі по центру",
+    "corner_bottom_center": "Унизу по центру"
   }
 }

@@ -10,6 +10,8 @@ import {
   shotFor,
   draftProblem,
   MAX_OVERLAYS,
+  overlayProblem,
+  timeline,
   SHAPE_SIZE,
   type PromoMedia,
 } from './promo-model';
@@ -135,5 +137,52 @@ describe('promo model', () => {
   it('sizes overlays like the backend output', () => {
     expect(SHAPE_SIZE.vertical).toEqual({ width: 1080, height: 1920 });
     expect(SHAPE_SIZE.landscape).toEqual({ width: 1920, height: 1080 });
+  });
+
+  it('anchors overlays to shots by key, so reordering carries them along', () => {
+    const draft = emptyDraft();
+    draft.shots = [shotFor(video, 'a'), shotFor(video, 'b'), shotFor(video, 'c')];
+    const media = { ...video, id: 'aaaaaaaaaaaaaaaa.webm' };
+    draft.overlays = [
+      { key: 'o1', media, start: 0.4, label: 'X', shotKey: 'c' },
+      { key: 'o2', media, start: 2, label: 'Y' },
+    ];
+    expect(renderRequest(draft).overlays).toEqual([
+      { media_id: media.id, start: 0.4, shot: 2 },
+      { media_id: media.id, start: 2 },
+    ]);
+    draft.shots = moveShot(draft.shots, 2, -1);
+    expect(renderRequest(draft).overlays[0]).toEqual({ media_id: media.id, start: 0.4, shot: 1 });
+  });
+
+  it('flags an overlay whose shot was removed or that starts after the end', () => {
+    const draft = emptyDraft();
+    draft.shots = [shotFor(video, 'a'), shotFor(video, 'b')];
+    const media = { ...video, id: 'aaaaaaaaaaaaaaaa.webm' };
+    const { starts, length } = timeline(draft);
+    expect(starts[0]).toBe(0);
+    expect(
+      overlayProblem(draft, { key: 'o', media, start: 0.1, label: '', shotKey: 'b' }),
+    ).toBeNull();
+    expect(overlayProblem(draft, { key: 'o', media, start: 0, label: '', shotKey: 'gone' })).toBe(
+      'shot_removed',
+    );
+    expect(overlayProblem(draft, { key: 'o', media, start: length + 1, label: '' })).toBe(
+      'after_end',
+    );
+    expect(
+      overlayProblem(draft, {
+        key: 'o',
+        media,
+        start: length - starts[1],
+        label: '',
+        shotKey: 'b',
+      }),
+    ).toBe('after_end');
+    const fallback = renderRequest({
+      ...draft,
+      overlays: [{ key: 'o', media, start: 1, label: '', shotKey: 'gone' }],
+    }).overlays[0];
+    expect(fallback).toEqual({ media_id: media.id, start: 1 });
   });
 });

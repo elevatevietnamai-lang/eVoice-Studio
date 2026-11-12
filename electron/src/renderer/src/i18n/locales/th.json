@@ -4108,6 +4108,26 @@
     "anim_replay": "เล่นอีกครั้ง",
     "anim_logo_needed": "เพิ่มโลโก้ในส่วนโลโก้ก่อน",
     "anim_error_logo_missing": "อ่านโลโก้ไม่ได้ เพิ่มอีกครั้งในส่วนโลโก้",
-    "anim_error_logo_too_large": "โลโก้มีขนาดใหญ่กว่า 20 MB"
+    "anim_error_logo_too_large": "โลโก้มีขนาดใหญ่กว่า 20 MB",
+    "anim_template_keyword": "คำสำคัญ",
+    "anim_text_keyword": "คำสำคัญ",
+    "anim_position": "ตำแหน่ง",
+    "anim_pos_top_left": "บนซ้าย",
+    "anim_pos_top_center": "บนกลาง",
+    "anim_pos_top_right": "บนขวา",
+    "anim_pos_middle_left": "กลางซ้าย",
+    "anim_pos_center": "กึ่งกลาง",
+    "anim_pos_middle_right": "กลางขวา",
+    "anim_pos_bottom_left": "ล่างซ้าย",
+    "anim_pos_bottom_center": "ล่างกลาง",
+    "anim_pos_bottom_right": "ล่างขวา",
+    "anim_anchor": "แสดงพร้อม",
+    "anim_anchor_free": "นับจากต้นวิดีโอ",
+    "anim_anchor_shot": "ช็อตที่ {{number}}",
+    "anim_offset": "วินาทีในช็อต",
+    "anim_warn_shot_removed": "ช็อตของเลเยอร์ถูกลบ จึงนับจากต้นวิดีโอแทน",
+    "anim_warn_after_end": "เลเยอร์เริ่มหลังวิดีโอจบ จึงจะไม่แสดง",
+    "corner_top_center": "บนกลาง",
+    "corner_bottom_center": "ล่างกลาง"
   }
 }

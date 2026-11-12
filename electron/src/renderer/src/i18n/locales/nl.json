@@ -4108,6 +4108,26 @@
     "anim_replay": "Opnieuw afspelen",
     "anim_logo_needed": "Voeg eerst een logo toe in het onderdeel Logo.",
     "anim_error_logo_missing": "Het logo kon niet worden gelezen. Voeg het opnieuw toe in het onderdeel Logo.",
-    "anim_error_logo_too_large": "Het logo is groter dan 20 MB."
+    "anim_error_logo_too_large": "Het logo is groter dan 20 MB.",
+    "anim_template_keyword": "Trefwoord",
+    "anim_text_keyword": "Trefwoord",
+    "anim_position": "Positie",
+    "anim_pos_top_left": "Linksboven",
+    "anim_pos_top_center": "Midden boven",
+    "anim_pos_top_right": "Rechtsboven",
+    "anim_pos_middle_left": "Links midden",
+    "anim_pos_center": "Midden",
+    "anim_pos_middle_right": "Rechts midden",
+    "anim_pos_bottom_left": "Linksonder",
+    "anim_pos_bottom_center": "Midden onder",
+    "anim_pos_bottom_right": "Rechtsonder",
+    "anim_anchor": "Tonen bij",
+    "anim_anchor_free": "Vanaf het begin van de video",
+    "anim_anchor_shot": "Shot {{number}}",
+    "anim_offset": "Seconden in het shot",
+    "anim_warn_shot_removed": "Het shot is verwijderd, dus de laag telt nu vanaf het begin van de video.",
+    "anim_warn_after_end": "De laag begint na het einde van de video en wordt niet getoond.",
+    "corner_top_center": "Midden boven",
+    "corner_bottom_center": "Midden onder"
   }
 }

@@ -4108,6 +4108,26 @@
     "anim_replay": "다시 재생",
     "anim_logo_needed": "먼저 로고 섹션에서 로고를 추가하세요.",
     "anim_error_logo_missing": "로고를 읽을 수 없습니다. 로고 섹션에서 다시 추가하세요.",
-    "anim_error_logo_too_large": "로고가 20MB보다 큽니다."
+    "anim_error_logo_too_large": "로고가 20MB보다 큽니다.",
+    "anim_template_keyword": "키워드",
+    "anim_text_keyword": "키워드",
+    "anim_position": "위치",
+    "anim_pos_top_left": "왼쪽 위",
+    "anim_pos_top_center": "가운데 위",
+    "anim_pos_top_right": "오른쪽 위",
+    "anim_pos_middle_left": "왼쪽 가운데",
+    "anim_pos_center": "가운데",
+    "anim_pos_middle_right": "오른쪽 가운데",
+    "anim_pos_bottom_left": "왼쪽 아래",
+    "anim_pos_bottom_center": "가운데 아래",
+    "anim_pos_bottom_right": "오른쪽 아래",
+    "anim_anchor": "함께 표시",
+    "anim_anchor_free": "영상 시작부터",
+    "anim_anchor_shot": "{{number}}번 샷",
+    "anim_offset": "샷 안의 초",
+    "anim_warn_shot_removed": "샷이 삭제되어 이제 영상 시작부터 계산합니다.",
+    "anim_warn_after_end": "영상이 끝난 뒤에 시작하므로 표시되지 않습니다.",
+    "corner_top_center": "가운데 위",
+    "corner_bottom_center": "가운데 아래"
   }
 }

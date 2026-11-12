@@ -4108,6 +4108,26 @@
     "anim_replay": "Spela igen",
     "anim_logo_needed": "Lägg först till en logotyp under Logotyp.",
     "anim_error_logo_missing": "Logotypen kunde inte läsas. Lägg till den igen under Logotyp.",
-    "anim_error_logo_too_large": "Logotypen är större än 20 MB."
+    "anim_error_logo_too_large": "Logotypen är större än 20 MB.",
+    "anim_template_keyword": "Nyckelord",
+    "anim_text_keyword": "Nyckelord",
+    "anim_position": "Position",
+    "anim_pos_top_left": "Uppe till vänster",
+    "anim_pos_top_center": "Uppe i mitten",
+    "anim_pos_top_right": "Uppe till höger",
+    "anim_pos_middle_left": "Mitten till vänster",
+    "anim_pos_center": "Mitten",
+    "anim_pos_middle_right": "Mitten till höger",
+    "anim_pos_bottom_left": "Nere till vänster",
+    "anim_pos_bottom_center": "Nere i mitten",
+    "anim_pos_bottom_right": "Nere till höger",
+    "anim_anchor": "Visa med",
+    "anim_anchor_free": "Från videons början",
+    "anim_anchor_shot": "Tagning {{number}}",
+    "anim_offset": "Sekunder in i tagningen",
+    "anim_warn_shot_removed": "Tagningen togs bort, så lagret räknas nu från videons början.",
+    "anim_warn_after_end": "Lagret börjar efter att videon slutat och visas inte.",
+    "corner_top_center": "Uppe i mitten",
+    "corner_bottom_center": "Nere i mitten"
   }
 }

@@ -4110,6 +4110,26 @@
     "anim_replay": "Riproduci di nuovo",
     "anim_logo_needed": "Aggiungi prima un logo nella sezione Logo.",
     "anim_error_logo_missing": "Impossibile leggere il logo. Aggiungilo di nuovo nella sezione Logo.",
-    "anim_error_logo_too_large": "Il logo supera i 20 MB."
+    "anim_error_logo_too_large": "Il logo supera i 20 MB.",
+    "anim_template_keyword": "Parola chiave",
+    "anim_text_keyword": "Parola chiave",
+    "anim_position": "Posizione",
+    "anim_pos_top_left": "In alto a sinistra",
+    "anim_pos_top_center": "In alto al centro",
+    "anim_pos_top_right": "In alto a destra",
+    "anim_pos_middle_left": "Al centro a sinistra",
+    "anim_pos_center": "Centro",
+    "anim_pos_middle_right": "Al centro a destra",
+    "anim_pos_bottom_left": "In basso a sinistra",
+    "anim_pos_bottom_center": "In basso al centro",
+    "anim_pos_bottom_right": "In basso a destra",
+    "anim_anchor": "Mostra con",
+    "anim_anchor_free": "Dall’inizio del video",
+    "anim_anchor_shot": "Inquadratura {{number}}",
+    "anim_offset": "Secondi nell’inquadratura",
+    "anim_warn_shot_removed": "La sua inquadratura è stata rimossa, quindi ora conta dall’inizio del video.",
+    "anim_warn_after_end": "Inizia dopo la fine del video, quindi non sarà visibile.",
+    "corner_top_center": "In alto al centro",
+    "corner_bottom_center": "In basso al centro"
   }
 }

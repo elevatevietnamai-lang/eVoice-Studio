@@ -4110,6 +4110,26 @@
     "anim_replay": "Repetir",
     "anim_logo_needed": "Añade primero un logotipo en la sección Logotipo.",
     "anim_error_logo_missing": "No se pudo leer el logotipo. Vuelve a añadirlo en la sección Logotipo.",
-    "anim_error_logo_too_large": "El logotipo supera los 20 MB."
+    "anim_error_logo_too_large": "El logotipo supera los 20 MB.",
+    "anim_template_keyword": "Palabra clave",
+    "anim_text_keyword": "Palabra clave",
+    "anim_position": "Posición",
+    "anim_pos_top_left": "Arriba a la izquierda",
+    "anim_pos_top_center": "Arriba al centro",
+    "anim_pos_top_right": "Arriba a la derecha",
+    "anim_pos_middle_left": "Centro a la izquierda",
+    "anim_pos_center": "Centro",
+    "anim_pos_middle_right": "Centro a la derecha",
+    "anim_pos_bottom_left": "Abajo a la izquierda",
+    "anim_pos_bottom_center": "Abajo al centro",
+    "anim_pos_bottom_right": "Abajo a la derecha",
+    "anim_anchor": "Mostrar con",
+    "anim_anchor_free": "Desde el inicio del vídeo",
+    "anim_anchor_shot": "Plano {{number}}",
+    "anim_offset": "Segundos dentro del plano",
+    "anim_warn_shot_removed": "Se quitó su plano, así que ahora cuenta desde el inicio del vídeo.",
+    "anim_warn_after_end": "Empieza después de que termina el vídeo, así que no se verá.",
+    "corner_top_center": "Arriba al centro",
+    "corner_bottom_center": "Abajo al centro"
   }
 }

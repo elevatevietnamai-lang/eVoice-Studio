@@ -4108,6 +4108,26 @@
     "anim_replay": "फिर से चलाएँ",
     "anim_logo_needed": "पहले लोगो सेक्शन में लोगो जोड़ें।",
     "anim_error_logo_missing": "लोगो पढ़ा नहीं जा सका। लोगो सेक्शन में उसे फिर से जोड़ें।",
-    "anim_error_logo_too_large": "लोगो 20 MB से बड़ा है।"
+    "anim_error_logo_too_large": "लोगो 20 MB से बड़ा है।",
+    "anim_template_keyword": "कीवर्ड",
+    "anim_text_keyword": "कीवर्ड",
+    "anim_position": "स्थिति",
+    "anim_pos_top_left": "ऊपर बाएँ",
+    "anim_pos_top_center": "ऊपर बीच में",
+    "anim_pos_top_right": "ऊपर दाएँ",
+    "anim_pos_middle_left": "बीच में बाएँ",
+    "anim_pos_center": "केंद्र",
+    "anim_pos_middle_right": "बीच में दाएँ",
+    "anim_pos_bottom_left": "नीचे बाएँ",
+    "anim_pos_bottom_center": "नीचे बीच में",
+    "anim_pos_bottom_right": "नीचे दाएँ",
+    "anim_anchor": "इसके साथ दिखाएँ",
+    "anim_anchor_free": "वीडियो की शुरुआत से",
+    "anim_anchor_shot": "शॉट {{number}}",
+    "anim_offset": "शॉट के भीतर सेकंड",
+    "anim_warn_shot_removed": "इसका शॉट हटा दिया गया, इसलिए अब यह वीडियो की शुरुआत से गिना जाता है।",
+    "anim_warn_after_end": "यह वीडियो खत्म होने के बाद शुरू होता है, इसलिए नहीं दिखेगा।",
+    "corner_top_center": "ऊपर बीच में",
+    "corner_bottom_center": "नीचे बीच में"
   }
 }

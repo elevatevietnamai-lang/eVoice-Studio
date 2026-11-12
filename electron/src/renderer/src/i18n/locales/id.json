@@ -4108,6 +4108,26 @@
     "anim_replay": "Putar ulang",
     "anim_logo_needed": "Tambahkan logo di bagian Logo terlebih dahulu.",
     "anim_error_logo_missing": "Logo tidak dapat dibaca. Tambahkan lagi di bagian Logo.",
-    "anim_error_logo_too_large": "Logo lebih besar dari 20 MB."
+    "anim_error_logo_too_large": "Logo lebih besar dari 20 MB.",
+    "anim_template_keyword": "Kata kunci",
+    "anim_text_keyword": "Kata kunci",
+    "anim_position": "Posisi",
+    "anim_pos_top_left": "Kiri atas",
+    "anim_pos_top_center": "Tengah atas",
+    "anim_pos_top_right": "Kanan atas",
+    "anim_pos_middle_left": "Kiri tengah",
+    "anim_pos_center": "Tengah",
+    "anim_pos_middle_right": "Kanan tengah",
+    "anim_pos_bottom_left": "Kiri bawah",
+    "anim_pos_bottom_center": "Tengah bawah",
+    "anim_pos_bottom_right": "Kanan bawah",
+    "anim_anchor": "Tampil bersama",
+    "anim_anchor_free": "Dari awal video",
+    "anim_anchor_shot": "Adegan {{number}}",
+    "anim_offset": "Detik di dalam adegan",
+    "anim_warn_shot_removed": "Adegannya dihapus, jadi kini dihitung dari awal video.",
+    "anim_warn_after_end": "Dimulai setelah video berakhir, jadi tidak akan tampil.",
+    "corner_top_center": "Tengah atas",
+    "corner_bottom_center": "Tengah bawah"
   }
 }

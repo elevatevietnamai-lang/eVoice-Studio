@@ -4108,6 +4108,26 @@
     "anim_replay": "もう一度再生",
     "anim_logo_needed": "先にロゴのセクションでロゴを追加してください。",
     "anim_error_logo_missing": "ロゴを読み込めませんでした。ロゴのセクションで追加し直してください。",
-    "anim_error_logo_too_large": "ロゴが 20 MB を超えています。"
+    "anim_error_logo_too_large": "ロゴが 20 MB を超えています。",
+    "anim_template_keyword": "キーワード",
+    "anim_text_keyword": "キーワード",
+    "anim_position": "位置",
+    "anim_pos_top_left": "左上",
+    "anim_pos_top_center": "上中央",
+    "anim_pos_top_right": "右上",
+    "anim_pos_middle_left": "左中央",
+    "anim_pos_center": "中央",
+    "anim_pos_middle_right": "右中央",
+    "anim_pos_bottom_left": "左下",
+    "anim_pos_bottom_center": "下中央",
+    "anim_pos_bottom_right": "右下",
+    "anim_anchor": "表示するタイミング",
+    "anim_anchor_free": "動画の最初から",
+    "anim_anchor_shot": "ショット {{number}}",
+    "anim_offset": "ショット内の秒数",
+    "anim_warn_shot_removed": "ショットが削除されたため、動画の最初から数えます。",
+    "anim_warn_after_end": "動画の終了後に始まるため、表示されません。",
+    "corner_top_center": "上中央",
+    "corner_bottom_center": "下中央"
   }
 }

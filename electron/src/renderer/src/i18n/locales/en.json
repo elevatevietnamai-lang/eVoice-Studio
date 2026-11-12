@@ -4108,6 +4108,26 @@
     "anim_replay": "Replay",
     "anim_logo_needed": "Add a logo in the Logo section first.",
     "anim_error_logo_missing": "The logo could not be read. Add it again in the Logo section.",
-    "anim_error_logo_too_large": "The logo is larger than 20 MB."
+    "anim_error_logo_too_large": "The logo is larger than 20 MB.",
+    "anim_template_keyword": "Keyword",
+    "anim_text_keyword": "Keyword",
+    "anim_position": "Position",
+    "anim_pos_top_left": "Top left",
+    "anim_pos_top_center": "Top centre",
+    "anim_pos_top_right": "Top right",
+    "anim_pos_middle_left": "Middle left",
+    "anim_pos_center": "Centre",
+    "anim_pos_middle_right": "Middle right",
+    "anim_pos_bottom_left": "Bottom left",
+    "anim_pos_bottom_center": "Bottom centre",
+    "anim_pos_bottom_right": "Bottom right",
+    "anim_anchor": "Show with",
+    "anim_anchor_free": "From the video start",
+    "anim_anchor_shot": "Shot {{number}}",
+    "anim_offset": "Seconds into the shot",
+    "anim_warn_shot_removed": "Its shot was removed, so it now counts from the video start.",
+    "anim_warn_after_end": "It starts after the video ends, so it will not show.",
+    "corner_top_center": "Top centre",
+    "corner_bottom_center": "Bottom centre"
   }
 }

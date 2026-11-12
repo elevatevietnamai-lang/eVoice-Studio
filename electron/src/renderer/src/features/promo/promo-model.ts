@@ -9,7 +9,14 @@
 export type PromoShape = 'vertical' | 'square' | 'landscape';
 export type PromoFit = 'cover' | 'contain';
 export type PromoMotion = 'none' | 'zoom_in' | 'zoom_out';
-export type PromoCorner = 'none' | 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right';
+export type PromoCorner =
+  | 'none'
+  | 'top_left'
+  | 'top_center'
+  | 'top_right'
+  | 'bottom_left'
+  | 'bottom_center'
+  | 'bottom_right';
 
 export const SHAPES: readonly PromoShape[] = ['vertical', 'square', 'landscape'];
 export const FPS_CHOICES = [30, 60] as const;
@@ -31,8 +38,10 @@ export type PromoLook = (typeof LOOKS)[number];
 export const CORNERS: readonly PromoCorner[] = [
   'none',
   'top_left',
+  'top_center',
   'top_right',
   'bottom_left',
+  'bottom_center',
   'bottom_right',
 ];
 
@@ -72,7 +81,13 @@ export interface PromoShot {
 export interface PromoOverlay {
   key: string;
   media: PromoMedia;
-  /** Seconds into the finished video. */
+  /**
+   * The shot it is anchored to, by key. The backend resolves the anchor after
+   * beat snapping, so the overlay stays on its shot when the cuts move.
+   * Missing (or the shot was removed): `start` counts from the video start.
+   */
+  shotKey?: string | null;
+  /** Seconds into its shot, or into the finished video when unanchored. */
   start: number;
   /** The title it shows, so the list stays readable. */
   label: string;
@@ -142,8 +157,11 @@ export function clampTransition(seconds: number, before: number, after: number):
   return Math.max(0, Math.min(seconds, limit));
 }
 
-/** Seconds of finished video, logo ending included. */
-export function programLength(draft: PromoDraft): number {
+/**
+ * When each shot (and the logo ending, last) starts to show, and the length of
+ * the finished video. Mirrors segment_starts in services/promo_video.py.
+ */
+export function timeline(draft: PromoDraft): { starts: number[]; length: number } {
   const segments: { duration: number; transition: PromoTransition; seconds: number }[] =
     draft.shots.map((shot) => ({
       duration: shot.duration,
@@ -153,9 +171,11 @@ export function programLength(draft: PromoDraft): number {
   const outro = draft.logo ? clamp(draft.outroSeconds, 0, MAX_OUTRO_SECONDS) : 0;
   if (outro > 0 && segments.length)
     segments.push({ duration: outro, transition: 'fade', seconds: OUTRO_FADE_SECONDS });
+  const starts: number[] = [];
   let total = 0;
   segments.forEach((segment, index) => {
     if (index === 0) {
+      starts.push(0);
       total = segment.duration;
       return;
     }
@@ -163,9 +183,36 @@ export function programLength(draft: PromoDraft): number {
       segment.transition === 'cut'
         ? 0
         : clampTransition(segment.seconds, segments[index - 1].duration, segment.duration);
+    starts.push(Math.round((total - overlap) * 1000) / 1000);
     total += segment.duration - overlap;
   });
-  return Math.round(total * 1000) / 1000;
+  return { starts, length: Math.round(total * 1000) / 1000 };
+}
+
+/** Seconds of finished video, logo ending included. */
+export function programLength(draft: PromoDraft): number {
+  return timeline(draft).length;
+}
+
+/** Index of the shot an overlay is anchored to, or -1. */
+export function anchorIndex(draft: PromoDraft, overlay: PromoOverlay): number {
+  return overlay.shotKey ? draft.shots.findIndex((shot) => shot.key === overlay.shotKey) : -1;
+}
+
+/**
+ * Something the user should know about an overlay before rendering: its shot
+ * was removed (it now counts from the video start), or it starts after the
+ * video ends (it will not show). Beat snapping can still move anchored ones.
+ */
+export function overlayProblem(
+  draft: PromoDraft,
+  overlay: PromoOverlay,
+): 'shot_removed' | 'after_end' | null {
+  const index = anchorIndex(draft, overlay);
+  if (overlay.shotKey && index < 0) return 'shot_removed';
+  const { starts, length } = timeline(draft);
+  const at = index >= 0 ? starts[index] + overlay.start : overlay.start;
+  return draft.shots.length && at >= length ? 'after_end' : null;
 }
 
 export function draftProblem(draft: PromoDraft): 'empty' | 'too_long' | 'too_many' | null {
@@ -198,10 +245,14 @@ export function renderRequest(draft: PromoDraft) {
     music_volume: clamp(draft.musicVolume, 0, 2),
     narration_id: draft.narration?.id ?? null,
     snap_to_beats: !!draft.music && draft.snapToBeats,
-    overlays: draft.overlays.slice(0, MAX_OVERLAYS).map((overlay) => ({
-      media_id: overlay.media.id,
-      start: clamp(overlay.start, 0, MAX_PROGRAM_SECONDS),
-    })),
+    overlays: draft.overlays.slice(0, MAX_OVERLAYS).map((overlay) => {
+      const shot = anchorIndex(draft, overlay);
+      return {
+        media_id: overlay.media.id,
+        start: clamp(overlay.start, 0, MAX_PROGRAM_SECONDS),
+        ...(shot >= 0 ? { shot } : {}),
+      };
+    }),
   };
 }
 
@@ -247,6 +298,9 @@ function isOverlay(value: unknown): value is PromoOverlay {
     typeof overlay.label === 'string' &&
     typeof overlay.start === 'number' &&
     Number.isFinite(overlay.start) &&
+    (overlay.shotKey === undefined ||
+      overlay.shotKey === null ||
+      typeof overlay.shotKey === 'string') &&
     !!overlay.media &&
     typeof overlay.media.id === 'string'
   );

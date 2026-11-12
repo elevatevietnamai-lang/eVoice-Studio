@@ -200,6 +200,26 @@ describe('templateHtml', () => {
   });
 });
 
+describe('position', () => {
+  it.each([
+    ['top_left', 'flex-start', 'flex-start', 'left'],
+    ['bottom_right', 'flex-end', 'flex-end', 'right'],
+    ['middle_left', 'center', 'flex-start', 'left'],
+    ['top_center', 'flex-start', 'center', 'center'],
+    ['center', 'center', 'center', 'center'],
+  ])('%s places the column', (position, justify, align, text) => {
+    const page = templateHtml(parseTemplateInput({ ...valid, position }), { fontsCss: '' });
+    expect(page).toContain(`align-items:${align};justify-content:${justify}`);
+    expect(page).toContain(`text-align:${text}`);
+  });
+
+  it('defaults to the centre and refuses anything off the grid', () => {
+    expect(parseTemplateInput(valid).position).toBe('center');
+    expect(field({ ...valid, position: 'middle' })).toBe('position');
+    expect(field({ ...valid, position: 'top_left;color:red' })).toBe('position');
+  });
+});
+
 describe('layout', () => {
   const longest =
     'Ưu đãi khai trương đặc biệt giảm giá toàn bộ sản phẩm nội thất nhiệt đới cao cấp tháng'.slice(
@@ -226,6 +246,20 @@ describe('layout', () => {
       expect(fit.height).toBeLessThanOrEqual(fit.available + 1);
     },
   );
+
+  it('keeps a short keyword on one line and lets a long one wrap at a readable size', () => {
+    const word = (title: string) =>
+      Number(
+        /#word\{font:900 (\d+)px/.exec(
+          templateHtml(parseTemplateInput({ ...valid, template: 'keyword', title }), {
+            fontsCss: '',
+          }),
+        )![1],
+      );
+    // One line of "QUY TRÌNH" in 1080 wide: about box / (letters x glyph width).
+    expect(word('Quy trình')).toBeGreaterThan(1080 * 0.1);
+    expect(word(longest)).toBeGreaterThanOrEqual(Math.round(1080 * 0.05));
+  });
 
   it('keeps short text at its full size', () => {
     const page = templateHtml(parseTemplateInput({ ...valid, title: 'SALE', subtitle: '' }), {
@@ -319,6 +353,7 @@ describe('preload contract', () => {
       search_bar: true,
       contact_card: true,
       logo_reveal: true,
+      keyword: true,
     };
     expect(Object.keys(fromPreload).sort()).toEqual([...PROMO_TEMPLATES].sort());
   });

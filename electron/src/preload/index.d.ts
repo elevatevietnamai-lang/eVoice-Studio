@@ -340,7 +340,24 @@ export type PromoBrowserState =
 
 export interface PromoOverlayInput {
   /** Must match PROMO_TEMPLATES in main/promo-templates.ts (a test checks). */
-  template: 'glow_title' | 'handwriting' | 'search_bar' | 'contact_card' | 'logo_reveal';
+  template:
+    | 'glow_title'
+    | 'handwriting'
+    | 'search_bar'
+    | 'contact_card'
+    | 'logo_reveal'
+    | 'keyword';
+  /** 3×3 grid, see POSITIONS in main/promo-templates.ts. Default centre. */
+  position?:
+    | 'top_left'
+    | 'top_center'
+    | 'top_right'
+    | 'middle_left'
+    | 'center'
+    | 'middle_right'
+    | 'bottom_left'
+    | 'bottom_center'
+    | 'bottom_right';
   title: string;
   subtitle: string;
   /** Contact card rows, at most 3. */

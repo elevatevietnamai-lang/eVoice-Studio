@@ -4114,6 +4114,26 @@
     "anim_replay": "Odtwórz ponownie",
     "anim_logo_needed": "Najpierw dodaj logo w sekcji Logo.",
     "anim_error_logo_missing": "Nie udało się odczytać logo. Dodaj je ponownie w sekcji Logo.",
-    "anim_error_logo_too_large": "Logo jest większe niż 20 MB."
+    "anim_error_logo_too_large": "Logo jest większe niż 20 MB.",
+    "anim_template_keyword": "Słowo kluczowe",
+    "anim_text_keyword": "Słowo kluczowe",
+    "anim_position": "Położenie",
+    "anim_pos_top_left": "Lewy górny róg",
+    "anim_pos_top_center": "Góra, środek",
+    "anim_pos_top_right": "Prawy górny róg",
+    "anim_pos_middle_left": "Środek, lewo",
+    "anim_pos_center": "Środek",
+    "anim_pos_middle_right": "Środek, prawo",
+    "anim_pos_bottom_left": "Lewy dolny róg",
+    "anim_pos_bottom_center": "Dół, środek",
+    "anim_pos_bottom_right": "Prawy dolny róg",
+    "anim_anchor": "Pokaż z",
+    "anim_anchor_free": "Od początku filmu",
+    "anim_anchor_shot": "Ujęcie {{number}}",
+    "anim_offset": "Sekundy w ujęciu",
+    "anim_warn_shot_removed": "Jego ujęcie usunięto, więc liczy się teraz od początku filmu.",
+    "anim_warn_after_end": "Zaczyna się po końcu filmu, więc się nie pojawi.",
+    "corner_top_center": "Góra, środek",
+    "corner_bottom_center": "Dół, środek"
   }
 }

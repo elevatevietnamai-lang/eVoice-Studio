@@ -4110,6 +4110,26 @@
     "anim_replay": "Repetir",
     "anim_logo_needed": "Adicione primeiro um logotipo na seção Logotipo.",
     "anim_error_logo_missing": "Não foi possível ler o logotipo. Adicione-o de novo na seção Logotipo.",
-    "anim_error_logo_too_large": "O logotipo tem mais de 20 MB."
+    "anim_error_logo_too_large": "O logotipo tem mais de 20 MB.",
+    "anim_template_keyword": "Palavra-chave",
+    "anim_text_keyword": "Palavra-chave",
+    "anim_position": "Posição",
+    "anim_pos_top_left": "Superior esquerdo",
+    "anim_pos_top_center": "Superior central",
+    "anim_pos_top_right": "Superior direito",
+    "anim_pos_middle_left": "Meio à esquerda",
+    "anim_pos_center": "Centro",
+    "anim_pos_middle_right": "Meio à direita",
+    "anim_pos_bottom_left": "Inferior esquerdo",
+    "anim_pos_bottom_center": "Inferior central",
+    "anim_pos_bottom_right": "Inferior direito",
+    "anim_anchor": "Mostrar com",
+    "anim_anchor_free": "Desde o início do vídeo",
+    "anim_anchor_shot": "Cena {{number}}",
+    "anim_offset": "Segundos dentro da cena",
+    "anim_warn_shot_removed": "A cena foi removida, então agora conta desde o início do vídeo.",
+    "anim_warn_after_end": "Começa depois do fim do vídeo, então não vai aparecer.",
+    "corner_top_center": "Superior central",
+    "corner_bottom_center": "Inferior central"
   }
 }
