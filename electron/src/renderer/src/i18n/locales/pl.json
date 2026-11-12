@@ -4081,7 +4081,13 @@
     "fade_out": "Wyciszanie: {{seconds}} s",
     "fade_out_label": "Wyciszanie",
     "speed": "Prędkość",
-    "speed_pitch": "Dźwięk gra w nowym tempie, więc zmienia się też jego wysokość."
+    "speed_pitch": "Dźwięk gra w nowym tempie, więc zmienia się też jego wysokość.",
+    "captions": "Automatyczne napisy",
+    "captions_working": "Słucham…",
+    "captions_hint": "Napisy powstają z mowy w projekcie, rozpoznanej na tym komputerze.",
+    "captions_no_sound": "Projekt nie ma dźwięku do napisów.",
+    "captions_none": "Nie znaleziono mowy.",
+    "captions_added": "Dodano napisy: {{n}}."
   },
   "promo": {
     "title": "Film reklamowy",

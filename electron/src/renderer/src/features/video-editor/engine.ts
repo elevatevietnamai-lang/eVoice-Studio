@@ -295,6 +295,64 @@ export class EditorPlayer {
   }
 }
 
+/** 16-bit PCM WAV of one mono channel. */
+function wav(samples: Float32Array, sampleRate: number): Blob {
+  const view = new DataView(new ArrayBuffer(44 + samples.length * 2));
+  const text = (offset: number, value: string) => {
+    for (let i = 0; i < value.length; i++) view.setUint8(offset + i, value.charCodeAt(i));
+  };
+  text(0, 'RIFF');
+  view.setUint32(4, 36 + samples.length * 2, true);
+  text(8, 'WAVEfmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  text(36, 'data');
+  view.setUint32(40, samples.length * 2, true);
+  for (let i = 0; i < samples.length; i++)
+    view.setInt16(44 + i * 2, Math.max(-1, Math.min(1, samples[i])) * 0x7fff, true);
+  return new Blob([view.buffer], { type: 'audio/wav' });
+}
+
+const SPEECH_SAMPLE_RATE = 16_000;
+
+/**
+ * The project's whole sound as a mono 16 kHz WAV, on the timeline's clock, so
+ * transcribed timings land on the timeline as they are. Null when silent.
+ */
+export async function mixdownForSpeech(
+  project: EditorProject,
+): Promise<{ wav: Blob; voiced: { start: number; end: number } | null } | null> {
+  const loaded = await loadMedia(project);
+  const seconds = projectSeconds(project);
+  if (!loaded.segments.length || seconds <= 0) return null;
+  const offline = new OfflineAudioContext(1, Math.ceil(seconds * SPEECH_SAMPLE_RATE), SPEECH_SAMPLE_RATE);
+  scheduleSegments(offline, loaded.segments, loaded.buffers, 0, 0);
+  const samples = (await offline.startRendering()).getChannelData(0);
+  return { wav: wav(samples, SPEECH_SAMPLE_RATE), voiced: voicedSpan(samples, SPEECH_SAMPLE_RATE) };
+}
+
+/** First and last moment (seconds) the sound is clearly above its quiet parts. */
+export function voicedSpan(samples: Float32Array, sampleRate: number): { start: number; end: number } | null {
+  const frame = Math.round(sampleRate * 0.02);
+  const levels: number[] = [];
+  for (let i = 0; i + frame <= samples.length; i += frame) {
+    let sum = 0;
+    for (let j = i; j < i + frame; j++) sum += samples[j] * samples[j];
+    levels.push(Math.sqrt(sum / frame));
+  }
+  const loudest = Math.max(0, ...levels);
+  if (loudest < 0.005) return null;
+  const threshold = loudest * 0.1;
+  const first = levels.findIndex((level) => level > threshold);
+  const last = levels.length - 1 - [...levels].reverse().findIndex((level) => level > threshold);
+  return { start: (first * frame) / sampleRate, end: ((last + 1) * frame) / sampleRate };
+}
+
 export type ExportProblem = 'empty' | 'too_long';
 
 export function exportProblem(project: EditorProject): ExportProblem | null {

@@ -4075,7 +4075,13 @@
     "fade_out": "淡出：{{seconds}} 秒",
     "fade_out_label": "淡出",
     "speed": "速度",
-    "speed_pitch": "声音以新速度播放，因此音调也会改变。"
+    "speed_pitch": "声音以新速度播放，因此音调也会改变。",
+    "captions": "自动字幕",
+    "captions_working": "正在识别…",
+    "captions_hint": "字幕来自项目中的语音，在这台电脑上转写。",
+    "captions_no_sound": "项目中没有可生成字幕的声音。",
+    "captions_none": "未找到语音。",
+    "captions_added": "已添加 {{n}} 条字幕。"
   },
   "promo": {
     "title": "宣传视频",

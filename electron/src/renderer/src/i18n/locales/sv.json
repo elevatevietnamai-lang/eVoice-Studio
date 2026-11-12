@@ -4075,7 +4075,13 @@
     "fade_out": "Tona ut: {{seconds}} s",
     "fade_out_label": "Tona ut",
     "speed": "Hastighet",
-    "speed_pitch": "Ljudet spelas i den nya hastigheten, så tonhöjden ändras också."
+    "speed_pitch": "Ljudet spelas i den nya hastigheten, så tonhöjden ändras också.",
+    "captions": "Automatiska undertexter",
+    "captions_working": "Lyssnar…",
+    "captions_hint": "Undertexterna kommer från talet i projektet, igenkänt på den här datorn.",
+    "captions_no_sound": "Projektet har inget ljud att texta.",
+    "captions_none": "Inget tal hittades.",
+    "captions_added": "{{n}} undertexter lades till."
   },
   "promo": {
     "title": "Reklamvideo",

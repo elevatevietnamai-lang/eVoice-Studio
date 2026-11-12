@@ -4075,7 +4075,13 @@
     "fade_out": "Uitfaden: {{seconds}} s",
     "fade_out_label": "Uitfaden",
     "speed": "Snelheid",
-    "speed_pitch": "Het geluid speelt op de nieuwe snelheid, dus ook de toonhoogte verandert."
+    "speed_pitch": "Het geluid speelt op de nieuwe snelheid, dus ook de toonhoogte verandert.",
+    "captions": "Automatische ondertitels",
+    "captions_working": "Bezig met luisteren…",
+    "captions_hint": "Ondertitels komen uit de spraak in je project, herkend op deze computer.",
+    "captions_no_sound": "Het project heeft geen geluid om te ondertitelen.",
+    "captions_none": "Geen spraak gevonden.",
+    "captions_added": "{{n}} ondertitels toegevoegd."
   },
   "promo": {
     "title": "Promovideo",

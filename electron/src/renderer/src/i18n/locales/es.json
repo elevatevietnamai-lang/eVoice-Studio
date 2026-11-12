@@ -4077,7 +4077,13 @@
     "fade_out": "Desvanecer: {{seconds}} s",
     "fade_out_label": "Desvanecer",
     "speed": "Velocidad",
-    "speed_pitch": "El sonido se reproduce a la nueva velocidad, así que su tono también cambia."
+    "speed_pitch": "El sonido se reproduce a la nueva velocidad, así que su tono también cambia.",
+    "captions": "Subtítulos automáticos",
+    "captions_working": "Escuchando…",
+    "captions_hint": "Los subtítulos salen de la voz del proyecto, transcrita en este equipo.",
+    "captions_no_sound": "El proyecto no tiene sonido que subtitular.",
+    "captions_none": "No se encontró voz.",
+    "captions_added": "Se añadieron {{n}} subtítulos."
   },
   "promo": {
     "title": "Vídeo promocional",

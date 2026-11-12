@@ -4075,7 +4075,13 @@
     "fade_out": "Kapanma: {{seconds}} sn",
     "fade_out_label": "Kapanma",
     "speed": "Hız",
-    "speed_pitch": "Ses yeni hızda çalar, bu yüzden perdesi de değişir."
+    "speed_pitch": "Ses yeni hızda çalar, bu yüzden perdesi de değişir.",
+    "captions": "Otomatik altyazı",
+    "captions_working": "Dinleniyor…",
+    "captions_hint": "Altyazılar projedeki konuşmadan, bu bilgisayarda yazıya dökülerek oluşturulur.",
+    "captions_no_sound": "Projede altyazı oluşturulacak ses yok.",
+    "captions_none": "Konuşma bulunamadı.",
+    "captions_added": "{{n}} altyazı eklendi."
   },
   "promo": {
     "title": "Tanıtım videosu",

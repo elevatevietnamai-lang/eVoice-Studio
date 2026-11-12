@@ -4075,7 +4075,13 @@
     "fade_out": "フェードアウト: {{seconds}} 秒",
     "fade_out_label": "フェードアウト",
     "speed": "速度",
-    "speed_pitch": "音声は新しい速度で再生されるため、音程も変わります。"
+    "speed_pitch": "音声は新しい速度で再生されるため、音程も変わります。",
+    "captions": "自動字幕",
+    "captions_working": "認識中…",
+    "captions_hint": "字幕はプロジェクト内の音声から、このコンピューター上で文字起こしして作成します。",
+    "captions_no_sound": "字幕にする音声がありません。",
+    "captions_none": "音声が見つかりませんでした。",
+    "captions_added": "{{n}} 件の字幕を追加しました。"
   },
   "promo": {
     "title": "プロモーション動画",

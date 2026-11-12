@@ -2,6 +2,7 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  CaptionsIcon,
   FileAudioIcon,
   ImageIcon,
   LayersIcon,
@@ -29,12 +30,16 @@ export function MediaBin({
   onUpload,
   onAdd,
   onAddText,
+  captioning,
+  onCaptions,
 }: {
   project: EditorProject;
   uploading: boolean;
   onUpload: (files: File[]) => void;
   onAdd: (media: EditorMedia, placement: 'main' | 'overlay') => void;
   onAddText: () => void;
+  captioning: boolean;
+  onCaptions: () => void;
 }) {
   const { t } = useTranslation();
   const input = useRef<HTMLInputElement>(null);
@@ -61,7 +66,12 @@ export function MediaBin({
           <TypeIcon />
           {t('editor.add_text')}
         </Button>
+        <Button size="sm" variant="outline" className="col-span-2" disabled={captioning} onClick={onCaptions}>
+          {captioning ? <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" /> : <CaptionsIcon />}
+          {t(captioning ? 'editor.captions_working' : 'editor.captions')}
+        </Button>
       </div>
+      <p className="text-xs text-muted-foreground">{t('editor.captions_hint')}</p>
       {project.media.length === 0 ? (
         <p className="text-xs text-muted-foreground">{t('editor.media_empty')}</p>
       ) : (

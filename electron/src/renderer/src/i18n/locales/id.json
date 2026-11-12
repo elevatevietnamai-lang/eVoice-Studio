@@ -4075,7 +4075,13 @@
     "fade_out": "Memudar: {{seconds}} dtk",
     "fade_out_label": "Memudar",
     "speed": "Kecepatan",
-    "speed_pitch": "Suara diputar dengan kecepatan baru, jadi nadanya juga berubah."
+    "speed_pitch": "Suara diputar dengan kecepatan baru, jadi nadanya juga berubah.",
+    "captions": "Teks otomatis",
+    "captions_working": "Mendengarkan…",
+    "captions_hint": "Teks berasal dari ucapan di proyek, ditranskripsi di komputer ini.",
+    "captions_no_sound": "Proyek tidak punya suara untuk diberi teks.",
+    "captions_none": "Tidak ada ucapan yang ditemukan.",
+    "captions_added": "{{n}} teks ditambahkan."
   },
   "promo": {
     "title": "Video promosi",

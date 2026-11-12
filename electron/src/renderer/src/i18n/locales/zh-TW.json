@@ -4075,7 +4075,13 @@
     "fade_out": "淡出：{{seconds}} 秒",
     "fade_out_label": "淡出",
     "speed": "速度",
-    "speed_pitch": "聲音以新速度播放，因此音調也會改變。"
+    "speed_pitch": "聲音以新速度播放，因此音調也會改變。",
+    "captions": "自動字幕",
+    "captions_working": "正在辨識…",
+    "captions_hint": "字幕來自專案中的語音，在這台電腦上轉寫。",
+    "captions_no_sound": "專案中沒有可產生字幕的聲音。",
+    "captions_none": "找不到語音。",
+    "captions_added": "已新增 {{n}} 則字幕。"
   },
   "promo": {
     "title": "宣傳影片",

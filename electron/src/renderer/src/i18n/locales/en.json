@@ -4075,7 +4075,13 @@
     "fade_out": "Fade out: {{seconds}} s",
     "fade_out_label": "Fade out",
     "speed": "Speed",
-    "speed_pitch": "Sound plays at the new speed, so its pitch changes too."
+    "speed_pitch": "Sound plays at the new speed, so its pitch changes too.",
+    "captions": "Auto captions",
+    "captions_working": "Listening…",
+    "captions_hint": "Captions come from your project's speech, transcribed on this computer.",
+    "captions_no_sound": "The project has no sound to caption.",
+    "captions_none": "No speech was found.",
+    "captions_added": "Added {{n}} captions."
   },
   "promo": {
     "title": "Promo video",

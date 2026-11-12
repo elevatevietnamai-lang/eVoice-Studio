@@ -4075,7 +4075,13 @@
     "fade_out": "Ausblenden: {{seconds}} s",
     "fade_out_label": "Ausblenden",
     "speed": "Geschwindigkeit",
-    "speed_pitch": "Der Ton läuft im neuen Tempo, daher ändert sich auch die Tonhöhe."
+    "speed_pitch": "Der Ton läuft im neuen Tempo, daher ändert sich auch die Tonhöhe.",
+    "captions": "Automatische Untertitel",
+    "captions_working": "Wird erkannt…",
+    "captions_hint": "Untertitel entstehen aus der Sprache im Projekt, erkannt auf diesem Computer.",
+    "captions_no_sound": "Das Projekt hat keinen Ton für Untertitel.",
+    "captions_none": "Keine Sprache gefunden.",
+    "captions_added": "{{n}} Untertitel hinzugefügt."
   },
   "promo": {
     "title": "Werbevideo",

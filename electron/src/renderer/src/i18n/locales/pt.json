@@ -4077,7 +4077,13 @@
     "fade_out": "Saída gradual: {{seconds}} s",
     "fade_out_label": "Saída gradual",
     "speed": "Velocidade",
-    "speed_pitch": "O som toca na nova velocidade, então o tom também muda."
+    "speed_pitch": "O som toca na nova velocidade, então o tom também muda.",
+    "captions": "Legendas automáticas",
+    "captions_working": "Ouvindo…",
+    "captions_hint": "As legendas vêm da fala do projeto, transcrita neste computador.",
+    "captions_no_sound": "O projeto não tem som para legendar.",
+    "captions_none": "Nenhuma fala encontrada.",
+    "captions_added": "{{n}} legendas adicionadas."
   },
   "promo": {
     "title": "Vídeo promocional",

@@ -13,7 +13,9 @@ import {
   type ElementRef,
 } from './project';
 import {
+  addCaptions,
   addText,
+  captionsFromText,
   deleteElement,
   hasKeyframes,
   insertMedia,
@@ -24,6 +26,7 @@ import {
   setSpeed,
   splitElement,
   trimElement,
+  wrapCaption,
 } from './timeline-ops';
 
 const clip = (id: string, duration: number): EditorMedia => ({
@@ -187,6 +190,65 @@ describe('keyframes', () => {
     const split = splitElement(next, refs[1], 7);
     expect(keyframeAt(element(split.project, split.ref), 'opacity', 8)?.value).toBe(1);
     expect(hasKeyframes(element(removeKeyframe(next, refs[1], 'opacity', 5), refs[1]), 'opacity')).toBe(true);
+  });
+});
+
+describe('captions', () => {
+  it('puts each spoken segment on one caption track without overlaps', () => {
+    const { project } = threeClips();
+    const next = addCaptions(
+      project,
+      [
+        { start: 2, end: 4.5, text: ' second ' },
+        { start: 0.5, end: 2.5, text: 'first' },
+        { start: 5, end: 5.1, text: 'short' },
+        { start: null, end: 3, text: 'no timing' },
+        { start: 7, end: 8, text: '   ' },
+      ],
+      { width: 1080, height: 1920 },
+    );
+    expect(next.tracks.overlay).toHaveLength(1);
+    const captions = next.tracks.overlay[0].elements.map((element) => [
+      element.params.content,
+      secondsOf(element.startTime),
+      secondsOf(element.duration),
+    ]);
+    // "first" stops where "second" starts; "short" is held for the minimum.
+    expect(captions).toEqual([
+      ['first', 0.5, 1.5],
+      ['second', 2, 2.5],
+      ['short', 5, 0.4],
+    ]);
+    expect(next.tracks.overlay[0].elements[0].params['background.enabled']).toBe(true);
+    expect(addCaptions(project, [], { width: 1080, height: 1920 })).toBe(project);
+  });
+
+  it('wraps a caption to fit the frame', () => {
+    // 64 px text on a 1080 px wide frame fits about 26 characters a line.
+    expect(wrapCaption('Welcome to the video editor this sentence', { width: 1080, height: 1920 })).toBe(
+      'Welcome to the video\neditor this sentence',
+    );
+    expect(wrapCaption('Short line', { width: 1920, height: 1080 })).toBe('Short line');
+  });
+});
+
+describe('captions without timings', () => {
+  it('breaks a transcript into short lines spread over the speech', () => {
+    const lines = captionsFromText('Welcome to the editor. This sentence becomes a caption, and here is the last line.', 1, 7);
+    expect(lines.map((line) => line.text)).toEqual([
+      'Welcome to the editor.',
+      'This sentence becomes a caption,',
+      'and here is the last line.',
+    ]);
+    expect(lines[0].start).toBe(1);
+    expect(lines.at(-1)!.end).toBeCloseTo(7);
+    // Longer lines get more time.
+    expect(lines[1].end! - lines[1].start!).toBeGreaterThan(lines[0].end! - lines[0].start!);
+    expect(captionsFromText('one two three four five six seven eight', 0, 2).map((l) => l.text)).toEqual([
+      'one two three four five six seven',
+      'eight',
+    ]);
+    expect(captionsFromText('', 0, 2)).toEqual([]);
   });
 });
 

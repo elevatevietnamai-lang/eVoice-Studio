@@ -285,12 +285,109 @@ export function addText(
       ...buildDefaultParamValues(getBuiltInElementParams({ type: 'text' })),
       content,
       fontFamily: font,
-      fontSize: 10,
+      fontSize: 7,
       color: '#ffffff',
       fontWeight: 'bold',
     },
   };
   return placeFree(project, null, text);
+}
+
+export interface CaptionSegment {
+  start: number | null;
+  end: number | null;
+  text: string;
+}
+
+/** Most words on one caption line when the timing has to be estimated. */
+const WORDS_PER_CAPTION = 7;
+
+/**
+ * Captions for a transcript that came back without timings: short lines that
+ * break at sentence ends, commas or every few words, spread over the stretch
+ * where there is speech in proportion to their length.
+ */
+export function captionsFromText(text: string, start: number, end: number): CaptionSegment[] {
+  const lines: string[] = [];
+  for (const sentence of text.split(/(?<=[.!?…。！？])\s+|(?<=[,;:，；])\s+/)) {
+    const words = sentence.trim().split(/\s+/).filter(Boolean);
+    for (let i = 0; i < words.length; i += WORDS_PER_CAPTION) lines.push(words.slice(i, i + WORDS_PER_CAPTION).join(' '));
+  }
+  const total = lines.reduce((sum, line) => sum + line.length, 0);
+  if (!total || end <= start) return [];
+  let cursor = start;
+  return lines.map((line) => {
+    const length = ((end - start) * line.length) / total;
+    const segment = { start: cursor, end: cursor + length, text: line };
+    cursor += length;
+    return segment;
+  });
+}
+
+/** Shortest a caption stays on screen, in seconds. */
+const MIN_CAPTION_SECONDS = 0.4;
+/** Caption size in OpenCut units (pixels = size × canvas height / 90). */
+const CAPTION_FONT_SIZE = 3;
+/** Rough width of an average bold character relative to its font size. */
+const CHAR_WIDTH_RATIO = 0.55;
+
+/** Breaks a caption into lines that fit 85% of the frame width. */
+export function wrapCaption(text: string, canvas: { width: number; height: number }): string {
+  const fontPixels = (CAPTION_FONT_SIZE * canvas.height) / 90;
+  const perLine = Math.max(8, Math.floor((canvas.width * 0.85) / (fontPixels * CHAR_WIDTH_RATIO)));
+  const lines: string[] = [];
+  let line = '';
+  for (const word of text.split(/\s+/).filter(Boolean)) {
+    if (line && line.length + 1 + word.length > perLine) {
+      lines.push(line);
+      line = word;
+    } else line = line ? `${line} ${word}` : word;
+  }
+  if (line) lines.push(line);
+  return lines.join('\n');
+}
+
+/**
+ * Turns transcribed speech into captions on a new text track: one title per
+ * segment, low in the frame on a dark box, never overlapping the next.
+ */
+export function addCaptions(
+  project: EditorProject,
+  segments: CaptionSegment[],
+  canvas: { width: number; height: number },
+): EditorProject {
+  const usable = segments
+    .map((segment) => ({ ...segment, text: segment.text.trim() }))
+    .filter((segment) => segment.text && segment.start !== null && segment.end !== null)
+    .sort((a, b) => a.start! - b.start!);
+  if (!usable.length) return project;
+  const track = emptyTrackLike('text') as TextTrack;
+  const elements: TextElement[] = usable.map((segment, index) => {
+    const start = Math.max(0, segment.start!);
+    const next = usable[index + 1]?.start ?? Number.POSITIVE_INFINITY;
+    const end = Math.min(Math.max(segment.end!, start + MIN_CAPTION_SECONDS), next);
+    return {
+      id: newId(),
+      name: segment.text,
+      type: 'text',
+      startTime: ticks(start),
+      duration: ticks(Math.max(MIN_CLIP_SECONDS, end - start)),
+      trimStart: ZERO_MEDIA_TIME,
+      trimEnd: ZERO_MEDIA_TIME,
+      params: {
+        ...buildDefaultParamValues(getBuiltInElementParams({ type: 'text' })),
+        content: wrapCaption(segment.text, canvas),
+        fontFamily: TEXT_FONTS[0],
+        fontSize: CAPTION_FONT_SIZE,
+        color: '#ffffff',
+        fontWeight: 'bold',
+        'background.enabled': true,
+        'background.color': '#000000',
+        'transform.positionY': Math.round(canvas.height * 0.3),
+      },
+    };
+  });
+  return insertTrack(project, { ...track, name: 'Captions', elements });
 }
 
 /** Moves a clip to start at `seconds`, on `trackId` when given and compatible. */

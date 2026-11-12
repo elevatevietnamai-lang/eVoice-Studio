@@ -24,7 +24,9 @@ import { MorphIcon } from '@/components/ui/morph-icon';
 import { Progress } from '@/components/ui/progress';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { saveExport } from '@/lib/export-history';
-import { EditorPlayer, exportProblem, exportProject } from './engine';
+import { EditorPlayer, exportProblem, exportProject, mixdownForSpeech } from './engine';
+import { resolveNumberAtTime } from '@/lib/opencut/vendor/animation/values';
+import { cn } from '@/lib/utils';
 import { EditorTimeline } from './editor-timeline';
 import { MediaBin } from './media-bin';
 import { PropertiesPanel, type Apply } from './properties-panel';
@@ -42,14 +44,21 @@ import {
   type ElementRef,
 } from './project';
 import {
+  addCaptions,
   addMedia,
+  captionsFromText,
   addText,
   deleteElement,
+  hasKeyframes,
   insertMedia,
+  localTicks,
   moveElement,
+  setKeyframe,
+  setParam,
   setTrackFlag,
   splitElement,
   trimElement,
+  type CaptionSegment,
 } from './timeline-ops';
 
 const MERGE_WINDOW_MS = 800;
@@ -199,6 +208,81 @@ export function VideoEditorPage() {
     }
   };
 
+  const [captioning, setCaptioning] = useState(false);
+  /** Transcribes the project's sound with the local speech engine and adds captions. */
+  const autoCaptions = async () => {
+    setCaptioning(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const sound = await mixdownForSpeech(latest.current);
+      if (!sound) {
+        setError(t('editor.captions_no_sound'));
+        return;
+      }
+      const body = new FormData();
+      body.set('audio', new File([sound.wav], 'mix.wav', { type: 'audio/wav' }));
+      body.set('mode', 'accurate');
+      const result = await apiJson<{ text?: string; segments?: CaptionSegment[] }>('/transcribe', {
+        method: 'POST',
+        body,
+      });
+      // Some engines return the words without timings: spread them over the speech.
+      const timed = (result.segments ?? []).filter((segment) => segment.start !== null && segment.text.trim());
+      const segments =
+        timed.length || !result.text?.trim() || !sound.voiced
+          ? timed
+          : captionsFromText(result.text, sound.voiced.start, sound.voiced.end);
+      if (!segments.length) {
+        setNotice(t('editor.captions_none'));
+        return;
+      }
+      apply((current) => addCaptions(current, segments, SHAPE_SIZE[current.shape]));
+      setNotice(t('editor.captions_added', { n: segments.length }));
+    } catch (cause) {
+      setError(describeError(cause));
+    } finally {
+      setCaptioning(false);
+    }
+  };
+
+  /** Dragging on the preview moves the selected picture or title (keyframed when it has keyframes). */
+  const moveOnCanvas = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const found = findElement(latest.current, selection);
+    if (!found || !selection || found.element.type === 'audio' || event.button !== 0) return;
+    const element = found.element;
+    const target = event.currentTarget;
+    target.setPointerCapture(event.pointerId);
+    const scale = width / target.getBoundingClientRect().width;
+    const local = localTicks(element, playhead);
+    const read = (path: 'transform.positionX' | 'transform.positionY') =>
+      resolveNumberAtTime({
+        baseValue: typeof element.params[path] === 'number' ? (element.params[path] as number) : 0,
+        animations: element.animations,
+        propertyPath: path,
+        localTime: local,
+      });
+    const origin = { x: event.clientX, y: event.clientY, px: read('transform.positionX'), py: read('transform.positionY') };
+    const keyed = hasKeyframes(element, 'transform.positionX') || hasKeyframes(element, 'transform.positionY');
+    const ref = selection;
+    const at = playhead;
+    const onMove = (move: PointerEvent) => {
+      const x = Math.round(origin.px + (move.clientX - origin.x) * scale);
+      const y = Math.round(origin.py + (move.clientY - origin.y) * scale);
+      apply((current) => {
+        const write = (project: EditorProject, path: 'transform.positionX' | 'transform.positionY', value: number) =>
+          keyed ? setKeyframe(project, ref, path, at, value) : setParam(project, ref, path, value);
+        return write(write(current, 'transform.positionX', x), 'transform.positionY', y);
+      }, `${ref.elementId}:canvas-move`);
+    };
+    const onUp = () => {
+      target.removeEventListener('pointermove', onMove);
+      target.removeEventListener('pointerup', onUp);
+    };
+    target.addEventListener('pointermove', onMove);
+    target.addEventListener('pointerup', onUp);
+  };
+
   const exportVideo = async () => {
     const controller = new AbortController();
     abort.current = controller;
@@ -271,6 +355,8 @@ export function VideoEditorPage() {
             uploading={uploading}
             onUpload={(files) => void upload(files)}
             onAddText={() => applySelecting((current) => addText(current, playhead, t('editor.text_default')))}
+            captioning={captioning}
+            onCaptions={() => void autoCaptions()}
             onAdd={(media, placement) => {
               applySelecting((current) => insertMedia(current, media, playhead, placement));
               // Like CapCut, the playhead moves past a clip added to the main track,
@@ -290,9 +376,13 @@ export function VideoEditorPage() {
                 ref={canvas}
                 width={width / 2}
                 height={height / 2}
-                className="max-h-full max-w-full min-h-0 rounded-lg bg-black object-contain"
+                className={cn(
+                  'max-h-full max-w-full min-h-0 touch-none rounded-lg bg-black object-contain',
+                  selected && selected.element.type !== 'audio' && 'cursor-move',
+                )}
                 style={{ aspectRatio: `${width} / ${height}` }}
                 aria-label={t('editor.preview')}
+                onPointerDown={moveOnCanvas}
               />
             </div>
             <aside className="w-72 shrink-0 overflow-y-auto pr-1" aria-label={t('editor.properties')}>

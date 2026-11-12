@@ -4075,7 +4075,13 @@
     "fade_out": "Tắt dần: {{seconds}} s",
     "fade_out_label": "Tắt dần",
     "speed": "Tốc độ",
-    "speed_pitch": "Âm thanh phát theo tốc độ mới nên cao độ cũng đổi."
+    "speed_pitch": "Âm thanh phát theo tốc độ mới nên cao độ cũng đổi.",
+    "captions": "Phụ đề tự động",
+    "captions_working": "Đang nghe…",
+    "captions_hint": "Phụ đề lấy từ lời nói trong dự án, nhận dạng ngay trên máy này.",
+    "captions_no_sound": "Dự án không có âm thanh để tạo phụ đề.",
+    "captions_none": "Không tìm thấy lời nói.",
+    "captions_added": "Đã thêm {{n}} phụ đề."
   },
   "promo": {
     "title": "Video quảng cáo",

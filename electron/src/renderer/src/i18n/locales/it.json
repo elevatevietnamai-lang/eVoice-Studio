@@ -4077,7 +4077,13 @@
     "fade_out": "Dissolvenza in uscita: {{seconds}} s",
     "fade_out_label": "Dissolvenza in uscita",
     "speed": "Velocità",
-    "speed_pitch": "L'audio segue la nuova velocità, quindi cambia anche l'intonazione."
+    "speed_pitch": "L'audio segue la nuova velocità, quindi cambia anche l'intonazione.",
+    "captions": "Sottotitoli automatici",
+    "captions_working": "In ascolto…",
+    "captions_hint": "I sottotitoli nascono dal parlato del progetto, trascritto su questo computer.",
+    "captions_no_sound": "Il progetto non ha audio da sottotitolare.",
+    "captions_none": "Nessun parlato trovato.",
+    "captions_added": "Aggiunti {{n}} sottotitoli."
   },
   "promo": {
     "title": "Video promozionale",
