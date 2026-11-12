@@ -4179,7 +4179,16 @@
     "mask_feather": "遮罩羽化",
     "mask_invert": "反轉遮罩",
     "keep_pitch": "保持音高",
-    "keep_pitch_hint": "聲音依時間伸縮，因此在新速度下人聲保持原本的音高。"
+    "keep_pitch_hint": "聲音依時間伸縮，因此在新速度下人聲保持原本的音高。",
+    "stickers": "貼圖",
+    "sticker_shapes": "形狀",
+    "sticker_arrows": "箭頭",
+    "sticker_frames": "邊框",
+    "sticker_emoji": "表情符號",
+    "sticker_add": "新增{{name}}",
+    "track_sticker": "貼圖",
+    "sticker": "貼圖",
+    "sticker_color": "顏色"
   },
   "promo": {
     "title": "宣傳影片",

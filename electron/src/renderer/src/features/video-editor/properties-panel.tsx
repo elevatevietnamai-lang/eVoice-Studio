@@ -46,9 +46,11 @@ import {
   setMaskShape,
   setSourceAudio,
   setSpeed,
+  setStickerId,
   setTransition,
 } from './timeline-ops';
 import { MASK_PARAMS, MASK_SHAPES, maskShapeOf } from './masks';
+import { DEFAULT_STICKER_COLOR, isRecolorable, parseStickerId, stickerId } from './stickers/library';
 import {
   DEFAULT_TRANSITION_SECONDS,
   MAX_TRANSITION_SECONDS,
@@ -385,6 +387,26 @@ export function PropertiesPanel({
             step={0.01}
             display={(value) => `${Math.round(value * 100)}%`}
           />
+        </Section>
+      )}
+
+      {element.type === 'sticker' && isRecolorable(element.stickerId) && (
+        <Section title={t('editor.sticker')}>
+          <Row label={t('editor.sticker_color')}>
+            <Input
+              type="color"
+              className="h-8 p-1"
+              value={parseStickerId(element.stickerId)?.color ?? DEFAULT_STICKER_COLOR}
+              onChange={(event) => {
+                const parsed = parseStickerId(element.stickerId);
+                if (parsed)
+                  apply(
+                    (current) => setStickerId(current, selection, stickerId(parsed.name, event.target.value)),
+                    `${selection.elementId}:sticker-color`,
+                  );
+              }}
+            />
+          </Row>
         </Section>
       )}
 

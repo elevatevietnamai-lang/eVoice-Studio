@@ -4185,7 +4185,16 @@
     "mask_feather": "Miękkość maski",
     "mask_invert": "Odwróć maskę",
     "keep_pitch": "Zachowaj wysokość dźwięku",
-    "keep_pitch_hint": "Dźwięk jest rozciągany w czasie, więc głosy zachowują wysokość przy nowej prędkości."
+    "keep_pitch_hint": "Dźwięk jest rozciągany w czasie, więc głosy zachowują wysokość przy nowej prędkości.",
+    "stickers": "Naklejki",
+    "sticker_shapes": "Kształty",
+    "sticker_arrows": "Strzałki",
+    "sticker_frames": "Ramki",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Dodaj: {{name}}",
+    "track_sticker": "Naklejki",
+    "sticker": "Naklejka",
+    "sticker_color": "Kolor"
   },
   "promo": {
     "title": "Film reklamowy",

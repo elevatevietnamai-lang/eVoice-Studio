@@ -4179,7 +4179,16 @@
     "mask_feather": "マスクのぼかし",
     "mask_invert": "マスクを反転",
     "keep_pitch": "ピッチを保つ",
-    "keep_pitch_hint": "音を時間方向に伸縮するため、新しい速度でも声の高さは変わりません。"
+    "keep_pitch_hint": "音を時間方向に伸縮するため、新しい速度でも声の高さは変わりません。",
+    "stickers": "ステッカー",
+    "sticker_shapes": "図形",
+    "sticker_arrows": "矢印",
+    "sticker_frames": "フレーム",
+    "sticker_emoji": "絵文字",
+    "sticker_add": "{{name}} を追加",
+    "track_sticker": "ステッカー",
+    "sticker": "ステッカー",
+    "sticker_color": "色"
   },
   "promo": {
     "title": "プロモーション動画",

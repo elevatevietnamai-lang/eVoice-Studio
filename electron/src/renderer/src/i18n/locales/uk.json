@@ -4185,7 +4185,16 @@
     "mask_feather": "М’якість маски",
     "mask_invert": "Інвертувати маску",
     "keep_pitch": "Зберігати висоту тону",
-    "keep_pitch_hint": "Звук розтягується в часі, тож голоси зберігають висоту за нової швидкості."
+    "keep_pitch_hint": "Звук розтягується в часі, тож голоси зберігають висоту за нової швидкості.",
+    "stickers": "Стікери",
+    "sticker_shapes": "Фігури",
+    "sticker_arrows": "Стрілки",
+    "sticker_frames": "Рамки",
+    "sticker_emoji": "Емодзі",
+    "sticker_add": "Додати: {{name}}",
+    "track_sticker": "Стікери",
+    "sticker": "Стікер",
+    "sticker_color": "Колір"
   },
   "promo": {
     "title": "Рекламне відео",

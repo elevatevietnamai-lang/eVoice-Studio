@@ -4181,7 +4181,16 @@
     "mask_feather": "Suavidad de la máscara",
     "mask_invert": "Invertir máscara",
     "keep_pitch": "Mantener el tono",
-    "keep_pitch_hint": "El sonido se estira en el tiempo, así que las voces conservan su tono a la nueva velocidad."
+    "keep_pitch_hint": "El sonido se estira en el tiempo, así que las voces conservan su tono a la nueva velocidad.",
+    "stickers": "Pegatinas",
+    "sticker_shapes": "Formas",
+    "sticker_arrows": "Flechas",
+    "sticker_frames": "Marcos",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Añadir {{name}}",
+    "track_sticker": "Pegatinas",
+    "sticker": "Pegatina",
+    "sticker_color": "Color"
   },
   "promo": {
     "title": "Vídeo promocional",

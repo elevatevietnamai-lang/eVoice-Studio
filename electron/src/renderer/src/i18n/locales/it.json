@@ -4181,7 +4181,16 @@
     "mask_feather": "Morbidezza della maschera",
     "mask_invert": "Inverti maschera",
     "keep_pitch": "Mantieni l'intonazione",
-    "keep_pitch_hint": "Il suono viene allungato nel tempo, così le voci mantengono l'intonazione alla nuova velocità."
+    "keep_pitch_hint": "Il suono viene allungato nel tempo, così le voci mantengono l'intonazione alla nuova velocità.",
+    "stickers": "Sticker",
+    "sticker_shapes": "Forme",
+    "sticker_arrows": "Frecce",
+    "sticker_frames": "Cornici",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Aggiungi {{name}}",
+    "track_sticker": "Sticker",
+    "sticker": "Sticker",
+    "sticker_color": "Colore"
   },
   "promo": {
     "title": "Video promozionale",

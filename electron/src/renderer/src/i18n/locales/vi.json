@@ -4179,7 +4179,16 @@
     "mask_feather": "Độ mềm mask",
     "mask_invert": "Đảo ngược mask",
     "keep_pitch": "Giữ cao độ",
-    "keep_pitch_hint": "Âm thanh được kéo giãn theo thời gian nên giọng nói giữ nguyên cao độ ở tốc độ mới."
+    "keep_pitch_hint": "Âm thanh được kéo giãn theo thời gian nên giọng nói giữ nguyên cao độ ở tốc độ mới.",
+    "stickers": "Sticker",
+    "sticker_shapes": "Hình khối",
+    "sticker_arrows": "Mũi tên",
+    "sticker_frames": "Khung",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Thêm {{name}}",
+    "track_sticker": "Sticker",
+    "sticker": "Sticker",
+    "sticker_color": "Màu"
   },
   "promo": {
     "title": "Video quảng cáo",

@@ -4179,7 +4179,16 @@
     "mask_feather": "Weiche Maskenkante",
     "mask_invert": "Maske umkehren",
     "keep_pitch": "Tonhöhe beibehalten",
-    "keep_pitch_hint": "Der Ton wird zeitlich gedehnt, sodass Stimmen bei der neuen Geschwindigkeit ihre Tonhöhe behalten."
+    "keep_pitch_hint": "Der Ton wird zeitlich gedehnt, sodass Stimmen bei der neuen Geschwindigkeit ihre Tonhöhe behalten.",
+    "stickers": "Sticker",
+    "sticker_shapes": "Formen",
+    "sticker_arrows": "Pfeile",
+    "sticker_frames": "Rahmen",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "{{name}} hinzufügen",
+    "track_sticker": "Sticker",
+    "sticker": "Sticker",
+    "sticker_color": "Farbe"
   },
   "promo": {
     "title": "Werbevideo",

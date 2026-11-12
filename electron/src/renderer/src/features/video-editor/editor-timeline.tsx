@@ -24,6 +24,7 @@ import {
 } from './project';
 import { formatTime } from './format';
 import { placedTransitions } from './transitions';
+import { stickerUrl } from './stickers/library';
 import { useMediaPoster, usePeaks, Waveform } from './clip-art';
 
 export const RULER_HEIGHT = 24;
@@ -69,6 +70,18 @@ function clipLabel(project: EditorProject, element: TimelineElement): string {
 
 /** A clip's picture strip and waveform, behind its label. */
 function ClipArt({ project, element }: { project: EditorProject; element: TimelineElement }) {
+  if (element.type === 'sticker') return <StickerArt id={element.stickerId} />;
+  return <MediaArt project={project} element={element} />;
+}
+
+function StickerArt({ id }: { id: string }) {
+  const url = stickerUrl(id);
+  return url ? (
+    <img src={url} alt="" className="pointer-events-none absolute top-1 right-1 bottom-1 h-[calc(100%-0.5rem)] w-auto opacity-80" aria-hidden />
+  ) : null;
+}
+
+function MediaArt({ project, element }: { project: EditorProject; element: TimelineElement }) {
   const media = 'mediaId' in element ? findMedia(project, element.mediaId) : undefined;
   const poster = useMediaPoster(media);
   const peaks = usePeaks(element.type === 'video' && element.isSourceAudioEnabled === false ? undefined : media);
@@ -305,7 +318,9 @@ export function EditorTimeline({
                       ? 'editor.track_audio'
                       : track.type === 'text'
                         ? 'editor.track_text'
-                        : 'editor.track_overlay',
+                        : track.type === 'graphic'
+                          ? 'editor.track_sticker'
+                          : 'editor.track_overlay',
                 )}
               </span>
               {'muted' in track && (

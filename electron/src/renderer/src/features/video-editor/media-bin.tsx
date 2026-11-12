@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { apiPath } from '@/lib/api/client';
 import type { EditorMedia, EditorProject } from './project';
 import { formatTime } from './format';
+import { StickerPicker } from './sticker-picker';
 
 function Thumb({ media }: { media: EditorMedia }) {
   if (media.kind === 'image')
@@ -32,8 +33,10 @@ export function MediaBin({
   onAddText,
   captioning,
   onCaptions,
+  onAddSticker,
   missing,
 }: {
+  onAddSticker: (id: string, name: string) => void;
   missing: ReadonlySet<string>;
   project: EditorProject;
   uploading: boolean;
@@ -74,6 +77,7 @@ export function MediaBin({
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">{t('editor.captions_hint')}</p>
+      <StickerPicker onAdd={onAddSticker} />
       {project.media.length === 0 ? (
         <p className="text-xs text-muted-foreground">{t('editor.media_empty')}</p>
       ) : (

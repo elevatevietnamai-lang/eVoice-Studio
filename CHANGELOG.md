@@ -50,6 +50,7 @@ metadata and the backend fallback mirror it.
 - Video editor chroma key: remove a green, blue or picked background colour from a clip or still, with strength, edge softness and spill removal (#13)
 - Video editor masks: rectangle, circle or horizontal band on a clip or still, with position, size, rotation and softness you can keyframe, and invert (#13)
 - Video editor speed changes keep the pitch of voices (Keep pitch, on for newly sped clips) with a time-stretch written for the app; clips sped in older projects sound as before (#13)
+- Video editor stickers: shapes, arrows and frames in any colour, and Fluent Emoji, bundled with the app so nothing is downloaded (#13)
 - The phone apps have a Report action on every generated result: pick a reason, add an optional note, and it reaches the VoiceStudio team only when you tap Send (#3268, #3276, #3281)
 - The phone apps run speech, dictation, voice cloning and dubbing on the phone itself, offline once you download the models; pairing a computer is optional ([guide](docs/mobile.md)) (#2969)
 - Beta update channel: choose Stable or Beta under Settings → Updates; betas are `-beta.N` prereleases that never reach Stable users, and Docker gets matching `:beta` tags ([guide](docs/update-channels.md)) (#3175)

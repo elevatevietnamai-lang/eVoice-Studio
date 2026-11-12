@@ -4179,7 +4179,16 @@
     "mask_feather": "蒙版羽化",
     "mask_invert": "反转蒙版",
     "keep_pitch": "保持音调",
-    "keep_pitch_hint": "声音按时间拉伸，因此在新速度下人声保持原有音调。"
+    "keep_pitch_hint": "声音按时间拉伸，因此在新速度下人声保持原有音调。",
+    "stickers": "贴纸",
+    "sticker_shapes": "形状",
+    "sticker_arrows": "箭头",
+    "sticker_frames": "边框",
+    "sticker_emoji": "表情",
+    "sticker_add": "添加{{name}}",
+    "track_sticker": "贴纸",
+    "sticker": "贴纸",
+    "sticker_color": "颜色"
   },
   "promo": {
     "title": "宣传视频",

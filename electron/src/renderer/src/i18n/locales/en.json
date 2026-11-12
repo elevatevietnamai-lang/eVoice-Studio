@@ -4179,7 +4179,16 @@
     "mask_feather": "Mask softness",
     "mask_invert": "Invert mask",
     "keep_pitch": "Keep pitch",
-    "keep_pitch_hint": "The sound is stretched in time, so voices keep their pitch at the new speed."
+    "keep_pitch_hint": "The sound is stretched in time, so voices keep their pitch at the new speed.",
+    "stickers": "Stickers",
+    "sticker_shapes": "Shapes",
+    "sticker_arrows": "Arrows",
+    "sticker_frames": "Frames",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Add {{name}}",
+    "track_sticker": "Stickers",
+    "sticker": "Sticker",
+    "sticker_color": "Color"
   },
   "promo": {
     "title": "Promo video",

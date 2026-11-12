@@ -4179,7 +4179,16 @@
     "mask_feather": "ความนุ่มของมาสก์",
     "mask_invert": "กลับด้านมาสก์",
     "keep_pitch": "คงระดับเสียง",
-    "keep_pitch_hint": "เสียงถูกยืดตามเวลา เสียงพูดจึงคงระดับเสียงเดิมที่ความเร็วใหม่"
+    "keep_pitch_hint": "เสียงถูกยืดตามเวลา เสียงพูดจึงคงระดับเสียงเดิมที่ความเร็วใหม่",
+    "stickers": "สติกเกอร์",
+    "sticker_shapes": "รูปทรง",
+    "sticker_arrows": "ลูกศร",
+    "sticker_frames": "กรอบ",
+    "sticker_emoji": "อีโมจิ",
+    "sticker_add": "เพิ่ม {{name}}",
+    "track_sticker": "สติกเกอร์",
+    "sticker": "สติกเกอร์",
+    "sticker_color": "สี"
   },
   "promo": {
     "title": "วิดีโอโปรโมต",

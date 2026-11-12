@@ -4179,7 +4179,16 @@
     "mask_feather": "मास्क की नरमी",
     "mask_invert": "मास्क उलटें",
     "keep_pitch": "पिच बनाए रखें",
-    "keep_pitch_hint": "आवाज़ को समय में खींचा जाता है, इसलिए नई गति पर भी आवाज़ की पिच वही रहती है।"
+    "keep_pitch_hint": "आवाज़ को समय में खींचा जाता है, इसलिए नई गति पर भी आवाज़ की पिच वही रहती है।",
+    "stickers": "स्टिकर",
+    "sticker_shapes": "आकार",
+    "sticker_arrows": "तीर",
+    "sticker_frames": "फ़्रेम",
+    "sticker_emoji": "इमोजी",
+    "sticker_add": "{{name}} जोड़ें",
+    "track_sticker": "स्टिकर",
+    "sticker": "स्टिकर",
+    "sticker_color": "रंग"
   },
   "promo": {
     "title": "प्रोमो वीडियो",

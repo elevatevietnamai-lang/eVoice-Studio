@@ -4181,7 +4181,16 @@
     "mask_feather": "Douceur du masque",
     "mask_invert": "Inverser le masque",
     "keep_pitch": "Conserver la hauteur",
-    "keep_pitch_hint": "Le son est étiré dans le temps : les voix gardent leur hauteur à la nouvelle vitesse."
+    "keep_pitch_hint": "Le son est étiré dans le temps : les voix gardent leur hauteur à la nouvelle vitesse.",
+    "stickers": "Autocollants",
+    "sticker_shapes": "Formes",
+    "sticker_arrows": "Flèches",
+    "sticker_frames": "Cadres",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Ajouter {{name}}",
+    "track_sticker": "Autocollants",
+    "sticker": "Autocollant",
+    "sticker_color": "Couleur"
   },
   "promo": {
     "title": "Vidéo promo",

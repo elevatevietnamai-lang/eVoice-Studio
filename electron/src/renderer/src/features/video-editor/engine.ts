@@ -23,8 +23,13 @@ import {
 } from './project';
 import { audioSegments, bufferKey, scheduleSegments, soundActivity, type AudioSegment } from './audio-mix';
 import { stretchAudioBuffer } from './time-stretch';
+import { setStickerResolver } from '@/lib/opencut/vendor/stickers';
+import { stickerUrl } from './stickers/library';
 import { TEXT_FONTS } from './timeline-ops';
 import { mainForRender, placedTransitions, shadeOpacity } from './transitions';
+
+// Stickers are the editor's bundled SVGs, drawn from data URLs.
+setStickerResolver(stickerUrl);
 
 export const SAMPLE_RATE = 48_000;
 

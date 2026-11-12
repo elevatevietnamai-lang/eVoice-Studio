@@ -62,6 +62,7 @@ import {
   addCaptions,
   addMedia,
   captionsFromText,
+  addSticker,
   addText,
   deleteElement,
   hasKeyframes,
@@ -436,6 +437,7 @@ export function VideoEditorPage() {
             uploading={uploading}
             onUpload={(files) => void upload(files)}
             onAddText={() => applySelecting((current) => addText(current, playhead, t('editor.text_default')))}
+            onAddSticker={(id, name) => applySelecting((current) => addSticker(current, playhead, id, name))}
             missing={missing}
             captioning={captioning}
             onCaptions={() => void autoCaptions()}

@@ -9,8 +9,10 @@
  */
 import type {
   AudioTrack,
+  GraphicTrack,
   ImageElement,
   SceneTracks,
+  StickerElement,
   TextElement,
   TextTrack,
   TimelineElement,
@@ -54,6 +56,9 @@ import { MASK_PARAMS, maskKeyOf, maskValue, withMaskParam, withMaskShape, type M
 
 export const DEFAULT_STILL_SECONDS = 3;
 export const DEFAULT_TEXT_SECONDS = 3;
+export const DEFAULT_STICKER_SECONDS = 3;
+/** A new sticker covers about a third of the frame's short side. */
+const STICKER_SCALE = 0.35;
 /** Text fonts the renderer has without a download (fontsource in main.tsx). */
 export const TEXT_FONTS = ['Inter Variable', 'Space Grotesk Variable'] as const;
 
@@ -74,6 +79,7 @@ function compatible(element: TimelineElement, track: TimelineTrack): boolean {
   if (element.type === 'video' || element.type === 'image') return track.type === 'video';
   if (element.type === 'text') return track.type === 'text';
   if (element.type === 'audio') return track.type === 'audio';
+  if (element.type === 'sticker') return track.type === 'graphic';
   return false;
 }
 
@@ -120,10 +126,11 @@ function pruneTracks(project: EditorProject): EditorProject {
   });
 }
 
-function emptyTrackLike(kind: 'video' | 'text' | 'audio'): TimelineTrack {
+function emptyTrackLike(kind: 'video' | 'text' | 'audio' | 'graphic'): TimelineTrack {
   const id = newId();
   if (kind === 'audio') return { id, name: 'Audio', type: 'audio', elements: [], muted: false };
   if (kind === 'text') return { id, name: 'Text', type: 'text', elements: [], hidden: false };
+  if (kind === 'graphic') return { id, name: 'Stickers', type: 'graphic', elements: [], hidden: false } as GraphicTrack;
   return { id, name: 'Overlay', type: 'video', elements: [], muted: false, hidden: false };
 }
 
@@ -189,7 +196,8 @@ function placeFree(project: EditorProject, trackId: string | null, element: Time
   project: EditorProject;
   ref: ElementRef;
 } {
-  const kind = element.type === 'audio' ? 'audio' : element.type === 'text' ? 'text' : 'video';
+  const kind =
+    element.type === 'audio' ? 'audio' : element.type === 'text' ? 'text' : element.type === 'sticker' ? 'graphic' : 'video';
   const end = element.startTime + element.duration;
   const tracks = kind === 'audio' ? project.tracks.audio : project.tracks.overlay;
   const requested = tracks.find((track) => track.id === trackId);
@@ -295,6 +303,38 @@ export function addText(
     },
   };
   return placeFree(project, null, text);
+}
+
+/** Adds a bundled sticker at `seconds` on a sticker track. */
+export function addSticker(
+  project: EditorProject,
+  seconds: number,
+  stickerId: string,
+  name: string,
+): { project: EditorProject; ref: ElementRef } {
+  const sticker: StickerElement = {
+    id: newId(),
+    name,
+    type: 'sticker',
+    stickerId,
+    startTime: ticks(Math.max(0, seconds)),
+    duration: ticks(DEFAULT_STICKER_SECONDS),
+    trimStart: ZERO_MEDIA_TIME,
+    trimEnd: ZERO_MEDIA_TIME,
+    params: {
+      ...buildDefaultParamValues(getBuiltInElementParams({ type: 'sticker' })),
+      'transform.scaleX': STICKER_SCALE,
+      'transform.scaleY': STICKER_SCALE,
+    },
+  };
+  return placeFree(project, null, sticker);
+}
+
+/** Points a sticker at another id (a recoloured shape). */
+export function setStickerId(project: EditorProject, ref: ElementRef, stickerId: string): EditorProject {
+  return mapElement(project, ref, (element) =>
+    element.type === 'sticker' ? ({ ...element, stickerId } as TimelineElement) : element,
+  );
 }
 
 export interface CaptionSegment {

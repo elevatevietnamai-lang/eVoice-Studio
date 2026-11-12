@@ -4181,7 +4181,16 @@
     "mask_feather": "Suavidade da máscara",
     "mask_invert": "Inverter máscara",
     "keep_pitch": "Manter o tom",
-    "keep_pitch_hint": "O som é esticado no tempo, então as vozes mantêm o tom na nova velocidade."
+    "keep_pitch_hint": "O som é esticado no tempo, então as vozes mantêm o tom na nova velocidade.",
+    "stickers": "Figurinhas",
+    "sticker_shapes": "Formas",
+    "sticker_arrows": "Setas",
+    "sticker_frames": "Molduras",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Adicionar {{name}}",
+    "track_sticker": "Figurinhas",
+    "sticker": "Figurinha",
+    "sticker_color": "Cor"
   },
   "promo": {
     "title": "Vídeo promocional",

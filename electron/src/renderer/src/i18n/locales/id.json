@@ -4179,7 +4179,16 @@
     "mask_feather": "Kelembutan mask",
     "mask_invert": "Balik mask",
     "keep_pitch": "Pertahankan nada",
-    "keep_pitch_hint": "Suara diregangkan dalam waktu, jadi nada suara tetap sama pada kecepatan baru."
+    "keep_pitch_hint": "Suara diregangkan dalam waktu, jadi nada suara tetap sama pada kecepatan baru.",
+    "stickers": "Stiker",
+    "sticker_shapes": "Bentuk",
+    "sticker_arrows": "Panah",
+    "sticker_frames": "Bingkai",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Tambahkan {{name}}",
+    "track_sticker": "Stiker",
+    "sticker": "Stiker",
+    "sticker_color": "Warna"
   },
   "promo": {
     "title": "Video promosi",

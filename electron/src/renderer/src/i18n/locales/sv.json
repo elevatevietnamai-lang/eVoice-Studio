@@ -4179,7 +4179,16 @@
     "mask_feather": "Maskens mjukhet",
     "mask_invert": "Invertera masken",
     "keep_pitch": "Behåll tonhöjden",
-    "keep_pitch_hint": "Ljudet sträcks ut i tid, så röster behåller sin tonhöjd i den nya hastigheten."
+    "keep_pitch_hint": "Ljudet sträcks ut i tid, så röster behåller sin tonhöjd i den nya hastigheten.",
+    "stickers": "Klistermärken",
+    "sticker_shapes": "Former",
+    "sticker_arrows": "Pilar",
+    "sticker_frames": "Ramar",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "Lägg till {{name}}",
+    "track_sticker": "Klistermärken",
+    "sticker": "Klistermärke",
+    "sticker_color": "Färg"
   },
   "promo": {
     "title": "Reklamvideo",

@@ -4179,7 +4179,16 @@
     "mask_feather": "Zachtheid van het masker",
     "mask_invert": "Masker omkeren",
     "keep_pitch": "Toonhoogte behouden",
-    "keep_pitch_hint": "Het geluid wordt in de tijd uitgerekt, zodat stemmen hun toonhoogte houden bij de nieuwe snelheid."
+    "keep_pitch_hint": "Het geluid wordt in de tijd uitgerekt, zodat stemmen hun toonhoogte houden bij de nieuwe snelheid.",
+    "stickers": "Stickers",
+    "sticker_shapes": "Vormen",
+    "sticker_arrows": "Pijlen",
+    "sticker_frames": "Kaders",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "{{name}} toevoegen",
+    "track_sticker": "Stickers",
+    "sticker": "Sticker",
+    "sticker_color": "Kleur"
   },
   "promo": {
     "title": "Promovideo",

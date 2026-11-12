@@ -4179,7 +4179,16 @@
     "mask_feather": "Maske yumuşaklığı",
     "mask_invert": "Maskeyi ters çevir",
     "keep_pitch": "Perdeyi koru",
-    "keep_pitch_hint": "Ses zamanda esnetilir, böylece sesler yeni hızda perdelerini korur."
+    "keep_pitch_hint": "Ses zamanda esnetilir, böylece sesler yeni hızda perdelerini korur.",
+    "stickers": "Çıkartmalar",
+    "sticker_shapes": "Şekiller",
+    "sticker_arrows": "Oklar",
+    "sticker_frames": "Çerçeveler",
+    "sticker_emoji": "Emoji",
+    "sticker_add": "{{name}} ekle",
+    "track_sticker": "Çıkartmalar",
+    "sticker": "Çıkartma",
+    "sticker_color": "Renk"
   },
   "promo": {
     "title": "Tanıtım videosu",

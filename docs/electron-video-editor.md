@@ -10,7 +10,10 @@ computer; nothing is uploaded.
 1. **Import** clips, images or audio in the **Media** column. Each file is kept by
    the local engine (`POST /promo/media`), so it survives a restart.
 2. **Add to the timeline** with **+**: clips and stills join the **main track**,
-   audio goes to an audio track. The layers button adds a clip or still as an
+   audio goes to an audio track. **Stickers** (under the files) adds a shape,
+   arrow, frame or emoji at the playhead on a sticker track; shapes, arrows and
+   frames take any colour. Stickers ship with the app and never download
+   anything. The layers button adds a clip or still as an
    **overlay** on its own track above the main one. The playhead moves to the end
    of a clip added to the main track, so the next one lands after it.
 3. **Edit on the timeline.**
@@ -121,11 +124,15 @@ get their own decoders. Masks use OpenCut's own mask shapes; their params animat
 `mask.<param>` in the clip's keyframes and are resolved per frame before the
 mask is drawn (`lib/opencut/mask-keyframes.ts`). The chroma key runs after the colour look, in one
 shared WebGL2 context (`lib/opencut/chroma-key.ts`), or with the same formula
-on the CPU where WebGL2 is missing. Keep pitch stretches the clip's sound in
+on the CPU where WebGL2 is missing. Stickers are bundled SVG
+(`features/video-editor/stickers/`) handed to OpenCut's sticker node as data
+URLs through a resolver the editor registers; any other sticker id is refused,
+so the renderer never reaches Iconify. Keep pitch stretches the clip's sound in
 time with the editor's own WSOLA (`features/video-editor/time-stretch.ts`),
 once per file and speed, in chunks that yield to the page; the preview and the
 export wait for the stretched copy and play the same one. Stickers, Iconify
-icons and OpenCut's audio time-stretch (`soundtouchjs`, LGPL) are stubbed out.
+icons, OpenCut's own sticker sources and its audio time-stretch
+(`soundtouchjs`, LGPL) are stubbed out.
 See `LICENSE-NOTICE.md`.
 
 ## Limits
