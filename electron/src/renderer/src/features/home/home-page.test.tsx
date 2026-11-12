@@ -54,6 +54,25 @@ it('uses no Tailwind hue classes or hard-coded hex colours in the Home sources',
   }
 });
 
+it('keeps every feature card in a group the same height', () => {
+  // jsdom has no layout, so pin the two rules that equalise heights: rows share one height,
+  // and the card fills its grid cell instead of sizing to its own description.
+  const nodeProcess = (
+    globalThis as unknown as {
+      process: {
+        getBuiltinModule(id: 'node:fs'): { readFileSync(path: string, encoding: 'utf8'): string };
+      };
+    }
+  ).process;
+  const css = nodeProcess
+    .getBuiltinModule('node:fs')
+    .readFileSync('src/renderer/src/features/home/home-page.css', 'utf8');
+  const rule = (selector: string) =>
+    css.match(new RegExp('(?:^|\\n)' + selector.replace('.', '\\.') + '\\s*\\{([^}]*)\\}'))?.[1] ?? '';
+  expect(rule('.home-destinations')).toMatch(/grid-auto-rows:\s*1fr/);
+  expect(rule('.home-destination')).toMatch(/height:\s*100%/);
+});
+
 it('names the feature Dubbing consistently while preserving the existing route', () => {
   expect(en.dubWorkspace.title).toBe('Dubbing');
   expect(en.nav.dub).toBe('Dubbing');

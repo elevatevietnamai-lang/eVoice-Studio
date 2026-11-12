@@ -25,6 +25,7 @@ const AudiobookPage = lazyRouteComponent(
   () => import('@/features/longform/longform-page'),
   'AudiobookPage',
 );
+const PromoPage = lazyRouteComponent(() => import('@/features/promo/promo-page'), 'PromoPage');
 const ProjectsPage = lazyRouteComponent(
   () => import('@/features/projects/projects-page'),
   'ProjectsPage',
@@ -189,6 +190,11 @@ export const storiesRoute = createRoute({
   path: '/stories',
   component: StoriesPage,
 });
+export const promoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/promo',
+  component: PromoPage,
+});
 export const audiobookRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/audiobook',
@@ -287,6 +293,7 @@ export const routeTree = rootRoute.addChildren([
   credentialsRoute,
   storiesRoute,
   audiobookRoute,
+  promoRoute,
   projectsRoute,
   indexRoute,
   cloneRoute,

@@ -29,6 +29,12 @@
 }
 
 
+/* Every card in a group is the same height: rows share the tallest card's height, and the card
+   fills its grid cell (the StaggerItem wrapper) instead of sizing to its own description. */
+.home-destinations {
+  grid-auto-rows: 1fr;
+}
+
 .home-destinations--primary {
   margin-bottom: 18px;
 }
@@ -36,6 +42,8 @@
 .home-destination {
   position: relative;
   isolation: isolate;
+  box-sizing: border-box;
+  height: 100%;
   min-width: 0;
   border: 1px solid var(--border);
   border-radius: var(--card-radius);

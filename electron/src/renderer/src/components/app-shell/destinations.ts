@@ -2,6 +2,7 @@ import {
   AudioLinesIcon,
   BlocksIcon,
   BookOpenIcon,
+  ClapperboardIcon,
   FilmIcon,
   FingerprintIcon,
   FolderIcon,
@@ -106,6 +107,13 @@ export const destinations: readonly WorkspaceDestination[] = [
     icon: FilmIcon,
     group: 'dub',
     home: true,
+  },
+  {
+    to: '/promo',
+    label: 'promo.title',
+    description: 'promo.description',
+    icon: ClapperboardIcon,
+    group: 'dub',
   },
   {
     to: '/batch',
