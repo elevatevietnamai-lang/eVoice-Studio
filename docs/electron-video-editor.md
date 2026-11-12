@@ -32,6 +32,11 @@ computer; nothing is uploaded.
      on the preview moves the selected picture or title.
    - **Colour:** a look (original, vivid, warm, cool, black & white, vintage) plus
      brightness, contrast and saturation, per clip or still.
+   - **Chroma key:** turn on **Remove a background color** to make a colour
+     (green by default, or blue, or any colour you pick) see-through, so the
+     tracks below show. **Strength** sets how far from the colour a pixel may be
+     and still go, **Edge softness** blends the border, and **Remove color
+     spill** takes the screen's tint out of what stays (hair, edges).
    - **Text:** content (new lines are kept), font (Inter or Space Grotesk, both
      bundled), size, colour, bold and a background box.
    - **Sound:** the clip's own sound on or off, volume (keyframable), fade in and
@@ -105,7 +110,9 @@ a frame reaches the compositor. Transitions are per-frame adjustments
 (`lib/opencut/frame-adjust.ts`) on the clips' opacity, position, scale and a
 canvas band for the wipe, plus a black layer that fades in and out over the
 main track for a fade through black; two clips of one file on screen at once
-get their own decoders. Stickers, Iconify icons and audio time-stretch
+get their own decoders. The chroma key runs after the colour look, in one
+shared WebGL2 context (`lib/opencut/chroma-key.ts`), or with the same formula
+on the CPU where WebGL2 is missing. Stickers, Iconify icons and audio time-stretch
 (`soundtouchjs`, LGPL) are stubbed out. See `LICENSE-NOTICE.md`.
 
 ## Limits

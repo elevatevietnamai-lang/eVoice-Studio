@@ -4162,7 +4162,16 @@
     "transition_wipe": "Шторка",
     "transition_duration": "Длина: {{seconds}} с",
     "transition_duration_label": "Длина перехода",
-    "transition_marker": "Переход: {{name}}"
+    "transition_marker": "Переход: {{name}}",
+    "chroma": "Хромакей",
+    "chroma_enable": "Удалить цвет фона",
+    "chroma_hint": "Части изображения, близкие к этому цвету, становятся прозрачными, и видны дорожки ниже.",
+    "chroma_color": "Цвет ключа",
+    "chroma_green": "Зелёный",
+    "chroma_blue": "Синий",
+    "chroma_threshold": "Сила",
+    "chroma_softness": "Мягкость края",
+    "chroma_spill": "Убрать цветной ореол"
   },
   "promo": {
     "title": "Рекламное видео",

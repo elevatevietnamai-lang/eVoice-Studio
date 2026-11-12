@@ -4156,7 +4156,16 @@
     "transition_wipe": "Veeg",
     "transition_duration": "Lengte: {{seconds}} s",
     "transition_duration_label": "Lengte van de overgang",
-    "transition_marker": "Overgang: {{name}}"
+    "transition_marker": "Overgang: {{name}}",
+    "chroma": "Chroma key",
+    "chroma_enable": "Een achtergrondkleur verwijderen",
+    "chroma_hint": "Delen van het beeld dicht bij deze kleur worden doorzichtig en tonen de sporen eronder.",
+    "chroma_color": "Sleutelkleur",
+    "chroma_green": "Groen",
+    "chroma_blue": "Blauw",
+    "chroma_threshold": "Sterkte",
+    "chroma_softness": "Zachtheid van de rand",
+    "chroma_spill": "Kleurzweem verwijderen"
   },
   "promo": {
     "title": "Promovideo",

@@ -4156,7 +4156,16 @@
     "transition_wipe": "Wischen",
     "transition_duration": "Länge: {{seconds}} s",
     "transition_duration_label": "Übergangslänge",
-    "transition_marker": "Übergang: {{name}}"
+    "transition_marker": "Übergang: {{name}}",
+    "chroma": "Chroma Key",
+    "chroma_enable": "Eine Hintergrundfarbe entfernen",
+    "chroma_hint": "Bildteile nahe dieser Farbe werden durchsichtig und zeigen die Spuren darunter.",
+    "chroma_color": "Key-Farbe",
+    "chroma_green": "Grün",
+    "chroma_blue": "Blau",
+    "chroma_threshold": "Stärke",
+    "chroma_softness": "Kantenweichheit",
+    "chroma_spill": "Farbsaum entfernen"
   },
   "promo": {
     "title": "Werbevideo",

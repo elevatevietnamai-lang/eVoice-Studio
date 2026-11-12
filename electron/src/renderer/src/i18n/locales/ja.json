@@ -4156,7 +4156,16 @@
     "transition_wipe": "ワイプ",
     "transition_duration": "長さ：{{seconds}} 秒",
     "transition_duration_label": "トランジションの長さ",
-    "transition_marker": "{{name}} トランジション"
+    "transition_marker": "{{name}} トランジション",
+    "chroma": "クロマキー",
+    "chroma_enable": "背景色を取り除く",
+    "chroma_hint": "この色に近い部分が透明になり、下のトラックが見えます。",
+    "chroma_color": "キーの色",
+    "chroma_green": "グリーン",
+    "chroma_blue": "ブルー",
+    "chroma_threshold": "強さ",
+    "chroma_softness": "エッジのぼかし",
+    "chroma_spill": "色かぶりを除去"
   },
   "promo": {
     "title": "プロモーション動画",

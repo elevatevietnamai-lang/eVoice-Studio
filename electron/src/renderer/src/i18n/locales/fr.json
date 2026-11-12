@@ -4158,7 +4158,16 @@
     "transition_wipe": "Volet",
     "transition_duration": "Durée : {{seconds}} s",
     "transition_duration_label": "Durée de la transition",
-    "transition_marker": "Transition : {{name}}"
+    "transition_marker": "Transition : {{name}}",
+    "chroma": "Incrustation (chroma key)",
+    "chroma_enable": "Retirer une couleur de fond",
+    "chroma_hint": "Les parties de l'image proches de cette couleur deviennent transparentes et laissent voir les pistes du dessous.",
+    "chroma_color": "Couleur à retirer",
+    "chroma_green": "Vert",
+    "chroma_blue": "Bleu",
+    "chroma_threshold": "Intensité",
+    "chroma_softness": "Douceur des bords",
+    "chroma_spill": "Retirer le débordement de couleur"
   },
   "promo": {
     "title": "Vidéo promo",

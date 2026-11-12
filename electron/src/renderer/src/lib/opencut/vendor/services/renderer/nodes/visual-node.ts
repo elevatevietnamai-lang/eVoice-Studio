@@ -4,6 +4,7 @@ import type { Mask } from "../../../masks/types";
 import type { BlendMode, Transform } from "../../../rendering";
 import type { RetimeConfig, VisualElement } from "../../../timeline";
 import type { FrameAdjustFn } from "../../../../frame-adjust";
+import type { ChromaKey } from "../../../../chroma-key";
 
 export interface VisualNodeParams {
 	duration: number;
@@ -21,6 +22,8 @@ export interface VisualNodeParams {
 	colorFilter?: string;
 	/** eVoice Studio: per-frame changes from the editor, such as a transition (see lib/opencut/frame-adjust). */
 	frameAdjust?: FrameAdjustFn;
+	/** eVoice Studio: the chroma key, after the colour look (see lib/opencut/chroma-key). */
+	chromaKey?: ChromaKey | null;
 	/**
 	 * eVoice Studio: which decoder plays the clip's file. Two clips of one file
 	 * on screen at once (a transition between the halves of a split clip) each

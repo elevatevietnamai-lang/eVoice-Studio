@@ -19,6 +19,7 @@ import {
 } from "../../rendering";
 
 import { colorFilterFor } from "../../../color-filter";
+import { chromaKeyFor } from "../../../chroma-key";
 import type { FrameAdjustFn } from "../../../frame-adjust";
 
 /**
@@ -93,6 +94,7 @@ function buildTrackNodes({
 							effects: element.effects ?? [],
 							masks: element.masks ?? [],
 							colorFilter: colorFilterFor(element.params),
+							chromaKey: chromaKeyFor(element.params),
 							frameAdjust: extrasOf(element).frameAdjust,
 							cacheKey: extrasOf(element).cacheKey,
 						}),
@@ -113,6 +115,7 @@ function buildTrackNodes({
 							effects: element.effects ?? [],
 							masks: element.masks ?? [],
 							colorFilter: colorFilterFor(element.params),
+							chromaKey: chromaKeyFor(element.params),
 							frameAdjust: extrasOf(element).frameAdjust,
 							...(isPreview && {
 								maxSourceSize: PREVIEW_MAX_IMAGE_SIZE,

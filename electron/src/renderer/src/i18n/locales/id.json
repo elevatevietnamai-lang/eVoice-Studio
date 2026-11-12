@@ -4156,7 +4156,16 @@
     "transition_wipe": "Sapu",
     "transition_duration": "Durasi: {{seconds}} dtk",
     "transition_duration_label": "Durasi transisi",
-    "transition_marker": "Transisi {{name}}"
+    "transition_marker": "Transisi {{name}}",
+    "chroma": "Chroma key",
+    "chroma_enable": "Hapus warna latar",
+    "chroma_hint": "Bagian gambar yang dekat dengan warna ini menjadi tembus pandang dan menampilkan trek di bawahnya.",
+    "chroma_color": "Warna kunci",
+    "chroma_green": "Hijau",
+    "chroma_blue": "Biru",
+    "chroma_threshold": "Kekuatan",
+    "chroma_softness": "Kelembutan tepi",
+    "chroma_spill": "Hapus pantulan warna"
   },
   "promo": {
     "title": "Video promosi",

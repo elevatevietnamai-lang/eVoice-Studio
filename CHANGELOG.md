@@ -47,6 +47,7 @@ metadata and the backend fallback mirror it.
 - Video editor: a CapCut-style multi-track editor with a magnetic main track, overlays, titles and audio tracks, keyframes, colour looks, speed, fades, music that ducks under voices, auto captions from local speech recognition, and MP4 export whose frames match the preview; built on OpenCut's renderer ([guide](docs/electron-video-editor.md)) (#13)
 - Video editor projects: a project library to open, create, rename, duplicate and delete projects; the project from the first release moves in untouched ([guide](docs/electron-video-editor.md#projects)) (#13)
 - Video editor transitions between main-track clips: dissolve, fade through black, slide, push, zoom and wipe, with their length; the clips overlap and their sound crossfades, in the preview and the export alike (#13)
+- Video editor chroma key: remove a green, blue or picked background colour from a clip or still, with strength, edge softness and spill removal (#13)
 - The phone apps have a Report action on every generated result: pick a reason, add an optional note, and it reaches the VoiceStudio team only when you tap Send (#3268, #3276, #3281)
 - The phone apps run speech, dictation, voice cloning and dubbing on the phone itself, offline once you download the models; pairing a computer is optional ([guide](docs/mobile.md)) (#2969)
 - Beta update channel: choose Stable or Beta under Settings → Updates; betas are `-beta.N` prereleases that never reach Stable users, and Docker gets matching `:beta` tags ([guide](docs/update-channels.md)) (#3175)

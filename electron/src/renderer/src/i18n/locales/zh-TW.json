@@ -4156,7 +4156,16 @@
     "transition_wipe": "擦除",
     "transition_duration": "長度：{{seconds}} 秒",
     "transition_duration_label": "轉場長度",
-    "transition_marker": "{{name}}轉場"
+    "transition_marker": "{{name}}轉場",
+    "chroma": "色度去背",
+    "chroma_enable": "去除一種背景色",
+    "chroma_hint": "畫面中接近此顏色的部分會變透明，露出下方的軌道。",
+    "chroma_color": "去背顏色",
+    "chroma_green": "綠色",
+    "chroma_blue": "藍色",
+    "chroma_threshold": "強度",
+    "chroma_softness": "邊緣柔和度",
+    "chroma_spill": "去除溢色"
   },
   "promo": {
     "title": "宣傳影片",

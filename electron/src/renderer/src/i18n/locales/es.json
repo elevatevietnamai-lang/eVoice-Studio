@@ -4158,7 +4158,16 @@
     "transition_wipe": "Barrido",
     "transition_duration": "Duración: {{seconds}} s",
     "transition_duration_label": "Duración de la transición",
-    "transition_marker": "Transición: {{name}}"
+    "transition_marker": "Transición: {{name}}",
+    "chroma": "Croma",
+    "chroma_enable": "Quitar un color de fondo",
+    "chroma_hint": "Las partes de la imagen cercanas a este color se vuelven transparentes y dejan ver las pistas de abajo.",
+    "chroma_color": "Color clave",
+    "chroma_green": "Verde",
+    "chroma_blue": "Azul",
+    "chroma_threshold": "Intensidad",
+    "chroma_softness": "Suavidad del borde",
+    "chroma_spill": "Quitar el reflejo de color"
   },
   "promo": {
     "title": "Vídeo promocional",

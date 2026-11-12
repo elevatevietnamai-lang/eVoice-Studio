@@ -4156,7 +4156,16 @@
     "transition_wipe": "กวาด",
     "transition_duration": "ความยาว: {{seconds}} วิ",
     "transition_duration_label": "ความยาวทรานซิชัน",
-    "transition_marker": "ทรานซิชัน {{name}}"
+    "transition_marker": "ทรานซิชัน {{name}}",
+    "chroma": "โครมาคีย์",
+    "chroma_enable": "ลบสีพื้นหลัง",
+    "chroma_hint": "ส่วนของภาพที่ใกล้สีนี้จะโปร่งใส และเห็นแทร็กด้านล่าง",
+    "chroma_color": "สีที่ต้องการลบ",
+    "chroma_green": "เขียว",
+    "chroma_blue": "น้ำเงิน",
+    "chroma_threshold": "ความแรง",
+    "chroma_softness": "ความนุ่มของขอบ",
+    "chroma_spill": "ลบสีที่ล้นเข้ามา"
   },
   "promo": {
     "title": "วิดีโอโปรโมต",

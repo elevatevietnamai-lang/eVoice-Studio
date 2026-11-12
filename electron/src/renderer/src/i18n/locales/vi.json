@@ -4156,7 +4156,16 @@
     "transition_wipe": "Xoá ngang",
     "transition_duration": "Độ dài: {{seconds}} giây",
     "transition_duration_label": "Độ dài chuyển cảnh",
-    "transition_marker": "Chuyển cảnh {{name}}"
+    "transition_marker": "Chuyển cảnh {{name}}",
+    "chroma": "Tách phông (chroma key)",
+    "chroma_enable": "Xoá một màu nền",
+    "chroma_hint": "Những phần gần màu này sẽ trong suốt, lộ ra các track bên dưới.",
+    "chroma_color": "Màu cần xoá",
+    "chroma_green": "Xanh lá",
+    "chroma_blue": "Xanh dương",
+    "chroma_threshold": "Độ ngưỡng",
+    "chroma_softness": "Độ mềm viền",
+    "chroma_spill": "Khử viền màu"
   },
   "promo": {
     "title": "Video quảng cáo",

@@ -4164,7 +4164,16 @@
     "transition_wipe": "مسح",
     "transition_duration": "المدة: {{seconds}} ث",
     "transition_duration_label": "مدة الانتقال",
-    "transition_marker": "انتقال {{name}}"
+    "transition_marker": "انتقال {{name}}",
+    "chroma": "مفتاح الكروما",
+    "chroma_enable": "إزالة لون الخلفية",
+    "chroma_hint": "تصبح أجزاء الصورة القريبة من هذا اللون شفافة وتظهر المسارات أسفلها.",
+    "chroma_color": "لون المفتاح",
+    "chroma_green": "أخضر",
+    "chroma_blue": "أزرق",
+    "chroma_threshold": "الشدة",
+    "chroma_softness": "نعومة الحواف",
+    "chroma_spill": "إزالة انعكاس اللون"
   },
   "promo": {
     "title": "فيديو ترويجي",

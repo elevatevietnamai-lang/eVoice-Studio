@@ -4156,7 +4156,16 @@
     "transition_wipe": "와이프",
     "transition_duration": "길이: {{seconds}}초",
     "transition_duration_label": "전환 길이",
-    "transition_marker": "{{name}} 전환"
+    "transition_marker": "{{name}} 전환",
+    "chroma": "크로마 키",
+    "chroma_enable": "배경색 제거",
+    "chroma_hint": "이 색과 가까운 부분이 투명해져 아래 트랙이 보입니다.",
+    "chroma_color": "키 색상",
+    "chroma_green": "초록",
+    "chroma_blue": "파랑",
+    "chroma_threshold": "강도",
+    "chroma_softness": "가장자리 부드럽게",
+    "chroma_spill": "색 번짐 제거"
   },
   "promo": {
     "title": "홍보 영상",

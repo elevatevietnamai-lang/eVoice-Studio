@@ -1,4 +1,5 @@
 import { applyColorFilter } from "../../../../color-filter";
+import { applyChromaKey, chromaKeyId } from "../../../../chroma-key";
 import { drawClipMask } from "../../../../frame-adjust";
 import { drawCssBackground } from "../../../gradients";
 import { getMaskDefinition } from "../../../masks";
@@ -247,9 +248,11 @@ async function collectVisualSourceNode({
 			: (node.resolved as ResolvedVisualSourceNodeState).sourceHeight;
 
 	const textureId = `${path}:source`;
-	// eVoice Studio: a colour look is drawn into a per-texture canvas first, so
-	// the revision carries the filter as well as the frame.
+	// eVoice Studio: a colour look and a chroma key are drawn into per-texture
+	// canvases first, so the revision carries them as well as the frame.
 	const colorFilter = node instanceof GraphicNode ? undefined : node.params.colorFilter;
+	const chromaKey = node instanceof GraphicNode ? undefined : node.params.chromaKey;
+	const keyId = chromaKeyId(chromaKey);
 	const sourceRevision =
 		node instanceof GraphicNode
 			? undefined
@@ -257,10 +260,17 @@ async function collectVisualSourceNode({
 	textures.set(textureId, {
 		kind: "external",
 		id: textureId,
-		source: applyColorFilter(textureId, source, sourceWidth, sourceHeight, colorFilter),
+		source: applyChromaKey(
+			textureId,
+			applyColorFilter(textureId, source, sourceWidth, sourceHeight, colorFilter),
+			sourceWidth,
+			sourceHeight,
+			chromaKey,
+		),
 		width: sourceWidth,
 		height: sourceHeight,
-		revision: colorFilter ? `${sourceRevision ?? ""}|${colorFilter}` : sourceRevision,
+		revision:
+			colorFilter || keyId ? `${sourceRevision ?? ""}|${colorFilter ?? ""}|${keyId}` : sourceRevision,
 	});
 
 	const transform = computeVisualTransform({

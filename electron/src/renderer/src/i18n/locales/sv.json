@@ -4156,7 +4156,16 @@
     "transition_wipe": "Svep",
     "transition_duration": "Längd: {{seconds}} s",
     "transition_duration_label": "Övergångens längd",
-    "transition_marker": "Övergång: {{name}}"
+    "transition_marker": "Övergång: {{name}}",
+    "chroma": "Chroma key",
+    "chroma_enable": "Ta bort en bakgrundsfärg",
+    "chroma_hint": "Delar av bilden nära den här färgen blir genomskinliga och visar spåren under.",
+    "chroma_color": "Nyckelfärg",
+    "chroma_green": "Grön",
+    "chroma_blue": "Blå",
+    "chroma_threshold": "Styrka",
+    "chroma_softness": "Kantmjukhet",
+    "chroma_spill": "Ta bort färgspill"
   },
   "promo": {
     "title": "Reklamvideo",

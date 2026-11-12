@@ -4156,7 +4156,16 @@
     "transition_wipe": "擦除",
     "transition_duration": "时长：{{seconds}} 秒",
     "transition_duration_label": "转场时长",
-    "transition_marker": "{{name}}转场"
+    "transition_marker": "{{name}}转场",
+    "chroma": "色度抠像",
+    "chroma_enable": "去除一种背景色",
+    "chroma_hint": "画面中接近此颜色的部分会变透明，露出下方的轨道。",
+    "chroma_color": "抠像颜色",
+    "chroma_green": "绿色",
+    "chroma_blue": "蓝色",
+    "chroma_threshold": "强度",
+    "chroma_softness": "边缘柔和度",
+    "chroma_spill": "去除溢色"
   },
   "promo": {
     "title": "宣传视频",

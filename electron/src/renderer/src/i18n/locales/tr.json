@@ -4156,7 +4156,16 @@
     "transition_wipe": "Silme",
     "transition_duration": "Süre: {{seconds}} sn",
     "transition_duration_label": "Geçiş süresi",
-    "transition_marker": "Geçiş: {{name}}"
+    "transition_marker": "Geçiş: {{name}}",
+    "chroma": "Kroma anahtar",
+    "chroma_enable": "Bir arka plan rengini kaldır",
+    "chroma_hint": "Görüntünün bu renge yakın kısımları saydamlaşır ve alttaki parçalar görünür.",
+    "chroma_color": "Anahtar renk",
+    "chroma_green": "Yeşil",
+    "chroma_blue": "Mavi",
+    "chroma_threshold": "Güç",
+    "chroma_softness": "Kenar yumuşaklığı",
+    "chroma_spill": "Renk taşmasını gider"
   },
   "promo": {
     "title": "Tanıtım videosu",

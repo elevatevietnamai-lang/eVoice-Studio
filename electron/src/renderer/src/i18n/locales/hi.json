@@ -4156,7 +4156,16 @@
     "transition_wipe": "वाइप",
     "transition_duration": "लंबाई: {{seconds}} से",
     "transition_duration_label": "ट्रांज़िशन की लंबाई",
-    "transition_marker": "{{name}} ट्रांज़िशन"
+    "transition_marker": "{{name}} ट्रांज़िशन",
+    "chroma": "क्रोमा की",
+    "chroma_enable": "बैकग्राउंड का रंग हटाएँ",
+    "chroma_hint": "तस्वीर के जो हिस्से इस रंग के पास हैं, वे पारदर्शी हो जाते हैं और नीचे के ट्रैक दिखते हैं।",
+    "chroma_color": "हटाने वाला रंग",
+    "chroma_green": "हरा",
+    "chroma_blue": "नीला",
+    "chroma_threshold": "तीव्रता",
+    "chroma_softness": "किनारे की नरमी",
+    "chroma_spill": "रंग का फैलाव हटाएँ"
   },
   "promo": {
     "title": "प्रोमो वीडियो",

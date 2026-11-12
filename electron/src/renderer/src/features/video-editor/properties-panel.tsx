@@ -17,6 +17,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { FILTER_PRESETS } from '@/lib/opencut/color-filter';
 import {
+  DEFAULT_KEY_COLOR,
+  DEFAULT_SOFTNESS,
+  DEFAULT_SPILL,
+  DEFAULT_THRESHOLD,
+} from '@/lib/opencut/chroma-key';
+import {
   EDITOR_FPS,
   EDITOR_SHAPES,
   MAIN_TRACK_ID,
@@ -410,6 +416,63 @@ export function PropertiesPanel({
               />
             </Row>
           ))}
+        </Section>
+      )}
+
+      {(element.type === 'video' || element.type === 'image') && (
+        <Section title={t('editor.chroma')}>
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <span className="text-muted-foreground">{t('editor.chroma_enable')}</span>
+            <Switch
+              aria-label={t('editor.chroma_enable')}
+              checked={element.params['chroma.enabled'] === true}
+              onCheckedChange={(on) => param('chroma.enabled', on, false)}
+            />
+          </div>
+          {element.params['chroma.enabled'] === true && (
+            <>
+              <p className="text-xs text-muted-foreground">{t('editor.chroma_hint')}</p>
+              <div className="flex items-end gap-2">
+                <Row label={t('editor.chroma_color')}>
+                  <Input
+                    type="color"
+                    className="h-8 w-16 p-1"
+                    value={String(element.params['chroma.color'] ?? DEFAULT_KEY_COLOR)}
+                    onChange={(event) => param('chroma.color', event.target.value)}
+                  />
+                </Row>
+                {(['#00ff00', '#0000ff'] as const).map((preset) => (
+                  <Button
+                    key={preset}
+                    size="xs"
+                    variant={(element.params['chroma.color'] ?? DEFAULT_KEY_COLOR) === preset ? 'secondary' : 'ghost'}
+                    aria-pressed={(element.params['chroma.color'] ?? DEFAULT_KEY_COLOR) === preset}
+                    onClick={() => param('chroma.color', preset, false)}
+                  >
+                    {t(preset === '#00ff00' ? 'editor.chroma_green' : 'editor.chroma_blue')}
+                  </Button>
+                ))}
+              </div>
+              {(
+                [
+                  ['threshold', DEFAULT_THRESHOLD, 0, 1],
+                  ['softness', DEFAULT_SOFTNESS, 0, 0.5],
+                  ['spill', DEFAULT_SPILL, 0, 1],
+                ] as const
+              ).map(([key, fallback, min, max]) => (
+                <Row key={key} label={`${t(`editor.chroma_${key}`)} ${Math.round(number(element.params[`chroma.${key}`], fallback) * 100)}%`}>
+                  <Slider
+                    min={min}
+                    max={max}
+                    step={0.01}
+                    value={[number(element.params[`chroma.${key}`], fallback)]}
+                    aria-label={t(`editor.chroma_${key}`)}
+                    onValueChange={(value) => param(`chroma.${key}`, single(value))}
+                  />
+                </Row>
+              ))}
+            </>
+          )}
         </Section>
       )}
 

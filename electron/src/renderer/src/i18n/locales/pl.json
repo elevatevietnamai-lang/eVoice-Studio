@@ -4162,7 +4162,16 @@
     "transition_wipe": "Wymazanie",
     "transition_duration": "Długość: {{seconds}} s",
     "transition_duration_label": "Długość przejścia",
-    "transition_marker": "Przejście: {{name}}"
+    "transition_marker": "Przejście: {{name}}",
+    "chroma": "Kluczowanie koloru",
+    "chroma_enable": "Usuń kolor tła",
+    "chroma_hint": "Części obrazu bliskie temu kolorowi stają się przezroczyste i odsłaniają ścieżki poniżej.",
+    "chroma_color": "Kolor klucza",
+    "chroma_green": "Zielony",
+    "chroma_blue": "Niebieski",
+    "chroma_threshold": "Siła",
+    "chroma_softness": "Miękkość krawędzi",
+    "chroma_spill": "Usuń poświatę koloru"
   },
   "promo": {
     "title": "Film reklamowy",

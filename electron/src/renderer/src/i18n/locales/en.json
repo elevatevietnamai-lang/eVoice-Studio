@@ -4156,7 +4156,16 @@
     "transition_wipe": "Wipe",
     "transition_duration": "Length: {{seconds}} s",
     "transition_duration_label": "Transition length",
-    "transition_marker": "{{name}} transition"
+    "transition_marker": "{{name}} transition",
+    "chroma": "Chroma key",
+    "chroma_enable": "Remove a background color",
+    "chroma_hint": "Parts of the picture close to this color become see-through, showing the tracks below.",
+    "chroma_color": "Key color",
+    "chroma_green": "Green",
+    "chroma_blue": "Blue",
+    "chroma_threshold": "Strength",
+    "chroma_softness": "Edge softness",
+    "chroma_spill": "Remove color spill"
   },
   "promo": {
     "title": "Promo video",
