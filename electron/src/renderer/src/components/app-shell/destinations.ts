@@ -115,6 +115,7 @@ export const destinations: readonly WorkspaceDestination[] = [
     description: 'editor.description',
     icon: SquarePlayIcon,
     group: 'dub',
+    home: true,
   },
   {
     to: '/promo',
@@ -122,6 +123,7 @@ export const destinations: readonly WorkspaceDestination[] = [
     description: 'promo.description',
     icon: ClapperboardIcon,
     group: 'dub',
+    home: true,
   },
   {
     to: '/batch',
