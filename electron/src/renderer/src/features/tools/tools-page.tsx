@@ -1,3 +1,4 @@
+import { Textarea } from '@/components/ui/textarea';
 import { AudioWaveformIcon, GitCompareArrowsIcon, WrenchIcon } from 'lucide-react';
 import { Reveal } from '@/components/motion';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
@@ -166,7 +167,7 @@ function ToolForm({ tool }: { tool: Tool }) {
           {t('tools.' + tool.description)}
         </p>
       </div>
-      <label className="block space-y-2 text-sm">
+      <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
         <span>
           {t(
             tool.id === 'probe'
@@ -186,8 +187,8 @@ function ToolForm({ tool }: { tool: Tool }) {
             }}
           />
         ) : (
-          <textarea
-            className="min-h-36 w-full resize-y rounded-lg border border-input bg-transparent p-3 leading-7 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          <Textarea
+            className="min-h-36 resize-y leading-7"
             disabled={busy}
             value={text}
             onChange={(event) => {
@@ -199,7 +200,7 @@ function ToolForm({ tool }: { tool: Tool }) {
       </label>
       {tool.id === 'rate-fit' && (
         <div className="flex flex-wrap items-end gap-4">
-          <label className="space-y-2 text-sm">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span>{t('tools.slot_seconds')}</span>
             <Input
               type="number"

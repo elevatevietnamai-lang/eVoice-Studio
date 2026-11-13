@@ -201,7 +201,7 @@ export function UninstallSettings() {
               </Alert>
             )}
           </Reveal>
-          <label className="space-y-1.5 text-sm">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span>{t('settings.uninstall_type_to_confirm', { word: confirmation })}</span>
             <Input
               autoFocus

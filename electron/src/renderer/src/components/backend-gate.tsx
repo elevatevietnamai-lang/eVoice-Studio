@@ -393,7 +393,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                 </div>
               )}
               <div className="grid w-full grid-cols-2 gap-2">
-                <label className="space-y-1 text-left text-xs text-muted-foreground">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium text-left text-muted-foreground">
                   <span>{t('settings.language')}</span>
                   <Select
                     items={APP_LANGUAGE_ITEMS}
@@ -415,7 +415,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                     </SelectContent>
                   </Select>
                 </label>
-                <label className="space-y-1 text-left text-xs text-muted-foreground">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium text-left text-muted-foreground">
                   <span>{t('firstrun.region_label')}</span>
                   <Select
                     items={regionItems}

@@ -172,7 +172,8 @@
   align-content: start;
 }
 .twilio-field-label {
-  font-size: 12px;
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
   font-weight: 500;
 }
 .twilio-field small,

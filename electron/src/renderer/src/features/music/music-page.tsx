@@ -209,7 +209,7 @@ export function MusicPage() {
             </section>
           ) : null}
 
-          <label className="block space-y-1.5 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="font-medium">{t('musicStudio.prompt')}</span>
             <Textarea
               value={prompt}
@@ -239,7 +239,7 @@ export function MusicPage() {
             <Switch checked={instrumental} disabled={busy} onCheckedChange={setInstrumental} />
           </label>
           {!instrumental && (
-            <label className="block space-y-1.5 text-xs">
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
               <span className="font-medium">{t('musicStudio.lyrics')}</span>
               <Textarea
                 value={lyrics}
@@ -269,7 +269,7 @@ export function MusicPage() {
               onValueChange={(value) => setDuration(Array.isArray(value) ? value[0] : value)}
             />
           </div>
-          <label className="block space-y-1.5 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="font-medium">{t('musicStudio.bpm')}</span>
             <Input
               inputMode="numeric"

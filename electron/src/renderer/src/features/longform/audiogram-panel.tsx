@@ -89,7 +89,7 @@ export function AudiogramPanel({
           {t('audiobook.audiogram_hint', { max: MAX_CLIP_SECONDS })}
         </p>
         <div className="grid grid-cols-2 gap-2">
-          <label className="space-y-1 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="text-muted-foreground">{t('audiobook.audiogram_start')}</span>
             <Input
               value={start}
@@ -98,7 +98,7 @@ export function AudiogramPanel({
               onChange={(event) => setStart(event.target.value)}
             />
           </label>
-          <label className="space-y-1 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="text-muted-foreground">{t('audiobook.audiogram_length')}</span>
             <Input
               type="number"
@@ -125,7 +125,7 @@ export function AudiogramPanel({
             ))}
           </div>
         </div>
-        <label className="block space-y-1 text-xs">
+        <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
           <span className="text-muted-foreground">{t('audiobook.audiogram_title')}</span>
           <Input
             value={caption}

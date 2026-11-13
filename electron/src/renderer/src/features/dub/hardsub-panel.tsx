@@ -301,7 +301,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 <span className="w-10 text-right tabular-nums">{frameAt.toFixed(1)}s</span>
               </label>
               <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
-                <label className="space-y-1">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                   <span>{t('dub_hardsub.top_edge')}</span>
                   <input
                     type="range"
@@ -315,7 +315,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                     }
                   />
                 </label>
-                <label className="space-y-1">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                   <span>{t('dub_hardsub.bottom_edge')}</span>
                   <input
                     type="range"

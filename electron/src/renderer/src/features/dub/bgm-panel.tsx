@@ -1,3 +1,4 @@
+import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
@@ -148,10 +149,9 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
           </p>
         ) : (
           <>
-            <label className="block space-y-1.5 text-xs">
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
               <span className="font-medium">{t('dub_bgm.style')}</span>
-              <input
-                className="h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+              <Input
                 value={style}
                 maxLength={400}
                 disabled={locked}

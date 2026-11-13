@@ -1,3 +1,4 @@
+import { Textarea } from '@/components/ui/textarea';
 import { StoryStems } from './story-stems';
 import { Reveal } from '@/components/motion';
 import { WaveformPlayer } from '@/components/waveform-player';
@@ -330,10 +331,10 @@ export function StoryEditor({
           <p className="text-xs leading-relaxed text-muted-foreground">
             {t('stories.autocastHint')}
           </p>
-          <textarea
+          <Textarea
             aria-label={t('stories.autocast')}
             placeholder={t('stories.splitPlaceholder')}
-            className="min-h-32 w-full rounded-lg border border-border/60 bg-background/40 p-3 text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="min-h-32"
             value={script}
             disabled={disabled}
             onChange={(e) => setScript(e.target.value)}

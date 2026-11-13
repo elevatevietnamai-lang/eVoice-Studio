@@ -398,7 +398,7 @@ export function ResetSettings({
             )}
           </Reveal>
           {needsTyped && (
-            <label className="space-y-1.5 text-sm">
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
               <span>
                 {t('settings.reset_type_to_confirm', { word: t('settings.reset_confirm_word') })}
               </span>

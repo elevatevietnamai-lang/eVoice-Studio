@@ -53,7 +53,7 @@ export function ProductionSettings({
     <details className="space-y-4" onToggle={(event) => setOpen(event.currentTarget.open)}>
       <summary className="cursor-pointer text-sm font-medium">{t('audiobook.expressive')}</summary>
       {knobs.map((knob) => (
-        <label key={knob.key} className="block space-y-2 text-xs">
+        <label key={knob.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
           <span className="flex justify-between text-muted-foreground">
             <span>{t('clone.' + knob.label)}</span>
             <span className="tabular-nums">{value[knob.key] ?? knob.value}</span>
@@ -92,7 +92,7 @@ export function ProductionSettings({
       </label>
       <p className="text-xs text-muted-foreground">{t('audiobook.joins_help')}</p>
       {gaps.map((gap) => (
-        <label key={gap.key} className="block space-y-2 text-xs">
+        <label key={gap.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
           <span className="flex justify-between text-muted-foreground">
             <span>{t('audiobook.' + gap.label)}</span>
             <span className="tabular-nums">{milliseconds.format(value[gap.key] ?? gap.value)}</span>
@@ -121,7 +121,7 @@ export function ProductionSettings({
           onCheckedChange={(trimEdges) => onChange({ ...value, trimEdges })}
         />
       </label>
-      <label className="block space-y-1 text-xs">
+      <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
         {t('audiobook.seed')}
         <Input
           type="number"
@@ -139,7 +139,7 @@ export function ProductionSettings({
       {emotion && (
         <div className="space-y-3">
           <p className="text-xs text-muted-foreground">{t('audiobook.emotion_help')}</p>
-          <label className="block space-y-1 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             {t('audiobook.emotion_text')}
             <Input
               value={value.emoText}
@@ -147,7 +147,7 @@ export function ProductionSettings({
               onChange={(event) => onChange({ ...value, emoText: event.target.value })}
             />
           </label>
-          <label className="block space-y-1 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             {t('audiobook.emotion_alpha')}
             <input
               type="range"
