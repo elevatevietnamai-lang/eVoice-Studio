@@ -53,6 +53,7 @@ import {
 } from './project';
 import { TRANSITION_KEYS, overlapTicks } from './transitions';
 import { MASK_PARAMS, maskKeyOf, maskValue, withMaskParam, withMaskShape, type MaskShape } from './masks';
+import { TITLE_PARAM } from './title-input';
 
 export const DEFAULT_STILL_SECONDS = 3;
 export const DEFAULT_TEXT_SECONDS = 3;
@@ -341,28 +342,45 @@ export function addTitleClip(
   form: string,
 ): { project: EditorProject; ref: ElementRef } {
   const placed = insertMedia(project, { ...media, has_audio: false }, seconds, 'overlay');
-  return { project: setParam(placed.project, placed.ref, 'title.form', form), ref: placed.ref };
+  return { project: setParam(placed.project, placed.ref, TITLE_PARAM, form), ref: placed.ref };
 }
 
-/** Swaps a title clip's render for a new one (edited text), keeping where it starts. */
-export function replaceTitleClip(project: EditorProject, ref: ElementRef, media: EditorMedia, form: string): EditorProject {
+/**
+ * Swaps a title clip's render for a new one (edited text), keeping where it starts and its look.
+ * A longer render that would run into the next clip on its track moves to a track of its own.
+ */
+export function replaceTitleClip(
+  project: EditorProject,
+  ref: ElementRef,
+  media: EditorMedia,
+  form: string,
+): { project: EditorProject; ref: ElementRef } {
   const found = findElement(project, ref);
-  if (!found || found.element.type !== 'video') return project;
+  if (!found || found.element.type !== 'video') return { project, ref };
   const fresh = clipFor({ ...media, has_audio: false }, found.element.startTime) as VideoElement;
-  const next = addMedia(project, { ...media, has_audio: false });
-  return mapElement(next, ref, (element) =>
-    ({
-      ...element,
-      mediaId: media.id,
-      name: media.name,
-      duration: fresh.duration,
-      sourceDuration: fresh.sourceDuration,
-      trimStart: ZERO_MEDIA_TIME,
-      trimEnd: ZERO_MEDIA_TIME,
-      isSourceAudioEnabled: false,
-      params: { ...element.params, 'title.form': form },
-    }) as TimelineElement,
+  // A new render plays at its own speed from its first frame.
+  const { retime: _retime, ...kept } = found.element;
+  const updated = {
+    ...kept,
+    mediaId: media.id,
+    name: media.name,
+    duration: fresh.duration,
+    sourceDuration: fresh.sourceDuration,
+    trimStart: ZERO_MEDIA_TIME,
+    trimEnd: ZERO_MEDIA_TIME,
+    isSourceAudioEnabled: false,
+    params: { ...found.element.params, [TITLE_PARAM]: form },
+  } as TimelineElement;
+  const without = mapTrack(
+    addMedia(project, { ...media, has_audio: false }),
+    ref.trackId,
+    (track) =>
+      ({
+        ...track,
+        elements: track.elements.filter((element) => element.id !== ref.elementId),
+      }) as TimelineTrack,
   );
+  return placeFree(without, ref.trackId, updated);
 }
 
 /** Points a sticker at another id (a recoloured shape). */

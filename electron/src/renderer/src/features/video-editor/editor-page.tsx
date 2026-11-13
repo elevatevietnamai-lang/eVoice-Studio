@@ -236,7 +236,7 @@ export function VideoEditorPage() {
   const onTitleRendered = (media: EditorMedia, form: TitleForm) => {
     const editing = titleDialog?.ref ?? null;
     const saved = JSON.stringify(form);
-    if (editing) apply((current) => replaceTitleClip(current, editing, media, saved));
+    if (editing) applySelecting((current) => replaceTitleClip(current, editing, media, saved));
     else applySelecting((current) => addTitleClip(current, media, playhead, saved));
   };
 

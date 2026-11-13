@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { EditorMedia } from './project';
-import { emptyProject, secondsOf } from './project';
+import { emptyProject, secondsOf, ticks } from './project';
 import { addTitleClip, findElementIn, replaceTitleClip } from './test-helpers';
 import { TITLE_PARAM, defaultTitleForm, titleFormOf, titleInput, titleProblem } from './title-input';
 
@@ -54,12 +54,34 @@ describe('title clips on the timeline', () => {
   it('swaps in a new render where the old one started', () => {
     const first = addTitleClip(emptyProject(), render('t1.webm', 3), 2, JSON.stringify(defaultTitleForm()));
     const form = { ...defaultTitleForm(), title: 'Edited', seconds: 5 };
-    const project = replaceTitleClip(first.project, first.ref, render('t2.webm', 5), JSON.stringify(form));
-    const element = findElementIn(project, first.ref);
+    const { project, ref } = replaceTitleClip(first.project, first.ref, render('t2.webm', 5), JSON.stringify(form));
+    expect(ref).toEqual(first.ref);
+    const element = findElementIn(project, ref);
     expect(element.type === 'video' && element.mediaId).toBe('t2.webm');
     expect(secondsOf(element.startTime)).toBeCloseTo(2);
     expect(secondsOf(element.duration)).toBeCloseTo(5);
     expect(titleFormOf(element)?.title).toBe('Edited');
+  });
+
+  it('moves a longer render to its own track rather than run into the next clip', () => {
+    const first = addTitleClip(emptyProject(), render('t1.webm', 3), 0, JSON.stringify(defaultTitleForm()));
+    const original = findElementIn(first.project, first.ref);
+    const next = { ...original, id: 'next', startTime: ticks(4) };
+    const crowded = {
+      ...first.project,
+      tracks: {
+        ...first.project.tracks,
+        overlay: first.project.tracks.overlay.map((track) =>
+          track.id === first.ref.trackId ? { ...track, elements: [...track.elements, next] } : track,
+        ),
+      },
+    } as typeof first.project;
+    const { project, ref } = replaceTitleClip(crowded, first.ref, render('t2.webm', 8), JSON.stringify(defaultTitleForm()));
+    expect(ref.trackId).not.toBe(first.ref.trackId);
+    expect(ref.elementId).toBe(first.ref.elementId);
+    expect(secondsOf(findElementIn(project, ref).duration)).toBeCloseTo(8);
+    const oldTrack = project.tracks.overlay.find((track) => track.id === first.ref.trackId)!;
+    expect(oldTrack.elements.map((element) => element.id)).toEqual(['next']);
   });
 
   it('ignores a damaged or foreign title param', () => {
