@@ -51,6 +51,8 @@ import {
 } from './timeline-ops';
 import { MASK_PARAMS, MASK_SHAPES, maskShapeOf } from './masks';
 import { DEFAULT_STICKER_COLOR, isRecolorable, parseStickerId, stickerId } from './stickers/library';
+import { titleFormOf } from './title-input';
+import { SparklesIcon } from 'lucide-react';
 import {
   DEFAULT_TRANSITION_SECONDS,
   MAX_TRANSITION_SECONDS,
@@ -267,11 +269,13 @@ export function PropertiesPanel({
   selection,
   playhead,
   apply,
+  onEditTitle,
 }: {
   project: EditorProject;
   selection: ElementRef | null;
   playhead: number;
   apply: Apply;
+  onEditTitle?: (ref: ElementRef) => void;
 }) {
   const { t } = useTranslation();
   const found = findElement(project, selection);
@@ -387,6 +391,16 @@ export function PropertiesPanel({
             step={0.01}
             display={(value) => `${Math.round(value * 100)}%`}
           />
+        </Section>
+      )}
+
+      {titleFormOf(element) && onEditTitle && (
+        <Section title={t('editor.title_dialog')}>
+          <p className="text-xs text-muted-foreground">{t('editor.title_edit_hint')}</p>
+          <Button size="sm" variant="outline" onClick={() => onEditTitle(selection)}>
+            <SparklesIcon />
+            {t('editor.title_edit')}
+          </Button>
         </Section>
       )}
 

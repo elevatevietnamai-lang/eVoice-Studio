@@ -13,7 +13,12 @@ computer; nothing is uploaded.
    audio goes to an audio track. **Stickers** (under the files) adds a shape,
    arrow, frame or emoji at the playhead on a sticker track; shapes, arrows and
    frames take any colour. Stickers ship with the app and never download
-   anything. The layers button adds a clip or still as an
+   anything. **Animated title** (desktop app) renders one of the Promo video
+   title templates with your text, colours, length and position, and lays it
+   at the playhead on an overlay track; select it and choose **Edit title** to
+   change it and render again in place. Titles are turned on once from the
+   **Promo video** page, which downloads the browser they render with after you
+   confirm; until then the dialog sends you there. The layers button adds a clip or still as an
    **overlay** on its own track above the main one. The playhead moves to the end
    of a clip added to the main track, so the next one lands after it.
 3. **Edit on the timeline.**
@@ -132,7 +137,13 @@ time with the editor's own WSOLA (`features/video-editor/time-stretch.ts`),
 once per file and speed, in chunks that yield to the page; the preview and the
 export wait for the stretched copy and play the same one. Stickers, Iconify
 icons, OpenCut's own sticker sources and its audio time-stretch
-(`soundtouchjs`, LGPL) are stubbed out.
+(`soundtouchjs`, LGPL) are stubbed out. Animated titles go through the Promo
+video's existing bridge (`promo.renderOverlay`): the desktop app renders the
+HyperFrames template in Chrome Headless Shell with every outbound connection
+blocked and saves a transparent VP9 WebM in the project's media; the editor
+decodes it with its alpha (`CanvasSink` with `alpha` when the track can be
+transparent) so the video shows through around the text in preview and export.
+The clip keeps the form it was rendered from (`title.form`) for editing.
 See `LICENSE-NOTICE.md`.
 
 ## Limits
@@ -142,5 +153,9 @@ See `LICENSE-NOTICE.md`.
 - The first time a clip plays at a new speed with Keep pitch, its sound is
   stretched before the preview updates (about 3 seconds for 5 minutes of
   stereo sound on a desktop CPU).
+- Animated titles need the desktop app with the engine on the same computer;
+  the browser UI shows why the button does nothing there. A 3-second title
+  takes about 45 seconds to render on a desktop CPU, and changing one renders
+  it again.
 - The preview renders at the project's full size; a slow GPU may skip frames
   while playing (the export never does).

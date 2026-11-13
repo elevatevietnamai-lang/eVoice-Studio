@@ -330,6 +330,41 @@ export function addSticker(
   return placeFree(project, null, sticker);
 }
 
+/**
+ * Adds a rendered animated title (a transparent WebM) at `seconds` on a new
+ * overlay track, remembering the form it came from.
+ */
+export function addTitleClip(
+  project: EditorProject,
+  media: EditorMedia,
+  seconds: number,
+  form: string,
+): { project: EditorProject; ref: ElementRef } {
+  const placed = insertMedia(project, { ...media, has_audio: false }, seconds, 'overlay');
+  return { project: setParam(placed.project, placed.ref, 'title.form', form), ref: placed.ref };
+}
+
+/** Swaps a title clip's render for a new one (edited text), keeping where it starts. */
+export function replaceTitleClip(project: EditorProject, ref: ElementRef, media: EditorMedia, form: string): EditorProject {
+  const found = findElement(project, ref);
+  if (!found || found.element.type !== 'video') return project;
+  const fresh = clipFor({ ...media, has_audio: false }, found.element.startTime) as VideoElement;
+  const next = addMedia(project, { ...media, has_audio: false });
+  return mapElement(next, ref, (element) =>
+    ({
+      ...element,
+      mediaId: media.id,
+      name: media.name,
+      duration: fresh.duration,
+      sourceDuration: fresh.sourceDuration,
+      trimStart: ZERO_MEDIA_TIME,
+      trimEnd: ZERO_MEDIA_TIME,
+      isSourceAudioEnabled: false,
+      params: { ...element.params, 'title.form': form },
+    }) as TimelineElement,
+  );
+}
+
 /** Points a sticker at another id (a recoloured shape). */
 export function setStickerId(project: EditorProject, ref: ElementRef, stickerId: string): EditorProject {
   return mapElement(project, ref, (element) =>

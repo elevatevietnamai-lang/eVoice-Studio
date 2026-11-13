@@ -8,6 +8,7 @@ import {
   LayersIcon,
   LoaderCircleIcon,
   PlusIcon,
+  SparklesIcon,
   TypeIcon,
   UploadIcon,
 } from 'lucide-react';
@@ -34,8 +35,10 @@ export function MediaBin({
   captioning,
   onCaptions,
   onAddSticker,
+  onAddTitle,
   missing,
 }: {
+  onAddTitle: () => void;
   onAddSticker: (id: string, name: string) => void;
   missing: ReadonlySet<string>;
   project: EditorProject;
@@ -70,6 +73,10 @@ export function MediaBin({
         <Button size="sm" variant="outline" onClick={onAddText}>
           <TypeIcon />
           {t('editor.add_text')}
+        </Button>
+        <Button size="sm" variant="outline" className="col-span-2" onClick={onAddTitle}>
+          <SparklesIcon />
+          {t('editor.title_add')}
         </Button>
         <Button size="sm" variant="outline" className="col-span-2" disabled={captioning} onClick={onCaptions}>
           {captioning ? <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" /> : <CaptionsIcon />}

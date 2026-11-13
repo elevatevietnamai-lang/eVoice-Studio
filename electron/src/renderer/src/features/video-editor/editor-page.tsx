@@ -44,6 +44,8 @@ import {
   type OpenProject,
 } from './library';
 import { ProjectLibrary } from './project-library';
+import { AnimatedTitleDialog } from './animated-title';
+import { titleFormOf, type TitleForm } from './title-input';
 import { PropertiesPanel, type Apply } from './properties-panel';
 import { formatTime, record, redo, undo, type History } from './format';
 import {
@@ -64,6 +66,8 @@ import {
   captionsFromText,
   addSticker,
   addText,
+  addTitleClip,
+  replaceTitleClip,
   deleteElement,
   hasKeyframes,
   insertMedia,
@@ -225,6 +229,15 @@ export function VideoEditorPage() {
       const result = openProject(safeStorage(), next.current);
       switchTo(result.opened, result.library);
     },
+  };
+
+  /** The animated title dialog: a new title, or the selected one to render again. */
+  const [titleDialog, setTitleDialog] = useState<{ ref: ElementRef | null; form: TitleForm | null } | null>(null);
+  const onTitleRendered = (media: EditorMedia, form: TitleForm) => {
+    const editing = titleDialog?.ref ?? null;
+    const saved = JSON.stringify(form);
+    if (editing) apply((current) => replaceTitleClip(current, editing, media, saved));
+    else applySelecting((current) => addTitleClip(current, media, playhead, saved));
   };
 
   const seek = useCallback((seconds: number) => {
@@ -438,6 +451,7 @@ export function VideoEditorPage() {
             onUpload={(files) => void upload(files)}
             onAddText={() => applySelecting((current) => addText(current, playhead, t('editor.text_default')))}
             onAddSticker={(id, name) => applySelecting((current) => addSticker(current, playhead, id, name))}
+            onAddTitle={() => setTitleDialog({ ref: null, form: null })}
             missing={missing}
             captioning={captioning}
             onCaptions={() => void autoCaptions()}
@@ -471,7 +485,16 @@ export function VideoEditorPage() {
               />
             </div>
             <aside className="w-72 shrink-0 overflow-y-auto pr-1" aria-label={t('editor.properties')}>
-              <PropertiesPanel project={project} selection={selected ? selection : null} playhead={playhead} apply={apply} />
+              <PropertiesPanel
+                project={project}
+                selection={selected ? selection : null}
+                playhead={playhead}
+                apply={apply}
+                onEditTitle={(ref) => {
+                  const found = findElement(project, ref);
+                  if (found) setTitleDialog({ ref, form: titleFormOf(found.element) });
+                }}
+              />
             </aside>
           </div>
           <div className="flex items-center gap-1">
@@ -541,6 +564,13 @@ export function VideoEditorPage() {
           )}
         </main>
       </div>
+      <AnimatedTitleDialog
+        open={titleDialog !== null}
+        onOpenChange={(open) => !open && setTitleDialog(null)}
+        project={project}
+        initial={titleDialog?.form ?? null}
+        onRendered={onTitleRendered}
+      />
     </div>
   );
 }
