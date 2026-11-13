@@ -42,6 +42,16 @@ export function writerErrorKey(error: unknown): string {
   return KNOWN_ERRORS.has(code) ? `promo.scene_ai_error_${code}` : 'promo.scene_ai_error_generic';
 }
 
+/** One line for an error, or nothing (the editor's own pattern). */
+function AlertLine({ text }: { text: string | null }) {
+  if (!text) return null;
+  return (
+    <p role="alert" className="text-xs text-destructive">
+      {text}
+    </p>
+  );
+}
+
 /**
  * "Write with AI": the description goes to the LLM provider the user set up in
  * Settings, and only after this panel has shown which one (by name, and
@@ -204,11 +214,7 @@ export function SceneWriter({
           <p className="text-xs text-muted-foreground">{t('promo.scene_ai_note')}</p>
         </>
       )}
-      {error && (
-        <p role="alert" className="text-xs text-destructive">
-          {t(error)}
-        </p>
-      )}
+      <AlertLine text={error ? t(error) : null} />
       {notice && <p className="text-xs text-muted-foreground">{notice}</p>}
     </section>
   );
