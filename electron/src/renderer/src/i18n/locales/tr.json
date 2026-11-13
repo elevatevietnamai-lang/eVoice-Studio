@@ -2982,6 +2982,18 @@
     "cancelled": "İptal edildi",
     "fitting": "Zamanlama ayarlanıyor"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio'yu destekleyin",
+    "hero_body": "eVoice Studio ücretsizdir ve tamamen bilgisayarınızda çalışır. İşinize yarıyorsa katkınız gelişmeye devam etmesini sağlar.",
+    "momo_title": "Momo",
+    "bank_title": "Banka havalesi ({{bank}})",
+    "phone": "Telefon numarası",
+    "account": "Hesap numarası",
+    "holder": "Hesap sahibi",
+    "copy": "{{label}} kopyala",
+    "qr_alt": "{{method}} QR kodu",
+    "scan_hint": "Kodu banka veya Momo uygulamanızla tarayın ya da bilgileri kopyalayın."
+  },
   "supportPlans": {
     "remove": "Sponsor çubuğunu kaldır",
     "title": "Ücretsiz ve Pro",

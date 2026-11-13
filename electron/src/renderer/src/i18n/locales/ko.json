@@ -2982,6 +2982,18 @@
     "cancelled": "취소됨",
     "fitting": "타이밍 조정 중"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio 후원하기",
+    "hero_body": "eVoice Studio는 무료이며 모두 내 컴퓨터에서 실행됩니다. 도움이 되었다면 후원이 앱을 계속 발전시킵니다.",
+    "momo_title": "Momo",
+    "bank_title": "계좌 이체 ({{bank}})",
+    "phone": "전화번호",
+    "account": "계좌번호",
+    "holder": "예금주",
+    "copy": "{{label}} 복사",
+    "qr_alt": "{{method}} QR 코드",
+    "scan_hint": "은행 앱이나 Momo로 코드를 스캔하거나 정보를 복사하세요."
+  },
   "supportPlans": {
     "remove": "스폰서 바 제거",
     "title": "무료와 Pro 비교",

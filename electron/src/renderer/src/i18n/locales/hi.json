@@ -2982,6 +2982,18 @@
     "cancelled": "रद्द किया गया",
     "fitting": "समय समायोजित हो रहा है"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio का समर्थन करें",
+    "hero_body": "eVoice Studio मुफ़्त है और पूरी तरह आपके कंप्यूटर पर चलता है। अगर यह आपके काम आता है, तो आपका योगदान इसे बेहतर बनाता रहेगा।",
+    "momo_title": "Momo",
+    "bank_title": "बैंक ट्रांसफ़र ({{bank}})",
+    "phone": "फ़ोन नंबर",
+    "account": "खाता संख्या",
+    "holder": "खाताधारक",
+    "copy": "{{label}} कॉपी करें",
+    "qr_alt": "{{method}} QR कोड",
+    "scan_hint": "बैंकिंग या Momo ऐप से कोड स्कैन करें, या जानकारी कॉपी करें।"
+  },
   "supportPlans": {
     "remove": "प्रायोजक बार हटाएँ",
     "title": "मुफ़्त बनाम Pro",

@@ -2982,6 +2982,18 @@
     "cancelled": "Đã hủy",
     "fitting": "Đang căn chỉnh thời lượng"
   },
+  "supportEvoice": {
+    "hero_title": "Ủng hộ eVoice Studio",
+    "hero_body": "eVoice Studio miễn phí và chạy hoàn toàn trên máy của bạn. Nếu app giúp ích cho công việc, khoản ủng hộ của bạn giúp app tiếp tục được cải thiện.",
+    "momo_title": "Momo",
+    "bank_title": "Chuyển khoản ({{bank}})",
+    "phone": "Số điện thoại",
+    "account": "Số tài khoản",
+    "holder": "Chủ tài khoản",
+    "copy": "Sao chép {{label}}",
+    "qr_alt": "Mã QR {{method}}",
+    "scan_hint": "Quét mã bằng app ngân hàng hoặc Momo, hoặc sao chép thông tin."
+  },
   "supportPlans": {
     "remove": "Ẩn thanh tài trợ",
     "title": "Miễn phí và Pro",

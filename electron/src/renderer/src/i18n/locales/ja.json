@@ -2982,6 +2982,18 @@
     "cancelled": "キャンセル済み",
     "fitting": "タイミングを調整中"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio を支援",
+    "hero_body": "eVoice Studio は無料で、すべてお使いの PC 上で動作します。お役に立っていれば、ご支援が今後の改善につながります。",
+    "momo_title": "Momo",
+    "bank_title": "銀行振込 ({{bank}})",
+    "phone": "電話番号",
+    "account": "口座番号",
+    "holder": "口座名義",
+    "copy": "{{label}}をコピー",
+    "qr_alt": "{{method}} の QR コード",
+    "scan_hint": "銀行アプリまたは Momo でコードを読み取るか、情報をコピーしてください。"
+  },
   "supportPlans": {
     "remove": "スポンサー欄を非表示にする",
     "title": "無料版とProの比較",

@@ -2982,6 +2982,18 @@
     "cancelled": "Dibatalkan",
     "fitting": "Menyesuaikan waktu"
   },
+  "supportEvoice": {
+    "hero_title": "Dukung eVoice Studio",
+    "hero_body": "eVoice Studio gratis dan berjalan sepenuhnya di komputer Anda. Jika membantu pekerjaan Anda, kontribusi Anda membuatnya terus berkembang.",
+    "momo_title": "Momo",
+    "bank_title": "Transfer bank ({{bank}})",
+    "phone": "Nomor telepon",
+    "account": "Nomor rekening",
+    "holder": "Pemilik rekening",
+    "copy": "Salin {{label}}",
+    "qr_alt": "Kode QR {{method}}",
+    "scan_hint": "Pindai kode dengan aplikasi bank atau Momo, atau salin detailnya."
+  },
   "supportPlans": {
     "remove": "Hapus bilah sponsor",
     "title": "Gratis vs Pro",

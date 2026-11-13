@@ -2982,6 +2982,18 @@
     "cancelled": "Geannuleerd",
     "fitting": "Timing aanpassen"
   },
+  "supportEvoice": {
+    "hero_title": "Steun eVoice Studio",
+    "hero_body": "eVoice Studio is gratis en draait volledig op je computer. Heb je er iets aan, dan helpt een bijdrage om het te blijven verbeteren.",
+    "momo_title": "Momo",
+    "bank_title": "Bankoverschrijving ({{bank}})",
+    "phone": "Telefoonnummer",
+    "account": "Rekeningnummer",
+    "holder": "Rekeninghouder",
+    "copy": "{{label}} kopiëren",
+    "qr_alt": "QR-code voor {{method}}",
+    "scan_hint": "Scan de code met je bank- of Momo-app, of kopieer de gegevens."
+  },
   "supportPlans": {
     "remove": "Sponsorbalk verwijderen",
     "title": "Gratis versus Pro",

@@ -15,6 +15,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- The Support page asks for donations to eVoice Studio by Momo or bank transfer (with a VietQR code made on your computer) and links to the eVoice website, instead of the upstream VoiceStudio donation and community links
 - Installing the music engine no longer stops at the model download, and its progress shows the step and how many GB are downloaded instead of sitting at one percentage
 - eVoice Studio builds no longer check for updates or offer upstream VoiceStudio releases; Settings → Updates says checks are off until eVoice has its own release feed
 - The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)

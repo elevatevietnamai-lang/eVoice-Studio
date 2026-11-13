@@ -2982,6 +2982,18 @@
     "cancelled": "已取消",
     "fitting": "正在調整時間"
   },
+  "supportEvoice": {
+    "hero_title": "支持 eVoice Studio",
+    "hero_body": "eVoice Studio 免費，且完全在你的電腦上執行。如果它對你的工作有幫助，你的支持能讓它持續改進。",
+    "momo_title": "Momo",
+    "bank_title": "銀行轉帳 ({{bank}})",
+    "phone": "電話號碼",
+    "account": "帳號",
+    "holder": "戶名",
+    "copy": "複製{{label}}",
+    "qr_alt": "{{method}} QR 碼",
+    "scan_hint": "用銀行 App 或 Momo 掃描條碼，或複製帳戶資訊。"
+  },
   "supportPlans": {
     "remove": "移除贊助商列",
     "title": "免費版與 Pro 比較",

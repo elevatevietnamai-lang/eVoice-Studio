@@ -2984,6 +2984,18 @@
     "cancelled": "Annulé",
     "fitting": "Ajustement du minutage"
   },
+  "supportEvoice": {
+    "hero_title": "Soutenir eVoice Studio",
+    "hero_body": "eVoice Studio est gratuit et fonctionne entièrement sur votre ordinateur. S’il vous est utile, une contribution l’aide à progresser.",
+    "momo_title": "Momo",
+    "bank_title": "Virement bancaire ({{bank}})",
+    "phone": "Numéro de téléphone",
+    "account": "Numéro de compte",
+    "holder": "Titulaire du compte",
+    "copy": "Copier {{label}}",
+    "qr_alt": "QR code {{method}}",
+    "scan_hint": "Scannez le code avec votre app bancaire ou Momo, ou copiez les informations."
+  },
   "supportPlans": {
     "remove": "Retirer la barre des sponsors",
     "title": "Gratuit ou Pro",

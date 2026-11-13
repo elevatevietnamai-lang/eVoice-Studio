@@ -1,8 +1,8 @@
 # Support page
 
-The support page puts the monthly development goal, donation amounts, and Ko-fi / PayPal links first. Selecting an amount carries it into PayPal; Ko-fi lets you choose the amount on its own page. No checkout opens until you choose a provider.
+In eVoice Studio the Electron Support page asks for donations to eVoice, not to the upstream VoiceStudio project. It shows two cards: Momo (phone number and account holder, plus the Momo QR when `electron/public/donate/momo-qr.png` exists) and a bank transfer (account number and holder, with a VietQR code the app builds on this computer from the bank's NAPAS id and the account; no QR service is contacted). Every value has a copy button. The details and the eVoice contact links live in `electron/src/renderer/src/features/settings/evoice-support.ts`; a link left as `#` is not shown. The upstream development goal, donation amounts, GitHub Sponsors / Ko-fi / PayPal links, star and Discord row and sponsor list are not on this page.
 
-Star and community links offer other ways to help. Sponsors remain visible. The Electron page uses the official VoiceStudio logo, a single donation panel, visible sponsor and Pro cards, and an icon grid for contact channels. No accordion hides those actions. Controls support keyboard navigation, and decorative interaction animations respect reduced-motion preferences.
+The Electron page uses the eVoice logo, the two donation cards, the Pro card and an icon grid for contact channels. No accordion hides those actions. Controls support keyboard navigation, and decorative interaction animations respect reduced-motion preferences.
 
 Workspace headers link to Support immediately before Search. Integrations is reachable from the sidebar and opens the directory; sponsored entries carry a Featured badge on their card. There is no app-wide footer, partnership form or sponsor tooltip; sponsor and contact details live on this page and in Settings.
 

@@ -2982,6 +2982,18 @@
     "cancelled": "Avbruten",
     "fitting": "Justerar tidsplacering"
   },
+  "supportEvoice": {
+    "hero_title": "Stöd eVoice Studio",
+    "hero_body": "eVoice Studio är gratis och körs helt på din dator. Om den hjälper dig i arbetet bidrar ett stöd till att den fortsätter att utvecklas.",
+    "momo_title": "Momo",
+    "bank_title": "Banköverföring ({{bank}})",
+    "phone": "Telefonnummer",
+    "account": "Kontonummer",
+    "holder": "Kontoinnehavare",
+    "copy": "Kopiera {{label}}",
+    "qr_alt": "QR-kod för {{method}}",
+    "scan_hint": "Skanna koden med din bank- eller Momo-app, eller kopiera uppgifterna."
+  },
   "supportPlans": {
     "remove": "Ta bort sponsorfältet",
     "title": "Gratis jämfört med Pro",

@@ -2984,6 +2984,18 @@
     "cancelled": "Cancelado",
     "fitting": "Ajustando o tempo"
   },
+  "supportEvoice": {
+    "hero_title": "Apoie o eVoice Studio",
+    "hero_body": "O eVoice Studio é gratuito e roda inteiramente no seu computador. Se ele ajuda no seu trabalho, uma contribuição o mantém evoluindo.",
+    "momo_title": "Momo",
+    "bank_title": "Transferência bancária ({{bank}})",
+    "phone": "Número de telefone",
+    "account": "Número da conta",
+    "holder": "Titular da conta",
+    "copy": "Copiar {{label}}",
+    "qr_alt": "Código QR {{method}}",
+    "scan_hint": "Leia o código com o app do banco ou Momo, ou copie os dados."
+  },
   "supportPlans": {
     "remove": "Remover barra de patrocinadores",
     "title": "Grátis vs Pro",

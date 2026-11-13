@@ -2982,6 +2982,18 @@
     "cancelled": "Abgebrochen",
     "fitting": "Timing anpassen"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio unterstützen",
+    "hero_body": "eVoice Studio ist kostenlos und läuft vollständig auf deinem Computer. Wenn es dir hilft, sorgt ein Beitrag dafür, dass es besser wird.",
+    "momo_title": "Momo",
+    "bank_title": "Banküberweisung ({{bank}})",
+    "phone": "Telefonnummer",
+    "account": "Kontonummer",
+    "holder": "Kontoinhaber",
+    "copy": "{{label}} kopieren",
+    "qr_alt": "QR-Code für {{method}}",
+    "scan_hint": "Scanne den Code mit deiner Banking- oder Momo-App oder kopiere die Angaben."
+  },
   "supportPlans": {
     "remove": "Sponsorenleiste entfernen",
     "title": "Free und Pro im Vergleich",

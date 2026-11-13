@@ -160,8 +160,75 @@
 }
 .support-opportunities {
   display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+/* eVoice donations: one card per method, each with its QR and copyable details. */
+.support-donate {
+  display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
+}
+.support-pay-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--support-line);
+  border-radius: var(--card-radius);
+  background: var(--support-surface);
+}
+.support-pay-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  font-size: 15px;
+  font-weight: 600;
+}
+.support-pay-card h2 svg {
+  width: 16px;
+  height: 16px;
+  color: var(--muted-foreground);
+}
+.support-pay-qr {
+  width: 180px;
+  height: 180px;
+  padding: 8px;
+  border-radius: var(--control-radius);
+  background: #fff;
+  object-fit: contain;
+}
+.support-pay-card dl {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+.support-pay-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+.support-pay-row dt {
+  color: var(--muted-foreground);
+}
+.support-pay-row dd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  min-width: 0;
+}
+.support-pay-note {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted-foreground);
 }
 .support-tile {
   display: flex;
@@ -343,6 +410,9 @@
 @container (max-width: 660px) {
   .support-giving,
   .support-opportunities {
+    grid-template-columns: 1fr;
+  }
+  .support-donate {
     grid-template-columns: 1fr;
   }
   .support-checkout {

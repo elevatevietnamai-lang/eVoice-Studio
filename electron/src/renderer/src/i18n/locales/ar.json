@@ -2990,6 +2990,18 @@
     "cancelled": "أُلغي",
     "fitting": "ضبط التوقيت"
   },
+  "supportEvoice": {
+    "hero_title": "ادعم eVoice Studio",
+    "hero_body": "eVoice Studio مجاني ويعمل بالكامل على جهازك. إذا كان يفيد عملك، فمساهمتك تساعد على تحسينه.",
+    "momo_title": "Momo",
+    "bank_title": "تحويل بنكي ({{bank}})",
+    "phone": "رقم الهاتف",
+    "account": "رقم الحساب",
+    "holder": "صاحب الحساب",
+    "copy": "نسخ {{label}}",
+    "qr_alt": "رمز QR لـ {{method}}",
+    "scan_hint": "امسح الرمز بتطبيق البنك أو Momo، أو انسخ البيانات."
+  },
   "supportPlans": {
     "remove": "إزالة شريط الرعاة",
     "title": "المجاني مقابل Pro",

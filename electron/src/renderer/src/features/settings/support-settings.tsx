@@ -1,58 +1,86 @@
 import { runRendererTask } from '@/lib/global-error-recovery';
 import {
   ArrowUpRightIcon,
+  BanknoteIcon,
   CheckIcon,
-  CoffeeIcon,
-  CreditCardIcon,
-  GemIcon,
+  CopyIcon,
   Globe2Icon,
-  HeartIcon,
   LightbulbIcon,
   MailIcon,
   MessagesSquareIcon,
   RadioIcon,
   ShieldCheckIcon,
-  StarIcon,
+  WalletIcon,
 } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import QRCode from 'qrcode';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EVoiceMark } from '@/components/brand/evoice-mark';
-import { DonationGoal } from './donation-goal';
 import { ReportBug } from '@/components/report-bug';
 import { ExternalLink } from '@/components/external-link';
-import { GITHUB_SPONSORS_URL, KOFI_URL, PAYPAL_URL } from '@shared/utils/donateLinks';
-import { SPONSORS, SPONSOR_TIERS, SPONSOR_CONTACT } from '@shared/config/sponsors';
-import {
-  ISSUES_URL,
-  DISCORD_URL,
-  SECURITY_URL,
-  EMAIL,
-  WEBSITE_URL,
-  X_URL,
-} from '@shared/utils/contactLinks';
+import { Button } from '@/components/ui/button';
+import { vietQrPayload } from '@/lib/vietqr';
+import { DONATE, EVOICE_LINKS, isSet } from './evoice-support';
 import './support-settings.css';
+
+function CopyValue({ label, value }: { label: string; value: string }) {
+  const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
+  return (
+    <div className="support-pay-row">
+      <dt>{label}</dt>
+      <dd>
+        <span className="tabular-nums">{value}</span>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={t('supportEvoice.copy', { label })}
+          onClick={() => {
+            void navigator.clipboard?.writeText(value).then(() => {
+              setCopied(true);
+              window.setTimeout(() => setCopied(false), 1500);
+            });
+          }}
+        >
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </Button>
+      </dd>
+    </div>
+  );
+}
+
+function useQrImage(payload: string) {
+  const [src, setSrc] = useState<string | null>(null);
+  useEffect(() => {
+    let live = true;
+    void QRCode.toDataURL(payload, { margin: 1, width: 360, errorCorrectionLevel: 'M' })
+      .then((url) => live && setSrc(url))
+      .catch(() => live && setSrc(null));
+    return () => {
+      live = false;
+    };
+  }, [payload]);
+  return src;
+}
 
 export function SupportSettings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [amount, setAmount] = useState<number | 'custom' | null>(null);
-  const sponsorGroups = [...SPONSOR_TIERS, '']
-    .map((tier) => ({
-      tier,
-      sponsors: SPONSORS.filter((sponsor) =>
-        tier ? sponsor.tier === tier : !SPONSOR_TIERS.includes(sponsor.tier),
-      ),
-    }))
-    .filter((group) => group.sponsors.length);
-  const channels = [
-    ['contact.feature_cta', ISSUES_URL, LightbulbIcon],
-    ['contact.community_cta', DISCORD_URL, MessagesSquareIcon],
-    ['contact.follow_cta', X_URL, RadioIcon],
-    ['contact.security_cta', SECURITY_URL, ShieldCheckIcon],
-    ['contact.email', 'mailto:' + EMAIL, MailIcon],
-    ['contact.website', WEBSITE_URL, Globe2Icon],
-  ] as const;
+  const [momoQr, setMomoQr] = useState(true);
+  const bankQr = useQrImage(
+    vietQrPayload({ bin: DONATE.bank.bin, account: DONATE.bank.account, note: DONATE.bank.note }),
+  );
+  const channels = (
+    [
+      ['contact.feature_cta', EVOICE_LINKS.feature, LightbulbIcon],
+      ['contact.community_cta', EVOICE_LINKS.community, MessagesSquareIcon],
+      ['contact.follow_cta', EVOICE_LINKS.follow, RadioIcon],
+      ['contact.security_cta', EVOICE_LINKS.security, ShieldCheckIcon],
+      ['contact.email', EVOICE_LINKS.email, MailIcon],
+      ['contact.website', EVOICE_LINKS.website, Globe2Icon],
+    ] as const
+  ).filter(([, href]) => isSet(href));
 
   return (
     <div className="support-studio">
@@ -60,103 +88,50 @@ export function SupportSettings() {
         <div className="support-emblem" aria-hidden="true">
           <EVoiceMark size={100} />
         </div>
-        <h1>{t('donate.hero_title')}</h1>
-        <p>{t('donate.footer')}</p>
+        <h1>{t('supportEvoice.hero_title')}</h1>
+        <p>{t('supportEvoice.hero_body')}</p>
       </header>
 
-      <section className="support-giving" aria-label={t('donate.goal.title')}>
-        <div className="support-progress">
-          <DonationGoal />
-        </div>
-        <div className="support-checkout">
-          <h2>{t('donate.suggested_title')}</h2>
-          <div className="support-amounts" role="group" aria-label={t('donate.suggested_title')}>
-            {[10, 20, 50, 'custom' as const].map((value) => (
-              <button
-                key={value}
-                type="button"
-                aria-pressed={amount === value}
-                onClick={() => setAmount(amount === value ? null : value)}
-              >
-                <CheckIcon aria-hidden="true" className="support-selected" />
-                <span>{value === 'custom' ? t('donate.custom') : '$' + value}</span>
-              </button>
-            ))}
-          </div>
-          <div className="support-payments" role="group" aria-label={t('donate.choose_method')}>
-            <ExternalLink href={GITHUB_SPONSORS_URL}>
-              <HeartIcon aria-hidden="true" />
-              GitHub Sponsors
-            </ExternalLink>
-            <ExternalLink href={KOFI_URL}>
-              <CoffeeIcon aria-hidden="true" />
-              Ko-fi
-            </ExternalLink>
-            <ExternalLink
-              href={typeof amount === 'number' ? PAYPAL_URL + '/' + amount : PAYPAL_URL}
-            >
-              <CreditCardIcon aria-hidden="true" />
-              PayPal
-            </ExternalLink>
-          </div>
-          <p className="support-payment-note">
-            {typeof amount === 'number'
-              ? t('donate.choose_method_amount', { amount })
-              : t('donate.choose_method')}
-          </p>
-        </div>
+      <section className="support-donate" aria-label={t('supportEvoice.hero_title')}>
+        <article className="support-pay-card">
+          <h2>
+            <WalletIcon aria-hidden="true" />
+            {t('supportEvoice.momo_title')}
+          </h2>
+          {momoQr && (
+            <img
+              className="support-pay-qr"
+              src={DONATE.momo.qr}
+              alt={t('supportEvoice.qr_alt', { method: 'Momo' })}
+              onError={() => setMomoQr(false)}
+            />
+          )}
+          <dl>
+            <CopyValue label={t('supportEvoice.phone')} value={DONATE.momo.phone} />
+            <CopyValue label={t('supportEvoice.holder')} value={DONATE.momo.holder} />
+          </dl>
+        </article>
+        <article className="support-pay-card">
+          <h2>
+            <BanknoteIcon aria-hidden="true" />
+            {t('supportEvoice.bank_title', { bank: DONATE.bank.bank })}
+          </h2>
+          {bankQr && (
+            <img
+              className="support-pay-qr"
+              src={bankQr}
+              alt={t('supportEvoice.qr_alt', { method: DONATE.bank.bank })}
+            />
+          )}
+          <dl>
+            <CopyValue label={t('supportEvoice.account')} value={DONATE.bank.account} />
+            <CopyValue label={t('supportEvoice.holder')} value={DONATE.bank.holder} />
+          </dl>
+        </article>
+        <p className="support-pay-note">{t('supportEvoice.scan_hint')}</p>
       </section>
 
-      <div className="support-community" role="group" aria-label={t('support.other_ways')}>
-        <span>{t('support.other_ways')}</span>
-        <ExternalLink href="https://github.com/debpalash/VoiceStudio">
-          <StarIcon aria-hidden="true" />
-          {t('support.star_github')}
-        </ExternalLink>
-        <ExternalLink href={DISCORD_URL}>
-          <MessagesSquareIcon aria-hidden="true" />
-          {t('support.join_discord')}
-        </ExternalLink>
-      </div>
-
       <div className="support-opportunities">
-        <section
-          className="support-tile support-sponsors"
-          aria-labelledby="support-sponsors-heading"
-        >
-          <GemIcon className="support-tile-icon" aria-hidden="true" />
-          <h2 id="support-sponsors-heading">{t('support.sponsors_title')}</h2>
-          <p>{t(SPONSORS.length ? 'support.sponsors_lead' : 'support.sponsors_empty_title')}</p>
-          {SPONSORS.length === 0 && (
-            <div className="support-logo-slot" aria-hidden="true">
-              <GemIcon />
-              <span>{t('support.sponsors_empty_desc')}</span>
-              <span className="support-logo-plus">+</span>
-            </div>
-          )}
-          {sponsorGroups.map(({ tier, sponsors }) => (
-            <div key={tier} className="support-sponsor-group">
-              {tier && <h3>{t('support.sponsors_tier_' + tier)}</h3>}
-              <div>
-                {sponsors.map((sponsor) => (
-                  <ExternalLink key={sponsor.url} href={sponsor.url}>
-                    <img src={sponsor.logoUrl} alt="" loading="lazy" />
-                    {sponsor.name}
-                  </ExternalLink>
-                ))}
-              </div>
-            </div>
-          ))}
-          <div className="support-tile-actions">
-            <ExternalLink href={SPONSOR_CONTACT.githubSponsors}>GitHub Sponsors</ExternalLink>
-            <ExternalLink href={SPONSOR_CONTACT.githubIssue}>
-              {t('support.sponsors_become')}
-            </ExternalLink>
-            <ExternalLink href={SPONSOR_CONTACT.docsUrl}>
-              {t('support.sponsors_learn_more')}
-            </ExternalLink>
-          </div>
-        </section>
         <section className="support-tile support-license" aria-labelledby="support-pro-heading">
           <span className="mb-4 w-fit rounded-lg bg-muted px-2 py-1 text-xs font-semibold tracking-wider text-foreground">
             {t('supportPlans.pro')}
