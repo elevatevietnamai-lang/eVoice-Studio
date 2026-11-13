@@ -6,6 +6,12 @@ update about 10 seconds after launch and every six hours while it stays open;
 **Settings → Updates** also has a manual check. The app never downloads an
 update until you ask, and an available update is only offered, never forced.
 
+A build can ship with update checks off: `"applicationUpdates": false` in
+`config/app.json` (the eVoice Studio build does this until it has its own
+release feed). Such a build never contacts a release feed, and
+**Settings → Updates** says checks are off and to get new versions from the
+download site.
+
 | Build | Where it comes from | Who it's for |
 |-------|--------------------|--------------|
 | **Stable** | The latest published `vX.Y.Z` GitHub Release. | Everyone. This is the default. |

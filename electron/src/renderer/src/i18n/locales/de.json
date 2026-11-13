@@ -1280,6 +1280,7 @@
     "shortcut": "Diktatverknüpfung",
     "shortcut_reset": "Auf Standard zurücksetzen",
     "updater_desktop": "Updater läuft nur in der Desktop-App.",
+    "updater_off_build": "Die Suche nach Updates ist in diesem Build deaktiviert. Neue Versionen gibt es auf der Website, von der du die App geladen hast.",
     "mcp_title": "MCP-Stimmzuordnungen",
     "mcp_desc": "Gib jedem MCP-Agenten eine eigene Stimme, indem du seine Client-ID einem Stimmprofil zuordnest.",
     "mcp_hint": "Agenten verbinden sich über /mcp mit eVoice Studio und weisen sich mit einer Client-ID wie claude-code aus. Ordne diese ID zu, damit der Agent immer diese Stimme verwendet.",

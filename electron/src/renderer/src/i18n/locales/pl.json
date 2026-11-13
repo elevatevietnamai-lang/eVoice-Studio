@@ -1284,6 +1284,7 @@
     "shortcut": "Skrót do dyktowania",
     "shortcut_reset": "Przywróć ustawienia domyślne",
     "updater_desktop": "Updater działa tylko w aplikacji komputerowej.",
+    "updater_off_build": "Sprawdzanie aktualizacji jest wyłączone w tej wersji. Nowe wersje pobierz ze strony, z której pobrano aplikację.",
     "mcp_title": "Powiązania głosowe MCP",
     "mcp_desc": "Nadaj każdemu agentowi MCP własny głos, wiążąc jego identyfikator klienta z profilem głosu.",
     "mcp_hint": "Agenci łączą się z eVoice Studio przez /mcp i identyfikują się za pomocą identyfikatora klienta, np. claude-code. Powiąż ten identyfikator, aby agent zawsze używał tego głosu.",

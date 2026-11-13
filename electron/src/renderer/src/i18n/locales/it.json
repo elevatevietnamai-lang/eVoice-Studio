@@ -1282,6 +1282,7 @@
     "shortcut": "Scorciatoia per la dettatura",
     "shortcut_reset": "Ripristina le impostazioni predefinite",
     "updater_desktop": "Il programma di aggiornamento viene eseguito solo nell'app desktop.",
+    "updater_off_build": "Il controllo degli aggiornamenti è disattivato in questa build. Scarica le nuove versioni dal sito da cui l’hai ottenuta.",
     "mcp_title": "Associazioni vocali MCP",
     "mcp_desc": "Assegna una voce a ogni agente MCP collegando il suo ID client a un profilo vocale.",
     "mcp_hint": "Gli agenti si connettono a eVoice Studio tramite /mcp e si identificano con un ID client, come claude-code. Associa l’ID affinché l’agente usi sempre questa voce.",

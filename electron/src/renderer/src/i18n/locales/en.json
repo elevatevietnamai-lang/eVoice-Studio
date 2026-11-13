@@ -1486,6 +1486,7 @@
     "shortcut": "Dictation shortcut",
     "shortcut_reset": "Reset to default",
     "updater_desktop": "Updater only runs in the desktop app.",
+    "updater_off_build": "Update checks are turned off in this build. Get new versions from the site you downloaded it from.",
     "mcp_title": "MCP voice bindings",
     "mcp_desc": "Give each MCP agent its own voice by binding its client ID to a voice profile.",
     "mcp_hint": "Agents connect to eVoice Studio at /mcp and identify themselves with a client ID, such as claude-code. Bind that ID so the agent always uses this voice.",

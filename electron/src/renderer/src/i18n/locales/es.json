@@ -1282,6 +1282,7 @@
     "shortcut": "Atajo de dictado",
     "shortcut_reset": "Restablecer los valores predeterminados",
     "updater_desktop": "El actualizador solo se ejecuta en la aplicación de escritorio.",
+    "updater_off_build": "La búsqueda de actualizaciones está desactivada en esta versión. Descarga las nuevas versiones desde el sitio donde la obtuviste.",
     "mcp_title": "Asignaciones de voz MCP",
     "mcp_desc": "Da a cada agente MCP su propia voz vinculando su ID de cliente a un perfil de voz.",
     "mcp_hint": "Los agentes se conectan a eVoice Studio en /mcp y se identifican con un ID de cliente, como claude-code. Vincula ese ID para que el agente use siempre esta voz.",

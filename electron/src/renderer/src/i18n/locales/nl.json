@@ -1280,6 +1280,7 @@
     "shortcut": "Snelkoppeling voor dicteren",
     "shortcut_reset": "Resetten naar standaard",
     "updater_desktop": "Updater werkt alleen in de desktop-app.",
+    "updater_off_build": "Zoeken naar updates staat uit in deze build. Download nieuwe versies van de site waar je de app vandaan hebt.",
     "mcp_title": "MCP-stemkoppelingen",
     "mcp_desc": "Geef elke MCP-agent een eigen stem door de client-ID aan een stemprofiel te koppelen.",
     "mcp_hint": "Agenten verbinden met eVoice Studio via /mcp en identificeren zich met een client-ID, zoals claude-code. Koppel die ID zodat de agent altijd deze stem gebruikt.",

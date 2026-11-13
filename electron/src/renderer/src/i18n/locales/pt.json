@@ -1282,6 +1282,7 @@
     "shortcut": "Atalho de ditado",
     "shortcut_reset": "Redefinir para o padrão",
     "updater_desktop": "O atualizador só é executado no aplicativo de desktop.",
+    "updater_off_build": "A verificação de atualizações está desativada nesta versão. Baixe as novas versões no site de onde você a obteve.",
     "mcp_title": "Associações de voz MCP",
     "mcp_desc": "Dê uma voz a cada agente MCP associando o ID do cliente a um perfil de voz.",
     "mcp_hint": "Os agentes se conectam ao eVoice Studio em /mcp e se identificam com um ID de cliente, como claude-code. Associe esse ID para que o agente sempre use esta voz.",

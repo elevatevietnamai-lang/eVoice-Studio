@@ -1280,6 +1280,7 @@
     "shortcut": "Phím tắt đọc chính tả",
     "shortcut_reset": "Đặt lại về mặc định",
     "updater_desktop": "Trình cập nhật chỉ chạy trên ứng dụng máy tính.",
+    "updater_off_build": "Bản này đã tắt kiểm tra cập nhật. Hãy tải phiên bản mới từ trang bạn đã tải ứng dụng.",
     "mcp_title": "Liên kết giọng nói MCP",
     "mcp_desc": "Cấp cho mỗi tác nhân MCP một giọng riêng bằng cách liên kết ID máy khách với hồ sơ giọng nói.",
     "mcp_hint": "Tác nhân kết nối với eVoice Studio tại /mcp và tự nhận dạng bằng ID máy khách, chẳng hạn claude-code. Liên kết ID để tác nhân luôn dùng giọng này.",

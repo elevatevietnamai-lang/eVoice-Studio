@@ -1280,6 +1280,7 @@
     "shortcut": "Genväg till diktat",
     "shortcut_reset": "Återställ till standard",
     "updater_desktop": "Updater körs bara i skrivbordsappen.",
+    "updater_off_build": "Sökning efter uppdateringar är avstängd i den här versionen. Hämta nya versioner från webbplatsen du laddade ner den från.",
     "mcp_title": "MCP-röstkopplingar",
     "mcp_desc": "Ge varje MCP-agent en egen röst genom att koppla klient-ID:t till en röstprofil.",
     "mcp_hint": "Agenter ansluter till eVoice Studio via /mcp och identifierar sig med ett klient-ID, till exempel claude-code. Koppla ID:t så att agenten alltid använder den här rösten.",

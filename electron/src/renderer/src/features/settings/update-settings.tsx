@@ -217,7 +217,11 @@ export function UpdateSettings() {
                     ? t('update.ready', { version: state.availableVersion || '' })
                     : t('update.available', { version: state.availableVersion || '' })
                   : state.status === 'unsupported'
-                    ? t('settings.updater_desktop')
+                    ? t(
+                        state.unsupportedReason === 'build'
+                          ? 'settings.updater_off_build'
+                          : 'settings.updater_desktop',
+                      )
                     : state.status === 'checking'
                       ? t('update.checking')
                       : state.status === 'downloading'

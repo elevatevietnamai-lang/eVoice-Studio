@@ -14,9 +14,11 @@ export function applicationUpdatesSupported(
   packaged: boolean,
   target: DistributionTarget = CURRENT_DISTRIBUTION,
   disabledByEnvironment = process.env.VOICESTUDIO_DISABLE_UPDATER === '1',
+  enabledByBuild: boolean = __APP_UPDATES__,
 ): boolean {
   return (
     packaged &&
+    enabledByBuild &&
     DISTRIBUTION_PROFILES[target].applicationUpdates === 'application' &&
     !disabledByEnvironment
   );

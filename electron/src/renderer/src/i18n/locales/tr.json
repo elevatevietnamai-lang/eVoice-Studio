@@ -1280,6 +1280,7 @@
     "shortcut": "Dikte kısayolu",
     "shortcut_reset": "Varsayılana sıfırla",
     "updater_desktop": "Güncelleyici yalnızca masaüstü uygulamasında çalışır.",
+    "updater_off_build": "Bu sürümde güncelleme denetimi kapalı. Yeni sürümleri uygulamayı indirdiğiniz siteden alın.",
     "mcp_title": "MCP ses bağları",
     "mcp_desc": "İstemci kimliğini bir ses profiline bağlayarak her MCP aracısına kendi sesini verin.",
     "mcp_hint": "Aracılar /mcp üzerinden eVoice Studio'ya bağlanır ve claude-code gibi bir istemci kimliğiyle kendilerini tanıtır. Aracının her zaman bu sesi kullanması için kimliği bağlayın.",

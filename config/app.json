@@ -1,6 +1,7 @@
 {
   "productName": "eVoice Studio",
   "appId": "com.voicestudio.desktop",
+  "applicationUpdates": false,
   "ports": {
     "backend": 3900,
     "web": 3901,

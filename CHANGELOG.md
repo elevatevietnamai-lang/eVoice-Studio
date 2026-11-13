@@ -15,6 +15,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- eVoice Studio builds no longer check for updates or offer upstream VoiceStudio releases; Settings → Updates says checks are off until eVoice has its own release feed
 - The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)
 - New eVoice Studio logo on the app icon, installers, browser tab, tray, and the iOS and Android launchers: four voice bars in an orange-to-pink gradient with a star
 - Burned-in subtitles use the bundled Inter font, so Latin, Cyrillic and Vietnamese captions look the same on macOS, Windows and Linux (other scripts still use a system font) (#6)

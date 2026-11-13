@@ -1280,6 +1280,7 @@
     "shortcut": "聽寫快捷鍵",
     "shortcut_reset": "重設為預設值",
     "updater_desktop": "更新程式僅在桌面應用程式中運行。",
+    "updater_off_build": "此版本已關閉更新檢查。請從你下載本應用程式的網站取得新版本。",
     "mcp_title": "MCP 語音綁定",
     "mcp_desc": "將用戶端 ID 綁定至語音設定檔，讓每個 MCP 代理使用自己的聲音。",
     "mcp_hint": "代理透過 /mcp 連線至 eVoice Studio，並使用用戶端 ID（例如 claude-code）識別自己。綁定該 ID 後，代理將一律使用此聲音。",

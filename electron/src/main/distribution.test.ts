@@ -46,6 +46,9 @@ describe('distribution contract', () => {
     expect(applicationUpdatesSupported(true, 'snap-store', false)).toBe(false);
     expect(applicationUpdatesSupported(true, 'mac-app-store', false)).toBe(false);
     expect(applicationUpdatesSupported(false, 'direct', false)).toBe(false);
+    // config/app.json applicationUpdates: false (eVoice) turns them off for every target.
+    expect(applicationUpdatesSupported(true, 'direct', false, false)).toBe(false);
+    expect(applicationUpdatesSupported(true, 'microsoft-store', false, false)).toBe(false);
   });
 
   test('bundled-only distributions cannot invoke runtime setup downloads', () => {

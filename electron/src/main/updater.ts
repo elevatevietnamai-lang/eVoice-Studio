@@ -248,6 +248,8 @@ export class DesktopUpdater {
   constructor(
     private readonly distribution: DistributionTarget = CURRENT_DISTRIBUTION,
     private readonly feedFetcher: typeof fetch = fetch,
+    /** config/app.json `applicationUpdates`, injected at build time. */
+    private readonly updatesInBuild: boolean = __APP_UPDATES__,
   ) {
     const supported = this.updatesSupported();
     // Store builds are stable-only, so they expose no channel to switch.
@@ -255,6 +257,7 @@ export class DesktopUpdater {
     if (selectable) this.channel = readSavedUpdateChannel();
     this.state = {
       status: supported ? 'idle' : 'unsupported',
+      unsupportedReason: !supported && !updatesInBuild ? 'build' : undefined,
       currentVersion: app.getVersion(),
       progress: 0,
       channel: selectable ? this.channel : undefined,
@@ -494,7 +497,12 @@ export class DesktopUpdater {
   }
 
   private updatesSupported(): boolean {
-    return applicationUpdatesSupported(app.isPackaged, this.distribution);
+    return applicationUpdatesSupported(
+      app.isPackaged,
+      this.distribution,
+      undefined,
+      this.updatesInBuild,
+    );
   }
 
   private patch(value: Partial<UpdateState>): void {
@@ -552,7 +560,8 @@ export function registerUpdateIpc(
   });
   ipcMain.handle(UPDATE_CHANNELS.listReleases, (event) => {
     trusted(event);
-    return listDesktopReleases();
+    // A build with update checks off never contacts a release feed, not even for the list.
+    return __APP_UPDATES__ ? listDesktopReleases() : [];
   });
   const unsubscribe = updater.subscribe((state) => {
     sendToLiveWindow(getMainWindow(), UPDATE_CHANNELS.state, state);

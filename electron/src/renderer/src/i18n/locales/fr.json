@@ -1282,6 +1282,7 @@
     "shortcut": "Raccourci de dictée",
     "shortcut_reset": "Réinitialiser aux valeurs par défaut",
     "updater_desktop": "Le programme de mise à jour ne s'exécute que dans l'application de bureau.",
+    "updater_off_build": "La recherche de mises à jour est désactivée dans cette version. Téléchargez les nouvelles versions depuis le site où vous l’avez obtenue.",
     "mcp_title": "Affectations vocales MCP",
     "mcp_desc": "Donnez une voix à chaque agent MCP en associant son identifiant client à un profil vocal.",
     "mcp_hint": "Les agents se connectent à eVoice Studio via /mcp et s’identifient avec un identifiant client, comme claude-code. Associez cet identifiant pour que l’agent utilise toujours cette voix.",
