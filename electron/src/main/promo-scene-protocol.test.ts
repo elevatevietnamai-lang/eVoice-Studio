@@ -118,7 +118,12 @@ describe('scene preview protocol', () => {
     expect(frameSrc.filter((source) => !source.startsWith('https://'))).toEqual([
       SCENE_PREVIEW_ORIGIN,
     ]);
-    // Scripts in the app page stay restricted to its own bundle.
-    expect(html).toMatch(/script-src 'self';/);
+    // Scripts in the app page stay restricted to its own bundle (WebAssembly
+    // compilation aside): no inline or eval'd script, no other origin.
+    const scriptSrc = /script-src ([^;"]+)/.exec(html)![1].trim().split(/\s+/);
+    expect(scriptSrc[0]).toBe("'self'");
+    expect(
+      scriptSrc.filter((source) => source !== "'self'" && source !== "'wasm-unsafe-eval'"),
+    ).toEqual([]);
   });
 });
