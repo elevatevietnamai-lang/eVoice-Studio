@@ -398,7 +398,7 @@ export function DubTimeline({
               onPointerUp={finish}
               onPointerCancel={(event) => finish(event, false)}
               className={cn(
-                'absolute top-2 flex h-10 min-w-0 cursor-grab items-center overflow-hidden rounded-sm bg-primary/30 px-0 text-[10px] font-medium text-foreground outline-none transition-[box-shadow,background-color] active:cursor-grabbing focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                'absolute top-2 flex h-10 min-w-0 cursor-grab items-center overflow-hidden rounded-sm bg-primary/30 px-0 text-[11px] font-medium text-foreground outline-none transition-[box-shadow,background-color] active:cursor-grabbing focus-visible:ring-[3px] focus-visible:ring-ring/50',
                 selectedId === segment.id && 'border-primary/70 bg-primary/35 shadow-sm',
                 focusId === segment.id &&
                   editMode &&
@@ -470,7 +470,7 @@ export function DubTimeline({
           ))}
         </div>
       </div>
-      <div className="mt-1 flex items-center justify-between font-mono text-[10px] text-muted-foreground tabular-nums">
+      <div className="mt-1 flex items-center justify-between font-mono text-[11px] text-muted-foreground tabular-nums">
         <span>0:00.0</span>
         {overlaps.size > 0 && (
           <button

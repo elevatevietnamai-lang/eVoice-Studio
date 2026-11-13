@@ -103,7 +103,7 @@ export function IntegrationsPage() {
                   <ChevronRightIcon aria-hidden="true" />
                 </div>
                 <div className="integration-card-title">
-                  <h3>{entry.name}</h3>
+                  <h2>{entry.name}</h2>
                   <span className="integration-badge integration-badge--works">
                     {t('integrationCatalog.worksWith')}
                   </span>

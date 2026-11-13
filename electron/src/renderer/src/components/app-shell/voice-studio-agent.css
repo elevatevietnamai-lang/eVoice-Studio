@@ -118,7 +118,7 @@
 }
 .agent-workspace-speaker {
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--muted-foreground);
   margin-bottom: 5px;
@@ -132,7 +132,7 @@
 .agent-workspace-result {
   display: block;
   margin-top: 7px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted-foreground);
 }
 .agent-workspace-composer {
@@ -165,7 +165,7 @@
 }
 .agent-workspace-hint {
   margin-top: 5px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted-foreground);
 }
 @container (max-width: 600px) {

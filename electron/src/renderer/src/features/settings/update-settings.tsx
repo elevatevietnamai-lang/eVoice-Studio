@@ -454,7 +454,7 @@ export function UpdateSettings() {
                     <ChevronDownIcon className="size-4 -rotate-90 text-muted-foreground transition-transform group-open:rotate-0" />
                     <span className="font-medium">v{release.version}</span>
                     {release.current && (
-                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] font-medium text-primary">
                         {t('updates.current')}
                       </span>
                     )}

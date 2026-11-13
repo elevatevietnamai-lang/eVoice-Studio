@@ -160,7 +160,7 @@
   background: color-mix(in srgb, var(--primary) 10%, transparent);
   padding: 3px 6px;
   color: var(--primary);
-  font-size: 9px;
+  font-size: 11px;
 }
 .integration-featured-card > svg,
 .integration-card-top > svg {
@@ -260,7 +260,7 @@
   flex-wrap: wrap;
   gap: 7px;
 }
-.integration-card-title h3 {
+.integration-card-title h2 {
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -270,7 +270,7 @@
   border-radius: 99px;
   padding: 2px 6px;
   color: var(--muted-foreground);
-  font-size: 9px;
+  font-size: 11px;
 }
 .integration-badge--featured {
   border-color: color-mix(in srgb, var(--primary) 28%, transparent);
@@ -291,7 +291,7 @@
   overflow: hidden;
   margin-top: auto;
   color: var(--muted-foreground);
-  font-size: 10px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

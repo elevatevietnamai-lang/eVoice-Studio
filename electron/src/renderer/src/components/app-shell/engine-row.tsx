@@ -187,7 +187,7 @@ export function EngineRow({
               <dt className="text-muted-foreground">{t('sidebarTools.modelLabel')}</dt>
               <dd className="flex min-w-0 items-center gap-1">
                 <code
-                  className="min-w-0 truncate font-mono text-[10.5px] text-foreground/90"
+                  className="min-w-0 truncate font-mono text-[11px] text-foreground/90"
                   title={detail}
                 >
                   {detail}

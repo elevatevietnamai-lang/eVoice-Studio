@@ -219,7 +219,7 @@
   border-radius: 99px;
   background: color-mix(in srgb, var(--primary) 12%, transparent);
   color: var(--primary);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* Copyable values */

@@ -181,11 +181,11 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
         <ScanTextIcon className="size-3.5 text-primary" />
         <span className="mr-auto">{t('dub_hardsub.title')}</span>
         {hs?.cleaned ? (
-          <span className="rounded bg-emerald-500/12 px-1.5 py-0.5 text-[10px] text-emerald-600 dark:text-emerald-400">
+          <span className="rounded bg-emerald-500/12 px-1.5 py-0.5 text-[11px] text-emerald-600 dark:text-emerald-400">
             {t('dub_hardsub.badge_cleaned')}
           </span>
         ) : hs?.cue_count ? (
-          <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-primary">
+          <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-primary">
             {t('dub_hardsub.badge_read', { count: hs.cue_count })}
           </span>
         ) : null}
@@ -219,7 +219,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                   aria-label={t('dub_hardsub.install')}
                 />
                 {installLog && (
-                  <p className="truncate font-mono text-[10px] text-muted-foreground">
+                  <p className="truncate font-mono text-[11px] text-muted-foreground">
                     {installLog}
                   </p>
                 )}
@@ -421,7 +421,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 </Button>
               )}
             </div>
-            <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <CaptionsOffIcon className="size-3" />
               {t('dub_hardsub.engine_line', {
                 accel: acceleratorLabel(status.data?.engine?.providers),

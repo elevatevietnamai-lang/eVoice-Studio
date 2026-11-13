@@ -198,7 +198,7 @@ export function CommunityView({
                   />
                 </Button>
               </div>
-              <p className="flex-1 text-xs leading-5 text-muted-foreground">
+              <p className="flex-1 text-xs leading-5 text-pretty text-muted-foreground">
                 {item.instruct || item.audio?.ref_text}
               </p>
               <p className="text-xs text-muted-foreground">

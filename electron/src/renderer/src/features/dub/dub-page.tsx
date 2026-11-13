@@ -2571,7 +2571,7 @@ export function DubPage() {
                                 <div className="ml-auto flex shrink-0 flex-wrap justify-end gap-1">
                                   {segment.translate_error && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive"
+                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive"
                                       title={t('segment.translate_error_title', {
                                         error: segment.translate_error,
                                       })}
@@ -2582,7 +2582,7 @@ export function DubPage() {
                                   )}
                                   {segment.translate_degraded && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning"
+                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[11px] font-medium text-warning"
                                       title={t('segment.translate_degraded_title', {
                                         reason: segment.translate_degraded,
                                       })}
@@ -2593,7 +2593,7 @@ export function DubPage() {
                                   )}
                                   {segment.plan?.status === 'tight' && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning"
+                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[11px] font-medium text-warning"
                                       title={t('segment.plan_tight_title', {
                                         est: segment.plan.est_dur_s.toFixed(1),
                                         avail: segment.plan.available_s.toFixed(1),
@@ -2605,7 +2605,7 @@ export function DubPage() {
                                   )}
                                   {segment.plan?.status === 'impossible' && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive"
+                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive"
                                       title={t('segment.plan_impossible_title', {
                                         est: segment.plan.est_dur_s.toFixed(1),
                                         avail: segment.plan.available_s.toFixed(1),
@@ -2620,7 +2620,7 @@ export function DubPage() {
                                   )}
                                   {segment.fit_status?.status === 'overflows' && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive"
+                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive"
                                       title={t('segment.fit_overflows_title', {
                                         seconds: (segment.fit_status.overflow_s || 0).toFixed(1),
                                       })}
@@ -2635,7 +2635,7 @@ export function DubPage() {
                               )}
                               {segment.qc_flagged && (
                                 <span
-                                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning"
+                                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[11px] font-medium text-warning"
                                   title={segment.qc_recognized || t('dub.qc_btn')}
                                 >
                                   <AlertCircleIcon className="size-3" />

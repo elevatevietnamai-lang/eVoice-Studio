@@ -26,7 +26,7 @@
 .workflow-stage .react-flow { flex: 1; min-height: 0; --xy-background-color: transparent; --xy-edge-stroke: color-mix(in srgb, var(--muted-foreground) 48%, transparent); --xy-edge-stroke-selected: var(--primary); --xy-connectionline-stroke: var(--muted-foreground); --xy-background-pattern-color: color-mix(in srgb, var(--border) 60%, transparent); --xy-minimap-background-color: var(--card); --xy-minimap-node-background-color: var(--muted-foreground); --xy-controls-button-background-color: var(--card); --xy-controls-button-background-color-hover: var(--accent); --xy-controls-button-color: var(--foreground); --xy-controls-button-border-color: var(--border); --xy-attribution-background-color: color-mix(in srgb, var(--card) 85%, transparent); --xy-selection-background-color: color-mix(in srgb, var(--primary) 8%, transparent); --xy-selection-border: 1px dotted var(--primary); }
 .workflow-stage .react-flow__background { background-color: transparent; opacity: .34; }
 .workflow-stage .react-flow__edge-path { stroke-width: 1.75; }
-.workflow-stage .react-flow__attribution { color: var(--muted-foreground); font-size: 9px; }
+.workflow-stage .react-flow__attribution { color: var(--muted-foreground); font-size: 11px; }
 .workflow-stage .react-flow__attribution a { color: inherit; }
 .workflow-stage .react-flow__controls, .workflow-stage .react-flow__minimap { overflow: hidden; border: 1px solid color-mix(in srgb, var(--border) 50%, transparent); border-radius: var(--card-radius); background: color-mix(in srgb, var(--card) 85%, transparent); }
 .workflow-stage .react-flow__minimap { width: 132px; height: 92px; }

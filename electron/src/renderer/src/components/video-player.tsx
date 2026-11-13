@@ -262,7 +262,7 @@ function VideoControls({
             <Button
               size="xs"
               variant="ghost"
-              className="min-w-10 px-1.5 text-[10px] tabular-nums hover:bg-accent hover:text-white"
+              className="min-w-10 px-1.5 text-[11px] tabular-nums hover:bg-accent hover:text-white"
               aria-label={t('clone.speed')}
               onClick={() => {
                 const rates = [0.75, 1, 1.25, 1.5, 2];
@@ -275,7 +275,7 @@ function VideoControls({
             </Button>
           </>
         )}
-        <span className="ml-auto whitespace-nowrap text-[10px] tabular-nums">
+        <span className="ml-auto whitespace-nowrap text-[11px] tabular-nums">
           {formatClock(time)} / {formatClock(duration)}
         </span>
         {!compact && (

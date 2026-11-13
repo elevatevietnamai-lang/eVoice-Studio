@@ -457,7 +457,7 @@ export function TranscriptionsPage() {
                       <KeyboardIcon />
                       {t('engineSidebar.dictation')}
                       {shortcut.data?.accelerator ? (
-                        <kbd className="hidden rounded border border-border/50 bg-background/30 px-1.5 py-0.5 font-mono text-[10px] font-normal text-muted-foreground lg:inline">
+                        <kbd className="hidden rounded border border-border/50 bg-background/30 px-1.5 py-0.5 font-mono text-[11px] font-normal text-muted-foreground lg:inline">
                           {formatShortcut(shortcut.data.accelerator)}
                         </kbd>
                       ) : null}

@@ -56,7 +56,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-3 border-b border-border/60 pb-4 last:border-0">
-      <h3 className="text-xs font-medium">{title}</h3>
+      <h2 className="text-xs font-medium">{title}</h2>
       {children}
     </section>
   );

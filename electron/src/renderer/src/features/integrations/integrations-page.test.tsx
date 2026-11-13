@@ -24,7 +24,7 @@ afterEach(() => {
 });
 it('only lists integrations with completed wiring pages', () => {
   const { container } = render(<IntegrationsPage />);
-  const names = [...container.querySelectorAll('.integration-card h3')].map(
+  const names = [...container.querySelectorAll('.integration-card h2')].map(
     (heading) => heading.textContent,
   );
   expect(names.sort()).toEqual([
@@ -70,7 +70,7 @@ it('badges every listed integration as working with VoiceStudio', () => {
   const { container } = render(<IntegrationsPage />);
   const card = (name: string) =>
     [...container.querySelectorAll('.integration-card')].find(
-      (element) => element.querySelector('h3')?.textContent === name,
+      (element) => element.querySelector('h2')?.textContent === name,
     )!;
   expect(card('Codex CLI')).toHaveTextContent('integrationCatalog.worksWith');
   expect(card('Codex CLI')).toHaveTextContent('integrationCatalog.capability.mcp');
@@ -83,7 +83,7 @@ it('badges only featured (sponsored) integrations', () => {
   const { container } = render(<IntegrationsPage />);
   const card = (name: string) =>
     [...container.querySelectorAll('.integration-card')].find(
-      (element) => element.querySelector('h3')?.textContent === name,
+      (element) => element.querySelector('h2')?.textContent === name,
     )!;
   expect(card('Twilio').querySelector('.integration-badge--featured')).not.toBeNull();
   expect(card('Codex CLI').querySelector('.integration-badge--featured')).toBeNull();

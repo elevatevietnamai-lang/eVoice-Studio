@@ -504,7 +504,7 @@ export function PromoTimeline({
             {ticks.map((at) => (
               <span
                 key={at}
-                className="absolute top-0 h-full border-l border-border/60 pl-0.5 text-[10px] text-muted-foreground"
+                className="absolute top-0 h-full border-l border-border/60 pl-0.5 text-[11px] text-muted-foreground"
                 style={{ left: at * pps }}
               >
                 {fmt(at).replace(/\.0$/, '')}
@@ -661,7 +661,7 @@ export function PromoTimeline({
               style={{ top: RULER + TRACK + layout.lanes * LANE, height: MUSIC }}
             >
               <Waveform draft={draft} pps={pps} length={length} offset={musicOffset(draft, grid)} />
-              <span className="absolute left-1 top-0.5 text-[10px] text-muted-foreground">
+              <span className="absolute left-1 top-0.5 text-[11px] text-muted-foreground">
                 {music.name}
               </span>
             </div>

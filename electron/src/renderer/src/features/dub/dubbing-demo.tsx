@@ -128,11 +128,11 @@ export function DubbingDemo({
     return (
       <article className="min-w-0 overflow-hidden rounded-(--card-radius) border border-border/55 bg-background/25">
         <div className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-medium">
-          <span className="grid size-6 shrink-0 place-items-center rounded-sm bg-muted font-mono text-[10px] font-semibold text-primary">
+          <span className="grid size-6 shrink-0 place-items-center rounded-sm bg-muted font-mono text-[11px] font-semibold text-primary">
             {channel}
           </span>
           <span>{label}</span>
-          <span className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
+          <span className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
             {tag}
           </span>
           <div className="ml-auto flex items-center gap-1">
