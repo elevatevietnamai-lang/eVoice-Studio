@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "뮤직 스튜디오",
     "engine_title": "음악 엔진",
-    "engine_help": "로컬 AI 음악 엔진(ACE-Step)을 한 번만 설치하세요. 약 8 GB를 다운로드하며 이 컴퓨터에서 실행되므로 아무것도 업로드되지 않습니다.",
+    "engine_help": "로컬 AI 음악 엔진(ACE-Step)을 한 번만 설치하세요. 약 15 GB를 다운로드하며 이 컴퓨터에서 실행되므로 아무것도 업로드되지 않습니다.",
     "engine_install": "음악 엔진 설치",
     "engine_installing": "설치 중…",
+    "install_step_source": "엔진 소스를 다운로드하는 중…",
+    "install_step_engine": "Python 환경 준비 중: 지금까지 {{amount}} 다운로드",
+    "install_step_model": "음악 모델 다운로드 중: {{done}} / {{total}}",
     "engine_installed": "음악 엔진이 설치되었습니다.",
     "engine_install_failed": "설치 실패: {{message}}",
     "engine_stopped": "음악 엔진이 중지되고 GPU 메모리가 해제되었습니다.",

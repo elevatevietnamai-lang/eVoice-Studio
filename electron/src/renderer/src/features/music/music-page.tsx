@@ -26,6 +26,7 @@ import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
 import { gpuBusyMessage } from '@/lib/api/failure';
 import { saveExport } from '@/lib/export-history';
+import { formatBytes } from '@/lib/format-bytes';
 
 type MusicStatus = { installed: boolean; running: boolean };
 type Track = {
@@ -47,6 +48,24 @@ const STYLE_PRESETS = [
   'acoustic guitar, cozy, 95 bpm',
 ];
 
+interface InstallStep {
+  stage: 'source' | 'engine' | 'model';
+  bytes: number;
+  total: number | null;
+  log: string;
+}
+
+/** The install's long steps report bytes on disk; the Python environment has no known total. */
+function installStepLabel(step: InstallStep) {
+  if (step.stage === 'source') return { key: 'musicStudio.install_step_source', values: {} };
+  if (step.stage === 'engine')
+    return { key: 'musicStudio.install_step_engine', values: { amount: formatBytes(step.bytes) } };
+  return {
+    key: 'musicStudio.install_step_model',
+    values: { done: formatBytes(step.bytes), total: formatBytes(step.total ?? 0) },
+  };
+}
+
 export function MusicPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -57,6 +76,7 @@ export function MusicPage() {
   const [bpm, setBpm] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [task, setTask] = useState<{ kind: 'install' | 'generate'; progress: number } | null>(null);
+  const [installStep, setInstallStep] = useState<InstallStep | null>(null);
   const abort = useRef<AbortController | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
 
@@ -76,10 +96,22 @@ export function MusicPage() {
 
   const install = async () => {
     setTask({ kind: 'install', progress: 0 });
+    setInstallStep(null);
     try {
       await consumeTaskStream('/music/install-stream', (event) => {
-        if (event.type === 'progress')
+        if (event.type === 'progress') {
           setTask({ kind: 'install', progress: Number(event.progress) || 0 });
+          const stage = event.stage;
+          if (stage === 'source' || stage === 'engine' || stage === 'model')
+            setInstallStep((step) => ({
+              stage,
+              bytes: Number(event.bytes) || 0,
+              total: Number(event.total) || null,
+              log: step?.stage === stage ? step.log : '',
+            }));
+        }
+        if (event.type === 'log')
+          setInstallStep((step) => (step ? { ...step, log: String(event.message || '') } : step));
         if (event.type === 'error') throw new Error(String(event.reason || 'Install failed'));
         return event.type === 'done';
       });
@@ -88,6 +120,7 @@ export function MusicPage() {
       toast.error(t('musicStudio.engine_install_failed', { message: describeError(error) }));
     } finally {
       setTask(null);
+      setInstallStep(null);
       void queryClient.invalidateQueries({ queryKey: ['music-status'] });
     }
   };
@@ -205,6 +238,21 @@ export function MusicPage() {
                   value={Math.round(task.progress * 100)}
                   aria-label={t('musicStudio.engine_installing')}
                 />
+              )}
+              {task?.kind === 'install' && installStep && (
+                <div className="space-y-0.5 text-xs leading-5" aria-live="polite">
+                  <p className="text-muted-foreground tabular-nums">
+                    {t(installStepLabel(installStep).key, installStepLabel(installStep).values)}
+                  </p>
+                  {installStep.log && (
+                    <p
+                      className="truncate font-mono text-[11px] text-muted-foreground/80"
+                      title={installStep.log}
+                    >
+                      {installStep.log}
+                    </p>
+                  )}
+                </div>
               )}
             </section>
           ) : null}

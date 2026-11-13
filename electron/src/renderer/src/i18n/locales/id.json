@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "Studio Musik",
     "engine_title": "Engine musik",
-    "engine_help": "Instal engine musik AI lokal (ACE-Step) sekali. Mengunduh sekitar 8 GB dan berjalan di komputer ini; tidak ada yang diunggah.",
+    "engine_help": "Instal engine musik AI lokal (ACE-Step) sekali. Mengunduh sekitar 15 GB dan berjalan di komputer ini; tidak ada yang diunggah.",
     "engine_install": "Instal engine musik",
     "engine_installing": "Menginstal…",
+    "install_step_source": "Mengunduh kode sumber engine…",
+    "install_step_engine": "Menyiapkan lingkungan Python: {{amount}} sudah diunduh",
+    "install_step_model": "Mengunduh model musik: {{done}} dari {{total}}",
     "engine_installed": "Engine musik terinstal.",
     "engine_install_failed": "Instalasi gagal: {{message}}",
     "engine_stopped": "Engine musik dihentikan dan memori GPU dikosongkan.",

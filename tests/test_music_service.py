@@ -201,3 +201,96 @@ def test_model_download_is_pinned_to_a_commit():
     assert "revision=sys.argv[3]" in music.MODEL_DOWNLOAD_CODE
     assert "modelscope" not in music.MODEL_DOWNLOAD_CODE.lower()
     compile(music.MODEL_DOWNLOAD_CODE, "<model-download>", "exec")
+
+
+def _collect(agen):
+    async def run():
+        return [event async for event in agen]
+
+    return asyncio.run(run())
+
+
+def test_silent_install_step_still_reports_bytes_on_disk(tmp_path):
+    # uv sync and the model download print almost nothing for many minutes; the bar must move.
+    target = tmp_path / "checkpoints"
+    target.mkdir()
+
+    async def silent_step():
+        for size in (1000, 3000):
+            await asyncio.sleep(0.05)
+            (target / f"part{size}").write_bytes(b"x" * size)
+        await asyncio.sleep(0.05)
+        yield "Music model ready"
+
+    events = _collect(music._watched(silent_step(), lambda: music._dir_bytes(target), stage="model",
+                                     start=0.4, end=0.99, total=8000, interval=0.02))
+    ticks = [event for event in events if event["type"] == "progress"]
+    assert ticks and all(event["stage"] == "model" and event["total"] == 8000 for event in ticks)
+    assert ticks[-1]["bytes"] == 4000
+    assert 0.4 < ticks[-1]["progress"] < 0.99
+    assert [event["progress"] for event in ticks] == sorted(event["progress"] for event in ticks)
+    assert events[-1] == {"type": "log", "message": "Music model ready"}
+
+
+def test_install_step_without_new_bytes_is_reported_as_stalled():
+    async def hung_step():
+        await asyncio.sleep(10)
+        yield "never"
+
+    with pytest.raises(RuntimeError, match="no progress"):
+        _collect(music._watched(hung_step(), lambda: 42, stage="engine", start=0.05, end=0.4,
+                                total=None, interval=0.01, stall_seconds=0.05))
+
+
+def test_uv_cache_bytes_count_only_what_this_install_wrote(tmp_path):
+    import os
+    import time
+
+    old = tmp_path / "archive-v0" / "old"
+    old.mkdir(parents=True)
+    (old / "torch.so").write_bytes(b"x" * 5000)
+    past = time.time() - 3600
+    os.utime(old, (past, past))
+    since = time.time() - 1
+    fresh = tmp_path / ".tmpAbC" / "torch"
+    fresh.mkdir(parents=True)
+    (fresh / "lib.dll").write_bytes(b"y" * 700)
+    done = tmp_path / "archive-v0" / "new"
+    done.mkdir()
+    (done / "numpy.pyd").write_bytes(b"z" * 300)
+    (tmp_path / ".tmpWheel").write_bytes(b"w" * 50)
+    (tmp_path / ".lock").write_bytes(b"")
+    assert music._new_bytes(tmp_path, since) == 1050
+    assert music._new_bytes(tmp_path / "missing", since) == 0
+
+
+def test_model_download_runs_without_carriage_return_progress_bars(tmp_path, monkeypatch):
+    # huggingface_hub redraws its bars with \r and no newline; the line reader caps a line at
+    # 64 KiB, so a 10 GB download with bars on aborted the install at the model step.
+    from services import hardsub, sidecar_install
+
+    engine = tmp_path / "acestep"
+    (engine / "src").mkdir(parents=True)
+    (engine / "src" / "pyproject.toml").write_text("[project]\nname='acestep'\n", encoding="utf-8")
+    monkeypatch.setattr(music, "engine_dir", lambda: engine)
+    monkeypatch.setattr(music, "_uv_cache_dir", lambda uv, env: tmp_path / "uv-cache")
+    monkeypatch.setattr(sidecar_install, "_locate_uv", lambda: "uv")
+    monkeypatch.setattr(sidecar_install, "uv_subprocess_env", lambda _parent: {"PATH": "x"})
+    calls = []
+
+    async def fake_run(cmd, env, idle_timeout, cwd=None):
+        calls.append((cmd, env, idle_timeout))
+        yield "ok"
+
+    monkeypatch.setattr(hardsub, "_run_logged", fake_run)
+    events = _collect(music.AceStepEngine().install())
+    assert events[-1] == {"type": "done", "installed": True}
+    (sync, _sync_env, sync_timeout), (_model, model_env, model_timeout) = calls
+    assert sync[1] == "sync"
+    assert model_env["HF_HUB_DISABLE_PROGRESS_BARS"] == "1"
+    # Silence alone no longer kills a slow download; the byte watcher detects stalls instead.
+    assert min(sync_timeout, model_timeout) >= music._STALL_SECONDS
+    stages = [event.get("stage") for event in events if event["type"] == "progress"]
+    assert stages.index("engine") < stages.index("model")
+    model_start = next(event for event in events if event.get("stage") == "model")
+    assert model_start["total"] == music.ACESTEP_MODEL_BYTES

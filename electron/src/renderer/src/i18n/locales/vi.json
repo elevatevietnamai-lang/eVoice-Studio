@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "Studio âm nhạc",
     "engine_title": "Engine nhạc",
-    "engine_help": "Cài engine nhạc AI chạy trên máy (ACE-Step) một lần. Cần tải khoảng 8 GB và chạy ngay trên máy này; không có gì được tải lên.",
+    "engine_help": "Cài engine nhạc AI chạy trên máy (ACE-Step) một lần. Cần tải khoảng 15 GB và chạy ngay trên máy này; không có gì được tải lên.",
     "engine_install": "Cài engine nhạc",
     "engine_installing": "Đang cài…",
+    "install_step_source": "Đang tải mã nguồn engine…",
+    "install_step_engine": "Đang cài môi trường Python: đã tải {{amount}}",
+    "install_step_model": "Đang tải mô hình nhạc: {{done}} / {{total}}",
     "engine_installed": "Đã cài engine nhạc.",
     "engine_install_failed": "Cài đặt thất bại: {{message}}",
     "engine_stopped": "Đã dừng engine nhạc và giải phóng bộ nhớ GPU.",

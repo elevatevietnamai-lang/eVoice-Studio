@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "Muziekstudio",
     "engine_title": "Muziek-engine",
-    "engine_help": "Installeer eenmalig de lokale AI-muziek-engine (ACE-Step). Deze downloadt ongeveer 8 GB en draait op deze computer; er wordt niets geüpload.",
+    "engine_help": "Installeer eenmalig de lokale AI-muziek-engine (ACE-Step). Deze downloadt ongeveer 15 GB en draait op deze computer; er wordt niets geüpload.",
     "engine_install": "Muziek-engine installeren",
     "engine_installing": "Installeren…",
+    "install_step_source": "Broncode van de engine downloaden…",
+    "install_step_engine": "Python-omgeving instellen: tot nu toe {{amount}} gedownload",
+    "install_step_model": "Muziekmodel downloaden: {{done}} van {{total}}",
     "engine_installed": "Muziek-engine geïnstalleerd.",
     "engine_install_failed": "Installatie mislukt: {{message}}",
     "engine_stopped": "Muziek-engine gestopt en GPU-geheugen vrijgemaakt.",

@@ -13,10 +13,12 @@ from __future__ import annotations
 
 import asyncio
 import atexit
+import contextlib
 import gzip
 import hashlib
 import json
 import logging
+import math
 import os
 import secrets
 import shutil
@@ -28,7 +30,7 @@ import tempfile
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import AsyncIterator, Optional, Protocol
+from typing import AsyncIterator, Callable, Optional, Protocol
 
 import httpx
 
@@ -52,6 +54,14 @@ MODEL_DOWNLOAD_CODE = (
     "[md._sync_model_code_files(c,d) for c in md.MAIN_MODEL_COMPONENTS if c in md._CHECKPOINT_TO_VARIANT];"
     "print('Music model ready at '+str(d))"
 )
+# Sum of every file in the pinned model revision (28 files, four large safetensors).
+ACESTEP_MODEL_BYTES = 10_092_102_593
+# The install's two long steps (uv sync, model download) print almost nothing, so they are
+# watched by bytes on disk instead of output lines: progress every few seconds, and a step
+# whose bytes stop growing this long is treated as stalled.
+_PROGRESS_INTERVAL = 3.0
+_STALL_SECONDS = 20 * 60
+_NO_LINE_TIMEOUT = 24 * 3600
 # SHA-256 of the *uncompressed* tar (git archive output is stable; the gzip layer is not).
 ACESTEP_TAR_SHA256 = "c1babe13937c756a10bb9ddc59f989b7cce58bf544ad234720095a5814ffd1db"
 _MAX_ARCHIVE_ENTRIES = 20_000
@@ -198,6 +208,122 @@ def _clean_env(extra: Optional[dict] = None) -> dict:
     return env
 
 
+# ── install progress
+
+
+def _dir_bytes(root: Path) -> int:
+    """Total size of the files under *root* (0 if it does not exist)."""
+    total = 0
+    for base, _dirs, files in os.walk(root):
+        for name in files:
+            try:
+                total += os.stat(os.path.join(base, name)).st_size
+            except OSError:
+                pass
+    return total
+
+
+def _new_bytes(root: Path, since: float) -> int:
+    """Bytes uv has written into its cache since *since*.
+
+    uv downloads and unpacks into ``.tmp*`` files and folders at the cache root, then renames
+    them into its buckets, so only entries (at most two levels down) touched after *since* are
+    walked; the rest of a multi-GB cache is never read. Sizes come from ``os.stat``: on Windows
+    a directory listing reports a file that is still being written as empty.
+    """
+    total = 0
+    try:
+        tops = list(os.scandir(root))
+    except OSError:
+        return 0
+    for top in tops:
+        try:
+            info = os.stat(top.path)
+            if info.st_mtime < since:
+                continue
+            if not top.is_dir():
+                total += info.st_size if top.name.startswith(".tmp") else 0
+                continue
+            if top.name.startswith(".tmp"):
+                total += _dir_bytes(Path(top.path))
+                continue
+            for child in os.scandir(top.path):
+                info = os.stat(child.path)
+                if info.st_mtime < since:
+                    continue
+                total += _dir_bytes(Path(child.path)) if child.is_dir() else info.st_size
+        except OSError:
+            continue
+    return total
+
+
+def _uv_cache_dir(uv: str, env: dict) -> Optional[Path]:
+    try:
+        out = subprocess.run([uv, "cache", "dir"], env=env, capture_output=True, text=True,
+                             timeout=30, check=True).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return Path(out) if out else None
+
+
+async def _watched(lines: AsyncIterator[str], measure: Callable[[], int], *, stage: str,
+                   start: float, end: float, total: Optional[int],
+                   interval: float = _PROGRESS_INTERVAL,
+                   stall_seconds: float = _STALL_SECONDS) -> AsyncIterator[dict]:
+    """Relay a step's output lines and, every *interval* seconds, its bytes on disk.
+
+    With a known *total* the bar is ``bytes / total``; without one (uv's download set is not
+    known up front) it eases towards *end* and the UI shows the amount, not a percentage.
+    Neither new bytes nor new lines for *stall_seconds* aborts the step.
+    """
+    queue: asyncio.Queue = asyncio.Queue()
+
+    async def pump() -> None:
+        try:
+            async for line in lines:
+                await queue.put(("log", line))
+            await queue.put(("end", None))
+        except Exception as exc:  # noqa: BLE001 - re-raised by the consumer
+            await queue.put(("error", exc))
+
+    task = asyncio.create_task(pump())
+    shown = start
+    last_bytes = -1
+    last_change = time.monotonic()
+    try:
+        while True:
+            try:
+                kind, value = await asyncio.wait_for(queue.get(), interval)
+            except TimeoutError:
+                kind, value = "tick", None
+            if kind == "end":
+                return
+            if kind == "error":
+                raise value
+            if kind == "log":
+                last_change = time.monotonic()
+                yield {"type": "log", "message": value}
+                continue
+            done = await asyncio.to_thread(measure)
+            if done != last_bytes:
+                last_bytes, last_change = done, time.monotonic()
+            elif time.monotonic() - last_change > stall_seconds:
+                raise RuntimeError(
+                    f"The {stage} download made no progress for {int(stall_seconds // 60)} minutes. "
+                    "Check the network connection and try again; finished parts are kept."
+                )
+            fraction = min(done / total, 0.99) if total else 1 - math.exp(-done / (3 * 1024**3))
+            # A retried download discards its partial file; the bar never moves backwards.
+            shown = max(shown, start + (end - start) * fraction)
+            yield {"type": "progress", "progress": shown,
+                   "stage": stage, "bytes": done, "total": total}
+    finally:
+        task.cancel()
+        # The step is being torn down either way; its own error was already relayed.
+        with contextlib.suppress(BaseException):
+            await task
+
+
 def _log_tail(lines: int = 20) -> str:
     try:
         text = (engine_dir() / "server.log").read_text(encoding="utf-8", errors="replace")
@@ -295,7 +421,8 @@ class AceStepEngine:
             env = _clean_env(uv_subprocess_env(engines))
             src = source_dir()
             if not (src / "pyproject.toml").is_file():
-                yield {"type": "progress", "progress": 0.02, "message": "Downloading ACE-Step source"}
+                yield {"type": "progress", "progress": 0.02, "stage": "source",
+                       "message": "Downloading ACE-Step source"}
                 engine_dir().mkdir(parents=True, exist_ok=True)
                 with tempfile.TemporaryDirectory(dir=engine_dir()) as tmp:
                     archive = Path(tmp) / "src.tar.gz"
@@ -307,17 +434,26 @@ class AceStepEngine:
                                 async for chunk in r.aiter_bytes():
                                     f.write(chunk)
                     await asyncio.to_thread(_safe_extract, archive, src, ACESTEP_TAR_SHA256)
-            yield {"type": "progress", "progress": 0.08,
+            yield {"type": "progress", "progress": 0.05, "stage": "engine", "bytes": 0, "total": None,
                    "message": "Installing the music engine (several GB, can take a while)"}
             sync = [uv, "sync", "--locked", "--python", _PYTHON_VERSION]
-            proc_env = env
-            async for line in _run_logged(sync, proc_env, 3600, cwd=str(src)):
-                yield {"type": "log", "message": line}
-            yield {"type": "progress", "progress": 0.7, "message": "Downloading the music model (~5 GB)"}
+            cache = await asyncio.to_thread(_uv_cache_dir, uv, env)
+            since = time.time() - 2
+            engine_bytes = (lambda: _new_bytes(cache, since)) if cache else (lambda: 0)
+            async for event in _watched(_run_logged(sync, env, _NO_LINE_TIMEOUT, cwd=str(src)),
+                                        engine_bytes, stage="engine", start=0.05, end=0.4, total=None):
+                yield event
+            yield {"type": "progress", "progress": 0.4, "stage": "model", "bytes": 0,
+                   "total": ACESTEP_MODEL_BYTES, "message": "Downloading the music model (~10 GB)"}
             cmd = [str(venv_python()), "-u", "-c", MODEL_DOWNLOAD_CODE, str(checkpoints_dir()),
                    ACESTEP_MODEL_REPO, ACESTEP_MODEL_REVISION]
-            async for line in _run_logged(cmd, proc_env, 3600, cwd=str(src)):
-                yield {"type": "log", "message": line}
+            # huggingface_hub's bars redraw with \r and no newline; over a 10 GB download that
+            # overflows the line reader (asyncio's 64 KiB limit) and aborts the install.
+            model_env = {**env, "HF_HUB_DISABLE_PROGRESS_BARS": "1"}
+            async for event in _watched(_run_logged(cmd, model_env, _NO_LINE_TIMEOUT, cwd=str(src)),
+                                        lambda: _dir_bytes(checkpoints_dir()), stage="model",
+                                        start=0.4, end=0.99, total=ACESTEP_MODEL_BYTES):
+                yield event
             _marker().write_text(json.dumps({"revision": ACESTEP_REVISION, "model_revision": ACESTEP_MODEL_REVISION,
                                                   "at": time.time()}), encoding="utf-8")
             yield {"type": "done", "installed": True}

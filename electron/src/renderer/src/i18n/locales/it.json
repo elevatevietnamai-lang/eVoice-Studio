@@ -3954,9 +3954,12 @@
   "musicStudio": {
     "title": "Studio musicale",
     "engine_title": "Motore musicale",
-    "engine_help": "Installa una sola volta il motore musicale IA locale (ACE-Step). Scarica circa 8 GB e funziona su questo computer; non viene caricato nulla online.",
+    "engine_help": "Installa una sola volta il motore musicale IA locale (ACE-Step). Scarica circa 15 GB e funziona su questo computer; non viene caricato nulla online.",
     "engine_install": "Installa motore musicale",
     "engine_installing": "Installazione…",
+    "install_step_source": "Download del codice sorgente del motore…",
+    "install_step_engine": "Preparazione dell’ambiente Python: {{amount}} scaricati finora",
+    "install_step_model": "Download del modello musicale: {{done}} di {{total}}",
     "engine_installed": "Motore musicale installato.",
     "engine_install_failed": "Installazione non riuscita: {{message}}",
     "engine_stopped": "Motore musicale arrestato e memoria GPU liberata.",

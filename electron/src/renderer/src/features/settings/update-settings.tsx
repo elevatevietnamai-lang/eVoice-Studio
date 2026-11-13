@@ -25,6 +25,7 @@ import { hasActiveAppWork, useAppActivityCount } from '@/lib/app-activity';
 import { apiJson, describeError } from '@/lib/api/client';
 import { SettingsSection } from './settings-layout';
 import type { UpdateChannel, UpdateReleaseInfo, UpdateState } from '../../../../preload/index.d';
+import { formatBytes } from '@/lib/format-bytes';
 
 const initial: UpdateState = {
   status: 'unsupported',
@@ -59,13 +60,6 @@ const serverWorkActive = (models?: ModelInstallJobs, batches?: unknown[]) =>
       ['queued', 'downloading', 'running', 'installing'].includes(job.state),
     ) || batches?.length,
   );
-
-function formatBytes(bytes: number): string {
-  if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
-  if (bytes >= 1024 ** 2) return `${Math.round(bytes / 1024 ** 2)} MB`;
-  if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${Math.max(0, Math.round(bytes))} B`;
-}
 
 function formatEta(seconds: number): string {
   const { minutes, seconds: remainder } = splitRoundedMinutes(seconds);

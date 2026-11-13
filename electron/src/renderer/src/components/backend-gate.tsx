@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils';
 import type { RuntimeRegion } from '../../../preload/index.d';
 import { getBridge, isMac } from './bridge';
 import { ExternalLink } from './external-link';
+import { formatBytes } from '@/lib/format-bytes';
 
 interface BackendGateProps {
   children: ReactNode;
@@ -57,13 +58,6 @@ function useElapsedSeconds(elapsedMs: number, running: boolean): number {
     return () => window.clearInterval(id);
   }, [elapsedMs, running]);
   return seconds;
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes >= 1024 ** 3)
-    return `${(bytes / 1024 ** 3).toFixed(bytes < 10 * 1024 ** 3 ? 1 : 0)} GB`;
-  if (bytes >= 1024 ** 2) return `${Math.round(bytes / 1024 ** 2)} MB`;
-  return `${Math.max(0, Math.round(bytes / 1024))} KB`;
 }
 
 function formatEta(seconds: number): string {

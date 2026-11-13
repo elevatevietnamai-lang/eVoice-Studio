@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "Musikstudio",
     "engine_title": "Musikmotor",
-    "engine_help": "Installera den lokala AI-musikmotorn (ACE-Step) en gång. Den laddar ner cirka 8 GB och körs på den här datorn; inget laddas upp.",
+    "engine_help": "Installera den lokala AI-musikmotorn (ACE-Step) en gång. Den laddar ner cirka 15 GB och körs på den här datorn; inget laddas upp.",
     "engine_install": "Installera musikmotor",
     "engine_installing": "Installerar…",
+    "install_step_source": "Laddar ner motorns källkod…",
+    "install_step_engine": "Förbereder Python-miljön: {{amount}} nedladdat hittills",
+    "install_step_model": "Laddar ner musikmodellen: {{done}} av {{total}}",
     "engine_installed": "Musikmotor installerad.",
     "engine_install_failed": "Installationen misslyckades: {{message}}",
     "engine_stopped": "Musikmotorn stoppades och GPU-minnet frigjordes.",

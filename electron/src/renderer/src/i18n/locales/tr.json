@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "Müzik Stüdyosu",
     "engine_title": "Müzik motoru",
-    "engine_help": "Yerel yapay zeka müzik motorunu (ACE-Step) bir kez kurun. Yaklaşık 8 GB indirir ve bu bilgisayarda çalışır; hiçbir veri karşıya yüklenmez.",
+    "engine_help": "Yerel yapay zeka müzik motorunu (ACE-Step) bir kez kurun. Yaklaşık 15 GB indirir ve bu bilgisayarda çalışır; hiçbir veri karşıya yüklenmez.",
     "engine_install": "Müzik motorunu kur",
     "engine_installing": "Kuruluyor…",
+    "install_step_source": "Motorun kaynak kodu indiriliyor…",
+    "install_step_engine": "Python ortamı hazırlanıyor: şu ana kadar {{amount}} indirildi",
+    "install_step_model": "Müzik modeli indiriliyor: {{done}} / {{total}}",
     "engine_installed": "Müzik motoru kuruldu.",
     "engine_install_failed": "Kurulum başarısız: {{message}}",
     "engine_stopped": "Müzik motoru durduruldu ve GPU belleği boşaltıldı.",

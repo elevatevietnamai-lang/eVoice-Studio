@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "音乐工坊",
     "engine_title": "音乐引擎",
-    "engine_help": "只需安装一次本地 AI 音乐引擎 (ACE-Step)。约需下载 8 GB 数据，完全在本机运行，不会上传任何内容。",
+    "engine_help": "只需安装一次本地 AI 音乐引擎 (ACE-Step)。约需下载 15 GB 数据，完全在本机运行，不会上传任何内容。",
     "engine_install": "安装音乐引擎",
     "engine_installing": "正在安装…",
+    "install_step_source": "正在下载引擎源代码…",
+    "install_step_engine": "正在配置 Python 环境：已下载 {{amount}}",
+    "install_step_model": "正在下载音乐模型：{{done}} / {{total}}",
     "engine_installed": "音乐引擎已安装。",
     "engine_install_failed": "安装失败：{{message}}",
     "engine_stopped": "音乐引擎已停止，显存已释放。",

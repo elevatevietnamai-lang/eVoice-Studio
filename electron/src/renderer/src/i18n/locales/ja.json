@@ -3952,9 +3952,12 @@
   "musicStudio": {
     "title": "ミュージックスタジオ",
     "engine_title": "音楽エンジン",
-    "engine_help": "ローカル AI 音楽エンジン (ACE-Step) をインストールします（初回のみ）。約 8 GB をダウンロードし、この PC 上で実行されます。外部へのアップロードは行われません。",
+    "engine_help": "ローカル AI 音楽エンジン (ACE-Step) をインストールします（初回のみ）。約 15 GB をダウンロードし、この PC 上で実行されます。外部へのアップロードは行われません。",
     "engine_install": "音楽エンジンをインストール",
     "engine_installing": "インストール中…",
+    "install_step_source": "エンジンのソースをダウンロード中…",
+    "install_step_engine": "Python 環境を準備中: これまでに {{amount}} をダウンロード",
+    "install_step_model": "音楽モデルをダウンロード中: {{done}} / {{total}}",
     "engine_installed": "音楽エンジンをインストールしました。",
     "engine_install_failed": "インストールに失敗しました: {{message}}",
     "engine_stopped": "音楽エンジンを停止し、GPU メモリを解放しました。",
