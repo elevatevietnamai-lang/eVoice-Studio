@@ -1,16 +1,29 @@
 // @vitest-environment node
-import type { TFunction } from 'i18next';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import en from '../renderer/src/i18n/locales/en.json';
-import { BUILTIN_SCENES, builtinScene } from '../renderer/src/features/promo/scene-builtins';
 import { lintScene, parseScene, sceneDocument, usedFontFamilies } from './promo-scenes';
 import { TEMPLATE_FONTS } from './promo-templates';
 
+// The built-ins live in the renderer, outside this project's tsconfig, so they
+// are loaded at run time (like blank-window-guard.test.ts reads the catalogs).
+const renderer = join(process.cwd(), 'src/renderer/src');
+type T = (key: string, values?: Record<string, unknown>) => string;
+const { BUILTIN_SCENES, builtinScene } = (await import(
+  /* @vite-ignore */ join(renderer, 'features/promo/scene-builtins.ts')
+)) as {
+  BUILTIN_SCENES: readonly string[];
+  builtinScene: (id: string, t: T, options?: { logoId?: string | null }) => unknown;
+};
+const en = JSON.parse(readFileSync(join(renderer, 'i18n/locales/en.json'), 'utf8')) as {
+  promo: Record<string, string>;
+};
+
 /** English catalog lookups, so a missing key shows up as the raw key. */
-const t = ((key: string, values?: Record<string, unknown>) => {
-  const text = (en.promo as Record<string, string>)[key.replace(/^promo\./, '')] ?? key;
+const t: T = (key, values) => {
+  const text = en.promo[key.replace(/^promo\./, '')] ?? key;
   return text.replace(/\{\{(\w+)\}\}/g, (_, name: string) => String(values?.[name] ?? ''));
-}) as unknown as TFunction;
+};
 
 describe('built-in scenes', () => {
   it.each(BUILTIN_SCENES)('%s passes the checks main applies to any scene', (id) => {
