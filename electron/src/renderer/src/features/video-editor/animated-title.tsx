@@ -10,6 +10,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { LoaderCircleIcon, SparklesIcon } from 'lucide-react';
 import type { PromoBrowserState } from '../../../../preload/index.d';
 import { getBridge } from '@/components/bridge';
+import { runRendererTask } from '@/lib/global-error-recovery';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
@@ -128,7 +129,7 @@ export function AnimatedTitleDialog({
           variant="outline"
           onClick={() => {
             onOpenChange(false);
-            void navigate({ to: '/promo' });
+            runRendererTask('Open Promo video for animated titles', () => navigate({ to: '/promo' }));
           }}
         >
           {t('editor.title_open_promo')}
