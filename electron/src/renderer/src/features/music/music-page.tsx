@@ -56,6 +56,14 @@ interface InstallStep {
 }
 
 /** The install's long steps report bytes on disk; the Python environment has no known total. */
+/** Short amount for the install button: done of total for the model, done so far otherwise. */
+export function installAmount(step: InstallStep | null): string | null {
+  if (!step || step.stage === 'source') return null;
+  if (step.stage === 'model' && step.total)
+    return `${formatBytes(step.bytes)} / ${formatBytes(step.total)}`;
+  return step.bytes > 0 ? formatBytes(step.bytes) : null;
+}
+
 function installStepLabel(step: InstallStep) {
   if (step.stage === 'source') return { key: 'musicStudio.install_step_source', values: {} };
   if (step.stage === 'engine')
@@ -232,6 +240,14 @@ export function MusicPage() {
                 {task?.kind === 'install'
                   ? t('musicStudio.engine_installing')
                   : t('musicStudio.engine_install')}
+                {task?.kind === 'install' && installAmount(installStep) && (
+                  <span
+                    className="ml-auto text-xs tabular-nums opacity-80"
+                    data-slot="install-amount"
+                  >
+                    {installAmount(installStep)}
+                  </span>
+                )}
               </Button>
               {task?.kind === 'install' && (
                 <Progress

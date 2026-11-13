@@ -40,7 +40,7 @@ vi.mock('@/lib/api/failure', () => ({
     e.error_code === 'gpu_busy' ? 'gpuBusy.dub' : undefined,
 }));
 
-import { MusicPage } from './music-page';
+import { MusicPage, installAmount } from './music-page';
 
 const track = {
   id: 'abc123def456',
@@ -89,6 +89,18 @@ it('streams the install and reports progress through the shared task stream', as
   expect(state.stream.mock.calls[0][0]).toBe('/music/install-stream');
 });
 
+it('formats the install button amount per step', () => {
+  expect(installAmount(null)).toBeNull();
+  expect(installAmount({ stage: 'source', bytes: 0, total: null, log: '' })).toBeNull();
+  expect(installAmount({ stage: 'engine', bytes: 0, total: null, log: '' })).toBeNull();
+  expect(installAmount({ stage: 'engine', bytes: 1.5 * 1024 ** 3, total: null, log: '' })).toBe(
+    '1.5 GB',
+  );
+  expect(
+    installAmount({ stage: 'model', bytes: 512 * 1024 ** 2, total: 10_092_102_593, log: '' }),
+  ).toBe('512 MB / 9.4 GB');
+});
+
 it('shows which install step is running and how much it has downloaded', async () => {
   let finish = () => {};
   state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
@@ -115,6 +127,8 @@ it('shows which install step is running and how much it has downloaded', async (
   renderPage();
   fireEvent.click(await screen.findByText('musicStudio.engine_install'));
   expect(await screen.findByText('musicStudio.install_step_model')).toBeTruthy();
+  // The button carries the downloaded amount and the model's total.
+  expect(screen.getByText('2.0 GB / 9.4 GB')).toBeTruthy();
   // A new step starts without the previous step's log line.
   expect(screen.queryByText('Resolved 180 packages')).toBeNull();
   finish();
