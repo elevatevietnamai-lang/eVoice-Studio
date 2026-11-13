@@ -15,6 +15,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)
 - Burned-in subtitles use the bundled Inter font, so Latin, Cyrillic and Vietnamese captions look the same on macOS, Windows and Linux (other scripts still use a system font) (#6)
 - Karaoke on translated lines gives longer words more time instead of splitting the line evenly, and Chinese, Japanese and Thai lines highlight per character instead of all at once (#6)
 - The sidebar is a slim icon rail beside each section's own pane: Home and Clone get a Saved voices / Recent takes column, Design gets a Saved voices tab, and the full navigation is one click away (#3234)
