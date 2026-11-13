@@ -265,7 +265,7 @@ export function MusicPage() {
                   </p>
                   {installStep.log && (
                     <p
-                      className="truncate font-mono text-[11px] text-muted-foreground/80"
+                      className="truncate font-mono text-[11px] text-muted-foreground"
                       title={installStep.log}
                     >
                       {installStep.log}
@@ -426,7 +426,9 @@ export function MusicPage() {
                     // The chosen track is lit flat, like every selected row (DESIGN.md).
                     className={cn(
                       'flex items-center gap-2 rounded-lg border border-border/60 px-2.5 py-2 transition-colors',
-                      selected?.id === track.id ? 'bg-accent' : 'bg-background/35 hover:bg-accent/50',
+                      selected?.id === track.id
+                        ? 'bg-accent'
+                        : 'bg-background/35 hover:bg-accent/50',
                     )}
                   >
                     <button

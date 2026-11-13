@@ -3,8 +3,6 @@ import {
   ArrowUpRightIcon,
   BanknoteIcon,
   GlobeIcon,
-  CheckIcon,
-  CopyIcon,
   Globe2Icon,
   LightbulbIcon,
   MailIcon,
@@ -13,6 +11,7 @@ import {
   ShieldCheckIcon,
   WalletIcon,
 } from 'lucide-react';
+import { Check as CheckShape, Copy as CopyShape } from 'lucide';
 import { useNavigate } from '@tanstack/react-router';
 import QRCode from 'qrcode';
 import { useEffect, useState } from 'react';
@@ -21,6 +20,7 @@ import { EVoiceMark } from '@/components/brand/evoice-mark';
 import { ReportBug } from '@/components/report-bug';
 import { ExternalLink } from '@/components/external-link';
 import { Button } from '@/components/ui/button';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { vietQrPayload } from '@/lib/vietqr';
 import { DONATE, EVOICE_LINKS, isSet } from './evoice-support';
 import './support-settings.css';
@@ -44,7 +44,7 @@ function CopyValue({ label, value }: { label: string; value: string }) {
             });
           }}
         >
-          {copied ? <CheckIcon /> : <CopyIcon />}
+          <MorphIcon icon={copied ? CheckShape : CopyShape} />
         </Button>
       </dd>
     </div>
