@@ -10,6 +10,7 @@ docs/logo-small.svg, whose bars fill more of the tile so they stay readable.
 The macOS ICNS puts the tile on Apple's 824 px grid inside a 1024 px canvas; it
 uses iconutil on macOS and Pillow's ICNS writer elsewhere.
 """
+
 import io
 import pathlib
 import shutil
@@ -30,7 +31,9 @@ MAC_TILE = 824
 
 
 def rasterize(svg, size=1024):
-    png = resvg_py.svg_to_bytes(svg_string=svg.read_text(encoding="utf-8"), width=size, height=size)
+    png = resvg_py.svg_to_bytes(
+        svg_string=svg.read_text(encoding="utf-8"), width=size, height=size
+    )
     return Image.open(io.BytesIO(bytes(png))).convert("RGBA")
 
 
@@ -41,7 +44,9 @@ def scaled(master, small, size):
 def recording(small):
     # The tray shows capture state with a red dot over the mark's lower right.
     icon = small.resize((128, 128), Image.LANCZOS)
-    ImageDraw.Draw(icon).ellipse((40, 40, 124, 124), fill=RECORDING, outline=(255, 255, 255, 255), width=6)
+    ImageDraw.Draw(icon).ellipse(
+        (40, 40, 124, 124), fill=RECORDING, outline=(255, 255, 255, 255), width=6
+    )
     return icon.resize((32, 32), Image.LANCZOS)
 
 
@@ -58,9 +63,15 @@ def icns(work, target):
         iconset = work / "icon.iconset"
         iconset.mkdir()
         for size in (16, 32, 128, 256, 512):
-            mac.resize((size, size), Image.LANCZOS).save(iconset / f"icon_{size}x{size}.png")
-            mac.resize((size * 2, size * 2), Image.LANCZOS).save(iconset / f"icon_{size}x{size}@2x.png")
-        subprocess.run(["iconutil", "-c", "icns", str(iconset), "-o", str(target)], check=True)
+            mac.resize((size, size), Image.LANCZOS).save(
+                iconset / f"icon_{size}x{size}.png"
+            )
+            mac.resize((size * 2, size * 2), Image.LANCZOS).save(
+                iconset / f"icon_{size}x{size}@2x.png"
+            )
+        subprocess.run(
+            ["iconutil", "-c", "icns", str(iconset), "-o", str(target)], check=True
+        )
     else:
         mac.save(target, format="ICNS")
 
@@ -74,7 +85,11 @@ def main():
     scaled(master, small, 32).save(ICONS / "32x32.png")
     recording(small).save(ICONS / "tray-recording.png")
     frames = [scaled(master, small, size) for size in sorted(ICO_SIZES, reverse=True)]
-    frames[0].save(ICONS / "icon.ico", sizes=[frame.size for frame in frames], append_images=frames[1:])
+    frames[0].save(
+        ICONS / "icon.ico",
+        sizes=[frame.size for frame in frames],
+        append_images=frames[1:],
+    )
     with tempfile.TemporaryDirectory() as tmp:
         icns(pathlib.Path(tmp), ICONS / "icon.icns")
 

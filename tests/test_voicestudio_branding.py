@@ -9,7 +9,6 @@ from pathlib import Path
 import pytest
 from packaging.version import Version
 
-
 ROOT = Path(__file__).resolve().parents[1]
 CURRENT_VERSION = json.loads((ROOT / "package.json").read_text())["version"]
 
@@ -60,8 +59,12 @@ def _paths(svg: str) -> list[str]:
 
 
 def test_brand_mark_is_shared_and_fills_the_icon() -> None:
-    mark = (ROOT / "electron/src/shared/components/brand/VoiceStudioMark.jsx").read_text(encoding="utf-8")
-    renderer_mark = (ROOT / "electron/src/renderer/src/components/brand/evoice-mark.tsx").read_text(encoding="utf-8")
+    mark = (
+        ROOT / "electron/src/shared/components/brand/VoiceStudioMark.jsx"
+    ).read_text(encoding="utf-8")
+    renderer_mark = (
+        ROOT / "electron/src/renderer/src/components/brand/evoice-mark.tsx"
+    ).read_text(encoding="utf-8")
     header = (ROOT / "electron/src/shared/components/Header.jsx").read_text()
     about = (ROOT / "electron/src/shared/components/settings/AboutTab.jsx").read_text()
     logo = (ROOT / "docs/logo.svg").read_text(encoding="utf-8")
@@ -102,11 +105,16 @@ def test_raster_icons_show_the_bars_and_the_cut_out_star() -> None:
 
     # Regenerated from docs/logo.svg (and docs/logo-small.svg at 32 px) by scripts/render_brand_icons.py.
     tile = (3, 3, 5)
-    for name in ("docs/logo.png", "docs/logo-256.png", "electron/build/icons/icon.png", "electron/build/icons/32x32.png"):
+    for name in (
+        "docs/logo.png",
+        "docs/logo-256.png",
+        "electron/build/icons/icon.png",
+        "electron/build/icons/32x32.png",
+    ):
         icon = Image.open(ROOT / name).convert("RGB")
         width, height = icon.size
         # On the tall second bar: brand gradient, not the tile.
-        r, g, b = icon.getpixel((int(width * 26 / 64), int(height * 20 / 64)))
+        r, _g, b = icon.getpixel((int(width * 26 / 64), int(height * 20 / 64)))
         assert r > 200 and b < 200, name
         if width >= 256:
             # Inside the star knocked out of the second bar: the tile shows through.
@@ -114,23 +122,36 @@ def test_raster_icons_show_the_bars_and_the_cut_out_star() -> None:
             assert max(abs(a - b) for a, b in zip(pixel, tile)) < 24, name
 
 
-@pytest.mark.parametrize("name", ("vs_logo", "vs_launcher_foreground", "vs_launcher_monochrome"))
+@pytest.mark.parametrize(
+    "name", ("vs_logo", "vs_launcher_foreground", "vs_launcher_monochrome")
+)
 def test_android_vectors_copy_the_canonical_paths(tmp_path: Path, name: str) -> None:
     import runpy
     import xml.etree.ElementTree as ET
 
-    generator = runpy.run_path(str(ROOT / "mobile/android/scripts/generate_brand_resources.py"))
+    generator = runpy.run_path(
+        str(ROOT / "mobile/android/scripts/generate_brand_resources.py")
+    )
     generator["generate"](ROOT, tmp_path)
     android = "{http://schemas.android.com/apk/res/android}"
     vector = ET.parse(tmp_path / f"drawable/{name}.xml").getroot()
     paths = list(vector.iter("path"))
-    assert [p.get(android + "pathData") for p in paths] == _paths((ROOT / "docs/logo.svg").read_text(encoding="utf-8"))
+    assert [p.get(android + "pathData") for p in paths] == _paths(
+        (ROOT / "docs/logo.svg").read_text(encoding="utf-8")
+    )
     bars, spark = paths
     if name == "vs_launcher_monochrome":
-        assert bars.get(android + "fillColor") == spark.get(android + "fillColor") == "#FFFFFFFF"
+        assert (
+            bars.get(android + "fillColor")
+            == spark.get(android + "fillColor")
+            == "#FFFFFFFF"
+        )
     else:
         gradient = bars.find(".//gradient")
-        assert [item.get(android + "color") for item in gradient] == ["#F8981D", "#FF32A3"]
+        assert [item.get(android + "color") for item in gradient] == [
+            "#F8981D",
+            "#FF32A3",
+        ]
         assert spark.get(android + "fillColor") == "#F88537"
     if name != "vs_logo":
         # 56 dp mark centred on the 108 dp canvas, inside the 66 dp safe circle.
@@ -144,8 +165,14 @@ def test_canonical_logo_changes_run_mobile_builds(event: str) -> None:
 
     import yaml
 
-    workflow = yaml.load((ROOT / ".github/workflows/mobile.yml").read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
-    assert any(fnmatchcase("docs/logo.svg", pattern) for pattern in workflow["on"][event]["paths"])
+    workflow = yaml.load(
+        (ROOT / ".github/workflows/mobile.yml").read_text(encoding="utf-8"),
+        Loader=yaml.BaseLoader,
+    )
+    assert any(
+        fnmatchcase("docs/logo.svg", pattern)
+        for pattern in workflow["on"][event]["paths"]
+    )
 
 
 def test_python_package_metadata_points_to_voicestudio() -> None:
