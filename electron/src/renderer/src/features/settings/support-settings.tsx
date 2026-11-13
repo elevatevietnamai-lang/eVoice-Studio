@@ -2,6 +2,7 @@ import { runRendererTask } from '@/lib/global-error-recovery';
 import {
   ArrowUpRightIcon,
   BanknoteIcon,
+  GlobeIcon,
   CheckIcon,
   CopyIcon,
   Globe2Icon,
@@ -127,6 +128,29 @@ export function SupportSettings() {
             <CopyValue label={t('supportEvoice.account')} value={DONATE.bank.account} />
             <CopyValue label={t('supportEvoice.holder')} value={DONATE.bank.holder} />
           </dl>
+        </article>
+        <article className="support-pay-card support-paypal">
+          <h2>
+            <GlobeIcon aria-hidden="true" />
+            {t('supportEvoice.paypal_title')}
+          </h2>
+          <p>{t('supportEvoice.paypal_body')}</p>
+          <div
+            className="support-paypal-amounts"
+            role="group"
+            aria-label={t('supportEvoice.paypal_title')}
+          >
+            {DONATE.paypal.amounts.map((amount) => (
+              <ExternalLink
+                key={amount}
+                href={`${DONATE.paypal.url}/${amount}USD`}
+                showIcon={false}
+              >
+                ${amount}
+              </ExternalLink>
+            ))}
+            <ExternalLink href={DONATE.paypal.url}>{t('supportEvoice.paypal_any')}</ExternalLink>
+          </div>
         </article>
         <p className="support-pay-note">{t('supportEvoice.scan_hint')}</p>
       </section>

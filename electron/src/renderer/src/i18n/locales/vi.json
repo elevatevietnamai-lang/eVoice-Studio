@@ -2992,7 +2992,10 @@
     "holder": "Chủ tài khoản",
     "copy": "Sao chép {{label}}",
     "qr_alt": "Mã QR {{method}}",
-    "scan_hint": "Quét mã bằng app ngân hàng hoặc Momo, hoặc sao chép thông tin."
+    "scan_hint": "Quét mã bằng app ngân hàng hoặc Momo, hoặc sao chép thông tin.",
+    "paypal_title": "PayPal (ngoài Việt Nam)",
+    "paypal_body": "Ủng hộ từ nước ngoài? Gửi số tiền bất kỳ qua PayPal.",
+    "paypal_any": "Số tiền khác"
   },
   "supportPlans": {
     "remove": "Ẩn thanh tài trợ",

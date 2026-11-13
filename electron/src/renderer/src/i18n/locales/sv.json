@@ -2992,7 +2992,10 @@
     "holder": "Kontoinnehavare",
     "copy": "Kopiera {{label}}",
     "qr_alt": "QR-kod för {{method}}",
-    "scan_hint": "Skanna koden med din bank- eller Momo-app, eller kopiera uppgifterna."
+    "scan_hint": "Skanna koden med din bank- eller Momo-app, eller kopiera uppgifterna.",
+    "paypal_title": "PayPal (utanför Vietnam)",
+    "paypal_body": "Stöder du från utlandet? Skicka valfritt belopp via PayPal.",
+    "paypal_any": "Annat belopp"
   },
   "supportPlans": {
     "remove": "Ta bort sponsorfältet",

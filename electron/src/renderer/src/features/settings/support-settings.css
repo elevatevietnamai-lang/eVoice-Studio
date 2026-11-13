@@ -224,6 +224,19 @@
   font-weight: 500;
   min-width: 0;
 }
+.support-paypal {
+  grid-column: 1 / -1;
+  align-items: flex-start;
+}
+.support-paypal p {
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.support-paypal-amounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 .support-pay-note {
   grid-column: 1 / -1;
   text-align: center;

@@ -2992,7 +2992,10 @@
     "holder": "Pemilik rekening",
     "copy": "Salin {{label}}",
     "qr_alt": "Kode QR {{method}}",
-    "scan_hint": "Pindai kode dengan aplikasi bank atau Momo, atau salin detailnya."
+    "scan_hint": "Pindai kode dengan aplikasi bank atau Momo, atau salin detailnya.",
+    "paypal_title": "PayPal (di luar Vietnam)",
+    "paypal_body": "Mendukung dari luar negeri? Kirim jumlah berapa pun lewat PayPal.",
+    "paypal_any": "Jumlah lain"
   },
   "supportPlans": {
     "remove": "Hapus bilah sponsor",

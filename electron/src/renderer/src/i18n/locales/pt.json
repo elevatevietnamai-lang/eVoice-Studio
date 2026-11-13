@@ -2994,7 +2994,10 @@
     "holder": "Titular da conta",
     "copy": "Copiar {{label}}",
     "qr_alt": "Código QR {{method}}",
-    "scan_hint": "Leia o código com o app do banco ou Momo, ou copie os dados."
+    "scan_hint": "Leia o código com o app do banco ou Momo, ou copie os dados.",
+    "paypal_title": "PayPal (fora do Vietnã)",
+    "paypal_body": "Apoiando do exterior? Envie qualquer valor pelo PayPal.",
+    "paypal_any": "Outro valor"
   },
   "supportPlans": {
     "remove": "Remover barra de patrocinadores",

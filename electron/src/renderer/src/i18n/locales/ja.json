@@ -2992,7 +2992,10 @@
     "holder": "口座名義",
     "copy": "{{label}}をコピー",
     "qr_alt": "{{method}} の QR コード",
-    "scan_hint": "銀行アプリまたは Momo でコードを読み取るか、情報をコピーしてください。"
+    "scan_hint": "銀行アプリまたは Momo でコードを読み取るか、情報をコピーしてください。",
+    "paypal_title": "PayPal（ベトナム国外）",
+    "paypal_body": "海外からのご支援は PayPal で任意の金額をお送りいただけます。",
+    "paypal_any": "その他の金額"
   },
   "supportPlans": {
     "remove": "スポンサー欄を非表示にする",

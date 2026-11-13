@@ -2992,7 +2992,10 @@
     "holder": "예금주",
     "copy": "{{label}} 복사",
     "qr_alt": "{{method}} QR 코드",
-    "scan_hint": "은행 앱이나 Momo로 코드를 스캔하거나 정보를 복사하세요."
+    "scan_hint": "은행 앱이나 Momo로 코드를 스캔하거나 정보를 복사하세요.",
+    "paypal_title": "PayPal (베트남 외 지역)",
+    "paypal_body": "해외에서 후원하시나요? PayPal로 원하는 금액을 보내세요.",
+    "paypal_any": "다른 금액"
   },
   "supportPlans": {
     "remove": "스폰서 바 제거",

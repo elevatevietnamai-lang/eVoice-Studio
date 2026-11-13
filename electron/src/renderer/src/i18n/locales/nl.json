@@ -2992,7 +2992,10 @@
     "holder": "Rekeninghouder",
     "copy": "{{label}} kopiëren",
     "qr_alt": "QR-code voor {{method}}",
-    "scan_hint": "Scan de code met je bank- of Momo-app, of kopieer de gegevens."
+    "scan_hint": "Scan de code met je bank- of Momo-app, of kopieer de gegevens.",
+    "paypal_title": "PayPal (buiten Vietnam)",
+    "paypal_body": "Steun je vanuit het buitenland? Stuur elk bedrag via PayPal.",
+    "paypal_any": "Ander bedrag"
   },
   "supportPlans": {
     "remove": "Sponsorbalk verwijderen",

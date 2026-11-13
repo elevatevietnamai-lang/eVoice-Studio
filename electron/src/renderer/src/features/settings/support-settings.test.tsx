@@ -69,3 +69,15 @@ it('lists only the contact links that are filled in and keeps the Pro page reach
   fireEvent.click(screen.getByRole('button', { name: 'supportPlans.get_pro' }));
   expect(mock.navigate).toHaveBeenCalledWith({ to: '/pro' });
 });
+
+it('offers PayPal amounts for supporters abroad, each opening its own PayPal.Me link', () => {
+  render(<SupportSettings />);
+  expect(screen.getByRole('link', { name: '$10' })).toHaveAttribute(
+    'href',
+    'https://paypal.me/vwilliam2402/10USD',
+  );
+  const other = screen.getByRole('link', { name: 'supportEvoice.paypal_any' });
+  expect(other).toHaveAttribute('href', DONATE.paypal.url);
+  fireEvent.click(screen.getByRole('link', { name: '$5' }));
+  expect(mock.open).toHaveBeenCalledWith('https://paypal.me/vwilliam2402/5USD');
+});

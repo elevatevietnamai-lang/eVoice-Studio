@@ -2996,7 +2996,10 @@
     "holder": "Właściciel konta",
     "copy": "Kopiuj: {{label}}",
     "qr_alt": "Kod QR {{method}}",
-    "scan_hint": "Zeskanuj kod aplikacją banku lub Momo albo skopiuj dane."
+    "scan_hint": "Zeskanuj kod aplikacją banku lub Momo albo skopiuj dane.",
+    "paypal_title": "PayPal (poza Wietnamem)",
+    "paypal_body": "Wspierasz z zagranicy? Wyślij dowolną kwotę przez PayPal.",
+    "paypal_any": "Inna kwota"
   },
   "supportPlans": {
     "remove": "Usuń pasek sponsorów",

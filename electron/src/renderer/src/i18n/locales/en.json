@@ -2992,7 +2992,10 @@
     "holder": "Account holder",
     "copy": "Copy {{label}}",
     "qr_alt": "{{method}} QR code",
-    "scan_hint": "Scan the code with your banking or Momo app, or copy the details."
+    "scan_hint": "Scan the code with your banking or Momo app, or copy the details.",
+    "paypal_title": "PayPal (outside Vietnam)",
+    "paypal_body": "Supporting from abroad? Send any amount through PayPal.",
+    "paypal_any": "Other amount"
   },
   "supportPlans": {
     "remove": "Remove sponsor bar",

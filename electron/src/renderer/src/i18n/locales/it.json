@@ -2994,7 +2994,10 @@
     "holder": "Intestatario",
     "copy": "Copia {{label}}",
     "qr_alt": "Codice QR {{method}}",
-    "scan_hint": "Scansiona il codice con l’app della banca o Momo, oppure copia i dati."
+    "scan_hint": "Scansiona il codice con l’app della banca o Momo, oppure copia i dati.",
+    "paypal_title": "PayPal (fuori dal Vietnam)",
+    "paypal_body": "Sostieni dall’estero? Invia l’importo che preferisci con PayPal.",
+    "paypal_any": "Altro importo"
   },
   "supportPlans": {
     "remove": "Rimuovi barra sponsor",

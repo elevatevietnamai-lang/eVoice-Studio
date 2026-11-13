@@ -2992,7 +2992,10 @@
     "holder": "戶名",
     "copy": "複製{{label}}",
     "qr_alt": "{{method}} QR 碼",
-    "scan_hint": "用銀行 App 或 Momo 掃描條碼，或複製帳戶資訊。"
+    "scan_hint": "用銀行 App 或 Momo 掃描條碼，或複製帳戶資訊。",
+    "paypal_title": "PayPal（越南境外）",
+    "paypal_body": "在海外支持？可透過 PayPal 寄送任意金額。",
+    "paypal_any": "其他金額"
   },
   "supportPlans": {
     "remove": "移除贊助商列",

@@ -2992,7 +2992,10 @@
     "holder": "Kontoinhaber",
     "copy": "{{label}} kopieren",
     "qr_alt": "QR-Code für {{method}}",
-    "scan_hint": "Scanne den Code mit deiner Banking- oder Momo-App oder kopiere die Angaben."
+    "scan_hint": "Scanne den Code mit deiner Banking- oder Momo-App oder kopiere die Angaben.",
+    "paypal_title": "PayPal (außerhalb Vietnams)",
+    "paypal_body": "Du unterstützt aus dem Ausland? Sende einen beliebigen Betrag über PayPal.",
+    "paypal_any": "Anderer Betrag"
   },
   "supportPlans": {
     "remove": "Sponsorenleiste entfernen",

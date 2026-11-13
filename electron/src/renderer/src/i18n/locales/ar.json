@@ -3000,7 +3000,10 @@
     "holder": "صاحب الحساب",
     "copy": "نسخ {{label}}",
     "qr_alt": "رمز QR لـ {{method}}",
-    "scan_hint": "امسح الرمز بتطبيق البنك أو Momo، أو انسخ البيانات."
+    "scan_hint": "امسح الرمز بتطبيق البنك أو Momo، أو انسخ البيانات.",
+    "paypal_title": "PayPal (خارج فيتنام)",
+    "paypal_body": "تدعمنا من خارج فيتنام؟ أرسل أي مبلغ عبر PayPal.",
+    "paypal_any": "مبلغ آخر"
   },
   "supportPlans": {
     "remove": "إزالة شريط الرعاة",

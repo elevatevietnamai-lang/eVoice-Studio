@@ -2992,7 +2992,10 @@
     "holder": "Hesap sahibi",
     "copy": "{{label}} kopyala",
     "qr_alt": "{{method}} QR kodu",
-    "scan_hint": "Kodu banka veya Momo uygulamanızla tarayın ya da bilgileri kopyalayın."
+    "scan_hint": "Kodu banka veya Momo uygulamanızla tarayın ya da bilgileri kopyalayın.",
+    "paypal_title": "PayPal (Vietnam dışından)",
+    "paypal_body": "Yurt dışından mı destekliyorsunuz? PayPal ile dilediğiniz tutarı gönderin.",
+    "paypal_any": "Başka tutar"
   },
   "supportPlans": {
     "remove": "Sponsor çubuğunu kaldır",

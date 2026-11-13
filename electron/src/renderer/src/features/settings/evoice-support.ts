@@ -17,6 +17,11 @@ export const DONATE = {
     holder: 'VO THANH BINH',
     note: 'Ung ho eVoice Studio',
   },
+  /** For supporters outside Vietnam. Amount links use PayPal.Me's /<amount>USD form. */
+  paypal: {
+    url: 'https://paypal.me/vwilliam2402',
+    amounts: [5, 10, 20],
+  },
 } as const;
 
 export const EVOICE_LINKS = {
