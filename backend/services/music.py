@@ -20,6 +20,7 @@ import json
 import logging
 import math
 import os
+import re
 import secrets
 import shutil
 import socket
@@ -324,6 +325,169 @@ async def _watched(lines: AsyncIterator[str], measure: Callable[[], int], *, sta
             await task
 
 
+# ── resumable torch wheel
+# The CUDA torch wheel is ~3 GB and uv restarts a dropped transfer from byte 0 on every retry, so on
+# an unstable connection the engine never installs. Like the app runtime's setup
+# (electron/src/main/runtime-wheel.ts), the locked wheel is fetched here with HTTP Range, resuming
+# across retries and app restarts, verified against the lock's SHA-256, and installed from the
+# local file after uv has synced everything else.
+
+_WHEEL_ATTEMPTS = 80
+_WHEEL_IDLE_ATTEMPTS = 8
+_WHEEL_READ_TIMEOUT = 60.0
+
+
+@dataclass(frozen=True)
+class LockedWheel:
+    name: str
+    version: str
+    filename: str
+    url: str
+    sha256: str
+
+
+def _wheel_tag() -> Optional[re.Pattern]:
+    """The cp311 wheel tag for this host, or None where torch is small or not CUDA (macOS)."""
+    import platform
+
+    machine = platform.machine().lower()
+    if sys.platform == "win32":
+        return re.compile(r"-cp311-cp311-win_amd64\.whl$")
+    if sys.platform.startswith("linux") and machine in ("x86_64", "amd64"):
+        return re.compile(r"-cp311-cp311-manylinux_[0-9_]+_x86_64\.whl$")
+    return None
+
+
+def _planned_version(dry_run_output: str, name: str) -> Optional[str]:
+    """The version `uv sync --dry-run` would install for *name* (None if already satisfied)."""
+    match = re.search(rf"^\s*\+ {re.escape(name)}==(\S+)", dry_run_output, re.MULTILINE)
+    return match.group(1) if match else None
+
+
+def _locked_wheel(lock: str, name: str, version: str, tag: re.Pattern) -> Optional[LockedWheel]:
+    """The wheel uv.lock pins for *name* *version* on this host, with its URL and SHA-256."""
+    from urllib.parse import unquote
+
+    for block in lock.replace("\r\n", "\n").split("\n[[package]]\n"):
+        head = re.match(r'name = "([^"]+)"\nversion = "([^"]+)"\nsource = \{ registry = "https://', block)
+        if not head or head.group(1) != name or head.group(2) != version:
+            continue
+        for url, digest in re.findall(r'\{ url = "(https://[^"]+)", hash = "sha256:([0-9a-f]{64})"', block):
+            filename = unquote(url.rsplit("/", 1)[-1])
+            if tag.search(filename):
+                return LockedWheel(name, version, filename, url, digest)
+    return None
+
+
+def _plan_torch(uv: str, env: dict, src: Path) -> Optional[LockedWheel]:
+    """The torch wheel this install still has to download, when it can be fetched resumably."""
+    tag = _wheel_tag()
+    if tag is None:
+        return None
+    try:
+        dry = subprocess.run([uv, "sync", "--locked", "--python", _PYTHON_VERSION, "--dry-run"],
+                             env=env, cwd=str(src), capture_output=True, text=True,
+                             encoding="utf-8", errors="replace", timeout=600, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    version = _planned_version(dry.stdout + dry.stderr, "torch")
+    if not version:
+        return None
+    try:
+        lock = (src / "uv.lock").read_text(encoding="utf-8")
+    except OSError:
+        return None
+    return _locked_wheel(lock, "torch", version, tag)
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _transient(exc: BaseException) -> bool:
+    return isinstance(exc, (httpx.TransportError, _Interrupted))
+
+
+class _Interrupted(Exception):
+    """The server closed the transfer early or answered with a retryable status."""
+
+
+async def _download_wheel(wheel: LockedWheel, folder: Path, *, interval: float = _PROGRESS_INTERVAL,
+                          backoff: float = 1.0) -> AsyncIterator[tuple[int, int]]:
+    """Download *wheel* into *folder*, resuming ``<file>.part`` across attempts and restarts.
+
+    Yields ``(bytes on disk, total)`` every *interval* seconds; the verified wheel is left at
+    ``folder / wheel.filename``.
+    """
+    if not wheel.url.startswith("https://"):
+        raise RuntimeError("Engine wheels are only downloaded over HTTPS.")
+    folder.mkdir(parents=True, exist_ok=True)
+    final = folder / wheel.filename
+    part = folder / (wheel.filename + ".part")
+    if final.is_file() and await asyncio.to_thread(_sha256_file, final) == wheel.sha256:
+        return
+    final.unlink(missing_ok=True)
+    timeout = httpx.Timeout(30.0, read=_WHEEL_READ_TIMEOUT)
+    rechecked = False
+    async with httpx.AsyncClient(timeout=timeout, follow_redirects=True) as client:
+        while True:
+            idle = 0
+            for attempt in range(1, _WHEEL_ATTEMPTS + 1):
+                have = part.stat().st_size if part.exists() else 0
+                try:
+                    headers = {"Range": f"bytes={have}-"} if have else {}
+                    async with client.stream("GET", wheel.url, headers=headers) as response:
+                        if response.status_code == 416:
+                            break  # the part already holds everything; the hash decides
+                        if response.status_code in (429,) or response.status_code >= 500:
+                            raise _Interrupted(f"server answered {response.status_code}")
+                        if response.status_code not in (200, 206):
+                            raise RuntimeError(f"Downloading {wheel.filename} failed ({response.status_code}).")
+                        resumed = response.status_code == 206 and have > 0
+                        offset = have if resumed else 0
+                        span = re.search(r"/(\d+)$", response.headers.get("content-range", ""))
+                        length = int(response.headers.get("content-length") or 0)
+                        total = int(span.group(1)) if span else (offset + length if length else 0)
+                        received = offset
+                        last = time.monotonic()
+                        with open(part, "ab" if resumed else "wb") as out:
+                            async for chunk in response.aiter_bytes():
+                                out.write(chunk)
+                                received += len(chunk)
+                                if time.monotonic() - last >= interval:
+                                    last = time.monotonic()
+                                    yield received, total
+                        yield received, total
+                        if total and received < total:
+                            raise _Interrupted("connection closed early")
+                        break
+                except Exception as exc:  # only transient errors are retried
+                    if not _transient(exc):
+                        raise
+                    grown = (part.stat().st_size if part.exists() else 0) > have
+                    idle = 0 if grown else idle + 1
+                    if idle >= _WHEEL_IDLE_ATTEMPTS:
+                        raise RuntimeError(
+                            f"The connection keeps dropping while downloading {wheel.filename}. "
+                            "Check the network and try again: the download continues where it stopped."
+                        ) from exc
+                    logger.info("engine wheel download interrupted (%s); retrying", exc)
+                    await asyncio.sleep(backoff * min(attempt, 10))
+            else:
+                raise RuntimeError(f"Could not finish downloading {wheel.filename}.")
+            if await asyncio.to_thread(_sha256_file, part) == wheel.sha256:
+                os.replace(part, final)
+                return
+            part.unlink(missing_ok=True)
+            if rechecked:
+                raise RuntimeError(f"The downloaded {wheel.filename} does not match its locked hash.")
+            rechecked = True
+
+
 def _log_tail(lines: int = 20) -> str:
     try:
         text = (engine_dir() / "server.log").read_text(encoding="utf-8", errors="replace")
@@ -437,12 +601,28 @@ class AceStepEngine:
             yield {"type": "progress", "progress": 0.05, "stage": "engine", "bytes": 0, "total": None,
                    "message": "Installing the music engine (several GB, can take a while)"}
             sync = [uv, "sync", "--locked", "--python", _PYTHON_VERSION]
+            torch = await asyncio.to_thread(_plan_torch, uv, env, src)
+            if torch:
+                sync += ["--no-install-package", "torch"]
             cache = await asyncio.to_thread(_uv_cache_dir, uv, env)
             since = time.time() - 2
             engine_bytes = (lambda: _new_bytes(cache, since)) if cache else (lambda: 0)
             async for event in _watched(_run_logged(sync, env, _NO_LINE_TIMEOUT, cwd=str(src)),
-                                        engine_bytes, stage="engine", start=0.05, end=0.4, total=None):
+                                        engine_bytes, stage="engine", start=0.05,
+                                        end=0.2 if torch else 0.4, total=None):
                 yield event
+            if torch:
+                wheels = engine_dir() / ".wheels"
+                async for done, size in _download_wheel(torch, wheels):
+                    fraction = min(done / size, 1.0) if size else 0.0
+                    yield {"type": "progress", "progress": 0.2 + 0.18 * fraction, "stage": "engine",
+                           "bytes": done, "total": size or None,
+                           "message": f"Downloading {torch.filename}"}
+                install = [uv, "pip", "install", "--python", str(venv_python()), "--no-deps",
+                           "--no-index", "--find-links", str(wheels), f"torch=={torch.version}"]
+                async for line in _run_logged(install, env, _NO_LINE_TIMEOUT, cwd=str(src)):
+                    yield {"type": "log", "message": line}
+                (wheels / torch.filename).unlink(missing_ok=True)
             yield {"type": "progress", "progress": 0.4, "stage": "model", "bytes": 0,
                    "total": ACESTEP_MODEL_BYTES, "message": "Downloading the music model (~10 GB)"}
             cmd = [str(venv_python()), "-u", "-c", MODEL_DOWNLOAD_CODE, str(checkpoints_dir()),

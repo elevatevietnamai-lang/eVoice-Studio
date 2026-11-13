@@ -56,18 +56,21 @@ interface InstallStep {
 }
 
 /** The install's long steps report bytes on disk; the Python environment has no known total. */
-/** Short amount for the install button: done of total for the model, done so far otherwise. */
+/** Short amount for the install button: done of total when the step knows its size. */
 export function installAmount(step: InstallStep | null): string | null {
   if (!step || step.stage === 'source') return null;
-  if (step.stage === 'model' && step.total)
-    return `${formatBytes(step.bytes)} / ${formatBytes(step.total)}`;
+  if (step.total) return `${formatBytes(step.bytes)} / ${formatBytes(step.total)}`;
   return step.bytes > 0 ? formatBytes(step.bytes) : null;
 }
 
 function installStepLabel(step: InstallStep) {
   if (step.stage === 'source') return { key: 'musicStudio.install_step_source', values: {} };
   if (step.stage === 'engine')
-    return { key: 'musicStudio.install_step_engine', values: { amount: formatBytes(step.bytes) } };
+    return {
+      key: 'musicStudio.install_step_engine',
+      // While the torch wheel downloads the step knows its size; uv's own downloads do not.
+      values: { amount: installAmount(step) ?? formatBytes(step.bytes) },
+    };
   return {
     key: 'musicStudio.install_step_model',
     values: { done: formatBytes(step.bytes), total: formatBytes(step.total ?? 0) },

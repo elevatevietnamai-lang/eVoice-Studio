@@ -96,6 +96,9 @@ it('formats the install button amount per step', () => {
   expect(installAmount({ stage: 'engine', bytes: 1.5 * 1024 ** 3, total: null, log: '' })).toBe(
     '1.5 GB',
   );
+  expect(installAmount({ stage: 'engine', bytes: 1024 ** 3, total: 3_273_066_072, log: '' })).toBe(
+    '1.0 GB / 3.0 GB',
+  );
   expect(
     installAmount({ stage: 'model', bytes: 512 * 1024 ** 2, total: 10_092_102_593, log: '' }),
   ).toBe('512 MB / 9.4 GB');

@@ -12,6 +12,12 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   stopped with an error; files already downloaded are kept, so trying again resumes. Hugging Face's
   progress bars are switched off for the model step: their carriage-return redraws overflowed the
   line reader and aborted the install.
+- **PyTorch download:** on Windows and Linux x64 the CUDA torch wheel (about 3 GB) is not left to
+  `uv`, which restarts a dropped transfer from zero. `uv sync --dry-run` names the torch version to
+  install, the wheel and its SHA-256 come from the engine's `uv.lock`, and the backend downloads it
+  with HTTP Range into `<engines dir>/acestep/.wheels`, continuing after a dropped connection or an
+  app restart. The verified file is installed with `uv pip install --no-index`; everything else
+  comes from `uv sync --no-install-package torch`.
 - **Generate:** describe the music, choose instrumental or add lyrics, length (10–240 s) and an
   optional BPM. Tracks are saved to the library (`<data dir>/music`, a `.wav` plus a `.json` per track),
   where they can be played, downloaded and deleted.
