@@ -127,7 +127,7 @@ try {
   assert.equal(await page.locator('.react-flow__node').count(), 4);
   await page.getByRole('button', { name: 'Duplicate' }).click();
   await page.getByRole('button', { name: 'Untitled workflow (2)' }).waitFor();
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Delete' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Delete' }).click();
   const deleteDialog = page.getByRole('dialog', { name: 'Delete' });
   await deleteDialog.waitFor();
   await page.waitForTimeout(180);
@@ -137,7 +137,7 @@ try {
   });
   await deleteDialog.getByRole('button', { name: 'Cancel' }).click();
   assert.equal(await page.getByRole('button', { name: 'Untitled workflow (2)' }).count(), 1);
-  await page.locator('.workflow-intro').getByRole('button', { name: 'Delete' }).click();
+  await page.locator('[data-slot="workflow-actions"]').getByRole('button', { name: 'Delete' }).click();
   await deleteDialog.getByRole('button', { name: 'Delete' }).click();
   assert.equal(await page.getByRole('button', { name: 'Untitled workflow (2)' }).count(), 0);
   assert.deepEqual(nativeDialogs, []);

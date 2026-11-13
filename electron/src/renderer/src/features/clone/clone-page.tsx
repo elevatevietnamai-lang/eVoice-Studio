@@ -10,8 +10,7 @@ import { openTake, useSelectedTake } from '@/lib/store/takes';
 import { TakeDetails } from './take-details';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from '@tanstack/react-router';
-import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon, } from 'lucide-react';
+import { HistoryIcon, AudioLinesIcon, ChevronDownIcon, PencilIcon } from 'lucide-react';
 import { isMac } from '@/components/bridge';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -26,7 +25,6 @@ import { OutputPanel } from './output-panel';
 import { ReferencePanel, SaveProfileForm } from './reference-panel';
 import { ScriptPanel } from './script-panel';
 import { useCloneDemo } from '@/hooks/use-clone-demo';
-import { runRendererTask } from '@/lib/global-error-recovery';
 import { SynthesisDock } from '@/components/synthesis-dock';
 
 const DEMO_PROFILE_ID = 'demo0001';
@@ -34,7 +32,6 @@ const DEMO_PROMPTED_KEY = 'omnivoice.demoClonePrompted';
 
 export function ClonePage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const selectedTake = useSelectedTake();
   const { generate, isGenerating } = useGenerateClone();
   const demo = useCloneDemo();
@@ -153,14 +150,7 @@ export function ClonePage() {
             </div>
             <CommandSearch className="ml-auto" />
             <div className="flex shrink-0 items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setLibraryTab('takes');
-                  setWorkspace({ panelCollapsed: false });
-                }}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setLibraryTab('takes')}>
                 <HistoryIcon data-icon="inline-start" />
                 {t('clone.history_title')}
               </Button>
@@ -169,14 +159,7 @@ export function ClonePage() {
           <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-5 overflow-y-auto px-6 pt-6 pb-4">
             <EngineNotice operation="clone" />
             {choosingVoice ? (
-              <VoiceSetup
-                onChosen={finishChoice}
-                onBack={
-                  hasVoice
-                    ? finishChoice
-                    : () => runRendererTask('Leave voice selection', () => navigate({ to: '/' }))
-                }
-              />
+              <VoiceSetup onChosen={finishChoice} />
             ) : savingUpload && reference.file ? (
               <div className="w-full space-y-5">
                 <SaveProfileForm

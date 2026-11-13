@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import {
   AlertTriangleIcon,
@@ -35,6 +36,7 @@ import { clearDubDraftForReset } from '@/features/dub/dub-session';
 import { fmtBytes } from '@shared/components/settings/models/format';
 import { SettingsSection } from './settings-layout';
 import { forgetSetupProgress } from '@/lib/setup-progress';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type ScopeKey =
   | 'ui_prefs'
@@ -242,13 +244,15 @@ export function ResetSettings({
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             {t('settings.reset_desc')}
           </p>
-          {(!bridge || scanFailed) && (
-            <Alert>
-              <AlertTriangleIcon />
-              <AlertTitle>{t('settings.reset_tier_ui')}</AlertTitle>
-              <AlertDescription>{t('settings.reset_body_web')}</AlertDescription>
-            </Alert>
-          )}
+          <Reveal>
+            {(!bridge || scanFailed) && (
+              <Alert>
+                <AlertTriangleIcon />
+                <AlertTitle>{t('settings.reset_tier_ui')}</AlertTitle>
+                <AlertDescription>{t('settings.reset_body_web')}</AlertDescription>
+              </Alert>
+            )}
+          </Reveal>
           <div className="grid gap-2 @2xl:grid-cols-2">
             {tiers.map(([id, label, hint]) => {
               const scopesForTier = PRESETS[id];
@@ -261,7 +265,7 @@ export function ResetSettings({
                     disabled
                       ? 'cursor-not-allowed opacity-45'
                       : active
-                        ? 'border-primary/35 bg-primary/8'
+                        ? 'border-foreground/30 bg-accent'
                         : 'cursor-pointer border-border/60 bg-background/30 hover:bg-accent'
                   }`}
                 >
@@ -303,52 +307,52 @@ export function ResetSettings({
                 />
                 {t('settings.reset_advanced')}
               </Button>
-              {advanced && (
-                <div className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-background/25">
-                  {SCOPE_ORDER.map((scope) => {
-                    const value = byKey[scope];
-                    const frontend = FRONTEND_SCOPES.has(scope);
-                    const disabled = !frontend && value?.exists === false;
-                    const Icon = SCOPE_ICONS[scope];
-                    return (
-                      <label
-                        key={scope}
-                        className={`flex items-center gap-3 border-b border-border/45 px-3 py-2.5 last:border-0 ${
-                          disabled ? 'opacity-45' : 'cursor-pointer hover:bg-accent'
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selected.includes(scope)}
-                          disabled={disabled}
-                          onChange={() =>
-                            setSelected((current) =>
-                              current.includes(scope)
-                                ? current.filter((item) => item !== scope)
-                                : [...current, scope],
-                            )
-                          }
-                          className="accent-primary"
-                        />
-                        <Icon className="size-4 shrink-0 text-muted-foreground" />
-                        <span className="min-w-0 flex-1 text-sm">
-                          {labels[scope]}
-                          {value?.shared && (
-                            <span className="mt-0.5 block text-xs text-amber-500">
-                              {t('settings.reset_models_shared')}
+              <Reveal>
+                {advanced && (
+                  <div className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-background/25">
+                    {SCOPE_ORDER.map((scope) => {
+                      const value = byKey[scope];
+                      const frontend = FRONTEND_SCOPES.has(scope);
+                      const disabled = !frontend && value?.exists === false;
+                      const Icon = SCOPE_ICONS[scope];
+                      return (
+                        <label
+                          key={scope}
+                          className={`flex items-center gap-3 border-b border-border/45 px-3 py-2.5 last:border-0 ${
+                            disabled ? 'opacity-45' : 'cursor-pointer hover:bg-accent'
+                          }`}
+                        >
+                          <Checkbox
+                            checked={selected.includes(scope)}
+                            disabled={disabled}
+                            onCheckedChange={() =>
+                              setSelected((current) =>
+                                current.includes(scope)
+                                  ? current.filter((item) => item !== scope)
+                                  : [...current, scope],
+                              )
+                            }
+                          />
+                          <Icon className="size-4 shrink-0 text-muted-foreground" />
+                          <span className="min-w-0 flex-1 text-sm">
+                            {labels[scope]}
+                            {value?.shared && (
+                              <span className="mt-0.5 block text-xs text-amber-500">
+                                {t('settings.reset_models_shared')}
+                              </span>
+                            )}
+                          </span>
+                          {!frontend && (
+                            <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
+                              {fmtBytes(value?.size_bytes ?? 0)}
                             </span>
                           )}
-                        </span>
-                        {!frontend && (
-                          <span className="shrink-0 font-mono text-xs tabular-nums text-muted-foreground">
-                            {fmtBytes(value?.size_bytes ?? 0)}
-                          </span>
-                        )}
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </Reveal>
             </>
           )}
           <Button
@@ -385,12 +389,14 @@ export function ResetSettings({
               </li>
             ))}
           </ul>
-          {byKey.models?.shared && selected.includes('models') && (
-            <Alert variant="destructive">
-              <AlertTriangleIcon />
-              <AlertDescription>{t('settings.reset_models_shared_warning')}</AlertDescription>
-            </Alert>
-          )}
+          <Reveal>
+            {byKey.models?.shared && selected.includes('models') && (
+              <Alert variant="destructive">
+                <AlertTriangleIcon />
+                <AlertDescription>{t('settings.reset_models_shared_warning')}</AlertDescription>
+              </Alert>
+            )}
+          </Reveal>
           {needsTyped && (
             <label className="space-y-1.5 text-sm">
               <span>

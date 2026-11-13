@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import { GenerationProgress } from './generation-progress';
 import type { GenerateBlocker } from './generate-blocker';
@@ -49,16 +50,20 @@ export function GeneratePanel({
       : '';
   return (
     <div data-slot="generate-panel" className="flex min-h-0 flex-col gap-3">
-      {session.failed > 0 && (
-        <p role="status" className="shrink-0 text-xs text-muted-foreground">
-          {t('audiobook.failed_note', { count: session.failed })}
-        </p>
-      )}
-      {session.stopped && !session.active && (
-        <p role="status" className="shrink-0 text-xs text-muted-foreground">
-          {t('audiobook.stopped_note')}
-        </p>
-      )}
+      <Reveal className="shrink-0">
+        {session.failed > 0 && (
+          <p role="status" className="shrink-0 text-xs text-muted-foreground">
+            {t('audiobook.failed_note', { count: session.failed })}
+          </p>
+        )}
+      </Reveal>
+      <Reveal className="shrink-0">
+        {session.stopped && !session.active && (
+          <p role="status" className="shrink-0 text-xs text-muted-foreground">
+            {t('audiobook.stopped_note')}
+          </p>
+        )}
+      </Reveal>
       {active && session.stage !== 'starting' && (
         <div className="min-h-0 max-h-[38vh] overflow-y-auto">
           <GenerationProgress
@@ -67,11 +72,13 @@ export function GeneratePanel({
           />
         </div>
       )}
-      {status && (
-        <p id="generate-status" role="status" className="shrink-0 text-xs text-muted-foreground">
-          {status}
-        </p>
-      )}
+      <Reveal className="shrink-0">
+        {status && (
+          <p id="generate-status" role="status" className="shrink-0 text-xs text-muted-foreground">
+            {status}
+          </p>
+        )}
+      </Reveal>
       {active ? (
         <Button variant="outline" className="w-full shrink-0" onClick={onStop}>
           {t('common.stop')}

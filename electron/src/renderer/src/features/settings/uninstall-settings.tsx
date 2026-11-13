@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import {
   AlertTriangleIcon,
@@ -27,6 +28,7 @@ import { describeError } from '@/lib/api/client';
 import type { UninstallTarget } from '../../../../preload/index.d';
 import { fmtBytes } from '@shared/components/settings/models/format';
 import { SettingsSection } from './settings-layout';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const ICONS: Record<UninstallTarget['key'], LucideIcon> = {
   data: FolderIcon,
@@ -99,17 +101,19 @@ export function UninstallSettings() {
           <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
             {t('settings.uninstall_body')}
           </p>
-          {scanFailed && (
-            <Alert variant="destructive">
-              <AlertTriangleIcon />
-              <AlertDescription className="flex items-center justify-between gap-3">
-                <span>{t('common.error')}</span>
-                <Button size="sm" variant="ghost" onClick={() => void scan()}>
-                  {t('common.retry')}
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
+          <Reveal>
+            {scanFailed && (
+              <Alert variant="destructive">
+                <AlertTriangleIcon />
+                <AlertDescription className="flex items-center justify-between gap-3">
+                  <span>{t('common.error')}</span>
+                  <Button size="sm" variant="ghost" onClick={() => void scan()}>
+                    {t('common.retry')}
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
+          </Reveal>
           {present.length > 0 && (
             <div className="overflow-hidden rounded-(--card-radius) border border-border/60 bg-background/25">
               {present
@@ -123,11 +127,10 @@ export function UninstallSettings() {
                 ))}
               {sharedModels && (
                 <label className="flex cursor-pointer items-start gap-3 border-t border-border/50 px-3 py-3 hover:bg-accent">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={includeModels}
-                    onChange={(event) => setIncludeModels(event.target.checked)}
-                    className="mt-1 accent-primary"
+                    onCheckedChange={(checked) => setIncludeModels(checked)}
+                    className="mt-1"
                   />
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2 text-sm font-medium">
@@ -186,16 +189,18 @@ export function UninstallSettings() {
               </li>
             ))}
           </ul>
-          {sharedModels && includeModels && (
-            <Alert variant="destructive">
-              <AlertTriangleIcon />
-              <AlertDescription>
-                {t('settings.uninstall_models_warning', {
-                  size: fmtBytes(sharedModels.size_bytes),
-                })}
-              </AlertDescription>
-            </Alert>
-          )}
+          <Reveal>
+            {sharedModels && includeModels && (
+              <Alert variant="destructive">
+                <AlertTriangleIcon />
+                <AlertDescription>
+                  {t('settings.uninstall_models_warning', {
+                    size: fmtBytes(sharedModels.size_bytes),
+                  })}
+                </AlertDescription>
+              </Alert>
+            )}
+          </Reveal>
           <label className="space-y-1.5 text-sm">
             <span>{t('settings.uninstall_type_to_confirm', { word: confirmation })}</span>
             <Input

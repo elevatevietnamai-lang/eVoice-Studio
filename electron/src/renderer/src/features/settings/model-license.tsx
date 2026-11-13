@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { useQueries } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -31,6 +32,7 @@ import {
   type ModelLicenseInfo,
   type ModelReviewPlan,
 } from './model-license-contract';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const blockerKeys: Record<string, string> = {
   component_closure_incomplete: 'modelLicense.blockerComponents',
@@ -217,7 +219,7 @@ export function ModelLicense({
           <h4 className="font-medium">{t('modelLicense.components')}</h4>
           {plan.components.map((component) => (
             <details key={component.id} className="rounded-lg border border-border/60 p-3">
-              <summary className="cursor-pointer rounded break-all focus-visible:ring-2 focus-visible:ring-ring">
+              <summary className="cursor-pointer rounded break-all focus-visible:ring-[3px] focus-visible:ring-ring/50">
                 {component.id}
               </summary>
               <p>
@@ -238,7 +240,7 @@ export function ModelLicense({
           <h4 className="font-medium">{t('modelLicense.documents')}</h4>
           {plan.documents.map((document) => (
             <details key={document.id} className="rounded-lg border border-border/60 p-3">
-              <summary className="cursor-pointer rounded focus-visible:ring-2 focus-visible:ring-ring">
+              <summary className="cursor-pointer rounded focus-visible:ring-[3px] focus-visible:ring-ring/50">
                 {document.title}
               </summary>
               <p className="break-all font-mono text-xs">SHA-256: {document.sha256}</p>
@@ -260,13 +262,12 @@ export function ModelLicense({
                 htmlFor={acknowledgementId}
                 className="flex items-start gap-2 rounded-lg border border-border p-3"
               >
-                <input
+                <Checkbox
                   id={acknowledgementId}
-                  type="checkbox"
                   checked={acknowledged}
                   disabled={busy === 'commit'}
-                  onChange={(event) => setAcknowledged(event.currentTarget.checked)}
-                  className="mt-0.5 size-4 shrink-0 accent-primary focus-visible:ring-2 focus-visible:ring-ring"
+                  onCheckedChange={(checked) => setAcknowledged(checked)}
+                  className="mt-0.5"
                 />
                 <span>{t('modelLicense.acknowledge')}</span>
               </label>
@@ -274,13 +275,15 @@ export function ModelLicense({
           )}
         </div>
       )}
-      {failed && (
-        <p role="alert" className="text-destructive">
-          {t('modelLicense.failed')}
-        </p>
-      )}
-      {completed && <p role="status">{t('modelLicense.downloaded')}</p>}
-      {busy && <p role="status">{t('common.loading')}</p>}
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-destructive">
+            {t('modelLicense.failed')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>{completed && <p role="status">{t('modelLicense.downloaded')}</p>}</Reveal>
+      <Reveal>{busy && <p role="status">{t('common.loading')}</p>}</Reveal>
       <div className="flex justify-end">
         {completed ? null : ready ? (
           <Button
@@ -307,11 +310,13 @@ export function ModelLicense({
   const mainView = (
     <>
       <ModelLicenceView details={details.data} infoFallback={info} extra={verifiedInstall} />
-      {details.isError && (
-        <p role="alert" className="mt-3 text-sm text-destructive">
-          {t('modelLicense.detailsFailed')}
-        </p>
-      )}
+      <Reveal>
+        {details.isError && (
+          <p role="alert" className="mt-3 text-sm text-destructive">
+            {t('modelLicense.detailsFailed')}
+          </p>
+        )}
+      </Reveal>
     </>
   );
 

@@ -1,4 +1,5 @@
 import { UserRoundIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -62,11 +63,13 @@ export function AccountSettings() {
               onCheckedChange={(on) => void setSwitches({ syncEnabled: on })}
             />
           </SettingsRow>
-          {state.notice && (
-            <p role="status" className="text-sm text-muted-foreground">
-              {t(`account.${state.notice}`)}
-            </p>
-          )}
+          <Reveal>
+            {state.notice && (
+              <p role="status" className="text-sm text-muted-foreground">
+                {t(`account.${state.notice}`)}
+              </p>
+            )}
+          </Reveal>
           {!state.remembered && (
             <p className="text-sm text-muted-foreground">{t('account.not_remembered')}</p>
           )}

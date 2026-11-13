@@ -16,11 +16,7 @@ import { ProfileAvatar } from '@/components/profile-avatar';
 import type { Profile } from '@/lib/api/types';
 import { cn } from '@/lib/utils';
 import { PRESETS } from '@shared/utils/constants';
-import {
-  autoProfileId,
-  castParts,
-  castSpeakers,
-} from '@shared/utils/segments';
+import { autoProfileId, castParts, castSpeakers } from '@shared/utils/segments';
 import type { DubSegment } from './dub-session';
 
 const DEFAULT_VOICE = '__default__';
@@ -124,7 +120,7 @@ export function CastingBoard({
       }}
     >
       <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
-        <span className="grid size-5 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
+        <span className="grid size-5 place-items-center rounded-full bg-muted text-[11px] font-semibold text-primary">
           3
         </span>
         {t('dub.cast')}
@@ -172,8 +168,7 @@ export function CastingBoard({
                 data-speaker={speaker}
                 className={cn(
                   'rounded-lg border border-border/50 bg-background/25 p-2 transition-[background-color,border-color,box-shadow] duration-150',
-                  dropTarget === speaker &&
-                    'border-primary/60 bg-primary/8',
+                  dropTarget === speaker && 'border-foreground/30 bg-accent',
                 )}
                 onDragOver={(event) => {
                   if (disabled) return;

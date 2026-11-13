@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -107,7 +108,13 @@ function EmptyCall() {
   );
 }
 
-export function CallsPage({ onCanvas, initialDraft }: { onCanvas?: () => void; initialDraft?: Pick<CallDraft, 'to' | 'brief'> }) {
+export function CallsPage({
+  onCanvas,
+  initialDraft,
+}: {
+  onCanvas?: () => void;
+  initialDraft?: Pick<CallDraft, 'to' | 'brief'>;
+}) {
   const { t } = useTranslation();
   const layout = useCallsLayout();
   const queryClient = useQueryClient();
@@ -363,7 +370,12 @@ export function CallsPage({ onCanvas, initialDraft }: { onCanvas?: () => void; i
     <div className="flex h-full min-h-0 flex-col" data-layout={layout}>
       <WorkspaceHeader>
         <h1 className="text-sm font-medium">{t('calls.title')}</h1>
-        {onCanvas && <Button size="sm" variant="outline" onClick={onCanvas}><WorkflowIcon aria-hidden="true" />{t('workflows.canvas')}</Button>}
+        {onCanvas && (
+          <Button size="sm" variant="outline" onClick={onCanvas}>
+            <WorkflowIcon aria-hidden="true" />
+            {t('workflows.canvas')}
+          </Button>
+        )}
         <Button
           size="sm"
           variant="ghost"
@@ -384,14 +396,16 @@ export function CallsPage({ onCanvas, initialDraft }: { onCanvas?: () => void; i
           />
         </div>
       )}
-      {!unavailable && readiness.isError && (
-        <p role="alert" className="mx-4 mt-3 flex items-center gap-2 text-sm text-destructive">
-          {describeError(readiness.error)}
-          <Button size="xs" variant="ghost" onClick={recheck}>
-            {t('common.retry')}
-          </Button>
-        </p>
-      )}
+      <Reveal>
+        {!unavailable && readiness.isError && (
+          <p role="alert" className="mx-4 mt-3 flex items-center gap-2 text-sm text-destructive">
+            {describeError(readiness.error)}
+            <Button size="xs" variant="ghost" onClick={recheck}>
+              {t('common.retry')}
+            </Button>
+          </p>
+        )}
+      </Reveal>
       <div
         className={cn(
           'flex min-h-0 flex-1 flex-col',

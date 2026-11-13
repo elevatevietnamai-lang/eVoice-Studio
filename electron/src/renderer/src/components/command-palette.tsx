@@ -153,7 +153,7 @@ export function CommandPalette() {
       group: workspaceGroup,
       icon: UsersRoundIcon,
       run: () => {
-        setWorkspace({ panelCollapsed: false, libraryTab: 'voices' });
+        setWorkspace({ libraryTab: 'voices' });
         return navigate({ to: '/personas' });
       },
     },
@@ -228,7 +228,7 @@ export function CommandPalette() {
       group: workspaceGroup,
       icon: HistoryIcon,
       run: () => {
-        setWorkspace({ panelCollapsed: false, libraryTab: 'takes' });
+        setWorkspace({ libraryTab: 'takes' });
         return navigate({ to: '/clone' });
       },
     },
@@ -373,7 +373,7 @@ export function CommandPalette() {
                     aria-selected={active === index}
                     tabIndex={-1}
                     className={cn(
-                      'group flex h-10 w-full items-center gap-3 rounded-md px-2.5 text-left text-sm text-foreground outline-none transition-colors duration-160',
+                      'group flex h-10 w-full items-center gap-3 rounded-lg px-2.5 text-left text-sm text-foreground outline-none transition-colors duration-160',
                       active === index ? 'bg-(--sidebar-row-selected)' : 'hover:bg-accent',
                     )}
                     onMouseMove={() => setActive(index)}

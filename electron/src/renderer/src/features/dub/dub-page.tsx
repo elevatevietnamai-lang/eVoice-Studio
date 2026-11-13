@@ -1,4 +1,5 @@
 import { DubProjects } from './dub-projects';
+import { Reveal } from '@/components/motion';
 import { Menu } from '@base-ui/react/menu';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
@@ -148,6 +149,9 @@ import {
   skipFailedDubTranslations,
   planDubIncremental,
 } from './dub-session';
+import { Checkbox } from '@/components/ui/checkbox';
+import { menuItemClass, menuPopupClass } from '@/components/menu-popup';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const DEFAULT_TRANSLATION_AGENT_KEY = 'voicestudio.defaultTranslationAgent';
 const LIVE_PREVIEW_KEY = 'voicestudio.dubLivePreview';
@@ -771,11 +775,13 @@ export function DubPage() {
               </Button>
             </div>
           )}
-          {cookieError && (
-            <p role="alert" className="text-xs text-destructive">
-              {t('dub.cookie_size_error')}
-            </p>
-          )}
+          <Reveal>
+            {cookieError && (
+              <p role="alert" className="text-xs text-destructive">
+                {t('dub.cookie_size_error')}
+              </p>
+            )}
+          </Reveal>
         </details>
       )}
       {url && (
@@ -1027,8 +1033,8 @@ export function DubPage() {
           <section
             className={cn(
               'space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3 transition-colors',
-              session.jobId && !['idle', 'preparing'].includes(session.phase) && 'rounded-b-md',
-              dragging && 'border-primary/60 bg-primary/5',
+              session.jobId && !['idle', 'preparing'].includes(session.phase) && 'rounded-b-lg',
+              dragging && 'border-foreground/30 bg-accent',
             )}
             onDragEnter={(event) => {
               event.preventDefault();
@@ -1050,7 +1056,7 @@ export function DubPage() {
             }}
           >
             <h2 className="flex items-center gap-2 text-sm font-medium">
-              <span className="grid size-5 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
+              <span className="grid size-5 place-items-center rounded-full bg-muted text-[11px] font-semibold text-primary">
                 1
               </span>
               {t('dub.upload_transcribe')}
@@ -1189,38 +1195,42 @@ export function DubPage() {
               <p className="text-xs leading-5 text-muted-foreground">
                 {t('dub.num_speakers_help')}
               </p>
-              {modelCatalogue.isSuccess && (
-                <div
-                  role="status"
-                  className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs"
-                >
-                  <UsersRoundIcon
-                    className={cn(
-                      'size-3.5 shrink-0',
-                      diarisationReady ? 'text-emerald-500' : 'text-muted-foreground',
+              <Reveal>
+                {modelCatalogue.isSuccess && (
+                  <div
+                    role="status"
+                    className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs"
+                  >
+                    <UsersRoundIcon
+                      className={cn(
+                        'size-3.5 shrink-0',
+                        diarisationReady ? 'text-emerald-500' : 'text-muted-foreground',
+                      )}
+                    />
+                    <span className="min-w-0 flex-1 truncate text-muted-foreground">
+                      {t('engineSidebar.diarisation')} ·{' '}
+                      {t(
+                        diarisationReady
+                          ? 'modelMaintenance.installed'
+                          : 'modelSettings.unavailable',
+                      )}
+                    </span>
+                    {!diarisationReady && (
+                      <Link
+                        to="/settings/models/$family"
+                        params={{ family: 'diarisation' }}
+                        className={buttonVariants({
+                          variant: 'outline',
+                          size: 'xs',
+                        })}
+                      >
+                        <Settings2Icon />
+                        {t('modelMaintenance.install')}
+                      </Link>
                     )}
-                  />
-                  <span className="min-w-0 flex-1 truncate text-muted-foreground">
-                    {t('engineSidebar.diarisation')} ·{' '}
-                    {t(
-                      diarisationReady ? 'modelMaintenance.installed' : 'modelSettings.unavailable',
-                    )}
-                  </span>
-                  {!diarisationReady && (
-                    <Link
-                      to="/settings/models/$family"
-                      params={{ family: 'diarisation' }}
-                      className={buttonVariants({
-                        variant: 'outline',
-                        size: 'xs',
-                      })}
-                    >
-                      <Settings2Icon />
-                      {t('modelMaintenance.install')}
-                    </Link>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+              </Reveal>
             </details>
             <label className="flex items-start gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs">
               <Switch
@@ -1263,27 +1273,29 @@ export function DubPage() {
             {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
               <HardsubPanel busy={busy} />
             )}
-            {session.subtitleImport && (
-              <p role="status" className="text-xs leading-5 text-muted-foreground">
-                {t('dub_workflow.imported_cues', {
-                  count: session.subtitleImport.stats.imported,
-                  file: session.subtitleImport.file,
-                })}
-                {(['skipped_malformed', 'dropped_overlap', 'clamped_to_duration'] as const).map(
-                  (key) =>
-                    session.subtitleImport!.stats[key] ? (
-                      <span key={key} className="block">
-                        {t('dub_workflow.' + key, {
-                          count: session.subtitleImport!.stats[key],
-                        })}
-                      </span>
-                    ) : null,
-                )}
-              </p>
-            )}
+            <Reveal>
+              {session.subtitleImport && (
+                <p role="status" className="text-xs leading-5 text-muted-foreground">
+                  {t('dub_workflow.imported_cues', {
+                    count: session.subtitleImport.stats.imported,
+                    file: session.subtitleImport.file,
+                  })}
+                  {(['skipped_malformed', 'dropped_overlap', 'clamped_to_duration'] as const).map(
+                    (key) =>
+                      session.subtitleImport!.stats[key] ? (
+                        <span key={key} className="block">
+                          {t('dub_workflow.' + key, {
+                            count: session.subtitleImport!.stats[key],
+                          })}
+                        </span>
+                      ) : null,
+                  )}
+                </p>
+              )}
+            </Reveal>
           </section>
           {session.jobId && !['idle', 'preparing'].includes(session.phase) && (
-            <section className="-mt-1 space-y-3 rounded-(--card-radius) rounded-t-md border border-border/60 bg-muted/15 p-3">
+            <section className="-mt-1 space-y-3 rounded-(--card-radius) rounded-t-lg border border-border/60 bg-muted/15 p-3">
               <h2 className="flex items-center gap-2 text-sm font-medium">
                 <PlayIcon className="size-4 text-muted-foreground" />
                 {t('dub.preview')}
@@ -1307,7 +1319,7 @@ export function DubPage() {
                   onCanPlay={restorePreviewPosition}
                 />
               )}
-              <div className="flex flex-wrap gap-1 rounded-lg bg-background/35 p-1">
+              <div className={cn(segmentedFrameClass, 'flex flex-wrap')}>
                 <Button
                   size="xs"
                   className="min-w-0 flex-1"
@@ -1362,7 +1374,7 @@ export function DubPage() {
           )}
           <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
             <h2 className="flex items-center gap-2 text-sm font-medium">
-              <span className="grid size-5 place-items-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
+              <span className="grid size-5 place-items-center rounded-full bg-muted text-[11px] font-semibold text-primary">
                 2
               </span>
               {t('dub.target_language')}
@@ -1434,7 +1446,7 @@ export function DubPage() {
               <div
                 role="group"
                 aria-label={t('about.translator')}
-                className="grid grid-cols-2 gap-1 rounded-lg bg-muted/30 p-1"
+                className={cn(segmentedFrameClass, 'grid grid-cols-2')}
               >
                 <Button
                   size="sm"
@@ -1494,7 +1506,7 @@ export function DubPage() {
                   onChange={(event) =>
                     setDubTranslationOptions({ translationInstructions: event.target.value })
                   }
-                  className="w-full resize-y rounded-lg border border-input bg-background/40 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                  className="w-full resize-y rounded-lg border border-input bg-background/40 px-3 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
                 />
                 <p
                   id="dub-translation-instructions-help"
@@ -1580,14 +1592,16 @@ export function DubPage() {
                 </div>
               </div>
             )}
-            {session.translationFallback && (
-              <div role="status" className="space-y-2 text-xs text-muted-foreground">
-                <p>{t('dub_workflow.cinematic_no_llm')}</p>
-                <Link to="/settings/models/$family" params={{ family: 'llm' }}>
-                  {t('engineSidebar.llm')}
-                </Link>
-              </div>
-            )}
+            <Reveal>
+              {session.translationFallback && (
+                <div role="status" className="space-y-2 text-xs text-muted-foreground">
+                  <p>{t('dub_workflow.cinematic_no_llm')}</p>
+                  <Link to="/settings/models/$family" params={{ family: 'llm' }}>
+                    {t('engineSidebar.llm')}
+                  </Link>
+                </div>
+              )}
+            </Reveal>
             <Link
               to="/settings/models/$family"
               params={{ family: 'translation' }}
@@ -1601,47 +1615,53 @@ export function DubPage() {
                 {t('modelMaintenance.' + provider.category)}
               </p>
             )}
-            {provider?.id === 'argos' && argosPacks.isError && (
-              <PipelineFailure
-                className="text-xs"
-                fallback={describeError(argosPacks.error)}
-                action={
-                  <Button size="xs" variant="ghost" onClick={() => void argosPacks.refetch()}>
-                    <RotateCcwIcon />
-                    {t('backend.retry')}
-                  </Button>
-                }
-              />
-            )}
-            {provider?.id === 'argos' && missingArgosPacks.length > 0 && (
-              <PipelineFailure
-                className="text-xs"
-                fallback={`${t('modelMaintenance.install')} · ${provider.display_name} · ${missingArgosPacks
-                  .map((pair) => `${pair.source_lang} → ${pair.target_lang}`)
-                  .join(', ')}`}
-                action={
-                  <Button
-                    size="xs"
-                    variant="outline"
-                    disabled={installingArgosPacks}
-                    onClick={() => void installArgosLanguagePacks()}
-                  >
-                    {installingArgosPacks ? (
-                      <LoaderCircleIcon className="animate-spin" />
-                    ) : (
-                      <LanguagesIcon />
-                    )}
-                    {t(installingArgosPacks ? 'common.loading' : 'modelMaintenance.install')}
-                  </Button>
-                }
-              />
-            )}
-            {provider && !(provider.ready ?? provider.installed) && (
-              <PipelineFailure
-                className="text-xs"
-                fallback={provider.availability_reason || t('modelSettings.unavailable')}
-              />
-            )}
+            <Reveal>
+              {provider?.id === 'argos' && argosPacks.isError && (
+                <PipelineFailure
+                  className="text-xs"
+                  fallback={describeError(argosPacks.error)}
+                  action={
+                    <Button size="xs" variant="ghost" onClick={() => void argosPacks.refetch()}>
+                      <RotateCcwIcon />
+                      {t('backend.retry')}
+                    </Button>
+                  }
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {provider?.id === 'argos' && missingArgosPacks.length > 0 && (
+                <PipelineFailure
+                  className="text-xs"
+                  fallback={`${t('modelMaintenance.install')} · ${provider.display_name} · ${missingArgosPacks
+                    .map((pair) => `${pair.source_lang} → ${pair.target_lang}`)
+                    .join(', ')}`}
+                  action={
+                    <Button
+                      size="xs"
+                      variant="outline"
+                      disabled={installingArgosPacks}
+                      onClick={() => void installArgosLanguagePacks()}
+                    >
+                      {installingArgosPacks ? (
+                        <LoaderCircleIcon className="animate-spin" />
+                      ) : (
+                        <LanguagesIcon />
+                      )}
+                      {t(installingArgosPacks ? 'common.loading' : 'modelMaintenance.install')}
+                    </Button>
+                  }
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {provider && !(provider.ready ?? provider.installed) && (
+                <PipelineFailure
+                  className="text-xs"
+                  fallback={provider.availability_reason || t('modelSettings.unavailable')}
+                />
+              )}
+            </Reveal>
           </section>
           <CastingBoard
             segments={session.segments}
@@ -1912,17 +1932,19 @@ export function DubPage() {
                 </Button>
               </div>
             )}
-            {errorMessage && (
-              <PipelineFailure
-                className="mb-4"
-                failure={session.failure}
-                fallback={errorMessage}
-                onDismiss={dismissDubError}
-              />
-            )}
+            <Reveal>
+              {errorMessage && (
+                <PipelineFailure
+                  className="mb-4"
+                  failure={session.failure}
+                  fallback={errorMessage}
+                  onDismiss={dismissDubError}
+                />
+              )}
+            </Reveal>
             {!session.segments.length && (!session.recovery || busy) && (
               <div className="mx-auto flex min-h-[24rem] w-full max-w-5xl flex-col items-center justify-center px-6 text-center">
-                <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="mb-3 flex size-12 items-center justify-center rounded-lg bg-muted text-foreground">
                   {busy ? (
                     <LoaderCircleIcon className="size-6 animate-spin motion-reduce:animate-none" />
                   ) : (
@@ -1978,7 +2000,7 @@ export function DubPage() {
                           key={number}
                           className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-xs"
                         >
-                          <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 font-medium text-primary">
+                          <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted font-medium text-foreground">
                             {number}
                           </span>
                           {t(label)}
@@ -1996,7 +2018,7 @@ export function DubPage() {
                   style={{ backgroundColor: 'var(--background)' }}
                 >
                   <div className="col-start-1 row-start-1 flex min-w-0 items-center gap-1.5">
-                    <span className="shrink-0 rounded-md bg-muted/35 px-2 py-1 text-xs font-medium tabular-nums text-muted-foreground">
+                    <span className="shrink-0 rounded-lg bg-muted/35 px-2 py-1 text-xs font-medium tabular-nums text-muted-foreground">
                       {session.segments.length} {t('dub.segments')}
                     </span>
                     <Button
@@ -2038,7 +2060,7 @@ export function DubPage() {
                           className="w-40 bg-muted/30 sm:w-48"
                         />
                         <span
-                          className="shrink-0 rounded-md bg-muted/40 px-2 py-1 text-xs tabular-nums text-muted-foreground"
+                          className="shrink-0 rounded-lg bg-muted/40 px-2 py-1 text-xs tabular-nums text-muted-foreground"
                           title={`${activeTranslatedCount}/${session.segments.length}`}
                         >
                           {activeTranslatedCount}/{session.segments.length}
@@ -2154,7 +2176,7 @@ export function DubPage() {
                       </Menu.Trigger>
                       <Menu.Portal>
                         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                          <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                          <Menu.Popup className={cn(menuPopupClass, 'min-w-52 p-1')}>
                             <Menu.Item
                               disabled={!session.jobId}
                               onClick={() =>
@@ -2191,7 +2213,7 @@ export function DubPage() {
                                     ),
                                   )
                               }
-                              className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               <WandSparklesIcon className="size-4" />
                               {t('dub.clean_up')}
@@ -2227,7 +2249,7 @@ export function DubPage() {
                                     ),
                                   )
                               }
-                              className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               <AudioWaveformIcon className="size-4" />
                               {t('dub.mirror_delivery')}
@@ -2235,7 +2257,7 @@ export function DubPage() {
                             <Menu.Item
                               disabled={!canRestoreOriginal}
                               onClick={restoreDubSegments}
-                              className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               <RotateCcwIcon className="size-4" />
                               {t('dub.restore')}
@@ -2243,7 +2265,7 @@ export function DubPage() {
                             {failedTranslationCount > 0 && code && (
                               <Menu.Item
                                 onClick={() => skipFailedDubTranslations(code)}
-                                className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                className={menuItemClass}
                               >
                                 <XIcon className="size-4" />
                                 {t('dub.skip_failed')}
@@ -2319,7 +2341,7 @@ export function DubPage() {
                 />
               )}
               {selectedSegmentIds.size > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-primary/20 bg-primary/5 p-2.5">
+                <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-border bg-card p-2.5">
                   <span className="mr-auto flex items-center gap-2 px-1 text-sm font-medium text-primary">
                     <CheckCheckIcon className="size-4" />
                     {t('dub.selected_count', {
@@ -2339,14 +2361,16 @@ export function DubPage() {
                     </Menu.Trigger>
                     <Menu.Portal>
                       <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                        <Menu.Popup className="max-h-72 min-w-52 overflow-y-auto rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                        <Menu.Popup
+                          className={cn(menuPopupClass, 'max-h-72 min-w-52 overflow-y-auto p-1')}
+                        >
                           <Menu.Item
                             onClick={() =>
                               editDubSegments(selectedSegmentIds, {
                                 profile_id: undefined,
                               })
                             }
-                            className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                            className={menuItemClass}
                           >
                             <RotateCcwIcon className="size-4" />
                             {t('dub.clear_voice')}
@@ -2359,7 +2383,7 @@ export function DubPage() {
                                   profile_id: profile.id,
                                 })
                               }
-                              className="cursor-default rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                              className={menuItemClass}
                             >
                               {profile.name}
                             </Menu.Item>
@@ -2463,8 +2487,7 @@ export function DubPage() {
                           onFocusCapture={() => setSelectedSegmentId(segment.id)}
                           className={cn(
                             'group/segment relative isolate grid grid-cols-[3.25rem_minmax(0,1fr)] gap-x-2 px-2 py-3.5 transition-colors after:pointer-events-none after:absolute after:right-2 after:bottom-0 after:left-[4.25rem] after:h-px after:bg-border/50 hover:bg-accent/[0.12] focus-within:bg-muted/[0.16]',
-                            selectedSegmentId === segment.id &&
-                              'bg-(--sidebar-row-selected)',
+                            selectedSegmentId === segment.id && 'bg-(--sidebar-row-selected)',
                           )}
                         >
                           <div
@@ -2473,13 +2496,12 @@ export function DubPage() {
                               selectedSegmentId === segment.id && 'text-foreground',
                             )}
                           >
-                            <input
-                              type="checkbox"
+                            <Checkbox
                               checked={selectedSegmentIds.has(segment.id)}
                               disabled={busy || Boolean(session.recovery)}
                               aria-label={`${t('modelSettings.select')} ${index + 1}`}
-                              className="mt-0.5 size-4 accent-primary"
-                              onChange={() =>
+                              className="mt-0.5"
+                              onCheckedChange={() =>
                                 setSelectedSegmentIds((current) => {
                                   const next = new Set(current);
                                   if (next.has(segment.id)) next.delete(segment.id);
@@ -2637,7 +2659,7 @@ export function DubPage() {
                                   aria-pressed={livePreview.liveSegmentId === segment.id}
                                   className={cn(
                                     livePreview.liveSegmentId === segment.id &&
-                                      'bg-primary/10 text-primary',
+                                      'bg-accent text-foreground',
                                   )}
                                   onClick={() =>
                                     livePreviewEnabled
@@ -2665,11 +2687,11 @@ export function DubPage() {
                                   </Menu.Trigger>
                                   <Menu.Portal>
                                     <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                                      <Menu.Popup className="min-w-52 rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground shadow-lg outline-none">
+                                      <Menu.Popup className={cn(menuPopupClass, 'min-w-52 p-1')}>
                                         <Menu.Item
                                           disabled={segment.text.trim().length < 2}
                                           onClick={() => splitAtCursor(segment.id, segment.text)}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <ScissorsIcon className="size-4" />
                                           {t('segmentEditing.split')}
@@ -2677,7 +2699,7 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={index === 0}
                                           onClick={() => mergeDubSegment(segment.id, 'prev')}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <MergeIcon className="size-4" />
                                           {t('segmentEditing.mergePrevious')}
@@ -2685,14 +2707,14 @@ export function DubPage() {
                                         <Menu.Item
                                           disabled={index === session.segments.length - 1}
                                           onClick={() => mergeDubSegment(segment.id)}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-disabled:opacity-40 data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <MergeIcon className="size-4" />
                                           {t('segmentEditing.mergeNext')}
                                         </Menu.Item>
                                         <Menu.Item
                                           onClick={() => insertDubSegment(segment.id)}
-                                          className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                          className={menuItemClass}
                                         >
                                           <PlusIcon className="size-4" />
                                           {t('segmentEditing.insert')}
@@ -2718,7 +2740,7 @@ export function DubPage() {
                                 aria-label={t('clone.text_label') + ' ' + (index + 1)}
                                 rows={1}
                                 autoFocus
-                                className="min-h-8 max-h-32 w-full resize-y overflow-y-auto rounded-md border border-input bg-background/35 px-2 py-1 text-sm leading-5 outline-none transition-[background-color,border-color,box-shadow] [field-sizing:content] focus-visible:ring-2 focus-visible:ring-ring"
+                                className="min-h-8 max-h-32 w-full resize-y overflow-y-auto rounded-sm border border-input bg-background/35 px-2 py-1 text-sm leading-5 outline-none transition-[background-color,border-color,box-shadow] [field-sizing:content] focus-visible:ring-[3px] focus-visible:ring-ring/50"
                                 disabled={busy || Boolean(session.recovery)}
                                 value={segment.text}
                                 onBlur={() => setEditingSegmentId(null)}
@@ -2764,7 +2786,7 @@ export function DubPage() {
                                 data-segment-id={segment.id}
                                 disabled={busy || Boolean(session.recovery)}
                                 className={cn(
-                                  'block min-h-10 w-full rounded-lg bg-transparent px-2.5 py-1.5 text-left text-[15px] leading-6 text-foreground/90 outline-none transition-[color,background-color,box-shadow] hover:bg-background/25 hover:text-foreground focus-visible:bg-background/35 focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-60',
+                                  'block min-h-10 w-full rounded-lg bg-transparent px-2.5 py-1.5 text-left text-[15px] leading-6 text-foreground/90 outline-none transition-[color,background-color,box-shadow] hover:bg-background/25 hover:text-foreground focus-visible:bg-background/35 focus-visible:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-default disabled:opacity-60',
                                   selectedSegmentId === segment.id &&
                                     'bg-background/25 text-foreground shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--border)_45%,transparent)]',
                                 )}
@@ -2777,7 +2799,7 @@ export function DubPage() {
                               </button>
                             )}
                             {segment.plan?.suggested_text && (
-                              <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/5 p-1.5 text-xs">
+                              <div className="flex items-center gap-2 rounded-lg border border-warning/20 bg-warning/5 p-1.5 text-xs">
                                 <span className="min-w-0 flex-1 truncate text-muted-foreground">
                                   {segment.plan.suggested_text}
                                 </span>
@@ -3025,7 +3047,7 @@ export function DubPage() {
                         variant={
                           session.agentCli === selectedTranslationAgent.id ? 'default' : 'outline'
                         }
-                        className="rounded-r-none border-primary/25 bg-primary/[0.06] text-foreground hover:bg-primary/10"
+                        className="rounded-r-none"
                         disabled={
                           Boolean(session.recovery) || !session.segments.length || !code || busy
                         }
@@ -3049,14 +3071,19 @@ export function DubPage() {
                                   : 'outline',
                               size: 'icon',
                             }),
-                            'rounded-l-none border-l-0 border-primary/25 bg-primary/[0.06] hover:bg-primary/10',
+                            'rounded-l-none border-l-0',
                           )}
                         >
                           <ChevronDownIcon />
                         </Menu.Trigger>
                         <Menu.Portal>
                           <Menu.Positioner side="top" sideOffset={6} align="end" className="z-50">
-                            <Menu.Popup className="cn-menu-target cn-menu-translucent min-w-44 rounded-(--card-radius) p-1 surface-glass text-popover-foreground shadow-lg ring-1 ring-border outline-none">
+                            <Menu.Popup
+                              className={cn(
+                                menuPopupClass,
+                                'cn-menu-target cn-menu-translucent min-w-44 p-1 surface-glass',
+                              )}
+                            >
                               {availableTranslationAgents.map((agent) => (
                                 <Menu.Item
                                   key={agent.id}
@@ -3068,7 +3095,7 @@ export function DubPage() {
                                       // The selection remains active for this session.
                                     }
                                   }}
-                                  className="flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none data-highlighted:bg-accent"
+                                  className={menuItemClass}
                                 >
                                   <span
                                     className={cn(
@@ -3098,7 +3125,6 @@ export function DubPage() {
                     <Button
                       data-slot="translate-with-agent"
                       variant={session.quality === 'agent' ? 'default' : 'outline'}
-                      className="border-primary/25 bg-primary/[0.06] text-foreground hover:bg-primary/10"
                       disabled={
                         Boolean(session.recovery) || !session.segments.length || !code || busy
                       }

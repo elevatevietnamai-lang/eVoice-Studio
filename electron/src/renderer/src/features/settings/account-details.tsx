@@ -63,7 +63,7 @@ export function AccountDetails({
         ) : (
           <span
             aria-hidden="true"
-            className="grid size-12 place-items-center rounded-full bg-primary/15 text-base font-semibold text-primary"
+            className="grid size-12 place-items-center rounded-full bg-muted text-base font-semibold text-primary"
           >
             {initials(name)}
           </span>

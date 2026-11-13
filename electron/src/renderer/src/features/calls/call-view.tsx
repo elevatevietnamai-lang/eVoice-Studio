@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -60,8 +61,8 @@ function Transcript({ lines, live }: { lines: LiveLine[]; live: boolean }) {
                 // Cap the bubble, not the page: long lines stay readable on 4K.
                 'max-w-[min(42rem,85%)] rounded-(--card-radius) px-3.5 py-2 text-sm leading-6 whitespace-pre-wrap break-words',
                 agent
-                  ? 'rounded-br-md bg-primary text-primary-foreground'
-                  : 'rounded-bl-md bg-muted text-foreground',
+                  ? 'rounded-br-lg bg-primary text-primary-foreground'
+                  : 'rounded-bl-lg bg-muted text-foreground',
                 !line.final && 'opacity-70 italic',
               )}
             >
@@ -193,12 +194,14 @@ export function CallView({
               {maxMinutes ? ` / ${formatDuration(maxMinutes * 60)}` : ''}
             </span>
           </div>
-          {active && (live.stream === 'reconnecting' || live.stream === 'closed') && (
-            <p role="status" className="flex items-center gap-2 text-xs text-warning-foreground">
-              <WifiOffIcon aria-hidden="true" className="size-3.5" />
-              {t(live.stream === 'closed' ? 'calls.stream_lost' : 'calls.reconnecting')}
-            </p>
-          )}
+          <Reveal>
+            {active && (live.stream === 'reconnecting' || live.stream === 'closed') && (
+              <p role="status" className="flex items-center gap-2 text-xs text-warning-foreground">
+                <WifiOffIcon aria-hidden="true" className="size-3.5" />
+                {t(live.stream === 'closed' ? 'calls.stream_lost' : 'calls.reconnecting')}
+              </p>
+            )}
+          </Reveal>
         </div>
       </div>
       <div className="studio-scrollbar min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6">

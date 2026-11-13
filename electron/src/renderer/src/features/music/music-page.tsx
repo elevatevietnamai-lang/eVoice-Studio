@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -45,7 +46,7 @@ const STYLE_PRESETS = [
 ];
 
 const fieldClass =
-  'h-8 w-full rounded-md border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50';
+  'h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50';
 
 export function MusicPage() {
   const { t } = useTranslation();
@@ -109,7 +110,8 @@ export function MusicPage() {
         (event) => {
           if (event.type === 'progress')
             setTask({ kind: 'generate', progress: Number(event.progress) || 0 });
-          if (event.type === 'error') throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
+          if (event.type === 'error')
+            throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
           if (event.type === 'done') {
             const track = event.track as Track | undefined;
             if (track?.id) setSelectedId(track.id);
@@ -299,18 +301,22 @@ export function MusicPage() {
                 value={Math.round(task.progress * 100)}
                 aria-label={t('musicStudio.generating')}
               />
-              {task.progress < 0.1 && (
-                <p role="status" className="text-xs text-muted-foreground">
-                  {t('musicStudio.loading_model')}
-                </p>
-              )}
+              <Reveal>
+                {task.progress < 0.1 && (
+                  <p role="status" className="text-xs text-muted-foreground">
+                    {t('musicStudio.loading_model')}
+                  </p>
+                )}
+              </Reveal>
             </>
           )}
-          {failure && !busy && (
-            <p role="alert" className="text-xs text-destructive">
-              {failure}
-            </p>
-          )}
+          <Reveal>
+            {failure && !busy && (
+              <p role="alert" className="text-xs text-destructive">
+                {failure}
+              </p>
+            )}
+          </Reveal>
           {installed && status.data?.running && (
             <Button
               className="w-full"
@@ -356,7 +362,7 @@ export function MusicPage() {
                   >
                     <button
                       type="button"
-                      className="min-w-0 flex-1 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="min-w-0 flex-1 text-left outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                       aria-pressed={selected?.id === track.id}
                       onClick={() => setSelectedId(track.id)}
                     >

@@ -113,6 +113,7 @@ VoiceStudio/
 │
 ├── docs/                        ⟵ developer docs, screenshots, branding
 │   ├── ROADMAP.md               where this project is going
+│   ├── EVOICE-ROADMAP.md        eVoice Studio's own track: redesign, distribution, product
 │   ├── STRUCTURE.md             you are here
 │   ├── RELEASING.md             the release checklist — every deployment channel
 │   ├── features.yaml            canonical feature inventory (drives docs-drift.yml)

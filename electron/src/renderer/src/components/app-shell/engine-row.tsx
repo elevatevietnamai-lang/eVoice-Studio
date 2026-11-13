@@ -1,12 +1,9 @@
 import { useEffect, useId, useState } from 'react';
+import { Reveal } from '@/components/motion';
+import { Check as CheckShape, Copy as CopyShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { Link } from '@tanstack/react-router';
-import {
-  CheckIcon,
-  ChevronRightIcon,
-  CopyIcon,
-  LoaderCircleIcon,
-  type LucideIcon,
-} from 'lucide-react';
+import { ChevronRightIcon, LoaderCircleIcon, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ComputeVendorIcon, formatComputeRuntime } from '@/components/compute-vendor-icon';
 import { cn } from '@/lib/utils';
@@ -30,7 +27,7 @@ function CopyModelId({ value }: { value: string }) {
       type="button"
       aria-label={t(copied ? 'sidebarTools.copied' : 'sidebarTools.copyModel')}
       title={t(copied ? 'sidebarTools.copied' : 'sidebarTools.copyModel')}
-      className="grid size-5 shrink-0 place-items-center rounded text-muted-foreground outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      className="grid size-5 shrink-0 place-items-center rounded text-muted-foreground outline-none hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
       onClick={() =>
         void navigator.clipboard
           ?.writeText(value)
@@ -38,7 +35,7 @@ function CopyModelId({ value }: { value: string }) {
           .catch(() => {})
       }
     >
-      {copied ? <CheckIcon className="size-3" /> : <CopyIcon className="size-3" />}
+      {<MorphIcon icon={copied ? CheckShape : CopyShape} className="size-3" />}
     </button>
   );
 }
@@ -79,7 +76,9 @@ export function EngineRow({
     );
   // Normal states read from the dot alone; words appear only when something needs attention.
   const quiet =
-    online && (state === 'engineRuntime.idle' || state === 'engineRuntime.ready') && level !== 'simple';
+    online &&
+    (state === 'engineRuntime.idle' || state === 'engineRuntime.ready') &&
+    level !== 'simple';
   const modelLabel = detail.includes('/')
     ? detail.slice(detail.lastIndexOf('/') + 1)
     : compactEngineName(model);
@@ -107,7 +106,7 @@ export function EngineRow({
     <>
       <span
         aria-hidden="true"
-        className="grid size-7 shrink-0 place-items-center rounded-md bg-sidebar-accent/45 text-muted-foreground ring-1 ring-inset ring-sidebar-border/40 transition-colors group-hover/engine-row:text-foreground"
+        className="grid size-7 shrink-0 place-items-center rounded-lg bg-sidebar-accent/45 text-muted-foreground ring-1 ring-inset ring-sidebar-border/40 transition-colors group-hover/engine-row:text-foreground"
       >
         <Icon className="size-3.5" />
       </span>
@@ -145,7 +144,7 @@ export function EngineRow({
     </>
   );
   const rowClass =
-    'group/engine-row flex min-h-11 w-full items-center gap-2.5 rounded-lg px-1.5 py-1 text-start outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring';
+    'group/engine-row flex min-h-11 w-full items-center gap-2.5 rounded-lg px-1.5 py-1 text-start outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50';
   return (
     <div data-slot="engine-row" aria-busy={loading} className="min-w-0">
       {level === 'details' ? (
@@ -169,53 +168,58 @@ export function EngineRow({
           {content}
         </Link>
       )}
-      {level === 'details' && open && (
-        <div
-          id={id}
-          data-slot="engine-diagnostics"
-          className="mx-1 mt-0.5 mb-1.5 rounded-lg bg-sidebar-accent/25 p-2.5 ring-1 ring-inset ring-sidebar-border/40"
-        >
-          <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1.5 text-[11px]">
-            {title && title !== detail && (
-              <>
-                <dt className="text-muted-foreground">{t('sidebarTools.engineLabel')}</dt>
-                <dd className="truncate text-foreground" title={title}>
-                  {compactEngineName(title)}
-                </dd>
-              </>
-            )}
-            <dt className="text-muted-foreground">{t('sidebarTools.modelLabel')}</dt>
-            <dd className="flex min-w-0 items-center gap-1">
-              <code className="min-w-0 truncate font-mono text-[10.5px] text-foreground/90" title={detail}>
-                {detail}
-              </code>
-              <CopyModelId value={detail} />
-            </dd>
-            {runtime && (
-              <>
-                <dt className="text-muted-foreground">{t('sidebarTools.runsOn')}</dt>
-                <dd className="flex min-w-0 items-center gap-1.5 text-foreground">
-                  <ComputeVendorIcon runtime={runtime} className="size-3 shrink-0" />
-                  <span className="truncate">{formatComputeRuntime(runtime)}</span>
-                </dd>
-              </>
-            )}
-          </dl>
-          {problem && (
-            <p className="mt-2 rounded-md bg-warning/10 px-2 py-1.5 text-[11px] leading-snug text-foreground/85 [overflow-wrap:anywhere]">
-              {problem}
-            </p>
-          )}
-          <Link
-            to="/settings/models/$family"
-            params={{ family }}
-            className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-md text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
+      <Reveal>
+        {level === 'details' && open && (
+          <div
+            id={id}
+            data-slot="engine-diagnostics"
+            className="mx-1 mt-0.5 mb-1.5 rounded-lg bg-sidebar-accent/25 p-2.5 ring-1 ring-inset ring-sidebar-border/40"
           >
-            {t('modelSettings.change')}
-            <ChevronRightIcon className="size-3 rtl:rotate-180" aria-hidden="true" />
-          </Link>
-        </div>
-      )}
+            <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-1.5 text-[11px]">
+              {title && title !== detail && (
+                <>
+                  <dt className="text-muted-foreground">{t('sidebarTools.engineLabel')}</dt>
+                  <dd className="truncate text-foreground" title={title}>
+                    {compactEngineName(title)}
+                  </dd>
+                </>
+              )}
+              <dt className="text-muted-foreground">{t('sidebarTools.modelLabel')}</dt>
+              <dd className="flex min-w-0 items-center gap-1">
+                <code
+                  className="min-w-0 truncate font-mono text-[10.5px] text-foreground/90"
+                  title={detail}
+                >
+                  {detail}
+                </code>
+                <CopyModelId value={detail} />
+              </dd>
+              {runtime && (
+                <>
+                  <dt className="text-muted-foreground">{t('sidebarTools.runsOn')}</dt>
+                  <dd className="flex min-w-0 items-center gap-1.5 text-foreground">
+                    <ComputeVendorIcon runtime={runtime} className="size-3 shrink-0" />
+                    <span className="truncate">{formatComputeRuntime(runtime)}</span>
+                  </dd>
+                </>
+              )}
+            </dl>
+            {problem && (
+              <p className="mt-2 rounded-sm bg-warning/10 px-2 py-1.5 text-[11px] leading-4 text-foreground/85 [overflow-wrap:anywhere]">
+                {problem}
+              </p>
+            )}
+            <Link
+              to="/settings/models/$family"
+              params={{ family }}
+              className="mt-2.5 flex h-7 w-full items-center justify-center gap-1 rounded-sm text-[11px] font-medium text-foreground ring-1 ring-inset ring-sidebar-border/60 outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              {t('modelSettings.change')}
+              <ChevronRightIcon className="size-3 rtl:rotate-180" aria-hidden="true" />
+            </Link>
+          </div>
+        )}
+      </Reveal>
     </div>
   );
 }

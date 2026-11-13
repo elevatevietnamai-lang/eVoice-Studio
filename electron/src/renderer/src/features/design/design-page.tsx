@@ -1,4 +1,5 @@
 import { VoicesSidebar } from '@/features/clone/voices-sidebar';
+import { Reveal } from '@/components/motion';
 import { WandSparklesIcon } from 'lucide-react';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
@@ -215,7 +216,7 @@ export function DesignPage() {
               id="voice-description"
               maxLength={2000}
               disabled={generation.isGenerating}
-              className="min-h-24 w-full resize-y rounded-lg border border-input bg-background/35 p-3 text-sm leading-5 outline-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary/30 focus-visible:bg-background/50 focus-visible:ring-2 focus-visible:ring-ring/30"
+              className="min-h-24 w-full resize-y rounded-lg border border-input bg-background/35 p-3 text-sm leading-5 outline-none transition-[border-color,background-color,box-shadow] focus-visible:border-ring focus-visible:bg-background/50 focus-visible:ring-[3px] focus-visible:ring-ring/50"
               value={description}
               placeholder={t('clone.describe_placeholder')}
               onChange={(event) => {
@@ -443,11 +444,13 @@ export function DesignPage() {
               <SaveIcon />
               {t('clone.save_as_profile')}
             </Button>
-            {saveError && (
-              <p role="alert" className="text-xs text-destructive">
-                {t('clone.save_failed', { message: saveError })}
-              </p>
-            )}
+            <Reveal>
+              {saveError && (
+                <p role="alert" className="text-xs text-destructive">
+                  {t('clone.save_failed', { message: saveError })}
+                </p>
+              )}
+            </Reveal>
           </form>
         </SecondarySidebar>
         <section className="flex min-w-0 flex-1 flex-col">
@@ -471,7 +474,7 @@ export function DesignPage() {
               {activeProfile ? (
                 <ProfileAvatar name={activeProfile.name} imageUrl={activeProfile.image_url} />
               ) : (
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/12 text-primary ring-1 ring-foreground/15">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-foreground ring-1 ring-foreground/15">
                   <WandSparklesIcon className="size-4" />
                 </span>
               )}
@@ -542,22 +545,26 @@ export function DesignPage() {
                   </Link>
                 </div>
               )}
-            {designBlocker === 'loading' && !generation.isGenerating && (
-              <p className="mb-3 px-1 text-sm text-muted-foreground" role="status">
-                {t('preferences.loading')}
-              </p>
-            )}
-            {generation.error && (
-              <PipelineFailure
-                className="mb-3"
-                fallback={generation.error}
-                onDismiss={generation.clearError}
-              />
-            )}
+            <Reveal>
+              {designBlocker === 'loading' && !generation.isGenerating && (
+                <p className="mb-3 px-1 text-sm text-muted-foreground" role="status">
+                  {t('preferences.loading')}
+                </p>
+              )}
+            </Reveal>
+            <Reveal>
+              {generation.error && (
+                <PipelineFailure
+                  className="mb-3"
+                  fallback={generation.error}
+                  onDismiss={generation.clearError}
+                />
+              )}
+            </Reveal>
             <div className="glass-panel relative grid min-h-16 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 overflow-hidden rounded-(--card-radius) border border-border/60 bg-muted/30 p-3 max-md:grid-cols-[1fr_auto]">
               <div className="min-w-0 justify-self-start">
                 <div className="flex items-center gap-1">
-                  <EngineLanguagePicker operation="tts" />
+                  <EngineLanguagePicker operation="tts" size="sm" />
                   <QualityControls size="sm" disabled={generation.isGenerating} />
                   <VoiceControls size="icon-sm" />
                 </div>

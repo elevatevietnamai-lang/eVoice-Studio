@@ -1,4 +1,5 @@
 import { StoryStems } from './story-stems';
+import { Reveal } from '@/components/motion';
 import { WaveformPlayer } from '@/components/waveform-player';
 import { previewStoryLine } from './story-preview';
 import { storyVoicesReady } from './story-inputs';
@@ -10,11 +11,7 @@ import {
 } from '@shared/utils/splitStoryText';
 import { useEffect, useRef, useState } from 'react';
 import { buildAutoCast } from '@shared/utils/autoCast';
-import {
-  SAMPLE_STORY_CAST,
-  SAMPLE_STORY_LINES,
-  SAMPLE_STORY_NAME,
-} from '@shared/data/sampleStory';
+import { SAMPLE_STORY_CAST, SAMPLE_STORY_LINES, SAMPLE_STORY_NAME } from '@shared/data/sampleStory';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDownIcon,
@@ -315,9 +312,11 @@ export function StoryEditor({
     // shrinkable flex item let a long script paint over the generation
     // progress panel and the footer instead of pushing them down.
     <div data-slot="story-editor" className="flex-1 space-y-4">
-      {previewError && (
-        <PipelineFailure fallback={previewError} onDismiss={() => setPreviewError(null)} />
-      )}
+      <Reveal>
+        {previewError && (
+          <PipelineFailure fallback={previewError} onDismiss={() => setPreviewError(null)} />
+        )}
+      </Reveal>
       <details
         className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
         open={inputOpen}
@@ -412,17 +411,19 @@ export function StoryEditor({
             )}
           </div>
           <p className="text-xs text-muted-foreground">{t('stories.splitModeHint')}</p>
-          {notice && (
-            <p role="status" className="text-xs text-muted-foreground">
-              {notice}
-            </p>
-          )}
+          <Reveal>
+            {notice && (
+              <p role="status" className="text-xs text-muted-foreground">
+                {notice}
+              </p>
+            )}
+          </Reveal>
         </div>
       </details>
 
       {draft.lines.length === 0 && (
         <div className="flex min-h-72 flex-col items-center justify-center rounded-(--card-radius) border border-dashed border-border/60 px-6 text-center">
-          <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-muted text-foreground">
             <BookOpenTextIcon className="size-5" />
           </div>
           <h3 className="text-sm font-semibold">{t('stories.newStory')}</h3>
@@ -447,7 +448,10 @@ export function StoryEditor({
       )}
 
       {draft.lines.map((line, index) => (
-        <div key={line.id} className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-4">
+        <div
+          key={line.id}
+          className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-4"
+        >
           <div className="flex items-start gap-3">
             <textarea
               ref={(node) => {
@@ -525,14 +529,16 @@ export function StoryEditor({
               </Button>
             </div>
           </div>
-          {previewing === line.id && (
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span role="status">{t('common.loading')}</span>
-              <Button size="sm" variant="ghost" onClick={() => controller.current?.abort()}>
-                {t('common.stop')}
-              </Button>
-            </div>
-          )}
+          <Reveal>
+            {previewing === line.id && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span role="status">{t('common.loading')}</span>
+                <Button size="sm" variant="ghost" onClick={() => controller.current?.abort()}>
+                  {t('common.stop')}
+                </Button>
+              </div>
+            )}
+          </Reveal>
           {preview?.id === line.id && (
             <WaveformPlayer showWaveform={false} src={preview.url} source="story-line-preview" />
           )}

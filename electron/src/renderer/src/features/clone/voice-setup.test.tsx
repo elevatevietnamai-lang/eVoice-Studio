@@ -53,13 +53,13 @@ const names = () =>
     .map((button) => button.getAttribute('aria-label'));
 
 it('lists cloned voices newest first, sorts by name on request and remembers it', () => {
-  const view = render(<VoiceSetup onChosen={() => {}} onBack={() => {}} />);
+  const view = render(<VoiceSetup onChosen={() => {}} />);
   expect(names()).toEqual(['Adam', 'Mia', 'Zoe']);
   fireEvent.click(screen.getByRole('radio', { name: 'cloneFlow.sort_name' }));
   expect(names()).toEqual(['Adam', 'Mia', 'Zoe']);
   mock.profiles = [voice('x', 'Beta', 1), voice('y', 'Alpha', 2)];
   view.unmount();
-  render(<VoiceSetup onChosen={() => {}} onBack={() => {}} />);
+  render(<VoiceSetup onChosen={() => {}} />);
   expect(screen.getByRole('radio', { name: 'cloneFlow.sort_name' })).toHaveAttribute(
     'aria-checked',
     'true',
@@ -69,7 +69,7 @@ it('lists cloned voices newest first, sorts by name on request and remembers it'
 
 it('marks the current voice, chooses a card and opens editing without choosing', () => {
   const chosen = vi.fn();
-  render(<VoiceSetup onChosen={chosen} onBack={() => {}} />);
+  render(<VoiceSetup onChosen={chosen} />);
   const adam = screen.getByRole('button', { name: 'Adam' });
   expect(adam).toHaveAttribute('aria-current', 'true');
   const card = adam.closest('[data-slot="voice-card"]') as HTMLElement;
@@ -84,7 +84,7 @@ it('marks the current voice, chooses a card and opens editing without choosing',
 
 it('uploads a photo from the card and rejects unsupported or oversized images', () => {
   mock.update.mockResolvedValue(voice('b', 'Adam', 300));
-  render(<VoiceSetup onChosen={() => {}} onBack={() => {}} />);
+  render(<VoiceSetup onChosen={() => {}} />);
   const input = screen.getByLabelText('cloneFlow.change_photo: Adam') as HTMLInputElement;
   const gif = new File(['x'], 'a.gif', { type: 'image/gif' });
   fireEvent.change(input, { target: { files: [gif] } });
@@ -101,7 +101,7 @@ it('searches by name once the list is long enough', () => {
   mock.profiles = ['One', 'Two', 'Three', 'Four', 'Five'].map((name, index) =>
     voice(name, name, index),
   );
-  render(<VoiceSetup onChosen={() => {}} onBack={() => {}} />);
+  render(<VoiceSetup onChosen={() => {}} />);
   fireEvent.change(screen.getByRole('textbox', { name: 'common.search' }), {
     target: { value: 'tw' },
   });

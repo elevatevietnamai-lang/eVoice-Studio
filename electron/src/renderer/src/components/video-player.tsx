@@ -1,15 +1,13 @@
 import { memo, useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import {
-  PlayIcon,
-  PauseIcon,
-  MaximizeIcon,
-  MinimizeIcon,
-  Volume2Icon,
-  VolumeXIcon,
-  LoaderCircleIcon,
-  RotateCcwIcon,
-  RotateCwIcon,
-} from 'lucide-react';
+  Maximize as MaximizeShape,
+  Minimize as MinimizeShape,
+  Volume2 as Volume2Shape,
+  VolumeX as VolumeXShape,
+} from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
+import { PlayIcon, PauseIcon, LoaderCircleIcon, RotateCcwIcon, RotateCwIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Poster, useMediaRemote, type MediaPlayerProps } from '@vidstack/react';
 import {
@@ -78,7 +76,10 @@ export const VideoPlayer = memo(function VideoPlayer({
         loaders={videoLoaders}
         className="relative aspect-video [&_video]:h-full [&_video]:w-full [&_iframe]:h-full [&_iframe]:w-full"
       >
-        <Poster alt="" className="absolute inset-0 h-full w-full object-contain opacity-0 data-[visible]:opacity-100 data-[hidden]:hidden" />
+        <Poster
+          alt=""
+          className="absolute inset-0 h-full w-full object-contain opacity-0 data-[visible]:opacity-100 data-[hidden]:hidden"
+        />
       </MediaProvider>
       <VideoControls
         player={player}
@@ -151,11 +152,13 @@ function VideoControls({
     <div
       className={`absolute inset-x-2 bottom-2 z-10 space-y-2 rounded-(--card-radius) border border-white/10 bg-black/55 px-2.5 py-2 text-white shadow-[0_12px_32px_rgb(0_0_0/38%)] backdrop-blur-xl transition-[opacity,transform] duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 ${paused || waiting ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}
     >
-      {(error || failed) && (
-        <p role="alert" className="text-xs text-destructive">
-          {t('player.unavailable')}
-        </p>
-      )}
+      <Reveal>
+        {(error || failed) && (
+          <p role="alert" className="text-xs text-destructive">
+            {t('player.unavailable')}
+          </p>
+        )}
+      </Reveal>
       <input
         type="range"
         aria-label={t('player.seek')}
@@ -237,7 +240,7 @@ function VideoControls({
             if (player.current) player.current.muted = !muted;
           }}
         >
-          {muted ? <VolumeXIcon /> : <Volume2Icon />}
+          {<MorphIcon icon={muted ? VolumeXShape : Volume2Shape} />}
         </Button>
         {!compact && (
           <>
@@ -289,7 +292,7 @@ function VideoControls({
               void action?.catch(() => setFailed(true));
             }}
           >
-            {fullscreen ? <MinimizeIcon /> : <MaximizeIcon />}
+            {<MorphIcon icon={fullscreen ? MinimizeShape : MaximizeShape} />}
           </Button>
         )}
       </div>

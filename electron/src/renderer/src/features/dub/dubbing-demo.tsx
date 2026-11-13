@@ -15,6 +15,8 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { apiJson, apiPath } from '@/lib/api/client';
 import { runRendererTask } from '@/lib/global-error-recovery';
+import { chipTrayClass } from '@/components/segmented';
+import { cn } from '@/lib/utils';
 
 interface DemoManifest {
   source: {
@@ -91,7 +93,14 @@ export function DubbingDemo({
     from: MediaPlayerInstance | null,
     to: MediaPlayerInstance | null,
   ) => {
-    if (!synchronized || pendingDubbedPosition.current !== null || mirroring.current || !from || !to) return;
+    if (
+      !synchronized ||
+      pendingDubbedPosition.current !== null ||
+      mirroring.current ||
+      !from ||
+      !to
+    )
+      return;
     mirroring.current = true;
     try {
       to.currentTime = from.currentTime;
@@ -119,7 +128,7 @@ export function DubbingDemo({
     return (
       <article className="min-w-0 overflow-hidden rounded-(--card-radius) border border-border/55 bg-background/25">
         <div className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-medium">
-          <span className="grid size-6 shrink-0 place-items-center rounded-md bg-primary/12 font-mono text-[10px] font-semibold text-primary">
+          <span className="grid size-6 shrink-0 place-items-center rounded-sm bg-muted font-mono text-[10px] font-semibold text-primary">
             {channel}
           </span>
           <span>{label}</span>
@@ -154,8 +163,11 @@ export function DubbingDemo({
                 onClick={() => {
                   setEditingVideo(true);
                   runRendererTask('Edit dubbing demo', async () => {
-                    try { await onEdit(editableVideo); }
-                    finally { setEditingVideo(false); }
+                    try {
+                      await onEdit(editableVideo);
+                    } finally {
+                      setEditingVideo(false);
+                    }
                   });
                 }}
               >
@@ -177,10 +189,12 @@ export function DubbingDemo({
             src={{ src: apiPath(`${DEMO_BASE}/${video}`), type: 'video/mp4' }}
             source={`${PLAYBACK_GROUP}-${tag}`}
             onCanPlay={() => {
-              if (channel !== 'B' || pendingDubbedPosition.current === null || !player.current) return;
+              if (channel !== 'B' || pendingDubbedPosition.current === null || !player.current)
+                return;
               player.current.currentTime = pendingDubbedPosition.current;
               pendingDubbedPosition.current = null;
-              if (activePlayer.current === player.current) synchronizePosition(player.current, peer.current);
+              if (activePlayer.current === player.current)
+                synchronizePosition(player.current, peer.current);
             }}
             onPlay={() => {
               const incoming = player.current;
@@ -193,7 +207,8 @@ export function DubbingDemo({
               synchronizePosition(incoming, peer.current);
             }}
             onPause={() => {
-              if (activePlayer.current === player.current) synchronizePosition(player.current, peer.current);
+              if (activePlayer.current === player.current)
+                synchronizePosition(player.current, peer.current);
             }}
             onSeeked={() => synchronizePosition(player.current, peer.current)}
           />
@@ -220,7 +235,7 @@ export function DubbingDemo({
   return (
     <section className="glass-panel @container/dubbing-demo w-full space-y-3 rounded-(--card-radius) border border-border/60 bg-card/35 p-4 text-left">
       <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
-        <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-foreground">
           <FilmIcon className="size-4" />
         </span>
         <div className="min-w-0 flex-1">
@@ -250,7 +265,7 @@ export function DubbingDemo({
       <div
         role="group"
         aria-label={t('demo.dubbing_picker')}
-        className="flex flex-wrap items-center gap-1.5 rounded-(--card-radius) border border-border/45 bg-background/30 p-1.5"
+        className={cn(chipTrayClass, 'flex flex-wrap items-center')}
       >
         {manifest.dubbed.map((item) => (
           <Button
@@ -260,9 +275,11 @@ export function DubbingDemo({
             aria-pressed={item.code === dubbed.code}
             onClick={() => {
               if (item.code === language) return;
-              pendingDubbedPosition.current = pendingDubbedPosition.current ??
+              pendingDubbedPosition.current =
+                pendingDubbedPosition.current ??
                 (synchronized ? activePlayer.current?.currentTime : undefined) ??
-                dubbedPlayer.current?.currentTime ?? 0;
+                dubbedPlayer.current?.currentTime ??
+                0;
               setLanguage(item.code);
             }}
           >

@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
+import { Mic as MicShape, Square as SquareShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { MicIcon, SquareIcon, ShieldCheckIcon } from 'lucide-react';
+import { ShieldCheckIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RecordingInputs } from '@/components/recording-inputs';
 import { useRecording } from '@/hooks/use-recording';
@@ -78,11 +81,13 @@ function SyncConsent({ profile }: { profile: Profile }) {
           </Button>
         </div>
       )}
-      {failed && (
-        <p role="alert" className="text-xs text-destructive">
-          {t('voice_profile.consent_failed', { message: failed })}
-        </p>
-      )}
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-xs text-destructive">
+            {t('voice_profile.consent_failed', { message: failed })}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }
@@ -169,7 +174,7 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
       ) : (
         <>
           <p className="text-xs text-muted-foreground">{t('voice_profile.consent_explain')}</p>
-          <blockquote className="border-l-2 border-primary/40 pl-3 text-sm leading-relaxed">
+          <blockquote className="border-l-2 border-border pl-3 text-sm leading-relaxed">
             {t('voice_profile.consent_statement')}
           </blockquote>
           <RecordingInputs rec={rec} disabled={busy} />
@@ -179,7 +184,7 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
             disabled={busy || rec.isStarting || rec.isCleaning}
             onClick={() => (rec.isRecording ? rec.stop() : void rec.start())}
           >
-            {rec.isRecording ? <SquareIcon /> : <MicIcon />}
+            {<MorphIcon icon={rec.isRecording ? SquareShape : MicShape} />}
             {t(rec.isRecording ? 'voice_profile.consent_stop' : 'voice_profile.consent_record')}
             {rec.isRecording && <span className="tabular-nums">{Math.floor(rec.seconds)}s</span>}
           </Button>
@@ -201,7 +206,7 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
         </div>
       )}
       {confirm && (
-        <div className="space-y-2 rounded-md bg-muted/40 p-3 text-xs">
+        <div className="space-y-2 rounded-lg bg-muted/40 p-3 text-xs">
           <p>
             {t(
               confirm === 'unlock'
@@ -230,19 +235,23 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
           </div>
         </div>
       )}
-      {(busy || rec.isCleaning) && (
-        <p role="status" className="text-xs text-muted-foreground">
-          {t('preferences.loading')}
-        </p>
-      )}
-      {failed && (
-        <p role="alert" className="text-xs text-destructive">
-          {t(
-            confirm === 'unlock' ? 'voice_profile.unlock_failed' : 'voice_profile.consent_failed',
-            { message: failed },
-          )}
-        </p>
-      )}
+      <Reveal>
+        {(busy || rec.isCleaning) && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {t('preferences.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-xs text-destructive">
+            {t(
+              confirm === 'unlock' ? 'voice_profile.unlock_failed' : 'voice_profile.consent_failed',
+              { message: failed },
+            )}
+          </p>
+        )}
+      </Reveal>
     </details>
   );
 }

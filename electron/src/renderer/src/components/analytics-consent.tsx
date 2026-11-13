@@ -1,4 +1,5 @@
 import { getBridge } from './bridge';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -128,11 +129,13 @@ export function AnalyticsConsent({
           {t('consent.no')}
         </Button>
       </div>
-      {failed && (
-        <p role="alert" className="text-sm text-destructive">
-          {t('common.error')}
-        </p>
-      )}
+      <Reveal>
+        {failed && (
+          <p role="alert" className="text-sm text-destructive">
+            {t('common.error')}
+          </p>
+        )}
+      </Reveal>
     </section>
   );
 }

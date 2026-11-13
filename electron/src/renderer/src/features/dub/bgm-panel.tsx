@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { DownloadIcon, LoaderCircleIcon, MusicIcon, SparklesIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { SimpleSelect } from '@/components/simple-select';
 import { Progress } from '@/components/ui/progress';
 import { getBridge } from '@/components/bridge';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
@@ -11,6 +12,7 @@ import { consumeTaskStream } from '@/lib/api/event-stream';
 import { gpuBusyMessage } from '@/lib/api/failure';
 import { saveExport } from '@/lib/export-history';
 import type { DubSession } from './dub-session';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type MusicStatus = { installed: boolean; running: boolean; model_ready: boolean };
 type MusicState = { has_track: boolean; style?: string | null; revision: number };
@@ -66,7 +68,8 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
         (event) => {
           if (event.type === 'progress')
             setTask({ kind: 'gen', progress: Number(event.progress) || 0 });
-          if (event.type === 'error') throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
+          if (event.type === 'error')
+            throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
           if (event.type === 'done')
             setState((prev) => ({
               has_track: true,
@@ -129,7 +132,7 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
         <MusicIcon className="size-4 text-muted-foreground" />
         <span className="mr-auto">{t('dub_bgm.title')}</span>
         {state.has_track && (
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+          <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-primary">
             {t('dub_bgm.badge_ready')}
           </span>
         )}
@@ -148,7 +151,7 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
             <label className="block space-y-1.5 text-xs">
               <span className="font-medium">{t('dub_bgm.style')}</span>
               <input
-                className="h-8 w-full rounded-md border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                className="h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
                 value={style}
                 maxLength={400}
                 disabled={locked}
@@ -177,7 +180,10 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
               {state.has_track ? t('dub_bgm.regenerate') : t('dub_bgm.generate')}
             </Button>
             {task?.kind === 'gen' && (
-              <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_bgm.generate')} />
+              <Progress
+                value={Math.round(task.progress * 100)}
+                aria-label={t('dub_bgm.generate')}
+              />
             )}
             {state.has_track && (
               <audio
@@ -202,27 +208,21 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
                 />
                 <span className="w-9 text-right tabular-nums">{Math.round(gain * 100)}%</span>
               </label>
-              <label className="flex items-center justify-between gap-2 text-xs">
+              <div className="flex items-center justify-between gap-2 text-xs">
                 <span>{t('dub_bgm.track')}</span>
-                <select
-                  className="h-7 rounded-md border border-border/60 bg-background px-2 text-xs"
+                <SimpleSelect
+                  label={t('dub_bgm.track')}
                   value={lang}
+                  items={session.tracks.map((track) => ({ value: track, label: track }))}
                   disabled={locked || session.tracks.length === 0}
-                  onChange={(event) => setLang(event.target.value)}
-                >
-                  {session.tracks.map((track) => (
-                    <option key={track} value={track}>
-                      {track}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onValueChange={setLang}
+                />
+              </div>
               <label className="flex items-center gap-2 text-xs">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={burn}
                   disabled={locked}
-                  onChange={(event) => setBurn(event.target.checked)}
+                  onCheckedChange={(checked) => setBurn(checked)}
                 />
                 {t('dub_bgm.burn')}
               </label>
@@ -241,7 +241,10 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
                 {t('dub_bgm.export')}
               </Button>
               {task?.kind === 'export' && (
-                <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_bgm.export')} />
+                <Progress
+                  value={Math.round(task.progress * 100)}
+                  aria-label={t('dub_bgm.export')}
+                />
               )}
               {session.tracks.length === 0 && (
                 <p className="text-[11px] leading-4 text-muted-foreground">

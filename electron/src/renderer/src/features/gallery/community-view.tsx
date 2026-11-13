@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -12,14 +13,8 @@ import { patchCloneSettings } from '@/lib/store/clone-settings';
 import { selectCloneProfile } from '@/lib/store/reference';
 import { getBridge } from '@/components/bridge';
 import { STORAGE, readDraft } from '@/features/design/design-draft';
-import {
-  instructToVdStates,
-  mergeDescribedAttrs,
-} from '@shared/utils/voiceInstruct';
-import type {
-  CommunityItem,
-  CommunityPage,
-} from '@shared/api/community-types';
+import { instructToVdStates, mergeDescribedAttrs } from '@shared/utils/voiceInstruct';
+import type { CommunityItem, CommunityPage } from '@shared/api/community-types';
 import type { Profile } from '@/lib/api/types';
 import type { Mode } from '@/features/longform/longform-session';
 import { placeLongformVoice } from './place-voice';
@@ -160,20 +155,22 @@ export function CommunityView({
             {t('gallery.submit_voice')}
           </Button>
         </div>
-        {(error || catalogue.isError) && (
-          <PipelineFailure
-            fallback={error || describeError(catalogue.error)}
-            action={
-              catalogue.isError ? (
-                <Button variant="ghost" size="xs" onClick={() => void catalogue.refetch()}>
-                  {t('common.retry')}
-                </Button>
-              ) : undefined
-            }
-            onDismiss={error ? () => setError(null) : undefined}
-          />
-        )}
-        {catalogue.isPending && <p role="status">{t('common.loading')}</p>}
+        <Reveal>
+          {(error || catalogue.isError) && (
+            <PipelineFailure
+              fallback={error || describeError(catalogue.error)}
+              action={
+                catalogue.isError ? (
+                  <Button variant="ghost" size="xs" onClick={() => void catalogue.refetch()}>
+                    {t('common.retry')}
+                  </Button>
+                ) : undefined
+              }
+              onDismiss={error ? () => setError(null) : undefined}
+            />
+          )}
+        </Reveal>
+        <Reveal>{catalogue.isPending && <p role="status">{t('common.loading')}</p>}</Reveal>
         {!catalogue.isPending && !items.length && (
           <p className="py-12 text-center text-sm text-muted-foreground">
             {t('gallery.community_empty')}

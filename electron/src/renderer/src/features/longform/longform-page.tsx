@@ -1,4 +1,5 @@
 import { readTextFile } from '@shared/utils/readTextFile';
+import { Reveal } from '@/components/motion';
 import { ProfileAvatar } from '@/components/profile-avatar';
 import {
   BookOpenTextIcon,
@@ -35,7 +36,6 @@ import {
 import { BookSettings } from './book-settings';
 import { duplicateWords } from './book-options';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useWorkspace } from '@/lib/store/workspace';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -66,6 +66,8 @@ import {
 } from './longform-session';
 import { SAMPLE_AUDIOBOOK_SCRIPT } from '@shared/data/sampleAudiobook';
 import { useTtsReadiness } from '@/hooks/use-tts-readiness';
+import { segmentedFrameClass } from '@/components/segmented';
+import { cn } from '@/lib/utils';
 interface Recovery {
   job_id: string;
   type: string;
@@ -90,6 +92,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
   const [warningsDismissed, setWarningsDismissed] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
   const audiobookInput = useRef<HTMLTextAreaElement>(null);
+  const importInput = useRef<HTMLInputElement>(null);
   const locked = !!session.active || importing;
   const scriptLines = scriptSize(mode, draft);
   const query = useQuery({
@@ -126,7 +129,6 @@ export function LongformPage({ mode }: { mode: Mode }) {
         : [],
     [draft.script, draft.voiceCast, mode, profiles],
   );
-  const sidebarCollapsed = useWorkspace().panelCollapsed;
   const blocker = generateBlocker({
     mode,
     busyElsewhere: Boolean(session.active) && session.active !== mode,
@@ -297,7 +299,7 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 <FileAudioIcon className="size-4" aria-hidden="true" />
                 {t('audiobook.format')}
               </h2>
-              <div className="flex gap-1 rounded-lg bg-background/40 p-1">
+              <div className={cn(segmentedFrameClass, 'flex')}>
                 {(['m4b', 'mp3'] as const).map((format) => (
                   <Button
                     key={format}
@@ -376,10 +378,11 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 </h2>
                 <p className="mt-1 text-xs text-muted-foreground">{t(mode + '.subtitle')}</p>
               </div>
-              <label className={buttonVariants({ variant: 'outline', size: 'sm' })}>
-                <ImportIcon />
-                {t('audiobook.import')}
+              {/* One right-aligned group, one variant: Import, Load sample and Clear script are
+                  peers, so none floats alone or looks heavier than the others. */}
+              <div className="ml-auto flex shrink-0 items-center gap-2">
                 <input
+                  ref={importInput}
                   aria-label={t('audiobook.import')}
                   type="file"
                   accept={
@@ -387,23 +390,45 @@ export function LongformPage({ mode }: { mode: Mode }) {
                   }
                   disabled={locked}
                   className="sr-only"
+                  tabIndex={-1}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     e.target.value = '';
                     if (file) void importFile(file);
                   }}
                 />
-              </label>
-              <Button
-                variant="ghost"
-                size="sm"
-                title={t('stories.clearScriptHint')}
-                disabled={locked || scriptLines === 0}
-                onClick={() => setClearOpen(true)}
-              >
-                <Trash2Icon />
-                {t('stories.clearScript')}
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={locked}
+                  onClick={() => importInput.current?.click()}
+                >
+                  <ImportIcon />
+                  {t('audiobook.import')}
+                </Button>
+                {mode === 'audiobook' && !draft.script.trim() && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    title={t('audiobook.load_sample_hint')}
+                    disabled={locked}
+                    onClick={() => set({ script: SAMPLE_AUDIOBOOK_SCRIPT })}
+                  >
+                    <SparklesIcon />
+                    {t('audiobook.load_sample')}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  title={t('stories.clearScriptHint')}
+                  disabled={locked || scriptLines === 0}
+                  onClick={() => setClearOpen(true)}
+                >
+                  <Trash2Icon />
+                  {t('stories.clearScript')}
+                </Button>
+              </div>
               <ConfirmDialog
                 open={clearOpen}
                 onOpenChange={setClearOpen}
@@ -416,18 +441,6 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 confirmLabel={t('stories.clearScript')}
                 onConfirm={() => set(clearedScriptPatch(mode))}
               />
-              {mode === 'audiobook' && !draft.script.trim() && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  title={t('audiobook.load_sample_hint')}
-                  disabled={locked}
-                  onClick={() => set({ script: SAMPLE_AUDIOBOOK_SCRIPT })}
-                >
-                  <SparklesIcon />
-                  {t('audiobook.load_sample')}
-                </Button>
-              )}
             </div>
             {mode === 'audiobook' ? (
               <div className="flex min-h-64 flex-1 flex-col gap-3">
@@ -467,96 +480,100 @@ export function LongformPage({ mode }: { mode: Mode }) {
                 runtime: formatRuntimeClock(stats.runtimeSec),
               })}
             </p>
-            {!warningsDismissed && warnings.length > 0 && !session.active && (
-              <ValidationWarnings
-                warnings={warnings}
-                onDismiss={() => setWarningsDismissed(true)}
-              />
-            )}
-            {session.error && (
-              <PipelineFailure
-                failure={session.failure}
-                fallback={session.error}
-                onDismiss={dismissLongformError}
-              />
-            )}
-            {localError && (
-              <PipelineFailure fallback={localError} onDismiss={() => setLocalError(null)} />
-            )}
-            <EngineNotice operation={ttsOperation} />
-            {session.storageError && (
-              <div role="alert" className="text-sm text-destructive">
-                {t('common.error')}
-                <Link to="/settings/logs" className="ml-3 underline">
-                  {t('settings.logs')}
-                </Link>
-              </div>
-            )}
-            {sidebarCollapsed && (
-              // The setup pane is collapsed: keep Generate and the tracker in reach.
-              <div className="sticky bottom-0 z-10 -mx-2 shrink-0 rounded-(--card-radius) border border-border/60 bg-background p-3">
-                {generatePanel}
-              </div>
-            )}
-            {draft.output && (
-              <section className="shrink-0 space-y-3 border-t border-border/50 pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-sm font-medium">{t('audiobook.ready')}</h2>
-                    {mode === 'audiobook' && draft.outputCachedChapters > 0 && (
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {t('audiobook.cached_note', {
-                          count: draft.outputCachedChapters,
-                        })}
-                      </p>
-                    )}
-                    {draft.outputFailedChapters > 0 && (
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {t('audiobook.failed_note', {
-                          count: draft.outputFailedChapters,
-                        })}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {cueSheet && (
-                      <Button variant="ghost" size="sm" onClick={() => void downloadCueSheet()}>
-                        <ListIcon />
-                        {t('audiobook.download_cues')}
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      disabled={exporting}
-                      onClick={() => void download()}
-                    >
-                      <DownloadIcon />
-                      {t('audiobook.download')}
-                    </Button>
-                  </div>
-                </div>
-                {mode === 'audiobook' ? (
-                  <SyncedAudiobookPlayer
-                    src={apiPath('/audio/' + encodeURIComponent(draft.output))}
-                    script={draft.outputScript}
-                    chapters={draft.outputChapters}
-                  />
-                ) : (
-                  <WaveformPlayer
-                    showWaveform={false}
-                    src={apiPath('/audio/' + encodeURIComponent(draft.output))}
-                    source={'longform-' + mode}
-                  />
-                )}
-                <AudiogramPanel
-                  key={draft.output}
-                  output={draft.output}
-                  title={draft.title}
-                  coverPath={draft.cover?.path ?? null}
+            <Reveal>
+              {!warningsDismissed && warnings.length > 0 && !session.active && (
+                <ValidationWarnings
+                  warnings={warnings}
+                  onDismiss={() => setWarningsDismissed(true)}
                 />
-              </section>
-            )}
+              )}
+            </Reveal>
+            <Reveal>
+              {session.error && (
+                <PipelineFailure
+                  failure={session.failure}
+                  fallback={session.error}
+                  onDismiss={dismissLongformError}
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {localError && (
+                <PipelineFailure fallback={localError} onDismiss={() => setLocalError(null)} />
+              )}
+            </Reveal>
+            <EngineNotice operation={ttsOperation} />
+            <Reveal>
+              {session.storageError && (
+                <div role="alert" className="text-sm text-destructive">
+                  {t('common.error')}
+                  <Link to="/settings/logs" className="ml-3 underline">
+                    {t('settings.logs')}
+                  </Link>
+                </div>
+              )}
+            </Reveal>
+            <Reveal className="shrink-0">
+              {draft.output && (
+                <section className="shrink-0 space-y-3 border-t border-border/50 pt-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-sm font-medium">{t('audiobook.ready')}</h2>
+                      {mode === 'audiobook' && draft.outputCachedChapters > 0 && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {t('audiobook.cached_note', {
+                            count: draft.outputCachedChapters,
+                          })}
+                        </p>
+                      )}
+                      {draft.outputFailedChapters > 0 && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {t('audiobook.failed_note', {
+                            count: draft.outputFailedChapters,
+                          })}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {cueSheet && (
+                        <Button variant="ghost" size="sm" onClick={() => void downloadCueSheet()}>
+                          <ListIcon />
+                          {t('audiobook.download_cues')}
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={exporting}
+                        onClick={() => void download()}
+                      >
+                        <DownloadIcon />
+                        {t('audiobook.download')}
+                      </Button>
+                    </div>
+                  </div>
+                  {mode === 'audiobook' ? (
+                    <SyncedAudiobookPlayer
+                      src={apiPath('/audio/' + encodeURIComponent(draft.output))}
+                      script={draft.outputScript}
+                      chapters={draft.outputChapters}
+                    />
+                  ) : (
+                    <WaveformPlayer
+                      showWaveform={false}
+                      src={apiPath('/audio/' + encodeURIComponent(draft.output))}
+                      source={'longform-' + mode}
+                    />
+                  )}
+                  <AudiogramPanel
+                    key={draft.output}
+                    output={draft.output}
+                    title={draft.title}
+                    coverPath={draft.cover?.path ?? null}
+                  />
+                </section>
+              )}
+            </Reveal>
           </div>
         </section>
       </div>

@@ -1,4 +1,5 @@
 import { SparklesIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -84,16 +85,20 @@ export function LlmSkills() {
           {t('backend.retry')}
         </Button>
       )}
-      {skills.isPending && (
-        <p role="status" className="p-4">
-          {t('common.loading')}
-        </p>
-      )}
-      {error && (
-        <p role="alert" className="px-4 text-sm text-destructive">
-          {t('settings.llmskills_save_failed')}
-        </p>
-      )}
+      <Reveal>
+        {skills.isPending && (
+          <p role="status" className="p-4">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {error && (
+          <p role="alert" className="px-4 text-sm text-destructive">
+            {t('settings.llmskills_save_failed')}
+          </p>
+        )}
+      </Reveal>
       {skills.data?.skills.map((skill) => (
         <SettingsRow
           key={skill.id}

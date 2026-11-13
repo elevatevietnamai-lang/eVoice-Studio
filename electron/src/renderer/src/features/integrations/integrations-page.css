@@ -48,7 +48,7 @@
   font-size: clamp(26px, 3vw, 38px);
   font-weight: 650;
   letter-spacing: -0.045em;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 .integrations-hero-copy {
   display: grid;
@@ -190,28 +190,24 @@
   width: 16px;
   height: 16px;
 }
-.integrations-search input {
-  height: 36px;
-  border-radius: var(--control-radius);
-}
 .integrations-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
 }
+/* Small-button size (28 px) at the control radius; the chosen filter is flat bg-accent. */
 .integrations-filters button {
-  min-height: 34px;
-  padding: 6px 10px;
+  min-height: 28px;
+  padding: 0 8px;
   border: 1px solid transparent;
   border-radius: var(--control-radius);
   color: var(--muted-foreground);
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
 }
 .integrations-filters button[aria-pressed='true'] {
-  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
-  background: color-mix(in srgb, var(--primary) 10%, var(--background));
-  color: var(--primary);
+  background: var(--accent);
+  color: var(--foreground);
 }
 .integrations-filters button:hover {
   background: var(--accent);

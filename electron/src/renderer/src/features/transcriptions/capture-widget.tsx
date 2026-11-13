@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { Pause as PauseShape, Play as PlayShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useTranslation } from 'react-i18next';
-import { CopyIcon, MicIcon, PauseIcon, PlayIcon, SquareIcon, XIcon } from 'lucide-react';
+import { CopyIcon, MicIcon, SquareIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
@@ -209,7 +211,7 @@ export function CaptureWidget() {
               aria-label={t(state.paused ? 'common.resume' : 'common.pause')}
               onClick={() => live.pause()}
             >
-              {state.paused ? <PlayIcon /> : <PauseIcon />}
+              {<MorphIcon icon={state.paused ? PlayShape : PauseShape} />}
             </Button>
             <Button size="sm" onClick={() => void live.stop().catch(() => setDelivery('failed'))}>
               <SquareIcon />

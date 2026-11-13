@@ -21,6 +21,8 @@ export interface LanguagePickerProps {
   modelLabel?: string;
   capabilityState?: 'known' | 'unknown' | 'loading' | 'error';
   recentsScope?: string;
+  /** `sm` (24 px) for toolbars, beside other small selects. */
+  size?: 'default' | 'sm';
 }
 
 export function LanguagePicker({
@@ -33,6 +35,7 @@ export function LanguagePicker({
   modelLabel,
   capabilityState,
   recentsScope = 'language',
+  size = 'default',
 }: LanguagePickerProps = {}) {
   const { t, i18n } = useTranslation();
   const saved = useCloneSetting('language');
@@ -59,12 +62,12 @@ export function LanguagePicker({
           <LanguagesIcon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
         )}
         <span className="min-w-0 flex-1">
-          <span className="block truncate leading-tight" title={option.label}>
+          <span className="block truncate leading-5" title={option.label}>
             {option.label}
           </span>
           {option.native && option.native.toLowerCase() !== option.label.toLowerCase() && (
             <span
-              className="block truncate text-[11px] leading-tight text-muted-foreground"
+              className="block truncate text-[11px] leading-4 text-muted-foreground"
               lang={option.code}
             >
               {option.native}
@@ -89,6 +92,7 @@ export function LanguagePicker({
       disabled={disabled}
       ariaLabel={t('clone.language')}
       buttonClassName={className}
+      size={size}
       unavailableLabel={unavailable}
       recentsKey={`voicestudio.language-recents.${recentsScope}.v1`}
       onChange={(next: string) => {
@@ -124,7 +128,7 @@ export function LanguagePicker({
             </span>
             <a
               href="#/settings/models/tts"
-              className="shrink-0 rounded text-primary hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+              className="shrink-0 rounded text-primary hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               {t('languagePicker.changeModel')}
             </a>
@@ -157,14 +161,14 @@ export function MultiLanguagePicker({
           {selected.map((language) => (
             <span
               key={language}
-              className="inline-flex h-7 max-w-full items-center gap-1 rounded-full bg-primary/10 px-2 text-xs font-medium text-primary"
+              className="inline-flex h-7 max-w-full items-center gap-1 rounded-lg bg-muted ps-2 pe-0.5 text-xs font-medium text-foreground"
             >
               <span className="truncate">{language}</span>
               <button
                 type="button"
                 disabled={disabled}
                 aria-label={`${t('common.delete')} ${language}`}
-                className="flex size-6 shrink-0 items-center justify-center rounded-full hover:bg-primary/15 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                className="flex size-6 shrink-0 items-center justify-center rounded-sm hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
                 onClick={() => onChange(selected.filter((item) => item !== language))}
               >
                 <XIcon className="size-3" />

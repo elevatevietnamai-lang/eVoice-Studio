@@ -77,7 +77,7 @@ export function OpenApiSettings() {
           <span className="shrink-0 text-xs font-medium">{t(`backend.${backend.stage}`)}</span>
           <code
             title={rawUrl}
-            className="min-w-0 truncate rounded-md border border-border/50 bg-background/50 px-2 py-1 font-mono text-[11px] text-muted-foreground"
+            className="min-w-0 truncate rounded-sm border border-border/50 bg-background/50 px-2 py-1 font-mono text-[11px] text-muted-foreground"
           >
             {displayedBaseUrl}
           </code>

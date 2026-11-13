@@ -1,4 +1,5 @@
 import { SecondarySidebar } from '@/components/workspace-sidebar';
+import { Reveal } from '@/components/motion';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { AudioPreviewButton } from '@/components/audio-preview-button';
 import { PipelineFailure } from '@/components/pipeline-failure';
@@ -68,6 +69,9 @@ import {
 } from '../dub/dub-session';
 import { projectPayload, type DubProject } from './project-format';
 import { RenderDetails, renderRecipe, type RenderRecord } from './render-details';
+import { Checkbox } from '@/components/ui/checkbox';
+import { segmentedFrameClass } from '@/components/segmented';
+import { cn } from '@/lib/utils';
 
 type LibraryKind =
   | 'dub'
@@ -508,7 +512,7 @@ export function ProjectsPage() {
               >
                 <Icon />
                 <span className="min-w-0 flex-1 truncate text-left">{item.label}</span>
-                <span className="rounded-md bg-background/45 px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
+                <span className="rounded-sm bg-background/45 px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
                   {counts[item.id]}
                 </span>
               </Button>
@@ -551,11 +555,13 @@ export function ProjectsPage() {
                     </Button>
                   )}
                 </div>
-                {saved && (
-                  <p role="status" className="text-sm text-muted-foreground">
-                    {t('app.toast_project_saved')}
-                  </p>
-                )}
+                <Reveal>
+                  {saved && (
+                    <p role="status" className="text-sm text-muted-foreground">
+                      {t('app.toast_project_saved')}
+                    </p>
+                  )}
+                </Reveal>
               </form>
             )}
             <div className="flex items-center gap-2">
@@ -573,7 +579,7 @@ export function ProjectsPage() {
                   }}
                 />
               </div>
-              <div className="flex rounded-lg border border-border/50 bg-muted/20 p-0.5">
+              <div className={cn(segmentedFrameClass, 'flex')}>
                 <Button
                   size="icon-sm"
                   variant={view === 'grid' ? 'secondary' : 'ghost'}
@@ -594,75 +600,85 @@ export function ProjectsPage() {
                 </Button>
               </div>
             </div>
-            {visible.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={locked}
-                  onClick={() => setSelected(new Set(visible.map((row) => row.key)))}
-                >
-                  {t('projects.select_visible')}
-                </Button>
-                {selectedRows.length > 0 && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      disabled={locked}
-                      onClick={() => setSelected(new Set())}
-                    >
-                      {t('common.clear')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      disabled={locked}
-                      onClick={() => requestDelete(selectedRows)}
-                    >
-                      <TrashIcon />
-                      {t('projects.delete_selected', { count: selectedRows.length })}
-                    </Button>
-                  </>
-                )}
-              </div>
-            )}
-            {deletedCount > 0 && (
-              <p role="status" className="text-sm text-muted-foreground">
-                {t('projects.deleted_count', { count: deletedCount })}
-              </p>
-            )}
-            {failure && (
-              <PipelineFailure
-                fallback={failure}
-                onDismiss={error ? () => setError(null) : undefined}
-                action={
-                  queryError ? (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setError(null);
-                        void query.refetch();
-                        void books.refetch();
-                        void profiles.refetch();
-                        void history.refetch();
-                        void exports.refetch();
-                        void renders.refetch();
-                      }}
-                    >
-                      {t('common.retry')}
-                    </Button>
-                  ) : undefined
-                }
-              />
-            )}
-            {loading && rows.length === 0 && <p role="status">{t('common.loading')}</p>}
-            {!loading && visible.length === 0 && (
-              <p className="py-12 text-center text-sm text-muted-foreground">
-                {search ? t('projects.no_matches', { query: search }) : t('projects.empty')}
-              </p>
-            )}
+            <Reveal>
+              {visible.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={locked}
+                    onClick={() => setSelected(new Set(visible.map((row) => row.key)))}
+                  >
+                    {t('projects.select_visible')}
+                  </Button>
+                  {selectedRows.length > 0 && (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={locked}
+                        onClick={() => setSelected(new Set())}
+                      >
+                        {t('common.clear')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        disabled={locked}
+                        onClick={() => requestDelete(selectedRows)}
+                      >
+                        <TrashIcon />
+                        {t('projects.delete_selected', { count: selectedRows.length })}
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
+            </Reveal>
+            <Reveal>
+              {deletedCount > 0 && (
+                <p role="status" className="text-sm text-muted-foreground">
+                  {t('projects.deleted_count', { count: deletedCount })}
+                </p>
+              )}
+            </Reveal>
+            <Reveal>
+              {failure && (
+                <PipelineFailure
+                  fallback={failure}
+                  onDismiss={error ? () => setError(null) : undefined}
+                  action={
+                    queryError ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setError(null);
+                          void query.refetch();
+                          void books.refetch();
+                          void profiles.refetch();
+                          void history.refetch();
+                          void exports.refetch();
+                          void renders.refetch();
+                        }}
+                      >
+                        {t('common.retry')}
+                      </Button>
+                    ) : undefined
+                  }
+                />
+              )}
+            </Reveal>
+            <Reveal>
+              {loading && rows.length === 0 && <p role="status">{t('common.loading')}</p>}
+            </Reveal>
+            <Reveal>
+              {!loading && visible.length === 0 && (
+                <p className="py-12 text-center text-sm text-muted-foreground">
+                  {search ? t('projects.no_matches', { query: search }) : t('projects.empty')}
+                </p>
+              )}
+            </Reveal>
             <div
               className={
                 view === 'grid'
@@ -696,14 +712,11 @@ export function ProjectsPage() {
                     }
                   >
                     <div className="flex min-w-0 flex-1 items-center gap-3">
-                      <input
-                        type="checkbox"
-                        className="size-4 shrink-0 accent-primary"
+                      <Checkbox
                         disabled={locked}
                         aria-label={t('projects.select_item', { name: row.name })}
                         checked={selected.has(row.key)}
-                        onChange={(event) => {
-                          const checked = event.target.checked;
+                        onCheckedChange={(checked) => {
                           setSelected((current) => {
                             const next = new Set(current);
                             if (checked) next.add(row.key);
@@ -935,14 +948,16 @@ export function ProjectsPage() {
               </li>
             ))}
           </ul>
-          {deleteError && (
-            <p
-              role="alert"
-              className="max-h-32 overflow-y-auto whitespace-pre-wrap text-sm text-destructive"
-            >
-              {deleteError}
-            </p>
-          )}
+          <Reveal>
+            {deleteError && (
+              <p
+                role="alert"
+                className="max-h-32 overflow-y-auto whitespace-pre-wrap text-sm text-destructive"
+              >
+                {deleteError}
+              </p>
+            )}
+          </Reveal>
           <DialogFooter>
             <Button
               ref={cancelDelete}

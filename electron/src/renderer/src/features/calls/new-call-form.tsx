@@ -179,7 +179,7 @@ export function NewCallForm({
               type="button"
               size="xs"
               variant="outline"
-              className="rounded-full"
+              className="rounded-lg"
               onClick={() => set('brief', t(text))}
             >
               {t(label)}

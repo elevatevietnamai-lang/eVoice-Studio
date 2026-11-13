@@ -1,10 +1,9 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { FilmIcon } from 'lucide-react';
-import { act } from 'react';
 import { SecondarySidebar } from './workspace-sidebar';
 import { renderHook } from '@testing-library/react';
-import { setWorkspace, usePanelMounted } from '@/lib/store/workspace';
+import { usePanelTitles } from '@/lib/store/workspace';
 import { PanelSlotContext } from './panel-slot-context';
 import { WorkspaceHeader } from './app-shell/workspace-header';
 
@@ -13,7 +12,6 @@ vi.mock('./app-shell/command-search', () => ({ CommandSearch: () => null }));
 
 afterEach(() => {
   cleanup();
-  setWorkspace({ panelCollapsed: false });
   localStorage.clear();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
@@ -44,14 +42,12 @@ it('allows a 40% wider spacious pane and restores the saved width on remount', (
   expect(screen.getByRole('separator')).toHaveAttribute('aria-valuenow', '436');
 });
 
-it('pins a footer outside the scrolling content and follows the shared panel toggle', () => {
-  const onCollapsedChange = vi.fn();
+it('pins a footer outside the scrolling content and offers no way to fold the panel', () => {
   render(
     <SecondarySidebar
       title="Stories"
       icon={FilmIcon}
       footer={<button type="button">Generate</button>}
-      onCollapsedChange={onCollapsedChange}
     >
       <section>Setup</section>
     </SecondarySidebar>,
@@ -61,14 +57,8 @@ it('pins a footer outside the scrolling content and follows the shared panel tog
   expect(footer).not.toBeNull();
   expect(content?.contains(footer)).toBe(false); // never scrolls away with the setup cards
   expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
-
-  // The rail's panel toggle is the only collapse control; the pane has none of its own.
-  expect(screen.queryByRole('button', { name: /collapse/i })).toBeNull();
-  act(() => setWorkspace({ panelCollapsed: true }));
-  expect(document.querySelector('[data-slot="secondary-sidebar-footer"]')).toBeNull();
-  fireEvent.click(screen.getByRole('button', { name: 'Stories' }));
-  expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
-  expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
+  // The panel is always open: no collapse control, no folded strip.
+  expect(screen.getAllByRole('button').map((button) => button.textContent)).toEqual(['Generate']);
 });
 
 it("switches between a page's controls and its section library, hiding the pinned footer in the library", () => {
@@ -163,19 +153,19 @@ it('reports a retained library as inactive when its tab is hidden', () => {
   expect(field).toHaveValue('true');
 });
 
-it('registers itself so the rail offers a panel toggle only while a pane is mounted', () => {
-  const mounted = renderHook(() => usePanelMounted());
-  expect(mounted.result.current).toBe(false);
+it('registers its title while mounted, so the page header can tell it names the page', () => {
+  const titles = renderHook(() => usePanelTitles());
+  expect(titles.result.current).toEqual([]);
   const pane = render(
     <SecondarySidebar title="Stories" icon={FilmIcon}>
       <section>Setup</section>
     </SecondarySidebar>,
   );
-  mounted.rerender();
-  expect(mounted.result.current).toBe(true);
+  titles.rerender();
+  expect(titles.result.current).toEqual(['Stories']);
   pane.unmount();
-  mounted.rerender();
-  expect(mounted.result.current).toBe(false);
+  titles.rerender();
+  expect(titles.result.current).toEqual([]);
 });
 
 it('renders into the shell panel column, and waits for it to mount', () => {

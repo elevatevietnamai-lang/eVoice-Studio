@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, LoaderCircleIcon, VideoIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getBridge } from '@/components/bridge';
@@ -137,9 +138,11 @@ export function AudiogramPanel({
           {t(busy ? 'audiobook.audiogram_rendering' : 'audiobook.audiogram_create')}
         </Button>
       </fieldset>
-      {error && (
-        <PipelineFailure fallback={error} onDismiss={() => setError(null)} className="text-xs" />
-      )}
+      <Reveal>
+        {error && (
+          <PipelineFailure fallback={error} onDismiss={() => setError(null)} className="text-xs" />
+        )}
+      </Reveal>
     </details>
   );
 }

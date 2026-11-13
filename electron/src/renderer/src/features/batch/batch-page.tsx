@@ -1,4 +1,5 @@
 import { splitRoundedMinutes } from '@shared/utils/timeFormat';
+import { Reveal } from '@/components/motion';
 import {
   ActivityIcon,
   AlertCircleIcon,
@@ -88,7 +89,8 @@ export function BatchPage() {
   useEffect(() => {
     for (const job of jobs.data ?? []) {
       const setup = job.setup_required;
-      if (setup?.kind !== 'model_licence_required' || announcedLicence.current.has(job.id)) continue;
+      if (setup?.kind !== 'model_licence_required' || announcedLicence.current.has(job.id))
+        continue;
       announcedLicence.current.add(job.id);
       announceModelLicenceRequired(setup);
     }
@@ -390,7 +392,7 @@ export function BatchPage() {
         </SecondarySidebar>
         <section className="min-w-0 flex-1 overflow-y-auto p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="inline-flex gap-1 rounded-(--card-radius) border border-border/50 bg-muted/20 p-1">
+            <div className="inline-flex gap-1 rounded-(--card-radius) border border-border/50 bg-muted/20 p-1 [&>*]:rounded-lg">
               {['active', 'done', 'failed'].map((value) => (
                 <Button
                   key={value}
@@ -419,24 +421,26 @@ export function BatchPage() {
               {t('batch.refresh')}
             </Button>
           </div>
-          {(error || jobs.isError) && (
-            <PipelineFailure
-              className="mb-4"
-              fallback={error || describeError(jobs.error)}
-              action={
-                jobs.isError ? (
-                  <Button size="xs" variant="ghost" onClick={() => void jobs.refetch()}>
-                    {t('common.retry')}
-                  </Button>
-                ) : undefined
-              }
-              onDismiss={error ? () => setError(null) : undefined}
-            />
-          )}
-          {jobs.isPending && <p role="status">{t('common.loading')}</p>}
+          <Reveal>
+            {(error || jobs.isError) && (
+              <PipelineFailure
+                className="mb-4"
+                fallback={error || describeError(jobs.error)}
+                action={
+                  jobs.isError ? (
+                    <Button size="xs" variant="ghost" onClick={() => void jobs.refetch()}>
+                      {t('common.retry')}
+                    </Button>
+                  ) : undefined
+                }
+                onDismiss={error ? () => setError(null) : undefined}
+              />
+            )}
+          </Reveal>
+          <Reveal>{jobs.isPending && <p role="status">{t('common.loading')}</p>}</Reveal>
           {jobs.data?.length === 0 && (
             <div className="flex min-h-[28rem] flex-col items-center justify-center text-center">
-              <div className="mb-4 flex size-14 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="mb-4 flex size-14 items-center justify-center rounded-lg bg-muted text-foreground">
                 <LayersIcon className="size-6" />
               </div>
               <h2 className="text-sm font-semibold">
@@ -506,7 +510,7 @@ function BatchJobCard({
   const created = formatTimestamp(job.created_at, i18n.resolvedLanguage);
 
   return (
-    <article className="rounded-(--card-radius) border border-border/50 bg-card/20 p-4 transition-colors hover:border-border">
+    <article className="rounded-(--card-radius) border border-border/50 bg-card/20 p-4">
       <div className="flex items-center gap-3">
         <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted/35 text-muted-foreground">
           <FilmIcon className="size-4" />
@@ -531,55 +535,62 @@ function BatchJobCard({
           {job.langs.map((lang) => (
             <span
               key={lang}
-              className="rounded-md border border-border/50 bg-muted/25 px-2 py-1 text-[11px] font-medium uppercase text-muted-foreground"
+              className="rounded-sm border border-border/50 bg-muted/25 px-2 py-1 text-[11px] font-medium uppercase text-muted-foreground"
             >
               {lang}
             </span>
           ))}
         </div>
       </div>
-      {job.progress && (
-        <div role="status" className="mt-4 space-y-2 text-xs text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <p className="font-medium text-foreground">
-              {t(
-                'batch.stage_' + (job.progress.stage === 'done' ? 'complete' : job.progress.stage),
-              )}{' '}
-              {job.progress.current_lang}
-            </p>
-            {job.progress.current_segment != null && job.progress.total_segments && (
-              <span>
-                {t('batch.seg', {
-                  current: job.progress.current_segment,
-                  total: job.progress.total_segments,
-                })}
-              </span>
-            )}
-            <span className="ml-auto tabular-nums">{job.progress.percent}%</span>
+      <Reveal>
+        {job.progress && (
+          <div role="status" className="mt-4 space-y-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <p className="font-medium text-foreground">
+                {t(
+                  'batch.stage_' +
+                    (job.progress.stage === 'done' ? 'complete' : job.progress.stage),
+                )}{' '}
+                {job.progress.current_lang}
+              </p>
+              {job.progress.current_segment != null && job.progress.total_segments && (
+                <span>
+                  {t('batch.seg', {
+                    current: job.progress.current_segment,
+                    total: job.progress.total_segments,
+                  })}
+                </span>
+              )}
+              <span className="ml-auto tabular-nums">{job.progress.percent}%</span>
+            </div>
+            <progress
+              className="h-1.5 w-full accent-primary"
+              max={100}
+              value={Math.min(100, Math.max(0, job.progress.percent))}
+            />
           </div>
-          <progress
-            className="h-1.5 w-full accent-primary"
-            max={100}
-            value={Math.min(100, Math.max(0, job.progress.percent))}
-          />
-        </div>
-      )}
+        )}
+      </Reveal>
       {duration != null && (
         <p className="mt-3 text-xs tabular-nums text-muted-foreground">
           {t('batch.completed_in', { duration: formatDuration(duration) })}
         </p>
       )}
-      {job.error && generationFailureMessage(job, t) && (
-        <p role="alert" className="mt-3 text-xs text-destructive">
-          {generationFailureMessage(job, t)}
-        </p>
-      )}
-      {job.error && (
-        <details className="mt-3 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-xs text-destructive">
-          <summary>{t('common.more_info')}</summary>
-          <p className="mt-2 break-words">{job.error}</p>
-        </details>
-      )}
+      <Reveal>
+        {job.error && generationFailureMessage(job, t) && (
+          <p role="alert" className="mt-3 text-xs text-destructive">
+            {generationFailureMessage(job, t)}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {job.error && (
+          <details className="mt-3 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+            <summary>{t('common.more_info')}</summary>
+            <p className="mt-2 break-words">{job.error}</p>
+          </details>
+        )}
+      </Reveal>
       <div className="mt-3 flex flex-wrap justify-end gap-2">
         {job.status === 'done' &&
           Object.keys(job.outputs || {}).map((lang) => (

@@ -10,8 +10,7 @@ import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { AccountCorner } from './account-corner';
 import { RouteFade } from '@/components/motion';
-import { useEffect, useState } from 'react';
-import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
+import { useState } from 'react';
 import { PanelSlotContext } from '@/components/panel-slot-context';
 import { PanelColumn } from './panel-slot';
 
@@ -21,13 +20,7 @@ export function AppShell() {
     select: (state) => state.location.pathname,
   });
   const segment = pathname.split('/')[1] ?? '';
-  const { panelCollapsed } = useWorkspace();
   const [panelSlot, setPanelSlot] = useState<HTMLElement | null>(null);
-  // Every way into a page (menu, Home card, search) shows its control panel open.
-  useEffect(() => {
-    if (panelCollapsed) setWorkspace({ panelCollapsed: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
   const shellOnly = pathname.startsWith('/settings') || pathname === '/pro';
   const macWorkspace = isMac() && !shellOnly;
   const SettingsWorkspace = pathname === '/settings/openapi' ? 'div' : 'main';

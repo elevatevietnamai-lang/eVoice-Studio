@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { BookAIcon, DownloadIcon, PlusIcon, Trash2Icon, UploadIcon } from 'lucide-react';
@@ -204,26 +205,30 @@ export function PronunciationSettings() {
       >
         <Badge variant="secondary">{rows.length}</Badge>
       </SettingsRow>
-      {(error || entries.isError) && (
-        <div className="p-4">
-          <PipelineFailure
-            fallback={error || describeError(entries.error)}
-            onDismiss={error ? () => setError('') : undefined}
-            action={
-              entries.isError ? (
-                <Button size="sm" variant="ghost" onClick={() => void entries.refetch()}>
-                  {t('common.retry')}
-                </Button>
-              ) : undefined
-            }
-          />
-        </div>
-      )}
-      {entries.isPending && (
-        <p role="status" className="px-4 py-3 text-sm text-muted-foreground">
-          {t('common.loading')}
-        </p>
-      )}
+      <Reveal>
+        {(error || entries.isError) && (
+          <div className="p-4">
+            <PipelineFailure
+              fallback={error || describeError(entries.error)}
+              onDismiss={error ? () => setError('') : undefined}
+              action={
+                entries.isError ? (
+                  <Button size="sm" variant="ghost" onClick={() => void entries.refetch()}>
+                    {t('common.retry')}
+                  </Button>
+                ) : undefined
+              }
+            />
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {entries.isPending && (
+          <p role="status" className="px-4 py-3 text-sm text-muted-foreground">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
       {!entries.isPending && rows.length === 0 && (
         <p className="px-4 py-3 text-sm text-muted-foreground">{t('pronunciation.empty')}</p>
       )}
@@ -362,14 +367,16 @@ export function PronunciationSettings() {
           )}
         </p>
       )}
-      {testError && (
-        <div className="p-4">
-          <PipelineFailure
-            fallback={t('pronunciation.test_error') + ' ' + testError}
-            onDismiss={() => setTestError('')}
-          />
-        </div>
-      )}
+      <Reveal>
+        {testError && (
+          <div className="p-4">
+            <PipelineFailure
+              fallback={t('pronunciation.test_error') + ' ' + testError}
+              onDismiss={() => setTestError('')}
+            />
+          </div>
+        )}
+      </Reveal>
       <SettingsRow
         id="pronunciation-backup"
         title={t('pronunciation.backup_title')}
@@ -416,11 +423,13 @@ export function PronunciationSettings() {
           </Button>
         </div>
       )}
-      {notice && (
-        <p role="status" className="px-4 py-3 text-sm text-muted-foreground">
-          {notice}
-        </p>
-      )}
+      <Reveal>
+        {notice && (
+          <p role="status" className="px-4 py-3 text-sm text-muted-foreground">
+            {notice}
+          </p>
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }

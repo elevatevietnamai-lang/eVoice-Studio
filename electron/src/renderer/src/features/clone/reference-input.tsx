@@ -117,8 +117,8 @@ export function UploadZone({
       <label
         htmlFor={id}
         className={cn(
-          'flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed bg-muted/30 px-4 py-6 text-center transition-colors hover:border-primary/60 hover:bg-accent focus-within:ring-3 focus-within:ring-ring/50',
-          dragging && 'border-primary bg-primary/10',
+          'flex min-h-36 cursor-pointer flex-col items-center justify-center gap-2 rounded-(--card-radius) border border-dashed bg-muted/30 px-4 py-6 text-center transition-colors hover:border-foreground/30 hover:bg-accent focus-within:ring-3 focus-within:ring-ring/50',
+          dragging && 'border-foreground/30 bg-accent',
         )}
         onDragOver={(event) => {
           event.preventDefault();
@@ -191,8 +191,9 @@ export function RecordZone({
     );
   }
 
+  // Same card as the drop zone beside it: card radius, border, muted fill.
   return (
-    <div className="flex flex-col gap-4 rounded-lg bg-muted/30 p-4">
+    <div className="flex flex-col gap-4 rounded-(--card-radius) border border-border bg-muted/30 p-4">
       <div className="flex justify-center py-2">{micButton}</div>
       <RecordingInputs rec={rec} />
       {rec.isRecording ? (

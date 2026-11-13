@@ -1,4 +1,5 @@
 import { FolderOpenIcon, HardDriveIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +60,7 @@ export function ModelsDirectorySettings() {
       >
         <code
           title={path}
-          className="min-w-0 max-w-full flex-1 truncate rounded-md border border-border/60 bg-muted/35 px-2.5 py-1.5 text-xs text-muted-foreground @2xl:max-w-[32rem]"
+          className="min-w-0 max-w-full flex-1 truncate rounded-lg border border-border/60 bg-muted/35 px-2.5 py-1.5 text-xs text-muted-foreground @2xl:max-w-[32rem]"
         >
           {query.isPending ? t('common.loading') : path}
         </code>
@@ -85,21 +86,25 @@ export function ModelsDirectorySettings() {
           </>
         )}
       </SettingsRow>
-      {(query.isError || error) && (
-        <div role="alert" className="flex items-center gap-2 px-4 py-3 text-sm text-destructive">
-          <span className="min-w-0 flex-1 break-words">{error || t('common.error')}</span>
-          {query.isError && (
-            <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-              {t('common.retry')}
-            </Button>
-          )}
-        </div>
-      )}
-      {state?.restart_required && (
-        <p role="status" className="px-4 py-3 text-xs text-muted-foreground">
-          {t('settings.compute_device_restart')}
-        </p>
-      )}
+      <Reveal>
+        {(query.isError || error) && (
+          <div role="alert" className="flex items-center gap-2 px-4 py-3 text-sm text-destructive">
+            <span className="min-w-0 flex-1 break-words">{error || t('common.error')}</span>
+            {query.isError && (
+              <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+                {t('common.retry')}
+              </Button>
+            )}
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {state?.restart_required && (
+          <p role="status" className="px-4 py-3 text-xs text-muted-foreground">
+            {t('settings.compute_device_restart')}
+          </p>
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }

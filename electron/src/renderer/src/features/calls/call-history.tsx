@@ -46,7 +46,7 @@ export function CallHistory({
               aria-current={call.id === selectedId ? 'true' : undefined}
               onClick={() => onSelect(call)}
               className={cn(
-                'w-full space-y-1 rounded-lg px-3 py-2 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring',
+                'w-full space-y-1 rounded-lg px-3 py-2 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50',
                 call.id === selectedId && 'bg-accent/80',
               )}
             >

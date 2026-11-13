@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { AudioLinesIcon } from 'lucide-react';
 import { EngineRow, compactEngineName } from './engine-row';
@@ -18,7 +18,7 @@ const row = {
   state: 'engineRuntime.ready',
 };
 
-it('keeps models compact and shows full diagnostics only when explicitly expanded', () => {
+it('keeps models compact and shows full diagnostics only when explicitly expanded', async () => {
   const toggle = vi.fn();
   const view = render(
     <EngineRow
@@ -39,7 +39,8 @@ it('keeps models compact and shows full diagnostics only when explicitly expande
     <EngineRow row={row} level="details" online dotClass="bg-success" open onToggle={toggle} />,
   );
   expect(button).toHaveAttribute('aria-expanded', 'true');
-  expect(screen.getByText('kitten/default')).toBeVisible();
+  // The diagnostics open with Reveal's height and fade, finished on the next frame.
+  await waitFor(() => expect(screen.getByText('kitten/default')).toBeVisible());
   expect(screen.getByRole('link')).toHaveAttribute('href', '/settings/models/tts');
 });
 it('shows loading text and busy semantics while preserving offline override', () => {

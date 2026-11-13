@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -132,7 +133,7 @@ export function DubProjects({ active = true }: { active?: boolean }) {
                 aria-current={active ? 'true' : undefined}
                 onClick={() => setConfirmation(row.id)}
                 className={cn(
-                  'flex w-full min-w-0 items-center gap-2.5 rounded-lg px-2 py-1.5 text-start outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50',
+                  'flex w-full min-w-0 items-center gap-2.5 rounded-lg px-2 py-1.5 text-start outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50',
                   active
                     ? 'bg-accent/80 text-foreground'
                     : 'text-foreground/85 hover:bg-accent hover:text-foreground',
@@ -145,7 +146,7 @@ export function DubProjects({ active = true }: { active?: boolean }) {
                     active ? 'text-primary' : 'text-muted-foreground',
                   )}
                 />
-                <span className="flex min-w-0 flex-1 flex-col leading-tight">
+                <span className="flex min-w-0 flex-1 flex-col leading-5">
                   <span className="truncate text-[13px] font-medium">{row.name}</span>
                   {when && (
                     <span className="truncate text-[11px] text-muted-foreground">{when}</span>
@@ -153,7 +154,7 @@ export function DubProjects({ active = true }: { active?: boolean }) {
                 </span>
               </button>
               {confirmation === row.id && (
-                <div className="space-y-2 rounded-md bg-muted/40 p-2 text-xs">
+                <div className="space-y-2 rounded-lg bg-muted/40 p-2 text-xs">
                   <p>{t('projectActions.open', { name: row.name })}</p>
                   <div className="flex gap-2">
                     <Button
@@ -188,14 +189,16 @@ export function DubProjects({ active = true }: { active?: boolean }) {
           </li>
         )}
       </ul>
-      {error && (
-        <p role="alert" className="shrink-0 px-3 pb-1 text-xs text-destructive">
-          {error}
-        </p>
-      )}
+      <Reveal className="shrink-0">
+        {error && (
+          <p role="alert" className="shrink-0 px-3 pb-1 text-xs text-destructive">
+            {error}
+          </p>
+        )}
+      </Reveal>
       <Link
         to="/projects"
-        className="flex h-9 shrink-0 items-center gap-2 border-t border-border/45 px-3 text-xs text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-9 shrink-0 items-center gap-2 border-t border-border/45 px-3 text-xs text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
         <FolderIcon aria-hidden="true" className="size-3.5" />
         {t('projects.title')}

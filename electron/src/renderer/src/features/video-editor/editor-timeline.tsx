@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { Volume2 as Volume2Shape, VolumeX as VolumeXShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
+import { Button } from '@/components/ui/button';
 import type { TimelineElement, TimelineTrack } from '@/lib/opencut/vendor/timeline/types';
 import { getElementKeyframes } from '@/lib/opencut/vendor/animation/keyframe-query';
 import { cn } from '@/lib/utils';
@@ -307,26 +308,26 @@ export function EditorTimeline({
                 )}
               </span>
               {'muted' in track && (
-                <button
-                  type="button"
-                  className="rounded-sm p-0.5 hover:text-foreground"
+                <Button
+                  size="icon-xs"
+                  variant="ghost"
                   aria-label={t(track.muted ? 'editor.unmute_track' : 'editor.mute_track')}
                   aria-pressed={track.muted}
                   onClick={() => edits.toggleTrack(track.id, 'muted', !track.muted)}
                 >
                   <MorphIcon className="size-3.5" icon={track.muted ? VolumeXShape : Volume2Shape} />
-                </button>
+                </Button>
               )}
               {'hidden' in track && (
-                <button
-                  type="button"
-                  className="rounded-sm p-0.5 hover:text-foreground"
+                <Button
+                  size="icon-xs"
+                  variant="ghost"
                   aria-label={t(track.hidden ? 'editor.show_track' : 'editor.hide_track')}
                   aria-pressed={track.hidden}
                   onClick={() => edits.toggleTrack(track.id, 'hidden', !track.hidden)}
                 >
                   {track.hidden ? <EyeOffIcon className="size-3.5" /> : <EyeIcon className="size-3.5" />}
-                </button>
+                </Button>
               )}
             </div>
             <div className="relative flex-1" onPointerDown={() => edits.select(null)}>

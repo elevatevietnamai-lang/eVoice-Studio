@@ -1,9 +1,12 @@
 import { useConversion, setConversion } from './conversion-state';
+import { Reveal } from '@/components/motion';
+import { Mic as MicShape, Square as SquareShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeftRightIcon, MicIcon, SquareIcon } from 'lucide-react';
+import { ArrowLeftRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
@@ -157,7 +160,7 @@ export function ConvertVoice() {
               }
             }}
           >
-            {recording.isRecording ? <SquareIcon /> : <MicIcon />}
+            {<MorphIcon icon={recording.isRecording ? SquareShape : MicShape} />}
             {recording.isRecording ? t('clone.stop_recording') : t('clone.record')}
           </Button>
           {file && (
@@ -217,54 +220,60 @@ export function ConvertVoice() {
         </label>
         <p className="text-xs text-muted-foreground">{t('convert.match_duration_hint')}</p>
       </div>
-      {engines.isError && !engines.data && !busy && (
-        <div
-          role="alert"
-          className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
-        >
-          <span>{describeError(engines.error)}</span>
-          <Button variant="outline" size="sm" onClick={engines.retry}>
-            {t('common.retry')}
-          </Button>
-        </div>
-      )}
-      {!canClone && !(engines.isError && !engines.data) && !busy && (
-        <div
-          role="status"
-          className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
-        >
-          <span>{t('convert.cloning_required')}</span>
-          <Link
-            to="/settings/models/$family"
-            params={{ family: 'tts' }}
-            className="font-medium text-primary hover:underline"
+      <Reveal>
+        {engines.isError && !engines.data && !busy && (
+          <div
+            role="alert"
+            className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
           >
-            {t('modelSettings.models')}
-          </Link>
-        </div>
-      )}
-      {error && (
-        <PipelineFailure
-          fallback={error}
-          onDismiss={() => setError('')}
-          action={
-            needsModel ? (
-              <div className="flex shrink-0 items-center gap-2">
-                <Link
-                  to="/settings/models/$family"
-                  params={{ family: 'asr' }}
-                  className="text-xs font-medium text-primary hover:underline"
-                >
-                  {t('modelSettings.models')}
-                </Link>
-                <AgentFixButton
-                  request={`Restore local ASR readiness for Voice Conversion, then keep the current source and target voice available for retry. Conversion reported: ${error}`}
-                />
-              </div>
-            ) : undefined
-          }
-        />
-      )}
+            <span>{describeError(engines.error)}</span>
+            <Button variant="outline" size="sm" onClick={engines.retry}>
+              {t('common.retry')}
+            </Button>
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {!canClone && !(engines.isError && !engines.data) && !busy && (
+          <div
+            role="status"
+            className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground"
+          >
+            <span>{t('convert.cloning_required')}</span>
+            <Link
+              to="/settings/models/$family"
+              params={{ family: 'tts' }}
+              className="font-medium text-primary hover:underline"
+            >
+              {t('modelSettings.models')}
+            </Link>
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {error && (
+          <PipelineFailure
+            fallback={error}
+            onDismiss={() => setError('')}
+            action={
+              needsModel ? (
+                <div className="flex shrink-0 items-center gap-2">
+                  <Link
+                    to="/settings/models/$family"
+                    params={{ family: 'asr' }}
+                    className="text-xs font-medium text-primary hover:underline"
+                  >
+                    {t('modelSettings.models')}
+                  </Link>
+                  <AgentFixButton
+                    request={`Restore local ASR readiness for Voice Conversion, then keep the current source and target voice available for retry. Conversion reported: ${error}`}
+                  />
+                </div>
+              ) : undefined
+            }
+          />
+        )}
+      </Reveal>
       <div className="flex items-center gap-2">
         <Button className="min-w-48" disabled={!valid || busy} onClick={() => void run()}>
           <ArrowLeftRightIcon />
@@ -276,16 +285,18 @@ export function ConvertVoice() {
           </Button>
         )}
       </div>
-      {result && (
-        <section className="space-y-3 border-t pt-4" aria-label={t('convert.result_kicker')}>
-          <h3 className="text-sm font-medium">{t('convert.result_kicker')}</h3>
-          <WaveformPlayer src={apiPath(result.audio_url)} source="convert-result" height={40} />
-          <p className="text-sm">
-            <span className="text-muted-foreground">{t('convert.transcript')}: </span>
-            {result.text}
-          </p>
-        </section>
-      )}
+      <Reveal>
+        {result && (
+          <section className="space-y-3 border-t pt-4" aria-label={t('convert.result_kicker')}>
+            <h3 className="text-sm font-medium">{t('convert.result_kicker')}</h3>
+            <WaveformPlayer src={apiPath(result.audio_url)} source="convert-result" height={40} />
+            <p className="text-sm">
+              <span className="text-muted-foreground">{t('convert.transcript')}: </span>
+              {result.text}
+            </p>
+          </section>
+        )}
+      </Reveal>
     </div>
   );
 }

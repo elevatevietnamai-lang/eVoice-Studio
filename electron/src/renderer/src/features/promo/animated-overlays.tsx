@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Reveal } from '@/components/motion';
 import {
   DownloadIcon,
   LoaderCircleIcon,
@@ -199,7 +200,7 @@ function TemplatePreview({
   return (
     <div className="space-y-1">
       <div
-        className="relative overflow-hidden rounded-md border border-border/60"
+        className="relative overflow-hidden rounded-lg border border-border/60"
         style={{
           width: boxWidth,
           height: Math.round(height * scale),
@@ -551,11 +552,13 @@ export function AnimatedOverlays({
       </div>
       {download()}
       {full && <p className="text-xs text-destructive">{t('promo.anim_too_many')}</p>}
-      {error && (
-        <p role="alert" className="text-xs text-destructive">
-          {error}
-        </p>
-      )}
+      <Reveal>
+        {error && (
+          <p role="alert" className="text-xs text-destructive">
+            {error}
+          </p>
+        )}
+      </Reveal>
       {browser.state === 'ready' && (
         <div className="flex items-center gap-2">
           <Button size="sm" disabled={busy || full || !ready} onClick={() => void create()}>

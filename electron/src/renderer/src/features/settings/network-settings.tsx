@@ -1,4 +1,5 @@
 import { NetworkIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -71,19 +72,23 @@ export function NetworkSettings() {
           </Button>
         </form>
       </SettingsRow>
-      {(query.isError || action.error) && (
-        <p role="alert" className="p-4 text-sm text-destructive">
-          {t('common.error')}{' '}
-          <Button variant="ghost" size="sm" onClick={() => void query.refetch()}>
-            {t('common.retry')}
-          </Button>
-        </p>
-      )}
-      {action.saved && (
-        <p role="status" className="p-4 text-sm text-muted-foreground">
-          {t(value ? 'settings.proxy_saved' : 'settings.proxy_cleared')}
-        </p>
-      )}
+      <Reveal>
+        {(query.isError || action.error) && (
+          <p role="alert" className="p-4 text-sm text-destructive">
+            {t('common.error')}{' '}
+            <Button variant="ghost" size="sm" onClick={() => void query.refetch()}>
+              {t('common.retry')}
+            </Button>
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {action.saved && (
+          <p role="status" className="p-4 text-sm text-muted-foreground">
+            {t(value ? 'settings.proxy_saved' : 'settings.proxy_cleared')}
+          </p>
+        )}
+      </Reveal>
       <SettingsRow id="network-media" title={t('settings.ffmpeg')}>
         <Link to="/settings/media" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
           {t('settings.audio_tools')}

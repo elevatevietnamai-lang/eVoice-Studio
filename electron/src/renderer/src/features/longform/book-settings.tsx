@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { ImagePlusIcon, TrashIcon, PlusIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -92,7 +93,7 @@ export function BookSettings({
           <img
             src={preview}
             alt={t('audiobook.cover')}
-            className="h-32 w-24 rounded-md object-cover"
+            className="h-32 w-24 rounded-sm object-cover"
           />
         )}
         {draft.cover && (
@@ -122,7 +123,9 @@ export function BookSettings({
             </Button>
           )}
         </div>
-        {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+        <Reveal>
+          {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+        </Reveal>
       </details>
       <details className="space-y-2">
         <summary className="cursor-pointer text-sm font-medium">{t('audiobook.loudness')}</summary>
@@ -200,11 +203,13 @@ export function BookSettings({
             <PlusIcon />
             {t('audiobook.lex_add')}
           </Button>
-          {duplicateWords(draft.lexicon) && (
-            <p role="alert" className="text-xs text-destructive">
-              {t('audiobook.lex_duplicate')}
-            </p>
-          )}
+          <Reveal>
+            {duplicateWords(draft.lexicon) && (
+              <p role="alert" className="text-xs text-destructive">
+                {t('audiobook.lex_duplicate')}
+              </p>
+            )}
+          </Reveal>
         </details>
       )}
     </div>

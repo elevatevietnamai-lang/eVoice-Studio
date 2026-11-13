@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useAccount } from '@/features/account/use-account';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { cn } from '@/lib/utils';
+import { menuItemClass, menuPopupClass } from '@/components/menu-popup';
 
 function initials(name: string): string {
   const words = name.includes('@') ? [name] : name.trim().split(/\s+/);
@@ -19,7 +20,7 @@ function initials(name: string): string {
 function Avatar({ name, url }: { name: string; url: string | null }) {
   if (!url && !name)
     return (
-      <span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
+      <span className="grid size-7 shrink-0 place-items-center rounded-full bg-muted text-foreground">
         <UserRoundIcon className="size-4" aria-hidden="true" />
       </span>
     );
@@ -28,15 +29,12 @@ function Avatar({ name, url }: { name: string; url: string | null }) {
   ) : (
     <span
       aria-hidden="true"
-      className="grid size-7 shrink-0 place-items-center rounded-full bg-primary/15 text-[11px] font-semibold text-primary"
+      className="grid size-7 shrink-0 place-items-center rounded-full bg-muted text-[11px] font-semibold text-primary"
     >
       {initials(name)}
     </span>
   );
 }
-
-const ITEM =
-  'flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground outline-none transition-colors duration-160 data-highlighted:bg-accent';
 
 /**
  * The account control in the window's top-right corner: the profile photo (or
@@ -57,7 +55,7 @@ export function AccountMenu({ className }: { className?: string }) {
         variant="outline"
         disabled={state.signingIn}
         onClick={() => void signIn()}
-        className={cn('h-8 rounded-full', className)}
+        className={cn('h-8', className)}
       >
         {t(state.signingIn ? 'account.continue_in_browser' : 'account.sign_in')}
       </Button>
@@ -71,7 +69,7 @@ export function AccountMenu({ className }: { className?: string }) {
         aria-label={name || t('account.menu_settings')}
         data-slot="account-menu"
         className={cn(
-          'flex h-8 max-w-56 min-w-0 items-center gap-2 rounded-full border border-border bg-card py-0.5 pr-3 pl-0.5 outline-none transition-colors duration-160 hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring',
+          'flex h-8 max-w-56 min-w-0 items-center gap-2 rounded-full border border-border bg-card py-0.5 pr-3 pl-0.5 outline-none transition-colors duration-160 hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50',
           className,
         )}
       >
@@ -80,9 +78,9 @@ export function AccountMenu({ className }: { className?: string }) {
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner sideOffset={6} align="end" className="z-50">
-          <Menu.Popup className="min-w-52 origin-(--transform-origin) rounded-(--card-radius) border border-border bg-popover p-1 text-popover-foreground outline-none transition-[opacity,transform] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:transition-none">
+          <Menu.Popup className={cn(menuPopupClass, 'min-w-52 p-1')}>
             <Menu.Item
-              className={ITEM}
+              className={menuItemClass}
               onClick={() =>
                 runRendererTask('Open account settings', () =>
                   navigate({ to: '/settings/account' }),
@@ -92,7 +90,7 @@ export function AccountMenu({ className }: { className?: string }) {
               <UserRoundCogIcon className="size-4" aria-hidden="true" />
               {t('account.menu_settings')}
             </Menu.Item>
-            <Menu.Item className={ITEM} onClick={() => void signOut()}>
+            <Menu.Item className={menuItemClass} onClick={() => void signOut()}>
               <LogOutIcon className="size-4" aria-hidden="true" />
               {t('account.sign_out')}
             </Menu.Item>

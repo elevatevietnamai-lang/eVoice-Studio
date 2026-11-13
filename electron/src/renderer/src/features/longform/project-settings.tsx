@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { SaveIcon, TrashIcon } from 'lucide-react';
@@ -122,24 +123,30 @@ export function ProjectSettings({
           </Button>
         )}
       </div>
-      {saved && (
-        <p role="status" className="text-xs text-muted-foreground">
-          {t('app.toast_project_saved')}
-        </p>
-      )}
-      {(error || query.isError) && (
-        <div role="alert" className="text-xs text-destructive">
-          {error || describeError(query.error)}
-          <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-            {t('common.retry')}
-          </Button>
-        </div>
-      )}
-      {query.isPending && (
-        <p role="status" className="text-xs">
-          {t('common.loading')}
-        </p>
-      )}
+      <Reveal>
+        {saved && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {t('app.toast_project_saved')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {(error || query.isError) && (
+          <div role="alert" className="text-xs text-destructive">
+            {error || describeError(query.error)}
+            <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+              {t('common.retry')}
+            </Button>
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {query.isPending && (
+          <p role="status" className="text-xs">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
       <div className={bare ? 'space-y-1' : 'max-h-64 space-y-1 overflow-y-auto'}>
         {query.data
           ?.filter((project) => project.mode === mode)
@@ -166,7 +173,7 @@ export function ProjectSettings({
                 </Button>
               </div>
               {confirmation?.project.id === project.id && (
-                <div className="space-y-2 rounded-md bg-muted/40 p-2 text-xs">
+                <div className="space-y-2 rounded-lg bg-muted/40 p-2 text-xs">
                   <p>
                     {t(
                       confirmation.action === 'delete'

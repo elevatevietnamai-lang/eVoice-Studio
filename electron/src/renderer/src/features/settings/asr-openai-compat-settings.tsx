@@ -1,4 +1,5 @@
 import { CheckCircle2Icon, LoaderCircleIcon, MicIcon, PlugIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -133,15 +134,17 @@ export function AsrOpenAiCompatSettings() {
         )}
       </SettingsRow>
 
-      {(config.isError || error) && (
-        <div className="p-4">
-          <SettingsActionError
-            title={t('modelSettings.failed')}
-            detail={error || describeError(config.error)}
-            onDismiss={error ? () => setError('') : undefined}
-          />
-        </div>
-      )}
+      <Reveal>
+        {(config.isError || error) && (
+          <div className="p-4">
+            <SettingsActionError
+              title={t('modelSettings.failed')}
+              detail={error || describeError(config.error)}
+              onDismiss={error ? () => setError('') : undefined}
+            />
+          </div>
+        )}
+      </Reveal>
 
       <SettingsRow id="asr-openai-compat-url" title={t('settings.llmp_base_url')}>
         <Input

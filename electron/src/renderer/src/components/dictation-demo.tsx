@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { DICTATION_SCRIPTS } from '@shared/utils/dictationScripts';
@@ -82,7 +83,10 @@ export function DictationDemo() {
       <p className="text-sm text-muted-foreground">{t('demo.dictation_lede')}</p>
       <div className="space-y-2">
         {DICTATION_SCRIPTS.map((script) => (
-          <article key={script.id} className="space-y-3 rounded-(--card-radius) border border-border/60 p-4">
+          <article
+            key={script.id}
+            className="space-y-3 rounded-(--card-radius) border border-border/60 p-4"
+          >
             <h3 className="text-sm font-medium">{t(script.labelKey)}</h3>
             <p className="text-sm leading-relaxed text-muted-foreground">{script.text}</p>
             <div className="flex items-center gap-2">
@@ -102,16 +106,20 @@ export function DictationDemo() {
                 {t(pending === script.id ? 'demo.dictation_transcribing' : 'demo.dictation_replay')}
               </Button>
             </div>
-            {results[script.id]?.text && (
-              <p role="status" className="text-sm text-success">
-                {results[script.id].text}
-              </p>
-            )}
-            {results[script.id]?.error && (
-              <p role="alert" className="text-sm text-destructive">
-                {t(results[script.id].error!)}
-              </p>
-            )}
+            <Reveal>
+              {results[script.id]?.text && (
+                <p role="status" className="text-sm text-success">
+                  {results[script.id].text}
+                </p>
+              )}
+            </Reveal>
+            <Reveal>
+              {results[script.id]?.error && (
+                <p role="alert" className="text-sm text-destructive">
+                  {t(results[script.id].error!)}
+                </p>
+              )}
+            </Reveal>
           </article>
         ))}
       </div>

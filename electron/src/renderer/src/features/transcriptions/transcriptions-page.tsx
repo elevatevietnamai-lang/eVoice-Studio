@@ -1,4 +1,12 @@
 import { SecondarySidebar } from '@/components/workspace-sidebar';
+import { Reveal } from '@/components/motion';
+import {
+  Mic as MicShape,
+  Pause as PauseShape,
+  Play as PlayShape,
+  Square as SquareShape,
+} from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { LiveDictation } from './live-dictation';
 import { DictationSetup } from './dictation-setup';
@@ -18,8 +26,6 @@ import {
   Clock3Icon,
   KeyboardIcon,
   LanguagesIcon,
-  PauseIcon,
-  PlayIcon,
   XIcon,
   CopyIcon,
   DownloadIcon,
@@ -284,8 +290,7 @@ export function TranscriptionsPage() {
                   key={entry.id}
                   className={cn(
                     'w-full rounded-(--card-radius) border border-transparent px-3 py-2.5 text-left text-sm transition-[color,background-color,border-color,box-shadow] hover:border-border/55 hover:bg-accent',
-                    selectedId === entry.id &&
-                      'border-primary/20 bg-primary/[0.07]',
+                    selectedId === entry.id && 'bg-accent',
                   )}
                   aria-pressed={selectedId === entry.id}
                   onClick={() => setSelectedId(entry.id)}
@@ -354,15 +359,13 @@ export function TranscriptionsPage() {
         </SecondarySidebar>
         <section className="flex min-w-0 flex-1 flex-col">
           <div className="border-b border-border/50 px-6 py-4">
-            <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-2">
+            <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-1">
               <ToggleGroup
                 value={[mode]}
                 onValueChange={(value) => chooseMode(value[0])}
                 disabled={busy || capturing}
                 size="sm"
-                spacing={0}
                 aria-label={t('transcriptions.mode_label')}
-                className="rounded-lg border border-border/50 bg-background/25 p-0.5"
               >
                 <ToggleGroupItem
                   value="fast"
@@ -434,7 +437,7 @@ export function TranscriptionsPage() {
                       recording.isRecording ? recording.stop() : void recording.start()
                     }
                   >
-                    {recording.isRecording ? <SquareIcon /> : <MicIcon />}
+                    {<MorphIcon icon={recording.isRecording ? SquareShape : MicShape} />}
                     {t(recording.isRecording ? 'clone.stop_recording' : 'clone.record')}
                     {recording.isRecording && (
                       <span className="tabular-nums">{Math.floor(recording.seconds)}s</span>
@@ -468,7 +471,7 @@ export function TranscriptionsPage() {
                             onClick={() => live.pause()}
                             aria-label={t(liveState.paused ? 'common.resume' : 'common.pause')}
                           >
-                            {liveState.paused ? <PlayIcon /> : <PauseIcon />}
+                            {<MorphIcon icon={liveState.paused ? PlayShape : PauseShape} />}
                             {t(liveState.paused ? 'common.resume' : 'common.pause')}
                           </Button>
                           <Button onClick={() => void live.stop()}>
@@ -617,42 +620,44 @@ export function TranscriptionsPage() {
               )}
             </div>
           )}
-          {failed && (
-            <div className="mx-6 mt-4 rounded-(--card-radius) border border-border/60 bg-muted/20 px-4 py-3 text-sm">
-              <div className="flex items-center gap-3">
-                <AlertCircleIcon className="size-4 shrink-0 text-destructive" />
-                <span role="alert" className="min-w-0 flex-1 font-medium">
-                  {t('transcriptions.failed')}
-                </span>
-                <Button
-                  variant="ghost"
-                  disabled={!file || busy}
-                  onClick={() => file && void transcribe(file)}
-                >
-                  {t('backend.retry')}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  aria-label={t('common.dismiss')}
-                  onClick={() => setFailed(null)}
-                >
-                  <XIcon />
-                </Button>
+          <Reveal>
+            {failed && (
+              <div className="mx-6 mt-4 rounded-(--card-radius) border border-border/60 bg-muted/20 px-4 py-3 text-sm">
+                <div className="flex items-center gap-3">
+                  <AlertCircleIcon className="size-4 shrink-0 text-destructive" />
+                  <span role="alert" className="min-w-0 flex-1 font-medium">
+                    {t('transcriptions.failed')}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    disabled={!file || busy}
+                    onClick={() => file && void transcribe(file)}
+                  >
+                    {t('backend.retry')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    aria-label={t('common.dismiss')}
+                    onClick={() => setFailed(null)}
+                  >
+                    <XIcon />
+                  </Button>
+                </div>
+                <details className="mt-1 pl-7 text-xs text-muted-foreground">
+                  <summary className="cursor-pointer rounded py-1 focus-visible:outline-ring">
+                    {t('profileIdentity.details')}
+                  </summary>
+                  <pre className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap break-all rounded-sm bg-muted/40 p-3 font-mono text-xs">
+                    {failed}
+                  </pre>
+                  <Link to="/settings/logs" className="mt-2 inline-block underline">
+                    {t('settings.logs')}
+                  </Link>
+                </details>
               </div>
-              <details className="mt-1 pl-7 text-xs text-muted-foreground">
-                <summary className="cursor-pointer rounded py-1 focus-visible:outline-ring">
-                  {t('profileIdentity.details')}
-                </summary>
-                <pre className="mt-2 max-h-32 overflow-auto whitespace-pre-wrap break-all rounded-md bg-muted/40 p-3 font-mono text-xs">
-                  {failed}
-                </pre>
-                <Link to="/settings/logs" className="mt-2 inline-block underline">
-                  {t('settings.logs')}
-                </Link>
-              </details>
-            </div>
-          )}
+            )}
+          </Reveal>
           <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
             {selected ? (
               <article className="mx-auto max-w-4xl space-y-5">
@@ -760,7 +765,7 @@ export function TranscriptionsPage() {
               </article>
             ) : (
               <div className="mx-auto flex min-h-[28rem] max-w-lg flex-col items-center justify-center px-6 text-center">
-                <div className="mb-4 flex size-14 items-center justify-center rounded-(--card-radius) bg-primary/10 text-primary">
+                <div className="mb-4 flex size-14 items-center justify-center rounded-(--card-radius) bg-muted text-foreground">
                   {search ? <FileTextIcon className="size-6" /> : <MicIcon className="size-6" />}
                 </div>
                 <h2 className="text-lg font-semibold">

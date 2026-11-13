@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Reveal } from '@/components/motion';
+import { Check as CheckShape, Download as DownloadShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { CheckIcon, DownloadIcon, MicIcon, XIcon } from 'lucide-react';
+import { CheckIcon, MicIcon, XIcon } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { AgentFixButton } from '@/components/agent-fix-button';
 import { Progress } from '@/components/ui/progress';
@@ -148,7 +151,7 @@ export function DictationSetup({ onReady }: { onReady: () => void }) {
         disabled={installing !== null}
         onClick={() => void choose(model)}
       >
-        {model.installed ? <CheckIcon /> : <DownloadIcon />}
+        {<MorphIcon icon={model.installed ? CheckShape : DownloadShape} />}
         {t(model.installed ? 'asr_missing.use' : 'asr_missing.download', {
           label: model.label,
           size: model.size_gb,
@@ -187,7 +190,7 @@ export function DictationSetup({ onReady }: { onReady: () => void }) {
   return (
     <div className="space-y-3 border-b border-border/50 bg-muted/15 px-6 py-4">
       <div className="flex items-start gap-3">
-        <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
           <MicIcon aria-hidden="true" className="size-4" />
         </span>
         <div className="min-w-0 flex-1">
@@ -196,28 +199,32 @@ export function DictationSetup({ onReady }: { onReady: () => void }) {
         </div>
       </div>
       {choice(primary)}
-      {installing && activeModel && (
-        <div className="space-y-2" role="status">
-          <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-            <span>{t('asr_missing.started', { label: activeModel.label })}</span>
-            <Button size="xs" variant="ghost" onClick={() => void cancel()}>
-              <XIcon />
-              {t('common.cancel')}
-            </Button>
+      <Reveal>
+        {installing && activeModel && (
+          <div className="space-y-2" role="status">
+            <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+              <span>{t('asr_missing.started', { label: activeModel.label })}</span>
+              <Button size="xs" variant="ghost" onClick={() => void cancel()}>
+                <XIcon />
+                {t('common.cancel')}
+              </Button>
+            </div>
+            <Progress value={progress} aria-label={t('modelMaintenance.downloading')} />
           </div>
-          <Progress value={progress} aria-label={t('modelMaintenance.downloading')} />
-        </div>
-      )}
-      {failed && (
-        <div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-destructive">
-          <span className="min-w-0 flex-1">
-            {t('asr_missing.install_failed', { message: failed })}
-          </span>
-          <AgentFixButton
-            request={`Restore local dictation readiness after the selected model install failed: ${failed}`}
-          />
-        </div>
-      )}
+        )}
+      </Reveal>
+      <Reveal>
+        {failed && (
+          <div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-destructive">
+            <span className="min-w-0 flex-1">
+              {t('asr_missing.install_failed', { message: failed })}
+            </span>
+            <AgentFixButton
+              request={`Restore local dictation readiness after the selected model install failed: ${failed}`}
+            />
+          </div>
+        )}
+      </Reveal>
       {others.length > 0 && (
         <details>
           <summary className="cursor-pointer text-xs text-muted-foreground">

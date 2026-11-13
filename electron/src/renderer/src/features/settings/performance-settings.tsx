@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion';
 import {
   CpuIcon,
   MemoryStickIcon,
@@ -258,16 +259,18 @@ export function PerformanceSettings() {
             <span className="font-mono text-foreground/80">{info.data?.python || '—'}</span>
           </p>
         </SettingsRow>
-        {(info.isError || hardware.isError) && (
-          <div className="col-span-full">
-            <ErrorRow
-              retry={() => {
-                void info.refetch();
-                void hardware.refetch();
-              }}
-            />
-          </div>
-        )}
+        <Reveal className="col-span-full">
+          {(info.isError || hardware.isError) && (
+            <div className="col-span-full">
+              <ErrorRow
+                retry={() => {
+                  void info.refetch();
+                  void hardware.refetch();
+                }}
+              />
+            </div>
+          )}
+        </Reveal>
       </SettingsSection>
     </>
   );
@@ -555,21 +558,25 @@ function ComputeDevice() {
       {state?.override_ignored && (
         <p className="p-4 text-sm text-muted-foreground">{t('settings.compute_device_ignored')}</p>
       )}
-      {state?.restart_required && (
-        <p role="status" className="p-4 text-sm text-muted-foreground">
-          {t('settings.compute_device_restart')}
-        </p>
-      )}
+      <Reveal>
+        {state?.restart_required && (
+          <p role="status" className="p-4 text-sm text-muted-foreground">
+            {t('settings.compute_device_restart')}
+          </p>
+        )}
+      </Reveal>
       {cuda?.env_pinned && (
         <p className="p-4 text-sm text-muted-foreground">
           {t('settings.generate_timeout_shadowed_note')}
         </p>
       )}
-      {cuda?.restart_required && (
-        <p role="status" className="p-4 text-sm text-muted-foreground">
-          {t('settings.compute_device_restart')}
-        </p>
-      )}
+      <Reveal>
+        {cuda?.restart_required && (
+          <p role="status" className="p-4 text-sm text-muted-foreground">
+            {t('settings.compute_device_restart')}
+          </p>
+        )}
+      </Reveal>
       {(action.error || query.isError || cudaAction.error || cudaQuery.isError) && (
         <ErrorRow
           retry={() => {
@@ -706,11 +713,13 @@ function BudgetRow({
             : 'settings.compute_device_restart',
         )}
       </p>
-      {action.error && (
-        <p role="alert" className="px-4 pb-3 text-sm text-destructive">
-          {t('common.error')}
-        </p>
-      )}
+      <Reveal>
+        {action.error && (
+          <p role="alert" className="px-4 pb-3 text-sm text-destructive">
+            {t('common.error')}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }

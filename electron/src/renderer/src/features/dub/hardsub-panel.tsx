@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { SimpleSelect } from '@/components/simple-select';
 import { Progress } from '@/components/ui/progress';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
@@ -23,6 +24,7 @@ import {
   syncDubHardsub,
   useDubSession,
 } from './dub-session';
+import { segmentedFrameClass } from '@/components/segmented';
 
 type EngineStatus = { installed: boolean; engine?: { providers?: string[]; encoder?: string } };
 
@@ -183,7 +185,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             {t('dub_hardsub.badge_cleaned')}
           </span>
         ) : hs?.cue_count ? (
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+          <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-primary">
             {t('dub_hardsub.badge_read', { count: hs.cue_count })}
           </span>
         ) : null}
@@ -197,7 +199,12 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             <p className="text-xs leading-5 text-muted-foreground">
               {t('dub_hardsub.install_help')}
             </p>
-            <Button size="sm" variant="outline" disabled={locked || status.isLoading} onClick={install}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={locked || status.isLoading}
+              onClick={install}
+            >
               {task?.kind === 'install' ? (
                 <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
               ) : (
@@ -207,9 +214,14 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             </Button>
             {task?.kind === 'install' && (
               <div className="space-y-1">
-                <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_hardsub.install')} />
+                <Progress
+                  value={Math.round(task.progress * 100)}
+                  aria-label={t('dub_hardsub.install')}
+                />
                 {installLog && (
-                  <p className="truncate font-mono text-[10px] text-muted-foreground">{installLog}</p>
+                  <p className="truncate font-mono text-[10px] text-muted-foreground">
+                    {installLog}
+                  </p>
                 )}
               </div>
             )}
@@ -231,7 +243,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 aria-valuenow={Math.round(region[0] * 100)}
                 tabIndex={0}
                 className={cn(
-                  'relative overflow-hidden rounded-md border border-border/60 bg-black select-none',
+                  'relative overflow-hidden rounded-lg border border-border/60 bg-black select-none',
                   locked ? 'cursor-not-allowed opacity-70' : 'cursor-crosshair',
                 )}
                 onPointerDown={onPointerDown}
@@ -265,7 +277,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 />
                 <div
                   className="pointer-events-none absolute inset-x-0 border-y-2 border-amber-400"
-                  style={{ top: `${region[0] * 100}%`, height: `${(region[1] - region[0]) * 100}%` }}
+                  style={{
+                    top: `${region[0] * 100}%`,
+                    height: `${(region[1] - region[0]) * 100}%`,
+                  }}
                 />
               </div>
               <p className="text-[11px] leading-4 text-muted-foreground">
@@ -295,7 +310,9 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                     max={100}
                     value={Math.round(region[0] * 100)}
                     disabled={locked}
-                    onChange={(event) => updateRegion([Number(event.target.value) / 100, region[1]])}
+                    onChange={(event) =>
+                      updateRegion([Number(event.target.value) / 100, region[1]])
+                    }
                   />
                 </label>
                 <label className="space-y-1">
@@ -307,28 +324,28 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                     max={100}
                     value={Math.round(region[1] * 100)}
                     disabled={locked}
-                    onChange={(event) => updateRegion([region[0], Number(event.target.value) / 100])}
+                    onChange={(event) =>
+                      updateRegion([region[0], Number(event.target.value) / 100])
+                    }
                   />
                 </label>
               </div>
             </div>
 
             <div className="space-y-2 border-t border-border/50 pt-3">
-              <label className="flex items-center justify-between gap-2 text-xs">
+              <div className="flex items-center justify-between gap-2 text-xs">
                 <span>{t('dub_hardsub.scan_rate')}</span>
-                <select
-                  className="h-7 rounded-md border border-border/60 bg-background px-2 text-xs"
-                  value={fps}
+                <SimpleSelect
+                  label={t('dub_hardsub.scan_rate')}
+                  value={String(fps)}
+                  items={[2, 4, 6, 8].map((value) => ({
+                    value: String(value),
+                    label: t('dub_hardsub.scan_rate_value', { count: value }),
+                  }))}
                   disabled={locked}
-                  onChange={(event) => setFps(Number(event.target.value))}
-                >
-                  {[2, 4, 6, 8].map((value) => (
-                    <option key={value} value={value}>
-                      {t('dub_hardsub.scan_rate_value', { count: value })}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onValueChange={(value) => setFps(Number(value))}
+                />
+              </div>
               <Button className="w-full" size="sm" disabled={locked} onClick={readSubtitles}>
                 {task?.kind === 'ocr' ? (
                   <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
@@ -338,7 +355,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 {hs?.cue_count ? t('dub_hardsub.read_again') : t('dub_hardsub.read')}
               </Button>
               {task?.kind === 'ocr' && (
-                <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_hardsub.read')} />
+                <Progress
+                  value={Math.round(task.progress * 100)}
+                  aria-label={t('dub_hardsub.read')}
+                />
               )}
               <p className="text-[11px] leading-4 text-muted-foreground">
                 {t('dub_hardsub.read_help')}
@@ -346,7 +366,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             </div>
 
             <div className="space-y-2 border-t border-border/50 pt-3">
-              <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1">
+              <div className={cn(segmentedFrameClass, 'grid grid-cols-3')}>
                 {(['sttn', 'lama', 'propainter'] as const).map((value) => (
                   <Button
                     key={value}
@@ -378,7 +398,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 {hs?.cleaned ? t('dub_hardsub.remove_again') : t('dub_hardsub.remove')}
               </Button>
               {task?.kind === 'clean' && (
-                <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_hardsub.remove')} />
+                <Progress
+                  value={Math.round(task.progress * 100)}
+                  aria-label={t('dub_hardsub.remove')}
+                />
               )}
               {!hs?.cue_count && (
                 <p className="text-[11px] leading-4 text-muted-foreground">

@@ -1,4 +1,3 @@
-.workspace-nav-item:is(:hover, :focus-visible, [aria-current='page'], [data-active='true'])
-  .workspace-nav-icon {
+.workspace-nav-item:is(:hover, :focus-visible, [data-lit='true']) .workspace-nav-icon {
   color: var(--sidebar-foreground);
 }

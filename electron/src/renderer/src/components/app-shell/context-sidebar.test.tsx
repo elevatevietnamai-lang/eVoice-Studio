@@ -1,9 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { beforeEach, expect, it, vi } from 'vitest';
 
 const route = vi.hoisted(() => ({ pathname: '/clone' }));
-const workspace = vi.hoisted(() => ({ panelCollapsed: true, libraryTab: 'voices' as const }));
-const setWorkspace = vi.hoisted(() => vi.fn());
+const workspace = vi.hoisted(() => ({ libraryTab: 'voices' as const }));
 
 vi.mock('@tanstack/react-router', () => ({
   useRouterState: ({ select }: any) => select({ location: route }),
@@ -11,7 +10,6 @@ vi.mock('@tanstack/react-router', () => ({
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 vi.mock('@/lib/store/workspace', () => ({
   useWorkspace: () => workspace,
-  setWorkspace,
   registerPanel: () => () => {},
 }));
 vi.mock('@/features/clone/voices-sidebar', () => ({
@@ -21,25 +19,14 @@ vi.mock('@/features/clone/voices-sidebar', () => ({
 import { ContextSidebar } from './context-sidebar';
 
 beforeEach(() => {
-  workspace.panelCollapsed = true;
-  workspace.libraryTab = 'voices';
-  setWorkspace.mockClear();
+  route.pathname = '/clone';
 });
 
-it('follows the shared panel state and reopens from its folded strip', () => {
+it('shows the voice library, always open, on the Voice routes only', () => {
   const view = render(<ContextSidebar />);
-  expect(document.querySelector('[data-slot="secondary-sidebar"]')).toHaveAttribute(
-    'data-collapsed',
-    'true',
-  );
-
-  fireEvent.click(screen.getByRole('button', { name: 'nav.voice' }));
-  expect(setWorkspace).toHaveBeenCalledWith({ panelCollapsed: false });
-
-  workspace.panelCollapsed = false;
-  view.rerender(<ContextSidebar />);
-  expect(document.querySelector('[data-slot="secondary-sidebar"]')).not.toHaveAttribute(
-    'data-collapsed',
-  );
   expect(screen.getByText('Voice library')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'nav.voice' })).toBeNull();
+  route.pathname = '/dub';
+  view.rerender(<ContextSidebar />);
+  expect(screen.queryByText('Voice library')).toBeNull();
 });

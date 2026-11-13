@@ -9,7 +9,7 @@ spark identifies creation. The product voice is clear, calm, and direct.
 |---|---|
 | Primary vector mark | `docs/logo.svg` |
 | README mark | `docs/logo.png` and `docs/logo-256.png` |
-| Browser icon | `electron/public/favicon.svg` |
+| Browser icon | `electron/public/favicon.svg` (eVoice app icon from `eVoice-brand/kit/svg/icon-dark.svg`), plus `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `maskable-512.png` and `site.webmanifest` from `eVoice-brand/kit/web` |
 | In-app mark | `frontend/src/components/brand/VoiceStudioMark.jsx` |
 | Desktop/platform icons | `electron/build/icons/` |
 | Electron sidebar and browser icon | `electron/public/favicon.svg` via `electron/src/renderer/src/lib/brand.ts` |

@@ -1,4 +1,5 @@
 import { SupportSettings } from './support-settings';
+import { Reveal } from '@/components/motion';
 import { UpdateSettings } from './update-settings';
 import { MirrorSettings } from './mirror-settings';
 import { StorageSettings } from './storage-settings';
@@ -73,7 +74,7 @@ import { SettingsContent, SettingsRow, SettingsSection } from './settings-layout
 import i18n, { APP_LANGUAGE_ITEMS, APP_LANGUAGES, setAppLanguage, type AppLocale } from '@/i18n';
 import { setReviewMode, useReviewMode } from '@/hooks/use-review-mode';
 import { rememberSettingsRoute } from '@/lib/settings-route';
-import { setWorkspace, useWorkspace } from '@/lib/store/workspace';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const sections = ['general', 'appearance'] as const;
 const fields = {
@@ -89,11 +90,10 @@ const fieldKey = (key: string) =>
       : `preferences.${key}`;
 
 const settingsNavItemClass =
-  'group h-9 min-w-0 rounded-md font-normal text-(--sidebar-muted-foreground) transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground aria-[current=page]:bg-(--sidebar-row-selected) aria-[current=page]:font-medium aria-[current=page]:text-sidebar-foreground';
+  'group h-9 min-w-0 rounded-lg font-normal text-(--sidebar-muted-foreground) transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground aria-[current=page]:bg-(--sidebar-row-selected) aria-[current=page]:font-medium aria-[current=page]:text-sidebar-foreground';
 const settingsNavIconClass =
   'size-4 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160 group-hover:text-sidebar-foreground group-aria-[current=page]:text-sidebar-foreground';
-const settingsNavActiveClass =
-  'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground';
+const settingsNavActiveClass = 'bg-(--sidebar-row-selected) font-medium text-sidebar-foreground';
 
 const extraSettings = [
   {
@@ -267,7 +267,6 @@ export function SettingsPage() {
   // The default Studio theme is flat; glass only applies to named palettes.
   const flatTheme = paletteId === 'default';
   const appearance = useAppearance();
-  const workspace = useWorkspace();
   const reviewMode = useReviewMode();
   const targetIds: Record<string, string> = {
     theme: 'theme-label',
@@ -303,7 +302,7 @@ export function SettingsPage() {
           </span>
         </header>
         <div className="studio-scrollbar flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain p-3 [scrollbar-gutter:stable]">
-          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar px-2.5 transition-[border-color,background-color,box-shadow] focus-within:border-primary/30 focus-within:bg-background focus-within:ring-2 focus-within:ring-ring/20">
+          <div className="sticky top-0 z-10 flex h-9 shrink-0 items-center gap-2 rounded-lg border border-sidebar-border/45 bg-sidebar px-2.5 transition-[border-color,background-color,box-shadow] focus-within:border-ring focus-within:bg-background focus-within:ring-[3px] focus-within:ring-ring/50">
             <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
             <Input
               type="search"
@@ -481,11 +480,13 @@ export function SettingsPage() {
               </span>
             </Link>
           </nav>
-          {matches.length === 0 && extraMatches.length === 0 && (
-            <p role="status" className="px-2 py-6 text-center text-xs text-muted-foreground">
-              {t('preferences.no_matches')}
-            </p>
-          )}
+          <Reveal>
+            {matches.length === 0 && extraMatches.length === 0 && (
+              <p role="status" className="px-2 py-6 text-center text-xs text-muted-foreground">
+                {t('preferences.no_matches')}
+              </p>
+            )}
+          </Reveal>
         </div>
         <div className="shrink-0 space-y-1.5 border-t border-sidebar-border/50 bg-background/15 p-3">
           <Link
@@ -628,17 +629,6 @@ export function SettingsPage() {
                       onCheckedChange={(glass) => appearance.update({ glass })}
                     />
                   </SettingsRow>
-                  <SettingsRow
-                    id="sidebar-expanded-label"
-                    title={t('preferences.sidebar_expanded')}
-                    description={t('preferences.sidebar_expanded_hint')}
-                  >
-                    <Switch
-                      aria-labelledby="sidebar-expanded-label"
-                      checked={!workspace.autoCollapseSidebar}
-                      onCheckedChange={(keep) => setWorkspace({ autoCollapseSidebar: !keep })}
-                    />
-                  </SettingsRow>
                   <PalettePicker appearance="light" />
                   <PalettePicker appearance="dark" />
                   <SettingsRow id="font-label" title={t('preferences.font')}>
@@ -708,7 +698,7 @@ export function SettingsPage() {
                     <div
                       role="group"
                       aria-label={t('settings.review_mode')}
-                      className="inline-flex rounded-lg border border-border/60 bg-muted/30 p-0.5"
+                      className={cn(segmentedFrameClass, 'inline-flex')}
                     >
                       {(['on', 'off'] as const).map((value) => (
                         <Button

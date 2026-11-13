@@ -9,6 +9,7 @@ import { useEngines } from '@/hooks/use-engines';
 import { effectiveSamplingSteps, samplingStepRange } from '@/lib/audio/quality';
 import { resetAudioQuality, setCloneSetting, useCloneSettings } from '@/lib/store/clone-settings';
 import { cn } from '@/lib/utils';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const precisions = [16, 24, 32] as const;
 
@@ -106,7 +107,7 @@ export function QualityControls({
             aria-describedby={`${id}-size`}
             aria-disabled={disabled || undefined}
             onKeyDown={onPresetKey}
-            className="grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1 ring-1 ring-border/50"
+            className={cn(segmentedFrameClass, 'grid grid-cols-3')}
           >
             {precisions.map((value, index) => {
               const selected = value === bits;
@@ -123,7 +124,7 @@ export function QualityControls({
                   disabled={disabled}
                   onClick={() => choose(index)}
                   className={cn(
-                    'relative flex min-w-0 flex-col items-start gap-0.5 rounded-md px-2.5 py-2 text-left outline-none transition-[background-color,box-shadow,color] duration-150 focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:opacity-60',
+                    'relative flex min-w-0 flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left outline-none transition-[background-color,box-shadow,color] duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-default disabled:opacity-60',
                     selected
                       ? 'bg-background text-foreground shadow-sm ring-1 ring-border'
                       : 'text-muted-foreground hover:bg-background/60 hover:text-foreground',
@@ -131,7 +132,9 @@ export function QualityControls({
                 >
                   <span className="flex w-full items-center justify-between gap-1 text-xs font-medium">
                     <span className="truncate">{t(`cloneQuality.preset${value}`)}</span>
-                    {selected && <CheckIcon aria-hidden="true" className="size-3 shrink-0 text-primary" />}
+                    {selected && (
+                      <CheckIcon aria-hidden="true" className="size-3 shrink-0 text-primary" />
+                    )}
                   </span>
                   <span className="truncate font-mono text-[10px] tabular-nums text-muted-foreground">
                     {t(`cloneQuality.bits${value}`)}
@@ -141,7 +144,10 @@ export function QualityControls({
             })}
           </div>
           <p className="mt-2 px-1 text-xs text-muted-foreground">{t(`cloneQuality.hint${bits}`)}</p>
-          <p id={`${id}-size`} className="mt-0.5 px-1 text-[11px] text-muted-foreground tabular-nums">
+          <p
+            id={`${id}-size`}
+            className="mt-0.5 px-1 text-[11px] text-muted-foreground tabular-nums"
+          >
             {estimatedSize
               ? t('cloneQuality.size', { size: estimatedSize })
               : t('cloneQuality.sizeUnknown')}

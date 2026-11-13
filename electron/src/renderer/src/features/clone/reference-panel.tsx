@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Reveal } from '@/components/motion';
 import { AgentFixButton } from '@/components/agent-fix-button';
 import type { useReferenceTranscript } from '@/hooks/use-reference-transcript';
 import { useReferenceAsrInstall } from '@/hooks/use-reference-asr-install';
@@ -217,17 +218,21 @@ function ReferenceAsrInstall({
         )}
         {t('referenceAsr.install', { label: model.label, size: model.size_gb })}
       </Button>
-      {install.installing && (
-        <div role="status" className="space-y-1">
-          <span>{t('referenceAsr.installing', { label: model.label })}</span>
-          <Progress value={install.progress} aria-label={t('modelMaintenance.downloading')} />
-        </div>
-      )}
-      {install.error && (
-        <p role="alert" className="text-destructive">
-          {t('asr_missing.install_failed', { message: install.error })}
-        </p>
-      )}
+      <Reveal>
+        {install.installing && (
+          <div role="status" className="space-y-1">
+            <span>{t('referenceAsr.installing', { label: model.label })}</span>
+            <Progress value={install.progress} aria-label={t('modelMaintenance.downloading')} />
+          </div>
+        )}
+      </Reveal>
+      <Reveal>
+        {install.error && (
+          <p role="alert" className="text-destructive">
+            {t('asr_missing.install_failed', { message: install.error })}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }
@@ -290,29 +295,31 @@ export function OptionalDetails({
                     : 'clone.transcript_hint',
               )}
             </p>
-            {transcription?.state === 'unavailable' && (
-              <div className="space-y-1 text-xs text-muted-foreground">
-                <p>{t('asr_missing.message')}</p>
-                {transcription.recommended && (
-                  <ReferenceAsrInstall
-                    model={transcription.recommended}
-                    onInstalled={transcription.retry}
-                  />
-                )}
-                <div className="flex flex-wrap items-center gap-2">
-                  <AgentFixButton request="Restore local reference-audio transcription. Install and activate the best compatible ASR model through VoiceStudio, preserve the uploaded reference and manual transcript, then verify automatic transcription is ready to retry." />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    nativeButton={false}
-                    render={<Link to="/settings/models/$family" params={{ family: 'asr' }} />}
-                  >
-                    <MicIcon />
-                    {t('engineSidebar.asr')} · {t('modelSettings.models')}
-                  </Button>
+            <Reveal>
+              {transcription?.state === 'unavailable' && (
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <p>{t('asr_missing.message')}</p>
+                  {transcription.recommended && (
+                    <ReferenceAsrInstall
+                      model={transcription.recommended}
+                      onInstalled={transcription.retry}
+                    />
+                  )}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <AgentFixButton request="Restore local reference-audio transcription. Install and activate the best compatible ASR model through VoiceStudio, preserve the uploaded reference and manual transcript, then verify automatic transcription is ready to retry." />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      nativeButton={false}
+                      render={<Link to="/settings/models/$family" params={{ family: 'asr' }} />}
+                    >
+                      <MicIcon />
+                      {t('engineSidebar.asr')} · {t('modelSettings.models')}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </Reveal>
             {(transcription?.state === 'failed' || transcription?.state === 'unavailable') && (
               <Button type="button" variant="ghost" size="sm" onClick={transcription.retry}>
                 {t('referenceAsr.retry')}
