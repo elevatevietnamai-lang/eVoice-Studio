@@ -205,6 +205,28 @@ def test_the_jq_expression_emits_status_and_filename_for_renames_too(tmp_path):
 
 # --- structure ----------------------------------------------------------------------
 
+# Runs even if `changes` failed; skips only when `changes` was skipped on purpose
+# (private forks without FULL_CI, see test_ci_skips_on_private_forks_unless_enabled).
+_GATED = "${{ !cancelled() && needs.changes.result != 'skipped' }}"
+
+
+def test_ci_skips_on_private_forks_unless_enabled():
+    jobs = WORKFLOW["jobs"]
+    for root in ("changes", "installer"):
+        condition = jobs[root]["if"]
+        for clause in ("github.repository == 'debpalash/VoiceStudio'", "vars.FULL_CI == 'true'",
+                       "github.event_name == 'workflow_dispatch'"):
+            assert clause in condition, (root, clause)
+    for name, job in jobs.items():
+        if name in ("changes", "installer"):
+            continue
+        needs = job["needs"] if isinstance(job["needs"], list) else [job["needs"]]
+        if "changes" in needs:
+            assert "needs.changes.result != 'skipped'" in job["if"], name
+        else:  # hangs off a gated job and has no !cancelled() override
+            assert "if" not in job and set(needs) <= {"test"}, name
+
+
 def test_the_electron_jobs_are_gated_on_the_detection_and_survive_its_failure():
     jobs = WORKFLOW["jobs"]
     for name in ("ui-crawler", "linux-native-package", "electron-ui", "test-electron"):
@@ -212,11 +234,11 @@ def test_the_electron_jobs_are_gated_on_the_detection_and_survive_its_failure():
         condition = jobs[name]["if"]
         assert "!cancelled()" in condition and "outputs.electron != 'false'" in condition, name
     # the merge gate always reports, even if detection broke
-    assert jobs["test-python"]["needs"] == "changes" and jobs["test-python"]["if"] == "${{ !cancelled() }}"
+    assert jobs["test-python"]["needs"] == "changes" and jobs["test-python"]["if"] == _GATED
     # `test` is the required check: it must wait for both halves and always report,
     # and may accept a skipped Electron half only when detection said "false".
     assert set(jobs["test"]["needs"]) == {"changes", "test-python", "test-electron"}
-    assert jobs["test"]["if"] == "${{ !cancelled() }}"
+    assert jobs["test"]["if"] == _GATED
     gate = "\n".join(str(s.get("run", "")) for s in jobs["test"]["steps"])
     assert '[ "$PYTHON" = success ]' in gate
     assert '"$ELECTRON" = skipped' in gate and '"$ELECTRON_NEEDED" = false' in gate
