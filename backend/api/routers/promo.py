@@ -390,3 +390,47 @@ async def promo_render(req: PromoRenderRequest) -> dict:
         "durations": [s.duration for s in plan.shots],
         "beat": period,
     }
+
+
+# ── Scene writer: an LLM drafts a custom HTML scene ───────────────────────────
+
+_LANGUAGE_RE = re.compile(r"^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})?$")
+
+
+class SceneWriterRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    description: str = Field(min_length=1, max_length=4000)
+    #: The provider the page showed; the request is refused if it changed.
+    provider_id: str = Field(min_length=1, max_length=64)
+    shape: Literal["overlay", "shot"] = "overlay"
+    language: str = Field(default="en", max_length=16)
+
+
+@router.get("/promo/scene-writer")
+async def promo_scene_writer() -> dict:
+    """Which LLM provider a scene description would be sent to, and whether it
+    is ready. Nothing is sent by this call."""
+    from services import promo_scene_writer
+
+    return await asyncio.to_thread(promo_scene_writer.describe)
+
+
+@router.post("/promo/scene-writer")
+async def promo_scene_write(req: SceneWriterRequest) -> dict:
+    """Draft a scene from a description with the provider the user confirmed.
+    Errors carry ``detail = "scene_writer:<code>"`` for a localized message."""
+    from services import promo_scene_writer
+
+    if not _LANGUAGE_RE.match(req.language):
+        raise HTTPException(status_code=422, detail="scene_writer:language")
+    try:
+        scene = await asyncio.to_thread(
+            promo_scene_writer.write_scene,
+            req.description, req.provider_id, req.shape, req.language,
+        )
+    except promo_scene_writer.WriterError as exc:
+        # The description and the reply stay out of the log.
+        logger.info("promo scene writer refused: %s", exc.code)
+        raise HTTPException(status_code=exc.status, detail=f"scene_writer:{exc.code}")
+    return {"scene": scene}

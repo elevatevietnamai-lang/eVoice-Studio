@@ -181,6 +181,32 @@ a PNG, JPEG or WebP image.
   which you turn on in the **Animated titles** section; this section never
   downloads it.
 
+### Writing a scene with AI
+
+**Write with AI** drafts a scene from a sentence or two you type, using the
+LLM provider you set up in **Settings → LLM Providers** (an online service
+with your own key, a local server such as Ollama or LM Studio, or a local CLI
+agent). There is no default provider and nothing new to download.
+
+- Before you can send anything, the panel names the provider your description
+  goes to and whether it runs on this computer. Without a ready provider, or
+  with the LLM set to Off (`OMNIVOICE_LLM_BACKEND=off` included), it says why
+  and offers no send button.
+- The request carries the provider it showed you. If the active provider
+  changed in between, the backend refuses (`409`) and the panel shows the new
+  one; it never falls back to another provider.
+- Only the description, the chosen shape (overlay or full-frame shot) and the
+  app's language are sent (`POST /promo/scene-writer`); the description and the
+  answer are not logged.
+- The answer is untrusted code. The backend keeps only a scene's fields
+  (at most 256 KB of code, 12 parameters, image parameters left empty for you
+  to pick), and it arrives as an unsaved draft that runs only in the sandboxed
+  preview below, with the same checks as an imported scene: a remote URL or
+  `@import` blocks the preview and the render. Nothing is saved or rendered
+  until you do it.
+- With a CLI agent, the app's existing agent runner is used: tools and file
+  access are turned off and it runs in a temporary folder.
+
 ### How scenes are kept offline and contained
 
 A scene, and above all an imported or AI-written one, is treated as untrusted:

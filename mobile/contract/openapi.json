@@ -3891,6 +3891,44 @@
     "title": "RevokeRequest",
     "type": "object"
    },
+   "SceneWriterRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "description": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+     },
+     "language": {
+      "default": "en",
+      "maxLength": 16,
+      "title": "Language",
+      "type": "string"
+     },
+     "provider_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+     },
+     "shape": {
+      "default": "overlay",
+      "enum": [
+       "overlay",
+       "shot"
+      ],
+      "title": "Shape",
+      "type": "string"
+     }
+    },
+    "required": [
+     "description",
+     "provider_id"
+    ],
+    "title": "SceneWriterRequest",
+    "type": "object"
+   },
    "SegmentPreviewRequest": {
     "properties": {
      "duration": {
@@ -18171,6 +18209,66 @@
      }
     },
     "summary": "Promo Render"
+   }
+  },
+  "/promo/scene-writer": {
+   "get": {
+    "description": "Which LLM provider a scene description would be sent to, and whether it\nis ready. Nothing is sent by this call.",
+    "operationId": "promo_scene_writer_promo_scene_writer_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Scene Writer Promo Scene Writer Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Promo Scene Writer"
+   },
+   "post": {
+    "description": "Draft a scene from a description with the provider the user confirmed.\nErrors carry ``detail = \"scene_writer:<code>\"`` for a localized message.",
+    "operationId": "promo_scene_write_promo_scene_writer_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SceneWriterRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Scene Write Promo Scene Writer Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Promo Scene Write"
    }
   },
   "/pronunciation": {

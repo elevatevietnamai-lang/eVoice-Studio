@@ -60,6 +60,7 @@ import {
 } from './promo-model';
 import { AnimatedOverlays } from './animated-overlays';
 import { SceneEditor } from './scene-editor';
+import { SceneWriter } from './scene-writer';
 import { sceneShapeMismatch } from './scene-model';
 import { useMissingMedia } from './missing-media';
 
@@ -809,6 +810,7 @@ export function PromoPage() {
             onAddShot={(shot) =>
               setDraft((current) => ({ ...current, shots: [...current.shots, shot] }))
             }
+            aiSlot={(load) => <SceneWriter disabled={busy} onScene={load} />}
           />
           <AnimatedOverlays
             draft={effective}
