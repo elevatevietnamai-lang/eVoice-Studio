@@ -54,8 +54,9 @@ export function WorkspaceSidebar() {
           trafficLights ? 'min-h-[72px] items-end pb-1' : 'h-12 items-center',
         )}
       >
-        {/* The app icon's own mark (kit mark-graphite / mark-white), no tile: dark on the light
-            rail, light on the dark one, 34 px: the brand reads larger than the 20 px menu icons while filling the same 40 px box. It goes Home. */}
+        {/* The app's mark in its brand colours, no tile. 26 px: the bars are tall (ink is 91% of
+            the box), so this sits about 24 px high, a step above the 20 px menu icons without
+            filling the 40 px button. It goes Home. */}
         <Link
           to="/"
           aria-label={appLabel}
@@ -65,7 +66,7 @@ export function WorkspaceSidebar() {
           // A brand mark, not a control surface: no hover or pressed fill, only the focus ring.
           className="grid size-10 shrink-0 place-items-center rounded-lg text-sidebar-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
-          <EVoiceMark size={34} cut="full" className="size-[34px] shrink-0" />
+          <EVoiceMark size={26} cut="full" className="size-[26px] shrink-0" />
         </Link>
       </div>
       <WorkspaceNavigation />
