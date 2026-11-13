@@ -1,52 +1,65 @@
 # VoiceStudio brand
 
-VoiceStudio uses a waveform-and-spark mark. The waveform identifies audio; the
-spark identifies creation. The product voice is clear, calm, and direct.
+The app ships as **eVoice Studio**. Its mark is four rounded voice bars in an
+orange-to-pink gradient, with a four-point star cut between the second and third
+bar and a smaller orange star above the last one. The bars identify audio; the
+stars identify creation. The product voice is clear, calm, and direct.
 
 ## Assets
 
 | Surface | Source |
 |---|---|
-| Primary vector mark | `docs/logo.svg` |
+| Primary vector icon (dark tile) | `docs/logo.svg` |
+| Small cut for 32 px and below | `docs/logo-small.svg` |
 | README mark | `docs/logo.png` and `docs/logo-256.png` |
-| Browser icon | `electron/public/favicon.svg` (eVoice app icon from `eVoice-brand/kit/svg/icon-dark.svg`), plus `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `maskable-512.png` and `site.webmanifest` from `eVoice-brand/kit/web` |
-| In-app mark | `frontend/src/components/brand/VoiceStudioMark.jsx` |
+| Browser icon | `electron/public/favicon.svg` (a copy of `docs/logo-small.svg`), plus `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `maskable-512.png` and `site.webmanifest` |
+| In-app mark (Electron) | `EVoiceMark` in `electron/src/renderer/src/components/brand/evoice-mark.tsx` (brand colours, or `tone="mono"` for `currentColor`) |
+| In-app mark (shared legacy chrome) | `electron/src/shared/components/brand/VoiceStudioMark.jsx` (one colour) |
 | Desktop/platform icons | `electron/build/icons/` |
-| Electron sidebar and browser icon | `electron/public/favicon.svg` via `electron/src/renderer/src/lib/brand.ts` |
+| iOS App Store icon | `mobile/ios/VoiceStudio/AppIcon.svg` → `Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png` |
+| Integration directory tile | `electron/src/shared/assets/integrations/voicestudio.svg` |
 | Sidebar/launchpad artwork | `electron/public/signal-field.webp` |
 
-Regenerate every desktop icon from the canonical vector after changing the
+Regenerate every desktop icon from the canonical vectors after changing the
 mark:
 
 ```sh
 uv run scripts/render_brand_icons.py
 ```
 
-It renders `docs/logo.svg` to the README PNGs and every PNG, ICO and ICNS under
-`electron/build/icons/` (the ICNS only on macOS, which has `iconutil`). Then run
-the Electron packaging contract. Keep `fill="none"` on the waveform path in every
-SVG copy of the mark; without it the curve fills black.
+It renders `docs/logo.svg` to the README PNGs, `icon.png` and the larger ICO
+frames under `electron/build/icons/`, and `docs/logo-small.svg` to `32x32.png`,
+the tray icons and the ICO frames of 32 px and below. The macOS ICNS places the
+tile on Apple's 824 px grid inside a 1024 px canvas; it is written with
+`iconutil` on macOS and with Pillow elsewhere. Then run the Electron packaging
+contract.
 
-Android generates its vectors from the same SVG with
-`mobile/android/scripts/generate_brand_resources.py`. SVG paint `none` becomes
-transparent Android color before applying the monochrome treatment, so the
-waveform stays unfilled in both standard and themed icons.
+`docs/logo.svg` must stay plain: a tile `<rect>`, then exactly two top-level
+`<path>` elements (the bars with the star already subtracted, filled with the
+`bars` gradient, and the orange star), with no `<mask>`, `<g>` or `transform`.
+Android generates its vectors from it with
+`mobile/android/scripts/generate_brand_resources.py`, which copies only those
+paths (VectorDrawable has no masks) and places the mark 56 dp tall on the 108 dp
+adaptive canvas, inside the 66 dp safe circle; the themed icon paints both paths
+white. `tests/test_voicestudio_branding.py` checks these rules.
 
-Do not redraw the waveform per screen. Use `VoiceStudioMark` in React and the
-canonical SVG elsewhere so the silhouette stays recognizable at 16–512 px.
+Do not redraw the mark per screen. Use `EVoiceMark` (or `VoiceStudioMark` in
+shared code) in React and the canonical SVGs elsewhere, so the silhouette stays
+recognizable at 16–512 px. At 20 px and below `EVoiceMark` drops the cut-out
+star, which would otherwise blur into a few pixels.
 
 ## Palette
 
 | Role | Color |
 |---|---|
-| Voice rose | `#F47FA3` |
-| Soft highlight | `#FFD0DB` |
-| Creative amber | `#F7AE73` |
-| Spark | `#FFE5B5` |
-| Plum tile | `#211B2B` → `#120F18` |
+| Bars, top | `#F8981D` |
+| Bars, bottom | `#FF32A3` |
+| Star | `#F88537` |
+| Tile and text on light | `#030305` |
+| Text on dark | `#F6F6F6` |
 
-The mark may render in one color inside app chrome. Keep the waveform and spark
-together; do not put text inside the icon or add another enclosing ring.
+The mark may render in one color inside app chrome. Keep the bars and both
+stars together; do not put text inside the icon or add another enclosing ring.
 
 ## Name and copy
 

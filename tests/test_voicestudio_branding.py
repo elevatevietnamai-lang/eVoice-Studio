@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -50,54 +49,73 @@ def test_visible_brand_surfaces_say_voicestudio() -> None:
     assert "**OmniVoice** (default)" not in readme
 
 
+# The flattened eVoice mark: four bars with the star knocked out, then the orange star.
+BARS_START = "M23.744 16.758C23.744 14.821"
+MARK_BARS = "M101.5 44C101.5 27.984"
+MARK_SPARK = "M273.5 42.5Q282.5 69.5 309.5 78.5"
+
+
+def _paths(svg: str) -> list[str]:
+    return re.findall(r'<path d="([^"]+)"', svg)
+
+
 def test_brand_mark_is_shared_and_fills_the_icon() -> None:
-    mark = (ROOT / "electron/src/shared/components/brand/VoiceStudioMark.jsx").read_text()
+    mark = (ROOT / "electron/src/shared/components/brand/VoiceStudioMark.jsx").read_text(encoding="utf-8")
+    renderer_mark = (ROOT / "electron/src/renderer/src/components/brand/evoice-mark.tsx").read_text(encoding="utf-8")
     header = (ROOT / "electron/src/shared/components/Header.jsx").read_text()
     about = (ROOT / "electron/src/shared/components/settings/AboutTab.jsx").read_text()
-    logo = (ROOT / "docs/logo.svg").read_text()
-    favicon = (ROOT / "electron/public/favicon.svg").read_text()
+    logo = (ROOT / "docs/logo.svg").read_text(encoding="utf-8")
+    favicon = (ROOT / "electron/public/favicon.svg").read_text(encoding="utf-8")
 
-    signature = "M6 34c4 0 5-7 9-7"
-    assert signature in mark
-    assert signature in logo
-    # The browser icon is the eVoice app icon from the brand kit: dark tile, full-cut mark.
-    assert "M70 174 C77.9 174 84.1 150 92 150" in favicon
-    assert 'rx="58" fill="#030305"' in favicon
+    for source in (mark, renderer_mark):
+        assert MARK_BARS in source and MARK_SPARK in source
+    assert _paths(logo)[0].startswith(BARS_START)
+    # The browser icon is the small cut of the app icon: same mark, tighter tile.
+    assert favicon == (ROOT / "docs/logo-small.svg").read_text(encoding="utf-8")
+    assert 'fill="#030305"' in favicon
     assert "<VoiceStudioMark" in header
     assert "<VoiceStudioMark" in about
     assert 'data-testid="voice-studio-logo"' in header
 
-    # The previous icon devoted most of its canvas to an empty ring. The new
-    # mark uses the full tile and keeps only a narrow 2-unit outer margin.
-    assert 'x="2" y="2" width="60" height="60"' in logo
-    assert "<circle" not in logo
+    # Dark full-bleed tile with the orange-to-pink bars and the orange star.
+    assert '<rect width="64" height="64" rx="14.5" fill="#030305"/>' in logo
+    for color in ("#F8981D", "#FF32A3", "#F88537"):
+        assert color in logo
     assert 'src="docs/logo.png"' in (ROOT / "README.md").read_text()
 
 
-def test_waveform_stroke_is_never_filled() -> None:
-    # An SVG path fills black unless told otherwise; without fill="none" the
-    # waveform's closed curves painted a black band across every icon.
-    signature = "M6 34c4 0 5-7 9-7"
-    tracked = subprocess.run(["git", "ls-files", "*.svg"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
-    svgs = [ROOT / name for name in tracked if signature in (ROOT / name).read_text()]
-    assert len(svgs) >= 3
-    for svg in svgs:
-        stroke = re.search(rf'<path d="{re.escape(signature)}[^>]*>', svg.read_text())
-        assert stroke and 'fill="none"' in stroke.group(0), svg
+@pytest.mark.parametrize("name", ("docs/logo.svg", "docs/logo-small.svg"))
+def test_canonical_logo_is_plain_paths_every_pipeline_can_read(name: str) -> None:
+    # Android's generator copies only top-level <path>s with their own fill, and
+    # VectorDrawable has no masks or inherited transforms: the star cut must be
+    # baked into the bars path, not drawn with a mask.
+    logo = (ROOT / name).read_text(encoding="utf-8")
+    for unsupported in ("<mask", "mask=", "<g", "transform=", "<use", "clip-path"):
+        assert unsupported not in logo, unsupported
+    paths = _paths(logo)
+    assert len(paths) == 2
+    assert 'fill="url(#bars)"' in re.search(r'<path d="[^"]+"[^>]*>', logo).group(0)
 
 
-def test_raster_icons_have_no_black_band() -> None:
+def test_raster_icons_show_the_bars_and_the_cut_out_star() -> None:
     from PIL import Image
 
-    # Regenerated from docs/logo.svg by scripts/render_brand_icons.py.
+    # Regenerated from docs/logo.svg (and docs/logo-small.svg at 32 px) by scripts/render_brand_icons.py.
+    tile = (3, 3, 5)
     for name in ("docs/logo.png", "docs/logo-256.png", "electron/build/icons/icon.png", "electron/build/icons/32x32.png"):
-        icon = Image.open(ROOT / name).convert("RGBA")
+        icon = Image.open(ROOT / name).convert("RGB")
         width, height = icon.size
-        assert icon.getpixel((width // 2, int(height * 0.53)))[:3] != (0, 0, 0), name
+        # On the tall second bar: brand gradient, not the tile.
+        r, g, b = icon.getpixel((int(width * 26 / 64), int(height * 20 / 64)))
+        assert r > 200 and b < 200, name
+        if width >= 256:
+            # Inside the star knocked out of the second bar: the tile shows through.
+            pixel = icon.getpixel((int(width * 30 / 64), int(height * 32.24 / 64)))
+            assert max(abs(a - b) for a, b in zip(pixel, tile)) < 24, name
 
 
 @pytest.mark.parametrize("name", ("vs_logo", "vs_launcher_foreground", "vs_launcher_monochrome"))
-def test_android_vectors_keep_unpainted_waveform_transparent(tmp_path: Path, name: str) -> None:
+def test_android_vectors_copy_the_canonical_paths(tmp_path: Path, name: str) -> None:
     import runpy
     import xml.etree.ElementTree as ET
 
@@ -105,12 +123,19 @@ def test_android_vectors_keep_unpainted_waveform_transparent(tmp_path: Path, nam
     generator["generate"](ROOT, tmp_path)
     android = "{http://schemas.android.com/apk/res/android}"
     vector = ET.parse(tmp_path / f"drawable/{name}.xml").getroot()
-    waveform = next(p for p in vector.iter("path") if p.get(android + "pathData", "").startswith("M6 34c4 0 5-7 9-7"))
-    # SVG's `none` is not an Android color; monochrome must preserve unpainted areas too.
-    assert waveform.get(android + "fillColor") in (None, "#00000000", "@android:color/transparent")
-    assert waveform.get(android + "strokeColor") or any(
-        attr.get("name") == "android:strokeColor" for attr in waveform
-    )
+    paths = list(vector.iter("path"))
+    assert [p.get(android + "pathData") for p in paths] == _paths((ROOT / "docs/logo.svg").read_text(encoding="utf-8"))
+    bars, spark = paths
+    if name == "vs_launcher_monochrome":
+        assert bars.get(android + "fillColor") == spark.get(android + "fillColor") == "#FFFFFFFF"
+    else:
+        gradient = bars.find(".//gradient")
+        assert [item.get(android + "color") for item in gradient] == ["#F8981D", "#FF32A3"]
+        assert spark.get(android + "fillColor") == "#F88537"
+    if name != "vs_logo":
+        # 56 dp mark centred on the 108 dp canvas, inside the 66 dp safe circle.
+        group = vector.find("group")
+        assert abs(float(group.get(android + "scaleX")) * 37.5 - 56) < 0.01
 
 
 @pytest.mark.parametrize("event", ("push", "pull_request"))
