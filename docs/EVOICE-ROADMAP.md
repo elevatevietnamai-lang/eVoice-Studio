@@ -44,6 +44,7 @@ specific to eVoice.
 | Animated word-level captions on burned subtitles (ffmpeg + ASS) | 🟡 | Branch `feat/caption-fx-audiogram` |
 | Audiogram video for audiobooks and podcasts | 🔒 | Waiting on the chosen visual format |
 | Programmatic video templates (Remotion, Motion Canvas, Revideo) | ⏳ | Not adopted: licence and local-first conflicts; revisit only for a confirmed template need |
+| Paid tier: VoiceStudio Pro page (Settings → Support, `/pro`) | ⏸ | Kept as is by the owner (2026-11-13). It is the upstream author's paid plan, sold at `voicestudio.sh/pro`; in eVoice builds it cannot be activated and gates no feature. Decide later: hide it, or replace it with an eVoice plan |
 | Vietnamese copy review across the app | ⏳ | Locale `vi` written by translation; needs a native pass |
 
 ## How to update this file
