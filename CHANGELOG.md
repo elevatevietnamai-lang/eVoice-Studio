@@ -15,6 +15,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- Installing the music engine no longer stops at the model download, and its progress shows the step and how many GB are downloaded instead of sitting at one percentage
 - eVoice Studio builds no longer check for updates or offer upstream VoiceStudio releases; Settings → Updates says checks are off until eVoice has its own release feed
 - The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)
 - New eVoice Studio logo on the app icon, installers, browser tab, tray, and the iOS and Android launchers: four voice bars in an orange-to-pink gradient with a star
@@ -49,7 +50,6 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
-- Installing the music engine no longer stops at the model download, and its progress shows the step and how many GB are downloaded instead of sitting at one percentage
 - Promo video: a saved draft whose files are gone marks them as missing and blocks Render, with one button to remove them, instead of a black preview and a failed render (#12)
 - First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)
 - iPhone Settings → About and licence receipts show the full app version (`0.5.7-beta.2`), like Android, instead of only `0.5.7` (#3273)
