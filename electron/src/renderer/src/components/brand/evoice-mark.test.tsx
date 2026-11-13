@@ -1,7 +1,6 @@
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
+import logo from '../../../../../../docs/logo.svg?raw';
 import { BARS, COLORS, EVoiceMark, SPARK } from './evoice-mark';
 
 afterEach(cleanup);
@@ -51,7 +50,6 @@ it('follows the theme in mono tone', () => {
 
 it('matches the canonical docs/logo.svg geometry', () => {
   // docs/logo.svg holds the same paths placed on a 64-unit tile; compare the shape, not the scale.
-  const logo = readFileSync(resolve(__dirname, '../../../../../../docs/logo.svg'), 'utf8');
   const commands = (d: string) => d.replace(/[^A-Za-z]/g, '');
   const paths = [...logo.matchAll(/<path d="([^"]+)"/g)].map((match) => match[1]);
   expect(paths.map(commands)).toEqual([commands(BARS.full), commands(SPARK)]);
