@@ -52,4 +52,29 @@ describe('built-in scenes', () => {
     // Every {{key}} was replaced: none of the scene's own keys is left over.
     expect(page).not.toMatch(/\{\{\s*[a-z]/);
   });
+
+  it.each(BUILTIN_SCENES)('%s has unique keys and moves with CSS only', (id) => {
+    const scene = parseScene(builtinScene(id, t));
+    const keys = scene.params.map((param) => param.key);
+    expect(new Set(keys).size).toBe(keys.length);
+    // The render seeks CSS animations exactly, so nothing can stutter. The
+    // starter only carries a commented-out example of scene.onFrame.
+    if (id !== 'starter') expect(scene.js).toBe('');
+  });
+
+  it.each(['lower_third', 'countdown', 'price', 'ticker', 'cta'])(
+    '%s overlay fades out over its last .4 s',
+    (id) => {
+      const scene = parseScene(builtinScene(id, t));
+      expect(scene.css).toContain('leave .4s calc({{duration}}s - .4s) ease-in forwards');
+      expect(scene.html).toMatch(/class="[^"]*\bout\b|class="(price|ticker)"/);
+    },
+  );
+
+  it('counts down over the whole scene, one digit per fifth', () => {
+    const scene = parseScene(builtinScene('countdown', t));
+    expect(scene.html.match(/<span>\d<\/span>/g)).toHaveLength(5);
+    expect(scene.css).toContain('count {{duration}}s steps(5, jump-none)');
+    expect(scene.css).toContain('translateY(-80%)');
+  });
 });

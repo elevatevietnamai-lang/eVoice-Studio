@@ -37,6 +37,7 @@ metadata and the backend fallback mirror it.
 - Promo video: the logo watermark can also sit in the middle of the top or bottom edge (#11)
 - Promo video in the desktop app: custom HTML scenes with a sandboxed live preview, text, colour and image fields, saving and `.html`/`.zip` import and export, used as an overlay or a full-frame shot (intro, outro and text slide built in); scenes run with no network or file access (#11)
 - Promo video: **Write with AI** drafts a scene from your description with the LLM provider you set up in Settings, named before anything is sent; the result opens as an unsaved draft in the sandboxed preview (#11)
+- Promo video: built-in scene overlays for a lower third, a 5-to-1 countdown, a price and offer tag, a scrolling ticker and a call to action, all editable (#11)
 - Promo video timeline: drag to trim, reorder, split and move titles over a beat grid and music waveform, with a live preview, undo and redo; with Cut on the beat it shows the cuts exactly as they render (#11)
 - The phone apps have a Report action on every generated result: pick a reason, add an optional note, and it reaches the VoiceStudio team only when you tap Send (#3268, #3276, #3281)
 - The phone apps run speech, dictation, voice cloning and dubbing on the phone itself, offline once you download the models; pairing a computer is optional ([guide](docs/mobile.md)) (#2969)

@@ -152,11 +152,17 @@ Built-in scenes open in your language and are edited as a copy:
 | Scene | Shows | Use |
 |---|---|---|
 | Simple title | A title and a second line rising in | Overlay |
+| Lower third | A name plate with a role under it, wiped in beside an accent bar | Overlay |
+| Countdown | A caption and the digits 5 to 1, one per fifth of the scene, over a bar that drains | Overlay |
+| Price and offer | A product name, the old price struck through, the new price and a badge | Overlay |
+| Ticker | A band at the bottom with a tag and text that scrolls in a seamless loop | Overlay |
+| Call to action | A pulsing button with an arrow and a line under it | Overlay |
 | Intro | The logo, a brand name, an accent bar and a tagline on a painted background, fading out at the end | Shot |
 | Outro | The logo, a call to action and a contact pill, with a bar that fills over the scene | Shot |
 | Text slide | A heading and up to three points appearing one by one (empty points are hidden) | Shot |
 
-The full-frame scenes take the brand logo from the **Logo** section when it is
+Overlays fade out over their last 0.4 s; empty text fields are hidden. The
+full-frame scenes take the brand logo from the **Logo** section when it is
 a PNG, JPEG or WebP image.
 
 - **Parameters** are the scene's fields: text, a colour or an image (the brand
