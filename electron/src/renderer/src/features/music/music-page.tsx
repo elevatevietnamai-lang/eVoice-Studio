@@ -20,6 +20,8 @@ import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
 import { gpuBusyMessage } from '@/lib/api/failure';
@@ -44,9 +46,6 @@ const STYLE_PRESETS = [
   'energetic electronic, punchy drums, 128 bpm',
   'acoustic guitar, cozy, 95 bpm',
 ];
-
-const fieldClass =
-  'h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50';
 
 export function MusicPage() {
   const { t } = useTranslation();
@@ -191,7 +190,7 @@ export function MusicPage() {
               <p className="text-xs leading-5 text-muted-foreground">
                 {t('musicStudio.engine_help')}
               </p>
-              <Button className="w-full" size="sm" disabled={busy} onClick={install}>
+              <Button className="w-full" disabled={busy} onClick={install}>
                 {task?.kind === 'install' ? (
                   <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
                 ) : (
@@ -272,8 +271,7 @@ export function MusicPage() {
           </div>
           <label className="block space-y-1.5 text-xs">
             <span className="font-medium">{t('musicStudio.bpm')}</span>
-            <input
-              className={fieldClass}
+            <Input
               inputMode="numeric"
               value={bpm}
               disabled={busy}
@@ -284,7 +282,7 @@ export function MusicPage() {
 
           <Button
             className="w-full"
-            size="sm"
+            size="lg"
             disabled={busy || !installed || !prompt.trim()}
             onClick={generate}
           >
@@ -358,7 +356,11 @@ export function MusicPage() {
                 {tracks.map((track) => (
                   <li
                     key={track.id}
-                    className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2"
+                    // The chosen track is lit flat, like every selected row (DESIGN.md).
+                    className={cn(
+                      'flex items-center gap-2 rounded-lg border border-border/60 px-2.5 py-2 transition-colors',
+                      selected?.id === track.id ? 'bg-accent' : 'bg-background/35 hover:bg-accent/50',
+                    )}
                   >
                     <button
                       type="button"
