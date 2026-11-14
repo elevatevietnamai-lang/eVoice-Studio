@@ -99,6 +99,38 @@ MAX_BATCH = 4
 MIN_STEPS, MAX_STEPS, DEFAULT_STEPS = 4, 20, 8
 INFER_METHODS = ("ode", "sde")
 AUDIO_FORMATS = ("wav", "flac", "mp3")
+# ── DiT models. Turbo ships with the main download and runs 8 steps with no guidance. SFT and
+# base are optional pinned downloads (MIT, checked 2026-11-14) that trade speed for detail and
+# honour guidance (CFG), shift, ADG and the CFG interval, which turbo ignores. One table drives
+# the backend's validation and, mirrored in music-options.ts, which controls the UI shows.
+DIT_TURBO = "acestep-v15-turbo"
+DIT_MODELS = {
+    "turbo": {"name": DIT_TURBO, "repo": None, "revision": None, "bytes": 0,
+              "steps": (4, 20, 8), "guidance": False},
+    "sft": {"name": "acestep-v15-sft", "repo": "ACE-Step/acestep-v15-sft",
+            "revision": "c410d249e71ea9385a7b586865e65b1473e1098d", "bytes": 4_791_792_772,
+            "steps": (8, 64, 32), "guidance": True},
+    "base": {"name": "acestep-v15-base", "repo": "ACE-Step/acestep-v15-base",
+             "revision": "e432212fec32b8965a14ffa57ae653438d6abd14", "bytes": 4_791_792_407,
+             "steps": (8, 64, 32), "guidance": True},
+}
+GUIDANCE_RANGE = (1.0, 15.0, 7.0)
+SHIFT_RANGE = (1.0, 5.0, 3.0)
+DIT_DOWNLOAD_CODE = (
+    "import sys;from pathlib import Path;from huggingface_hub import snapshot_download;"
+    "d=Path(sys.argv[1]);d.mkdir(parents=True,exist_ok=True);"
+    "snapshot_download(repo_id=sys.argv[2],revision=sys.argv[3],local_dir=str(d));"
+    "print('Music model ready at '+str(d))"
+)
+
+
+def dit_on_disk(model: str) -> bool:
+    if model == "turbo":
+        return True
+    folder = checkpoints_dir() / DIT_MODELS[model]["name"]
+    return folder.is_dir() and (folder / "model.safetensors").is_file()
+
+
 # Edits of existing audio: a cover re-renders a song in a new style; a repaint regenerates one
 # region and keeps the rest. Sources can be longer than a new track (ACE-Step allows 600 s).
 TASK_TYPES = ("text2music", "cover", "repaint")
@@ -188,6 +220,13 @@ class MusicRequest:
     repaint_end: Optional[float] = None
     repaint_mode: str = "balanced"
     repaint_strength: float = 0.5
+    # DiT model and the options only SFT/base honour.
+    model: str = "turbo"
+    guidance_scale: float = GUIDANCE_RANGE[2]
+    shift: float = SHIFT_RANGE[2]
+    use_adg: bool = False
+    cfg_interval_start: float = 0.0
+    cfg_interval_end: float = 1.0
 
     def seconds(self) -> int:
         if self.task_type != "text2music" and self.src_seconds:
@@ -632,6 +671,11 @@ def _task_state(value: object) -> str:
     return "running"
 
 
+def _steps(req: MusicRequest) -> int:
+    low, high, default = (DIT_MODELS.get(req.model) or DIT_MODELS["turbo"])["steps"]
+    return max(low, min(high, int(req.inference_steps or default)))
+
+
 def build_payload(req: MusicRequest) -> dict:
     payload: dict = {
         "prompt": req.prompt.strip() or "calm cinematic background music",
@@ -640,7 +684,7 @@ def build_payload(req: MusicRequest) -> dict:
         "vocal_language": req.vocal_language or "en",
         "audio_format": req.audio_format if req.audio_format in AUDIO_FORMATS else "wav",
         "batch_size": max(1, min(MAX_BATCH, int(req.batch_size or 1))),
-        "inference_steps": max(MIN_STEPS, min(MAX_STEPS, int(req.inference_steps or DEFAULT_STEPS))),
+        "inference_steps": _steps(req),
         # These default to true on the server and would invoke the language model. Thinking turns
         # on code generation only; the caption and language stay exactly what the user wrote.
         "thinking": False,
@@ -657,6 +701,14 @@ def build_payload(req: MusicRequest) -> dict:
         payload["key_scale"] = req.key_scale
     if req.time_signature in TIME_SIGNATURES:
         payload["time_signature"] = req.time_signature
+    spec = DIT_MODELS.get(req.model) or DIT_MODELS["turbo"]
+    if spec["guidance"]:
+        start = max(0.0, min(1.0, float(req.cfg_interval_start)))
+        payload["guidance_scale"] = round(max(GUIDANCE_RANGE[0], min(GUIDANCE_RANGE[1], float(req.guidance_scale))), 2)
+        payload["shift"] = round(max(SHIFT_RANGE[0], min(SHIFT_RANGE[1], float(req.shift))), 2)
+        payload["use_adg"] = bool(req.use_adg)
+        payload["cfg_interval_start"] = round(start, 3)
+        payload["cfg_interval_end"] = round(max(start, min(1.0, float(req.cfg_interval_end))), 3)
     if req.task_type in ("cover", "repaint"):
         payload["task_type"] = req.task_type
     if req.task_type == "cover":
@@ -688,6 +740,8 @@ class _Server:
     busy: int = 0
     # The LM this server loaded at startup, or None for a DiT-only server.
     llm: Optional[str] = None
+    # The DiT it loaded ("turbo", "sft" or "base").
+    dit: str = "turbo"
     reaper: Optional[asyncio.Task] = None
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -776,6 +830,37 @@ class AceStepEngine:
                     raise RuntimeError("The language model download finished without its weights.")
             yield {"type": "done", "installed": True}
 
+    # ── optional DiT models (SFT, base)
+    def models_status(self) -> list[dict]:
+        return [{"id": key, "installed": dit_on_disk(key) if is_installed() else key == "turbo",
+                 "download_bytes": 0 if key == "turbo" or dit_on_disk(key) else spec["bytes"]}
+                for key, spec in DIT_MODELS.items()]
+
+    async def install_model(self, model: str) -> AsyncIterator[dict]:
+        """Download the pinned SFT or base DiT into the engine's checkpoints."""
+        from services.hardsub import _run_logged
+
+        spec = DIT_MODELS.get(model)
+        if not spec or not spec["repo"]:
+            raise ValueError("Unknown music model.")
+        async with self._install_lock:
+            if not is_installed():
+                raise RuntimeError("Install the music engine first.")
+            if not dit_on_disk(model):
+                target = checkpoints_dir() / spec["name"]
+                yield {"type": "progress", "progress": 0.0, "stage": "model", "bytes": 0,
+                       "total": spec["bytes"], "message": f"Downloading {spec['name']}"}
+                cmd = [str(venv_python()), "-u", "-c", DIT_DOWNLOAD_CODE, str(target),
+                       spec["repo"], spec["revision"]]
+                env = _clean_env({"HF_HUB_DISABLE_PROGRESS_BARS": "1"})
+                async for event in _watched(_run_logged(cmd, env, _NO_LINE_TIMEOUT, cwd=str(source_dir())),
+                                            lambda: _dir_bytes(target), stage="model",
+                                            start=0.0, end=0.99, total=spec["bytes"]):
+                    yield event
+                if not dit_on_disk(model):
+                    raise RuntimeError("The music model download finished without its weights.")
+            yield {"type": "done", "installed": True}
+
     # ── install
     async def install(self) -> AsyncIterator[dict]:
         from services.hardsub import _run_logged
@@ -846,15 +931,19 @@ class AceStepEngine:
             yield {"type": "done", "installed": True}
 
     # ── lifecycle
-    async def _ensure_running(self, llm: Optional[str] = None) -> tuple[str, str]:
+    async def _ensure_running(self, llm: Optional[str] = None, dit: str = "turbo") -> tuple[str, str]:
         srv = self._server
         async with srv.lock:
             if not is_installed():
                 raise RuntimeError("The music engine is not installed yet.")
-            if self._alive() and srv.llm != llm:
+            if dit not in DIT_MODELS:
+                raise ValueError("Unknown music model.")
+            if not dit_on_disk(dit):
+                raise MusicLmUnavailable(f"The {dit.upper()} music model is not downloaded yet.", "music_model_missing")
+            if self._alive() and (srv.llm != llm or srv.dit != dit):
                 if srv.busy:
                     raise MusicModeBusy("Another track is still generating. Try again when it finishes.")
-                logger.info("restarting ACE-Step %s the language model", "with" if llm else "without")
+                logger.info("restarting ACE-Step with %s, %s the language model", dit, "with" if llm else "without")
                 await asyncio.to_thread(self._kill_now)
             if not self._alive():
                 from core.contained_subprocess import spawn_owned
@@ -863,6 +952,15 @@ class AceStepEngine:
                          "ACESTEP_API_KEY": srv.key, "ACESTEP_INIT_LLM": "false",
                          "ACESTEP_LM_BACKEND": "pt",
                          "ACESTEP_TMPDIR": str(engine_dir() / "tmp")}
+                if dit != "turbo":
+                    extra["ACESTEP_CONFIG_PATH"] = DIT_MODELS[dit]["name"]
+                if llm or dit != "turbo":
+                    # Only pinned models already on disk may load: no fallback download.
+                    dead = "http://127.0.0.1:9"
+                    extra.update({"ACESTEP_DOWNLOAD_SOURCE": "huggingface", "HF_HUB_OFFLINE": "1",
+                                  "HTTP_PROXY": dead, "HTTPS_PROXY": dead, "ALL_PROXY": dead,
+                                  "http_proxy": dead, "https_proxy": dead, "all_proxy": dead,
+                                  "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"})
                 if llm:
                     # `llm` is on disk and is the model ACE-Step's own tiering (total GPU memory,
                     # fixed per machine) loads, so startup needs no download. Its fallback would
@@ -878,6 +976,7 @@ class AceStepEngine:
                                   "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"})
                 env = _clean_env(extra)
                 srv.llm = llm
+                srv.dit = dit
                 logger.info("starting ACE-Step on 127.0.0.1:%s", srv.port)
                 log_file = open(engine_dir() / "server.log", "wb")
                 try:
@@ -955,7 +1054,7 @@ class AceStepEngine:
     async def format_input(self, request: MusicRequest) -> dict:
         """Ask the language model to format *request*; nothing is applied until the user does."""
         llm = await self._lm_for_request()
-        base, key = await self._ensure_running(llm)
+        base, key = await self._ensure_running(llm, request.model if request.model in DIT_MODELS else "turbo")
         srv = self._server
         srv.busy += 1
         try:
@@ -999,7 +1098,7 @@ class AceStepEngine:
             raise ValueError("No output path for the generated music.")
         llm = await self._lm_for_request() if request.thinking else None
         yield {"type": "progress", "progress": 0.0, "message": "Starting the music engine"}
-        base, key = await self._ensure_running(llm)
+        base, key = await self._ensure_running(llm, request.model if request.model in DIT_MODELS else "turbo")
         srv = self._server
         srv.busy += 1
         finished = False

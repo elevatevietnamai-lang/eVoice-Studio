@@ -8,6 +8,8 @@
 * ``POST   /music/generate``              — generate 1-4 variants and save them to the library (SSE)
 * ``POST   /music/format``                — the language model tidies caption and lyrics, suggests metadata
 * ``POST   /music/upload``                — store a source or reference audio file; returns its id
+* ``GET    /music/models``                — the DiT models (turbo, SFT, base) and which are downloaded
+* ``GET    /music/model-install-stream``  — download the pinned SFT or base model (SSE)
 * ``GET    /music/library``               — saved tracks, newest first
 * ``GET    /music/audio/{track_id}``      — a saved track
 * ``DELETE /music/library/{track_id}``    — remove a saved track
@@ -43,7 +45,8 @@ class GenerateBody(BaseModel):
     time_signature: Literal["", "2", "3", "4", "6"] = ""
     thinking: bool = False
     batch_size: int = Field(1, ge=1, le=music.MAX_BATCH)
-    inference_steps: int = Field(music.DEFAULT_STEPS, ge=music.MIN_STEPS, le=music.MAX_STEPS)
+    # Bounds per model are checked below (turbo 4-20, SFT/base 8-64).
+    inference_steps: int = Field(music.DEFAULT_STEPS, ge=music.MIN_STEPS, le=64)
     infer_method: Literal["ode", "sde"] = "ode"
     audio_format: Literal["wav", "flac", "mp3"] = "wav"
     # Edits (cover, repaint) and a style reference. Audio is named by a library track id or an
@@ -58,9 +61,21 @@ class GenerateBody(BaseModel):
     repaint_end: float | None = Field(None, ge=0.0, le=music.MAX_SOURCE_SECONDS)
     repaint_mode: Literal["conservative", "balanced", "aggressive"] = "balanced"
     repaint_strength: float = Field(0.5, ge=0.0, le=1.0)
+    # DiT model; guidance, shift, ADG and the CFG interval only apply to SFT and base.
+    model: Literal["turbo", "sft", "base"] = "turbo"
+    guidance_scale: float = Field(music.GUIDANCE_RANGE[2], ge=music.GUIDANCE_RANGE[0], le=music.GUIDANCE_RANGE[1])
+    shift: float = Field(music.SHIFT_RANGE[2], ge=music.SHIFT_RANGE[0], le=music.SHIFT_RANGE[1])
+    use_adg: bool = False
+    cfg_interval_start: float = Field(0.0, ge=0.0, le=1.0)
+    cfg_interval_end: float = Field(1.0, ge=0.0, le=1.0)
 
     @model_validator(mode="after")
     def _one_source(self) -> "GenerateBody":
+        low, high, _default = music.DIT_MODELS[self.model]["steps"]
+        if not low <= self.inference_steps <= high:
+            raise ValueError(f"The {self.model} model takes {low}-{high} steps.")
+        if self.cfg_interval_end < self.cfg_interval_start:
+            raise ValueError("The CFG interval must end after it starts.")
         sources = [v for v in (self.source_track_id, self.source_upload_id) if v]
         if self.task != "text2music" and len(sources) != 1:
             raise ValueError("A cover or repaint needs one source track or uploaded file.")
@@ -94,7 +109,10 @@ class GenerateBody(BaseModel):
                                   infer_method=self.infer_method, audio_format=self.audio_format,
                                   task_type=self.task, cover_strength=self.cover_strength,
                                   repaint_start=self.repaint_start, repaint_end=self.repaint_end,
-                                  repaint_mode=self.repaint_mode, repaint_strength=self.repaint_strength)
+                                  repaint_mode=self.repaint_mode, repaint_strength=self.repaint_strength,
+                                  model=self.model, guidance_scale=self.guidance_scale, shift=self.shift,
+                                  use_adg=self.use_adg, cfg_interval_start=self.cfg_interval_start,
+                                  cfg_interval_end=self.cfg_interval_end)
 
 
 def _audio_for(track_id: str | None, upload_id: str | None) -> str | None:
@@ -179,6 +197,25 @@ async def music_lm_install_stream():
     return _stream(gen())
 
 
+@router.get("/music/models", dependencies=[Depends(reject_cross_site_get)])
+def music_models():
+    return {"models": music.get_engine().models_status()}
+
+
+@router.get("/music/model-install-stream",
+            dependencies=[Depends(reject_cross_site_get), Depends(require_admin), Depends(require_desktop)])
+async def music_model_install_stream(model: Literal["sft", "base"]):
+    async def gen():
+        try:
+            async for event in music.get_engine().install_model(model):
+                yield _sse("done" if event["type"] == "done" else event["type"], event)
+        except Exception as exc:
+            logger.warning("music model download failed: %s", exc)
+            yield _sse("error", {"error": "music_model_install_failed", "stage": "install",
+                                 "reason": (str(exc) or type(exc).__name__)[-1200:]})
+    return _stream(gen())
+
+
 async def _stop_idle_music() -> None:
     engine = music.get_engine()
     if not engine.is_busy():
@@ -238,7 +275,7 @@ async def music_generate(body: GenerateBody):
                     vocal_language=body.vocal_language, thinking=body.thinking, ext=body.audio_format,
                     inference_steps=body.inference_steps, infer_method=body.infer_method,
                     batch_id=batch_id, variant=index + 1 if batch_id else None,
-                    task=body.task, source_id=body.source_track_id))
+                    task=body.task, source_id=body.source_track_id, model=body.model))
                 yield _sse("track", {"track": records[-1]})
             if not records:
                 raise RuntimeError("Music generation finished without a downloadable file.")

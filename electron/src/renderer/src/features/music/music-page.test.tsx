@@ -8,6 +8,7 @@ const state = vi.hoisted(() => ({
   calls: [] as string[],
   stream: vi.fn(),
   format: null as unknown,
+  models: [] as { id: string; installed: boolean; download_bytes: number }[],
   lm: { model: null, ready: false, download_bytes: 0 } as {
     model: string | null;
     ready: boolean;
@@ -24,6 +25,7 @@ vi.mock('@/lib/api/client', () => ({
     if (path === '/music/library') return { tracks: state.tracks };
     if (path === '/music/lm') return state.lm;
     if (path === '/music/format') return state.format;
+    if (path === '/music/models') return { models: state.models };
     if (path === '/music/upload')
       return { upload_id: 'fedcba987654', name: 'demo.mp3', duration: 42.5 };
     return {};
@@ -79,6 +81,11 @@ beforeEach(() => {
   state.stream.mockReset();
   state.lm = { model: null, ready: false, download_bytes: 0 };
   state.format = null;
+  state.models = [
+    { id: 'turbo', installed: true, download_bytes: 0 },
+    { id: 'sft', installed: false, download_bytes: 4_791_792_772 },
+    { id: 'base', installed: true, download_bytes: 0 },
+  ];
 });
 afterEach(cleanup);
 
@@ -437,5 +444,43 @@ it('keeps an edit disabled until it has a source, then uses an uploaded file by 
   expect(JSON.parse(state.stream.mock.calls[0][3].body)).toMatchObject({
     task: 'cover',
     source_upload_id: 'fedcba987654',
+  });
+});
+
+it('offers the SFT download and keeps generation off until the chosen model is there', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({ type: 'done' });
+  });
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.advanced'));
+  fireEvent.click(await screen.findByText('musicStudio.model_sft'));
+  const generate = screen.getByText('musicStudio.generate').closest('button') as HTMLButtonElement;
+  fireEvent.click(await screen.findByText('musicStudio.model_download'));
+  expect(generate.disabled).toBe(true);
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(state.stream.mock.calls[0][0]).toBe('/music/model-install-stream?model=sft');
+});
+
+it('sends guidance only for a model that takes it, with the steps of that model', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.advanced'));
+  expect(screen.queryByText('musicStudio.guidance')).toBeNull();
+  fireEvent.click(await screen.findByText('musicStudio.model_base'));
+  expect(await screen.findByText('musicStudio.guidance')).toBeTruthy();
+  const generate = screen.getByText('musicStudio.generate').closest('button') as HTMLButtonElement;
+  await waitFor(() => expect(generate.disabled).toBe(false));
+  fireEvent.click(generate);
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(JSON.parse(state.stream.mock.calls[0][3].body)).toMatchObject({
+    model: 'base',
+    inference_steps: 32,
+    guidance_scale: 7,
+    shift: 3,
+    use_adg: false,
+    cfg_interval_start: 0,
+    cfg_interval_end: 1,
   });
 });

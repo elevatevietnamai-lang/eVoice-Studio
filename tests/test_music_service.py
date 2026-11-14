@@ -867,3 +867,75 @@ def test_old_uploads_are_pruned(tmp_path, monkeypatch):
         os.utime(path, (1000 + n, 1000 + n))
     music_library.prune_uploads(keep=2)
     assert sorted(p.stem for p in music_library.uploads_dir().iterdir()) == ["000000000003", "000000000004"]
+
+
+# ── Phase 3b: optional SFT and base models
+
+
+def test_guidance_options_are_sent_only_to_models_that_honour_them():
+    turbo = music.build_payload(music.MusicRequest(prompt="x", guidance_scale=12, use_adg=True))
+    assert not {"guidance_scale", "shift", "use_adg", "cfg_interval_start"} & set(turbo)
+    sft = music.build_payload(music.MusicRequest(prompt="x", model="sft", inference_steps=99, guidance_scale=40,
+                                                 shift=0.2, use_adg=True, cfg_interval_start=0.6,
+                                                 cfg_interval_end=0.3))
+    assert (sft["inference_steps"], sft["guidance_scale"], sft["shift"], sft["use_adg"]) == (64, 15.0, 1.0, True)
+    assert (sft["cfg_interval_start"], sft["cfg_interval_end"]) == (0.6, 0.6)
+    assert music.build_payload(music.MusicRequest(prompt="x", model="base", inference_steps=4))["inference_steps"] == 8
+
+
+def test_optional_models_are_pinned_downloads():
+    for key in ("sft", "base"):
+        spec = music.DIT_MODELS[key]
+        assert len(spec["revision"]) == 40 and spec["repo"].startswith("ACE-Step/") and spec["bytes"] > 4e9
+    compile(music.DIT_DOWNLOAD_CODE, "<dit>", "exec")
+    assert music.DIT_MODELS["turbo"]["repo"] is None
+
+
+def test_server_loads_the_chosen_model_offline_and_switches_when_asked(tmp_path, monkeypatch):
+    engine, spawned = _fake_server(tmp_path, monkeypatch)
+    monkeypatch.setattr(music, "dit_on_disk", lambda m: True)
+
+    async def run():
+        await engine._ensure_running(None)
+        await engine._ensure_running(None, "sft")
+        await engine._ensure_running(None, "sft")
+
+    asyncio.run(run())
+    assert len(spawned) == 2 and "ACESTEP_CONFIG_PATH" not in spawned[0]
+    assert spawned[1]["ACESTEP_CONFIG_PATH"] == "acestep-v15-sft" and spawned[1]["HF_HUB_OFFLINE"] == "1"
+    assert spawned[1]["HTTPS_PROXY"] == "http://127.0.0.1:9" and spawned[1]["ACESTEP_INIT_LLM"] == "false"
+    engine._kill_now()
+
+
+def test_a_model_that_is_not_downloaded_is_refused_before_starting(tmp_path, monkeypatch):
+    engine, spawned = _fake_server(tmp_path, monkeypatch)
+    monkeypatch.setattr(music, "checkpoints_dir", lambda: tmp_path / "ckpt")
+    with pytest.raises(music.MusicLmUnavailable) as err:
+        asyncio.run(engine._ensure_running(None, "base"))
+    assert err.value.code == "music_model_missing" and spawned == []
+    assert [m["id"] for m in engine.models_status() if not m["installed"]] == ["sft", "base"]
+
+
+def test_generate_body_checks_steps_per_model():
+    from pydantic import ValidationError
+    from api.routers.music import GenerateBody
+
+    assert GenerateBody(prompt="x", model="sft", inference_steps=48).to_request().model == "sft"
+    for bad in ({"inference_steps": 32}, {"model": "base", "inference_steps": 6},
+                {"model": "sft", "cfg_interval_start": 0.8, "cfg_interval_end": 0.2},
+                {"model": "xl"}, {"model": "sft", "guidance_scale": 30}):
+        with pytest.raises(ValidationError):
+            GenerateBody(prompt="x", **bad)
+
+
+def test_renderer_model_table_matches_the_backend():
+    """music-options.ts mirrors each model's step range and whether it takes guidance."""
+    import re
+
+    source = (Path(__file__).resolve().parents[1] / "electron/src/renderer/src/features/music/music-options.ts"
+              ).read_text(encoding="utf-8")
+    for key, spec in music.DIT_MODELS.items():
+        row = re.search(rf"{key}: \{{ steps: \[(\d+), (\d+), (\d+)\], guidance: (true|false)", source)
+        assert row, f"{key} missing from DIT_MODELS in music-options.ts"
+        assert tuple(int(v) for v in row.groups()[:3]) == spec["steps"]
+        assert (row.group(4) == "true") == spec["guidance"]

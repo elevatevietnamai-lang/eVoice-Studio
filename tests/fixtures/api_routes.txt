@@ -157,6 +157,8 @@ GET /music/install-stream
 GET /music/library
 GET /music/lm
 GET /music/lm-install-stream
+GET /music/model-install-stream
+GET /music/models
 GET /music/status
 GET /openapi.json
 GET /personalities
