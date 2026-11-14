@@ -36,8 +36,8 @@ metadata and the backend fallback mirror it.
 
 ### Added
 
-- Music Studio can sing in the language of your lyrics, and lets you set the key, time signature and seed under Advanced; each saved track keeps its seed so you can reuse it
-- Music Studio's optional Thinking mode lets a language model plan the song before it is rendered, for better structure and lyrics that fit; GPUs with 6–12 GB first download a small 1.4 GB model
+- Music Studio can sing in the language of your lyrics, and lets you set the key, time signature and seed under Advanced; each saved track keeps its seed so you can reuse it (#19)
+- Music Studio's optional Thinking mode lets a language model plan the song before it is rendered, for better structure and lyrics that fit; GPUs with 6–12 GB first download a small 1.4 GB model (#19)
 - Karaoke subtitles have three looks in Dub export: Sweep, Highlight (only the spoken word lights up) and Pop (a short bounce); the ASS download uses the same look (#6)
 - Audiobook and Stories can turn part of a finished render into a short audiogram video (waveform, title and cover; square, landscape or vertical) for social posts (#6)
 - Promo video: cut clips and stills into a short ad with transitions, music cut on the beat, narration, a logo watermark and a logo ending, in 9:16, 1:1 or 16:9 (#11)
