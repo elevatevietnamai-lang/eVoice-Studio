@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { PlayIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -95,12 +96,16 @@ export function ChapterPreviews({
       >
         {t('audiobook.preview_plan')}
       </Button>
-      {pending && (
-        <p role="status" className="text-xs text-muted-foreground">
-          {t('common.loading')}
-        </p>
-      )}
-      {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+      <Reveal>
+        {pending && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {t('common.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {error && <PipelineFailure fallback={error} onDismiss={() => setError(null)} />}
+      </Reveal>
       {chapters && (
         <div className="max-h-56 space-y-1 overflow-y-auto">
           {chapters.map((chapter, index) => {
@@ -125,16 +130,18 @@ export function ChapterPreviews({
           })}
         </div>
       )}
-      {output && (
-        <div className="space-y-2">
-          <p className="text-xs text-muted-foreground">{output.title}</p>
-          <WaveformPlayer
-            showWaveform={false}
-            src={apiPath('/audio/' + encodeURIComponent(output.output))}
-            source="chapter-preview"
-          />
-        </div>
-      )}
+      <Reveal>
+        {output && (
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">{output.title}</p>
+            <WaveformPlayer
+              showWaveform={false}
+              src={apiPath('/audio/' + encodeURIComponent(output.output))}
+              source="chapter-preview"
+            />
+          </div>
+        )}
+      </Reveal>
     </section>
   );
 }

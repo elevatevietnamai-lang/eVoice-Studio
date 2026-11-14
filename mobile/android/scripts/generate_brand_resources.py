@@ -31,8 +31,14 @@ def generate(repository, output):
     def vector(adaptive=False, monochrome=False):
         size = 108 if adaptive else 64
         root = ET.Element('vector', android(width=f'{size}dp', height=f'{size}dp', viewportWidth=size, viewportHeight=size))
-        # The complete waveform + spark fit inside the adaptive icon safe zone.
-        parent = ET.SubElement(root, 'group', android(scaleX='.9', scaleY='.9', translateX='25.2', translateY='25.2')) if adaptive else root
+        # docs/logo.svg draws the mark 37.5 units tall on a 64-unit tile. On the
+        # 108 dp adaptive canvas it is scaled to 56 dp, centred, which keeps the
+        # farthest ink (the star's right tip, ~30 dp from centre) inside the
+        # 66 dp safe circle. Only <path> elements are copied; the tile <rect>s
+        # are replaced by the vs_canvas background layer.
+        scale = 56 / 37.5
+        offset = 54 - 32 * scale
+        parent = ET.SubElement(root, 'group', android(scaleX=f'{scale:.5f}', scaleY=f'{scale:.5f}', translateX=f'{offset:.4f}', translateY=f'{offset:.4f}')) if adaptive else root
         for path in logo.findall(f'{{{SVG}}}path'):
             attrs = android(pathData=path.attrib['d'])
             for source, target in [('stroke-width', 'strokeWidth'), ('stroke-linecap', 'strokeLineCap'), ('stroke-linejoin', 'strokeLineJoin')]:

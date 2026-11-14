@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { composeBugReportUrl } from '@shared/utils/bugReportDocument';
 import { formatBreadcrumbs } from '@shared/utils/breadcrumbs';
@@ -7,10 +8,7 @@ import { clampCrashTail } from '@shared/utils/crashReport';
 import { scrubText } from '@shared/utils/scrub';
 import { formatHostSnapshot, withDeadline } from '@shared/utils/hostSnapshot';
 import { describeExitCode, isNativeFaultExit } from '@shared/utils/nativeExit';
-import {
-  _adaptLastRunCrash,
-  type LastRunCrashRecord,
-} from '@shared/utils/runCrashRecord';
+import { _adaptLastRunCrash, type LastRunCrashRecord } from '@shared/utils/runCrashRecord';
 import { getBackendStatusSnapshot } from '@/hooks/use-backend-status';
 import { apiJson } from '@/lib/api/client';
 import { router } from '@/router';
@@ -99,20 +97,22 @@ export function ReportBug({ error }: { error?: Error | string }) {
         popup.opener = null;
       }
       const signal = AbortSignal.timeout(2500);
-      const [system, engines, previous, nativeStatus, currentLogs, host] = await Promise.allSettled([
-        apiJson<Record<string, unknown>>('/system/info', { signal }),
-        apiJson<{ tts?: { active?: string }; asr?: { active?: string } }>('/engines', { signal }),
-        apiJson<{ record: LastRunCrashRecord | null; acknowledged: boolean }>(
-          '/system/last-run-crash',
-          { signal },
-        ),
-        bridge?.backend?.getStatus?.() ?? Promise.resolve(null),
-        error
-          ? apiJson<{ lines?: unknown[] }>('/system/logs?tail=120', { signal })
-          : Promise.resolve(null),
-        // A stalled network drive must not hold the report hostage.
-        withDeadline(bridge?.backend?.getHostSnapshot?.() ?? Promise.resolve(null), 3000),
-      ]);
+      const [system, engines, previous, nativeStatus, currentLogs, host] = await Promise.allSettled(
+        [
+          apiJson<Record<string, unknown>>('/system/info', { signal }),
+          apiJson<{ tts?: { active?: string }; asr?: { active?: string } }>('/engines', { signal }),
+          apiJson<{ record: LastRunCrashRecord | null; acknowledged: boolean }>(
+            '/system/last-run-crash',
+            { signal },
+          ),
+          bridge?.backend?.getStatus?.() ?? Promise.resolve(null),
+          error
+            ? apiJson<{ lines?: unknown[] }>('/system/logs?tail=120', { signal })
+            : Promise.resolve(null),
+          // A stalled network drive must not hold the report hostage.
+          withDeadline(bridge?.backend?.getHostSnapshot?.() ?? Promise.resolve(null), 3000),
+        ],
+      );
       const backend =
         nativeStatus.status === 'fulfilled' && nativeStatus.value
           ? nativeStatus.value
@@ -165,7 +165,9 @@ export function ReportBug({ error }: { error?: Error | string }) {
             ...(isNativeFaultExit({
               exitCode: backend.exitCode,
               signal: backend.exitSignal,
-            }) ? [t('reportBug.native_fault_cause')] : []),
+            })
+              ? [t('reportBug.native_fault_cause')]
+              : []),
             scrubText(backend.message),
             '',
             '```',
@@ -189,9 +191,7 @@ export function ReportBug({ error }: { error?: Error | string }) {
           'Exit code: ' + describeExitCode(crash.exitCode, t('common.unknown')),
           'Signal: ' + (crash.signal ?? '—'),
           ...(isNativeFaultExit({ exitCode: crash.exitCode, signal: crash.signal })
-            ? [
-                t('reportBug.native_fault_cause'),
-              ]
+            ? [t('reportBug.native_fault_cause')]
             : []),
           'Uptime (seconds): ' + Math.round(crash.uptimeMs / 1000),
           '```',
@@ -252,11 +252,13 @@ export function ReportBug({ error }: { error?: Error | string }) {
         >
           {t(busy ? 'common.loading' : 'reportBug.label')}
         </Button>
-        {failed && (
-          <p role="alert" className="text-sm text-destructive">
-            {t('common.error')}
-          </p>
-        )}
+        <Reveal>
+          {failed && (
+            <p role="alert" className="text-sm text-destructive">
+              {t('common.error')}
+            </p>
+          )}
+        </Reveal>
       </div>
       <ConfirmDialog
         open={knownUpdate !== null}

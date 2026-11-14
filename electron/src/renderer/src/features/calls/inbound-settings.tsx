@@ -75,7 +75,7 @@ export function InboundSettings({
                 key={value}
                 className={cn(
                   'flex cursor-pointer gap-2 rounded-lg border p-3 text-sm has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring',
-                  mode === value ? 'border-primary/60 bg-primary/5' : 'border-border',
+                  mode === value ? 'border-foreground/30 bg-accent' : 'border-border',
                 )}
               >
                 <input
@@ -95,7 +95,7 @@ export function InboundSettings({
           </div>
           {mode === 'agent' && (
             <div className="space-y-1.5">
-              <label htmlFor={`${ids}-brief`} className="text-sm font-medium">
+              <label htmlFor={`${ids}-brief`} className="block text-label font-medium">
                 {t('calls.inbound_brief')}
               </label>
               <Textarea

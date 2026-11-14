@@ -15,6 +15,12 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- The Support page asks for donations to eVoice Studio by Momo or bank transfer (with a VietQR code made on your computer) and links to the eVoice website, instead of the upstream VoiceStudio donation and community links
+- Installing the music engine no longer stops at the model download or restarts the 3 GB PyTorch download after a dropped connection, and its button and progress show how many GB are downloaded
+- eVoice Studio builds no longer check for updates or offer upstream VoiceStudio releases; Settings → Updates says checks are off until eVoice has its own release feed
+- The desktop app has a full application menu (File, Edit, View, Go, Window, Help) that opens every feature page with a shortcut: the menu bar on macOS, a menu button in the top-right corner on Windows and Linux
+- The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)
+- New eVoice Studio logo on the app icon, installers, browser tab, tray, and the iOS and Android launchers: four white voice bars with a star on a near-black tile; in the light theme the in-app logo sits on the same tile so it stays visible (#16, #18)
 - Burned-in subtitles use the bundled Inter font, so Latin, Cyrillic and Vietnamese captions look the same on macOS, Windows and Linux (other scripts still use a system font) (#6)
 - Karaoke on translated lines gives longer words more time instead of splitting the line evenly, and Chinese, Japanese and Thai lines highlight per character instead of all at once (#6)
 - The sidebar is a slim icon rail beside each section's own pane: Home and Clone get a Saved voices / Recent takes column, Design gets a Saved voices tab, and the full navigation is one click away (#3234)
@@ -30,6 +36,8 @@ metadata and the backend fallback mirror it.
 
 ### Added
 
+- Music Studio can sing in the language of your lyrics, and lets you set the key, time signature and seed under Advanced; each saved track keeps its seed so you can reuse it (#19)
+- Music Studio's optional Thinking mode lets a language model plan the song before it is rendered, for better structure and lyrics that fit; GPUs with 6–12 GB first download a small 1.4 GB model (#19)
 - Karaoke subtitles have three looks in Dub export: Sweep, Highlight (only the spoken word lights up) and Pop (a short bounce); the ASS download uses the same look (#6)
 - Audiobook and Stories can turn part of a finished render into a short audiogram video (waveform, title and cover; square, landscape or vertical) for social posts (#6)
 - Promo video: cut clips and stills into a short ad with transitions, music cut on the beat, narration, a logo watermark and a logo ending, in 9:16, 1:1 or 16:9 (#11)
@@ -39,6 +47,14 @@ metadata and the backend fallback mirror it.
 - Promo video: **Write with AI** drafts a scene from your description with the LLM provider you set up in Settings, named before anything is sent; the result opens as an unsaved draft in the sandboxed preview (#11)
 - Promo video: built-in scene overlays for a lower third, a 5-to-1 countdown, a price and offer tag, a scrolling ticker and a call to action, all editable (#11)
 - Promo video timeline: drag to trim, reorder, split and move titles over a beat grid and music waveform, with a live preview, undo and redo; with Cut on the beat it shows the cuts exactly as they render (#11)
+- Video editor: a CapCut-style multi-track editor with a magnetic main track, overlays, titles and audio tracks, keyframes, colour looks, speed, fades, music that ducks under voices, auto captions from local speech recognition, and MP4 export whose frames match the preview; built on OpenCut's renderer ([guide](docs/electron-video-editor.md)) (#13)
+- Video editor projects: a project library to open, create, rename, duplicate and delete projects; the project from the first release moves in untouched ([guide](docs/electron-video-editor.md#projects)) (#22)
+- Video editor transitions between main-track clips: dissolve, fade through black, slide, push, zoom and wipe, with their length; the clips overlap and their sound crossfades, in the preview and the export alike (#22)
+- Video editor chroma key: remove a green, blue or picked background colour from a clip or still, with strength, edge softness and spill removal (#22)
+- Video editor masks: rectangle, circle or horizontal band on a clip or still, with position, size, rotation and softness you can keyframe, and invert (#22)
+- Video editor speed changes keep the pitch of voices (Keep pitch, on for newly sped clips) with a time-stretch written for the app; clips sped in older projects sound as before (#22)
+- Video editor stickers: shapes, arrows and frames in any colour, and Fluent Emoji, bundled with the app so nothing is downloaded (#22)
+- Video editor animated titles: the Promo video title templates rendered with your text and laid over the video on their own track, editable afterwards; turned on from the Promo video page (#22)
 - The phone apps have a Report action on every generated result: pick a reason, add an optional note, and it reaches the VoiceStudio team only when you tap Send (#3268, #3276, #3281)
 - The phone apps run speech, dictation, voice cloning and dubbing on the phone itself, offline once you download the models; pairing a computer is optional ([guide](docs/mobile.md)) (#2969)
 - Beta update channel: choose Stable or Beta under Settings → Updates; betas are `-beta.N` prereleases that never reach Stable users, and Docker gets matching `:beta` tags ([guide](docs/update-channels.md)) (#3175)

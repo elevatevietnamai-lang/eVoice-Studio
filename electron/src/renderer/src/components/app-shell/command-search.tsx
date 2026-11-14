@@ -19,7 +19,7 @@ export function CommandSearch({ className }: { className?: string }) {
       title={isMac() ? 'Command + K' : 'Ctrl + K'}
       onClick={() => window.dispatchEvent(new Event('voicestudio:commands'))}
       className={cn(
-        'app-no-drag group flex size-8 shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-muted-foreground outline-none transition-colors duration-160 hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring',
+        'app-no-drag group flex size-8 shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent text-muted-foreground outline-none transition-colors duration-160 hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50',
         '@3xl:absolute @3xl:top-1/2 @3xl:left-1/2 @3xl:w-[min(26rem,38%)] @3xl:-translate-x-1/2 @3xl:-translate-y-1/2 @3xl:justify-start @3xl:border-input @3xl:bg-control-fill @3xl:px-3',
         className,
       )}

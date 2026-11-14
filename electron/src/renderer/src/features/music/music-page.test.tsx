@@ -7,6 +7,11 @@ const state = vi.hoisted(() => ({
   tracks: [] as unknown[],
   calls: [] as string[],
   stream: vi.fn(),
+  lm: { model: null, ready: false, download_bytes: 0 } as {
+    model: string | null;
+    ready: boolean;
+    download_bytes: number;
+  },
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }),
@@ -16,6 +21,7 @@ vi.mock('@/lib/api/client', () => ({
     state.calls.push(`${init?.method || 'GET'} ${path}`);
     if (path === '/music/status') return state.status;
     if (path === '/music/library') return { tracks: state.tracks };
+    if (path === '/music/lm') return state.lm;
     return {};
   },
   apiPath: (path: string) => path,
@@ -40,7 +46,7 @@ vi.mock('@/lib/api/failure', () => ({
     e.error_code === 'gpu_busy' ? 'gpuBusy.dub' : undefined,
 }));
 
-import { MusicPage } from './music-page';
+import { MusicPage, installAmount } from './music-page';
 
 const track = {
   id: 'abc123def456',
@@ -67,6 +73,7 @@ beforeEach(() => {
   state.tracks = [];
   state.calls = [];
   state.stream.mockReset();
+  state.lm = { model: null, ready: false, download_bytes: 0 };
 });
 afterEach(cleanup);
 
@@ -87,6 +94,55 @@ it('streams the install and reports progress through the shared task stream', as
   fireEvent.click(await screen.findByText('musicStudio.engine_install'));
   await waitFor(() => expect(state.stream).toHaveBeenCalled());
   expect(state.stream.mock.calls[0][0]).toBe('/music/install-stream');
+});
+
+it('formats the install button amount per step', () => {
+  expect(installAmount(null)).toBeNull();
+  expect(installAmount({ stage: 'source', bytes: 0, total: null, log: '' })).toBeNull();
+  expect(installAmount({ stage: 'engine', bytes: 0, total: null, log: '' })).toBeNull();
+  expect(installAmount({ stage: 'engine', bytes: 1.5 * 1024 ** 3, total: null, log: '' })).toBe(
+    '1.5 GB',
+  );
+  expect(installAmount({ stage: 'engine', bytes: 1024 ** 3, total: 3_273_066_072, log: '' })).toBe(
+    '1.0 GB / 3.0 GB',
+  );
+  expect(
+    installAmount({ stage: 'model', bytes: 512 * 1024 ** 2, total: 10_092_102_593, log: '' }),
+  ).toBe('512 MB / 9.4 GB');
+});
+
+it('shows which install step is running and how much it has downloaded', async () => {
+  let finish = () => {};
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({
+      type: 'progress',
+      progress: 0.2,
+      stage: 'engine',
+      bytes: 1.5 * 1024 ** 3,
+      total: null,
+    });
+    onEvent({ type: 'log', message: 'Resolved 180 packages' });
+    onEvent({
+      type: 'progress',
+      progress: 0.6,
+      stage: 'model',
+      bytes: 2 * 1024 ** 3,
+      total: 10_092_102_593,
+    });
+    await new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    onEvent({ type: 'done' });
+  });
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.engine_install'));
+  expect(await screen.findByText('musicStudio.install_step_model')).toBeTruthy();
+  // The button carries the downloaded amount and the model's total.
+  expect(screen.getByText('2.0 GB / 9.4 GB')).toBeTruthy();
+  // A new step starts without the previous step's log line.
+  expect(screen.queryByText('Resolved 180 packages')).toBeNull();
+  finish();
+  await waitFor(() => expect(screen.queryByText('musicStudio.install_step_model')).toBeNull());
 });
 
 it('lists saved tracks, plays the first and posts a generate request as JSON', async () => {
@@ -123,7 +179,9 @@ it('shows the localized GPU-busy message when a dubbing job holds the GPU', asyn
     onEvent({ type: 'error', error_code: 'gpu_busy', busy_with: 'dub', reason: 'raw english' });
   });
   renderPage();
-  const generate = (await screen.findByText('musicStudio.generate')).closest('button') as HTMLButtonElement;
+  const generate = (await screen.findByText('musicStudio.generate')).closest(
+    'button',
+  ) as HTMLButtonElement;
   await waitFor(() => expect(generate.disabled).toBe(false));
   fireEvent.click(generate);
   await waitFor(() => expect(toastError).toHaveBeenCalledWith('Error: gpuBusy.dub'));
@@ -147,7 +205,9 @@ it('keeps the failure on screen and explains the model load while progress is lo
       }),
   );
   renderPage();
-  const generate = (await screen.findByText('musicStudio.generate')).closest('button') as HTMLButtonElement;
+  const generate = (await screen.findByText('musicStudio.generate')).closest(
+    'button',
+  ) as HTMLButtonElement;
   await waitFor(() => expect(generate.disabled).toBe(false));
   fireEvent.click(generate);
   expect(await screen.findByText('musicStudio.loading_model')).toBeTruthy();
@@ -157,3 +217,60 @@ it('keeps the failure on screen and explains the model load while progress is lo
   expect(screen.queryByText('musicStudio.loading_model')).toBeNull();
 });
 
+it('sends the language, key, meter, seed and Thinking it shows', async () => {
+  state.status = { installed: true, running: false };
+  state.lm = { model: 'acestep-5Hz-lm-1.7B', ready: true, download_bytes: 0 };
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  const thinking = (await screen.findByText('musicStudio.thinking')).closest('label');
+  const toggle = thinking?.querySelector('[role="switch"]') as HTMLElement;
+  await waitFor(() => expect(toggle.getAttribute('aria-disabled')).not.toBe('true'));
+  fireEvent.click(toggle);
+  fireEvent.click(screen.getByText('musicStudio.advanced'));
+  fireEvent.click(await screen.findByText('3/4'));
+  fireEvent.change(screen.getByPlaceholderText('musicStudio.seed_hint'), {
+    target: { value: '42x' },
+  });
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  const body = JSON.parse(state.stream.mock.calls[0][3].body);
+  expect(body).toMatchObject({
+    thinking: true,
+    time_signature: '3',
+    seed: 42,
+    key_scale: '',
+    vocal_language: 'en',
+  });
+});
+
+it('offers the small language model download instead of a dead Thinking switch', async () => {
+  state.status = { installed: true, running: false };
+  state.lm = { model: 'acestep-5Hz-lm-0.6B', ready: false, download_bytes: 1_372_702_240 };
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({ type: 'done' });
+  });
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.thinking_download'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(state.stream.mock.calls[0][0]).toBe('/music/lm-install-stream');
+});
+
+it('explains when the GPU cannot run Thinking and never sends it', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  expect(await screen.findByText('musicStudio.thinking_unsupported')).toBeTruthy();
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(JSON.parse(state.stream.mock.calls[0][3].body).thinking).toBe(false);
+});
+
+it('reuses the seed a saved track was made with', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [{ ...track, seed: 777 }];
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.reuse_seed'));
+  expect((screen.getByPlaceholderText('musicStudio.seed_hint') as HTMLInputElement).value).toBe(
+    '777',
+  );
+});

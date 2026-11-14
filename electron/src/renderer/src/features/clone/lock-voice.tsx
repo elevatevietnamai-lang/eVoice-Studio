@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { LockIcon } from 'lucide-react';
@@ -58,16 +59,20 @@ export function LockVoice({
         <LockIcon />
         {t(state === 'done' ? 'voice_profile.locked' : 'sidebar.lock_identity')}
       </Button>
-      {state === 'done' && (
-        <p role="status" className="text-xs text-muted-foreground">
-          {t('profiles.locked')}
-        </p>
-      )}
-      {state === 'failed' && (
-        <p role="alert" className="text-xs text-destructive">
-          {t('profiles.lock_failed')}
-        </p>
-      )}
+      <Reveal>
+        {state === 'done' && (
+          <p role="status" className="text-xs text-muted-foreground">
+            {t('profiles.locked')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {state === 'failed' && (
+          <p role="alert" className="text-xs text-destructive">
+            {t('profiles.lock_failed')}
+          </p>
+        )}
+      </Reveal>
     </div>
   );
 }

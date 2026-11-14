@@ -10,6 +10,7 @@ import {
   LibraryIcon,
   MicIcon,
   MusicIcon,
+  SquarePlayIcon,
   UsersRoundIcon,
   WandSparklesIcon,
   WorkflowIcon,
@@ -35,7 +36,7 @@ export interface WorkspaceDestination {
   activate?: () => void;
 }
 
-const openSaved = () => setWorkspace({ panelCollapsed: false, libraryTab: 'voices' });
+const openSaved = () => setWorkspace({ libraryTab: 'voices' });
 
 /**
  * One list for the menu and for Home, so names, order and descriptions cannot drift apart.
@@ -109,11 +110,20 @@ export const destinations: readonly WorkspaceDestination[] = [
     home: true,
   },
   {
+    to: '/editor',
+    label: 'editor.title',
+    description: 'editor.description',
+    icon: SquarePlayIcon,
+    group: 'dub',
+    home: true,
+  },
+  {
     to: '/promo',
     label: 'promo.title',
     description: 'promo.description',
     icon: ClapperboardIcon,
     group: 'dub',
+    home: true,
   },
   {
     to: '/batch',

@@ -13,6 +13,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { TAGS } from '@shared/utils/constants';
+import { menuItemClass, menuPopupClass } from '@/components/menu-popup';
+import { cn } from '@/lib/utils';
+import { chipTrayClass } from '@/components/segmented';
 
 export function AudiobookMarkupToolbar({
   textareaRef,
@@ -67,7 +70,7 @@ export function AudiobookMarkupToolbar({
     <div
       role="toolbar"
       aria-label={t('audiobook.markup_toolbar')}
-      className="flex flex-wrap items-center gap-1 rounded-(--card-radius) border border-border/50 bg-muted/15 p-1.5"
+      className={cn(chipTrayClass, 'flex flex-wrap items-center')}
     >
       <Button size="xs" variant="ghost" disabled={disabled} onClick={() => insert('[pause 500ms]')}>
         <PauseIcon />
@@ -124,12 +127,17 @@ export function AudiobookMarkupToolbar({
         </Menu.Trigger>
         <Menu.Portal>
           <Menu.Positioner sideOffset={6} align="start" className="z-50">
-            <Menu.Popup className="flex max-h-72 max-w-sm flex-wrap gap-1 overflow-y-auto rounded-(--card-radius) border border-border bg-popover p-2 text-popover-foreground shadow-lg outline-none">
+            <Menu.Popup
+              className={cn(
+                menuPopupClass,
+                'flex max-h-72 max-w-sm flex-wrap gap-1 overflow-y-auto p-2',
+              )}
+            >
               {TAGS.map((tag) => (
                 <Menu.Item
                   key={tag}
                   onClick={() => insert(tag)}
-                  className="cursor-default rounded-md px-2.5 py-1.5 text-xs outline-none data-highlighted:bg-accent"
+                  className={cn(menuItemClass, 'px-2.5 py-1.5 text-xs')}
                 >
                   {tag}
                 </Menu.Item>

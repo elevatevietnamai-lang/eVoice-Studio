@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { createPlayhead } from './playhead';
 import { beatSyncActive, musicOffset, useBeatGrid } from './beat-grid';
 import { PromoPreview } from './promo-preview';
@@ -82,7 +83,7 @@ const nextKey = () => `${Date.now().toString(36)}-${(shotCounter += 1)}`;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block space-y-1 text-xs">
+    <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
       <span className="text-muted-foreground">{label}</span>
       {children}
     </label>
@@ -212,7 +213,7 @@ function ShotRow({
     Math.min(max, Math.max(min, Number(value) || min));
   return (
     <li className="flex gap-3 rounded-(--card-radius) border border-border/60 bg-background/35 p-2.5">
-      <div className="flex h-24 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
+      <div className="flex h-24 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
         {missing ? (
           <FileXIcon className="size-5 text-destructive" aria-hidden />
         ) : shot.media.kind === 'image' ? (
@@ -672,13 +673,15 @@ export function PromoPage() {
         </SecondarySidebar>
 
         <main className="@container flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-5">
-          {error && (
-            <PipelineFailure
-              fallback={error}
-              onDismiss={() => setError(null)}
-              className="text-xs"
-            />
-          )}
+          <Reveal>
+            {error && (
+              <PipelineFailure
+                fallback={error}
+                onDismiss={() => setError(null)}
+                className="text-xs"
+              />
+            )}
+          </Reveal>
           {result && (
             <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
               <div className="flex items-center gap-2">

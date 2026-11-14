@@ -1,4 +1,5 @@
 import { useStore } from '@tanstack/react-store';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouterState } from '@tanstack/react-router';
@@ -42,6 +43,7 @@ import { translationActivity } from '@/features/dub/translation-activity';
 import { TranslationAgentDock } from './translation-agent-dock';
 import { AgentDockFrame } from './agent-dock-frame';
 import './voice-studio-agent.css';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const icons = { codex: codexIcon, claude: claudeIcon, opencode: openCodeIcon, pi: piIcon };
 const labels: Record<AgentFeature, string> = {
@@ -391,11 +393,10 @@ export function VoiceStudioAgent() {
               ))}
             </div>
             <label className="agent-workspace-source">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={source}
                 disabled={running}
-                onChange={(event) => setSource(event.target.checked)}
+                onCheckedChange={(checked) => setSource(checked)}
               />
               <WrenchIcon className="size-3.5" />
               {t('agentWorkspace.source')}
@@ -490,11 +491,13 @@ export function VoiceStudioAgent() {
           if (canSend) void send();
         }}
       >
-        {error && (
-          <p role="alert" className="text-xs text-destructive">
-            {error}
-          </p>
-        )}
+        <Reveal>
+          {error && (
+            <p role="alert" className="text-xs text-destructive">
+              {error}
+            </p>
+          )}
+        </Reveal>
         <div className="agent-workspace-input">
           <textarea
             aria-label={t('agentWorkspace.placeholder')}

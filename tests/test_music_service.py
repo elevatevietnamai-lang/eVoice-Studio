@@ -19,11 +19,164 @@ def _wrap(data, code=200, error=None):
     return {"data": data, "code": code, "error": error, "timestamp": 1, "extra": None}
 
 
-def test_payload_never_invokes_the_language_model():
+def test_payload_never_invokes_the_language_model_unless_asked():
     p = music.build_payload(music.MusicRequest(prompt="lofi", duration=3, bpm=90))
     assert (p["thinking"], p["use_cot_caption"], p["use_cot_language"], p["use_format"]) == (False,) * 4
     assert p["batch_size"] == 1 and p["lyrics"] == "[Instrumental]"
     assert p["audio_duration"] == music.MIN_SECONDS and p["bpm"] == 90 and p["use_random_seed"] is True
+    assert "lm_backend" not in p and "time_signature" not in p
+    # Thinking turns on code generation only; the caption and language stay the user's own.
+    t = music.build_payload(music.MusicRequest(prompt="lofi", thinking=True, time_signature="3"))
+    assert (t["thinking"], t["lm_backend"], t["time_signature"]) == (True, "pt", "3")
+    assert (t["use_cot_caption"], t["use_cot_language"], t["use_format"]) == (False,) * 3
+
+
+def test_default_request_payload_is_unchanged():
+    """Dub BGM builds a bare MusicRequest: new fields must not change what it sends."""
+    assert music.build_payload(music.MusicRequest(prompt="calm piano", duration=60, bpm=80, seed=7)) == {
+        "prompt": "calm piano", "lyrics": "[Instrumental]", "audio_duration": 60, "vocal_language": "en",
+        "audio_format": "wav", "batch_size": 1, "inference_steps": 8, "thinking": False,
+        "use_cot_caption": False, "use_cot_language": False, "use_format": False,
+        "use_random_seed": False, "seed": 7, "bpm": 80,
+    }
+
+
+def test_key_scale_normalizes_to_acestep_form():
+    assert [music.normalize_key_scale(v) for v in ("", "c", "f# MINOR", "Bbm", "E♭ major", "a min")] == [
+        "", "C major", "F# minor", "Bb minor", "Eb major", "A minor"]
+    for bad in ("H major", "C dorian", "C#b"):
+        with pytest.raises(ValueError):
+            music.normalize_key_scale(bad)
+
+
+def test_result_details_keep_the_real_seed_and_lm_metadata():
+    d = music.result_details({"seed_value": "12345,67890",
+                              "metas": {"bpm": 96, "keyscale": "D minor", "timesignature": "3"}})
+    assert d == {"seed": 12345, "bpm": 96, "key_scale": "D minor", "time_signature": "3"}
+    assert music.result_details({"seed_value": "junk", "metas": {"bpm": 999}}) == {
+        "seed": None, "bpm": None, "key_scale": "", "time_signature": ""}
+
+
+class _Proc:
+    def __init__(self):
+        self.alive = True
+
+    def poll(self):
+        return None if self.alive else 0
+
+    def terminate(self):
+        self.alive = False
+
+    def wait(self, timeout=None):
+        return 0
+
+
+def _fake_server(tmp_path, monkeypatch, log=""):
+    from core import contained_subprocess
+
+    monkeypatch.setattr(music, "is_installed", lambda: True)
+    monkeypatch.setattr(music, "engine_dir", lambda: tmp_path)
+    spawned = []
+
+    def spawn(argv, env, **_kw):
+        (tmp_path / "server.log").write_text(log, encoding="utf-8")
+        spawned.append(env)
+        return _Proc()
+
+    monkeypatch.setattr(contained_subprocess, "spawn_owned", spawn)
+    engine = music.AceStepEngine()
+
+    async def healthy():
+        return None
+
+    monkeypatch.setattr(engine, "_wait_healthy", healthy)
+    return engine, spawned
+
+
+def test_server_mode_follows_each_request(tmp_path, monkeypatch):
+    monkeypatch.setenv("MAX_CUDA_VRAM", "48")  # a debug override must never reach the engine
+    log = f"[API Server] LLM model loaded: {music.LM_LARGE}\n"
+    engine, spawned = _fake_server(tmp_path, monkeypatch, log=log)
+
+    async def run():
+        await engine._ensure_running(None)
+        await engine._ensure_running(None)  # same mode: reused
+        await engine._ensure_running(music.LM_LARGE)  # LM wanted: restarted with it
+        await engine._ensure_running(None)  # a loaded LM would fill metadata: restarted without
+
+    asyncio.run(run())
+    assert [e["ACESTEP_INIT_LLM"] for e in spawned] == ["false", "true", "false"]
+    lm_env = spawned[1]
+    assert lm_env["ACESTEP_LM_MODEL_PATH"] == music.LM_LARGE and lm_env["ACESTEP_LM_BACKEND"] == "pt"
+    assert lm_env["HF_HUB_OFFLINE"] == "1" and lm_env["ACESTEP_DOWNLOAD_SOURCE"] == "huggingface"
+    # Eager init: the LM is loaded before /health answers, so the log check sees the result.
+    assert lm_env["ACESTEP_NO_INIT"] == "false" and "ACESTEP_NO_INIT" not in spawned[0]
+    # Any outbound fetch (HF fallback, ModelScope) fails fast; loopback still works.
+    assert lm_env["HTTPS_PROXY"] == lm_env["HTTP_PROXY"] == "http://127.0.0.1:9"
+    assert "127.0.0.1" in lm_env["NO_PROXY"] and spawned[0].get("HTTPS_PROXY") != "http://127.0.0.1:9"
+    assert all("MAX_CUDA_VRAM" not in e for e in spawned)
+    engine._kill_now()
+
+
+def test_server_mode_never_switches_under_a_running_track(tmp_path, monkeypatch):
+    engine, spawned = _fake_server(tmp_path, monkeypatch)
+
+    async def run():
+        await engine._ensure_running(None)
+        engine._server.busy = 1
+        with pytest.raises(music.MusicModeBusy):
+            await engine._ensure_running(music.LM_LARGE)
+
+    asyncio.run(run())
+    assert len(spawned) == 1 and engine._alive()
+    engine._server.busy = 0
+    engine._kill_now()
+
+
+def test_lm_that_did_not_load_as_asked_stops_the_server(tmp_path, monkeypatch):
+    log = ("[API Server] Falling back to supported LM model: acestep-5Hz-lm-0.6B\n"
+           "[API Server] LLM model loaded: acestep-5Hz-lm-0.6B\n")
+    engine, _ = _fake_server(tmp_path, monkeypatch, log=log)
+    with pytest.raises(RuntimeError, match="language model could not be loaded"):
+        asyncio.run(engine._ensure_running(music.LM_LARGE))
+    assert not engine._alive()
+
+
+@pytest.mark.parametrize("probe,on_disk,code,model", [
+    ({"large": True, "small": True}, True, None, music.LM_LARGE),
+    ({"large": False, "small": True}, True, None, music.LM_SMALL),
+    ({"large": False, "small": True}, False, "music_lm_missing", None),
+    ({"large": False, "small": False}, True, "music_lm_unsupported", None),
+])
+def test_thinking_picks_the_lm_acestep_would_load(monkeypatch, probe, on_disk, code, model):
+    engine = music.AceStepEngine()
+    engine._probe = {"memory_gb": 12.0, "tier": "tier4", **probe}
+    monkeypatch.setattr(music, "lm_on_disk", lambda _m: on_disk)
+    if code:
+        with pytest.raises(music.MusicLmUnavailable) as err:
+            asyncio.run(engine._lm_for_request())
+        assert err.value.code == code
+    else:
+        assert asyncio.run(engine._lm_for_request()) == model
+
+
+def test_lm_probe_reads_acestep_tiering_and_hides_debug_overrides():
+    assert "get_gpu_config" in music.LM_PROBE_CODE and music.LM_LARGE in music.LM_PROBE_CODE
+    assert set(music._VRAM_DEBUG_ENV) == {"MAX_CUDA_VRAM", "MAX_MPS_VRAM", "MAX_XPU_VRAM"}
+    compile(music.LM_PROBE_CODE, "<probe>", "exec")
+    compile(music.LM_SMALL_DOWNLOAD_CODE, "<download>", "exec")
+    assert len(music.LM_SMALL_REVISION) == 40
+
+
+def test_generate_body_validates_language_key_and_meter():
+    from pydantic import ValidationError
+    from api.routers.music import GenerateBody
+
+    body = GenerateBody(prompt="x", vocal_language="VI", key_scale="f#m", time_signature="6", thinking=True)
+    assert (body.vocal_language, body.key_scale, body.time_signature) == ("vi", "F# minor", "6")
+    for bad in ({"vocal_language": "xx"}, {"key_scale": "C lydian"}, {"time_signature": "5"}):
+        with pytest.raises(ValidationError):
+            GenerateBody(prompt="x", **bad)
 
 
 def test_unwrap_checks_code_and_error_not_just_http():
@@ -115,7 +268,7 @@ def test_generate_flow_parses_stringified_result_and_saves_audio(tmp_path, monke
     monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
     engine = music.AceStepEngine()
 
-    async def fake_running():
+    async def fake_running(*_a):
         return "http://127.0.0.1:9", "k"
 
     monkeypatch.setattr(engine, "_ensure_running", fake_running)
@@ -160,7 +313,7 @@ def test_generate_survives_a_transient_connection_error(tmp_path, monkeypatch):
     monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
     engine = music.AceStepEngine()
 
-    async def fake_running():
+    async def fake_running(*_a):
         return "http://127.0.0.1:9", "k"
 
     monkeypatch.setattr(engine, "_ensure_running", fake_running)
@@ -201,3 +354,247 @@ def test_model_download_is_pinned_to_a_commit():
     assert "revision=sys.argv[3]" in music.MODEL_DOWNLOAD_CODE
     assert "modelscope" not in music.MODEL_DOWNLOAD_CODE.lower()
     compile(music.MODEL_DOWNLOAD_CODE, "<model-download>", "exec")
+
+
+def _collect(agen):
+    async def run():
+        return [event async for event in agen]
+
+    return asyncio.run(run())
+
+
+def test_silent_install_step_still_reports_bytes_on_disk(tmp_path):
+    # uv sync and the model download print almost nothing for many minutes; the bar must move.
+    target = tmp_path / "checkpoints"
+    target.mkdir()
+
+    async def silent_step():
+        for size in (1000, 3000):
+            await asyncio.sleep(0.05)
+            (target / f"part{size}").write_bytes(b"x" * size)
+        await asyncio.sleep(0.05)
+        yield "Music model ready"
+
+    events = _collect(music._watched(silent_step(), lambda: music._dir_bytes(target), stage="model",
+                                     start=0.4, end=0.99, total=8000, interval=0.02))
+    ticks = [event for event in events if event["type"] == "progress"]
+    assert ticks and all(event["stage"] == "model" and event["total"] == 8000 for event in ticks)
+    assert ticks[-1]["bytes"] == 4000
+    assert 0.4 < ticks[-1]["progress"] < 0.99
+    assert [event["progress"] for event in ticks] == sorted(event["progress"] for event in ticks)
+    assert events[-1] == {"type": "log", "message": "Music model ready"}
+
+
+def test_install_step_without_new_bytes_is_reported_as_stalled():
+    async def hung_step():
+        await asyncio.sleep(10)
+        yield "never"
+
+    with pytest.raises(RuntimeError, match="no progress"):
+        _collect(music._watched(hung_step(), lambda: 42, stage="engine", start=0.05, end=0.4,
+                                total=None, interval=0.01, stall_seconds=0.05))
+
+
+def test_uv_cache_bytes_count_only_what_this_install_wrote(tmp_path):
+    import os
+    import time
+
+    old = tmp_path / "archive-v0" / "old"
+    old.mkdir(parents=True)
+    (old / "torch.so").write_bytes(b"x" * 5000)
+    past = time.time() - 3600
+    os.utime(old, (past, past))
+    since = time.time() - 1
+    fresh = tmp_path / ".tmpAbC" / "torch"
+    fresh.mkdir(parents=True)
+    (fresh / "lib.dll").write_bytes(b"y" * 700)
+    done = tmp_path / "archive-v0" / "new"
+    done.mkdir()
+    (done / "numpy.pyd").write_bytes(b"z" * 300)
+    (tmp_path / ".tmpWheel").write_bytes(b"w" * 50)
+    (tmp_path / ".lock").write_bytes(b"")
+    assert music._new_bytes(tmp_path, since) == 1050
+    assert music._new_bytes(tmp_path / "missing", since) == 0
+
+
+def test_model_download_runs_without_carriage_return_progress_bars(tmp_path, monkeypatch):
+    # huggingface_hub redraws its bars with \r and no newline; the line reader caps a line at
+    # 64 KiB, so a 10 GB download with bars on aborted the install at the model step.
+    from services import hardsub, sidecar_install
+
+    engine = tmp_path / "acestep"
+    (engine / "src").mkdir(parents=True)
+    (engine / "src" / "pyproject.toml").write_text("[project]\nname='acestep'\n", encoding="utf-8")
+    monkeypatch.setattr(music, "engine_dir", lambda: engine)
+    monkeypatch.setattr(music, "_uv_cache_dir", lambda uv, env: tmp_path / "uv-cache")
+    monkeypatch.setattr(music, "_plan_torch", lambda uv, env, src: None)
+    monkeypatch.setattr(sidecar_install, "_locate_uv", lambda: "uv")
+    monkeypatch.setattr(sidecar_install, "uv_subprocess_env", lambda _parent: {"PATH": "x"})
+    calls = []
+
+    async def fake_run(cmd, env, idle_timeout, cwd=None):
+        calls.append((cmd, env, idle_timeout))
+        yield "ok"
+
+    monkeypatch.setattr(hardsub, "_run_logged", fake_run)
+    events = _collect(music.AceStepEngine().install())
+    assert events[-1] == {"type": "done", "installed": True}
+    (sync, _sync_env, sync_timeout), (_model, model_env, model_timeout) = calls
+    assert sync[1] == "sync"
+    assert model_env["HF_HUB_DISABLE_PROGRESS_BARS"] == "1"
+    # Silence alone no longer kills a slow download; the byte watcher detects stalls instead.
+    assert min(sync_timeout, model_timeout) >= music._STALL_SECONDS
+    stages = [event.get("stage") for event in events if event["type"] == "progress"]
+    assert stages.index("engine") < stages.index("model")
+    model_start = next(event for event in events if event.get("stage") == "model")
+    assert model_start["total"] == music.ACESTEP_MODEL_BYTES
+
+
+LOCK = """version = 1
+
+[[package]]
+name = "torch"
+version = "2.10.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.example/torch-2.10.0-cp311-cp311-win_amd64.whl", hash = "sha256:%s", size = 1 },
+]
+
+[[package]]
+name = "torch"
+version = "2.7.1+cu128"
+source = { registry = "https://download.pytorch.org/whl/cu128" }
+wheels = [
+    { url = "https://download-r2.pytorch.org/whl/cu128/torch-2.7.1%%2Bcu128-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:%s" },
+    { url = "https://download-r2.pytorch.org/whl/cu128/torch-2.7.1%%2Bcu128-cp311-cp311-win_amd64.whl", hash = "sha256:%s" },
+]
+""" % ("a" * 64, "b" * 64, "c" * 64)
+
+
+def test_torch_plan_follows_uv_and_the_lock():
+    import re
+
+    dry = "Would install 3 packages\n + numpy==2.1.0\n + torch==2.7.1+cu128\n + torchaudio==2.7.1+cu128\n"
+    assert music._planned_version(dry, "torch") == "2.7.1+cu128"
+    assert music._planned_version("Would install 1 package\n + torchaudio==2.7.1\n", "torch") is None
+    windows = re.compile(r"-cp311-cp311-win_amd64\.whl$")
+    wheel = music._locked_wheel(LOCK, "torch", "2.7.1+cu128", windows)
+    assert wheel.filename == "torch-2.7.1+cu128-cp311-cp311-win_amd64.whl"
+    assert wheel.sha256 == "c" * 64
+    linux = re.compile(r"-cp311-cp311-manylinux_[0-9_]+_x86_64\.whl$")
+    assert music._locked_wheel(LOCK, "torch", "2.7.1+cu128", linux).sha256 == "b" * 64
+    assert music._locked_wheel(LOCK, "torch", "2.10.0", windows).sha256 == "a" * 64
+    assert music._locked_wheel(LOCK, "torch", "9.9.9", windows) is None
+
+
+class _Dropping(httpx.AsyncByteStream):
+    """Sends part of the body, then the connection resets."""
+
+    def __init__(self, data):
+        self.data = data
+
+    async def __aiter__(self):
+        yield self.data
+        raise httpx.ReadError("connection reset")
+
+
+def _wheel_server(body, monkeypatch, *, drop_at):
+    import hashlib
+
+    calls = []
+
+    def handler(request):
+        rng = request.headers.get("range")
+        calls.append(rng)
+        start = int(rng.split("=")[1].rstrip("-")) if rng else 0
+        rest = body[start:]
+        headers = {"content-length": str(len(rest))}
+        if rng:
+            headers["content-range"] = f"bytes {start}-{len(body) - 1}/{len(body)}"
+        if len(calls) == 1:
+            return httpx.Response(200, headers=headers, stream=_Dropping(rest[:drop_at]))
+        return httpx.Response(206 if rng else 200, headers=headers, content=rest)
+
+    real = httpx.AsyncClient
+    monkeypatch.setattr(music.httpx, "AsyncClient",
+                        lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    wheel = music.LockedWheel("torch", "2.7.1", "torch-2.7.1-cp311-cp311-win_amd64.whl",
+                              "https://download.example/torch.whl", hashlib.sha256(body).hexdigest())
+    return wheel, calls
+
+
+def test_wheel_download_resumes_after_a_connection_reset(tmp_path, monkeypatch):
+    body = bytes(range(256)) * 400
+    wheel, calls = _wheel_server(body, monkeypatch, drop_at=30_000)
+
+    async def run():
+        return [tick async for tick in music._download_wheel(wheel, tmp_path, interval=0, backoff=0)]
+
+    ticks = asyncio.run(run())
+    # The second request asks only for the bytes the first one did not deliver.
+    assert calls == [None, "bytes=30000-"]
+    assert (tmp_path / wheel.filename).read_bytes() == body
+    assert not (tmp_path / (wheel.filename + ".part")).exists()
+    assert ticks[-1] == (len(body), len(body))
+
+
+def test_wheel_download_rejects_a_file_that_fails_its_hash_twice(tmp_path, monkeypatch):
+    body = b"x" * 1000
+    wheel, _calls = _wheel_server(body, monkeypatch, drop_at=1000)
+    wheel = music.LockedWheel(wheel.name, wheel.version, wheel.filename, wheel.url, "0" * 64)
+
+    async def run():
+        return [tick async for tick in music._download_wheel(wheel, tmp_path, interval=0, backoff=0)]
+
+    with pytest.raises(RuntimeError, match="does not match its locked hash"):
+        asyncio.run(run())
+    assert not (tmp_path / wheel.filename).exists()
+
+
+def test_install_fetches_torch_resumably_and_installs_it_from_the_local_file(tmp_path, monkeypatch):
+    from services import hardsub, sidecar_install
+
+    engine = tmp_path / "acestep"
+    (engine / "src").mkdir(parents=True)
+    (engine / "src" / "pyproject.toml").write_text("[project]\nname='acestep'\n", encoding="utf-8")
+    monkeypatch.setattr(music, "engine_dir", lambda: engine)
+    monkeypatch.setattr(music, "_uv_cache_dir", lambda uv, env: None)
+    monkeypatch.setattr(sidecar_install, "_locate_uv", lambda: "uv")
+    monkeypatch.setattr(sidecar_install, "uv_subprocess_env", lambda _parent: {"PATH": "x"})
+    wheel = music.LockedWheel("torch", "2.7.1+cu128", "torch-2.7.1+cu128-cp311-cp311-win_amd64.whl",
+                              "https://download.example/torch.whl", "d" * 64)
+    monkeypatch.setattr(music, "_plan_torch", lambda uv, env, src: wheel)
+
+    async def fake_download(target, folder, **_kw):
+        (folder).mkdir(parents=True, exist_ok=True)
+        (folder / target.filename).write_bytes(b"wheel")
+        yield 5, 10
+        yield 10, 10
+
+    monkeypatch.setattr(music, "_download_wheel", fake_download)
+    calls = []
+
+    async def fake_run(cmd, env, idle_timeout, cwd=None):
+        calls.append(cmd)
+        yield "ok"
+
+    monkeypatch.setattr(hardsub, "_run_logged", fake_run)
+    events = _collect(music.AceStepEngine().install())
+    sync, install, _model = calls
+    assert sync[-2:] == ["--no-install-package", "torch"]
+    assert install[1:3] == ["pip", "install"] and "--no-index" in install
+    assert install[-1] == "torch==2.7.1+cu128"
+    torch_ticks = [e for e in events if e.get("stage") == "engine" and e.get("total") == 10]
+    assert [e["bytes"] for e in torch_ticks] == [5, 10]
+    assert not (engine / ".wheels" / wheel.filename).exists()
+    assert events[-1] == {"type": "done", "installed": True}
+
+
+def test_renderer_language_list_matches_the_backend():
+    """The Music page offers exactly the vocal languages the backend accepts (minus 'unknown')."""
+    import re
+
+    source = (Path(__file__).resolve().parents[1] / "electron/src/renderer/src/features/music/music-options.ts")
+    block = re.search(r"VOCAL_LANGUAGES = \[(.*?)\] as const", source.read_text(encoding="utf-8"), re.S)
+    assert block, "VOCAL_LANGUAGES not found in music-options.ts"
+    assert re.findall(r"'([a-z]+)'", block.group(1)) == [c for c in music.VOCAL_LANGUAGES if c != "unknown"]

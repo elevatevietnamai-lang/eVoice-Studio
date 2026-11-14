@@ -95,9 +95,7 @@ If the renderer remains empty after three bounded reloads, Electron paints an as
 
 Branding remains in a fixed native title row while onboarding status loads, installation runs or recovery needs retry. Runtime details scroll independently below it; installer phases wrap into two columns on narrow windows, so a growing progress/log surface cannot clip the wordmark or window controls.
 
-On Windows and Linux, the collapsed workspace sidebar shows the VoiceStudio icon at the top. Use the toggle beside the page title to expand the sidebar. macOS retains its existing sidebar control.
-
-Workspace headers carry no sidebar toggle. The rail's logo opens the full menu, and a single panel toggle at the bottom of the rail (and in the full menu's footer) folds or reopens the current page's control panel on every platform. Every navigation reopens the panel, so a page reached from the menu, Home or search always shows its controls.
+The workspace navigation is the icon rail on every platform, with the app mark at the top linking Home. There is no sidebar or panel toggle: rail groups open their menu in the panel column, and each page's control panel is always open.
 
 The shared video player renders Vidstack's poster before playback, including the Dub source thumbnail, and hides it once playback starts. Play requests made while the video is loading wait for the provider to become ready, including timeline preview requests.
 

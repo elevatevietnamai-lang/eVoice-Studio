@@ -108,6 +108,29 @@ export function HomeFeatureIcon({ destination }: { destination: string }) {
             <circle cx="24" cy="27" r="3" />
           </>
         );
+      case '/editor':
+        return (
+          <>
+            <rect x="3" y="4" width="26" height="14" rx="2.5" />
+            <path d="m14 8 5 3-5 3Z" />
+            <path d="M3 23h26M3 28h26" opacity=".4" />
+            <g>
+              <rect x="6" y="21" width="9" height="4" rx="1.2" fill="var(--secondary)" />
+              <path d="M21 20v10" />
+            </g>
+          </>
+        );
+      case '/promo':
+        return (
+          <>
+            <path d="M4 13h24v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+            <g>
+              <path d="m4 13-.8-4.6a2 2 0 0 1 1.6-2.3L23.6 3a2 2 0 0 1 2.3 1.6l.6 3.6Z" />
+              <path d="m10 5.7 3 5m3-6.3 3 5" opacity=".6" />
+            </g>
+            <path d="M9 19h10m-10 4h6" opacity=".6" />
+          </>
+        );
       case '/music':
         return (
           <>

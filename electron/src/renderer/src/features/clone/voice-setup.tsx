@@ -1,4 +1,5 @@
-import { ArrowLeftIcon, CheckIcon, PencilIcon, PlusIcon, SearchIcon } from 'lucide-react';
+import { CheckIcon, PencilIcon, PlusIcon, SearchIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +13,7 @@ import { setWorkspace } from '@/lib/store/workspace';
 import { cn } from '@/lib/utils';
 import { ProfilePhoto, useProfileImageSave } from './profile-photo';
 import { ReferencePanel } from './reference-panel';
+import { segmentedFrameClass } from '@/components/segmented';
 
 const VIRTUALIZE_ABOVE = 30;
 const SEARCH_ABOVE = 4;
@@ -61,7 +63,7 @@ function VoiceCard({
       data-slot="voice-card"
       className={cn(
         'group/card relative flex h-[68px] min-w-0 items-center gap-3 rounded-(--card-radius) border bg-card/40 px-3 transition-[background-color,border-color,box-shadow] duration-150 hover:border-border hover:bg-accent has-[[data-choose]:focus-visible]:ring-2 has-[[data-choose]:focus-visible]:ring-ring',
-        current ? 'border-primary/60 bg-primary/5' : 'border-border/60',
+        current ? 'border-foreground/30 bg-accent' : 'border-border/60',
       )}
     >
       {/* Covers the card so the whole surface chooses the voice; photo and edit sit above it. */}
@@ -111,7 +113,7 @@ function VoiceCard({
   );
 }
 
-export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack: () => void }) {
+export function VoiceSetup({ onChosen }: { onChosen: () => void }) {
   const { t, i18n } = useTranslation();
   const profiles = useProfiles();
   const selectedId = useCloneSetting('selectedProfileId');
@@ -169,21 +171,10 @@ export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack:
 
   return (
     <section className="flex w-full flex-col gap-7">
-      <div className="flex items-start gap-3">
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label={t('preferences.back')}
-          title={t('preferences.back')}
-          className="mt-0.5"
-          onClick={onBack}
-        >
-          <ArrowLeftIcon />
-        </Button>
-        <div className="min-w-0">
-          <h2 className="text-xl font-semibold tracking-tight">{t('cloneFlow.choose_voice')}</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{t('cloneFlow.choose_hint')}</p>
-        </div>
+      {/* No back button: the rail is the way out, and the current voice card returns to it. */}
+      <div className="min-w-0">
+        <h2 className="text-xl font-semibold tracking-tight">{t('cloneFlow.choose_voice')}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t('cloneFlow.choose_hint')}</p>
       </div>
       {eligibleVoices.length > 0 && (
         <div className="space-y-3">
@@ -210,7 +201,7 @@ export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack:
               <div
                 role="radiogroup"
                 aria-label={t('cloneFlow.sort_label')}
-                className="flex items-center gap-0.5 rounded-lg bg-muted/40 p-0.5 ring-1 ring-inset ring-border/50"
+                className={cn(segmentedFrameClass, 'flex items-center')}
               >
                 {(['recent', 'name'] as const).map((value) => (
                   <button
@@ -220,7 +211,7 @@ export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack:
                     aria-checked={sort === value}
                     onClick={() => chooseSort(value)}
                     className={cn(
-                      'h-7 rounded-md px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+                      'h-7 rounded-lg px-2.5 text-xs font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
                       sort === value
                         ? 'bg-background text-foreground shadow-sm'
                         : 'text-muted-foreground hover:text-foreground',
@@ -257,11 +248,13 @@ export function VoiceSetup({ onChosen, onBack }: { onChosen: () => void; onBack:
           </div>
         </div>
       )}
-      {profiles.isPending && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {t('preferences.loading')}
-        </p>
-      )}
+      <Reveal>
+        {profiles.isPending && (
+          <p role="status" className="text-sm text-muted-foreground">
+            {t('preferences.loading')}
+          </p>
+        )}
+      </Reveal>
       <div className="space-y-3">
         <h3 className="flex items-center gap-2 text-sm font-medium">
           <PlusIcon className="size-4 text-muted-foreground" aria-hidden="true" />

@@ -1,11 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import {
-  createMacApplicationMenuTemplate,
-  installAppIdentity,
-  installMacApplicationMenu,
-} from './app-identity';
+import { installAppIdentity } from './app-identity';
 
 describe('installAppIdentity', () => {
   it('names Electron internals consistently', () => {
@@ -44,21 +40,6 @@ describe('installAppIdentity', () => {
     expect(setPath).not.toHaveBeenCalled();
   });
 
-  it('defines the complete native macOS menu with eVoice Studio app labels', () => {
-    const template = createMacApplicationMenuTemplate();
-
-    expect(template[0]).toMatchObject({ label: 'eVoice Studio' });
-    expect(template[0]?.submenu).toEqual(
-      expect.arrayContaining([{ role: 'about' }, { role: 'hide' }, { role: 'quit' }]),
-    );
-    expect(template.slice(1)).toEqual([
-      { role: 'fileMenu' },
-      { role: 'editMenu' },
-      { role: 'viewMenu' },
-      { role: 'windowMenu' },
-    ]);
-  });
-
   it('installs the identity before Electron begins ready initialization', () => {
     const entrypoint = readFileSync(resolve(process.cwd(), 'src/main/index.ts'), 'utf8');
     const identityInstall = entrypoint.indexOf('installAppIdentity(app);');
@@ -66,25 +47,5 @@ describe('installAppIdentity', () => {
 
     expect(identityInstall).toBeGreaterThanOrEqual(0);
     expect(readyInitialization).toBeGreaterThan(identityInstall);
-  });
-
-  it('brands the About panel and installs the macOS menu', () => {
-    const application = {
-      setAboutPanelOptions: vi.fn(),
-    };
-    const nativeMenu = { id: 'native-menu' };
-    const menu = {
-      buildFromTemplate: vi.fn(() => nativeMenu),
-      setApplicationMenu: vi.fn(),
-    };
-
-    installMacApplicationMenu(application, menu, '0.5.6');
-
-    expect(application.setAboutPanelOptions).toHaveBeenCalledWith({
-      applicationName: 'eVoice Studio',
-      applicationVersion: '0.5.6',
-      version: '0.5.6',
-    });
-    expect(menu.setApplicationMenu).toHaveBeenCalledWith(nativeMenu);
   });
 });

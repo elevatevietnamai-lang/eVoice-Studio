@@ -1,11 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
+import { RotateCw as RotateCwShape, X as XShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   ChevronDownIcon,
   ExternalLinkIcon,
   GlobeIcon,
-  RotateCwIcon,
   XIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -212,7 +214,7 @@ export function SiteBrowserPage({ anchor = null }: { anchor?: HTMLElement | null
             title={t(page.loading ? 'siteBrowser.stop' : 'siteBrowser.reload')}
             onClick={() => void run(() => browser!.command(page.loading ? 'stop' : 'reload'))}
           >
-            {page.loading ? <XIcon /> : <RotateCwIcon />}
+            {<MorphIcon icon={page.loading ? XShape : RotateCwShape} />}
           </Button>
           <form
             onSubmit={(event) => {
@@ -233,32 +235,36 @@ export function SiteBrowserPage({ anchor = null }: { anchor?: HTMLElement | null
             />
           </form>
         </div>
-        {showBrowsers && (
-          <div
-            id="external-browsers"
-            className="site-browser-external"
-            aria-label={t('siteBrowser.open_in')}
-          >
-            {[{ id: 'default', name: t('siteBrowser.default_browser') }, ...browsers].map(
-              (item) => (
-                <Button
-                  key={item.id}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => void run(() => browser!.openExternal(item.id))}
-                >
-                  <ExternalLinkIcon aria-hidden="true" />
-                  {item.name}
-                </Button>
-              ),
-            )}
-          </div>
-        )}
-        {(page.error || error) && (
-          <p role="alert" className="site-browser-error">
-            {t('siteBrowser.failed')}
-          </p>
-        )}
+        <Reveal>
+          {showBrowsers && (
+            <div
+              id="external-browsers"
+              className="site-browser-external"
+              aria-label={t('siteBrowser.open_in')}
+            >
+              {[{ id: 'default', name: t('siteBrowser.default_browser') }, ...browsers].map(
+                (item) => (
+                  <Button
+                    key={item.id}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => void run(() => browser!.openExternal(item.id))}
+                  >
+                    <ExternalLinkIcon aria-hidden="true" />
+                    {item.name}
+                  </Button>
+                ),
+              )}
+            </div>
+          )}
+        </Reveal>
+        <Reveal>
+          {(page.error || error) && (
+            <p role="alert" className="site-browser-error">
+              {t('siteBrowser.failed')}
+            </p>
+          )}
+        </Reveal>
         <div className="site-browser-progress" data-loading={page.loading} aria-hidden="true" />
       </header>
       <div ref={viewport} className="site-browser-viewport" />

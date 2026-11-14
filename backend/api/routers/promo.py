@@ -167,6 +167,64 @@ async def promo_media(file: UploadFile = File(...)) -> dict:
     }
 
 
+class EditorFinalizeRequest(BaseModel):
+    media_id: str = Field(..., max_length=32)
+
+
+@router.post("/editor/finalize")
+async def editor_finalize(req: EditorFinalizeRequest) -> dict:
+    """Turn a video editor export into an MP4 (H.264 + AAC).
+
+    The editor encodes in the app with WebCodecs; where the system has no
+    H.264 encoder it writes WebM (VP9 + Opus) instead, and this converts it so
+    every platform saves the same MP4. Returns the new media like
+    ``/promo/media``.
+    """
+    from services.ffmpeg_utils import explain_ffmpeg_failure, find_ffmpeg, run_ffmpeg
+
+    source = resolve_media(req.media_id, kinds=("video",))
+    media_id = f"{uuid.uuid4().hex[:16]}.mp4"
+    out_path = os.path.join(_media_dir(), media_id)
+    cmd = [
+        find_ffmpeg(), "-hide_banner", "-loglevel", "error", "-y", "-i", source,
+        "-map", "0:v:0", "-map", "0:a:0?",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", out_path,
+    ]
+    try:
+        rc, _, stderr = await run_ffmpeg(cmd, timeout=_RENDER_TIMEOUT_SECONDS)
+        if rc != 0:
+            raise RuntimeError(stderr.decode(errors="replace") if stderr else "ffmpeg finalize non-zero")
+    except asyncio.TimeoutError:
+        with contextlib.suppress(OSError):
+            os.remove(out_path)
+        raise HTTPException(status_code=504, detail="Converting the video timed out")
+    except Exception as exc:
+        with contextlib.suppress(OSError):
+            os.remove(out_path)
+        logger.warning("editor finalize failed: %s", str(exc)[-2000:])
+        raise HTTPException(
+            status_code=500, detail=explain_ffmpeg_failure(exc, "convert the video to MP4", cmd=cmd),
+        )
+    info = await _probe(out_path)
+    if not info.get("has_video"):
+        with contextlib.suppress(OSError):
+            os.remove(out_path)
+        raise HTTPException(status_code=500, detail="Converting the video produced no file")
+    with contextlib.suppress(OSError):
+        os.remove(source)
+    return {
+        "id": media_id,
+        "kind": "video",
+        "name": os.path.splitext(os.path.basename(source))[0] + ".mp4",
+        "duration": info.get("duration"),
+        "width": info.get("width"),
+        "height": info.get("height"),
+        "has_audio": bool(info.get("has_audio")),
+        "url": f"/audio/promo_media/{media_id}",
+    }
+
+
 class PromoShotRequest(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
     media_id: str

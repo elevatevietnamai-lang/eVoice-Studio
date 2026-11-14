@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
-import { CheckCircleIcon, TriangleAlertIcon, CircleXIcon, ScanSearchIcon } from 'lucide-react';
+import { CircleCheckIcon, TriangleAlertIcon, CircleXIcon, ScanSearchIcon } from 'lucide-react';
 import type { PreflightReport } from '@shared/api/setup-types';
 import { apiJson } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
@@ -48,17 +49,19 @@ export function SystemPreflight() {
           )}
         </Button>
       </SettingsRow>
-      {query.isError && (
-        <p role="alert" className="px-4 py-3 text-sm text-destructive">
-          {t('backend.retry')}
-        </p>
-      )}
+      <Reveal>
+        {query.isError && (
+          <p role="alert" className="px-4 py-3 text-sm text-destructive">
+            {t('backend.retry')}
+          </p>
+        )}
+      </Reveal>
       {checks.length > 0 && (
         <ul className="divide-y divide-border/50 px-4">
           {checks.map((check) => {
             const Icon =
               check.status === 'pass'
-                ? CheckCircleIcon
+                ? CircleCheckIcon
                 : check.status === 'warn'
                   ? TriangleAlertIcon
                   : CircleXIcon;

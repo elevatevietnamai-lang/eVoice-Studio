@@ -1,4 +1,5 @@
 import { ProfileConsent } from './profile-consent';
+import { Reveal } from '@/components/motion';
 import { ProfilePreview } from './profile-preview';
 import { ProfileUsagePanel } from './profile-usage';
 import { LanguagePicker } from './language-picker';
@@ -288,11 +289,13 @@ export function EditProfile({ profile, onDone }: { profile: Profile; onDone: () 
       <div className="min-w-0">
         <ProfileConsent key={profile.id + '-consent'} profile={profile} />
       </div>
-      {failed && (
-        <p role="alert" className="text-sm text-destructive @min-[620px]:col-span-2">
-          {t('clone.save_failed', { message: failed })}
-        </p>
-      )}
+      <Reveal className="col-span-2">
+        {failed && (
+          <p role="alert" className="text-sm text-destructive @min-[620px]:col-span-2">
+            {t('clone.save_failed', { message: failed })}
+          </p>
+        )}
+      </Reveal>
       <div
         className={cn(
           'flex min-h-10 items-center gap-2 border-t border-border/50 pt-4',

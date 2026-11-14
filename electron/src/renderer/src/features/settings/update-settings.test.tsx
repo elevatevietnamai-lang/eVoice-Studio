@@ -126,6 +126,13 @@ describe('UpdateSettings', () => {
     expect(screen.queryByRole('button', { name: 'update.channel_beta' })).not.toBeInTheDocument();
   });
 
+  test('says update checks are off when the build ships without them', async () => {
+    mocks.state = { ...mocks.state, status: 'unsupported', unsupportedReason: 'build' };
+    renderSettings();
+    expect(await screen.findByText('settings.updater_off_build')).toBeInTheDocument();
+    expect(screen.queryByText('settings.updater_desktop')).not.toBeInTheDocument();
+  });
+
   test('switches to Beta and checks that channel straight away', async () => {
     mocks.state = { ...mocks.state, channel: 'stable' };
     const beta = { ...mocks.state, channel: 'beta' as const };

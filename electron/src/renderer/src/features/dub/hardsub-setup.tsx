@@ -60,7 +60,7 @@ export function SetupHardsubEngine() {
       {installing && (
         <div className="space-y-1">
           <Progress value={Math.round((progress ?? 0) * 100)} aria-label={t('dub_hardsub.install')} />
-          {log && <p className="truncate font-mono text-[10px] text-muted-foreground">{log}</p>}
+          {log && <p className="truncate font-mono text-[11px] text-muted-foreground">{log}</p>}
         </div>
       )}
     </section>

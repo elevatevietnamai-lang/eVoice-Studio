@@ -35,6 +35,8 @@ concurrency:
 
 jobs:
   android:
+    # Phone builds are the costliest jobs on a private fork (macOS bills 10x).
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     defaults:
@@ -88,6 +90,8 @@ jobs:
 
   ios:
     # Same SDK as the TestFlight upload, so App Store toolchain breaks show up here first.
+    # Phone builds are the costliest jobs on a private fork (macOS bills 10x).
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') }}
     runs-on: macos-26
     # Leave room for cold native builds plus simulator and device validation.
     timeout-minutes: 60
@@ -205,6 +209,8 @@ jobs:
   # native code the phones run. Models are user-started downloads in the app;
   # here they are fetched for the test with its explicit test-licence flag.
   ios-inference:
+    # Phone builds are the costliest jobs on a private fork (macOS bills 10x).
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') }}
     runs-on: macos-15
     timeout-minutes: 60
     steps:
@@ -230,6 +236,8 @@ jobs:
         run: mobile/ios/scripts/real-inference.sh
 
   android-inference:
+    # Phone builds are the costliest jobs on a private fork (macOS bills 10x).
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 75
     defaults:
@@ -279,7 +287,7 @@ jobs:
   # phone-first, smallest speech model, English. Nexus 5X is 1080x1920, inside
   # Play's 2:1 limit. Pulled from the emulator as the android-play-screenshots artifact.
   android-screenshots:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && (github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true')) }}
     runs-on: ubuntu-24.04
     timeout-minutes: 75
     defaults:

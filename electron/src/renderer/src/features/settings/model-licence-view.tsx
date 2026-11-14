@@ -1,11 +1,13 @@
 import { useState, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
+import { Check as CheckShape, Copy as CopyShape } from 'lucide';
+import { MorphIcon } from '@/components/ui/morph-icon';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import {
   CheckIcon,
   ChevronRightIcon,
   CircleHelpIcon,
-  CopyIcon,
   TriangleAlertIcon,
   UserRoundIcon,
   XIcon,
@@ -33,8 +35,7 @@ export const modelLicenceDetailsKey = (repoId: string) => ['model-licence', repo
 export function useModelLicenceDetails(repoId: string, enabled = true) {
   return useQuery({
     queryKey: modelLicenceDetailsKey(repoId),
-    queryFn: () =>
-      apiJson<ModelLicenceDetails>(`/models/licenses/details/${encodeURI(repoId)}`),
+    queryFn: () => apiJson<ModelLicenceDetails>(`/models/licenses/details/${encodeURI(repoId)}`),
     enabled: enabled && !!repoId,
     staleTime: 0,
   });
@@ -45,7 +46,9 @@ export function formatLicenceDate(value: string | null | undefined, locale: stri
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   try {
-    return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+    return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(
+      date,
+    );
   } catch {
     return date.toISOString();
   }
@@ -69,7 +72,7 @@ function CopyValue({ value }: { value: string }) {
       </code>
       <button
         type="button"
-        className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="rounded p-0.5 text-muted-foreground hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
         aria-label={copied ? t('modelLicense.copied') : t('modelLicense.copy')}
         title={copied ? t('modelLicense.copied') : t('modelLicense.copy')}
         onClick={() => {
@@ -79,7 +82,7 @@ function CopyValue({ value }: { value: string }) {
             .catch(() => {});
         }}
       >
-        {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
+        {<MorphIcon icon={copied ? CheckShape : CopyShape} className="size-3.5" />}
       </button>
     </span>
   );
@@ -110,12 +113,16 @@ export function LicenceAcceptanceState({ acceptance }: { acceptance?: ModelLicen
       text = t('modelLicense.stateNotRequired');
       break;
     case 'accepted':
-      text = at ? t('modelLicense.stateAccepted', { date: at }) : t('modelLicense.stateAcceptedUndated');
+      text = at
+        ? t('modelLicense.stateAccepted', { date: at })
+        : t('modelLicense.stateAcceptedUndated');
       tone = 'text-success';
       Icon = CheckIcon;
       break;
     case 'withdrawn':
-      text = at ? t('modelLicense.stateWithdrawn', { date: at }) : t('modelLicense.stateWithdrawnUndated');
+      text = at
+        ? t('modelLicense.stateWithdrawn', { date: at })
+        : t('modelLicense.stateWithdrawnUndated');
       tone = 'text-warning';
       Icon = TriangleAlertIcon;
       break;
@@ -132,7 +139,7 @@ export function LicenceAcceptanceState({ acceptance }: { acceptance?: ModelLicen
       Icon = TriangleAlertIcon;
   }
   return (
-    <div role="status" className="space-y-1 rounded-md bg-background/80 p-2.5">
+    <div role="status" className="space-y-1 rounded-lg bg-background/80 p-2.5">
       <p className="flex items-start gap-2 font-medium text-foreground">
         <Icon aria-hidden="true" className={cn('mt-0.5 size-4 shrink-0', tone)} />
         <span>{text}</span>
@@ -143,7 +150,9 @@ export function LicenceAcceptanceState({ acceptance }: { acceptance?: ModelLicen
         </p>
       )}
       {fields.length > 0 && (
-        <p className="ps-6 text-sm">{t('modelLicense.changedFields', { fields: fields.join(', ') })}</p>
+        <p className="ps-6 text-sm">
+          {t('modelLicense.changedFields', { fields: fields.join(', ') })}
+        </p>
       )}
     </div>
   );
@@ -189,7 +198,11 @@ export function LicenceSummary({
 type Verdict = 'allowed' | 'conditions' | 'not_allowed' | 'not_verified' | 'yours';
 
 const verdictStyle: Record<Verdict, { icon: ReactNode; tone: string; key: string }> = {
-  allowed: { icon: <CheckIcon className="size-3.5" />, tone: 'border-success/40 text-success', key: 'chipAllowed' },
+  allowed: {
+    icon: <CheckIcon className="size-3.5" />,
+    tone: 'border-success/40 text-success',
+    key: 'chipAllowed',
+  },
   conditions: {
     icon: <TriangleAlertIcon className="size-3.5" />,
     tone: 'border-warning/40 text-warning',
@@ -205,10 +218,15 @@ const verdictStyle: Record<Verdict, { icon: ReactNode; tone: string; key: string
     tone: 'border-border text-muted-foreground',
     key: 'chipNotVerified',
   },
-  yours: { icon: <UserRoundIcon className="size-3.5" />, tone: 'border-info/40 text-info', key: 'chipYours' },
+  yours: {
+    icon: <UserRoundIcon className="size-3.5" />,
+    tone: 'border-info/40 text-info',
+    key: 'chipYours',
+  },
 };
 
-const restricted = (value?: string) => value === 'restricted' || !!value?.startsWith('noncommercial');
+const restricted = (value?: string) =>
+  value === 'restricted' || !!value?.startsWith('noncommercial');
 
 export function licenceVerdicts(info?: ModelLicenseInfo): Record<string, Verdict> {
   const category = modelLicenseCategory(info?.license_category);
@@ -223,7 +241,10 @@ export function licenceVerdicts(info?: ModelLicenseInfo): Record<string, Verdict
           : 'not_verified';
   return {
     model,
-    outputs: restricted(info?.commercial_outputs) || category === 'noncommercial' ? 'not_allowed' : 'not_verified',
+    outputs:
+      restricted(info?.commercial_outputs) || category === 'noncommercial'
+        ? 'not_allowed'
+        : 'not_verified',
     redistribution: 'not_verified',
     voice: 'yours',
   };
@@ -245,7 +266,10 @@ export function LicencePermissions({ info }: { info?: ModelLicenseInfo }) {
         {rows.map(([id, label, hint]) => {
           const verdict = verdictStyle[verdicts[id]];
           return (
-            <div key={id} className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 p-3">
+            <div
+              key={id}
+              className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1 p-3"
+            >
               <div className="min-w-0 flex-1 basis-56">
                 <dt className="font-medium">{t(`modelLicense.${label}`)}</dt>
                 <dd className="text-xs text-muted-foreground">{t(`modelLicense.${hint}`)}</dd>
@@ -306,7 +330,7 @@ export function LicenceSection({
 }) {
   return (
     <details open={defaultOpen} className="group/section rounded-lg border border-border">
-      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-lg p-3 font-medium focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-lg p-3 font-medium focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
         <ChevronRightIcon
           aria-hidden="true"
           className="size-4 shrink-0 transition-transform group-open/section:rotate-90"
@@ -332,15 +356,19 @@ export function LicenceVariants({ info }: { info?: ModelLicenseInfo }) {
         {variants.map((variant) => {
           const evidence = modelLicenseUrl(variant.evidence_url);
           return (
-            <li key={variant.id} className="space-y-1 rounded-md bg-muted/40 p-3">
+            <li key={variant.id} className="space-y-1 rounded-lg bg-muted/40 p-3">
               <p className="flex items-center gap-1.5 font-medium">
                 <ModelLicenseIcon category={modelLicenseCategory(variant.license_category)} />
                 <span className="break-all">{variant.label}</span>
               </p>
               <p>{t(modelLicenseCategoryKey(variant.license_category))}</p>
-              {variant.observations?.output_terms && <p>{variant.observations.output_terms}</p>}
+              <Reveal>
+                {variant.observations?.output_terms && <p>{variant.observations.output_terms}</p>}
+              </Reveal>
               {variant.observations?.license_status && <p>{variant.observations.license_status}</p>}
-              {evidence && <ExternalLink href={evidence}>{t('modelLicense.readLicence')}</ExternalLink>}
+              {evidence && (
+                <ExternalLink href={evidence}>{t('modelLicense.readLicence')}</ExternalLink>
+              )}
             </li>
           );
         })}
@@ -368,9 +396,15 @@ function HistoryList({ history }: { history: ModelLicenceHistoryEntry[] }) {
       {history.map((entry, index) => (
         <li key={`${entry.at}-${index}`} className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <span className="font-medium">
-            {t(entry.action === 'withdrawn' ? 'modelLicense.historyWithdrawn' : 'modelLicense.historyAccepted')}
+            {t(
+              entry.action === 'withdrawn'
+                ? 'modelLicense.historyWithdrawn'
+                : 'modelLicense.historyAccepted',
+            )}
           </span>
-          <span>{formatLicenceDate(entry.at, i18n.language) ?? t('modelLicense.dateNotRecorded')}</span>
+          <span>
+            {formatLicenceDate(entry.at, i18n.language) ?? t('modelLicense.dateNotRecorded')}
+          </span>
           {entry.fingerprint && <CopyValue value={entry.fingerprint} />}
           {entry.app_version && (
             <span className="text-xs text-muted-foreground">
@@ -395,7 +429,10 @@ export function LicenceTechnical({
   const { t, i18n } = useTranslation();
   const rows: [string, ReactNode][] = [
     ['modelVersion', info?.runtime_revision ? <CopyValue value={info.runtime_revision} /> : null],
-    ['evidenceVersion', info?.evidence_revision ? <CopyValue value={info.evidence_revision} /> : null],
+    [
+      'evidenceVersion',
+      info?.evidence_revision ? <CopyValue value={info.evidence_revision} /> : null,
+    ],
     ['checked', formatLicenceDate(info?.evidence_checked_at, i18n.language)],
     ['termsHash', acceptance?.fingerprint ? <CopyValue value={acceptance.fingerprint} /> : null],
     [

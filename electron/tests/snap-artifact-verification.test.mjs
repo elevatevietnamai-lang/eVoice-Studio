@@ -12,6 +12,7 @@ import {
   verifySnapRuntimePayload,
 } from '../snap-template-payload.mjs';
 import { verifySnapMetadata } from '../../scripts/verify_snap_artifact.mjs';
+import { PRODUCT_NAME } from '../../config/app-config.mjs';
 
 const snapYaml = `base: core22
 grade: stable
@@ -22,7 +23,7 @@ plugs:
     allow-sandbox: false
 name: voicestudio
 version: 0.5.7
-title: VoiceStudio
+title: ${PRODUCT_NAME}
 summary: ${metadata.listing.shortDescription}
 description: ${metadata.listing.description}
 apps:

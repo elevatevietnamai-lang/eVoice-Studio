@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import {
   AlertCircleIcon,
@@ -97,11 +98,13 @@ export function PermissionsSettings() {
       {!bridge && (
         <p className="px-4 py-3 text-sm text-muted-foreground">{t('permissions.web_note')}</p>
       )}
-      {error && (
-        <div className="p-4">
-          <PipelineFailure fallback={error} onDismiss={() => setError('')} />
-        </div>
-      )}
+      <Reveal>
+        {error && (
+          <div className="p-4">
+            <PipelineFailure fallback={error} onDismiss={() => setError('')} />
+          </div>
+        )}
+      </Reveal>
       {state && (
         <>
           <SettingsRow

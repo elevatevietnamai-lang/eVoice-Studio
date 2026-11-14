@@ -80,6 +80,15 @@ export const componentRoles: Record<string, ComponentSpec> = {
     motionNote: 'Optional FadeIn (8 px drift, 240 ms) on first mount; Stagger (40 ms) for grids.',
     avoid: 'No shadows; depth comes from the border and surface step.',
   },
+  checkbox: {
+    role: 'selection',
+    use: 'One choice in a form or list that takes effect on Save or on a later action.',
+    tokens: ['--primary', '--primary-foreground', '--input', '--ring'],
+    type: 'text-ui',
+    motion: 'feedback',
+    motionNote: 'Box fill and check mark change with the default 160 ms transition.',
+    avoid: 'Do not use the native checkbox input; it ignores the theme.',
+  },
   collapsible: {
     role: 'structure',
     use: 'Disclosure that hides secondary content.',

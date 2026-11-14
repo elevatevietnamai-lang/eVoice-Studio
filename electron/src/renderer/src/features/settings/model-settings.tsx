@@ -1,4 +1,5 @@
 import { BookOpenIcon, CpuIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { ShortcutSettings } from './shortcut-settings';
 import { RefinementSettings } from './refinement-settings';
 import { LlmSkills } from './llm-skills';
@@ -196,33 +197,39 @@ export function DiarisationSettings() {
           </SettingsRow>
         ))
       )}
-      {runtime.isError && (
-        <SettingsActionError
-          className="m-4"
-          title={t('modelMaintenance.failed')}
-          detail={describeError(runtime.error)}
-          action={
-            <Button size="xs" variant="ghost" onClick={() => void runtime.refetch()}>
-              {t('backend.retry')}
-            </Button>
-          }
-        />
-      )}
-      {failed && (
-        <SettingsActionError
-          className="m-4"
-          title={t('modelSettings.failed')}
-          detail={failed}
-          onDismiss={() => setFailed(null)}
-        />
-      )}
-      {runtime.data?.job.state === 'error' && runtime.data.job.error && (
-        <SettingsActionError
-          className="m-4"
-          title={t('modelMaintenance.failed')}
-          detail={runtime.data.job.error}
-        />
-      )}
+      <Reveal>
+        {runtime.isError && (
+          <SettingsActionError
+            className="m-4"
+            title={t('modelMaintenance.failed')}
+            detail={describeError(runtime.error)}
+            action={
+              <Button size="xs" variant="ghost" onClick={() => void runtime.refetch()}>
+                {t('backend.retry')}
+              </Button>
+            }
+          />
+        )}
+      </Reveal>
+      <Reveal>
+        {failed && (
+          <SettingsActionError
+            className="m-4"
+            title={t('modelSettings.failed')}
+            detail={failed}
+            onDismiss={() => setFailed(null)}
+          />
+        )}
+      </Reveal>
+      <Reveal>
+        {runtime.data?.job.state === 'error' && runtime.data.job.error && (
+          <SettingsActionError
+            className="m-4"
+            title={t('modelMaintenance.failed')}
+            detail={runtime.data.job.error}
+          />
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }
@@ -459,7 +466,7 @@ export function ModelSettings({
               <div className="space-y-1.5">
                 {row.detail && <p>{row.detail}</p>}
                 {row.setupSnippet && (
-                  <code className="block w-fit max-w-full overflow-x-auto rounded-md bg-muted/55 px-2 py-1 text-[11px] text-foreground/75">
+                  <code className="block w-fit max-w-full overflow-x-auto rounded-sm bg-muted/55 px-2 py-1 text-[11px] text-foreground/75">
                     {row.setupSnippet}
                   </code>
                 )}
@@ -478,7 +485,7 @@ export function ModelSettings({
           {row.device && (
             <span
               title={row.routingReason || row.routingStatus}
-              className="inline-flex h-6 items-center gap-1.5 rounded-md border border-border/60 bg-muted/35 px-2 text-[11px] font-medium tracking-wide text-muted-foreground"
+              className="inline-flex h-6 items-center gap-1.5 rounded-sm border border-border/60 bg-muted/35 px-2 text-[11px] font-medium tracking-wide text-muted-foreground"
             >
               <ComputeVendorIcon runtime={row.device} className="size-3.5 shrink-0" />
               {formatComputeRuntime(row.device)}
@@ -601,13 +608,15 @@ export function ModelSettings({
           <AecSettings />
         </>
       )}
-      {failed && (
-        <SettingsActionError
-          title={t('modelSettings.failed')}
-          detail={failed}
-          onDismiss={() => setFailed(null)}
-        />
-      )}
+      <Reveal>
+        {failed && (
+          <SettingsActionError
+            title={t('modelSettings.failed')}
+            detail={failed}
+            onDismiss={() => setFailed(null)}
+          />
+        )}
+      </Reveal>
     </>
   );
 }

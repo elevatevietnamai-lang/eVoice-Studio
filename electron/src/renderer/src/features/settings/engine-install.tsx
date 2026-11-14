@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Reveal } from '@/components/motion';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DownloadIcon } from 'lucide-react';
@@ -67,18 +68,23 @@ export function EngineInstall({ id }: { id: string }) {
           {t('engines.localInstallRequired')}
         </p>
       )}
-      {!dismissedFailure && (failed || status.isError || status.data?.job?.state === 'failed') && (
-        <SettingsActionError
-          className="max-w-sm text-left"
-          title={t('modelMaintenance.failed')}
-          detail={
-            failed ||
-            (status.isError ? describeError(status.error) : '') ||
-            [status.data?.job?.error, status.data?.job?.remediation].filter(Boolean).join('\n\n')
-          }
-          onDismiss={() => setDismissedFailure(true)}
-        />
-      )}
+      <Reveal>
+        {!dismissedFailure &&
+          (failed || status.isError || status.data?.job?.state === 'failed') && (
+            <SettingsActionError
+              className="max-w-sm text-left"
+              title={t('modelMaintenance.failed')}
+              detail={
+                failed ||
+                (status.isError ? describeError(status.error) : '') ||
+                [status.data?.job?.error, status.data?.job?.remediation]
+                  .filter(Boolean)
+                  .join('\n\n')
+              }
+              onDismiss={() => setDismissedFailure(true)}
+            />
+          )}
+      </Reveal>
     </div>
   );
 }

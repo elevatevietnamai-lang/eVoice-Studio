@@ -68,7 +68,7 @@ export function LiveDeviceUsage({ open }: { open: boolean }) {
           <button
             type="button"
             onClick={() => void query.refetch()}
-            className="rounded text-muted-foreground underline outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="rounded text-muted-foreground underline outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             {t('common.retry')}
           </button>

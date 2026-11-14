@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { Reveal } from '@/components/motion';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -304,15 +305,17 @@ export function DiagnosticsSettings() {
           </Button>
         </div>
 
-        {error && (
-          <div className="p-4">
-            <SettingsActionError
-              title={t('about.self_check_failed', { message: '' }).trim()}
-              detail={error}
-              onDismiss={() => setError(null)}
-            />
-          </div>
-        )}
+        <Reveal>
+          {error && (
+            <div className="p-4">
+              <SettingsActionError
+                title={t('about.self_check_failed', { message: '' }).trim()}
+                detail={error}
+                onDismiss={() => setError(null)}
+              />
+            </div>
+          )}
+        </Reveal>
 
         {report && (
           <div>

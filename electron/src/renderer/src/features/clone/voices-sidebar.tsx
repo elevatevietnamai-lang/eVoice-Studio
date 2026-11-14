@@ -192,7 +192,7 @@ export function SavedVoices({
   if (allItems.length === 0) {
     return (
       <div className="mx-auto flex min-h-72 max-w-md flex-col items-center justify-center px-6 py-10 text-center">
-        <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-4 flex size-12 items-center justify-center rounded-lg bg-muted text-foreground">
           <FingerprintIcon className="size-5" aria-hidden="true" />
         </div>
         <p className="text-[length:var(--text-label)] leading-relaxed text-muted-foreground">
@@ -305,7 +305,7 @@ export function SavedVoices({
               >
                 <button
                   type="button"
-                  className="absolute inset-y-0 left-0 right-24 z-0 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="absolute inset-y-0 left-0 right-24 z-0 rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   title={profile.name + ' · ' + formatRelative(profile.created_at, i18n.language)}
                   aria-label={profile.name}
                   aria-pressed={active}
@@ -336,7 +336,7 @@ export function SavedVoices({
                     </p>
                   )}
                 </div>
-                <div className="absolute right-2 z-20 flex items-center gap-0.5 rounded-md bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-0.5 opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity duration-150 group-hover/profile:opacity-100 group-focus-within/profile:opacity-100">
+                <div className="absolute right-2 z-20 flex items-center gap-0.5 rounded-lg bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-1 [&>*]:rounded-sm opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity duration-150 group-hover/profile:opacity-100 group-focus-within/profile:opacity-100">
                   {profile.ref_audio_path ||
                   profile.locked_audio_path ||
                   profile.kind === 'design' ? (
@@ -435,7 +435,7 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
             runRendererTask('Open cloned take', () => navigate({ to: '/clone' }));
           }
         }}
-        className="flex h-full min-w-0 flex-1 items-center gap-2 rounded text-left text-[length:var(--text-label)] outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-full min-w-0 flex-1 items-center gap-2 rounded text-left text-[length:var(--text-label)] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         title={[
           item.text,
           workspaceLabel,
@@ -450,7 +450,7 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
         )}
         <span className="truncate">{displayTitle(item.text)}</span>
       </button>
-      <div className="pointer-events-none absolute right-1 z-10 flex items-center gap-0.5 rounded-md bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-0.5 opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
+      <div className="pointer-events-none absolute right-1 z-10 flex items-center gap-0.5 rounded-lg bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-1 [&>*]:rounded-sm opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
         {item.audio_path && (
           <AudioPreviewButton src={audioUrl(item.audio_path)} source={'take-' + item.id} />
         )}
@@ -672,12 +672,13 @@ export function VoicesSidebar({
         className="flex min-h-0 flex-1 flex-col gap-0"
       >
         <div className="px-2 py-2">
-          <TabsList className="flex w-full min-w-0 gap-1 bg-transparent p-0">
+          {/* The shared segmented tabs, unstyled here (DESIGN.md). */}
+          <TabsList className="w-full min-w-0">
             <TabsTrigger
               value="voices"
               title={t('clone.saved_profiles')}
               aria-label={t('clone.saved_profiles')}
-              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-(--sidebar-row-hover) data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
+              className="min-w-0"
             >
               <span className="min-w-0 truncate">{t('clone.saved_profiles')}</span>
             </TabsTrigger>
@@ -685,7 +686,7 @@ export function VoicesSidebar({
               value="takes"
               title={t('clone.history_title')}
               aria-label={t('clone.history_title')}
-              className="min-w-0 flex-1 rounded-lg text-sidebar-foreground/60 hover:bg-(--sidebar-row-hover) data-active:bg-[var(--sidebar-row-active)] data-active:text-sidebar-foreground dark:data-active:border-transparent dark:data-active:bg-[var(--sidebar-row-active)] dark:data-active:text-sidebar-foreground"
+              className="min-w-0"
             >
               <span className="min-w-0 truncate">{t('clone.history_title')}</span>
             </TabsTrigger>

@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Reveal } from '@/components/motion';
 import { CircleAlertIcon, LoaderCircleIcon, PauseIcon, PlayIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,10 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { formatClock } from '@/components/waveform-player';
 import { cn } from '@/lib/utils';
-import {
-  activeWordIndex,
-  buildLyricsTimeline,
-} from '@shared/utils/audiobookLyrics';
+import { activeWordIndex, buildLyricsTimeline } from '@shared/utils/audiobookLyrics';
 import type { AudiobookRenderChapter } from './longform-session';
 
 interface TimelineWord {
@@ -144,11 +142,13 @@ function SyncedPlayerContent({
           {formatClock(currentTime)} / {formatClock(duration)}
         </span>
       </div>
-      {error && (
-        <p role="alert" className="border-t border-border/50 px-3 py-2 text-xs text-destructive">
-          {t('player.unavailable')}
-        </p>
-      )}
+      <Reveal>
+        {error && (
+          <p role="alert" className="border-t border-border/50 px-3 py-2 text-xs text-destructive">
+            {t('player.unavailable')}
+          </p>
+        )}
+      </Reveal>
       {timeline.words.length > 0 && (
         <div
           ref={pane}
@@ -196,7 +196,7 @@ const LyricsChapter = memo(function LyricsChapter({
     <section>
       <button
         type="button"
-        className="mb-1 rounded-md px-1 py-0.5 text-left text-xs font-medium text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+        className="mb-1 rounded-sm px-1 py-0.5 text-left text-xs font-medium text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
         onClick={() => onSeek(chapter.start)}
       >
         {title}
@@ -216,9 +216,9 @@ const LyricsChapter = memo(function LyricsChapter({
                   data-active-word={active || undefined}
                   aria-current={active ? 'true' : undefined}
                   className={cn(
-                    'rounded px-0.5 text-inherit outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring',
+                    'rounded px-0.5 text-inherit outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50',
                     spoken && 'text-foreground/70',
-                    active && 'bg-primary/15 font-medium text-primary ring-1 ring-primary/20',
+                    active && 'bg-accent font-medium text-foreground',
                   )}
                   onClick={() => onSeek(word.start)}
                 >

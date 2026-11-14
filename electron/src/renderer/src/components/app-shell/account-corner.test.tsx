@@ -4,6 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 const mock = vi.hoisted(() => ({ mac: false }));
 vi.mock('@/components/bridge', () => ({ isMac: () => mock.mac }));
 vi.mock('./account-menu', () => ({ AccountMenu: () => <button type="button">account</button> }));
+vi.mock('./app-menu-button', () => ({ AppMenuButton: () => null }));
 vi.mock('./system-notifications', () => ({
   SystemNotifications: ({ enabled, titlebar }: { enabled: boolean; titlebar?: boolean }) => (
     <button type="button" data-enabled={String(enabled)} data-titlebar={String(Boolean(titlebar))}>

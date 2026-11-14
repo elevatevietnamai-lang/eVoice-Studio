@@ -3,6 +3,7 @@ import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 
 export interface SearchOption {
   value: string;
@@ -19,6 +20,8 @@ export interface VirtualSelectProps {
   ariaLabel: string;
   disabled?: boolean;
   buttonClassName?: string;
+  /** Trigger height, as SelectTrigger: `default` 32 px, `sm` 24 px for toolbars. */
+  size?: 'default' | 'sm';
   renderOption?: (option: SearchOption) => ReactNode;
   renderValue?: (option: SearchOption | undefined) => ReactNode;
   header?: ReactNode;
@@ -91,6 +94,7 @@ export function VirtualSearchableSelect({
   ariaLabel,
   disabled = false,
   buttonClassName = '',
+  size = 'default',
   renderOption,
   renderValue,
   header,
@@ -196,7 +200,12 @@ export function VirtualSearchableSelect({
         disabled={disabled}
         aria-label={ariaLabel}
         aria-describedby={current?.disabled ? `${id}-invalid` : undefined}
-        className={`inline-flex h-9 min-w-0 items-center gap-2 rounded-lg px-2.5 text-sm outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${buttonClassName}`}
+        data-size={size}
+        // The same field as SelectTrigger and Input: height, radius, border and fill.
+        className={cn(
+          'inline-flex w-fit min-w-0 items-center justify-between gap-1.5 rounded-(--control-radius) border border-input bg-control-fill px-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-8 data-[size=sm]:h-6',
+          buttonClassName,
+        )}
         onKeyDown={(event) => {
           if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
             event.preventDefault();
@@ -223,7 +232,7 @@ export function VirtualSearchableSelect({
             initialFocus={input}
             aria-label={ariaLabel}
             data-slot="language-menu"
-            className="flex max-h-[min(440px,var(--available-height))] w-[min(640px,calc(100vw-24px))] flex-col overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-xl outline-none"
+            className="cn-menu-target cn-menu-translucent flex max-h-[min(440px,var(--available-height))] w-[min(640px,calc(100vw-24px))] flex-col overflow-hidden rounded-(--card-radius) surface-glass text-popover-foreground shadow-md ring-1 ring-border outline-none"
             dir={rtl ? 'rtl' : 'ltr'}
           >
             <div className="flex shrink-0 items-center gap-2 border-b border-border px-3 transition-colors focus-within:bg-muted/30">
@@ -280,7 +289,7 @@ export function VirtualSearchableSelect({
                 <button
                   type="button"
                   aria-label={t('languagePicker.clearSearch')}
-                  className="flex size-9 shrink-0 items-center justify-center rounded-md hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-lg hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => {
                     setQuery('');
                     setActiveValue(value);
@@ -362,7 +371,7 @@ export function VirtualSearchableSelect({
                               aria-setsize={sorted.length}
                               disabled={option.disabled}
                               tabIndex={-1}
-                              className={`my-0.5 flex min-w-0 items-center gap-2 rounded-md px-2 text-start text-[13px] outline-none disabled:cursor-not-allowed disabled:text-muted-foreground ${active?.value === option.value ? 'bg-accent ring-1 ring-inset ring-border' : 'enabled:hover:bg-muted'} `}
+                              className={`my-0.5 flex min-w-0 items-center gap-2 rounded-lg px-2 text-start text-[13px] outline-none disabled:cursor-not-allowed disabled:text-muted-foreground ${active?.value === option.value ? 'bg-accent ring-1 ring-inset ring-border' : 'enabled:hover:bg-muted'} `}
                               onPointerMove={(event) => {
                                 if (event.pointerType === 'mouse' && !option.disabled)
                                   setActiveValue(option.value);
