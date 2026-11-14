@@ -11,6 +11,7 @@ metadata and the backend fallback mirror it.
 **Highlights**
 
 - Vietnamese user guide drafts with real app screenshots
+- Music Studio fixes from a full run on a real GPU: reused seeds reproduce the track again
 
 ### Docs
 
@@ -19,6 +20,7 @@ metadata and the backend fallback mirror it.
 ### Fixed
 
 - Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
+- Music Studio: *Reuse seed* now reproduces a track (seeds were reported but not used, and seeds above 2.1 billion were lost), M4A uploads work for cover and style reference, Turbo steps stop at 8 where the engine stops, and tracks no longer save the key "N/A" (#33)
 
 ## [0.5.7-beta.3] — 2026-11-14
 

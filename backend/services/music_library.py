@@ -49,13 +49,25 @@ def save(track_id: str, **meta) -> dict:
     return record
 
 
+def _clean_record(record: dict) -> dict:
+    """Tracks saved by 0.5.7-beta.3 may hold the server's "N/A" as their key or meter."""
+    from services.music import clean_key, clean_meter
+
+    for name, clean in (("key_scale", clean_key), ("time_signature", clean_meter)):
+        if name in record:
+            record[name] = clean(record[name])
+    return record
+
+
 def get(track_id: str) -> Optional[dict]:
     try:
         record = json.loads(_meta_path(track_id).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+    if not isinstance(record, dict):
+        return None
     try:
-        return record if audio_path(track_id, record.get("ext", "wav")).is_file() else None
+        return _clean_record(record) if audio_path(track_id, record.get("ext", "wav")).is_file() else None
     except ValueError:
         return None
 
@@ -82,6 +94,8 @@ def resolve_track_audio(track_id: str) -> Path:
 # The client only ever names an upload by its id; the path is resolved here, under the library.
 
 UPLOAD_EXTS = frozenset({"wav", "mp3", "flac", "ogg", "m4a"})
+# What the music engine's soundfile (libsndfile 1.2) reads; anything else is stored as FLAC.
+ENGINE_EXTS = frozenset({"wav", "mp3", "flac", "ogg"})
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
 MAX_UPLOADS = 20
 
@@ -116,6 +130,30 @@ def resolve_upload(upload_id: str) -> Path:
         if path.is_file():
             return path
     raise ValueError("That uploaded file is gone. Upload it again.")
+
+
+async def engine_readable(path: Path) -> Path:
+    """*path* when the engine can read it, else a FLAC copy beside it (the original is removed)."""
+    from services.ffmpeg_utils import find_ffmpeg, run_ffmpeg
+
+    ext = path.suffix.lower().lstrip(".")
+    if ext in ENGINE_EXTS:
+        return path
+    if path.parent.resolve() != uploads_dir().resolve():
+        raise ValueError("Unsupported audio type")
+    target = path.with_suffix(".flac")
+    tmp = target.with_name(target.stem + ".part.flac")
+    ffmpeg = find_ffmpeg()
+    if not ffmpeg:
+        raise ValueError("ffmpeg is needed to read this file. Use a WAV, MP3, FLAC or OGG file.")
+    code, _out, err = await run_ffmpeg([ffmpeg, "-v", "error", "-y", "-i", str(path), "-vn",
+                                        "-c:a", "flac", str(tmp)], timeout=600)
+    if code != 0 or not tmp.is_file():
+        tmp.unlink(missing_ok=True)
+        raise ValueError("That file has no audio this app can read.")
+    os.replace(tmp, target)
+    path.unlink(missing_ok=True)
+    return target
 
 
 def prune_uploads(keep: int = MAX_UPLOADS) -> None:

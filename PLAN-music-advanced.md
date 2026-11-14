@@ -223,3 +223,83 @@ Cột "API" = trường của `/release_task` tại revision đang pin. Ưu tiê
 2. PR-2 (Pha 2): batch, steps/ODE-SDE, định dạng, thẻ lời, chip style, format cục bộ, dùng lại thiết lập.
 3. PR-3 (Pha 3a): upload an toàn, cover, repaint, extend.
 4. PR-4 (Pha 3b): tải model SFT/base/LM 0.6B và các nút chỉ dành cho base.
+
+---
+
+## 8. Bổ sung 2026-11-14: Pha 3c, Pha 4 và kiểm chứng thật
+
+Pha 1–3b đã merge (#19, #25, #28, #29). Mục này lập plan chi tiết cho phần còn thiếu. Mọi trường API dưới đây đã đối chiếu với mã nguồn tại revision pin `ca1e85fe…` (`acestep/api/http/release_task_models.py`, `acestep/constants.py`, `acestep/core/generation/handler/padding_utils.py`), bản cài ở `D:\eVoiceEngines\acestep\src`.
+
+### 8.0 Kiểm chứng thật (làm đầu tiên, PR-5)
+
+Engine đã cài trên máy này (`OMNIVOICE_ENGINES_DIR=D:\eVoiceEngines`). Chạy từng bước, ghi thời gian, VRAM, lỗi; lỗi nào thì sửa ở PR-5 kèm test.
+1. text2music turbo: không lời, lời tiếng Anh, lời tiếng Việt; cùng seed hai lần ra cùng kết quả.
+2. Thinking với LM 0.6B; Format (`/format_input`).
+3. Batch 2, steps 4/20, SDE, định dạng FLAC/MP3; "dùng lại thiết lập".
+4. Cover (strength 0.2 / 0.8), repaint (ba mode), audio tham chiếu, upload M4A.
+5. Đổi model turbo → SFT (tải 4,8 GB khi tới bước này) → turbo: server khởi động lại đúng model, guidance/shift có tác dụng.
+6. Thử Extend bằng tay (xem 8.1) trước khi viết UI.
+
+### 8.1 Pha 3c-1: Extend (kéo dài bài)
+
+**Ngữ nghĩa đã xác nhận trong code pin:** với `task_type=repaint`, `repainting_end` > độ dài nguồn thì server đệm im lặng bên phải rồi sinh phần đệm (outpaint); `repainting_start` < 0 thì đệm bên trái. Không cần task riêng.
+- **Backend:** thêm chế độ UI `extend`, ánh xạ sang `task_type=repaint`.
+  - Trường mới: `extend_side: Literal["end", "start"] = "end"`, `extend_seconds: float` (5–120), `extend_overlap: float` (0–10, mặc định 2): đoạn cuối bài gốc được sinh lại cùng phần mới để nối mượt.
+  - Sau: `repainting_start = dur - overlap`, `repainting_end = dur + seconds`. Trước: `repainting_start = -seconds`, `repainting_end = overlap`.
+  - Tổng độ dài sau khi kéo dài ≤ `MAX_SOURCE_SECONDS` (600); vượt thì lỗi 422 có thông điệp rõ.
+  - Dùng lại `repaint_mode`/`repaint_strength`; kết quả lưu thành bài mới, `params` ghi `task=extend` để "dùng lại thiết lập" nạp đúng.
+- **UI:** thêm "Kéo dài" vào `ToggleGroup` chế độ; chọn phía (sau/trước), số giây (`Slider`), độ chồng; hiện độ dài sau khi kéo dài. Mô tả và lời cho phần mới dùng ô prompt/lời hiện có.
+- **Test:** tính `repainting_start/end` cho cả hai phía, chặn vượt 600 giây, payload mặc định không đổi.
+
+### 8.2 Pha 3c-2: Tham số LM (mục "Chuyên gia")
+
+Chỉ hiện khi Thinking bật (LM có nạp). Mặc định lấy đúng mặc định của server và **không gửi** khi người dùng không đổi, để payload cũ giữ nguyên từng byte.
+
+| Trường | Khoảng | Mặc định server |
+|---|---|---|
+| `lm_temperature` | 0.1–2.0 | 0.85 |
+| `lm_cfg_scale` | 1.0–5.0 | 2.5 |
+| `lm_top_k` | 0 (tắt) – 200 | None |
+| `lm_top_p` | 0.1–1.0 | 0.9 |
+| `lm_repetition_penalty` | 1.0–2.0 | 1.0 |
+| `lm_negative_prompt` | ≤ 500 ký tự | "NO USER INPUT" |
+
+- Bảng khoảng/mặc định nằm một chỗ ở backend (`LM_PARAMS`) và một bảng trong `music-options.ts`; test đối chiếu hai bảng như `DIT_MODELS`.
+- Nút "Khôi phục mặc định". Lưu vào `params` của bài.
+
+### 8.3 Pha 3c-3: Custom timesteps
+
+`timesteps` (chuỗi số phân tách dấu phẩy) **thay thế** `inference_steps` và `shift`.
+- Đặt trong mục "Chuyên gia", tắt mặc định. Khi bật: ẩn steps và shift, hiện ô nhập kèm một preset (lịch 9 bước trong tài liệu ACE-Step).
+- Validate ở backend: 2–64 giá trị, giảm dần, trong [0, 1], kết thúc bằng 0; chuẩn hóa thành chuỗi trước khi gửi. Áp dụng cho mọi model (server tự xử lý); chạy thử ở 8.0 trên turbo xem có tác dụng không, nếu không thì chỉ hiện với SFT/base.
+
+### 8.4 Pha 4a: LoRA
+
+API pin: `/v1/lora/load` (`lora_path`, `adapter_name`), `/v1/lora/unload`, `/v1/lora/toggle`, `/v1/lora/scale`, `/v1/lora/status`.
+- **Bảo mật:** đường dẫn chỉ đến từ hộp thoại chọn file/thư mục của Electron main; router nhận token do main cấp, không nhận đường dẫn thô; `require_admin` + `require_desktop`. Chỉ nhận `.safetensors` hoặc thư mục PEFT có `adapter_config.json`.
+- **Vòng đời:** LoRA gắn với server; server khởi động lại (đổi model/Thinking) thì nạp lại LoRA đã chọn. LoRA chỉ hợp với DiT đã train nó: ghi model đích, cảnh báo khi lệch.
+- **UI:** mục "LoRA" trong Nâng cao: chọn file, bật/tắt, scale 0–1, gỡ. Không tải LoRA từ mạng; giấy phép LoRA là của người dùng.
+- Training LoRA: không làm.
+
+### 8.5 Pha 4b: Extract / Lego / Complete (chỉ model base)
+
+`TASK_TYPES_BASE` tại pin có thêm `extract`, `lego`, `complete`; turbo/SFT không chạy được.
+- Chỉ bật khi đang chọn model base và đã tải (4,8 GB, tải khi bắt đầu pha này).
+- `extract`: chọn một track trong `TRACK_NAMES` (vocals, drums, bass, guitar, …) → tách thành bài mới.
+- `lego`: thêm một lớp nhạc cụ (`track_name` + `global_caption` mô tả cả bài).
+- `complete`: chọn nhiều nhạc cụ (`track_classes`) để hoàn thiện bản phối dở.
+- Dùng lại bộ chọn nguồn của Pha 3a; danh sách track lấy từ một bảng chung backend/UI, nhãn qua i18n.
+
+### 8.6 Không làm
+
+- **Auto score / LRC:** API REST tại pin không có endpoint nào (chỉ có trong Gradio). Không làm cho tới khi đổi revision pin có endpoint.
+- **Training LoRA**, AudioMass, Demucs, chia sẻ/LAN: giữ như mục 2.
+
+### 8.7 Thứ tự PR
+
+5. PR-5: kiểm chứng thật (8.0) + sửa lỗi phát hiện được.
+6. PR-6 (Pha 3c): Extend, tham số LM, custom timesteps.
+7. PR-7 (Pha 4a): LoRA.
+8. PR-8 (Pha 4b): Extract/Lego/Complete.
+
+Mỗi PR: test backend + Vitest, i18n 21 locale (`agy` Gemini 4 Argon), `docs/music-studio.md`, một dòng CHANGELOG `[Unreleased]`, OpenAPI và guard thiết kế xanh.

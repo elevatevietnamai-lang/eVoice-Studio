@@ -2,6 +2,9 @@ import { expect, it } from 'vitest';
 import {
   appendStyleTag,
   insertLyricTag,
+  knownKey,
+  MAX_SEED,
+  randomSeed,
   settingsFromTrack,
   type MusicSettings,
 } from './music-options';
@@ -54,7 +57,7 @@ it('reuses every setting a track was saved with, one variant at a time', () => {
       key_scale: 'D minor',
       time_signature: '3',
       thinking: true,
-      inference_steps: 12,
+      inference_steps: 6,
       infer_method: 'sde',
       ext: 'flac',
     },
@@ -72,7 +75,7 @@ it('reuses every setting a track was saved with, one variant at a time', () => {
     seed: '7',
     thinking: true,
     batchSize: '1',
-    steps: 12,
+    steps: 6,
     inferMethod: 'sde',
     audioFormat: 'flac',
     model: 'turbo',
@@ -92,6 +95,31 @@ it('fills defaults for tracks saved before the newer settings existed', () => {
     audioFormat: 'wav',
     batchSize: '1',
   });
+});
+
+it("drops a key or meter the server reported as 'N/A' (tracks saved by 0.5.7-beta.3)", () => {
+  const next = settingsFromTrack(
+    {
+      prompt: 'x',
+      lyrics: '',
+      instrumental: true,
+      duration: 30,
+      bpm: null,
+      key_scale: 'N/A',
+      time_signature: 'N/A',
+    },
+    current,
+  );
+  expect(next).toMatchObject({ keyScale: '', timeSignature: '' });
+  expect(knownKey('F# minor')).toBe('F# minor');
+});
+
+it('draws random seeds from the whole range ACE-Step uses', () => {
+  expect(MAX_SEED).toBe(4294967295);
+  for (let i = 0; i < 50; i += 1) {
+    const seed = randomSeed();
+    expect(Number.isInteger(seed) && seed >= 0 && seed <= MAX_SEED).toBe(true);
+  }
 });
 
 it('applies only what the language model filled in', () => {

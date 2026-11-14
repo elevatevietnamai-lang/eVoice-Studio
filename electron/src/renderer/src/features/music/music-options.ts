@@ -81,9 +81,17 @@ export function vocalLanguageOptions(uiLanguage: string): { value: string; label
   );
 }
 
+/** ACE-Step's seed range (it draws batch variants from all of it). */
+export const MAX_SEED = 2 ** 32 - 1;
+
 /** A random seed in the range the backend accepts. */
 export function randomSeed(): number {
-  return Math.floor(Math.random() * 2 ** 31);
+  return Math.floor(Math.random() * (MAX_SEED + 1));
+}
+
+/** A key the form can hold ('C major', 'F# minor'), or '' for anything else (the server's 'N/A'). */
+export function knownKey(value: string | undefined): string {
+  return /^[A-G][#b]? (major|minor)$/.test(value ?? '') ? (value as string) : '';
 }
 
 /** Variants per run, turbo's default steps, samplers and file formats (backend `services/music.py`). */
@@ -100,7 +108,7 @@ export type AudioFormat = (typeof AUDIO_FORMATS)[number];
  * keeps the two equal.
  */
 export const DIT_MODELS = {
-  turbo: { steps: [4, 20, 8], guidance: false },
+  turbo: { steps: [4, 8, 8], guidance: false },
   sft: { steps: [8, 64, 32], guidance: true },
   base: { steps: [8, 64, 32], guidance: true },
 } as const;
@@ -249,7 +257,7 @@ export function settingsFromTrack(
     vocalLanguage: (VOCAL_LANGUAGES as readonly string[]).includes(track.vocal_language ?? '')
       ? (track.vocal_language as string)
       : current.vocalLanguage,
-    keyScale: track.key_scale ?? '',
+    keyScale: knownKey(track.key_scale),
     timeSignature: (TIME_SIGNATURES as readonly string[]).includes(track.time_signature ?? '')
       ? (track.time_signature as string)
       : '',
