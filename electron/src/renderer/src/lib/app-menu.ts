@@ -7,6 +7,7 @@ import {
   type AppMenuLabels,
 } from '@shared/app-menu';
 import { destinations } from '@/components/app-shell/destinations';
+import { runRendererTask } from '@/lib/global-error-recovery';
 
 /** The native menu's labels in the current language, for `app.menu.setLabels`. */
 export function appMenuLabels(t: TFunction): AppMenuLabels {
@@ -22,9 +23,12 @@ export function appMenuLabels(t: TFunction): AppMenuLabels {
  * `activate` runs first (Clone and Saved open the saved-voices tab). Paths the menu does not list
  * are ignored, so the channel cannot open arbitrary routes.
  */
-export function openAppMenuPath(path: unknown, navigate: (to: string) => unknown): boolean {
+export function openAppMenuPath(
+  path: unknown,
+  navigate: (to: string) => void | Promise<void>,
+): boolean {
   if (typeof path !== 'string' || !APP_MENU_PATHS.includes(path)) return false;
   destinations.find((destination) => destination.to === path)?.activate?.();
-  void navigate(path);
+  runRendererTask(`App menu: ${path}`, () => navigate(path));
   return true;
 }

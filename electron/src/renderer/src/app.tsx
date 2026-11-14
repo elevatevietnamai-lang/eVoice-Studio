@@ -97,9 +97,7 @@ export function App() {
     const app = getBridge()?.app;
     if (!app) return;
     return app.onNavigate((path) => {
-      openAppMenuPath(path, (to) =>
-        runRendererTask('Native menu navigation', () => router.navigate({ to })),
-      );
+      openAppMenuPath(path, (to) => router.navigate({ to }));
     });
   }, []);
   useEffect(() => {
