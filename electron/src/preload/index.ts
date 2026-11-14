@@ -177,6 +177,7 @@ const bridge: VoiceStudioBridge = {
     authorizeMediaTool: (kind) => ipcRenderer.invoke('files:authorizeMediaTool', kind),
     authorizeModelsDirectory: (reset = false) =>
       ipcRenderer.invoke('files:authorizeModelsDirectory', reset),
+    authorizeMusicLora: (pick) => ipcRenderer.invoke('files:authorizeMusicLora', pick),
     extractScript: (input) => ipcRenderer.invoke('files:extractScript', input) as Promise<string>,
     saveAudio: (req: SaveAudioRequest) =>
       ipcRenderer.invoke('files:saveAudio', req) as Promise<SaveAudioResult>,

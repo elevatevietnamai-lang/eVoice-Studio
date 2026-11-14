@@ -306,7 +306,7 @@ def test_generate_flow_parses_stringified_result_and_saves_audio(tmp_path, monke
     monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
     engine = music.AceStepEngine()
 
-    async def fake_running(*_a):
+    async def fake_running(*_a, **_k):
         return "http://127.0.0.1:9", "k"
 
     monkeypatch.setattr(engine, "_ensure_running", fake_running)
@@ -351,7 +351,7 @@ def test_generate_survives_a_transient_connection_error(tmp_path, monkeypatch):
     monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
     engine = music.AceStepEngine()
 
-    async def fake_running(*_a):
+    async def fake_running(*_a, **_k):
         return "http://127.0.0.1:9", "k"
 
     monkeypatch.setattr(engine, "_ensure_running", fake_running)
@@ -689,7 +689,7 @@ def _mock_server(monkeypatch, handler):
     monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
     engine = music.AceStepEngine()
 
-    async def fake_running(*_a):
+    async def fake_running(*_a, **_k):
         return "http://127.0.0.1:9", "k"
 
     monkeypatch.setattr(engine, "_ensure_running", fake_running)
@@ -1150,3 +1150,154 @@ def test_renderer_extend_and_lm_tables_match_the_backend():
         assert row, f"{name} missing from LM_PARAMS in music-options.ts"
         assert nums(row.group(1)) == tuple(None if v is None else float(v) for v in spec), name
     assert f"LM_NEGATIVE_PROMPT_DEFAULT = '{music.LM_NEGATIVE_PROMPT_DEFAULT}'" in source
+
+
+# ── Phase 4a: LoRA picked in the desktop app
+
+
+def _lora_grant(tmp_path, monkeypatch, path):
+    """What Electron main writes after its native picker: a one-shot grant, the backend sees a token."""
+    from core import path_authorization
+
+    store = tmp_path / ".path-authorizations"
+    store.mkdir(exist_ok=True)
+    token = "ab" * 32
+    (store / f"{token}.json").write_text(json.dumps({"token": token, "kind": "music_lora", "path": str(path)}),
+                                         encoding="utf-8")
+    monkeypatch.setattr(path_authorization, "_AUTH_DIR", str(store))
+    return token
+
+
+def _lora_client(tmp_path, monkeypatch):
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from api.routers import music as router
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    app = FastAPI()
+    app.include_router(router.router)
+    return TestClient(app, client=("127.0.0.1", 5000))
+
+
+def test_lora_kind_accepts_only_what_the_engine_loads(tmp_path):
+    (tmp_path / "a.safetensors").write_bytes(b"x")
+    (tmp_path / "peft").mkdir()
+    (tmp_path / "peft" / "adapter_config.json").write_text("{}")
+    (tmp_path / "lokr").mkdir()
+    (tmp_path / "lokr" / "lokr_weights.safetensors").write_bytes(b"x")
+    (tmp_path / "empty").mkdir()
+    (tmp_path / "x.bin").write_bytes(b"x")
+    assert [music.lora_kind(str(tmp_path / n)) for n in ("a.safetensors", "peft", "lokr")] == [
+        "file", "folder", "folder"]
+    for bad in ("empty", "x.bin", "missing.safetensors"):
+        with pytest.raises(ValueError):
+            music.lora_kind(str(tmp_path / bad))
+
+
+def test_lora_is_chosen_only_through_a_desktop_grant_never_a_path(tmp_path, monkeypatch):
+    client = _lora_client(tmp_path, monkeypatch)
+    lora = tmp_path / "style.safetensors"
+    lora.write_bytes(b"x")
+    # A raw path in place of the grant is refused by validation; an unknown token by the grant store.
+    assert client.post("/music/lora", json={"authorization": str(lora)}).status_code == 422
+    _lora_grant(tmp_path, monkeypatch, lora)
+    assert client.post("/music/lora", json={"authorization": "cd" * 32}).status_code == 403
+    token = _lora_grant(tmp_path, monkeypatch, lora)
+    r = client.post("/music/lora", json={"authorization": token, "model": "sft"})
+    assert r.status_code == 200
+    view = r.json()
+    assert view == {"selected": True, "name": "style.safetensors", "kind": "file", "scale": 1.0,
+                    "enabled": True, "model": "sft", "available": True}
+    assert "path" not in client.get("/music/lora").json()
+    # The grant is one-shot.
+    assert client.post("/music/lora", json={"authorization": token}).status_code == 403
+    assert client.patch("/music/lora", json={"scale": 0.4, "enabled": False}).json()["scale"] == 0.4
+    assert client.patch("/music/lora", json={"scale": 1.5}).status_code == 422
+    assert client.delete("/music/lora").json() == {"selected": False}
+    assert client.get("/music/lora").json() == {"selected": False}
+
+
+def test_lora_routes_that_change_it_need_the_desktop(tmp_path, monkeypatch):
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from api.routers import music as router
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    app = FastAPI()
+    app.include_router(router.router)
+    remote = TestClient(app, client=("203.0.113.9", 5000))
+    assert remote.post("/music/lora", json={"authorization": "ab" * 32}).status_code == 403
+    for route in router.router.routes:
+        if getattr(route, "path", "") == "/music/lora" and "POST" in route.methods:
+            names = {d.call.__name__ for d in route.dependant.dependencies}
+            assert {"require_admin", "require_desktop"} <= names
+
+
+def test_generate_uses_the_lora_only_while_it_is_on_and_on_disk(tmp_path, monkeypatch):
+    from api.routers.music import _apply_lora_choice
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    lora = tmp_path / "style.safetensors"
+    lora.write_bytes(b"x")
+    music_library.save_lora({"path": str(lora), "name": "style.safetensors", "scale": 0.6, "enabled": True})
+    req = music.MusicRequest(prompt="x")
+    assert _apply_lora_choice(req) == {"name": "style.safetensors", "scale": 0.6}
+    assert (req.lora_path, req.lora_scale) == (str(lora), 0.6)
+    music_library.save_lora({"path": str(lora), "scale": 0.6, "enabled": False})
+    off = music.MusicRequest(prompt="x")
+    assert _apply_lora_choice(off) is None and off.lora_path is None
+    music_library.save_lora({"path": str(tmp_path / "gone.safetensors"), "enabled": True})
+    with pytest.raises(ValueError, match="moved or deleted"):
+        _apply_lora_choice(music.MusicRequest(prompt="x"))
+
+
+def test_engine_loads_swaps_and_unloads_the_lora_on_its_server(monkeypatch):
+    calls = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append((request.url.path, json.loads(request.content or b"{}")))
+        return httpx.Response(200, json=_wrap({"message": "ok"}))
+
+    engine = _mock_server(monkeypatch, handler)
+
+    async def run(req):
+        async with httpx.AsyncClient() as client:
+            await engine._apply_lora(client, "http://x", req)
+
+    asyncio.run(run(music.MusicRequest(prompt="x", lora_path="/a", lora_scale=0.5)))
+    asyncio.run(run(music.MusicRequest(prompt="x", lora_path="/a", lora_scale=0.7)))
+    asyncio.run(run(music.MusicRequest(prompt="x", lora_path="/b")))
+    asyncio.run(run(music.MusicRequest(prompt="x")))
+    assert [c[0] for c in calls] == [
+        "/v1/lora/load", "/v1/lora/scale", "/v1/lora/toggle",
+        "/v1/lora/scale", "/v1/lora/toggle",
+        "/v1/lora/unload", "/v1/lora/load", "/v1/lora/scale", "/v1/lora/toggle",
+        "/v1/lora/unload"]
+    assert calls[0][1] == {"lora_path": "/a"} and calls[1][1] == {"scale": 0.5}
+    assert engine._server.lora is None
+
+
+def test_lora_failure_does_not_leak_the_servers_text(monkeypatch):
+    engine = _mock_server(monkeypatch, lambda _r: httpx.Response(400, json={"detail": "LoRA path not found: C:/secret"}))
+
+    async def run():
+        async with httpx.AsyncClient() as client:
+            await engine._apply_lora(client, "http://x", music.MusicRequest(prompt="x", lora_path="/a"))
+
+    with pytest.raises(RuntimeError) as err:
+        asyncio.run(run())
+    assert "secret" not in str(err.value) and engine._server.lora is None
+
+
+def test_a_lora_starts_the_server_with_the_model_loaded(tmp_path, monkeypatch):
+    engine, spawned = _fake_server(tmp_path, monkeypatch)
+
+    async def run():
+        await engine._ensure_running(None)
+        await engine._ensure_running(None, eager=True)
+        await engine._ensure_running(None)  # an eager server serves plain requests too
+
+    asyncio.run(run())
+    assert len(spawned) == 2 and "ACESTEP_NO_INIT" not in spawned[0]
+    assert spawned[1]["ACESTEP_NO_INIT"] == "false"
+    engine._kill_now()

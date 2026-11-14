@@ -98,6 +98,16 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   them. Switching models restarts the music server with that model; a model that is not downloaded
   is refused before the server starts, and SFT/Base run with the same offline guard as Thinking, so
   ACE-Step's fallback can never fetch an unpinned model. Each saved track records its model.
+- **LoRA (Advanced, desktop app only):** *Choose a LoRA file* (a LoKr/LyCORIS `.safetensors`) or
+  *Choose a LoRA folder* (a PEFT adapter with `adapter_config.json`, or `lokr_weights.safetensors`).
+  The path comes only from the app's own file dialog: Electron main checks the choice and writes a
+  one-shot grant, the page sends the grant token, and `POST /music/lora` (admin and desktop only)
+  turns it into the path. The page never sees or sends a path, and the browser build has no picker.
+  The choice is kept in `<data dir>/music/lora.json`. You can turn it on or off, set its strength
+  (0–100 %) or remove it. A LoRA only fits the DiT it was trained for, so the page warns when another
+  model is selected. While a LoRA is on, the music server loads its model at startup (a LoRA needs it
+  in memory) and the LoRA is loaded again after any restart. Saved tracks record its name and strength.
+  Nothing is downloaded, and the LoRA's license is yours to check. Training LoRAs is not part of the app.
 - **Memory:** the music server starts on demand, listens on a random loopback port with a random key and
   stops after 5 minutes idle. *Free GPU memory* stops it immediately. Measured on an RTX 3060 12 GB
   (Windows): the first start takes about 3 minutes, then a 30–40 s Turbo track takes 6–8 s and about
@@ -116,6 +126,8 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   saved), `POST /music/upload` (multipart `file`; returns `upload_id`, `name`, `duration`),
   `GET /music/models` (turbo, sft, base and which are downloaded), `GET /music/model-install-stream?model=sft|base`
   (SSE), and on generate `model`, `guidance_scale`, `shift`, `use_adg`, `cfg_interval_start`, `cfg_interval_end`,
+  `GET`/`POST`/`PATCH`/`DELETE /music/lora` (the POST takes only a desktop grant `authorization`
+  and the target `model`),
   `GET /music/library`, `GET /music/audio/{id}`, `DELETE /music/library/{id}`, `POST /music/stop`.
 
 ## GPU exclusion

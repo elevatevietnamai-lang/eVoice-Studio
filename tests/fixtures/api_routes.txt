@@ -20,6 +20,7 @@ DELETE /marketplace/{filename}
 DELETE /models/licenses/receipts/{plan_digest}
 DELETE /models/{repo_id:path}
 DELETE /music/library/{track_id}
+DELETE /music/lora
 DELETE /profiles/{profile_id}
 DELETE /profiles/{profile_id}/attestation
 DELETE /profiles/{profile_id}/consent
@@ -157,6 +158,7 @@ GET /music/install-stream
 GET /music/library
 GET /music/lm
 GET /music/lm-install-stream
+GET /music/lora
 GET /music/model-install-stream
 GET /music/models
 GET /music/status
@@ -204,6 +206,7 @@ GET /v1/models
 GET /v1/models/{model_id:path}
 GET /watermark/status
 PATCH /gallery/voices/{voice_id}
+PATCH /music/lora
 PATCH /projects/{project_id}
 POST /api/auth/session
 POST /api/auth/ws-ticket
@@ -307,6 +310,7 @@ POST /models/licenses/revoke
 POST /models/licenses/verify/{plan_digest}
 POST /music/format
 POST /music/generate
+POST /music/lora
 POST /music/stop
 POST /music/upload
 POST /personas/export/{profile_id}

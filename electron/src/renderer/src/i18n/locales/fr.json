@@ -4109,7 +4109,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "Pénalité de répétition",
     "lm_negative_prompt": "À éviter (prompt négatif)",
-    "lm_reset": "Rétablir les valeurs par défaut"
+    "lm_reset": "Rétablir les valeurs par défaut",
+    "lora": "LoRA",
+    "lora_help": "Un adaptateur de style entraîné pour un modèle musical. Il reste sur cet ordinateur : choisissez un fichier .safetensors ou un dossier d'adaptateur.",
+    "lora_enabled": "Utiliser ce LoRA",
+    "lora_missing": "Le LoRA a été déplacé ou supprimé. Choisissez-le à nouveau.",
+    "lora_model_mismatch": "Choisi pour {{picked}} ; il peut ne pas fonctionner avec {{current}}.",
+    "lora_scale": "Intensité",
+    "lora_remove": "Retirer le LoRA",
+    "lora_pick_file": "Choisir un fichier LoRA",
+    "lora_pick_folder": "Choisir un dossier LoRA"
   },
   "gpuBusy": {
     "dub": "Une tâche de doublage utilise le GPU. Attendez qu'elle se termine, puis générez la musique.",

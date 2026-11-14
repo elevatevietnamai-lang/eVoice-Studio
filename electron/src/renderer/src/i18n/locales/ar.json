@@ -4115,7 +4115,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "عقوبة التكرار",
     "lm_negative_prompt": "تجنّب (وصف سلبي)",
-    "lm_reset": "استعادة الإعدادات الافتراضية"
+    "lm_reset": "استعادة الإعدادات الافتراضية",
+    "lora": "LoRA",
+    "lora_help": "محوّل أسلوب مدرَّب لنموذج موسيقى واحد. يبقى على هذا الكمبيوتر: اختر ملف .safetensors أو مجلد محوّل.",
+    "lora_enabled": "استخدام LoRA هذا",
+    "lora_missing": "تم نقل LoRA أو حذفه. اختره مرة أخرى.",
+    "lora_model_mismatch": "تم اختياره لـ {{picked}}؛ قد لا يعمل مع {{current}}.",
+    "lora_scale": "الشدة",
+    "lora_remove": "إزالة LoRA",
+    "lora_pick_file": "اختيار ملف LoRA",
+    "lora_pick_folder": "اختيار مجلد LoRA"
   },
   "gpuBusy": {
     "dub": "مهمة دبلجة تستخدم وحدة معالجة الرسومات حالياً. انتظر حتى تنتهي ثم أنشئ الموسيقى.",

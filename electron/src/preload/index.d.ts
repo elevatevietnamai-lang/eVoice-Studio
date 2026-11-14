@@ -435,7 +435,12 @@ export interface PromoSceneRequest {
   mode?: 'overlay' | 'shot';
 }
 
-type PromoSceneFailure = { ok: false; code: string; detail?: string; problems?: PromoSceneProblem[] };
+type PromoSceneFailure = {
+  ok: false;
+  code: string;
+  detail?: string;
+  problems?: PromoSceneProblem[];
+};
 
 export interface VoiceStudioBridge {
   /** VoiceStudio Cloud account; never carries a token. */
@@ -603,6 +608,8 @@ export interface VoiceStudioBridge {
     authorizeMediaTool(kind: 'ffmpeg' | 'ffprobe'): Promise<AuthorizedPathSelection | null>;
     /** Authorize a chosen model cache directory, or the platform default when reset is true. */
     authorizeModelsDirectory(reset?: boolean): Promise<AuthorizedPathSelection | null>;
+    /** Pick a music LoRA (a .safetensors file or an adapter folder) and authorize it for the backend. */
+    authorizeMusicLora(pick: 'file' | 'folder'): Promise<AuthorizedPathSelection | null>;
     extractScript(input: { name: string; data: Uint8Array }): Promise<string>;
     /** Native "Save as…" for a generated take: main fetches the URL and writes the file. */
     saveAudio(req: SaveAudioRequest): Promise<SaveAudioResult>;

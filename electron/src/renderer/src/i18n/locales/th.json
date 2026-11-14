@@ -4107,7 +4107,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "ลดการใช้ซ้ำ",
     "lm_negative_prompt": "สิ่งที่ต้องการหลีกเลี่ยง (Negative prompt)",
-    "lm_reset": "คืนค่าเริ่มต้น"
+    "lm_reset": "คืนค่าเริ่มต้น",
+    "lora": "LoRA",
+    "lora_help": "อะแดปเตอร์สไตล์ที่ฝึกมาสำหรับโมเดลเพลงหนึ่งโมเดล โดยจะอยู่ในคอมพิวเตอร์เครื่องนี้เท่านั้น: เลือกไฟล์ .safetensors หรือโฟลเดอร์อะแดปเตอร์",
+    "lora_enabled": "ใช้ LoRA นี้",
+    "lora_missing": "LoRA ถูกย้ายหรือลบไปแล้ว โปรดเลือกใหม่อีกครั้ง",
+    "lora_model_mismatch": "เลือกไว้สำหรับ {{picked}} อาจใช้งานกับ {{current}} ไม่ได้",
+    "lora_scale": "ความเข้มข้น",
+    "lora_remove": "เอา LoRA ออก",
+    "lora_pick_file": "เลือกไฟล์ LoRA",
+    "lora_pick_folder": "เลือกโฟลเดอร์ LoRA"
   },
   "gpuBusy": {
     "dub": "งานพากย์เสียงกำลังใช้ GPU อยู่ รอให้เสร็จก่อน แล้วค่อยสร้างเพลง",

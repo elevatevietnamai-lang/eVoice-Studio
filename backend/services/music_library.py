@@ -167,6 +167,32 @@ def prune_uploads(keep: int = MAX_UPLOADS) -> None:
             pass
 
 
+# ── The music LoRA: one adapter the user picked in the desktop app (its path came from the
+# native file picker as a one-shot grant). Kept beside the library so it survives restarts.
+
+def _lora_file() -> Path:
+    return library_dir() / "lora.json"
+
+
+def get_lora() -> Optional[dict]:
+    try:
+        data = json.loads(_lora_file().read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(data, dict) or not isinstance(data.get("path"), str) or not data["path"]:
+        return None
+    return data
+
+
+def save_lora(data: Optional[dict]) -> None:
+    if data is None:
+        _lora_file().unlink(missing_ok=True)
+        return
+    tmp = _lora_file().with_suffix(".part")
+    tmp.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, _lora_file())
+
+
 def free_slots() -> int:
     return max(0, MAX_TRACKS - len(list_tracks()))
 

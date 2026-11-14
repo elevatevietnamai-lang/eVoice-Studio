@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, expect, it, vi } from 'vitest';
@@ -13,7 +13,7 @@ vi.mock('node:child_process', () => ({
     callback: (error: null, result: { stdout: string; stderr: string }) => void,
   ) => callback(null, { stdout: run.output, stderr: '' }),
 }));
-import { authorizeMediaTool } from './media-authorization';
+import { authorizeMediaTool, authorizeMusicLora } from './media-authorization';
 let directory: string | undefined;
 afterEach(async () => {
   if (directory) await rm(directory, { recursive: true, force: true });
@@ -51,4 +51,29 @@ it('writes the backend capability format only for a matching executable', async 
     ),
   ).toEqual({ token: result.authorization, kind: 'ffmpeg', path: result.path });
   await expect(authorizeMediaTool('relative', executable, 'ffmpeg')).rejects.toThrow('absolute');
+});
+it('authorizes only a LoRA file or adapter folder the music engine can load', async () => {
+  directory = await mkdtemp(join(tmpdir(), 'vs-lora-'));
+  const weights = join(directory, 'style.safetensors');
+  const other = join(directory, 'notes.txt');
+  const adapter = join(directory, 'adapter');
+  const empty = join(directory, 'empty');
+  await writeFile(weights, 'x');
+  await writeFile(other, 'x');
+  await mkdir(adapter);
+  await mkdir(empty);
+  await writeFile(join(adapter, 'adapter_config.json'), '{"peft_type":"LORA"}');
+  await expect(authorizeMusicLora(directory, other)).rejects.toThrow('.safetensors');
+  await expect(authorizeMusicLora(directory, empty)).rejects.toThrow('adapter_config.json');
+  await expect(authorizeMusicLora(directory, 'relative')).rejects.toThrow('absolute');
+  for (const picked of [weights, adapter]) {
+    const result = await authorizeMusicLora(directory, picked);
+    const grant = JSON.parse(
+      await readFile(
+        join(directory, '.path-authorizations', result.authorization + '.json'),
+        'utf8',
+      ),
+    );
+    expect(grant).toEqual({ token: result.authorization, kind: 'music_lora', path: result.path });
+  }
 });

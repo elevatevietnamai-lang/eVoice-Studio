@@ -4107,7 +4107,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "Penalti pengulangan",
     "lm_negative_prompt": "Hindari (prompt negatif)",
-    "lm_reset": "Pulihkan bawaan"
+    "lm_reset": "Pulihkan bawaan",
+    "lora": "LoRA",
+    "lora_help": "Adaptor gaya yang dilatih untuk satu model musik. Tetap berada di komputer ini: pilih file .safetensors atau folder adaptor.",
+    "lora_enabled": "Gunakan LoRA ini",
+    "lora_missing": "LoRA telah dipindahkan atau dihapus. Pilih lagi.",
+    "lora_model_mismatch": "Dipilih untuk {{picked}}; mungkin tidak berfungsi dengan {{current}}.",
+    "lora_scale": "Kekuatan",
+    "lora_remove": "Hapus LoRA",
+    "lora_pick_file": "Pilih file LoRA",
+    "lora_pick_folder": "Pilih folder LoRA"
   },
   "gpuBusy": {
     "dub": "Tugas dubbing sedang memakai GPU. Tunggu sampai selesai, lalu buat musik.",

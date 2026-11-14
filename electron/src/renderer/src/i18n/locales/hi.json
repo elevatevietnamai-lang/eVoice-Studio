@@ -4107,7 +4107,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "दोहराव दंड",
     "lm_negative_prompt": "बचें (नेगेटिव प्रॉम्प्ट)",
-    "lm_reset": "डिफ़ॉल्ट बहाल करें"
+    "lm_reset": "डिफ़ॉल्ट बहाल करें",
+    "lora": "LoRA",
+    "lora_help": "एक संगीत मॉडल के लिए प्रशिक्षित स्टाइल अडैप्टर। यह इसी कंप्यूटर पर रहता है: कोई .safetensors फ़ाइल या अडैप्टर फ़ोल्डर चुनें।",
+    "lora_enabled": "इस LoRA का उपयोग करें",
+    "lora_missing": "LoRA को स्थानांतरित या हटा दिया गया है। इसे फिर से चुनें।",
+    "lora_model_mismatch": "{{picked}} के लिए चुना गया; हो सकता है यह {{current}} के साथ काम न करे।",
+    "lora_scale": "तीव्रता",
+    "lora_remove": "LoRA हटाएँ",
+    "lora_pick_file": "LoRA फ़ाइल चुनें",
+    "lora_pick_folder": "LoRA फ़ोल्डर चुनें"
   },
   "gpuBusy": {
     "dub": "एक डबिंग कार्य GPU का उपयोग कर रहा है। उसके पूरा होने तक प्रतीक्षा करें, फिर संगीत बनाएँ।",

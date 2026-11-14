@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { execFile } from 'node:child_process';
-import { mkdir, realpath, rm, stat, writeFile } from 'node:fs/promises';
+import { access, mkdir, realpath, rm, stat, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { promisify } from 'node:util';
 
@@ -37,6 +37,44 @@ export async function authorizeMediaTool(dataDir: string, selected: string, kind
     throw new Error('Selected executable does not match the media tool');
   }
   return writeAuthorization(dataDir, kind, path);
+}
+
+export type MusicLoraPick = 'file' | 'folder';
+export function assertMusicLoraPick(value: unknown): MusicLoraPick {
+  if (value !== 'file' && value !== 'folder') throw new Error('Invalid LoRA selection');
+  return value;
+}
+
+async function exists(path: string) {
+  try {
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Authorize a music LoRA the user picked: a `.safetensors` file (LoKr/LyCORIS), or a folder holding
+ * a PEFT adapter (`adapter_config.json`) or `lokr_weights.safetensors`. The backend only ever
+ * receives the one-shot token, never a path from the renderer.
+ */
+export async function authorizeMusicLora(dataDir: string, selected: string) {
+  if (!isAbsolute(dataDir) || !isAbsolute(selected)) throw new Error('Expected absolute paths');
+  const path = await realpath(selected);
+  const info = await stat(path);
+  if (info.isFile()) {
+    if (!path.toLowerCase().endsWith('.safetensors'))
+      throw new Error('Expected a .safetensors file');
+  } else if (info.isDirectory()) {
+    const adapter =
+      (await exists(join(path, 'adapter_config.json'))) ||
+      (await exists(join(path, 'lokr_weights.safetensors')));
+    if (!adapter) throw new Error('Expected a LoRA folder with adapter_config.json');
+  } else {
+    throw new Error('Expected a LoRA file or folder');
+  }
+  return writeAuthorization(dataDir, 'music_lora', path);
 }
 
 export async function authorizeModelsDirectory(dataDir: string, selected: string) {

@@ -10,6 +10,10 @@
 * ``POST   /music/upload``                — store a source or reference audio file; returns its id
 * ``GET    /music/models``                — the DiT models (turbo, SFT, base) and which are downloaded
 * ``GET    /music/model-install-stream``  — download the pinned SFT or base model (SSE)
+* ``GET    /music/lora``                  — the LoRA picked in the desktop app (name, strength, on/off)
+* ``POST   /music/lora``                  — use a LoRA authorized by the desktop file picker (token only)
+* ``PATCH  /music/lora``                  — change its strength or turn it on or off
+* ``DELETE /music/lora``                  — stop using it
 * ``GET    /music/library``               — saved tracks, newest first
 * ``GET    /music/audio/{track_id}``      — a saved track
 * ``DELETE /music/library/{track_id}``    — remove a saved track
@@ -143,6 +147,20 @@ async def _audio_for(track_id: str | None, upload_id: str | None) -> str | None:
     return None
 
 
+def _apply_lora_choice(request: music.MusicRequest) -> dict | None:
+    """Attach the chosen LoRA (when on and still on disk) to *request*; returns what was used."""
+    lora = music_library.get_lora()
+    if not lora or not lora.get("enabled", True):
+        return None
+    try:
+        music.lora_kind(lora["path"])
+    except ValueError:
+        raise ValueError("The LoRA file was moved or deleted. Pick it again or remove it.")
+    request.lora_path = lora["path"]
+    request.lora_scale = float(lora.get("scale", 1.0))
+    return {"name": lora.get("name", ""), "scale": request.lora_scale}
+
+
 async def resolve_audio(body: GenerateBody) -> music.MusicRequest:
     """The request with source and reference files resolved under the library (ValueError if not)."""
     from services.ffmpeg_utils import probe_duration
@@ -270,6 +288,7 @@ async def music_generate(body: GenerateBody):
                 return
             try:
                 request = await resolve_audio(body)
+                lora_used = _apply_lora_choice(request)
             except ValueError as exc:
                 yield _sse("error", {"error": "music_source_invalid", "error_code": "music_source_invalid",
                                      "stage": "music", "reason": str(exc)})
@@ -302,7 +321,8 @@ async def music_generate(body: GenerateBody):
                     task=body.task, source_id=body.source_track_id, model=body.model,
                     **({"extend_side": body.extend_side, "extend_seconds": body.extend_seconds}
                        if body.task == "extend" else {}),
-                    **({"lm_params": body.lm_params()} if body.thinking and body.lm_params() else {})))
+                    **({"lm_params": body.lm_params()} if body.thinking and body.lm_params() else {}),
+                    **({"lora": lora_used} if lora_used else {})))
                 yield _sse("track", {"track": records[-1]})
             if not records:
                 raise RuntimeError("Music generation finished without a downloadable file.")
@@ -343,6 +363,78 @@ async def music_format(body: GenerateBody):
         logger.warning("music format failed: %s", exc)
         raise HTTPException(status_code=502, detail={"error_code": "music_format_failed",
                                                      "reason": music.public_reason(exc)})
+
+
+class LoraPick(BaseModel):
+    # One-shot grant written by Electron main after its native file picker (never a path).
+    authorization: str = Field(..., min_length=64, max_length=64)
+    # The DiT the LoRA is meant for, so the page can warn when another model is selected.
+    model: Literal["turbo", "sft", "base"] = "turbo"
+
+
+class LoraChange(BaseModel):
+    scale: float | None = Field(None, ge=0.0, le=1.0)
+    enabled: bool | None = None
+
+
+def _lora_view(lora: dict | None) -> dict:
+    if not lora:
+        return {"selected": False}
+    return {"selected": True, "name": lora.get("name", ""), "kind": lora.get("kind", ""),
+            "scale": lora.get("scale", 1.0), "enabled": lora.get("enabled", True),
+            "model": lora.get("model", "turbo"), "available": _on_disk(lora["path"])}
+
+
+def _on_disk(path: str) -> bool:
+    try:
+        music.lora_kind(path)
+        return True
+    except ValueError:
+        return False
+
+
+@router.get("/music/lora", dependencies=[Depends(reject_cross_site_get)])
+def music_lora():
+    return _lora_view(music_library.get_lora())
+
+
+@router.post("/music/lora", dependencies=[Depends(require_admin), Depends(require_desktop)])
+def music_lora_pick(body: LoraPick):
+    from pathlib import Path
+
+    from core.path_authorization import PathAuthorizationError, consume
+
+    try:
+        path = consume(body.authorization, "music_lora")
+        kind = music.lora_kind(path)
+    except PathAuthorizationError:
+        raise HTTPException(status_code=403, detail={"error_code": "music_lora_unauthorized",
+                                                     "reason": "Pick the LoRA again in the app."})
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={"error_code": "music_lora_invalid", "reason": str(exc)})
+    lora = {"path": path, "name": Path(path).name[-120:], "kind": kind, "scale": 1.0, "enabled": True,
+            "model": body.model}
+    music_library.save_lora(lora)
+    return _lora_view(lora)
+
+
+@router.patch("/music/lora", dependencies=[Depends(require_admin)])
+def music_lora_change(body: LoraChange):
+    lora = music_library.get_lora()
+    if not lora:
+        raise HTTPException(status_code=404, detail="No LoRA is selected")
+    if body.scale is not None:
+        lora["scale"] = round(body.scale, 3)
+    if body.enabled is not None:
+        lora["enabled"] = body.enabled
+    music_library.save_lora(lora)
+    return _lora_view(lora)
+
+
+@router.delete("/music/lora", dependencies=[Depends(require_admin)])
+def music_lora_remove():
+    music_library.save_lora(None)
+    return {"selected": False}
 
 
 _UPLOAD_CHUNK = 1024 * 1024

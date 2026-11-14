@@ -4107,7 +4107,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "重复惩罚",
     "lm_negative_prompt": "避免元素（反向提示词）",
-    "lm_reset": "恢复默认"
+    "lm_reset": "恢复默认",
+    "lora": "LoRA",
+    "lora_help": "针对单一音乐模型训练的风格适配器。仅保存在本机：请选择 .safetensors 文件或适配器文件夹。",
+    "lora_enabled": "使用此 LoRA",
+    "lora_missing": "该 LoRA 已被移动或删除，请重新选择。",
+    "lora_model_mismatch": "适用于 {{picked}}，可能与 {{current}} 不兼容。",
+    "lora_scale": "强度",
+    "lora_remove": "移除 LoRA",
+    "lora_pick_file": "选择 LoRA 文件",
+    "lora_pick_folder": "选择 LoRA 文件夹"
   },
   "gpuBusy": {
     "dub": "配音任务正在使用 GPU。请等待其完成后再生成音乐。",

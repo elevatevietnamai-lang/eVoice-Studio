@@ -4113,7 +4113,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "Kara za powtórzenia",
     "lm_negative_prompt": "Unikaj (negatywna podpowiedź)",
-    "lm_reset": "Przywróć domyślne"
+    "lm_reset": "Przywróć domyślne",
+    "lora": "LoRA",
+    "lora_help": "Adapter stylu wytrenowany dla jednego modelu muzycznego. Zostaje na tym komputerze: wybierz plik .safetensors lub folder adaptera.",
+    "lora_enabled": "Użyj tej LoRA",
+    "lora_missing": "LoRA została przeniesiona lub usunięta. Wybierz ją ponownie.",
+    "lora_model_mismatch": "Wybrano dla {{picked}}; może nie działać z {{current}}.",
+    "lora_scale": "Siła",
+    "lora_remove": "Usuń LoRA",
+    "lora_pick_file": "Wybierz plik LoRA",
+    "lora_pick_folder": "Wybierz folder LoRA"
   },
   "gpuBusy": {
     "dub": "Zadanie dubbingu korzysta z GPU. Poczekaj na jego zakończenie, a potem wygeneruj muzykę.",

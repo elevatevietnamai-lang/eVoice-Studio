@@ -175,6 +175,22 @@ def normalize_key_scale(value: str) -> str:
     return f"{note.upper()}{accidental} {'minor' if mode in ('minor', 'min', 'm') else 'major'}"
 
 
+def lora_kind(path: str) -> str:
+    """'file' or 'folder' when *path* is a LoRA the engine can load (ValueError otherwise).
+
+    The pinned engine loads a PEFT adapter folder (adapter_config.json) or a LoKr/LyCORIS
+    `.safetensors` file (or a folder holding lokr_weights.safetensors).
+    """
+    target = Path(path)
+    if target.is_file() and target.suffix.lower() == ".safetensors":
+        return "file"
+    if target.is_dir() and ((target / "adapter_config.json").is_file()
+                            or (target / "lokr_weights.safetensors").is_file()):
+        return "folder"
+    raise ValueError("That is not a LoRA the music engine can load: pick a .safetensors file or an "
+                     "adapter folder with adapter_config.json.")
+
+
 class MusicLmUnavailable(RuntimeError):
     """Thinking was asked for but this machine cannot run a language model as installed.
 
@@ -255,6 +271,10 @@ class MusicRequest:
     # Language-model sampling (Thinking only); only the values set here are sent.
     lm_params: Optional[dict] = None
     lm_negative_prompt: str = ""
+    # A LoRA the user authorized through the desktop file picker (resolved by the backend, never a
+    # client path), and its strength.
+    lora_path: Optional[str] = None
+    lora_scale: float = 1.0
     # One seed per variant, picked by the backend just before the run (see variant_seeds).
     seeds: Optional[list[int]] = None
 
@@ -815,6 +835,10 @@ class _Server:
     llm: Optional[str] = None
     # The DiT it loaded ("turbo", "sft" or "base").
     dit: str = "turbo"
+    # Models loaded at startup instead of on the first request (a LoRA needs the DiT in memory).
+    eager: bool = False
+    # The LoRA loaded into this server, if any.
+    lora: Optional[str] = None
     reaper: Optional[asyncio.Task] = None
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -1004,7 +1028,8 @@ class AceStepEngine:
             yield {"type": "done", "installed": True}
 
     # ── lifecycle
-    async def _ensure_running(self, llm: Optional[str] = None, dit: str = "turbo") -> tuple[str, str]:
+    async def _ensure_running(self, llm: Optional[str] = None, dit: str = "turbo",
+                              eager: bool = False) -> tuple[str, str]:
         srv = self._server
         async with srv.lock:
             if not is_installed():
@@ -1013,7 +1038,7 @@ class AceStepEngine:
                 raise ValueError("Unknown music model.")
             if not dit_on_disk(dit):
                 raise MusicLmUnavailable(f"The {dit.upper()} music model is not downloaded yet.", "music_model_missing")
-            if self._alive() and (srv.llm != llm or srv.dit != dit):
+            if self._alive() and (srv.llm != llm or srv.dit != dit or (eager and not srv.eager)):
                 if srv.busy:
                     raise MusicModeBusy("Another track is still generating. Try again when it finishes.")
                 logger.info("restarting ACE-Step with %s, %s the language model", dit, "with" if llm else "without")
@@ -1027,6 +1052,9 @@ class AceStepEngine:
                          "ACESTEP_TMPDIR": str(engine_dir() / "tmp")}
                 if dit != "turbo":
                     extra["ACESTEP_CONFIG_PATH"] = DIT_MODELS[dit]["name"]
+                if eager or llm:
+                    # Load the DiT before /health answers: a LoRA can only attach to a loaded model.
+                    extra["ACESTEP_NO_INIT"] = "false"
                 if llm or dit != "turbo":
                     # Only pinned models already on disk may load: no fallback download.
                     dead = "http://127.0.0.1:9"
@@ -1050,6 +1078,8 @@ class AceStepEngine:
                 env = _clean_env(extra)
                 srv.llm = llm
                 srv.dit = dit
+                srv.eager = bool(eager or llm)
+                srv.lora = None
                 logger.info("starting ACE-Step on 127.0.0.1:%s", srv.port)
                 log_file = open(engine_dir() / "server.log", "wb")
                 try:
@@ -1123,6 +1153,23 @@ class AceStepEngine:
             except Exception:
                 pass
 
+    # ── LoRA
+    async def _apply_lora(self, client: httpx.AsyncClient, base: str, request: MusicRequest) -> None:
+        """Make the server's LoRA match *request*: load, swap or unload it, then set its strength."""
+        srv = self._server
+        wanted = request.lora_path
+        if srv.lora and srv.lora != wanted:
+            await _lora_call(client, base, "/v1/lora/unload")
+            srv.lora = None
+        if not wanted:
+            return
+        if srv.lora != wanted:
+            await _lora_call(client, base, "/v1/lora/load", {"lora_path": wanted})
+            srv.lora = wanted
+        scale = round(max(0.0, min(1.0, float(request.lora_scale))), 3)
+        await _lora_call(client, base, "/v1/lora/scale", {"scale": scale})
+        await _lora_call(client, base, "/v1/lora/toggle", {"use_lora": True})
+
     # ── Format (language model): tidy a caption and lyrics, and suggest BPM, key and meter
     async def format_input(self, request: MusicRequest) -> dict:
         """Ask the language model to format *request*; nothing is applied until the user does."""
@@ -1173,13 +1220,15 @@ class AceStepEngine:
             request = replace(request, seeds=variant_seeds(request.seed, request.batch_size))
         llm = await self._lm_for_request() if request.thinking else None
         yield {"type": "progress", "progress": 0.0, "message": "Starting the music engine"}
-        base, key = await self._ensure_running(llm, request.model if request.model in DIT_MODELS else "turbo")
+        base, key = await self._ensure_running(llm, request.model if request.model in DIT_MODELS else "turbo",
+                                               eager=bool(request.lora_path))
         srv = self._server
         srv.busy += 1
         finished = False
         try:
             headers = {"Authorization": f"Bearer {key}"}
             async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, read=600.0), headers=headers) as client:
+                await self._apply_lora(client, base, request)
                 r = await _release(client, base, request)
                 if r.status_code >= 400:
                     logger.warning("music server refused the task: %s", r.text[:300])
@@ -1241,6 +1290,21 @@ class AceStepEngine:
                 # The client left or the job failed mid-run: the server has no cancel call,
                 # so stop it to free the GPU instead of finishing a track nobody wants.
                 self._kill_now()
+
+
+async def _lora_call(client: httpx.AsyncClient, base: str, path: str, body: Optional[dict] = None) -> None:
+    """One LoRA control call; the server's own text (it names paths) only goes to the log."""
+    r = await client.post(f"{base}{path}", json=body or {})
+    try:
+        payload = r.json()
+        ok = r.status_code < 400 and isinstance(payload, dict) and payload.get("code", 200) == 200 \
+            and not payload.get("error")
+    except ValueError:
+        payload, ok = r.text, False
+    if not ok:
+        logger.warning("music LoRA call %s failed (HTTP %s): %s", path, r.status_code, str(payload)[:300])
+        raise RuntimeError("The LoRA could not be used with this music model. Check that it was trained "
+                           "for the selected model, or turn it off.")
 
 
 def form_fields(payload: dict) -> dict[str, str]:
