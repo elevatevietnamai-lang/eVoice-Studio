@@ -62,3 +62,14 @@ it('honours data-motion="none"', () => {
   expect(event.defaultPrevented).toBe(false);
   expect(details.animate).not.toHaveBeenCalled();
 });
+
+it('closes to the measured closed height, so a card whose summary has a margin does not jump back', () => {
+  // A `space-y-3` card: the summary keeps a 12 px bottom margin when closed, which a sum of
+  // summary height, padding and border misses (the card shrank past 53 px, then snapped back).
+  const details = card('open class="space-y-3"');
+  details.getBoundingClientRect = () => ({ height: details.open ? 277 : 53 }) as DOMRect;
+  details.querySelector('summary')!.click();
+  const keyframes = vi.mocked(details.animate).mock.calls[0][0] as Keyframe[];
+  expect(keyframes).toEqual([{ height: '277px' }, { height: '53px' }]);
+  expect(details.open).toBe(true);
+});
