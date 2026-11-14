@@ -2420,6 +2420,23 @@
    },
    "GenerateBody": {
     "properties": {
+     "audio_format": {
+      "default": "wav",
+      "enum": [
+       "wav",
+       "flac",
+       "mp3"
+      ],
+      "title": "Audio Format",
+      "type": "string"
+     },
+     "batch_size": {
+      "default": 1,
+      "maximum": 4.0,
+      "minimum": 1.0,
+      "title": "Batch Size",
+      "type": "integer"
+     },
      "bpm": {
       "anyOf": [
        {
@@ -2439,6 +2456,22 @@
       "minimum": 10.0,
       "title": "Duration",
       "type": "number"
+     },
+     "infer_method": {
+      "default": "ode",
+      "enum": [
+       "ode",
+       "sde"
+      ],
+      "title": "Infer Method",
+      "type": "string"
+     },
+     "inference_steps": {
+      "default": 8,
+      "maximum": 20.0,
+      "minimum": 4.0,
+      "title": "Inference Steps",
+      "type": "integer"
      },
      "instrumental": {
       "default": true,
@@ -16904,6 +16937,43 @@
      }
     },
     "summary": "Music Audio"
+   }
+  },
+  "/music/format": {
+   "post": {
+    "description": "Run the language model's formatter on the form. Returns suggestions; nothing is saved.",
+    "operationId": "music_format_music_format_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/GenerateBody"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Format"
    }
   },
   "/music/generate": {

@@ -38,6 +38,9 @@ metadata and the backend fallback mirror it.
 
 - Music Studio can sing in the language of your lyrics, and lets you set the key, time signature and seed under Advanced; each saved track keeps its seed so you can reuse it (#19)
 - Music Studio's optional Thinking mode lets a language model plan the song before it is rendered, for better structure and lyrics that fit; GPUs with 6–12 GB first download a small 1.4 GB model (#19)
+- Music Studio makes up to 4 variants in one run, each saved as its own track with its own seed, and adds steps, a stable or varied sampler, and WAV, FLAC or MP3 files under Advanced (#25)
+- Music Studio: style tags add genre, instrument and mood words to the description, and section buttons put [verse], [chorus] and other song sections into the lyrics at the cursor (#25)
+- Music Studio: Polish with the language model tidies the description and lyrics and suggests BPM, key and meter, shown side by side before you apply them; Reuse settings brings back everything a saved track was made with (#25)
 - Karaoke subtitles have three looks in Dub export: Sweep, Highlight (only the spoken word lights up) and Pop (a short bounce); the ASS download uses the same look (#6)
 - Audiobook and Stories can turn part of a finished render into a short audiogram video (waveform, title and cover; square, landscape or vertical) for social posts (#6)
 - Promo video: cut clips and stills into a short ad with transitions, music cut on the beat, narration, a logo watermark and a logo ending, in 9:16, 1:1 or 16:9 (#11)

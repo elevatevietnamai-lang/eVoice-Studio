@@ -598,3 +598,141 @@ def test_renderer_language_list_matches_the_backend():
     block = re.search(r"VOCAL_LANGUAGES = \[(.*?)\] as const", source.read_text(encoding="utf-8"), re.S)
     assert block, "VOCAL_LANGUAGES not found in music-options.ts"
     assert re.findall(r"'([a-z]+)'", block.group(1)) == [c for c in music.VOCAL_LANGUAGES if c != "unknown"]
+
+
+# ── Phase 2: variants, steps, sampler, formats, Format
+
+
+def test_payload_sends_variants_steps_sampler_and_format_within_bounds():
+    p = music.build_payload(music.MusicRequest(prompt="x", batch_size=9, inference_steps=99,
+                                               infer_method="sde", audio_format="flac"))
+    assert (p["batch_size"], p["inference_steps"], p["infer_method"], p["audio_format"]) == (4, 20, "sde", "flac")
+    low = music.build_payload(music.MusicRequest(prompt="x", batch_size=0, inference_steps=1, audio_format="exe"))
+    assert (low["batch_size"], low["inference_steps"], low["audio_format"]) == (1, 4, "wav")
+    assert "infer_method" not in low  # ODE is the server default and is never sent
+
+
+def test_result_details_pick_each_variants_own_seed():
+    entry = {"seed_value": "11,22,33", "metas": {}}
+    assert [music.result_details(entry, i)["seed"] for i in range(4)] == [11, 22, 33, None]
+
+
+def _mock_server(monkeypatch, handler):
+    real = httpx.AsyncClient
+    monkeypatch.setattr(music.httpx, "AsyncClient",
+                        lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    real_sleep = asyncio.sleep
+    monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
+    engine = music.AceStepEngine()
+
+    async def fake_running(*_a):
+        return "http://127.0.0.1:9", "k"
+
+    monkeypatch.setattr(engine, "_ensure_running", fake_running)
+    return engine
+
+
+def test_generate_saves_every_variant_with_its_seed(tmp_path, monkeypatch):
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/release_task":
+            assert json.loads(request.content)["batch_size"] == 3
+            return httpx.Response(200, json=_wrap({"task_id": "t1"}))
+        if request.url.path == "/query_result":
+            files = [{"file": f"/v1/audio?path={n}.mp3", "status": 1, "seed_value": "5,6,7",
+                      "metas": {"bpm": 100}} for n in "abc"]
+            return httpx.Response(200, json=_wrap([{"task_id": "t1", "status": 1, "result": json.dumps(files)}]))
+        return httpx.Response(200, content=request.url.params["path"].encode())
+
+    engine = _mock_server(monkeypatch, handler)
+    outs = [str(tmp_path / f"{n}.mp3") for n in "xyz"]
+
+    async def run():
+        return [e async for e in engine.generate(
+            music.MusicRequest(prompt="x", batch_size=3, audio_format="mp3"), outs)]
+
+    done = asyncio.run(run())[-1]
+    assert [t["seed"] for t in done["tracks"]] == [5, 6, 7] and done["seed"] == 5
+    assert [Path(p).read_bytes() for p in outs] == [b"a.mp3", b"b.mp3", b"c.mp3"]
+    assert [t["path"] for t in done["tracks"]] == outs
+
+
+def test_clean_format_result_checks_every_field_like_user_input():
+    assert music.clean_format_result({
+        "caption": "c" * 2000, "lyrics": "[verse]\nhi", "bpm": 120.0, "key_scale": "f#m",
+        "time_signature": "3/4", "duration": 95.4, "vocal_language": "VI"}) == {
+        "caption": "c" * 1000, "lyrics": "[verse]\nhi", "bpm": 120, "key_scale": "F# minor",
+        "time_signature": "3", "duration": 95, "vocal_language": "vi"}
+    assert music.clean_format_result({"bpm": 900, "key_scale": "H dorian", "time_signature": "5",
+                                      "duration": 9999, "vocal_language": "xx"}) == {
+        "caption": "", "lyrics": "", "bpm": None, "key_scale": "", "time_signature": "",
+        "duration": None, "vocal_language": ""}
+    assert music.clean_format_result(None)["caption"] == ""
+
+
+def test_format_input_runs_on_the_lm_server_and_returns_only_suggestions(tmp_path, monkeypatch):
+    sent = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        assert request.url.path == "/format_input" and request.headers["authorization"] == "Bearer k"
+        sent.update(json.loads(request.content))
+        return httpx.Response(200, json=_wrap({"caption": "warm lofi", "lyrics": "[verse]\nla", "bpm": 82,
+                                               "key_scale": "A minor", "time_signature": "4",
+                                               "duration": 60, "vocal_language": "en"}))
+
+    engine = _mock_server(monkeypatch, handler)
+    asked = []
+
+    async def lm():
+        asked.append(True)
+        return music.LM_SMALL
+
+    monkeypatch.setattr(engine, "_lm_for_request", lm)
+    out = asyncio.run(engine.format_input(music.MusicRequest(prompt=" lofi ", lyrics="la", instrumental=False,
+                                                             bpm=80, vocal_language="en")))
+    assert asked and out["caption"] == "warm lofi" and out["bpm"] == 82
+    assert sent["prompt"] == "lofi" and json.loads(sent["param_obj"]) == {"duration": 60, "bpm": 80, "language": "en"}
+    assert engine._server.busy == 0
+
+
+def test_format_input_failure_is_our_own_message(monkeypatch):
+    engine = _mock_server(monkeypatch, lambda _r: httpx.Response(200, json=_wrap(None, code=500, error="trace C:/x")))
+
+    async def lm():
+        return music.LM_SMALL
+
+    monkeypatch.setattr(engine, "_lm_for_request", lm)
+    with pytest.raises(RuntimeError) as err:
+        asyncio.run(engine.format_input(music.MusicRequest(prompt="x")))
+    assert "C:/x" not in str(err.value)
+
+
+def test_generate_body_bounds_variants_steps_and_format():
+    from pydantic import ValidationError
+    from api.routers.music import GenerateBody
+
+    body = GenerateBody(prompt="x", batch_size=4, inference_steps=20, infer_method="sde", audio_format="mp3")
+    req = body.to_request()
+    assert (req.batch_size, req.inference_steps, req.infer_method, req.audio_format) == (4, 20, "sde", "mp3")
+    for bad in ({"batch_size": 5}, {"inference_steps": 3}, {"infer_method": "euler"}, {"audio_format": "ogg"}):
+        with pytest.raises(ValidationError):
+            GenerateBody(prompt="x", **bad)
+
+
+def test_saved_track_is_served_with_its_own_media_type(tmp_path, monkeypatch):
+    from api.routers import music as router
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    for ext, media in (("mp3", "audio/mpeg"), ("flac", "audio/flac"), ("wav", "audio/wav")):
+        tid = music_library.new_id()
+        music_library.audio_path(tid, ext).write_bytes(b"x")
+        music_library.save(tid, title="t", ext=ext)
+        assert router.music_audio(tid).media_type == media
+
+
+def test_library_counts_free_slots_for_a_batch(tmp_path, monkeypatch):
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(music_library, "MAX_TRACKS", 3)
+    tid = music_library.new_id()
+    music_library.audio_path(tid).write_bytes(b"x")
+    music_library.save(tid, title="t")
+    assert music_library.free_slots() == 2 and not music_library.is_full()
