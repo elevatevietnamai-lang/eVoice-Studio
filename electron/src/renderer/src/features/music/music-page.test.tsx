@@ -345,7 +345,7 @@ it('inserts a section tag into the lyrics and a style tag into the description',
 
 it('reuses all of a saved track settings', async () => {
   state.status = { installed: true, running: false };
-  state.tracks = [{ ...track, prompt: 'warm jazz', seed: 9, inference_steps: 12, ext: 'mp3' }];
+  state.tracks = [{ ...track, prompt: 'warm jazz', seed: 9, inference_steps: 6, ext: 'mp3' }];
   state.stream.mockImplementation(async () => {});
   renderPage();
   fireEvent.click(await screen.findByText('musicStudio.reuse_settings'));
@@ -354,7 +354,7 @@ it('reuses all of a saved track settings', async () => {
   expect(JSON.parse(state.stream.mock.calls[0][3].body)).toMatchObject({
     prompt: 'warm jazz',
     seed: 9,
-    inference_steps: 12,
+    inference_steps: 6,
     audio_format: 'mp3',
     batch_size: 1,
   });

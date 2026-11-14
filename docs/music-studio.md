@@ -31,9 +31,12 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   and seed. Each saved track records the seed the server actually used, and *Reuse seed* puts it back
   in the form to refine a take you liked. *Reuse settings* puts every setting of a saved track back.
   - **Variants:** 1–4 versions in one run (the server allows 8; 4 keeps memory and waiting in check).
-    Each is saved as its own track, marked *Variant 1…4*, with its own seed. The library must have room
-    for all of them before the run starts.
-  - **Steps:** 4–20 (default 8, the turbo model's own setting). More steps take longer.
+    Each is saved as its own track, marked *Variant 1…4*, with its own seed. With a fixed seed only
+    *Variant 1* uses it; ACE-Step draws the others (seeds run 0–4,294,967,295). The library must have
+    room for all of them before the run starts. Re-running one variant's seed alone gives very close,
+    not bit-identical, audio; a single track on the same seed and settings repeats exactly.
+  - **Steps:** 4–8 on Turbo (default 8). The pinned engine clamps Turbo to 8 steps, so more would
+    change nothing; fewer are faster and rougher.
   - **Sampler:** *Stable (ODE)*, the default, or *Varied (SDE)*, which adds randomness at each step.
   - **File format:** WAV (default), FLAC or MP3; the library serves each with its own media type.
 - **Thinking:** off by default. When on, ACE-Step's 5Hz language model plans the song (its audio codes)
@@ -55,7 +58,8 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
     without the model.
 - **Cover and Repaint:** *Mode* switches between *New song*, *Cover* and *Repaint*; the selected
   track also has *Cover* and *Repaint* shortcuts. Both take a source: a library track, or a file you
-  upload (WAV, MP3, FLAC, OGG or M4A, up to 100 MB and 10 minutes). The result keeps the source's
+  upload (WAV, MP3, FLAC, OGG or M4A, up to 100 MB and 10 minutes; M4A is stored as FLAC, because
+  the engine cannot read it). The result keeps the source's
   length and is saved as a new track; the source is never changed.
   - *Cover* plays the source again in the style you describe. *Stay close to the original* (0–100 %,
     default 70 %) sets how much of the source survives; low values are a looser style transfer.
@@ -74,8 +78,9 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   lyrics and settings to ACE-Step's formatter, which tidies the description and lyrics and suggests a
   BPM, key, time signature, length and language. A dialog shows each change next to your own; nothing
   changes until you choose *Apply changes*. Every suggestion is checked like user input (an unknown key
-  or a BPM out of range is dropped). It runs on the same language-model server as Thinking.
-- **Models (Advanced → Model):** *Turbo* (default, installed with the engine: 4–20 steps, no
+  or a BPM out of range is dropped). It runs on the same language-model server as Thinking. The 0.6B
+  model writes English well but garbles Vietnamese lyrics; review them before applying.
+- **Models (Advanced → Model):** *Turbo* (default, installed with the engine: 4–8 steps, no
   guidance) or the optional *SFT* and *Base* models (about 4.8 GB each, MIT, pinned downloads of
   `ACE-Step/acestep-v15-sft` and `ACE-Step/acestep-v15-base` into `<engines dir>/acestep/src/checkpoints`).
   SFT and Base run 8–64 steps (32 to start) and show the options Turbo ignores: *Guidance (CFG)*
@@ -84,7 +89,10 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   is refused before the server starts, and SFT/Base run with the same offline guard as Thinking, so
   ACE-Step's fallback can never fetch an unpinned model. Each saved track records its model.
 - **Memory:** the music server starts on demand, listens on a random loopback port with a random key and
-  stops after 5 minutes idle. *Free GPU memory* stops it immediately. Do not generate music and dub at the
+  stops after 5 minutes idle. *Free GPU memory* stops it immediately. Measured on an RTX 3060 12 GB
+  (Windows): the first start takes about 3 minutes, then a 30–40 s Turbo track takes 6–8 s and about
+  7.3 GB; Thinking with the 0.6B model 27 s (85 s when it restarts the server); repaint and cover up to
+  9.7 GB; SFT at 32 steps about 22 s. Do not generate music and dub at the
   same time on a small GPU.
 - **API:** `GET /music/status`, `GET /music/install-stream`, `GET /music/lm` (which language model
   Thinking uses here and whether it is ready), `GET /music/lm-install-stream` (download the 0.6B model),

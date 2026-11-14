@@ -40,7 +40,7 @@ class GenerateBody(BaseModel):
     duration: float = Field(60.0, ge=music.MIN_SECONDS, le=music.MAX_SECONDS)
     bpm: int | None = Field(None, ge=30, le=300)
     key_scale: str = Field("", max_length=24)
-    seed: int | None = Field(None, ge=0, le=2**31 - 1)
+    seed: int | None = Field(None, ge=0, le=music.MAX_SEED)
     vocal_language: str = Field("en", max_length=8)
     time_signature: Literal["", "2", "3", "4", "6"] = ""
     thinking: bool = False
@@ -115,11 +115,12 @@ class GenerateBody(BaseModel):
                                   cfg_interval_end=self.cfg_interval_end)
 
 
-def _audio_for(track_id: str | None, upload_id: str | None) -> str | None:
+async def _audio_for(track_id: str | None, upload_id: str | None) -> str | None:
     if track_id:
         return str(music_library.resolve_track_audio(track_id))
     if upload_id:
-        return str(music_library.resolve_upload(upload_id))
+        # Uploads kept from before the engine-readable conversion are converted on first use.
+        return str(await music_library.engine_readable(music_library.resolve_upload(upload_id)))
     return None
 
 
@@ -128,10 +129,10 @@ async def resolve_audio(body: GenerateBody) -> music.MusicRequest:
     from services.ffmpeg_utils import probe_duration
 
     request = body.to_request()
-    request.ref_path = _audio_for(body.reference_track_id, body.reference_upload_id)
+    request.ref_path = await _audio_for(body.reference_track_id, body.reference_upload_id)
     if body.task == "text2music":
         return request
-    request.src_path = _audio_for(body.source_track_id, body.source_upload_id)
+    request.src_path = await _audio_for(body.source_track_id, body.source_upload_id)
     seconds = await probe_duration(request.src_path, allowed_root=str(music_library.library_dir()))
     if not seconds:
         raise ValueError("Could not read the source audio.")
@@ -269,7 +270,8 @@ async def music_generate(body: GenerateBody):
                     paths[variant["path"]], title=title, prompt=body.prompt,
                     lyrics=body.lyrics, instrumental=body.instrumental, duration=request.seconds(),
                     bpm=variant.get("bpm") or body.bpm,
-                    seed=variant["seed"] if variant.get("seed") is not None else body.seed,
+                    # Only the first variant runs on the requested seed; the server draws the rest.
+                    seed=variant["seed"] if variant.get("seed") is not None else (body.seed if index == 0 else None),
                     key_scale=variant.get("key_scale") or body.key_scale,
                     time_signature=variant.get("time_signature") or body.time_signature,
                     vocal_language=body.vocal_language, thinking=body.thinking, ext=body.audio_format,
@@ -332,6 +334,7 @@ async def music_upload(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail={"error_code": "music_upload_type", "reason": str(exc)})
     upload_id = music_library.new_id()
     path = music_library.upload_path(upload_id, ext)
+    stored = path
     size = 0
     try:
         with open(path, "wb") as out:
@@ -345,11 +348,14 @@ async def music_upload(file: UploadFile = File(...)):
             raise ValueError("That file has no audio this app can read.")
         if seconds > music.MAX_SOURCE_SECONDS:
             raise ValueError(f"The file is longer than {music.MAX_SOURCE_SECONDS // 60} minutes.")
+        stored = await music_library.engine_readable(path)
     except ValueError as exc:
         path.unlink(missing_ok=True)
+        stored.unlink(missing_ok=True)
         raise HTTPException(status_code=400, detail={"error_code": "music_upload_invalid", "reason": str(exc)})
     except BaseException:
         path.unlink(missing_ok=True)
+        stored.unlink(missing_ok=True)
         raise
     music_library.prune_uploads()
     return {"upload_id": upload_id, "name": (file.filename or "")[-120:], "duration": round(seconds, 2)}

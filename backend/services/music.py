@@ -31,7 +31,7 @@ import sys
 import tarfile
 import tempfile
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import AsyncIterator, Callable, Optional, Protocol, Sequence
 
@@ -96,7 +96,10 @@ TIME_SIGNATURES = ("2", "3", "4", "6")
 # Variants per run (the server allows 8; 4 keeps VRAM and wait time sane), turbo step range,
 # diffusion samplers, and the formats the library can store and serve.
 MAX_BATCH = 4
-MIN_STEPS, MAX_STEPS, DEFAULT_STEPS = 4, 20, 8
+# ACE-Step clamps turbo to 8 steps at this revision (service_generate_request.py), so more do nothing.
+MIN_STEPS, MAX_STEPS, DEFAULT_STEPS = 4, 8, 8
+# ACE-Step draws random seeds (and every batch variant after the first) from 0..2**32-1.
+MAX_SEED = 2**32 - 1
 INFER_METHODS = ("ode", "sde")
 AUDIO_FORMATS = ("wav", "flac", "mp3")
 # ── DiT models. Turbo ships with the main download and runs 8 steps with no guidance. SFT and
@@ -106,7 +109,7 @@ AUDIO_FORMATS = ("wav", "flac", "mp3")
 DIT_TURBO = "acestep-v15-turbo"
 DIT_MODELS = {
     "turbo": {"name": DIT_TURBO, "repo": None, "revision": None, "bytes": 0,
-              "steps": (4, 20, 8), "guidance": False},
+              "steps": (MIN_STEPS, MAX_STEPS, DEFAULT_STEPS), "guidance": False},
     "sft": {"name": "acestep-v15-sft", "repo": "ACE-Step/acestep-v15-sft",
             "revision": "c410d249e71ea9385a7b586865e65b1473e1098d", "bytes": 4_791_792_772,
             "steps": (8, 64, 32), "guidance": True},
@@ -227,6 +230,8 @@ class MusicRequest:
     use_adg: bool = False
     cfg_interval_start: float = 0.0
     cfg_interval_end: float = 1.0
+    # One seed per variant, picked by the backend just before the run (see variant_seeds).
+    seeds: Optional[list[int]] = None
 
     def seconds(self) -> int:
         if self.task_type != "text2music" and self.src_seconds:
@@ -676,6 +681,17 @@ def _steps(req: MusicRequest) -> int:
     return max(low, min(high, int(req.inference_steps or default)))
 
 
+def variant_seeds(seed: Optional[int], count: int) -> list[int]:
+    """The seed of every variant: *seed* (or a random one) first, random ones after it.
+
+    ACE-Step must never pick seeds itself: at the pinned revision it draws them twice (once to
+    report, once again to render), so a seed it reports does not reproduce the track it made.
+    """
+    count = max(1, min(MAX_BATCH, int(count or 1)))
+    first = int(seed) if seed is not None else secrets.randbelow(MAX_SEED + 1)
+    return [first] + [secrets.randbelow(MAX_SEED + 1) for _ in range(count - 1)]
+
+
 def build_payload(req: MusicRequest) -> dict:
     payload: dict = {
         "prompt": req.prompt.strip() or "calm cinematic background music",
@@ -693,7 +709,12 @@ def build_payload(req: MusicRequest) -> dict:
         "use_format": False,
         "use_random_seed": req.seed is None,
     }
-    if req.seed is not None:
+    if req.seeds:
+        # Explicit seeds for every variant, so the seeds reported back are the ones rendered.
+        seeds = [int(s) for s in req.seeds[:payload["batch_size"]]]
+        payload["use_random_seed"] = False
+        payload["seed"] = seeds[0] if len(seeds) == 1 else ",".join(str(s) for s in seeds)
+    elif req.seed is not None:
         payload["seed"] = int(req.seed)
     if req.bpm:
         payload["bpm"] = int(req.bpm)
@@ -1096,6 +1117,8 @@ class AceStepEngine:
         paths = [out_path] if isinstance(out_path, str) else list(out_path)
         if not paths:
             raise ValueError("No output path for the generated music.")
+        if not request.seeds:
+            request = replace(request, seeds=variant_seeds(request.seed, request.batch_size))
         llm = await self._lm_for_request() if request.thinking else None
         yield {"type": "progress", "progress": 0.0, "message": "Starting the music engine"}
         base, key = await self._ensure_running(llm, request.model if request.model in DIT_MODELS else "turbo")
@@ -1150,7 +1173,10 @@ class AceStepEngine:
                         tracks = []
                         for index, (entry, path) in enumerate(zip(files, paths)):
                             await _download(client, base, entry.get("file", ""), path)
-                            tracks.append({**result_details(entry, index), "path": path})
+                            details = result_details(entry, index)
+                            if details["seed"] is None and index < len(request.seeds or []):
+                                details["seed"] = request.seeds[index]
+                            tracks.append({**details, "path": path})
                         finished = True
                         first = {k: v for k, v in tracks[0].items() if k != "path"}
                         yield {"type": "done", "seconds": request.seconds(), **first, "tracks": tracks}
@@ -1186,23 +1212,32 @@ async def _release(client: httpx.AsyncClient, base: str, request: MusicRequest) 
             handle.close()
 
 
+def clean_key(value: object) -> str:
+    """A key the server reported, in our form, or '' (it says "N/A" when nobody set one)."""
+    try:
+        return normalize_key_scale(str(value or ""))
+    except ValueError:
+        return ""
+
+
+def clean_meter(value: object) -> str:
+    """A time signature the server reported ("3/4" or "3"), as its beat count, or ''."""
+    meter = str(value or "").strip().split("/")[0]
+    return meter if meter in TIME_SIGNATURES else ""
+
+
 def clean_format_result(data: object) -> dict:
     """What `/format_input` may change in the form: each field checked like user input."""
     data = data if isinstance(data, dict) else {}
     bpm = data.get("bpm")
     duration = data.get("duration")
-    try:
-        key = normalize_key_scale(str(data.get("key_scale") or ""))
-    except ValueError:
-        key = ""
     language = str(data.get("vocal_language") or "").strip().lower()
-    meter = str(data.get("time_signature") or "").strip().split("/")[0]
     return {
         "caption": str(data.get("caption") or "")[:1000],
         "lyrics": str(data.get("lyrics") or "")[:8000],
         "bpm": int(bpm) if isinstance(bpm, (int, float)) and 30 <= bpm <= 300 else None,
-        "key_scale": key,
-        "time_signature": meter if meter in TIME_SIGNATURES else "",
+        "key_scale": clean_key(data.get("key_scale")),
+        "time_signature": clean_meter(data.get("time_signature")),
         "duration": int(round(duration))
         if isinstance(duration, (int, float)) and MIN_SECONDS <= duration <= MAX_SECONDS else None,
         "vocal_language": language if language in VOCAL_LANGUAGES else "",
@@ -1221,10 +1256,10 @@ def result_details(result: dict, index: int = 0) -> dict:
         seed = int(pick)
     metas = result.get("metas") if isinstance(result.get("metas"), dict) else {}
     bpm = metas.get("bpm")
-    return {"seed": seed if seed is not None and 0 <= seed <= 2**31 - 1 else None,
+    return {"seed": seed if seed is not None and 0 <= seed <= MAX_SEED else None,
             "bpm": int(bpm) if isinstance(bpm, (int, float)) and 30 <= bpm <= 300 else None,
-            "key_scale": str(metas.get("keyscale") or "")[:24],
-            "time_signature": str(metas.get("timesignature") or "")[:4]}
+            "key_scale": clean_key(metas.get("keyscale")),
+            "time_signature": clean_meter(metas.get("timesignature"))}
 
 
 async def _download(client: httpx.AsyncClient, base: str, file_url: str, out_path: str) -> None:

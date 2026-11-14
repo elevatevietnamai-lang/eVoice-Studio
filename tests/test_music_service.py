@@ -41,6 +41,44 @@ def test_default_request_payload_is_unchanged():
     }
 
 
+def test_every_variant_is_sent_an_explicit_seed():
+    """ACE-Step draws its own seeds twice at the pinned revision (reports one, renders another), so a
+    real "Reuse seed" never reproduced a random track. The backend now picks every seed itself."""
+    assert music.variant_seeds(7, 1) == [7]
+    seeds = music.variant_seeds(None, 3)
+    assert len(seeds) == 3 and all(0 <= s <= music.MAX_SEED for s in seeds)
+    assert music.variant_seeds(7, 4)[0] == 7 and len(music.variant_seeds(7, 9)) == music.MAX_BATCH
+    one = music.build_payload(music.MusicRequest(prompt="x", seeds=[3912345678]))
+    assert (one["use_random_seed"], one["seed"]) == (False, 3912345678)
+    many = music.build_payload(music.MusicRequest(prompt="x", batch_size=2, seeds=[5, 6, 7]))
+    assert (many["use_random_seed"], many["seed"]) == (False, "5,6")
+
+
+def test_generate_sends_its_own_seeds_and_reports_them(tmp_path, monkeypatch):
+    sent = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/release_task":
+            sent.update(json.loads(request.content))
+            return httpx.Response(200, json=_wrap({"task_id": "t1"}))
+        if request.url.path == "/query_result":
+            files = [{"file": f"/v1/audio?path={n}.wav", "status": 1, "metas": {}} for n in "ab"]
+            return httpx.Response(200, json=_wrap([{"task_id": "t1", "status": 1, "result": json.dumps(files)}]))
+        return httpx.Response(200, content=b"RIFF")
+
+    engine = _mock_server(monkeypatch, handler)
+    outs = [str(tmp_path / f"{n}.wav") for n in "xy"]
+
+    async def run():
+        return [e async for e in engine.generate(music.MusicRequest(prompt="x", batch_size=2), outs)]
+
+    done = asyncio.run(run())[-1]
+    seeds = [int(s) for s in sent["seed"].split(",")]
+    assert sent["use_random_seed"] is False and len(seeds) == 2
+    # The server reported no seed_value here: the ones we sent are what was rendered.
+    assert [t["seed"] for t in done["tracks"]] == seeds
+
+
 def test_key_scale_normalizes_to_acestep_form():
     assert [music.normalize_key_scale(v) for v in ("", "c", "f# MINOR", "Bbm", "E♭ major", "a min")] == [
         "", "C major", "F# minor", "Bb minor", "Eb major", "A minor"]
@@ -606,7 +644,7 @@ def test_renderer_language_list_matches_the_backend():
 def test_payload_sends_variants_steps_sampler_and_format_within_bounds():
     p = music.build_payload(music.MusicRequest(prompt="x", batch_size=9, inference_steps=99,
                                                infer_method="sde", audio_format="flac"))
-    assert (p["batch_size"], p["inference_steps"], p["infer_method"], p["audio_format"]) == (4, 20, "sde", "flac")
+    assert (p["batch_size"], p["inference_steps"], p["infer_method"], p["audio_format"]) == (4, 8, "sde", "flac")
     low = music.build_payload(music.MusicRequest(prompt="x", batch_size=0, inference_steps=1, audio_format="exe"))
     assert (low["batch_size"], low["inference_steps"], low["audio_format"]) == (1, 4, "wav")
     assert "infer_method" not in low  # ODE is the server default and is never sent
@@ -615,6 +653,32 @@ def test_payload_sends_variants_steps_sampler_and_format_within_bounds():
 def test_result_details_pick_each_variants_own_seed():
     entry = {"seed_value": "11,22,33", "metas": {}}
     assert [music.result_details(entry, i)["seed"] for i in range(4)] == [11, 22, 33, None]
+    # ACE-Step draws variants after the first from 0..2**32-1 (a real batch lost such a seed).
+    wide = {"seed_value": "4242, 3912345678", "metas": {}}
+    assert [music.result_details(wide, i)["seed"] for i in range(2)] == [4242, 3912345678]
+    assert music.result_details({"seed_value": str(2**32)}, 0)["seed"] is None
+
+
+def test_result_details_drop_the_servers_not_available_metadata():
+    """Turbo without Thinking reports keyscale/timesignature "N/A"; that is no key, not a key."""
+    out = music.result_details({"seed_value": "1", "metas": {"keyscale": "N/A", "timesignature": "N/A", "bpm": "N/A"}})
+    assert (out["key_scale"], out["time_signature"], out["bpm"]) == ("", "", None)
+    lm = music.result_details({"metas": {"keyscale": "a minor", "timesignature": "3/4", "bpm": 80}})
+    assert (lm["key_scale"], lm["time_signature"], lm["bpm"]) == ("A minor", "3", 80)
+
+
+def test_library_cleans_not_available_metadata_saved_by_older_builds(tmp_path, monkeypatch):
+    from api.routers.music import GenerateBody
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    tid = music_library.new_id()
+    music_library.audio_path(tid).write_bytes(b"x")
+    music_library.save(tid, title="t", key_scale="N/A", time_signature="N/A")
+    record = music_library.get(tid)
+    assert (record["key_scale"], record["time_signature"]) == ("", "")
+    # Reusing its settings must not be refused.
+    GenerateBody(prompt="x", key_scale=record["key_scale"], time_signature=record["time_signature"])
+    assert GenerateBody(prompt="x", seed=music.MAX_SEED).seed == 2**32 - 1
 
 
 def _mock_server(monkeypatch, handler):
@@ -652,6 +716,7 @@ def test_generate_saves_every_variant_with_its_seed(tmp_path, monkeypatch):
 
     done = asyncio.run(run())[-1]
     assert [t["seed"] for t in done["tracks"]] == [5, 6, 7] and done["seed"] == 5
+    assert done["key_scale"] == "" and done["bpm"] == 100
     assert [Path(p).read_bytes() for p in outs] == [b"a.mp3", b"b.mp3", b"c.mp3"]
     assert [t["path"] for t in done["tracks"]] == outs
 
@@ -710,10 +775,12 @@ def test_generate_body_bounds_variants_steps_and_format():
     from pydantic import ValidationError
     from api.routers.music import GenerateBody
 
-    body = GenerateBody(prompt="x", batch_size=4, inference_steps=20, infer_method="sde", audio_format="mp3")
+    body = GenerateBody(prompt="x", batch_size=4, inference_steps=8, infer_method="sde", audio_format="mp3")
     req = body.to_request()
-    assert (req.batch_size, req.inference_steps, req.infer_method, req.audio_format) == (4, 20, "sde", "mp3")
-    for bad in ({"batch_size": 5}, {"inference_steps": 3}, {"infer_method": "euler"}, {"audio_format": "ogg"}):
+    assert (req.batch_size, req.inference_steps, req.infer_method, req.audio_format) == (4, 8, "sde", "mp3")
+    # The pinned server clamps turbo to 8 steps (a real run at 20 matched 8 exactly), so more is refused.
+    for bad in ({"batch_size": 5}, {"inference_steps": 3}, {"inference_steps": 9}, {"infer_method": "euler"},
+                {"audio_format": "ogg"}):
         with pytest.raises(ValidationError):
             GenerateBody(prompt="x", **bad)
 
@@ -854,6 +921,55 @@ def test_upload_rejects_other_types_unreadable_and_oversized_files(tmp_path, mon
     monkeypatch.setattr(music_library, "MAX_UPLOAD_BYTES", 3)
     _probe(monkeypatch, 10.0)
     assert client.post("/music/upload", files={"file": ("x.wav", b"RIFFxx", "audio/wav")}).status_code == 400
+    assert list(music_library.uploads_dir().iterdir()) == []
+
+
+def _fake_ffmpeg(monkeypatch, calls, ok=True):
+    from services import ffmpeg_utils
+
+    async def run(cmd, timeout=0, **_k):
+        calls.append(cmd)
+        if ok:
+            Path(cmd[-1]).write_bytes(b"fLaC")
+        return (0 if ok else 1), b"", b""
+
+    monkeypatch.setattr(ffmpeg_utils, "run_ffmpeg", run)
+    monkeypatch.setattr(ffmpeg_utils, "find_ffmpeg", lambda: "ffmpeg")
+
+
+def test_m4a_upload_is_stored_as_flac_the_engine_can_read(tmp_path, monkeypatch):
+    """The engine's soundfile cannot open M4A: a real cover and style reference failed on one."""
+    client = _upload_client(tmp_path, monkeypatch)
+    calls = []
+    _fake_ffmpeg(monkeypatch, calls)
+    r = client.post("/music/upload", files={"file": ("song.m4a", b"ftypM4A", "audio/mp4")})
+    assert r.status_code == 200
+    stored = music_library.resolve_upload(r.json()["upload_id"])
+    assert stored.suffix == ".flac" and stored.read_bytes() == b"fLaC"
+    assert [p.suffix for p in music_library.uploads_dir().iterdir()] == [".flac"]
+    assert calls[0][calls[0].index("-c:a") + 1] == "flac"
+    # Engine-readable formats are stored as they are.
+    r = client.post("/music/upload", files={"file": ("song.ogg", b"OggS", "audio/ogg")})
+    assert music_library.resolve_upload(r.json()["upload_id"]).suffix == ".ogg" and len(calls) == 1
+
+
+def test_m4a_kept_from_an_older_build_is_converted_when_used(tmp_path, monkeypatch):
+    from api.routers.music import GenerateBody, resolve_audio
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    _probe(monkeypatch, 30.0)
+    calls = []
+    _fake_ffmpeg(monkeypatch, calls)
+    music_library.upload_path("0123456789ab", "m4a").write_bytes(b"ftyp")
+    req = asyncio.run(resolve_audio(GenerateBody(prompt="x", task="cover", source_upload_id="0123456789ab",
+                                                 reference_upload_id="0123456789ab")))
+    assert req.src_path.endswith(".flac") and req.ref_path == req.src_path and len(calls) == 1
+
+
+def test_unconvertible_m4a_upload_is_refused_and_removed(tmp_path, monkeypatch):
+    client = _upload_client(tmp_path, monkeypatch)
+    _fake_ffmpeg(monkeypatch, [], ok=False)
+    assert client.post("/music/upload", files={"file": ("x.m4a", b"junk", "audio/mp4")}).status_code == 400
     assert list(music_library.uploads_dir().iterdir()) == []
 
 

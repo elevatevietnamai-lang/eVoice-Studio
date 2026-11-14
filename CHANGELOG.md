@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Music Studio fixes from a full run on a real GPU: reused seeds reproduce the track again
+
+### Fixed
+
+- Music Studio: *Reuse seed* now reproduces a track (seeds were reported but not used, and seeds above 2.1 billion were lost), M4A uploads work for cover and style reference, Turbo steps stop at 8 where the engine stops, and tracks no longer save the key "N/A" (#33)
+
 ## [0.5.7-beta.3] — 2026-11-14
 
 The first eVoice Studio release built from this repository: a Windows beta with a new white logo, a
