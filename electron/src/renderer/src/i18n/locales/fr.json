@@ -4113,7 +4113,8 @@
   "windowControls": {
     "minimize": "Réduire",
     "maximize": "Agrandir",
-    "restore": "Restaurer"
+    "restore": "Restaurer",
+    "close_window": "Fermer la fenêtre"
   },
   "editor": {
     "title": "Éditeur vidéo",
@@ -4622,5 +4623,17 @@
     "command_palette": "Palette de commandes…",
     "toggle_full_screen": "Plein écran",
     "settings": "Paramètres…"
+  },
+  "shell": {
+    "home_hint": "Vue d’ensemble, raccourcis et voix récentes",
+    "logo_hint": "Aller à l’accueil",
+    "app_menu": "Menu de l’application",
+    "app_menu_hint": "Toutes les pages, commandes et raccourcis",
+    "settings_hint": "Modèles, apparence, stockage et mises à jour",
+    "performance_hint": "Équilibrer vitesse et qualité",
+    "notifications": "Notifications",
+    "search_hint": "Rechercher des pages, voix et commandes",
+    "group_system": "État du système",
+    "group_app": "Application"
   }
 }

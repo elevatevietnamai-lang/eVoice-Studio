@@ -4,7 +4,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 const mock = vi.hoisted(() => ({ mac: false }));
 vi.mock('@/components/bridge', () => ({ isMac: () => mock.mac }));
 vi.mock('./account-menu', () => ({ AccountMenu: () => <button type="button">account</button> }));
-vi.mock('./app-menu-button', () => ({ AppMenuButton: () => null }));
 vi.mock('./system-notifications', () => ({
   SystemNotifications: ({ enabled, titlebar }: { enabled: boolean; titlebar?: boolean }) => (
     <button type="button" data-enabled={String(enabled)} data-titlebar={String(Boolean(titlebar))}>
@@ -28,6 +27,12 @@ it('puts the notifications bell to the right of the account control', () => {
   expect(bell).toHaveTextContent('bell');
   expect(bell).toHaveAttribute('data-enabled', 'true');
   expect(bell).toHaveAttribute('data-titlebar', 'true');
+});
+
+it('keeps the application menu out of the corner, away from the window buttons', () => {
+  render(<AccountCorner notificationsEnabled />);
+  expect(screen.getAllByRole('button')).toHaveLength(2);
+  expect(document.querySelector('[data-slot="app-menu-button"]')).toBeNull();
 });
 
 it('sits left of the Windows/Linux window buttons, and at the corner on macOS', () => {

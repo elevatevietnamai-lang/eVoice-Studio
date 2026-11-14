@@ -4119,7 +4119,8 @@
   "windowControls": {
     "minimize": "تصغير",
     "maximize": "تكبير",
-    "restore": "استعادة"
+    "restore": "استعادة",
+    "close_window": "إغلاق النافذة"
   },
   "editor": {
     "title": "محرر الفيديو",
@@ -4628,5 +4629,17 @@
     "command_palette": "لوحة الأوامر…",
     "toggle_full_screen": "ملء الشاشة",
     "settings": "الإعدادات…"
+  },
+  "shell": {
+    "home_hint": "نظرة عامة واختصارات وأصوات حديثة",
+    "logo_hint": "الانتقال إلى الرئيسية",
+    "app_menu": "قائمة التطبيق",
+    "app_menu_hint": "كل صفحة وأمر واختصار",
+    "settings_hint": "النماذج والمظهر والتخزين والتحديثات",
+    "performance_hint": "موازنة السرعة والجودة",
+    "notifications": "الإشعارات",
+    "search_hint": "ابحث عن الصفحات والأصوات والأوامر",
+    "group_system": "حالة النظام",
+    "group_app": "التطبيق"
   }
 }

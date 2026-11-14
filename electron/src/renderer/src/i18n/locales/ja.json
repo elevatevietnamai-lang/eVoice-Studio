@@ -4111,7 +4111,8 @@
   "windowControls": {
     "minimize": "最小化",
     "maximize": "最大化",
-    "restore": "元に戻す"
+    "restore": "元に戻す",
+    "close_window": "ウィンドウを閉じる"
   },
   "editor": {
     "title": "動画エディター",
@@ -4620,5 +4621,17 @@
     "command_palette": "コマンドパレット…",
     "toggle_full_screen": "フルスクリーン切り替え",
     "settings": "設定…"
+  },
+  "shell": {
+    "home_hint": "概要、ショートカット、最近の音声",
+    "logo_hint": "ホームへ移動",
+    "app_menu": "アプリケーションメニュー",
+    "app_menu_hint": "すべてのページ、コマンド、ショートカット",
+    "settings_hint": "モデル、外観、ストレージ、アップデート",
+    "performance_hint": "速度と品質のバランス",
+    "notifications": "通知",
+    "search_hint": "ページ、音声、コマンドを検索",
+    "group_system": "システムの状態",
+    "group_app": "アプリ"
   }
 }

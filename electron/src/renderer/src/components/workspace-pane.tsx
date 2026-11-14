@@ -45,7 +45,7 @@ export function WorkspacePane({
         aria-label={title}
         className="group/resize absolute inset-y-0 -left-1 z-20 flex w-2 cursor-col-resize touch-none items-center justify-center outline-none"
       >
-        <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color] duration-150 group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
+        <span className="h-10 w-px rounded-full bg-border/0 transition-[height,background-color] group-hover/resize:h-16 group-hover/resize:bg-primary/45 group-focus-visible/resize:h-16 group-focus-visible/resize:bg-primary" />
       </div>
       <header
         className={cn(

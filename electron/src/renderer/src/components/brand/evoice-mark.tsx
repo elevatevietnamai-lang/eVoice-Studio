@@ -16,8 +16,16 @@ export const BARS = {
 };
 export const SPARK =
   'M273.5 42.5Q282.5 69.5 309.5 78.5Q282.5 87.5 273.5 114.5Q264.5 87.5 237.5 78.5Q264.5 69.5 273.5 42.5Z';
-/** The mark is white; the tile is the app icon's near-black (`docs/logo.svg`). */
-export const COLORS = { mark: '#FFFFFF', tile: '#030305' };
+/**
+ * The mark is white; the tile is the app icon's near-black (`docs/logo.svg`). `ink` is the bare
+ * mark's colour on light surfaces, where white would vanish: the same near-black as the tile.
+ */
+export const COLORS = { mark: '#FFFFFF', tile: '#030305', ink: '#030305' };
+/**
+ * The ink box (30–309.5 × 15–325) as a square, centred on the mark: `crop` draws this instead of
+ * the 340-unit canvas, so the bars touch the top and bottom edge with no built-in margin.
+ */
+export const CROP_VIEWBOX = '14.75 15 310 310';
 /** At this size and below, `cut="auto"` draws solid bars. */
 export const SMALL_MAX = 20;
 /**
@@ -42,8 +50,14 @@ export interface EVoiceMarkProps extends Omit<
   label?: string;
   /** `full` keeps the cut-out star at any size; `auto` drops it at 20 px and below. */
   cut?: 'auto' | 'full';
-  /** `white` is the brand mark; `mono` draws in `currentColor` and never adds a tile. */
-  tone?: 'white' | 'mono';
+  /**
+   * `white` is the brand mark; `mono` draws in `currentColor` and never adds a tile; `ink` is the
+   * bare mark for app chrome, never tiled: white in the dark theme, near-black (`COLORS.ink`) in the
+   * light one, so it reads on either background without a tile behind it.
+   */
+  tone?: 'white' | 'mono' | 'ink';
+  /** Draw the ink box only (`CROP_VIEWBOX`), with no margin around the bars. */
+  crop?: boolean;
   /**
    * The near-black app-icon tile behind the white mark. `auto` shows it only in the light theme,
    * where a bare white mark would vanish; `always` matches the app icon in both themes.
@@ -57,16 +71,19 @@ export function EVoiceMark({
   cut: cutMode = 'auto',
   tone = 'white',
   tile = 'auto',
+  crop = false,
   className,
   ...props
 }: EVoiceMarkProps) {
   const small = cutMode === 'auto' && size <= SMALL_MAX;
   const white = tone === 'white';
   const tiled = white && tile !== 'none';
-  const fill = white ? COLORS.mark : 'currentColor';
+  const ink = tone === 'ink';
+  // `ink` leaves the paths unfilled so its group's theme classes colour them.
+  const fill = white ? COLORS.mark : ink ? undefined : 'currentColor';
   const tileCut = size <= SMALL_TILE_MAX ? TILE.small : TILE.full;
   const tileOffset = 170 * (1 - tileCut.scale);
-  const ink = (
+  const paths = (
     <>
       <path d={small ? BARS.small : BARS.full} fill={fill} />
       <path d={SPARK} fill={fill} />
@@ -74,7 +91,7 @@ export function EVoiceMark({
   );
   return (
     <svg
-      viewBox="0 0 340 340"
+      viewBox={crop ? CROP_VIEWBOX : '0 0 340 340'}
       width={size}
       height={size}
       className={className}
@@ -83,6 +100,7 @@ export function EVoiceMark({
       aria-hidden={label ? undefined : true}
       data-mark={small ? 'small' : 'full'}
       data-tone={tone}
+      data-crop={crop || undefined}
       data-tile={tiled ? tile : 'none'}
       {...props}
     >
@@ -90,12 +108,18 @@ export function EVoiceMark({
         // In `auto` the tiled copy shows in the light theme and the bare copy in the dark one.
         <g data-part="tiled" className={cn(tile === 'auto' && 'dark:hidden')}>
           <rect width="340" height="340" rx={tileCut.radius} fill={COLORS.tile} />
-          <g transform={`translate(${tileOffset} ${tileOffset}) scale(${tileCut.scale})`}>{ink}</g>
+          <g transform={`translate(${tileOffset} ${tileOffset}) scale(${tileCut.scale})`}>
+            {paths}
+          </g>
         </g>
       ) : null}
-      {!tiled || tile === 'auto' ? (
+      {ink ? (
+        <g data-part="ink" className="fill-[#030305] dark:fill-white">
+          {paths}
+        </g>
+      ) : !tiled || tile === 'auto' ? (
         <g data-part="bare" className={cn(tiled && 'hidden dark:inline')}>
-          {ink}
+          {paths}
         </g>
       ) : null}
     </svg>

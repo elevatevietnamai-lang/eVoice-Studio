@@ -4111,7 +4111,8 @@
   "windowControls": {
     "minimize": "最小化",
     "maximize": "最大化",
-    "restore": "还原"
+    "restore": "还原",
+    "close_window": "关闭窗口"
   },
   "editor": {
     "title": "视频编辑器",
@@ -4620,5 +4621,17 @@
     "command_palette": "命令面板…",
     "toggle_full_screen": "切换全屏",
     "settings": "设置…"
+  },
+  "shell": {
+    "home_hint": "概览、快捷方式和最近的声音",
+    "logo_hint": "前往主页",
+    "app_menu": "应用菜单",
+    "app_menu_hint": "所有页面、命令和快捷键",
+    "settings_hint": "模型、外观、存储和更新",
+    "performance_hint": "平衡速度与质量",
+    "notifications": "通知",
+    "search_hint": "查找页面、声音和命令",
+    "group_system": "系统状态",
+    "group_app": "应用"
   }
 }

@@ -4111,7 +4111,8 @@
   "windowControls": {
     "minimize": "最小化",
     "maximize": "最大化",
-    "restore": "還原"
+    "restore": "還原",
+    "close_window": "關閉視窗"
   },
   "editor": {
     "title": "影片編輯器",
@@ -4620,5 +4621,17 @@
     "command_palette": "命令面板…",
     "toggle_full_screen": "切換全螢幕",
     "settings": "設定…"
+  },
+  "shell": {
+    "home_hint": "概覽、捷徑和最近的聲音",
+    "logo_hint": "前往首頁",
+    "app_menu": "應用程式選單",
+    "app_menu_hint": "所有頁面、命令和快捷鍵",
+    "settings_hint": "模型、外觀、儲存空間和更新",
+    "performance_hint": "平衡速度與品質",
+    "notifications": "通知",
+    "search_hint": "尋找頁面、聲音和命令",
+    "group_system": "系統狀態",
+    "group_app": "應用程式"
   }
 }

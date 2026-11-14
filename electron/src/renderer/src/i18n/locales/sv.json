@@ -4111,7 +4111,8 @@
   "windowControls": {
     "minimize": "Minimera",
     "maximize": "Maximera",
-    "restore": "Återställ"
+    "restore": "Återställ",
+    "close_window": "Stäng fönstret"
   },
   "editor": {
     "title": "Videoredigerare",
@@ -4620,5 +4621,17 @@
     "command_palette": "Kommandopalett…",
     "toggle_full_screen": "Helskärm",
     "settings": "Inställningar…"
+  },
+  "shell": {
+    "home_hint": "Översikt, genvägar och senaste röster",
+    "logo_hint": "Till startsidan",
+    "app_menu": "Programmeny",
+    "app_menu_hint": "Alla sidor, kommandon och kortkommandon",
+    "settings_hint": "Modeller, utseende, lagring och uppdateringar",
+    "performance_hint": "Balansera hastighet och kvalitet",
+    "notifications": "Aviseringar",
+    "search_hint": "Hitta sidor, röster och kommandon",
+    "group_system": "Systemstatus",
+    "group_app": "App"
   }
 }

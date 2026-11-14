@@ -7,8 +7,11 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { useWindowFullscreen } from '@/hooks/use-window-fullscreen';
 import { setMenuGroup, useMenuGroup } from '@/lib/store/workspace';
+import { APP_MENU_HOME_ACCELERATOR, APP_MENU_SETTINGS_ACCELERATOR } from '@shared/app-menu';
 import { WorkspaceNavigation } from './workspace-menu';
 import { StatusBar } from './status-bar';
+import { AppMenuButton } from './app-menu-button';
+import { ShellTooltip } from './shell-tooltip';
 
 export function versionTranslationKey(development: boolean) {
   return development ? ('app.version_dev' as const) : ('app.version' as const);
@@ -54,36 +57,66 @@ export function WorkspaceSidebar() {
           trafficLights ? 'min-h-[72px] items-end pb-1' : 'h-12 items-center',
         )}
       >
-        {/* The app's mark in its brand colours, no tile. 26 px: the bars are tall (ink is 91% of
-            the box), so this sits about 24 px high, a step above the 20 px menu icons without
-            filling the 40 px button. It goes Home. */}
-        <Link
-          to="/"
-          aria-label={appLabel}
-          title={appLabel}
-          data-slot="rail-logo"
-          onClick={() => setMenuGroup(null)}
-          // A brand mark, not a control surface: no hover or pressed fill, only the focus ring.
-          className="grid size-10 shrink-0 place-items-center rounded-lg text-sidebar-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        {/* The bare mark, no tile and no margin: cropped to its ink box, 32 px tall, white in the
+            dark theme and near-black in the light one (`tone="ink"`). The link is exactly the
+            mark's size, so nothing pads it. It goes Home. */}
+        <ShellTooltip
+          side="right"
+          label={appLabel}
+          hint={t('shell.logo_hint')}
+          accelerator={APP_MENU_HOME_ACCELERATOR}
         >
-          <EVoiceMark size={26} cut="full" className="size-[26px] shrink-0" />
-        </Link>
+          <Link
+            to="/"
+            aria-label={appLabel}
+            data-slot="rail-logo"
+            onClick={() => setMenuGroup(null)}
+            // A brand mark, not a control surface: no hover or pressed fill, only the focus ring.
+            className="grid size-8 shrink-0 place-items-center rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            <EVoiceMark size={32} tone="ink" crop cut="full" className="size-8 shrink-0" />
+          </Link>
+        </ShellTooltip>
       </div>
       <WorkspaceNavigation />
-      <div className="flex shrink-0 flex-col items-center gap-1 border-t border-border/50 py-2">
-        <StatusBar compact />
-        <Link
-          to="/settings"
-          aria-label={t('nav.settings')}
-          title={t('nav.settings')}
-          activeProps={{ 'data-lit': menuOpen ? undefined : 'true' }}
-          className={cn(
-            buttonVariants({ variant: 'ghost', size: 'icon' }),
-            'workspace-nav-item size-10',
-          )}
+      {/* The rail's foot, in two groups: system status (speed/quality, engines), then the app
+          (the application menu on Windows and Linux, and Settings). */}
+      <div className="flex shrink-0 flex-col items-center border-t border-border/50 py-2">
+        <div
+          role="group"
+          aria-label={t('shell.group_system')}
+          data-slot="rail-system"
+          className="flex flex-col items-center gap-1"
         >
-          <SettingsIcon className="workspace-nav-icon size-5" />
-        </Link>
+          <StatusBar compact />
+        </div>
+        <span aria-hidden="true" className="my-1.5 h-px w-6 bg-border/60" />
+        <div
+          role="group"
+          aria-label={t('shell.group_app')}
+          data-slot="rail-app"
+          className="flex flex-col items-center gap-1"
+        >
+          <AppMenuButton />
+          <ShellTooltip
+            side="right"
+            label={t('nav.settings')}
+            hint={t('shell.settings_hint')}
+            accelerator={APP_MENU_SETTINGS_ACCELERATOR}
+          >
+            <Link
+              to="/settings"
+              aria-label={t('nav.settings')}
+              activeProps={{ 'data-lit': menuOpen ? undefined : 'true' }}
+              className={cn(
+                buttonVariants({ variant: 'ghost', size: 'icon' }),
+                'workspace-nav-item size-10',
+              )}
+            >
+              <SettingsIcon className="workspace-nav-icon size-5" />
+            </Link>
+          </ShellTooltip>
+        </div>
       </div>
     </aside>
   );

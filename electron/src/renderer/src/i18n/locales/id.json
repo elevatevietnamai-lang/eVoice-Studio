@@ -4111,7 +4111,8 @@
   "windowControls": {
     "minimize": "Perkecil",
     "maximize": "Perbesar",
-    "restore": "Pulihkan"
+    "restore": "Pulihkan",
+    "close_window": "Tutup jendela"
   },
   "editor": {
     "title": "Editor video",
@@ -4620,5 +4621,17 @@
     "command_palette": "Palet Perintah…",
     "toggle_full_screen": "Layar Penuh",
     "settings": "Pengaturan…"
+  },
+  "shell": {
+    "home_hint": "Ringkasan, pintasan, dan suara terbaru",
+    "logo_hint": "Ke Beranda",
+    "app_menu": "Menu aplikasi",
+    "app_menu_hint": "Setiap halaman, perintah, dan pintasan",
+    "settings_hint": "Model, tampilan, penyimpanan, dan pembaruan",
+    "performance_hint": "Seimbangkan kecepatan dan kualitas",
+    "notifications": "Notifikasi",
+    "search_hint": "Cari halaman, suara, dan perintah",
+    "group_system": "Status sistem",
+    "group_app": "Aplikasi"
   }
 }

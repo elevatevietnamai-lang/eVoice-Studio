@@ -9,12 +9,19 @@ import {
   WrenchIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { APP_MENU_HOME, APP_MENU_HOME_ACCELERATOR, APP_MENU_PAGES } from '@shared/app-menu';
 import { cn } from '@/lib/utils';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { MenuReveal, MenuRevealItem, menuSurfaceMotion } from '@/components/motion';
 import { inGroup, type DestinationGroup, type WorkspaceDestination } from './destinations';
+import { ShellTooltip } from './shell-tooltip';
 import './workspace-menu.css';
+
+/** The keyboard shortcut the application menu gives a page, shown in its rail tooltip. */
+function pageAccelerator(path: string): string | undefined {
+  if (path === APP_MENU_HOME) return APP_MENU_HOME_ACCELERATOR;
+  return APP_MENU_PAGES.find((page) => page.path === path)?.accelerator;
+}
 
 type Destination = WorkspaceDestination;
 
@@ -22,15 +29,15 @@ type Destination = WorkspaceDestination;
 const HOME: Destination = {
   to: '/',
   label: 'nav.home',
-  description: 'homeUi.subtitle',
+  description: 'shell.home_hint',
   icon: LayoutDashboardIcon,
   group: 'library',
 };
 
 const itemClass =
-  'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-lg text-sm text-(--sidebar-muted-foreground) outline-none transition-colors duration-160 hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
+  'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-lg text-sm text-(--sidebar-muted-foreground) outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
 const iconClass =
-  'workspace-nav-icon size-5 shrink-0 text-(--sidebar-muted-foreground) transition-colors duration-160';
+  'workspace-nav-icon size-5 shrink-0 text-(--sidebar-muted-foreground) transition-colors';
 
 function NavigationLink({
   destination: { to, label, description, icon: Icon, activate },
@@ -93,10 +100,14 @@ function NavigationLink({
   );
   if (!compact) return link;
   return (
-    <Tooltip>
-      <TooltipTrigger render={link} />
-      <TooltipContent side="right">{t(label)}</TooltipContent>
-    </Tooltip>
+    <ShellTooltip
+      side="right"
+      label={t(label)}
+      hint={t(description)}
+      accelerator={pageAccelerator(to)}
+    >
+      {link}
+    </ShellTooltip>
   );
 }
 
@@ -125,36 +136,36 @@ function NavigationGroup({
     lit && 'bg-(--sidebar-row-selected) text-sidebar-foreground',
   );
   return (
-    // Hover names the group; a click fills the panel column with its menu, a second click
-    // gives the column back to the page's panel.
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <button
-            type="button"
-            aria-label={t(label)}
-            aria-expanded={open}
-            aria-controls={open ? GROUP_MENU_ID : undefined}
-            data-active={active}
-            data-lit={lit || undefined}
-            data-menu-group={group}
-            className={triggerClass}
-            onClick={() => setMenuGroup(open ? null : group)}
-            onKeyDown={(event) => {
-              if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
-              event.preventDefault();
-              setMenuGroup(group);
-              requestAnimationFrame(() =>
-                document.getElementById(GROUP_MENU_ID)?.querySelector('a')?.focus(),
-              );
-            }}
-          />
-        }
+    // Hover names the group and the pages in it; a click fills the panel column with its menu, a
+    // second click gives the column back to the page's panel.
+    <ShellTooltip
+      side="right"
+      disabled={open}
+      label={t(label)}
+      hint={children.map((page) => t(page.label)).join(' · ')}
+    >
+      <button
+        type="button"
+        aria-label={t(label)}
+        aria-expanded={open}
+        aria-controls={open ? GROUP_MENU_ID : undefined}
+        data-active={active}
+        data-lit={lit || undefined}
+        data-menu-group={group}
+        className={triggerClass}
+        onClick={() => setMenuGroup(open ? null : group)}
+        onKeyDown={(event) => {
+          if (event.key !== 'ArrowRight' && event.key !== 'ArrowDown') return;
+          event.preventDefault();
+          setMenuGroup(group);
+          requestAnimationFrame(() =>
+            document.getElementById(GROUP_MENU_ID)?.querySelector('a')?.focus(),
+          );
+        }}
       >
         <Icon className={iconClass} aria-hidden="true" />
-      </TooltipTrigger>
-      {!open && <TooltipContent side="right">{t(label)}</TooltipContent>}
-    </Tooltip>
+      </button>
+    </ShellTooltip>
   );
 }
 
@@ -231,13 +242,14 @@ export function GroupMenuPanel() {
 
 function GroupMenu({ group }: { group: keyof typeof GROUPS }) {
   const { t } = useTranslation();
+  const reduced = useReducedMotion() ?? false;
   const close = () => {
     setMenuGroup(null);
     document.querySelector<HTMLElement>(`[data-menu-group="${group}"]`)?.focus();
   };
   return (
     <motion.aside
-      {...menuSurfaceMotion}
+      {...menuSurfaceMotion(reduced)}
       id={GROUP_MENU_ID}
       aria-label={t(GROUPS[group])}
       data-slot="group-menu"

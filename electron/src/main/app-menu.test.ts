@@ -2,12 +2,15 @@ import type { BrowserWindow, IpcMainInvokeEvent, MenuItemConstructorOptions } fr
 import { describe, expect, it, vi } from 'vitest';
 import {
   APP_MENU_ACTION_CHANNEL,
+  APP_MENU_HOME_ACCELERATOR,
   APP_MENU_LABELS_CHANNEL,
   APP_MENU_PAGES,
   APP_MENU_PATHS,
   APP_MENU_POPUP_CHANNEL,
+  APP_MENU_SETTINGS_ACCELERATOR,
   APP_NAVIGATE_CHANNEL,
   englishAppMenuLabels,
+  formatAccelerator,
 } from '../shared/app-menu';
 import {
   createApplicationMenuTemplate,
@@ -339,5 +342,22 @@ describe('installAppMenu', () => {
     const { handlers, installed } = setup();
     installed.dispose();
     expect(handlers.size).toBe(0);
+  });
+});
+
+describe('formatAccelerator', () => {
+  it('writes a shortcut the way each platform shows it', () => {
+    expect(formatAccelerator(APP_MENU_HOME_ACCELERATOR, false)).toBe('Ctrl+Shift+H');
+    expect(formatAccelerator(APP_MENU_HOME_ACCELERATOR, true)).toBe('⌘⇧H');
+    expect(formatAccelerator(APP_MENU_SETTINGS_ACCELERATOR, false)).toBe('Ctrl+,');
+    expect(formatAccelerator('CmdOrCtrl+9', true)).toBe('⌘9');
+  });
+
+  it('is the shortcut the menu itself registers for Home and Settings', () => {
+    const items = flatten(template('win32'));
+    expect(items.find((item) => item.id === 'go:/')?.accelerator).toBe(APP_MENU_HOME_ACCELERATOR);
+    expect(items.find((item) => item.id === 'go:/settings')?.accelerator).toBe(
+      APP_MENU_SETTINGS_ACCELERATOR,
+    );
   });
 });

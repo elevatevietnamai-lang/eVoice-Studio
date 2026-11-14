@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { apiFetch, apiJson } from '@/lib/api/client';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { ShellTooltip } from './shell-tooltip';
 import type { UpdateState } from '../../../../preload/index.d';
 
 interface SystemNotification {
@@ -93,6 +94,7 @@ export function SystemNotifications({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(loadDismissed);
+  const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState<UpdateState | null>(null);
   const query = useQuery({
     queryKey: ['system-notifications'],
@@ -186,36 +188,47 @@ export function SystemNotifications({
             ? 'preferences.loading'
             : 'logs.all_clear',
     );
+  // The status line without its leading emoji: the tooltip and the accessible name read cleanly.
+  const status = triggerLabel.replace(/^\p{Extended_Pictographic}\p{Mn}*\s*/u, '');
+  const trigger = (
+    <PopoverTrigger
+      render={
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            'relative shrink-0 text-muted-foreground hover:text-foreground',
+            titlebar && 'app-no-drag',
+          )}
+          aria-label={`${t('shell.notifications')}: ${status}`}
+        />
+      }
+    >
+      <BellIcon className="size-[18px]" />
+      {visible.length > 0 && (
+        <span
+          className={cn(
+            'absolute top-0.5 right-0.5 min-w-4 rounded-full px-1 text-center text-[11px] leading-4 font-semibold ring-2 ring-background',
+            visible.some((note) => note.level === 'error')
+              ? 'bg-destructive text-white'
+              : 'bg-primary text-primary-foreground',
+          )}
+          aria-hidden="true"
+        >
+          {visible.length > 9 ? '9+' : visible.length}
+        </span>
+      )}
+    </PopoverTrigger>
+  );
   return (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(
-              'relative shrink-0 text-muted-foreground hover:text-foreground',
-              titlebar && 'app-no-drag',
-            )}
-            aria-label={triggerLabel}
-          />
-        }
-      >
-        <BellIcon className="size-[18px]" />
-        {visible.length > 0 && (
-          <span
-            className={cn(
-              'absolute top-0.5 right-0.5 min-w-4 rounded-full px-1 text-center text-[11px] leading-4 font-semibold ring-2 ring-background',
-              visible.some((note) => note.level === 'error')
-                ? 'bg-destructive text-white'
-                : 'bg-primary text-primary-foreground',
-            )}
-            aria-hidden="true"
-          >
-            {visible.length > 9 ? '9+' : visible.length}
-          </span>
-        )}
-      </PopoverTrigger>
+    <Popover open={open} onOpenChange={setOpen}>
+      {titlebar ? (
+        <ShellTooltip side="bottom" disabled={open} label={t('shell.notifications')} hint={status}>
+          {trigger}
+        </ShellTooltip>
+      ) : (
+        trigger
+      )}
       <PopoverContent
         side={titlebar ? 'bottom' : compact ? 'right' : 'top'}
         align={titlebar ? 'end' : 'start'}
