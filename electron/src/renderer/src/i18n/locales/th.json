@@ -4243,5 +4243,32 @@
     "timeline_outro": "ตอนจบโลโก้",
     "timeline_preview": "ตัวอย่าง",
     "timeline_preview_note": "ตัวอย่างเป็นเพียงการประมาณ วิดีโอที่สร้างออกมาจึงจะแม่นยำ"
+  },
+  "appMenu": {
+    "menu": "เมนู",
+    "file": "ไฟล์",
+    "edit": "แก้ไข",
+    "view": "มุมมอง",
+    "go": "ไปที่",
+    "window": "หน้าต่าง",
+    "help": "วิธีใช้",
+    "about": "เกี่ยวกับ {{app}}",
+    "services": "บริการ",
+    "hide": "ซ่อน {{app}}",
+    "hide_others": "ซ่อนแอปอื่น",
+    "show_all": "แสดงทั้งหมด",
+    "quit": "ออกจาก {{app}}",
+    "exit": "ออก",
+    "close_window": "ปิดหน้าต่าง",
+    "bring_all_to_front": "นำทั้งหมดมาไว้ด้านหน้า",
+    "undo": "เลิกทำ",
+    "redo": "ทำซ้ำ",
+    "cut": "ตัด",
+    "copy": "คัดลอก",
+    "paste": "วาง",
+    "select_all": "เลือกทั้งหมด",
+    "command_palette": "แผงคำสั่ง…",
+    "toggle_full_screen": "เต็มหน้าจอ",
+    "settings": "การตั้งค่า…"
   }
 }

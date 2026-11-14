@@ -4251,5 +4251,32 @@
     "timeline_outro": "خاتمة بالشعار",
     "timeline_preview": "معاينة",
     "timeline_preview_note": "المعاينة تقريبية؛ الفيديو الناتج دقيق."
+  },
+  "appMenu": {
+    "menu": "القائمة",
+    "file": "ملف",
+    "edit": "تحرير",
+    "view": "عرض",
+    "go": "انتقال",
+    "window": "نافذة",
+    "help": "مساعدة",
+    "about": "حول {{app}}",
+    "services": "الخدمات",
+    "hide": "إخفاء {{app}}",
+    "hide_others": "إخفاء الآخرين",
+    "show_all": "إظهار الكل",
+    "quit": "إنهاء {{app}}",
+    "exit": "خروج",
+    "close_window": "إغلاق النافذة",
+    "bring_all_to_front": "إحضار الكل إلى الأمام",
+    "undo": "تراجع",
+    "redo": "إعادة",
+    "cut": "قص",
+    "copy": "نسخ",
+    "paste": "لصق",
+    "select_all": "تحديد الكل",
+    "command_palette": "لوحة الأوامر…",
+    "toggle_full_screen": "ملء الشاشة",
+    "settings": "الإعدادات…"
   }
 }

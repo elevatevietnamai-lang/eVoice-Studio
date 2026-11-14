@@ -24,7 +24,8 @@ import {
 } from './main-error-journal';
 import { activateLiveWindow, isLiveWindow } from './window-safety';
 import { startAccount } from './account';
-import { installAppIdentity, installMacApplicationMenu } from './app-identity';
+import { installAppIdentity } from './app-identity';
+import { installAppMenu } from './app-menu';
 import { APP_ID, PRODUCT_NAME } from '../../../config/app-config.mjs';
 
 // Packaged GUI launches can inherit a short-lived terminal pipe. When that
@@ -61,6 +62,7 @@ let closeUpdates: (() => void) | null = null;
 let closeRepairAgents: (() => void) | null = null;
 let closeAccount: (() => void) | null = null;
 let quitPreparation: Promise<void> | null = null;
+let appMenu: ReturnType<typeof installAppMenu> | null = null;
 
 const PERSISTENCE_FLUSH_REQUEST = 'app:flush-persistence';
 const PERSISTENCE_FLUSHED = 'app:persistence-flushed';
@@ -180,6 +182,7 @@ function createWindow(): BrowserWindow {
     if (process.platform !== 'darwin' && !quitting) app.quit();
   });
   wireWindowMaximizeEvents(win);
+  appMenu?.attach(win);
   installBlankWindowGuard(
     win,
     appUrl,
@@ -245,7 +248,15 @@ if (process.env.VOICESTUDIO_ALLOW_MULTIPLE_INSTANCES !== '1' && !app.requestSing
     .whenReady()
     .then(async () => {
       electronApp.setAppUserModelId(APP_ID);
-      if (process.platform === 'darwin') installMacApplicationMenu(app, Menu, __APP_VERSION__);
+      appMenu = installAppMenu({
+        application: app,
+        menu: Menu,
+        ipcMain,
+        getWindow: () => mainWindow,
+        assertTrusted: assertTrustedMainFrame,
+        version: __APP_VERSION__,
+        platform: process.platform,
+      });
       installRendererPermissions(session.defaultSession, process.env.ELECTRON_RENDERER_URL);
       app.on('browser-window-created', (_event, window) => optimizer.watchWindowShortcuts(window));
 

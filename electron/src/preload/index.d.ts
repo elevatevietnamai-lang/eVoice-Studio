@@ -451,6 +451,14 @@ export interface VoiceStudioBridge {
     platform: NodeJS.Platform;
     isDev: boolean;
     onNavigate(callback: (path: string) => void): () => void;
+    /** The native application menu (`src/shared/app-menu.ts`). */
+    menu: {
+      /** Translated labels keyed by menu label id or page path; main rebuilds the menu. */
+      setLabels(labels: Record<string, string>): Promise<void>;
+      /** Opens the whole menu at a window point (the Windows and Linux menu button). */
+      popup(point: { x: number; y: number }): Promise<void>;
+      onAction(callback: (action: 'command-palette') => void): () => void;
+    };
     /** Native fullscreen state (macOS hides the traffic lights there); the callback fires on every change. */
     isFullScreen(): Promise<boolean>;
     onFullScreen(callback: (fullscreen: boolean) => void): () => void;
