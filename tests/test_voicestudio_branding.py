@@ -101,7 +101,7 @@ def test_canonical_logo_is_plain_paths_every_pipeline_can_read(name: str) -> Non
 
 
 # The retired orange-to-pink gradient and orange star; the mark is white everywhere.
-RETIRED_BRAND_COLORS = re.compile(r"#?(?:F8981D|FF32A3|F88537)", re.IGNORECASE)
+RETIRED_BRAND_COLORS = re.compile(r"#?(?:F8981D|FF32A3|F88537)\b", re.IGNORECASE)
 WHITE_MARK_SOURCES = (
     "docs/logo.svg",
     "docs/logo-small.svg",
@@ -140,9 +140,13 @@ def test_raster_icons_show_the_bars_and_the_cut_out_star() -> None:
         icon = Image.open(ROOT / name).convert("RGB")
         width, height = icon.size
         # On the tall second bar: the white mark, not the tile.
-        assert min(icon.getpixel((int(width * 26 / 64), int(height * 20 / 64)))) > 235, name
+        assert (
+            min(icon.getpixel((int(width * 26 / 64), int(height * 20 / 64)))) > 235
+        ), name
         # Between the bars and the tile edge: the near-black tile.
-        assert max(icon.getpixel((int(width * 8 / 64), int(height * 32 / 64)))) < 24, name
+        assert max(icon.getpixel((int(width * 8 / 64), int(height * 32 / 64)))) < 24, (
+            name
+        )
         if width >= 192:
             # Inside the star knocked out of the second bar: the tile shows through.
             pixel = icon.getpixel((int(width * 30 / 64), int(height * 32.24 / 64)))

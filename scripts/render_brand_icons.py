@@ -109,7 +109,9 @@ def web(master, small):
     # tile; the platforms that mask or need opacity get the full-bleed square.
     scaled(master, small, 192).save(PUBLIC / "icon-192.png")
     scaled(master, small, 512).save(PUBLIC / "icon-512.png")
-    favicons = [scaled(master, small, size) for size in sorted(FAVICON_SIZES, reverse=True)]
+    favicons = [
+        scaled(master, small, size) for size in sorted(FAVICON_SIZES, reverse=True)
+    ]
     favicons[0].save(
         PUBLIC / "favicon.ico",
         sizes=[frame.size for frame in favicons],
