@@ -45,6 +45,7 @@ FENCE_RE = re.compile(rf"{FENCE}.*?{FENCE}", re.S)
 INLINE_CODE_RE = re.compile(r"`[^`\n]+`")
 IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
 BOLD_RE = re.compile(r"\*\*([^*\n]+?)\*\*")
+LOCAL_LINK_RE = re.compile(r"\]\(((?:file:|[A-Za-z]:[\\/]|/)[^)]*)\)")
 REL_GUIDE_LINK_RE = re.compile(r"\]\(\.\./([^/)\s#?]+)/?(?:[#?][^)]*)?\)")
 EMAIL_RE = re.compile(r"\b[A-Za-z0-9._%+-]+@([A-Za-z0-9.-]+\.[A-Za-z]{2,})\b")
 HF_TOKEN_RE = re.compile(r"\bhf_[A-Za-z0-9]{10,}\b")
@@ -208,6 +209,10 @@ def check(path: Path) -> list[str]:
                 target_slug = match.group(1)
                 if target_slug not in BY_SLUG:
                     errors.append(f"{rel}:{lineno}: link to unknown guide slug '{target_slug}'")
+
+            # The writer has produced file:/// links to local paths; only web and relative links may ship.
+            for match in LOCAL_LINK_RE.finditer(masked_line):
+                errors.append(f"{rel}:{lineno}: local or absolute link '{match.group(1)[:60]}'")
 
         for match in EMAIL_RE.finditer(raw_line):
             if match.group(1).lower() != "example.com":

@@ -40,7 +40,8 @@ def test_check_rejects_unknown_label_and_missing_image() -> None:
     bad.write_text(
         "---\ntitle: T\ndescription: D\nslug: nhan-ban-giong\norder: 2\ngroup: voice\n"
         "updated: 2026-11-14\napp_version: 0\nstatus: draft\n---\n\n"
-        "Bấm **Nút Không Tồn Tại**.\n\n![ảnh](shots/khong-co.png)\n",
+        "Bấm **Nút Không Tồn Tại**.\n\n![ảnh](shots/khong-co.png)\n\n"
+        "[ảnh gốc](file:///D:/x/y.png)\n",
         encoding="utf-8",
     )
     try:
@@ -49,3 +50,4 @@ def test_check_rejects_unknown_label_and_missing_image() -> None:
         bad.unlink()
     assert "Nút Không Tồn Tại" in problems
     assert "khong-co.png" in problems
+    assert "local or absolute link" in problems

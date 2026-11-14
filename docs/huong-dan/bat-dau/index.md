@@ -27,6 +27,8 @@ Bài viết này hướng dẫn bạn cài đặt eVoice Studio trên máy tính
 
 ### 1. Cài đặt ứng dụng trên Windows, macOS hoặc Linux
 
+<!-- TODO: kiểm tra — bản beta eVoice Studio hiện chỉ có bộ cài Windows; các dòng macOS/Linux và lệnh curl lấy từ tài liệu VoiceStudio gốc -->
+
 Chọn cách cài đặt phù hợp với hệ điều hành của bạn:
 
 - Trên Windows: Tải bộ cài đặt `.exe` (`win-x64` hoặc `win-arm64`) từ trang phát hành chính thức và mở tệp để cài đặt cho tài khoản hiện tại mà không cần quyền quản trị. Bạn cũng có thể mở PowerShell thông thường và chạy lệnh `irm https://voicestudio.sh/install | iex`.
