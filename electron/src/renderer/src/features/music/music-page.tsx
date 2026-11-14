@@ -48,7 +48,14 @@ import {
   DEFAULT_STEPS,
   DIT_MODELS,
   DIT_MODEL_IDS,
+  EXTEND_OVERLAP,
+  EXTEND_SECONDS,
+  EXTEND_SIDES,
   GUIDANCE_RANGE,
+  LM_NEGATIVE_PROMPT_DEFAULT,
+  LM_PARAMS,
+  LM_PARAM_IDS,
+  MAX_SOURCE_SECONDS,
   SHIFT_RANGE,
   INFER_METHODS,
   KEY_NOTES,
@@ -56,7 +63,10 @@ import {
   STYLE_TAGS,
   TIME_SIGNATURES,
   appendStyleTag,
+  changedLmValues,
+  defaultLmValues,
   defaultVocalLanguage,
+  extendedLength,
   insertLyricTag,
   meterLabel,
   randomSeed,
@@ -65,7 +75,9 @@ import {
   vocalLanguageOptions,
   type AudioFormat,
   type DitModel,
+  type ExtendSide,
   type InferMethod,
+  type LmValues,
   type MusicSettings,
   type StyleGroup,
 } from './music-options';
@@ -104,8 +116,8 @@ type Track = {
   task?: string;
 };
 
-type MusicTask = 'text2music' | 'cover' | 'repaint';
-const MUSIC_TASKS: MusicTask[] = ['text2music', 'cover', 'repaint'];
+type MusicTask = 'text2music' | 'cover' | 'repaint' | 'extend';
+const MUSIC_TASKS: MusicTask[] = ['text2music', 'cover', 'repaint', 'extend'];
 const REPAINT_MODES = ['conservative', 'balanced', 'aggressive'] as const;
 type RepaintMode = (typeof REPAINT_MODES)[number];
 
@@ -175,7 +187,14 @@ export function MusicPage() {
   const [repaintRange, setRepaintRange] = useState<[number, number]>([0, 10]);
   const [repaintMode, setRepaintMode] = useState<RepaintMode>('balanced');
   const [repaintStrength, setRepaintStrength] = useState(0.5);
+  const [extendSide, setExtendSide] = useState<ExtendSide>('end');
+  const [extendSeconds, setExtendSeconds] = useState<number>(EXTEND_SECONDS[2]);
+  const [extendOverlap, setExtendOverlap] = useState<number>(EXTEND_OVERLAP[2]);
+  const [expertOpen, setExpertOpen] = useState(false);
+  const [lmValues, setLmValues] = useState<LmValues>(defaultLmValues);
+  const [lmNegative, setLmNegative] = useState('');
   const editing = musicTask !== 'text2music';
+  const regenerating = musicTask === 'repaint' || musicTask === 'extend';
   const [model, setModel] = useState<DitModel>('turbo');
   const [guidance, setGuidance] = useState<number>(GUIDANCE_RANGE[2]);
   const [shift, setShift] = useState<number>(SHIFT_RANGE[2]);
@@ -303,6 +322,7 @@ export function MusicPage() {
     time_signature: timeSignature,
     seed: seed ? Number(seed) : null,
     thinking: thinking && lmReady,
+    ...(thinking && lmReady ? changedLmValues(lmValues, lmNegative) : {}),
     batch_size: Number(batchSize),
     inference_steps: steps,
     infer_method: inferMethod,
@@ -322,14 +342,20 @@ export function MusicPage() {
     ...sourceFields(reference, 'reference'),
     ...(musicTask === 'cover' ? { cover_strength: coverStrength } : {}),
     ...(musicTask === 'repaint'
-      ? {
-          repaint_start: repaintRange[0],
-          repaint_end: repaintRange[1],
-          repaint_mode: repaintMode,
-          repaint_strength: repaintStrength,
-        }
+      ? { repaint_start: repaintRange[0], repaint_end: repaintRange[1] }
       : {}),
+    ...(musicTask === 'extend'
+      ? { extend_side: extendSide, extend_seconds: extendSeconds, extend_overlap: extendOverlap }
+      : {}),
+    ...(regenerating ? { repaint_mode: repaintMode, repaint_strength: repaintStrength } : {}),
   });
+  // The most the source can grow: its engine limit, and the slider's own range.
+  const extendMax = source
+    ? Math.max(
+        EXTEND_SECONDS[0],
+        Math.min(EXTEND_SECONDS[1], Math.floor(MAX_SOURCE_SECONDS - source.duration)),
+      )
+    : EXTEND_SECONDS[1];
 
   const chooseSource = (next: MusicSource | null) => {
     setSource(next);
@@ -648,32 +674,108 @@ export function MusicPage() {
               </p>
             </div>
           )}
-          {musicTask === 'repaint' && source && (
+          {musicTask === 'extend' && source && (
             <div className="space-y-3 text-xs">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <span id="music-extend-side" className="font-medium">
+                  {t('musicStudio.extend_side')}
+                </span>
+                <ToggleGroup
+                  value={[extendSide]}
+                  disabled={busy}
+                  size="sm"
+                  aria-labelledby="music-extend-side"
+                  onValueChange={(value) => {
+                    const next = value[0];
+                    if ((EXTEND_SIDES as readonly string[]).includes(next as string))
+                      setExtendSide(next as ExtendSide);
+                  }}
+                >
+                  {EXTEND_SIDES.map((value) => (
+                    <ToggleGroupItem key={value} value={value}>
+                      {t(`musicStudio.extend_side_${value}`)}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{t('musicStudio.repaint_region')}</span>
+                  <span className="font-medium">{t('musicStudio.extend_seconds')}</span>
                   <span className="text-muted-foreground tabular-nums">
-                    {t('musicStudio.repaint_region_value', {
-                      start: repaintRange[0],
-                      end: repaintRange[1],
+                    {t('musicStudio.duration_value', {
+                      seconds: Math.min(extendSeconds, extendMax),
                     })}
                   </span>
                 </div>
                 <Slider
-                  min={0}
-                  max={Math.max(1, Math.round(source.duration))}
+                  min={EXTEND_SECONDS[0]}
+                  max={extendMax}
                   step={1}
-                  minStepsBetweenValues={1}
-                  value={repaintRange}
+                  value={[Math.min(extendSeconds, extendMax)]}
                   disabled={busy}
-                  aria-label={t('musicStudio.repaint_region')}
-                  onValueChange={(value) => {
-                    if (Array.isArray(value) && value.length === 2)
-                      setRepaintRange([value[0], value[1]]);
-                  }}
+                  aria-label={t('musicStudio.extend_seconds')}
+                  onValueChange={(value) =>
+                    setExtendSeconds(Array.isArray(value) ? value[0] : value)
+                  }
                 />
+                <p className="leading-5 text-muted-foreground">
+                  {t('musicStudio.extend_total', {
+                    seconds: extendedLength(source.duration, Math.min(extendSeconds, extendMax)),
+                  })}
+                </p>
               </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{t('musicStudio.extend_overlap')}</span>
+                  <span className="text-muted-foreground tabular-nums">
+                    {t('musicStudio.duration_value', { seconds: extendOverlap })}
+                  </span>
+                </div>
+                <Slider
+                  min={EXTEND_OVERLAP[0]}
+                  max={EXTEND_OVERLAP[1]}
+                  step={0.5}
+                  value={[extendOverlap]}
+                  disabled={busy}
+                  aria-label={t('musicStudio.extend_overlap')}
+                  onValueChange={(value) =>
+                    setExtendOverlap(Array.isArray(value) ? value[0] : value)
+                  }
+                />
+                <p className="leading-5 text-muted-foreground">
+                  {t('musicStudio.extend_overlap_help')}
+                </p>
+              </div>
+            </div>
+          )}
+          {regenerating && source && (
+            <div className="space-y-3 text-xs">
+              {musicTask === 'repaint' && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{t('musicStudio.repaint_region')}</span>
+                    <span className="text-muted-foreground tabular-nums">
+                      {t('musicStudio.repaint_region_value', {
+                        start: repaintRange[0],
+                        end: repaintRange[1],
+                      })}
+                    </span>
+                  </div>
+                  <Slider
+                    min={0}
+                    max={Math.max(1, Math.round(source.duration))}
+                    step={1}
+                    minStepsBetweenValues={1}
+                    value={repaintRange}
+                    disabled={busy}
+                    aria-label={t('musicStudio.repaint_region')}
+                    onValueChange={(value) => {
+                      if (Array.isArray(value) && value.length === 2)
+                        setRepaintRange([value[0], value[1]]);
+                    }}
+                  />
+                </div>
+              )}
               <div className="flex min-w-0 flex-col gap-1.5">
                 <span id="music-repaint-mode" className="font-medium">
                   {t('musicStudio.repaint_mode')}
@@ -1228,6 +1330,80 @@ export function MusicPage() {
                 aria-label={t('musicStudio.thinking_downloading')}
               />
             )}
+            {thinking && lmReady && (
+              <Collapsible
+                open={expertOpen}
+                onOpenChange={setExpertOpen}
+                className="rounded-(--card-radius) border border-border/60"
+              >
+                <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 px-3 py-2 text-label font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+                  {t('musicStudio.lm_expert')}
+                  <ChevronDownIcon
+                    className={cn('size-3.5 transition-transform', expertOpen && 'rotate-180')}
+                    aria-hidden="true"
+                  />
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="space-y-3 px-3 pb-3">
+                    <p className="leading-5 text-muted-foreground">
+                      {t('musicStudio.lm_expert_help')}
+                    </p>
+                    {LM_PARAM_IDS.map((id) => {
+                      const [low, high, fallback] = LM_PARAMS[id].range;
+                      const value = lmValues[id];
+                      return (
+                        <div key={id} className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium">{t(`musicStudio.${id}`)}</span>
+                            <span className="text-muted-foreground tabular-nums">
+                              {value === null ? t('musicStudio.lm_top_k_off') : value}
+                            </span>
+                          </div>
+                          <Slider
+                            min={id === 'lm_top_k' ? 0 : low}
+                            max={high}
+                            step={LM_PARAMS[id].step}
+                            value={[value ?? 0]}
+                            disabled={busy}
+                            aria-label={t(`musicStudio.${id}`)}
+                            onValueChange={(next) => {
+                              const raw = Array.isArray(next) ? next[0] : next;
+                              const rounded = Math.round(raw * 100) / 100;
+                              setLmValues((current) => ({
+                                ...current,
+                                [id]: id === 'lm_top_k' && rounded < low ? fallback : rounded,
+                              }));
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                    <label className="flex min-w-0 flex-col gap-1.5">
+                      <span className="font-medium">{t('musicStudio.lm_negative_prompt')}</span>
+                      <Input
+                        value={lmNegative}
+                        maxLength={500}
+                        disabled={busy}
+                        placeholder={LM_NEGATIVE_PROMPT_DEFAULT}
+                        onChange={(event) => setLmNegative(event.target.value)}
+                      />
+                    </label>
+                    <Button
+                      size="xs"
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() => {
+                        setLmValues(defaultLmValues());
+                        setLmNegative('');
+                      }}
+                    >
+                      <RotateCcwIcon />
+                      {t('musicStudio.lm_reset')}
+                    </Button>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            )}
           </div>
 
           {lmReady && (
@@ -1345,6 +1521,14 @@ export function MusicPage() {
                     onClick={() => editTrack('repaint', selected)}
                   >
                     {t('musicStudio.repaint_this')}
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => editTrack('extend', selected)}
+                  >
+                    {t('musicStudio.extend_this')}
                   </Button>
                   {typeof selected.seed === 'number' && (
                     <Button

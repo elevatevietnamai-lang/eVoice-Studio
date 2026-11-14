@@ -267,7 +267,9 @@ Chỉ hiện khi Thinking bật (LM có nạp). Mặc định lấy đúng mặc
 - Bảng khoảng/mặc định nằm một chỗ ở backend (`LM_PARAMS`) và một bảng trong `music-options.ts`; test đối chiếu hai bảng như `DIT_MODELS`.
 - Nút "Khôi phục mặc định". Lưu vào `params` của bài.
 
-### 8.3 Pha 3c-3: Custom timesteps
+### 8.3 Pha 3c-3: Custom timesteps — KHÔNG LÀM ĐƯỢC tại revision pin
+
+Kiểm chứng 2026-11-15: `release_task_request_builder.py` không đọc trường `timesteps` (nó chỉ có trong model Pydantic), nên REST luôn bỏ qua. Chạy thật lịch 9 và 12 giá trị trên turbo cho kết quả giống hệt mặc định (corr 1.0). Chuyển sang mục 8.6 cho tới khi đổi revision pin. Bản kế hoạch gốc giữ bên dưới để tham khảo.
 
 `timesteps` (chuỗi số phân tách dấu phẩy) **thay thế** `inference_steps` và `shift`.
 - Đặt trong mục "Chuyên gia", tắt mặc định. Khi bật: ẩn steps và shift, hiện ô nhập kèm một preset (lịch 9 bước trong tài liệu ACE-Step).
@@ -293,6 +295,7 @@ API pin: `/v1/lora/load` (`lora_path`, `adapter_name`), `/v1/lora/unload`, `/v1/
 ### 8.6 Không làm
 
 - **Auto score / LRC:** API REST tại pin không có endpoint nào (chỉ có trong Gradio). Không làm cho tới khi đổi revision pin có endpoint.
+- **Custom timesteps:** REST tại pin bỏ qua `timesteps` (xem 8.3).
 - **Training LoRA**, AudioMass, Demucs, chia sẻ/LAN: giữ như mục 2.
 
 ### 8.7 Thứ tự PR

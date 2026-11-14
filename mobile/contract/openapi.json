@@ -2492,6 +2492,29 @@
       "title": "Duration",
       "type": "number"
      },
+     "extend_overlap": {
+      "default": 2,
+      "maximum": 10.0,
+      "minimum": 0.0,
+      "title": "Extend Overlap",
+      "type": "number"
+     },
+     "extend_seconds": {
+      "default": 30,
+      "maximum": 120.0,
+      "minimum": 5.0,
+      "title": "Extend Seconds",
+      "type": "number"
+     },
+     "extend_side": {
+      "default": "end",
+      "enum": [
+       "end",
+       "start"
+      ],
+      "title": "Extend Side",
+      "type": "string"
+     },
      "guidance_scale": {
       "default": 7.0,
       "maximum": 15.0,
@@ -2525,6 +2548,77 @@
       "maxLength": 24,
       "title": "Key Scale",
       "type": "string"
+     },
+     "lm_cfg_scale": {
+      "anyOf": [
+       {
+        "maximum": 5.0,
+        "minimum": 1.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Cfg Scale"
+     },
+     "lm_negative_prompt": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Lm Negative Prompt",
+      "type": "string"
+     },
+     "lm_repetition_penalty": {
+      "anyOf": [
+       {
+        "maximum": 2.0,
+        "minimum": 1.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Repetition Penalty"
+     },
+     "lm_temperature": {
+      "anyOf": [
+       {
+        "maximum": 2.0,
+        "minimum": 0.1,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Temperature"
+     },
+     "lm_top_k": {
+      "anyOf": [
+       {
+        "maximum": 200.0,
+        "minimum": 1.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Top K"
+     },
+     "lm_top_p": {
+      "anyOf": [
+       {
+        "maximum": 1.0,
+        "minimum": 0.1,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Top P"
      },
      "lyrics": {
       "default": "",
@@ -2658,7 +2752,8 @@
       "enum": [
        "text2music",
        "cover",
-       "repaint"
+       "repaint",
+       "extend"
       ],
       "title": "Task",
       "type": "string"

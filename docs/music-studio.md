@@ -53,6 +53,12 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
     server runs with its download source fixed (no google.com probe), Hugging Face offline and an
     unreachable proxy for everything but loopback, so a fallback fetch from Hugging Face or
     ModelScope fails instead of downloading an unpinned model.
+  - **Expert: language model** (shown while Thinking is on, closed by default): temperature 0.1–2
+    (0.85), prompt guidance 1–5 (2.5), top-K off or 1–200, top-P 0.1–1 (0.9), repetition penalty 1–2
+    (1.0) and a negative prompt (up to 500 characters). Values left at the engine's defaults are not
+    sent, so an untouched form sends exactly what it did before; *Restore defaults* resets them. The
+    values used are saved with the track.
+  - Custom timestep schedules are not offered: the pinned engine's REST API does not read them.
   - The server loads the model before it reports ready (eager init). If startup reports anything but
     that model loaded, the server is stopped and the track fails with a message instead of running
     without the model.
@@ -72,8 +78,12 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
     requests name sources by library or upload id and the backend resolves the path itself. The file
     is handed to the ACE-Step server as a multipart upload, because the server only accepts absolute
     paths inside its own temp folder.
-  - **Extend is not available yet:** continuing a song past its end has to be tested on the pinned
-    engine revision first.
+  - *Extend* (also a shortcut on the selected track) adds 5–120 s of new music after the end or before
+    the start of the source, up to 10 minutes in all; the result is a new, longer track. *Smooth join*
+    (0–10 s, default 2) redoes that much of the source with the new part so the seam is not heard; the
+    rest of the source is kept exactly (checked on the pinned engine). It is a repaint past the source's
+    edge: `repainting_end` beyond its length, or a negative `repainting_start`, and the server pads the
+    source with silence and fills it. *How much to change* applies as for Repaint.
 - **Polish with the language model:** shown once Thinking's model is ready. It sends the description,
   lyrics and settings to ACE-Step's formatter, which tidies the description and lyrics and suggests a
   BPM, key, time signature, length and language. A dialog shows each change next to your own; nothing
@@ -100,7 +110,9 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   `batch_size`, `inference_steps`, `infer_method`, `audio_format`; a `track` event per saved variant,
   then `done` with `tracks`; `task`, `source_track_id`/`source_upload_id`,
   `reference_track_id`/`reference_upload_id`, `cover_strength`, `repaint_start`, `repaint_end`,
-  `repaint_mode`, `repaint_strength`), `POST /music/format` (the formatter's suggestions, nothing
+  `repaint_mode`, `repaint_strength`; `task=extend` with `extend_side`, `extend_seconds`, `extend_overlap`;
+  with Thinking `lm_temperature`, `lm_cfg_scale`, `lm_top_k`, `lm_top_p`, `lm_repetition_penalty`,
+  `lm_negative_prompt`), `POST /music/format` (the formatter's suggestions, nothing
   saved), `POST /music/upload` (multipart `file`; returns `upload_id`, `name`, `duration`),
   `GET /music/models` (turbo, sft, base and which are downloaded), `GET /music/model-install-stream?model=sft|base`
   (SSE), and on generate `model`, `guidance_scale`, `shift`, `use_adg`, `cfg_interval_start`, `cfg_interval_end`,

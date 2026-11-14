@@ -427,6 +427,56 @@ it('repaints the middle third of the selected track by default', async () => {
   });
 });
 
+it('extends the selected track before its start, with the join and how much to change', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [{ ...track, duration: 90 }];
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.extend_this'));
+  fireEvent.click(screen.getByText('musicStudio.extend_side_start'));
+  fireEvent.click(screen.getByText('musicStudio.repaint_mode_conservative'));
+  // Extend has no region to pick: the region slider belongs to Repaint.
+  expect(screen.queryByText('musicStudio.repaint_region')).toBeNull();
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  const body = JSON.parse(state.stream.mock.calls[0][3].body);
+  expect(body).toMatchObject({
+    task: 'extend',
+    source_track_id: 'abc123def456',
+    extend_side: 'start',
+    extend_seconds: 30,
+    extend_overlap: 2,
+    repaint_mode: 'conservative',
+  });
+  expect(body).not.toHaveProperty('repaint_start');
+});
+
+it('shows the language model options only with Thinking and sends only what was changed', async () => {
+  state.status = { installed: true, running: false };
+  state.lm = { model: 'acestep-5Hz-lm-0.6B', ready: true, download_bytes: 0 };
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  const thinking = (await screen.findByText('musicStudio.thinking')).closest('label');
+  const toggle = thinking?.querySelector('[role="switch"]') as HTMLElement;
+  await waitFor(() => expect(toggle.getAttribute('aria-disabled')).not.toBe('true'));
+  expect(screen.queryByText('musicStudio.lm_expert')).toBeNull();
+  fireEvent.click(toggle);
+  fireEvent.click(await screen.findByText('musicStudio.lm_expert'));
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalledTimes(1));
+  const untouched = JSON.parse(state.stream.mock.calls[0][3].body);
+  expect(Object.keys(untouched).filter((key) => key.startsWith('lm_'))).toEqual([]);
+  fireEvent.change(screen.getByPlaceholderText('NO USER INPUT'), {
+    target: { value: 'no drums' },
+  });
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalledTimes(2));
+  expect(JSON.parse(state.stream.mock.calls[1][3].body)).toMatchObject({
+    thinking: true,
+    lm_negative_prompt: 'no drums',
+  });
+});
+
 it('keeps an edit disabled until it has a source, then uses an uploaded file by id', async () => {
   state.status = { installed: true, running: false };
   state.stream.mockImplementation(async () => {});

@@ -12,6 +12,11 @@ metadata and the backend fallback mirror it.
 
 - Vietnamese user guide drafts with real app screenshots
 - Music Studio fixes from a full run on a real GPU: reused seeds reproduce the track again
+- Music Studio extends a song after its end or before its start
+
+### Added
+
+- Music Studio: *Extend* adds up to 2 minutes before or after a track with a smooth join, and Thinking gets expert language-model options (#34)
 
 ### Docs
 

@@ -1,6 +1,9 @@
 import { expect, it } from 'vitest';
 import {
   appendStyleTag,
+  changedLmValues,
+  defaultLmValues,
+  extendedLength,
   insertLyricTag,
   knownKey,
   MAX_SEED,
@@ -194,4 +197,20 @@ it('keeps steps that fit the model and resets the rest to its default', () => {
       current,
     ),
   ).toMatchObject({ model: 'turbo', steps: 8 });
+});
+
+it('sends only the language model options moved off the server defaults', () => {
+  const values = defaultLmValues();
+  expect(changedLmValues(values, '')).toEqual({});
+  expect(changedLmValues(values, ' NO USER INPUT ')).toEqual({});
+  expect(changedLmValues({ ...values, lm_temperature: 1.1, lm_top_k: 40 }, 'no drums')).toEqual({
+    lm_temperature: 1.1,
+    lm_top_k: 40,
+    lm_negative_prompt: 'no drums',
+  });
+});
+
+it('shows the extended length up to the engine limit', () => {
+  expect(extendedLength(40.4, 20)).toBe(60);
+  expect(extendedLength(590, 120)).toBe(600);
 });

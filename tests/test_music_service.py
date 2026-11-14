@@ -1055,3 +1055,98 @@ def test_renderer_model_table_matches_the_backend():
         assert row, f"{key} missing from DIT_MODELS in music-options.ts"
         assert tuple(int(v) for v in row.groups()[:3]) == spec["steps"]
         assert (row.group(4) == "true") == spec["guidance"]
+
+
+# ── Phase 3c: extend and the language model's sampling options
+
+
+def test_extend_after_the_end_pads_and_regenerates_the_join():
+    """Checked on the pinned engine: a repaint past the source's end keeps it intact and fills the rest."""
+    p = music.build_payload(music.MusicRequest(prompt="x", task_type="extend", src_path="s.wav", src_seconds=40,
+                                               extend_seconds=20, extend_overlap=2))
+    assert (p["task_type"], p["repainting_start"], p["repainting_end"], p["audio_duration"]) == (
+        "repaint", 38.0, 60.0, 60)
+    assert p["repaint_mode"] == "balanced" and "audio_cover_strength" not in p
+
+
+def test_extend_before_the_start_uses_a_negative_start():
+    p = music.build_payload(music.MusicRequest(prompt="x", task_type="extend", src_path="s.wav", src_seconds=40,
+                                               extend_side="start", extend_seconds=15, extend_overlap=2,
+                                               repaint_mode="conservative"))
+    assert (p["repainting_start"], p["repainting_end"], p["audio_duration"], p["repaint_mode"]) == (
+        -15.0, 2.0, 55, "conservative")
+    # Values out of range are clamped, never sent as they came.
+    wild = music.build_payload(music.MusicRequest(prompt="x", task_type="extend", src_path="s.wav", src_seconds=3,
+                                                  extend_seconds=999, extend_overlap=50))
+    assert (wild["repainting_start"], wild["repainting_end"]) == (0.0, 123.0)
+    assert music.MusicRequest(prompt="x", task_type="extend", src_path="s.wav").uploads() == {"src_audio": "s.wav"}
+
+
+def test_extend_body_needs_a_source_and_fits_the_length_limit(tmp_path, monkeypatch):
+    from pydantic import ValidationError
+    from api.routers.music import GenerateBody, resolve_audio
+
+    with pytest.raises(ValidationError):
+        GenerateBody(prompt="x", task="extend")
+    for bad in ({"extend_seconds": 4}, {"extend_seconds": 121}, {"extend_overlap": 11}, {"extend_side": "middle"}):
+        with pytest.raises(ValidationError):
+            GenerateBody(prompt="x", task="extend", source_track_id="0123456789ab", **bad)
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    tid = music_library.new_id()
+    music_library.audio_path(tid).write_bytes(b"x")
+    music_library.save(tid, title="t")
+    _probe(monkeypatch, 590.0)
+    with pytest.raises(ValueError, match="longer than 10 minutes"):
+        asyncio.run(resolve_audio(GenerateBody(prompt="x", task="extend", source_track_id=tid, extend_seconds=30)))
+    _probe(monkeypatch, 100.0)
+    req = asyncio.run(resolve_audio(GenerateBody(prompt="x", task="extend", source_track_id=tid, extend_seconds=30)))
+    assert req.seconds() == 130 and req.task_type == "extend"
+
+
+def test_lm_options_are_sent_only_with_thinking_and_only_when_set():
+    from api.routers.music import GenerateBody
+
+    plain = music.build_payload(GenerateBody(prompt="x", lm_temperature=1.2).to_request())
+    assert not any(k.startswith("lm_") for k in plain)
+    think = music.build_payload(GenerateBody(prompt="x", thinking=True).to_request())
+    assert [k for k in think if k.startswith("lm_")] == ["lm_backend"]
+    tuned = music.build_payload(GenerateBody(prompt="x", thinking=True, lm_temperature=1.2, lm_top_k=40,
+                                             lm_negative_prompt=" no drums ").to_request())
+    assert (tuned["lm_temperature"], tuned["lm_top_k"], tuned["lm_negative_prompt"]) == (1.2, 40, "no drums")
+    assert "lm_cfg_scale" not in tuned and "lm_top_p" not in tuned
+    same = music.build_payload(GenerateBody(prompt="x", thinking=True,
+                                            lm_negative_prompt=music.LM_NEGATIVE_PROMPT_DEFAULT).to_request())
+    assert "lm_negative_prompt" not in same
+
+
+def test_lm_options_are_bounded_like_the_server_defaults_say():
+    from pydantic import ValidationError
+    from api.routers.music import GenerateBody
+
+    for name, (low, high, default) in music.LM_PARAMS.items():
+        assert default is None or low <= default <= high
+        for bad in (low - 1, high + 1):
+            with pytest.raises(ValidationError):
+                GenerateBody(prompt="x", **{name: bad})
+    with pytest.raises(ValidationError):
+        GenerateBody(prompt="x", lm_negative_prompt="n" * 501)
+
+
+def test_renderer_extend_and_lm_tables_match_the_backend():
+    """music-options.ts mirrors the extend ranges and the language-model option table."""
+    import re
+
+    source = (Path(__file__).resolve().parents[1] / "electron/src/renderer/src/features/music/music-options.ts"
+              ).read_text(encoding="utf-8")
+
+    def nums(text):
+        return tuple(None if v == "null" else float(v) for v in re.findall(r"-?[\d.]+|null", text))
+
+    for name, spec in (("EXTEND_SECONDS", music.EXTEND_SECONDS), ("EXTEND_OVERLAP", music.EXTEND_OVERLAP)):
+        row = re.search(rf"export const {name} = \[([^\]]+)\]", source)
+        assert row and nums(row.group(1)) == tuple(float(v) for v in spec), name
+    for name, spec in music.LM_PARAMS.items():
+        row = re.search(rf"{name}: \{{ range: \[([^\]]+)\]", source)
+        assert row, f"{name} missing from LM_PARAMS in music-options.ts"
+        assert nums(row.group(1)) == tuple(None if v is None else float(v) for v in spec), name
+    assert f"LM_NEGATIVE_PROMPT_DEFAULT = '{music.LM_NEGATIVE_PROMPT_DEFAULT}'" in source
