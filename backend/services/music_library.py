@@ -70,6 +70,65 @@ def list_tracks() -> list[dict]:
     return sorted(records, key=lambda r: r.get("created_at", 0), reverse=True)
 
 
+def resolve_track_audio(track_id: str) -> Path:
+    """The audio file of a saved track, for use as a cover/repaint source or a style reference."""
+    record = get(track_id)
+    if not record:
+        raise ValueError("That track is no longer in the library.")
+    return audio_path(track_id, record.get("ext", "wav"))
+
+
+# ── Uploaded source audio (cover, repaint, style reference)
+# The client only ever names an upload by its id; the path is resolved here, under the library.
+
+UPLOAD_EXTS = frozenset({"wav", "mp3", "flac", "ogg", "m4a"})
+MAX_UPLOAD_BYTES = 100 * 1024 * 1024
+MAX_UPLOADS = 20
+
+
+def uploads_dir() -> Path:
+    path = library_dir() / "uploads"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def upload_ext(filename: str) -> str:
+    ext = Path(filename or "").suffix.lower().lstrip(".")
+    if ext not in UPLOAD_EXTS:
+        raise ValueError("Use a WAV, MP3, FLAC, OGG or M4A file.")
+    return ext
+
+
+def upload_path(upload_id: str, ext: str) -> Path:
+    if not _ID_RE.fullmatch(upload_id or ""):
+        raise ValueError("Invalid upload id")
+    if ext not in UPLOAD_EXTS:
+        raise ValueError("Unsupported audio type")
+    return uploads_dir() / f"{upload_id}.{ext}"
+
+
+def resolve_upload(upload_id: str) -> Path:
+    """The stored file for *upload_id* (whatever its extension), or ValueError."""
+    if not _ID_RE.fullmatch(upload_id or ""):
+        raise ValueError("Invalid upload id")
+    for ext in sorted(UPLOAD_EXTS):
+        path = uploads_dir() / f"{upload_id}.{ext}"
+        if path.is_file():
+            return path
+    raise ValueError("That uploaded file is gone. Upload it again.")
+
+
+def prune_uploads(keep: int = MAX_UPLOADS) -> None:
+    """Keep only the newest *keep* uploads; older source files are not part of the library."""
+    files = sorted((p for p in uploads_dir().iterdir() if p.is_file()),
+                   key=lambda p: p.stat().st_mtime, reverse=True)
+    for stale in files[keep:]:
+        try:
+            stale.unlink()
+        except OSError:
+            pass
+
+
 def free_slots() -> int:
     return max(0, MAX_TRACKS - len(list_tracks()))
 

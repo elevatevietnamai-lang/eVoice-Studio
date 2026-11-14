@@ -65,6 +65,7 @@ import {
   type MusicSettings,
   type StyleGroup,
 } from './music-options';
+import { MusicSourcePicker, sourceFields, type MusicSource } from './music-source-picker';
 import {
   MusicFormatDialog,
   applyFormat,
@@ -96,7 +97,13 @@ type Track = {
   // Variants made together share the first variant's id; `variant` counts from 1.
   batch_id?: string | null;
   variant?: number | null;
+  task?: string;
 };
+
+type MusicTask = 'text2music' | 'cover' | 'repaint';
+const MUSIC_TASKS: MusicTask[] = ['text2music', 'cover', 'repaint'];
+const REPAINT_MODES = ['conservative', 'balanced', 'aggressive'] as const;
+type RepaintMode = (typeof REPAINT_MODES)[number];
 
 const STYLE_PRESETS = [
   'calm lo-fi, soft piano, 85 bpm',
@@ -157,6 +164,14 @@ export function MusicPage() {
   const [formatting, setFormatting] = useState(false);
   const [formatNext, setFormatNext] = useState<FormatFields | null>(null);
   const lyricsRef = useRef<HTMLTextAreaElement | null>(null);
+  const [musicTask, setMusicTask] = useState<MusicTask>('text2music');
+  const [source, setSource] = useState<MusicSource | null>(null);
+  const [reference, setReference] = useState<MusicSource | null>(null);
+  const [coverStrength, setCoverStrength] = useState(0.7);
+  const [repaintRange, setRepaintRange] = useState<[number, number]>([0, 10]);
+  const [repaintMode, setRepaintMode] = useState<RepaintMode>('balanced');
+  const [repaintStrength, setRepaintStrength] = useState(0.5);
+  const editing = musicTask !== 'text2music';
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [task, setTask] = useState<{
     kind: 'install' | 'generate' | 'lm';
@@ -262,7 +277,39 @@ export function MusicPage() {
     inference_steps: steps,
     infer_method: inferMethod,
     audio_format: audioFormat,
+    task: musicTask,
+    ...(editing ? sourceFields(source, 'source') : {}),
+    ...sourceFields(reference, 'reference'),
+    ...(musicTask === 'cover' ? { cover_strength: coverStrength } : {}),
+    ...(musicTask === 'repaint'
+      ? {
+          repaint_start: repaintRange[0],
+          repaint_end: repaintRange[1],
+          repaint_mode: repaintMode,
+          repaint_strength: repaintStrength,
+        }
+      : {}),
   });
+
+  const chooseSource = (next: MusicSource | null) => {
+    setSource(next);
+    if (next) {
+      // Start the repaint region on the middle third, a common place for a fix.
+      const third = Math.max(1, Math.round(next.duration / 3));
+      setRepaintRange([third, Math.min(Math.round(next.duration), third * 2)]);
+    }
+  };
+  const editTrack = (task: MusicTask, track: Track) => {
+    setMusicTask(task);
+    chooseSource({
+      kind: 'track',
+      id: track.id,
+      name: track.variant
+        ? `${track.title} · ${t('musicStudio.variant_label', { n: track.variant })}`
+        : track.title,
+      duration: track.duration,
+    });
+  };
 
   const insertTag = (tag: string) => {
     const field = lyricsRef.current;
@@ -485,6 +532,134 @@ export function MusicPage() {
             </section>
           ) : null}
 
+          <div className="flex min-w-0 flex-col gap-1.5 text-label">
+            <span id="music-task" className="font-medium">
+              {t('musicStudio.task')}
+            </span>
+            <ToggleGroup
+              value={[musicTask]}
+              disabled={busy}
+              size="sm"
+              aria-labelledby="music-task"
+              onValueChange={(value) => {
+                const next = value[0];
+                if (MUSIC_TASKS.includes(next as MusicTask)) setMusicTask(next as MusicTask);
+              }}
+            >
+              {MUSIC_TASKS.map((value) => (
+                <ToggleGroupItem key={value} value={value}>
+                  {t(`musicStudio.task_${value}`)}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+            <p className="leading-5 text-muted-foreground">
+              {t(`musicStudio.task_${musicTask}_help`)}
+            </p>
+          </div>
+          {editing && (
+            <MusicSourcePicker
+              id="music-source"
+              label={t('musicStudio.source')}
+              tracks={tracks}
+              value={source}
+              disabled={busy}
+              onChange={chooseSource}
+            />
+          )}
+          {musicTask === 'cover' && (
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{t('musicStudio.cover_strength')}</span>
+                <span className="text-muted-foreground tabular-nums">
+                  {Math.round(coverStrength * 100)}%
+                </span>
+              </div>
+              <Slider
+                min={0}
+                max={1}
+                step={0.05}
+                value={[coverStrength]}
+                disabled={busy}
+                aria-label={t('musicStudio.cover_strength')}
+                onValueChange={(value) => setCoverStrength(Array.isArray(value) ? value[0] : value)}
+              />
+              <p className="leading-5 text-muted-foreground">
+                {t('musicStudio.cover_strength_help')}
+              </p>
+            </div>
+          )}
+          {musicTask === 'repaint' && source && (
+            <div className="space-y-3 text-xs">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{t('musicStudio.repaint_region')}</span>
+                  <span className="text-muted-foreground tabular-nums">
+                    {t('musicStudio.repaint_region_value', {
+                      start: repaintRange[0],
+                      end: repaintRange[1],
+                    })}
+                  </span>
+                </div>
+                <Slider
+                  min={0}
+                  max={Math.max(1, Math.round(source.duration))}
+                  step={1}
+                  minStepsBetweenValues={1}
+                  value={repaintRange}
+                  disabled={busy}
+                  aria-label={t('musicStudio.repaint_region')}
+                  onValueChange={(value) => {
+                    if (Array.isArray(value) && value.length === 2)
+                      setRepaintRange([value[0], value[1]]);
+                  }}
+                />
+              </div>
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <span id="music-repaint-mode" className="font-medium">
+                  {t('musicStudio.repaint_mode')}
+                </span>
+                <ToggleGroup
+                  value={[repaintMode]}
+                  disabled={busy}
+                  size="sm"
+                  aria-labelledby="music-repaint-mode"
+                  onValueChange={(value) => {
+                    const next = value[0];
+                    if ((REPAINT_MODES as readonly string[]).includes(next as string))
+                      setRepaintMode(next as RepaintMode);
+                  }}
+                >
+                  {REPAINT_MODES.map((value) => (
+                    <ToggleGroupItem key={value} value={value}>
+                      {t(`musicStudio.repaint_mode_${value}`)}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+              {repaintMode === 'balanced' && (
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{t('musicStudio.repaint_strength')}</span>
+                    <span className="text-muted-foreground tabular-nums">
+                      {Math.round(repaintStrength * 100)}%
+                    </span>
+                  </div>
+                  <Slider
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={[repaintStrength]}
+                    disabled={busy}
+                    aria-label={t('musicStudio.repaint_strength')}
+                    onValueChange={(value) =>
+                      setRepaintStrength(Array.isArray(value) ? value[0] : value)
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
           <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="font-medium">{t('musicStudio.prompt')}</span>
             <Textarea
@@ -610,23 +785,25 @@ export function MusicPage() {
             </div>
           )}
 
-          <div className="space-y-1.5 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-medium">{t('musicStudio.duration')}</span>
-              <span className="text-muted-foreground">
-                {t('musicStudio.duration_value', { seconds: duration })}
-              </span>
+          {!editing && (
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{t('musicStudio.duration')}</span>
+                <span className="text-muted-foreground">
+                  {t('musicStudio.duration_value', { seconds: duration })}
+                </span>
+              </div>
+              <Slider
+                min={10}
+                max={240}
+                step={5}
+                value={[duration]}
+                disabled={busy}
+                aria-label={t('musicStudio.duration')}
+                onValueChange={(value) => setDuration(Array.isArray(value) ? value[0] : value)}
+              />
             </div>
-            <Slider
-              min={10}
-              max={240}
-              step={5}
-              value={[duration]}
-              disabled={busy}
-              aria-label={t('musicStudio.duration')}
-              onValueChange={(value) => setDuration(Array.isArray(value) ? value[0] : value)}
-            />
-          </div>
+          )}
           <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="font-medium">{t('musicStudio.bpm')}</span>
             <Input
@@ -808,6 +985,15 @@ export function MusicPage() {
                     ))}
                   </ToggleGroup>
                 </div>
+                <MusicSourcePicker
+                  id="music-reference"
+                  label={t('musicStudio.reference')}
+                  hint={t('musicStudio.reference_help')}
+                  tracks={tracks}
+                  value={reference}
+                  disabled={busy}
+                  onChange={setReference}
+                />
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -885,7 +1071,7 @@ export function MusicPage() {
           <Button
             className="w-full"
             size="lg"
-            disabled={busy || formatting || !installed || !prompt.trim()}
+            disabled={busy || formatting || !installed || !prompt.trim() || (editing && !source)}
             onClick={generate}
           >
             {task?.kind === 'generate' ? (
@@ -955,6 +1141,22 @@ export function MusicPage() {
                     <SlidersHorizontalIcon />
                     {t('musicStudio.reuse_settings')}
                   </Button>
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => editTrack('cover', selected)}
+                  >
+                    {t('musicStudio.cover_this')}
+                  </Button>
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    disabled={busy}
+                    onClick={() => editTrack('repaint', selected)}
+                  >
+                    {t('musicStudio.repaint_this')}
+                  </Button>
                   {typeof selected.seed === 'number' && (
                     <Button
                       size="xs"
@@ -1013,6 +1215,9 @@ export function MusicPage() {
                         {track.instrumental ? ` · ${t('musicStudio.instrumental')}` : ''}
                         {track.variant
                           ? ` · ${t('musicStudio.variant_label', { n: track.variant })}`
+                          : ''}
+                        {track.task === 'cover' || track.task === 'repaint'
+                          ? ` · ${t(`musicStudio.task_${track.task}`)}`
                           : ''}
                         {track.ext && track.ext !== 'wav' ? ` · ${track.ext.toUpperCase()}` : ''}
                         {' · '}

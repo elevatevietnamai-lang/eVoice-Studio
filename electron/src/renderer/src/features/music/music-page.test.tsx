@@ -24,6 +24,8 @@ vi.mock('@/lib/api/client', () => ({
     if (path === '/music/library') return { tracks: state.tracks };
     if (path === '/music/lm') return state.lm;
     if (path === '/music/format') return state.format;
+    if (path === '/music/upload')
+      return { upload_id: 'fedcba987654', name: 'demo.mp3', duration: 42.5 };
     return {};
   },
   apiPath: (path: string) => path,
@@ -381,4 +383,59 @@ it('offers Format only with a ready language model and shows the suggestion befo
   expect((screen.getByPlaceholderText('musicStudio.bpm_hint') as HTMLInputElement).value).toBe(
     '84',
   );
+});
+
+it('covers the selected track with its id and strength, never a path', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [{ ...track, duration: 90 }];
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.cover_this'));
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  const body = JSON.parse(state.stream.mock.calls[0][3].body);
+  expect(body).toMatchObject({
+    task: 'cover',
+    source_track_id: 'abc123def456',
+    cover_strength: 0.7,
+  });
+  expect(JSON.stringify(body)).not.toMatch(/path/);
+});
+
+it('repaints the middle third of the selected track by default', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [{ ...track, duration: 90 }];
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.repaint_this'));
+  fireEvent.click(screen.getByText('musicStudio.repaint_mode_aggressive'));
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(JSON.parse(state.stream.mock.calls[0][3].body)).toMatchObject({
+    task: 'repaint',
+    source_track_id: 'abc123def456',
+    repaint_start: 30,
+    repaint_end: 60,
+    repaint_mode: 'aggressive',
+  });
+});
+
+it('keeps an edit disabled until it has a source, then uses an uploaded file by id', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async () => {});
+  const { container } = renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.task_cover'));
+  const generate = screen.getByText('musicStudio.generate').closest('button') as HTMLButtonElement;
+  expect(generate.disabled).toBe(true);
+  const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+  fireEvent.change(input, { target: { files: [new File(['ID3'], 'demo.mp3')] } });
+  await waitFor(() => expect(state.calls).toContain('POST /music/upload'));
+  expect(await screen.findByText('demo.mp3')).toBeTruthy();
+  await waitFor(() => expect(generate.disabled).toBe(false));
+  fireEvent.click(generate);
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(JSON.parse(state.stream.mock.calls[0][3].body)).toMatchObject({
+    task: 'cover',
+    source_upload_id: 'fedcba987654',
+  });
 });
