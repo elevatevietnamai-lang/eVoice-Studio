@@ -68,6 +68,7 @@ function useQrImage(payload: string) {
 export function SupportSettings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  // `onError` stays as a fallback; an unset path is never requested (a 404 still logs a console error).
   const [momoQr, setMomoQr] = useState(true);
   const bankQr = useQrImage(
     vietQrPayload({ bin: DONATE.bank.bin, account: DONATE.bank.account, note: DONATE.bank.note }),
@@ -99,7 +100,7 @@ export function SupportSettings() {
             <WalletIcon aria-hidden="true" />
             {t('supportEvoice.momo_title')}
           </h2>
-          {momoQr && (
+          {momoQr && isSet(DONATE.momo.qr) && (
             <img
               className="support-pay-qr"
               src={DONATE.momo.qr}

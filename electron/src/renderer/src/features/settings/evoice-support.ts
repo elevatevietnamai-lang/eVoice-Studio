@@ -6,8 +6,12 @@ export const DONATE = {
   momo: {
     phone: '0983863437',
     holder: 'VO THANH BINH',
-    /** Optional QR exported from the Momo app; place the PNG at electron/public/donate/momo-qr.png. */
-    qr: '/donate/momo-qr.png',
+    /**
+     * Optional QR exported from the Momo app. Place the PNG at electron/public/donate/momo-qr.png,
+     * then set this to '/donate/momo-qr.png'. Left as '#' the page shows no image and requests none;
+     * a path whose file is missing fails support-settings.test.tsx.
+     */
+    qr: '#' as string,
   },
   bank: {
     bank: 'ACB',
