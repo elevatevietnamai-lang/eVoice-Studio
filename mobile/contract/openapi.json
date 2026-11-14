@@ -1473,6 +1473,20 @@
     "title": "Body_lock_profile_profiles__profile_id__lock_post",
     "type": "object"
    },
+   "Body_music_upload_music_upload_post": {
+    "properties": {
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "title": "Body_music_upload_music_upload_post",
+    "type": "object"
+   },
    "Body_normalize_workflow_speech_tools_normalize_speech_post": {
     "properties": {
      "audio": {
@@ -2450,6 +2464,13 @@
       ],
       "title": "Bpm"
      },
+     "cover_strength": {
+      "default": 0.7,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Cover Strength",
+      "type": "number"
+     },
      "duration": {
       "default": 60.0,
       "maximum": 240.0,
@@ -2496,6 +2517,67 @@
       "title": "Prompt",
       "type": "string"
      },
+     "reference_track_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reference Track Id"
+     },
+     "reference_upload_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reference Upload Id"
+     },
+     "repaint_end": {
+      "anyOf": [
+       {
+        "maximum": 600.0,
+        "minimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Repaint End"
+     },
+     "repaint_mode": {
+      "default": "balanced",
+      "enum": [
+       "conservative",
+       "balanced",
+       "aggressive"
+      ],
+      "title": "Repaint Mode",
+      "type": "string"
+     },
+     "repaint_start": {
+      "default": 0.0,
+      "maximum": 600.0,
+      "minimum": 0.0,
+      "title": "Repaint Start",
+      "type": "number"
+     },
+     "repaint_strength": {
+      "default": 0.5,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Repaint Strength",
+      "type": "number"
+     },
      "seed": {
       "anyOf": [
        {
@@ -2508,6 +2590,40 @@
        }
       ],
       "title": "Seed"
+     },
+     "source_track_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Track Id"
+     },
+     "source_upload_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Upload Id"
+     },
+     "task": {
+      "default": "text2music",
+      "enum": [
+       "text2music",
+       "cover",
+       "repaint"
+      ],
+      "title": "Task",
+      "type": "string"
      },
      "thinking": {
       "default": false,
@@ -17143,6 +17259,43 @@
      }
     },
     "summary": "Music Stop"
+   }
+  },
+  "/music/upload": {
+   "post": {
+    "description": "Store a source or reference audio file under the library and return its id and length.",
+    "operationId": "music_upload_music_upload_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_music_upload_music_upload_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Upload"
    }
   },
   "/personalities": {

@@ -736,3 +736,134 @@ def test_library_counts_free_slots_for_a_batch(tmp_path, monkeypatch):
     music_library.audio_path(tid).write_bytes(b"x")
     music_library.save(tid, title="t")
     assert music_library.free_slots() == 2 and not music_library.is_full()
+
+
+# ── Phase 3a: cover, repaint, style reference, safe uploads
+
+
+def test_cover_and_repaint_payloads_leave_text2music_untouched():
+    base = music.build_payload(music.MusicRequest(prompt="x"))
+    assert "task_type" not in base and "audio_cover_strength" not in base
+    cover = music.build_payload(music.MusicRequest(prompt="x", task_type="cover", src_path="s.wav",
+                                                   src_seconds=200.4, cover_strength=1.7))
+    assert (cover["task_type"], cover["audio_cover_strength"], cover["audio_duration"]) == ("cover", 1.0, 200)
+    paint = music.build_payload(music.MusicRequest(prompt="x", task_type="repaint", src_path="s.wav",
+                                                   src_seconds=90, repaint_start=10, repaint_end=500,
+                                                   repaint_mode="weird", repaint_strength=0.3))
+    assert (paint["repainting_start"], paint["repainting_end"], paint["repaint_mode"], paint["repaint_strength"]) == (
+        10.0, 90.0, "balanced", 0.3)
+
+
+def test_only_edits_send_their_source_and_a_reference_rides_along():
+    assert music.MusicRequest(prompt="x", src_path="s.wav").uploads() == {}
+    assert music.MusicRequest(prompt="x", ref_path="r.wav").uploads() == {"ref_audio": "r.wav"}
+    assert music.MusicRequest(prompt="x", task_type="cover", src_path="s.wav", ref_path="r.wav").uploads() == {
+        "src_audio": "s.wav", "ref_audio": "r.wav"}
+
+
+def test_release_sends_files_as_multipart_with_string_fields(tmp_path):
+    src = tmp_path / "s.wav"
+    src.write_bytes(b"RIFFsource")
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["type"] = request.headers["content-type"]
+        seen["body"] = request.content
+        return httpx.Response(200, json=_wrap({"task_id": "t"}))
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            await music._release(client, "http://x", music.MusicRequest(
+                prompt="x", task_type="cover", src_path=str(src), src_seconds=30))
+
+    asyncio.run(run())
+    assert seen["type"].startswith("multipart/form-data")
+    assert b'name="src_audio"; filename="s.wav"' in seen["body"] and b"RIFFsource" in seen["body"]
+    assert b'name="task_type"\r\n\r\ncover' in seen["body"] and b'name="thinking"\r\n\r\nfalse' in seen["body"]
+
+
+def test_generate_body_needs_one_source_for_an_edit():
+    from pydantic import ValidationError
+    from api.routers.music import GenerateBody
+
+    assert GenerateBody(prompt="x", task="cover", source_track_id="0123456789ab").task == "cover"
+    for bad in ({"task": "cover"}, {"source_upload_id": "0123456789ab"},
+                {"task": "repaint", "source_track_id": "0123456789ab", "source_upload_id": "0123456789ab"},
+                {"task": "repaint", "source_track_id": "0123456789ab", "repaint_start": 5, "repaint_end": 5},
+                {"reference_track_id": "0123456789ab", "reference_upload_id": "0123456789ab"}):
+        with pytest.raises(ValidationError):
+            GenerateBody(prompt="x", **bad)
+
+
+def _probe(monkeypatch, seconds):
+    from services import ffmpeg_utils
+
+    async def probe(_path, *, allowed_root):
+        return seconds
+
+    monkeypatch.setattr(ffmpeg_utils, "probe_duration", probe)
+
+
+def test_sources_resolve_only_inside_the_library(tmp_path, monkeypatch):
+    from api.routers.music import GenerateBody, resolve_audio
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    _probe(monkeypatch, 120.0)
+    tid = music_library.new_id()
+    music_library.audio_path(tid, "mp3").write_bytes(b"x")
+    music_library.save(tid, title="t", ext="mp3")
+    req = asyncio.run(resolve_audio(GenerateBody(prompt="x", task="repaint", source_track_id=tid,
+                                                 repaint_start=10, repaint_end=20)))
+    assert req.src_path == str(music_library.audio_path(tid, "mp3")) and req.src_seconds == 120.0
+    for body in (GenerateBody(prompt="x", task="cover", source_track_id="../../../x"[:12]),
+                 GenerateBody(prompt="x", task="cover", source_upload_id="ffffffffffff"),
+                 GenerateBody(prompt="x", task="repaint", source_track_id=tid, repaint_start=130)):
+        with pytest.raises(ValueError):
+            asyncio.run(resolve_audio(body))
+    _probe(monkeypatch, 900.0)
+    with pytest.raises(ValueError, match="longer"):
+        asyncio.run(resolve_audio(GenerateBody(prompt="x", task="cover", source_track_id=tid)))
+
+
+def _upload_client(tmp_path, monkeypatch, seconds=30.0):
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from api.routers import music as router
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    _probe(monkeypatch, seconds)
+    app = FastAPI()
+    app.include_router(router.router)
+    return TestClient(app)
+
+
+def test_upload_stores_audio_under_the_library_and_returns_only_an_id(tmp_path, monkeypatch):
+    client = _upload_client(tmp_path, monkeypatch)
+    r = client.post("/music/upload", files={"file": ("../../song.mp3", b"ID3data", "audio/mpeg")})
+    assert r.status_code == 200
+    body = r.json()
+    assert set(body) == {"upload_id", "name", "duration"} and body["duration"] == 30.0
+    stored = music_library.resolve_upload(body["upload_id"])
+    assert stored.parent == music_library.uploads_dir() and stored.read_bytes() == b"ID3data"
+
+
+def test_upload_rejects_other_types_unreadable_and_oversized_files(tmp_path, monkeypatch):
+    client = _upload_client(tmp_path, monkeypatch, seconds=None)
+    assert client.post("/music/upload", files={"file": ("x.exe", b"MZ", "application/x")}).status_code == 400
+    assert client.post("/music/upload", files={"file": ("x.wav", b"junk", "audio/wav")}).status_code == 400
+    monkeypatch.setattr(music_library, "MAX_UPLOAD_BYTES", 3)
+    _probe(monkeypatch, 10.0)
+    assert client.post("/music/upload", files={"file": ("x.wav", b"RIFFxx", "audio/wav")}).status_code == 400
+    assert list(music_library.uploads_dir().iterdir()) == []
+
+
+def test_old_uploads_are_pruned(tmp_path, monkeypatch):
+    import os
+
+    monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
+    for n in range(5):
+        path = music_library.upload_path(f"{n:012x}", "wav")
+        path.write_bytes(b"x")
+        os.utime(path, (1000 + n, 1000 + n))
+    music_library.prune_uploads(keep=2)
+    assert sorted(p.stem for p in music_library.uploads_dir().iterdir()) == ["000000000003", "000000000004"]

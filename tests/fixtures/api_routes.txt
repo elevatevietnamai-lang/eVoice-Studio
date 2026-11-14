@@ -306,6 +306,7 @@ POST /models/licenses/verify/{plan_digest}
 POST /music/format
 POST /music/generate
 POST /music/stop
+POST /music/upload
 POST /personas/export/{profile_id}
 POST /personas/import
 POST /personas/inspect

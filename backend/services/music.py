@@ -99,6 +99,11 @@ MAX_BATCH = 4
 MIN_STEPS, MAX_STEPS, DEFAULT_STEPS = 4, 20, 8
 INFER_METHODS = ("ode", "sde")
 AUDIO_FORMATS = ("wav", "flac", "mp3")
+# Edits of existing audio: a cover re-renders a song in a new style; a repaint regenerates one
+# region and keeps the rest. Sources can be longer than a new track (ACE-Step allows 600 s).
+TASK_TYPES = ("text2music", "cover", "repaint")
+REPAINT_MODES = ("conservative", "balanced", "aggressive")
+MAX_SOURCE_SECONDS = 600
 AUDIO_MEDIA_TYPES = {"wav": "audio/wav", "flac": "audio/flac", "mp3": "audio/mpeg", "ogg": "audio/ogg"}
 _KEY_RE = re.compile(r"^([A-Ga-g])([#b♯♭]?)\s*(major|minor|maj|min|m)?$", re.IGNORECASE)
 
@@ -172,9 +177,32 @@ class MusicRequest:
     batch_size: int = 1
     inference_steps: int = DEFAULT_STEPS
     infer_method: str = "ode"
+    # Edits and style reference. Paths are resolved by the backend from library or upload ids;
+    # they are never taken from a client.
+    task_type: str = "text2music"
+    src_path: Optional[str] = None
+    src_seconds: Optional[float] = None
+    ref_path: Optional[str] = None
+    cover_strength: float = 0.7
+    repaint_start: float = 0.0
+    repaint_end: Optional[float] = None
+    repaint_mode: str = "balanced"
+    repaint_strength: float = 0.5
 
     def seconds(self) -> int:
+        if self.task_type != "text2music" and self.src_seconds:
+            # An edit keeps the source's length.
+            return int(max(1, min(MAX_SOURCE_SECONDS, round(self.src_seconds))))
         return int(max(MIN_SECONDS, min(MAX_SECONDS, round(self.duration))))
+
+    def uploads(self) -> dict[str, str]:
+        """Files sent with the request: ACE-Step reads absolute paths only from its own temp dir."""
+        files = {}
+        if self.task_type in ("cover", "repaint") and self.src_path:
+            files["src_audio"] = self.src_path
+        if self.ref_path:
+            files["ref_audio"] = self.ref_path
+        return files
 
 
 class MusicEngine(Protocol):
@@ -629,6 +657,16 @@ def build_payload(req: MusicRequest) -> dict:
         payload["key_scale"] = req.key_scale
     if req.time_signature in TIME_SIGNATURES:
         payload["time_signature"] = req.time_signature
+    if req.task_type in ("cover", "repaint"):
+        payload["task_type"] = req.task_type
+    if req.task_type == "cover":
+        payload["audio_cover_strength"] = round(max(0.0, min(1.0, float(req.cover_strength))), 3)
+    if req.task_type == "repaint":
+        end = req.repaint_end if req.repaint_end is not None else req.seconds()
+        payload["repainting_start"] = round(max(0.0, float(req.repaint_start)), 2)
+        payload["repainting_end"] = round(max(payload["repainting_start"], min(float(end), req.seconds())), 2)
+        payload["repaint_mode"] = req.repaint_mode if req.repaint_mode in REPAINT_MODES else "balanced"
+        payload["repaint_strength"] = round(max(0.0, min(1.0, float(req.repaint_strength))), 3)
     if req.infer_method == "sde":
         # ODE is the server default; only a change is sent, so default payloads stay as they were.
         payload["infer_method"] = "sde"
@@ -968,7 +1006,7 @@ class AceStepEngine:
         try:
             headers = {"Authorization": f"Bearer {key}"}
             async with httpx.AsyncClient(timeout=httpx.Timeout(60.0, read=600.0), headers=headers) as client:
-                r = await client.post(f"{base}/release_task", json=build_payload(request))
+                r = await _release(client, base, request)
                 if r.status_code >= 400:
                     logger.warning("music server refused the task: %s", r.text[:300])
                     raise RuntimeError(f"Music generation was refused (HTTP {r.status_code}).")
@@ -1026,6 +1064,27 @@ class AceStepEngine:
                 # The client left or the job failed mid-run: the server has no cancel call,
                 # so stop it to free the GPU instead of finishing a track nobody wants.
                 self._kill_now()
+
+
+def form_fields(payload: dict) -> dict[str, str]:
+    """A JSON payload as multipart form fields (ACE-Step parses 'true'/'false' and numbers)."""
+    return {k: (json.dumps(v) if isinstance(v, bool) else str(v)) for k, v in payload.items()}
+
+
+async def _release(client: httpx.AsyncClient, base: str, request: MusicRequest) -> httpx.Response:
+    """Submit *request*: JSON normally, multipart when it carries source or reference audio."""
+    payload = build_payload(request)
+    uploads = request.uploads()
+    if not uploads:
+        return await client.post(f"{base}/release_task", json=payload)
+    handles = {}
+    try:
+        for field, path in uploads.items():
+            handles[field] = (os.path.basename(path), open(path, "rb"))
+        return await client.post(f"{base}/release_task", data=form_fields(payload), files=handles)
+    finally:
+        for _name, handle in handles.values():
+            handle.close()
 
 
 def clean_format_result(data: object) -> dict:

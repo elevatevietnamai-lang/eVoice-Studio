@@ -53,13 +53,30 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   - The server loads the model before it reports ready (eager init). If startup reports anything but
     that model loaded, the server is stopped and the track fails with a message instead of running
     without the model.
+- **Cover and Repaint:** *Mode* switches between *New song*, *Cover* and *Repaint*; the selected
+  track also has *Cover* and *Repaint* shortcuts. Both take a source: a library track, or a file you
+  upload (WAV, MP3, FLAC, OGG or M4A, up to 100 MB and 10 minutes). The result keeps the source's
+  length and is saved as a new track; the source is never changed.
+  - *Cover* plays the source again in the style you describe. *Stay close to the original* (0–100 %,
+    default 70 %) sets how much of the source survives; low values are a looser style transfer.
+  - *Repaint* regenerates the region you select (it starts on the middle third) and keeps the rest.
+    *How much to change*: Little, Balanced (with a strength) or Freely.
+  - **Style reference** (under Advanced, any mode): an optional track or upload whose sound,
+    instruments and mood the new music follows.
+  - **Uploads stay local and are named by id only.** `POST /music/upload` stores the file under
+    `<data dir>/music/uploads` (the newest 20 are kept), checks it with ffprobe and returns an id;
+    requests name sources by library or upload id and the backend resolves the path itself. The file
+    is handed to the ACE-Step server as a multipart upload, because the server only accepts absolute
+    paths inside its own temp folder.
+  - **Extend is not available yet:** continuing a song past its end has to be tested on the pinned
+    engine revision first.
 - **Polish with the language model:** shown once Thinking's model is ready. It sends the description,
   lyrics and settings to ACE-Step's formatter, which tidies the description and lyrics and suggests a
   BPM, key, time signature, length and language. A dialog shows each change next to your own; nothing
   changes until you choose *Apply changes*. Every suggestion is checked like user input (an unknown key
   or a BPM out of range is dropped). It runs on the same language-model server as Thinking.
 - **Not available yet:** guidance (CFG), shift and the other base-model options have no effect on the
-  turbo model installed here, so they are not shown. Cover, repaint and extend are planned.
+  turbo model installed here, so they are not shown.
 - **Memory:** the music server starts on demand, listens on a random loopback port with a random key and
   stops after 5 minutes idle. *Free GPU memory* stops it immediately. Do not generate music and dub at the
   same time on a small GPU.
@@ -67,7 +84,10 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   Thinking uses here and whether it is ready), `GET /music/lm-install-stream` (download the 0.6B model),
   `POST /music/generate` (SSE; adds `vocal_language`, `key_scale`, `time_signature`, `thinking`,
   `batch_size`, `inference_steps`, `infer_method`, `audio_format`; a `track` event per saved variant,
-  then `done` with `tracks`), `POST /music/format` (the formatter's suggestions, nothing saved),
+  then `done` with `tracks`; `task`, `source_track_id`/`source_upload_id`,
+  `reference_track_id`/`reference_upload_id`, `cover_strength`, `repaint_start`, `repaint_end`,
+  `repaint_mode`, `repaint_strength`), `POST /music/format` (the formatter's suggestions, nothing
+  saved), `POST /music/upload` (multipart `file`; returns `upload_id`, `name`, `duration`),
   `GET /music/library`, `GET /music/audio/{id}`, `DELETE /music/library/{id}`, `POST /music/stop`.
 
 ## GPU exclusion

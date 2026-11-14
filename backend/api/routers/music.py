@@ -7,6 +7,7 @@
 * ``POST   /music/stop``                  — stop the music server now (frees VRAM)
 * ``POST   /music/generate``              — generate 1-4 variants and save them to the library (SSE)
 * ``POST   /music/format``                — the language model tidies caption and lyrics, suggests metadata
+* ``POST   /music/upload``                — store a source or reference audio file; returns its id
 * ``GET    /music/library``               — saved tracks, newest first
 * ``GET    /music/audio/{track_id}``      — a saved track
 * ``DELETE /music/library/{track_id}``    — remove a saved track
@@ -16,11 +17,11 @@ from __future__ import annotations
 import json
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from api.dependencies import require_admin, require_desktop
 from core.browser_guard import reject_cross_site_get
@@ -45,6 +46,31 @@ class GenerateBody(BaseModel):
     inference_steps: int = Field(music.DEFAULT_STEPS, ge=music.MIN_STEPS, le=music.MAX_STEPS)
     infer_method: Literal["ode", "sde"] = "ode"
     audio_format: Literal["wav", "flac", "mp3"] = "wav"
+    # Edits (cover, repaint) and a style reference. Audio is named by a library track id or an
+    # upload id from POST /music/upload, never by a path.
+    task: Literal["text2music", "cover", "repaint"] = "text2music"
+    source_track_id: str | None = Field(None, max_length=12)
+    source_upload_id: str | None = Field(None, max_length=12)
+    reference_track_id: str | None = Field(None, max_length=12)
+    reference_upload_id: str | None = Field(None, max_length=12)
+    cover_strength: float = Field(0.7, ge=0.0, le=1.0)
+    repaint_start: float = Field(0.0, ge=0.0, le=music.MAX_SOURCE_SECONDS)
+    repaint_end: float | None = Field(None, ge=0.0, le=music.MAX_SOURCE_SECONDS)
+    repaint_mode: Literal["conservative", "balanced", "aggressive"] = "balanced"
+    repaint_strength: float = Field(0.5, ge=0.0, le=1.0)
+
+    @model_validator(mode="after")
+    def _one_source(self) -> "GenerateBody":
+        sources = [v for v in (self.source_track_id, self.source_upload_id) if v]
+        if self.task != "text2music" and len(sources) != 1:
+            raise ValueError("A cover or repaint needs one source track or uploaded file.")
+        if self.task == "text2music" and sources:
+            raise ValueError("A source track is only used for a cover or repaint.")
+        if self.reference_track_id and self.reference_upload_id:
+            raise ValueError("Pick one style reference.")
+        if self.task == "repaint" and self.repaint_end is not None and self.repaint_end <= self.repaint_start:
+            raise ValueError("The repaint region must end after it starts.")
+        return self
 
     @field_validator("vocal_language")
     @classmethod
@@ -65,7 +91,40 @@ class GenerateBody(BaseModel):
                                   seed=self.seed, vocal_language=self.vocal_language,
                                   time_signature=self.time_signature, thinking=self.thinking,
                                   batch_size=self.batch_size, inference_steps=self.inference_steps,
-                                  infer_method=self.infer_method, audio_format=self.audio_format)
+                                  infer_method=self.infer_method, audio_format=self.audio_format,
+                                  task_type=self.task, cover_strength=self.cover_strength,
+                                  repaint_start=self.repaint_start, repaint_end=self.repaint_end,
+                                  repaint_mode=self.repaint_mode, repaint_strength=self.repaint_strength)
+
+
+def _audio_for(track_id: str | None, upload_id: str | None) -> str | None:
+    if track_id:
+        return str(music_library.resolve_track_audio(track_id))
+    if upload_id:
+        return str(music_library.resolve_upload(upload_id))
+    return None
+
+
+async def resolve_audio(body: GenerateBody) -> music.MusicRequest:
+    """The request with source and reference files resolved under the library (ValueError if not)."""
+    from services.ffmpeg_utils import probe_duration
+
+    request = body.to_request()
+    request.ref_path = _audio_for(body.reference_track_id, body.reference_upload_id)
+    if body.task == "text2music":
+        return request
+    request.src_path = _audio_for(body.source_track_id, body.source_upload_id)
+    seconds = await probe_duration(request.src_path, allowed_root=str(music_library.library_dir()))
+    if not seconds:
+        raise ValueError("Could not read the source audio.")
+    if seconds > music.MAX_SOURCE_SECONDS:
+        raise ValueError(f"The source is longer than {music.MAX_SOURCE_SECONDS // 60} minutes.")
+    request.src_seconds = seconds
+    if body.task == "repaint":
+        end = body.repaint_end if body.repaint_end is not None else seconds
+        if body.repaint_start >= seconds or end > seconds + 0.5:
+            raise ValueError("The repaint region is outside the source audio.")
+    return request
 
 
 def _sse(event: str, payload: dict) -> bytes:
@@ -149,7 +208,12 @@ async def music_generate(body: GenerateBody):
                                      "reason": f"The library holds {music_library.MAX_TRACKS} tracks. "
                                                f"Delete some first to make room for {body.batch_size}."})
                 return
-            request = body.to_request()
+            try:
+                request = await resolve_audio(body)
+            except ValueError as exc:
+                yield _sse("error", {"error": "music_source_invalid", "error_code": "music_source_invalid",
+                                     "stage": "music", "reason": str(exc)})
+                return
             ids = [music_library.new_id() for _ in range(body.batch_size)]
             paths = {str(music_library.audio_path(i, body.audio_format)): i for i in ids}
             result: dict = {}
@@ -173,7 +237,8 @@ async def music_generate(body: GenerateBody):
                     time_signature=variant.get("time_signature") or body.time_signature,
                     vocal_language=body.vocal_language, thinking=body.thinking, ext=body.audio_format,
                     inference_steps=body.inference_steps, infer_method=body.infer_method,
-                    batch_id=batch_id, variant=index + 1 if batch_id else None))
+                    batch_id=batch_id, variant=index + 1 if batch_id else None,
+                    task=body.task, source_id=body.source_track_id))
                 yield _sse("track", {"track": records[-1]})
             if not records:
                 raise RuntimeError("Music generation finished without a downloadable file.")
@@ -199,9 +264,11 @@ async def music_format(body: GenerateBody):
                                                      "reason": "Install the music engine first."})
     try:
         with gpu_exclusive.music_job():
-            return await music.get_engine().format_input(body.to_request())
+            return await music.get_engine().format_input(await resolve_audio(body))
     except music.MusicLmUnavailable as exc:
         raise HTTPException(status_code=409, detail={"error_code": exc.code, "reason": str(exc)})
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={"error_code": "music_source_invalid", "reason": str(exc)})
     except music.MusicModeBusy as exc:
         raise HTTPException(status_code=409, detail={"error_code": "gpu_busy", "busy_with": "music",
                                                      "reason": str(exc)})
@@ -212,6 +279,43 @@ async def music_format(body: GenerateBody):
         logger.warning("music format failed: %s", exc)
         raise HTTPException(status_code=502, detail={"error_code": "music_format_failed",
                                                      "reason": music.public_reason(exc)})
+
+
+_UPLOAD_CHUNK = 1024 * 1024
+
+
+@router.post("/music/upload")
+async def music_upload(file: UploadFile = File(...)):
+    """Store a source or reference audio file under the library and return its id and length."""
+    from services.ffmpeg_utils import probe_duration
+
+    try:
+        ext = music_library.upload_ext(file.filename or "")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={"error_code": "music_upload_type", "reason": str(exc)})
+    upload_id = music_library.new_id()
+    path = music_library.upload_path(upload_id, ext)
+    size = 0
+    try:
+        with open(path, "wb") as out:
+            while chunk := await file.read(_UPLOAD_CHUNK):
+                size += len(chunk)
+                if size > music_library.MAX_UPLOAD_BYTES:
+                    raise ValueError(f"The file is larger than {music_library.MAX_UPLOAD_BYTES // 2**20} MB.")
+                out.write(chunk)
+        seconds = await probe_duration(str(path), allowed_root=str(music_library.library_dir()))
+        if not seconds:
+            raise ValueError("That file has no audio this app can read.")
+        if seconds > music.MAX_SOURCE_SECONDS:
+            raise ValueError(f"The file is longer than {music.MAX_SOURCE_SECONDS // 60} minutes.")
+    except ValueError as exc:
+        path.unlink(missing_ok=True)
+        raise HTTPException(status_code=400, detail={"error_code": "music_upload_invalid", "reason": str(exc)})
+    except BaseException:
+        path.unlink(missing_ok=True)
+        raise
+    music_library.prune_uploads()
+    return {"upload_id": upload_id, "name": (file.filename or "")[-120:], "duration": round(seconds, 2)}
 
 
 @router.get("/music/library")
