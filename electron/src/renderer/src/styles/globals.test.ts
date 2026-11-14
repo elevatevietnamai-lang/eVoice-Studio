@@ -114,3 +114,15 @@ it('keeps the default success colour on the brand graphite and white', () => {
   expect(success.length).toBeGreaterThanOrEqual(4);
   for (const value of success) expect(value).toMatch(/--brand-(?:graphite|white)|--app-theme/);
 });
+
+/** A click (or focus a popup hands back after one) shows no ring; keyboard focus and text fields keep it. */
+it('drops the focus ring after pointer input only', () => {
+  const rule = css.slice(css.indexOf("html[data-input-modality='pointer'] :focus-visible"));
+  expect(rule).toContain(':not(input, textarea');
+  expect(rule).toContain('--tw-ring-shadow: 0 0 #0000;');
+  expect(rule).toContain('--ring: transparent;');
+  expect(css).toContain(
+    "html[data-input-modality='pointer'] [data-slot='select-trigger']:focus-visible",
+  );
+  expect(css).not.toContain("data-input-modality='keyboard'");
+});
