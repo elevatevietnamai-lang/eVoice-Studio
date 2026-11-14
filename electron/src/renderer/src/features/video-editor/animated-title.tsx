@@ -34,7 +34,7 @@ import {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block space-y-1 text-xs">
+    <label className="flex min-w-0 flex-col gap-1.5 text-label">
       <span className="text-muted-foreground">{label}</span>
       {children}
     </label>

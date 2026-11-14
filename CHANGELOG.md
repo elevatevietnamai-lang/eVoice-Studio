@@ -67,6 +67,7 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- Buttons and dropdowns no longer stay outlined in white after you click them or pick an option; the focus ring still shows when you move with the keyboard (#24)
 - Promo video: a saved draft whose files are gone marks them as missing and blocks Render, with one button to remove them, instead of a black preview and a failed render (#12)
 - First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)
 - iPhone Settings → About and licence receipts show the full app version (`0.5.7-beta.2`), like Android, instead of only `0.5.7` (#3273)

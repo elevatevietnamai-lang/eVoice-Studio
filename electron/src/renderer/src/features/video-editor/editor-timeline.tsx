@@ -391,7 +391,7 @@ export function EditorTimeline({
                   <button
                     key={item.fromId}
                     type="button"
-                    className="absolute top-1/2 z-10 h-5 -translate-y-1/2 rounded-sm border border-foreground/60 bg-background/80 text-[10px] leading-none"
+                    className="absolute top-1/2 z-10 h-5 -translate-y-1/2 rounded-sm border border-foreground/60 bg-background/80 text-[11px] leading-none"
                     style={{ left: item.start * pixelsPerSecond, width: Math.max(10, item.seconds * pixelsPerSecond) }}
                     aria-label={t('editor.transition_marker', { name: t(`editor.transition_${item.type}`) })}
                     title={t(`editor.transition_${item.type}`)}

@@ -711,3 +711,17 @@ html[data-theme-id='heritage'] {
     animation: none;
   }
 }
+
+/* Focus after a click shows no ring (lib/input-modality.ts). Browsers also match :focus-visible
+   when a popup hands focus back to its trigger, which left clicked buttons and dropdowns outlined
+   in the white ring colour. Keyboard focus and text fields keep their ring. Unlayered, so it wins
+   over the utilities' focus-visible:ring and focus-visible:border-ring. */
+html[data-input-modality='pointer'] :focus-visible:not(input, textarea, [contenteditable='true']) {
+  --tw-ring-shadow: 0 0 #0000;
+  --ring: transparent;
+  outline-color: transparent;
+}
+/* A dropdown keeps its own border instead of losing it. */
+html[data-input-modality='pointer'] [data-slot='select-trigger']:focus-visible {
+  --ring: var(--input);
+}
