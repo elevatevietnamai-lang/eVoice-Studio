@@ -4262,5 +4262,32 @@
     "timeline_outro": "ロゴのエンディング",
     "timeline_preview": "プレビュー",
     "timeline_preview_note": "プレビューは近似です。書き出した動画が正確です。"
+  },
+  "appMenu": {
+    "menu": "メニュー",
+    "file": "ファイル",
+    "edit": "編集",
+    "view": "表示",
+    "go": "移動",
+    "window": "ウインドウ",
+    "help": "ヘルプ",
+    "about": "{{app}}について",
+    "services": "サービス",
+    "hide": "{{app}}を隠す",
+    "hide_others": "ほかを隠す",
+    "show_all": "すべてを表示",
+    "quit": "{{app}}を終了",
+    "exit": "終了",
+    "close_window": "ウインドウを閉じる",
+    "bring_all_to_front": "すべてを手前に移動",
+    "undo": "取り消す",
+    "redo": "やり直す",
+    "cut": "切り取り",
+    "copy": "コピー",
+    "paste": "貼り付け",
+    "select_all": "すべてを選択",
+    "command_palette": "コマンドパレット…",
+    "toggle_full_screen": "フルスクリーン切り替え",
+    "settings": "設定…"
   }
 }

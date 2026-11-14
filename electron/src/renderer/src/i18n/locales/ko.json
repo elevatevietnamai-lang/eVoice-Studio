@@ -4262,5 +4262,32 @@
     "timeline_outro": "로고 엔딩",
     "timeline_preview": "미리보기",
     "timeline_preview_note": "미리보기는 근사치이며, 렌더링된 영상이 정확합니다."
+  },
+  "appMenu": {
+    "menu": "메뉴",
+    "file": "파일",
+    "edit": "편집",
+    "view": "보기",
+    "go": "이동",
+    "window": "윈도우",
+    "help": "도움말",
+    "about": "{{app}} 정보",
+    "services": "서비스",
+    "hide": "{{app}} 가리기",
+    "hide_others": "기타 가리기",
+    "show_all": "모두 보기",
+    "quit": "{{app}} 종료",
+    "exit": "종료",
+    "close_window": "윈도우 닫기",
+    "bring_all_to_front": "모두 앞으로 가져오기",
+    "undo": "실행 취소",
+    "redo": "실행 복귀",
+    "cut": "오려두기",
+    "copy": "복사하기",
+    "paste": "붙여넣기",
+    "select_all": "전체 선택",
+    "command_palette": "명령 팔레트…",
+    "toggle_full_screen": "전체 화면 전환",
+    "settings": "설정…"
   }
 }

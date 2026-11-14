@@ -4262,5 +4262,32 @@
     "timeline_outro": "Logo-Abspann",
     "timeline_preview": "Vorschau",
     "timeline_preview_note": "Die Vorschau ist ungefähr; das gerenderte Video ist genau."
+  },
+  "appMenu": {
+    "menu": "Menü",
+    "file": "Datei",
+    "edit": "Bearbeiten",
+    "view": "Ansicht",
+    "go": "Gehe zu",
+    "window": "Fenster",
+    "help": "Hilfe",
+    "about": "Über {{app}}",
+    "services": "Dienste",
+    "hide": "{{app}} ausblenden",
+    "hide_others": "Andere ausblenden",
+    "show_all": "Alle einblenden",
+    "quit": "{{app}} beenden",
+    "exit": "Beenden",
+    "close_window": "Fenster schließen",
+    "bring_all_to_front": "Alle nach vorne bringen",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen",
+    "cut": "Ausschneiden",
+    "copy": "Kopieren",
+    "paste": "Einfügen",
+    "select_all": "Alles auswählen",
+    "command_palette": "Befehlspalette…",
+    "toggle_full_screen": "Vollbild ein/aus",
+    "settings": "Einstellungen…"
   }
 }

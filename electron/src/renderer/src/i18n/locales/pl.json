@@ -4268,5 +4268,32 @@
     "timeline_outro": "Zakończenie z logo",
     "timeline_preview": "Podgląd",
     "timeline_preview_note": "Podgląd jest przybliżony; wyrenderowany film jest dokładny."
+  },
+  "appMenu": {
+    "menu": "Menu",
+    "file": "Plik",
+    "edit": "Edycja",
+    "view": "Widok",
+    "go": "Przejdź",
+    "window": "Okno",
+    "help": "Pomoc",
+    "about": "O {{app}}",
+    "services": "Usługi",
+    "hide": "Ukryj {{app}}",
+    "hide_others": "Ukryj pozostałe",
+    "show_all": "Pokaż wszystko",
+    "quit": "Zakończ {{app}}",
+    "exit": "Zakończ",
+    "close_window": "Zamknij okno",
+    "bring_all_to_front": "Przenieś wszystko na wierzch",
+    "undo": "Cofnij",
+    "redo": "Ponów",
+    "cut": "Wytnij",
+    "copy": "Kopiuj",
+    "paste": "Wklej",
+    "select_all": "Zaznacz wszystko",
+    "command_palette": "Paleta poleceń…",
+    "toggle_full_screen": "Pełny ekran",
+    "settings": "Ustawienia…"
   }
 }

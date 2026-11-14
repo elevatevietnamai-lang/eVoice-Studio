@@ -4262,5 +4262,32 @@
     "timeline_outro": "Afsluiter met logo",
     "timeline_preview": "Voorbeeld",
     "timeline_preview_note": "Het voorbeeld is bij benadering; de gerenderde video is exact."
+  },
+  "appMenu": {
+    "menu": "Menu",
+    "file": "Bestand",
+    "edit": "Bewerken",
+    "view": "Beeld",
+    "go": "Ga naar",
+    "window": "Venster",
+    "help": "Help",
+    "about": "Over {{app}}",
+    "services": "Diensten",
+    "hide": "Verberg {{app}}",
+    "hide_others": "Verberg andere",
+    "show_all": "Toon alles",
+    "quit": "Stop {{app}}",
+    "exit": "Afsluiten",
+    "close_window": "Sluit venster",
+    "bring_all_to_front": "Alles naar voren",
+    "undo": "Ongedaan maken",
+    "redo": "Opnieuw",
+    "cut": "Knippen",
+    "copy": "Kopiëren",
+    "paste": "Plakken",
+    "select_all": "Alles selecteren",
+    "command_palette": "Opdrachtpalet…",
+    "toggle_full_screen": "Volledig scherm",
+    "settings": "Instellingen…"
   }
 }

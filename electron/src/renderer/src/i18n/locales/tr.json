@@ -4262,5 +4262,32 @@
     "timeline_outro": "Logolu kapanış",
     "timeline_preview": "Önizleme",
     "timeline_preview_note": "Önizleme yaklaşıktır; oluşturulan video kesindir."
+  },
+  "appMenu": {
+    "menu": "Menü",
+    "file": "Dosya",
+    "edit": "Düzen",
+    "view": "Görünüm",
+    "go": "Git",
+    "window": "Pencere",
+    "help": "Yardım",
+    "about": "{{app}} Hakkında",
+    "services": "Hizmetler",
+    "hide": "{{app}} Gizle",
+    "hide_others": "Diğerlerini Gizle",
+    "show_all": "Tümünü Göster",
+    "quit": "{{app}} Uygulamasından Çık",
+    "exit": "Çıkış",
+    "close_window": "Pencereyi Kapat",
+    "bring_all_to_front": "Tümünü Öne Getir",
+    "undo": "Geri Al",
+    "redo": "Yinele",
+    "cut": "Kes",
+    "copy": "Kopyala",
+    "paste": "Yapıştır",
+    "select_all": "Tümünü Seç",
+    "command_palette": "Komut Paleti…",
+    "toggle_full_screen": "Tam Ekran",
+    "settings": "Ayarlar…"
   }
 }

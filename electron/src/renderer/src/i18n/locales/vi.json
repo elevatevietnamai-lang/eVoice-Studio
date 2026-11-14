@@ -4262,5 +4262,32 @@
     "timeline_outro": "Logo kết thúc",
     "timeline_preview": "Xem trước",
     "timeline_preview_note": "Bản xem trước chỉ gần đúng; video xuất ra mới chính xác."
+  },
+  "appMenu": {
+    "menu": "Menu",
+    "file": "Tệp",
+    "edit": "Sửa",
+    "view": "Xem",
+    "go": "Đi tới",
+    "window": "Cửa sổ",
+    "help": "Trợ giúp",
+    "about": "Giới thiệu {{app}}",
+    "services": "Dịch vụ",
+    "hide": "Ẩn {{app}}",
+    "hide_others": "Ẩn ứng dụng khác",
+    "show_all": "Hiện tất cả",
+    "quit": "Thoát {{app}}",
+    "exit": "Thoát",
+    "close_window": "Đóng cửa sổ",
+    "bring_all_to_front": "Đưa tất cả lên trước",
+    "undo": "Hoàn tác",
+    "redo": "Làm lại",
+    "cut": "Cắt",
+    "copy": "Sao chép",
+    "paste": "Dán",
+    "select_all": "Chọn tất cả",
+    "command_palette": "Bảng lệnh…",
+    "toggle_full_screen": "Bật/tắt toàn màn hình",
+    "settings": "Cài đặt…"
   }
 }

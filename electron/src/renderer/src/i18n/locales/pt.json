@@ -4264,5 +4264,32 @@
     "timeline_outro": "Encerramento com logotipo",
     "timeline_preview": "Pré-visualização",
     "timeline_preview_note": "A pré-visualização é aproximada; o vídeo renderizado é exato."
+  },
+  "appMenu": {
+    "menu": "Menu",
+    "file": "Arquivo",
+    "edit": "Editar",
+    "view": "Ver",
+    "go": "Ir",
+    "window": "Janela",
+    "help": "Ajuda",
+    "about": "Sobre o {{app}}",
+    "services": "Serviços",
+    "hide": "Ocultar {{app}}",
+    "hide_others": "Ocultar outros",
+    "show_all": "Mostrar tudo",
+    "quit": "Sair do {{app}}",
+    "exit": "Sair",
+    "close_window": "Fechar janela",
+    "bring_all_to_front": "Trazer tudo para a frente",
+    "undo": "Desfazer",
+    "redo": "Refazer",
+    "cut": "Recortar",
+    "copy": "Copiar",
+    "paste": "Colar",
+    "select_all": "Selecionar tudo",
+    "command_palette": "Paleta de comandos…",
+    "toggle_full_screen": "Tela cheia",
+    "settings": "Configurações…"
   }
 }
