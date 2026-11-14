@@ -7,7 +7,9 @@ loopback port with a random API key, and stops it when idle or when the backend 
 
 Only the DiT is used by default: the 5Hz language model and every LM-driven option stay off
 (``thinking`` / CoT / ``use_format`` all default to true on the server, so they are sent
-explicitly as false).
+explicitly as false). A request that opts into Thinking runs on a server started with the LM;
+the server mode always matches the request, because a loaded LM also fills missing metadata
+for requests that did not ask for it.
 """
 from __future__ import annotations
 
@@ -57,6 +59,71 @@ MODEL_DOWNLOAD_CODE = (
 )
 # Sum of every file in the pinned model revision (28 files, four large safetensors).
 ACESTEP_MODEL_BYTES = 10_092_102_593
+
+# ── 5Hz language model ("Thinking"): writes the song's audio codes before the DiT renders it.
+# The 1.7B LM ships in the main model repo above. ACE-Step only loads it on GPUs above 12 GB;
+# 6-12 GB GPUs get the 0.6B LM, an optional pinned download (MIT, checked 2026-11-14).
+LM_LARGE = "acestep-5Hz-lm-1.7B"
+LM_SMALL = "acestep-5Hz-lm-0.6B"
+LM_SMALL_REPO = "ACE-Step/acestep-5Hz-lm-0.6B"
+LM_SMALL_REVISION = "148d8ea0225bdab342ee1ae3a354275ccd60ca80"
+LM_SMALL_BYTES = 1_372_702_240
+LM_SMALL_DOWNLOAD_CODE = (
+    "import sys;from pathlib import Path;from huggingface_hub import snapshot_download;"
+    "d=Path(sys.argv[1]);d.mkdir(parents=True,exist_ok=True);"
+    "snapshot_download(repo_id=sys.argv[2],revision=sys.argv[3],local_dir=str(d));"
+    "print('Language model ready at '+str(d))"
+)
+# Runs inside the engine venv with ACE-Step's own GPU tiering, so the answer is exactly the LM
+# the server will load at startup (a different answer there would make it download one itself).
+LM_PROBE_CODE = (
+    "import json;from acestep.gpu_config import get_gpu_config,is_lm_model_supported as s;"
+    "c=get_gpu_config();"
+    "print('LMPROBE'+json.dumps({'memory_gb':round(float(c.gpu_memory_gb),2),'tier':c.tier,"
+    f"'large':s('{LM_LARGE}',c)[0],'small':s('{LM_SMALL}',c)[0]}}))"
+)
+# Debug overrides ACE-Step honours for its GPU tiering; never inherited from the user's shell.
+_VRAM_DEBUG_ENV = ("MAX_CUDA_VRAM", "MAX_MPS_VRAM", "MAX_XPU_VRAM")
+
+# What ACE-Step accepts (acestep/constants.py at ACESTEP_REVISION).
+VOCAL_LANGUAGES = (
+    "ar", "az", "bg", "bn", "ca", "cs", "da", "de", "el", "en", "es", "fa", "fi", "fr", "he", "hi",
+    "hr", "ht", "hu", "id", "is", "it", "ja", "ko", "la", "lt", "ms", "ne", "nl", "no", "pa", "pl",
+    "pt", "ro", "ru", "sa", "sk", "sr", "sv", "sw", "ta", "te", "th", "tl", "tr", "uk", "ur", "vi",
+    "yue", "zh", "unknown",
+)
+TIME_SIGNATURES = ("2", "3", "4", "6")
+_KEY_RE = re.compile(r"^([A-Ga-g])([#b♯♭]?)\s*(major|minor|maj|min|m)?$", re.IGNORECASE)
+
+
+def normalize_key_scale(value: str) -> str:
+    """'f# MINOR', 'Bbm', 'C' -> ACE-Step's 'F# minor', 'Bb minor', 'C major'; '' stays ''."""
+    text = (value or "").strip()
+    if not text:
+        return ""
+    match = _KEY_RE.match(text)
+    if not match:
+        raise ValueError("Unknown key. Use a note and a mode, for example 'C major' or 'F# minor'.")
+    note, accidental, mode = match.groups()
+    accidental = {"♯": "#", "♭": "b"}.get(accidental, accidental)
+    mode = (mode or "major").lower()
+    return f"{note.upper()}{accidental} {'minor' if mode in ('minor', 'min', 'm') else 'major'}"
+
+
+class MusicLmUnavailable(RuntimeError):
+    """Thinking was asked for but this machine cannot run a language model as installed.
+
+    ``code`` is ``music_lm_unsupported`` (not enough GPU memory) or ``music_lm_missing``
+    (the 0.6B LM this GPU needs is not downloaded yet).
+    """
+
+    def __init__(self, message: str, code: str):
+        super().__init__(message)
+        self.code = code
+
+
+class MusicModeBusy(RuntimeError):
+    """Switching the server in or out of Thinking would interrupt a running track."""
 # The install's two long steps (uv sync, model download) print almost nothing, so they are
 # watched by bytes on disk instead of output lines: progress every few seconds, and a step
 # whose bytes stop growing this long is treated as stalled.
@@ -92,6 +159,9 @@ class MusicRequest:
     seed: Optional[int] = None
     vocal_language: str = "en"
     audio_format: str = "wav"
+    time_signature: str = ""
+    # Thinking: the 5Hz LM writes the audio codes and fills a missing BPM, key or time signature.
+    thinking: bool = False
 
     def seconds(self) -> int:
         return int(max(MIN_SECONDS, min(MAX_SECONDS, round(self.duration))))
@@ -127,6 +197,15 @@ def checkpoints_dir() -> Path:
 
 def _marker() -> Path:
     return engine_dir() / ".install-complete"
+
+
+def lm_dir(model: str) -> Path:
+    return checkpoints_dir() / model
+
+
+def lm_on_disk(model: str) -> bool:
+    folder = lm_dir(model)
+    return folder.is_dir() and any(folder.glob("*.safetensors"))
 
 
 def is_installed() -> bool:
@@ -200,7 +279,7 @@ def _safe_extract(archive: Path, dest: Path, expected_sha256: Optional[str] = No
 def _clean_env(extra: Optional[dict] = None) -> dict:
     """Environment for the engine's own interpreter: nothing from VoiceStudio's venv may leak in."""
     env = os.environ.copy()
-    for name in ("VIRTUAL_ENV", "PYTHONHOME", "PYTHONPATH", "UV_PROJECT_ENVIRONMENT"):
+    for name in ("VIRTUAL_ENV", "PYTHONHOME", "PYTHONPATH", "UV_PROJECT_ENVIRONMENT", *_VRAM_DEBUG_ENV):
         env.pop(name, None)
     env.update({"PYTHONUNBUFFERED": "1", "PYTHONIOENCODING": "utf-8",
                 "ACESTEP_PROJECT_ROOT": str(source_dir()),
@@ -524,7 +603,8 @@ def build_payload(req: MusicRequest) -> dict:
         "audio_format": req.audio_format if req.audio_format in ("wav", "mp3", "flac") else "wav",
         "batch_size": 1,
         "inference_steps": 8,
-        # These default to true on the server and would invoke the language model.
+        # These default to true on the server and would invoke the language model. Thinking turns
+        # on code generation only; the caption and language stay exactly what the user wrote.
         "thinking": False,
         "use_cot_caption": False,
         "use_cot_language": False,
@@ -537,6 +617,12 @@ def build_payload(req: MusicRequest) -> dict:
         payload["bpm"] = int(req.bpm)
     if req.key_scale:
         payload["key_scale"] = req.key_scale
+    if req.time_signature in TIME_SIGNATURES:
+        payload["time_signature"] = req.time_signature
+    if req.thinking:
+        # The request model defaults to vllm, which the engine does not install on any platform.
+        payload["thinking"] = True
+        payload["lm_backend"] = "pt"
     return payload
 
 
@@ -549,6 +635,8 @@ class _Server:
     key: str = ""
     last_used: float = 0.0
     busy: int = 0
+    # The LM this server loaded at startup, or None for a DiT-only server.
+    llm: Optional[str] = None
     reaper: Optional[asyncio.Task] = None
     lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
@@ -557,6 +645,7 @@ class AceStepEngine:
     def __init__(self) -> None:
         self._server = _Server()
         self._install_lock = asyncio.Lock()
+        self._probe: Optional[dict] = None
         atexit.register(self._kill_now)
 
     # ── status
@@ -568,6 +657,73 @@ class AceStepEngine:
     def _alive(self) -> bool:
         proc = self._server.proc
         return proc is not None and proc.poll() is None
+
+    # ── language model (Thinking)
+    async def hardware(self) -> dict:
+        """ACE-Step's own GPU tiering, measured once in the engine's interpreter."""
+        if self._probe is None:
+            if not is_installed():
+                raise RuntimeError("The music engine is not installed yet.")
+            proc = await asyncio.create_subprocess_exec(
+                str(venv_python()), "-c", LM_PROBE_CODE, cwd=str(source_dir()), env=_clean_env(),
+                stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
+            try:
+                out, _ = await asyncio.wait_for(proc.communicate(), timeout=180)
+            except asyncio.TimeoutError:
+                with contextlib.suppress(ProcessLookupError):
+                    proc.kill()
+                raise RuntimeError("Measuring the GPU for the music language model timed out.")
+            text = out.decode("utf-8", "replace")
+            line = next((ln for ln in text.splitlines() if ln.startswith("LMPROBE")), "")
+            if not line:
+                logger.warning("music LM probe failed: %s", text[-500:])
+                raise RuntimeError("Could not measure the GPU for the music language model. See the backend log.")
+            self._probe = json.loads(line[len("LMPROBE"):])
+        return self._probe
+
+    async def lm_status(self) -> dict:
+        """Which LM Thinking would use here, and whether it is ready."""
+        hw = await self.hardware()
+        model = LM_LARGE if hw.get("large") else LM_SMALL if hw.get("small") else None
+        ready = bool(model and lm_on_disk(model))
+        return {"model": model, "ready": ready,
+                "download_bytes": LM_SMALL_BYTES if model == LM_SMALL and not ready else 0,
+                "memory_gb": hw.get("memory_gb"), "tier": hw.get("tier")}
+
+    async def _lm_for_request(self) -> str:
+        info = await self.lm_status()
+        if not info["model"]:
+            raise MusicLmUnavailable(
+                "Thinking needs a GPU with more than 6 GB of memory. Turn Thinking off to generate.",
+                "music_lm_unsupported")
+        if not info["ready"]:
+            raise MusicLmUnavailable(
+                "Thinking on this GPU uses the small language model. Download it first (about 1.4 GB).",
+                "music_lm_missing")
+        return info["model"]
+
+    async def install_lm(self) -> AsyncIterator[dict]:
+        """Download the pinned 0.6B LM for 6-12 GB GPUs (the 1.7B LM ships with the main model)."""
+        from services.hardsub import _run_logged
+
+        async with self._install_lock:
+            info = await self.lm_status()
+            if info["model"] != LM_SMALL:
+                raise RuntimeError("This GPU does not use the small language model.")
+            if not info["ready"]:
+                yield {"type": "progress", "progress": 0.0, "stage": "model", "bytes": 0,
+                       "total": LM_SMALL_BYTES, "message": "Downloading the music language model"}
+                target = lm_dir(LM_SMALL)
+                cmd = [str(venv_python()), "-u", "-c", LM_SMALL_DOWNLOAD_CODE, str(target),
+                       LM_SMALL_REPO, LM_SMALL_REVISION]
+                env = _clean_env({"HF_HUB_DISABLE_PROGRESS_BARS": "1"})
+                async for event in _watched(_run_logged(cmd, env, _NO_LINE_TIMEOUT, cwd=str(source_dir())),
+                                            lambda: _dir_bytes(target), stage="model",
+                                            start=0.0, end=0.99, total=LM_SMALL_BYTES):
+                    yield event
+                if not lm_on_disk(LM_SMALL):
+                    raise RuntimeError("The language model download finished without its weights.")
+            yield {"type": "done", "installed": True}
 
     # ── install
     async def install(self) -> AsyncIterator[dict]:
@@ -639,18 +795,38 @@ class AceStepEngine:
             yield {"type": "done", "installed": True}
 
     # ── lifecycle
-    async def _ensure_running(self) -> tuple[str, str]:
+    async def _ensure_running(self, llm: Optional[str] = None) -> tuple[str, str]:
         srv = self._server
         async with srv.lock:
             if not is_installed():
                 raise RuntimeError("The music engine is not installed yet.")
+            if self._alive() and srv.llm != llm:
+                if srv.busy:
+                    raise MusicModeBusy("Another track is still generating. Try again when it finishes.")
+                logger.info("restarting ACE-Step %s the language model", "with" if llm else "without")
+                await asyncio.to_thread(self._kill_now)
             if not self._alive():
                 from core.contained_subprocess import spawn_owned
                 srv.port, srv.key = _free_port(), secrets.token_urlsafe(24)
-                env = _clean_env({"ACESTEP_API_HOST": "127.0.0.1", "ACESTEP_API_PORT": str(srv.port),
-                                  "ACESTEP_API_KEY": srv.key, "ACESTEP_INIT_LLM": "false",
-                                  "ACESTEP_LM_BACKEND": "pt",
-                                  "ACESTEP_TMPDIR": str(engine_dir() / "tmp")})
+                extra = {"ACESTEP_API_HOST": "127.0.0.1", "ACESTEP_API_PORT": str(srv.port),
+                         "ACESTEP_API_KEY": srv.key, "ACESTEP_INIT_LLM": "false",
+                         "ACESTEP_LM_BACKEND": "pt",
+                         "ACESTEP_TMPDIR": str(engine_dir() / "tmp")}
+                if llm:
+                    # `llm` is on disk and is the model ACE-Step's own tiering (total GPU memory,
+                    # fixed per machine) loads, so startup needs no download. Its fallback would
+                    # probe google.com and fetch unpinned from Hugging Face, then ModelScope; the
+                    # fixed source skips the probe and the dead proxy makes any fetch fail fast.
+                    # Eager init loads the LM before /health answers, so the log check is final.
+                    dead = "http://127.0.0.1:9"
+                    extra.update({"ACESTEP_INIT_LLM": "true", "ACESTEP_LM_MODEL_PATH": llm,
+                                  "ACESTEP_NO_INIT": "false",
+                                  "ACESTEP_DOWNLOAD_SOURCE": "huggingface", "HF_HUB_OFFLINE": "1",
+                                  "HTTP_PROXY": dead, "HTTPS_PROXY": dead, "ALL_PROXY": dead,
+                                  "http_proxy": dead, "https_proxy": dead, "all_proxy": dead,
+                                  "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost"})
+                env = _clean_env(extra)
+                srv.llm = llm
                 logger.info("starting ACE-Step on 127.0.0.1:%s", srv.port)
                 log_file = open(engine_dir() / "server.log", "wb")
                 try:
@@ -659,6 +835,8 @@ class AceStepEngine:
                 finally:
                     log_file.close()  # the child keeps its own handle
                 await self._wait_healthy()
+                if llm:
+                    self._check_lm_loaded(llm)
             srv.last_used = time.monotonic()
             if srv.reaper is None or srv.reaper.done():
                 srv.reaper = asyncio.create_task(self._reap_idle())
@@ -682,6 +860,16 @@ class AceStepEngine:
                 await asyncio.sleep(2.0)
         await self.stop()
         raise RuntimeError("The music server did not become ready in time.\n" + _log_tail())
+
+    def _check_lm_loaded(self, llm: str) -> None:
+        """Startup reports the LM it really loaded; anything else must not run as Thinking."""
+        log = _log_tail(400)
+        if f"LLM model loaded: {llm}" in log and "Falling back to supported LM model" not in log:
+            return
+        logger.warning("music LM did not load as %s:\n%s", llm, _log_tail(40))
+        self._kill_now()
+        raise RuntimeError("The music language model could not be loaded. Turn Thinking off, "
+                           "or free GPU memory and try again.")
 
     async def _reap_idle(self) -> None:
         srv = self._server
@@ -714,8 +902,9 @@ class AceStepEngine:
 
     # ── generation
     async def generate(self, request: MusicRequest, out_path: str) -> AsyncIterator[dict]:
+        llm = await self._lm_for_request() if request.thinking else None
         yield {"type": "progress", "progress": 0.0, "message": "Starting the music engine"}
-        base, key = await self._ensure_running()
+        base, key = await self._ensure_running(llm)
         srv = self._server
         srv.busy += 1
         finished = False
@@ -761,10 +950,10 @@ class AceStepEngine:
                     if state == "succeeded":
                         results = item.get("result")
                         results = json.loads(results) if isinstance(results, str) else (results or [])
-                        file_url = next((x.get("file") for x in results if isinstance(x, dict) and x.get("file")), "")
-                        await _download(client, base, file_url, out_path)
+                        first = next((x for x in results if isinstance(x, dict) and x.get("file")), {})
+                        await _download(client, base, first.get("file", ""), out_path)
                         finished = True
-                        yield {"type": "done", "seconds": request.seconds()}
+                        yield {"type": "done", "seconds": request.seconds(), **result_details(first)}
                         return
                     yield {"type": "progress", "progress": min(0.1 + waited / 240.0, 0.95), "message": "Generating"}
         finally:
@@ -774,6 +963,20 @@ class AceStepEngine:
                 # The client left or the job failed mid-run: the server has no cancel call,
                 # so stop it to free the GPU instead of finishing a track nobody wants.
                 self._kill_now()
+
+
+def result_details(result: dict) -> dict:
+    """The seed the server really used and the metadata it settled on (the LM may fill these)."""
+    seed = None
+    first = str(result.get("seed_value") or "").split(",")[0].strip()
+    if first.lstrip("-").isdigit():
+        seed = int(first)
+    metas = result.get("metas") if isinstance(result.get("metas"), dict) else {}
+    bpm = metas.get("bpm")
+    return {"seed": seed if seed is not None and 0 <= seed <= 2**31 - 1 else None,
+            "bpm": int(bpm) if isinstance(bpm, (int, float)) and 30 <= bpm <= 300 else None,
+            "key_scale": str(metas.get("keyscale") or "")[:24],
+            "time_signature": str(metas.get("timesignature") or "")[:4]}
 
 
 async def _download(client: httpx.AsyncClient, base: str, file_url: str, out_path: str) -> None:

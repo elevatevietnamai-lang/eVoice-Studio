@@ -3292,6 +3292,48 @@
         ],
         "identified_components": []
       }
+    },
+    {
+      "id": "ACE-Step/acestep-5Hz-lm-0.6B",
+      "license": "mit",
+      "commercial_use": false,
+      "review_status": "unreviewed",
+      "credit": "ACE-Step 1.5 5Hz LM 0.6B — ACE Studio and StepFun",
+      "source_url": "https://huggingface.co/ACE-Step/acestep-5Hz-lm-0.6B",
+      "evidence_url": "https://huggingface.co/ACE-Step/acestep-5Hz-lm-0.6B/blob/148d8ea0225bdab342ee1ae3a354275ccd60ca80/README.md",
+      "revision": "148d8ea0225bdab342ee1ae3a354275ccd60ca80",
+      "engines": [
+        "music"
+      ],
+      "configured_at": "backend/services/music.py LM_SMALL_REPO",
+      "notes": "Licence identifier is upstream model-card metadata, not verified permission for this distribution. Optional Music Studio language model for Thinking on 6-12 GB GPUs; component terms and attribution text require review.",
+      "runtime_revision": "148d8ea0225bdab342ee1ae3a354275ccd60ca80",
+      "runtime_pin_scope": "external",
+      "runtime_pin_source": "backend/services/music.py",
+      "component_closure": "incomplete",
+      "commercial_inference": "unknown",
+      "commercial_outputs": "unknown",
+      "documents": [],
+      "artifacts": [],
+      "required_components": [],
+      "upstream_access": "unknown",
+      "audit_observations": {
+        "commercial_inference": {
+          "status": "unreviewed",
+          "scope": "Selected weight/component only; not complete workflow clearance."
+        },
+        "output_terms": {
+          "status": "not_assessed",
+          "ownership_or_all_rights_cleared": false
+        },
+        "sources": [],
+        "open_questions": [
+          "Governing terms at installed revision and relevant required components",
+          "Attribution/NOTICE/redistribution duties",
+          "Training-provenance scope of generated music"
+        ],
+        "identified_components": []
+      }
     }
   ],
   "dynamic_assets": [

@@ -2476,6 +2476,23 @@
       ],
       "title": "Seed"
      },
+     "thinking": {
+      "default": false,
+      "title": "Thinking",
+      "type": "boolean"
+     },
+     "time_signature": {
+      "default": "",
+      "enum": [
+       "",
+       "2",
+       "3",
+       "4",
+       "6"
+      ],
+      "title": "Time Signature",
+      "type": "string"
+     },
      "vocal_language": {
       "default": "en",
       "maxLength": 8,
@@ -16954,6 +16971,38 @@
      }
     },
     "summary": "Music Delete"
+   }
+  },
+  "/music/lm": {
+   "get": {
+    "operationId": "music_lm_music_lm_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lm"
+   }
+  },
+  "/music/lm-install-stream": {
+   "get": {
+    "operationId": "music_lm_install_stream_music_lm_install_stream_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lm Install Stream"
    }
   },
   "/music/status": {

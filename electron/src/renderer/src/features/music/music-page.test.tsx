@@ -7,6 +7,11 @@ const state = vi.hoisted(() => ({
   tracks: [] as unknown[],
   calls: [] as string[],
   stream: vi.fn(),
+  lm: { model: null, ready: false, download_bytes: 0 } as {
+    model: string | null;
+    ready: boolean;
+    download_bytes: number;
+  },
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }),
@@ -16,6 +21,7 @@ vi.mock('@/lib/api/client', () => ({
     state.calls.push(`${init?.method || 'GET'} ${path}`);
     if (path === '/music/status') return state.status;
     if (path === '/music/library') return { tracks: state.tracks };
+    if (path === '/music/lm') return state.lm;
     return {};
   },
   apiPath: (path: string) => path,
@@ -67,6 +73,7 @@ beforeEach(() => {
   state.tracks = [];
   state.calls = [];
   state.stream.mockReset();
+  state.lm = { model: null, ready: false, download_bytes: 0 };
 });
 afterEach(cleanup);
 
@@ -208,4 +215,62 @@ it('keeps the failure on screen and explains the model load while progress is lo
   const alert = await screen.findByRole('alert');
   expect(alert.textContent).toContain('Music generation failed on the music server.');
   expect(screen.queryByText('musicStudio.loading_model')).toBeNull();
+});
+
+it('sends the language, key, meter, seed and Thinking it shows', async () => {
+  state.status = { installed: true, running: false };
+  state.lm = { model: 'acestep-5Hz-lm-1.7B', ready: true, download_bytes: 0 };
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  const thinking = (await screen.findByText('musicStudio.thinking')).closest('label');
+  const toggle = thinking?.querySelector('[role="switch"]') as HTMLElement;
+  await waitFor(() => expect(toggle.getAttribute('aria-disabled')).not.toBe('true'));
+  fireEvent.click(toggle);
+  fireEvent.click(screen.getByText('musicStudio.advanced'));
+  fireEvent.click(await screen.findByText('3/4'));
+  fireEvent.change(screen.getByPlaceholderText('musicStudio.seed_hint'), {
+    target: { value: '42x' },
+  });
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  const body = JSON.parse(state.stream.mock.calls[0][3].body);
+  expect(body).toMatchObject({
+    thinking: true,
+    time_signature: '3',
+    seed: 42,
+    key_scale: '',
+    vocal_language: 'en',
+  });
+});
+
+it('offers the small language model download instead of a dead Thinking switch', async () => {
+  state.status = { installed: true, running: false };
+  state.lm = { model: 'acestep-5Hz-lm-0.6B', ready: false, download_bytes: 1_372_702_240 };
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({ type: 'done' });
+  });
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.thinking_download'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(state.stream.mock.calls[0][0]).toBe('/music/lm-install-stream');
+});
+
+it('explains when the GPU cannot run Thinking and never sends it', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  expect(await screen.findByText('musicStudio.thinking_unsupported')).toBeTruthy();
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(JSON.parse(state.stream.mock.calls[0][3].body).thinking).toBe(false);
+});
+
+it('reuses the seed a saved track was made with', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [{ ...track, seed: 777 }];
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.reuse_seed'));
+  expect((screen.getByPlaceholderText('musicStudio.seed_hint') as HTMLInputElement).value).toBe(
+    '777',
+  );
 });
