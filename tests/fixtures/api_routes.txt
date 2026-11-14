@@ -155,6 +155,8 @@ GET /models/licenses/receipts/{plan_digest}
 GET /music/audio/{track_id}
 GET /music/install-stream
 GET /music/library
+GET /music/lm
+GET /music/lm-install-stream
 GET /music/status
 GET /openapi.json
 GET /personalities
@@ -167,6 +169,7 @@ GET /profiles/{profile_id}/image
 GET /profiles/{profile_id}/usage
 GET /projects
 GET /projects/{project_id}
+GET /promo/beats/{media_id}
 GET /pronunciation
 GET /pronunciation/export
 GET /setup/download-stream
@@ -253,6 +256,7 @@ POST /dub/transcribe/{job_id}
 POST /dub/translate
 POST /dub/upload
 POST /dub/use-downloaded-captions/{job_id}
+POST /editor/finalize
 POST /engines/audiocpp/runtime/install
 POST /engines/diarisation/select
 POST /engines/select
