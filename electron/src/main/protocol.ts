@@ -3,6 +3,7 @@ import { stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { Readable } from 'node:stream';
 import { net, protocol } from 'electron';
+import { SCENE_SCHEME_PRIVILEGES } from './promo-scene-protocol';
 
 export const APP_SCHEME = 'app';
 export const APP_HOST = 'voicestudio';
@@ -90,6 +91,8 @@ export function registerAppScheme(): void {
         bypassCSP: false,
       },
     },
+    // The custom-scene preview (promo-scene-protocol.ts): no fetch, no CORS, no CSP bypass.
+    SCENE_SCHEME_PRIVILEGES,
   ]);
 }
 

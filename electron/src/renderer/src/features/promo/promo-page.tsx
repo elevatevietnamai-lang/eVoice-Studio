@@ -60,6 +60,9 @@ import {
   type PromoShot,
 } from './promo-model';
 import { AnimatedOverlays } from './animated-overlays';
+import { SceneEditor } from './scene-editor';
+import { SceneWriter } from './scene-writer';
+import { sceneShapeMismatch } from './scene-model';
 import { useMissingMedia } from './missing-media';
 
 interface RenderResult {
@@ -187,6 +190,7 @@ function ShotRow({
   index,
   count,
   missing,
+  otherShape = false,
   busy,
   onChange,
   onMove,
@@ -196,6 +200,8 @@ function ShotRow({
   index: number;
   count: number;
   missing: boolean;
+  /** A rendered scene made for another format than the draft's. */
+  otherShape?: boolean;
   busy: boolean;
   onChange: (patch: Partial<PromoShot>) => void;
   onMove: (step: -1 | 1) => void;
@@ -228,6 +234,11 @@ function ShotRow({
             {shot.media.name}
             {missing && (
               <span className="ml-2 text-xs text-destructive">{t('promo.media_missing')}</span>
+            )}
+            {otherShape && (
+              <span className="ml-2 text-xs text-muted-foreground">
+                {t('promo.scene_warn_shape')}
+              </span>
             )}
           </span>
           <Button
@@ -772,6 +783,7 @@ export function PromoPage() {
                     index={index}
                     count={draft.shots.length}
                     missing={missing.has(shot.media.id)}
+                    otherShape={sceneShapeMismatch(draft, shot)}
                     busy={busy}
                     onChange={(patch) => updateShot(shot.key, patch)}
                     onMove={(step) =>
@@ -791,6 +803,18 @@ export function PromoPage() {
               </ul>
             )}
           </section>
+          <SceneEditor
+            draft={effective}
+            busy={busy}
+            onBusy={setOverlayBusy}
+            onAddOverlay={(overlay) =>
+              setDraft((current) => ({ ...current, overlays: [...current.overlays, overlay] }))
+            }
+            onAddShot={(shot) =>
+              setDraft((current) => ({ ...current, shots: [...current.shots, shot] }))
+            }
+            aiSlot={(load) => <SceneWriter disabled={busy} onScene={load} />}
+          />
           <AnimatedOverlays
             draft={effective}
             busy={busy}

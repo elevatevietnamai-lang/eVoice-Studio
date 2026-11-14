@@ -8,11 +8,14 @@ import {
   MAX_LOGO_BYTES,
   PromoRenderError,
   renderPromoOverlay,
+  renderPromoScene,
+  renderTimeoutMs,
   workerEnvironment,
   type PromoRenderDeps,
   type RenderChild,
 } from './promo-render';
 import type { WorkerReply, WorkerRequest } from './promo-render-worker';
+import { parseScene, SCENE_CSP } from './promo-scenes';
 import { parseTemplateInput, TEMPLATE_FONTS } from './promo-templates';
 
 const input = parseTemplateInput({
@@ -237,5 +240,82 @@ describe('workerEnvironment', () => {
     expect(env.HYPERFRAMES_BROWSER_PATH).toBeUndefined();
     expect(env.HTTPS_PROXY).toBeUndefined();
     expect(env.no_proxy).toBeUndefined();
+  });
+});
+
+describe('renderPromoScene', () => {
+  const scene = parseScene({
+    id: null,
+    name: 'Intro',
+    html: '<h1>{{title}}</h1><img src="{{logo}}">',
+    css: 'h1{font-family:"Oswald"}',
+    js: '',
+    params: [
+      { key: 'title', type: 'text', label: 'Title', value: 'Hi' },
+      { key: 'logo', type: 'image', label: 'Logo', value: '0123456789abcdef.png' },
+    ],
+    assets: [],
+    duration: 4,
+  });
+
+  it('renders a shot as an opaque MP4 from one self-contained page', async () => {
+    let page = '';
+    let format: string | undefined;
+    const { value, fetchImpl } = deps((request, reply) => {
+      page = readFileSync(join(request.projectDir, 'index.html'), 'utf8');
+      format = request.format;
+      expect(readdirSync(request.projectDir)).toEqual(['index.html']);
+      writeFileSync(request.outputPath, 'mp4');
+      reply({ type: 'done', blocked: [] });
+    });
+    await renderPromoScene(scene, { width: 1080, height: 1920, mode: 'shot' }, value, { fps: 30 });
+    expect(format).toBe('mp4');
+    expect(page).toContain(`content="${SCENE_CSP}"`);
+    expect(page).toContain('<h1>Hi</h1>');
+    // Where the scene paints nothing, a shot is black, not the producer's white.
+    expect(page).toContain('background:#000000');
+    // The logo and the font are inlined; the page loads nothing.
+    expect(page).toContain('src="data:image/png;base64,');
+    expect(page).toContain('src:url("data:font/ttf;base64,');
+    const upload = fetchImpl.mock.calls.at(-1) as unknown as [string, RequestInit];
+    expect(((upload[1].body as FormData).get('file') as File).name).toBe('scene.mp4');
+    expect(readdirSync(join(root, 'tmp'))).toEqual([]);
+  });
+
+  it('renders an overlay as a transparent WebM', async () => {
+    let format: string | undefined;
+    const { value } = deps((request, reply) => {
+      format = request.format;
+      writeFileSync(request.outputPath, 'webm');
+      reply({ type: 'done', blocked: [] });
+    });
+    let page = '';
+    const second = deps((request, reply) => {
+      page = readFileSync(join(request.projectDir, 'index.html'), 'utf8');
+      writeFileSync(request.outputPath, 'webm');
+      reply({ type: 'done', blocked: [] });
+    });
+    await renderPromoScene(scene, { width: 640, height: 360, mode: 'overlay' }, value, { fps: 30 });
+    expect(format).toBe('webm');
+    await renderPromoScene(scene, { width: 640, height: 360, mode: 'overlay' }, second.value, {
+      fps: 30,
+    });
+    expect(page).toContain('background:transparent');
+  });
+
+  it('kills a render that never answers', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    try {
+      const { value, child } = deps(() => {});
+      const pending = renderPromoScene(scene, { width: 640, height: 360, mode: 'overlay' }, value, {
+        fps: 30,
+      }).catch((e) => e);
+      await vi.waitFor(() => expect(child.env.PRODUCER_HEADLESS_SHELL_PATH).toBeTruthy());
+      await vi.advanceTimersByTimeAsync(renderTimeoutMs(4, 30) + 1);
+      expect(await pending).toMatchObject({ code: 'render_timeout' });
+      expect(child.killed).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

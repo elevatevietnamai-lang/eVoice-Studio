@@ -40,7 +40,7 @@ export const TEMPLATE_FONTS = {
     weight: '400 700',
   },
 } as const;
-type FontId = keyof typeof TEMPLATE_FONTS;
+export type FontId = keyof typeof TEMPLATE_FONTS;
 
 export const TEMPLATE_SPECS: Record<
   PromoTemplateId,
@@ -731,7 +731,7 @@ const MIME: Record<string, string> = {
 
 /** Fonts as data URIs, read once: the preview rebuilds on every edit. */
 const fontUris = new Map<string, string>();
-function fontDataUri(assetsDir: string, id: FontId): string {
+export function fontDataUri(assetsDir: string, id: FontId): string {
   const path = join(assetsDir, TEMPLATE_FONTS[id].source);
   let uri = fontUris.get(path);
   if (!uri) {

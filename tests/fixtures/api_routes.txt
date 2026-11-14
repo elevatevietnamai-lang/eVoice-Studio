@@ -170,6 +170,7 @@ GET /profiles/{profile_id}/usage
 GET /projects
 GET /projects/{project_id}
 GET /promo/beats/{media_id}
+GET /promo/scene-writer
 GET /pronunciation
 GET /pronunciation/export
 GET /setup/download-stream
@@ -316,6 +317,7 @@ POST /profiles/{profile_id}/unlock
 POST /projects
 POST /promo/media
 POST /promo/render
+POST /promo/scene-writer
 POST /pronunciation
 POST /pronunciation/import
 POST /pronunciation/test
