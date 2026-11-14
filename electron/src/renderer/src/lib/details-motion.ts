@@ -19,16 +19,16 @@ function reducedMotion() {
   return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-/** Height of the card with only its summary showing. */
+/**
+ * Height of the card with only its summary showing, measured rather than summed: margins on the
+ * summary (a `space-y-*` card), gaps and open-only summary styles all change it. Closing and
+ * reopening in the same task lays out twice but never paints the closed state.
+ */
 function closedHeight(details: HTMLDetailsElement) {
-  const summary = details.querySelector(':scope > summary');
-  const style = getComputedStyle(details);
-  const frame =
-    parseFloat(style.paddingTop) +
-    parseFloat(style.paddingBottom) +
-    parseFloat(style.borderTopWidth) +
-    parseFloat(style.borderBottomWidth);
-  return (summary?.getBoundingClientRect().height ?? 0) + frame;
+  details.open = false;
+  const height = details.getBoundingClientRect().height;
+  details.open = true;
+  return height;
 }
 
 export function toggleDetails(details: HTMLDetailsElement) {

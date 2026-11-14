@@ -48,7 +48,7 @@ def test_visible_brand_surfaces_say_voicestudio() -> None:
     assert "**OmniVoice** (default)" not in readme
 
 
-# The flattened eVoice mark: four bars with the star knocked out, then the orange star.
+# The flattened eVoice mark: four bars with the star knocked out, then the star above.
 BARS_START = "M23.744 16.758C23.744 14.821"
 MARK_BARS = "M101.5 44C101.5 27.984"
 MARK_SPARK = "M273.5 42.5Q282.5 69.5 309.5 78.5"
@@ -80,10 +80,10 @@ def test_brand_mark_is_shared_and_fills_the_icon() -> None:
     assert "<VoiceStudioMark" in about
     assert 'data-testid="voice-studio-logo"' in header
 
-    # Dark full-bleed tile with the orange-to-pink bars and the orange star.
+    # Near-black tile with a white mark: both paths white, no gradient.
     assert '<rect width="64" height="64" rx="14.5" fill="#030305"/>' in logo
-    for color in ("#F8981D", "#FF32A3", "#F88537"):
-        assert color in logo
+    assert re.findall(r'<path d="[^"]+" fill="([^"]+)"', logo) == ["#FFFFFF", "#FFFFFF"]
+    assert "<linearGradient" not in logo
     assert 'src="docs/logo.png"' in (ROOT / "README.md").read_text()
 
 
@@ -97,7 +97,31 @@ def test_canonical_logo_is_plain_paths_every_pipeline_can_read(name: str) -> Non
         assert unsupported not in logo, unsupported
     paths = _paths(logo)
     assert len(paths) == 2
-    assert 'fill="url(#bars)"' in re.search(r'<path d="[^"]+"[^>]*>', logo).group(0)
+    assert 'fill="#FFFFFF"' in re.search(r'<path d="[^"]+"[^>]*>', logo).group(0)
+
+
+# The retired orange-to-pink gradient and orange star; the mark is white everywhere.
+RETIRED_BRAND_COLORS = re.compile(r"#?(?:F8981D|FF32A3|F88537)\b", re.IGNORECASE)
+WHITE_MARK_SOURCES = (
+    "docs/logo.svg",
+    "docs/logo-small.svg",
+    "electron/public/favicon.svg",
+    "electron/src/shared/assets/integrations/voicestudio.svg",
+    "mobile/ios/VoiceStudio/AppIcon.svg",
+    "electron/src/renderer/src/components/brand/evoice-mark.tsx",
+    "electron/src/shared/components/brand/VoiceStudioMark.jsx",
+    "mobile/android/scripts/generate_brand_resources.py",
+    "scripts/render_brand_icons.py",
+    "scripts/create_google_play_assets.py",
+)
+
+
+@pytest.mark.parametrize("name", WHITE_MARK_SOURCES)
+def test_brand_sources_do_not_bring_back_the_gradient(name: str) -> None:
+    text = (ROOT / name).read_text(encoding="utf-8")
+    assert not RETIRED_BRAND_COLORS.search(text), name
+    if name.endswith(".svg"):
+        assert "<linearGradient" not in text, name
 
 
 def test_raster_icons_show_the_bars_and_the_cut_out_star() -> None:
@@ -110,16 +134,47 @@ def test_raster_icons_show_the_bars_and_the_cut_out_star() -> None:
         "docs/logo-256.png",
         "electron/build/icons/icon.png",
         "electron/build/icons/32x32.png",
+        "electron/public/icon-192.png",
+        "electron/public/icon-512.png",
     ):
         icon = Image.open(ROOT / name).convert("RGB")
         width, height = icon.size
-        # On the tall second bar: brand gradient, not the tile.
-        r, _g, b = icon.getpixel((int(width * 26 / 64), int(height * 20 / 64)))
-        assert r > 200 and b < 200, name
-        if width >= 256:
+        # On the tall second bar: the white mark, not the tile.
+        assert (
+            min(icon.getpixel((int(width * 26 / 64), int(height * 20 / 64)))) > 235
+        ), name
+        # Between the bars and the tile edge: the near-black tile.
+        assert max(icon.getpixel((int(width * 8 / 64), int(height * 32 / 64)))) < 24, (
+            name
+        )
+        if width >= 192:
             # Inside the star knocked out of the second bar: the tile shows through.
             pixel = icon.getpixel((int(width * 30 / 64), int(height * 32.24 / 64)))
             assert max(abs(a - b) for a, b in zip(pixel, tile)) < 24, name
+
+
+@pytest.mark.parametrize(
+    "name",
+    (
+        "electron/public/apple-touch-icon.png",
+        "electron/public/maskable-512.png",
+        "electron/public/social/voicestudio.jpg",
+        "mobile/ios/VoiceStudio/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png",
+        "store/google-play/icon-512.png",
+    ),
+)
+def test_full_bleed_icons_are_a_white_mark_on_the_opaque_tile(name: str) -> None:
+    from PIL import Image
+
+    # Rendered from mobile/ios/VoiceStudio/AppIcon.svg (Play: the adaptive icon layout).
+    icon = Image.open(ROOT / name)
+    assert icon.mode == "RGB", name
+    width, height = icon.size
+    assert max(icon.getpixel((0, 0))) < 24, name
+    # The tall second bar runs through the centre column above the star cut.
+    column = [icon.getpixel((x, int(height * 0.4))) for x in range(width)]
+    assert any(min(pixel) > 235 for pixel in column), name
+    assert not any(pixel[0] - pixel[2] > 60 for pixel in column), name
 
 
 @pytest.mark.parametrize(
@@ -147,12 +202,12 @@ def test_android_vectors_copy_the_canonical_paths(tmp_path: Path, name: str) -> 
             == "#FFFFFFFF"
         )
     else:
-        gradient = bars.find(".//gradient")
-        assert [item.get(android + "color") for item in gradient] == [
-            "#F8981D",
-            "#FF32A3",
-        ]
-        assert spark.get(android + "fillColor") == "#F88537"
+        assert bars.find(".//gradient") is None
+        assert (
+            bars.get(android + "fillColor")
+            == spark.get(android + "fillColor")
+            == "#FFFFFF"
+        )
     if name != "vs_logo":
         # 56 dp mark centred on the 108 dp canvas, inside the 66 dp safe circle.
         group = vector.find("group")

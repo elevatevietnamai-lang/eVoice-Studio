@@ -8,7 +8,7 @@ const SPARK = 'M273.5 42.5Q282.5 69.5 309.5 78.5Q282.5 87.5 273.5 114.5Q264.5 87
 /**
  * The eVoice Studio mark in one colour (`currentColor`) for the shared legacy chrome:
  * four voice bars with a cut-out star, and a star above. The desktop icon draws it
- * in the brand gradient on a dark tile.
+ * white on a near-black tile.
  */
 export default function VoiceStudioMark({ className = '', title, ...props }) {
   return (
