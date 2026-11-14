@@ -24,25 +24,36 @@ it('drops the cut-out star at 20 px and below unless asked for the full cut', ()
   expect(svg().dataset.mark).toBe('full');
 });
 
-it('paints the brand gradient and orange star, with one gradient id per instance', () => {
-  const { container } = render(
-    <>
-      <EVoiceMark size={64} />
-      <EVoiceMark size={64} />
-    </>,
-  );
-  const ids = [...container.querySelectorAll('linearGradient')].map((node) => node.id);
-  expect(new Set(ids).size).toBe(2);
-  const [bars, spark] = container.querySelectorAll('svg')[0].querySelectorAll('path');
-  expect(bars.getAttribute('fill')).toBe(`url(#${ids[0]})`);
-  expect(spark.getAttribute('fill')).toBe(COLORS.spark);
-  const stops = [...container.querySelectorAll('svg')[0].querySelectorAll('stop')];
-  expect(stops.map((stop) => stop.getAttribute('stop-color'))).toEqual([COLORS.top, COLORS.bottom]);
+it('paints a white mark, on the near-black tile only in the light theme by default', () => {
+  const { container } = render(<EVoiceMark size={64} />);
+  const svg = container.querySelector('svg')!;
+  expect(svg.dataset.tile).toBe('auto');
+  expect(container.querySelector('linearGradient')).toBeNull();
+  for (const path of svg.querySelectorAll('path')) {
+    expect(path.getAttribute('fill')).toBe(COLORS.mark);
+  }
+  const tiled = svg.querySelector('[data-part="tiled"]')!;
+  const bare = svg.querySelector('[data-part="bare"]')!;
+  expect(tiled.querySelector('rect')?.getAttribute('fill')).toBe(COLORS.tile);
+  // The dark theme hides the tile; the light theme hides the bare mark.
+  expect(tiled.getAttribute('class')).toContain('dark:hidden');
+  expect(bare.getAttribute('class')).toContain('hidden');
+  expect(bare.getAttribute('class')).toContain('dark:inline');
 });
 
-it('follows the theme in mono tone', () => {
+it('keeps the tile in both themes when asked, and drops it on request', () => {
+  const { container, rerender } = render(<EVoiceMark size={64} tile="always" />);
+  const svg = () => container.querySelector('svg')!;
+  expect(svg().querySelector('[data-part="bare"]')).toBeNull();
+  expect(svg().querySelector('[data-part="tiled"]')?.getAttribute('class') ?? '').not.toContain('hidden');
+  rerender(<EVoiceMark size={64} tile="none" />);
+  expect(svg().querySelector('rect')).toBeNull();
+  expect(svg().querySelector('[data-part="bare"]')?.getAttribute('class') ?? '').not.toContain('hidden');
+});
+
+it('follows the theme in mono tone, without a tile', () => {
   const { container } = render(<EVoiceMark size={64} tone="mono" />);
-  expect(container.querySelector('linearGradient')).toBeNull();
+  expect(container.querySelector('rect')).toBeNull();
   for (const path of container.querySelectorAll('path')) {
     expect(path.getAttribute('fill')).toBe('currentColor');
   }
