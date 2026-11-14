@@ -39,6 +39,7 @@ import { ImageNode, loadImageSource } from "./nodes/image-node";
 import { StickerNode, loadStickerSource } from "./nodes/sticker-node";
 import { TextNode, type ResolvedTextNodeState } from "./nodes/text-node";
 import { VideoNode } from "./nodes/video-node";
+import { ColorNode } from "./nodes/color-node";
 import type {
 	ResolvedVisualNodeState,
 	ResolvedVisualSourceNodeState,
@@ -89,6 +90,11 @@ async function resolveNode({
 		node.resolved = await resolveBlurBackgroundNode({ node, context });
 	} else if (node instanceof EffectLayerNode) {
 		node.resolved = resolveEffectLayerNode({ node, context });
+	} else if (node instanceof ColorNode && node.params.opacityAt) {
+		// eVoice Studio: a colour layer that fades over time.
+		node.resolved = {
+			opacity: node.params.opacityAt(mediaTimeToSeconds({ time: roundMediaTime({ time: context.time }) })),
+		};
 	}
 
 	await Promise.all(
@@ -149,16 +155,30 @@ function resolveVisualState({
 		elementStartTime: params.timeOffset,
 		elementDuration: params.duration,
 	});
-	const transform = resolveTransformAtTime({
+	const keyed = resolveTransformAtTime({
 		baseTransform: params.transform,
 		animations: params.animations,
 		localTime,
 	});
-	const opacity = resolveOpacityAtTime({
-		baseOpacity: params.opacity,
-		animations: params.animations,
-		localTime,
-	});
+	// eVoice Studio: the editor's per-frame adjustment (a transition) on top of the keyframes.
+	const adjust = params.frameAdjust?.(mediaTimeToSeconds({ time: roundMediaTime({ time: localTime }) })) ?? null;
+	const transform = adjust
+		? {
+				...keyed,
+				position: {
+					x: keyed.position.x + (adjust.offsetX ?? 0),
+					y: keyed.position.y + (adjust.offsetY ?? 0),
+				},
+				scaleX: keyed.scaleX * (adjust.scale ?? 1),
+				scaleY: keyed.scaleY * (adjust.scale ?? 1),
+			}
+		: keyed;
+	const opacity =
+		resolveOpacityAtTime({
+			baseOpacity: params.opacity,
+			animations: params.animations,
+			localTime,
+		}) * (adjust?.opacity ?? 1);
 	const containScale = Math.min(
 		context.renderer.width / sourceWidth,
 		context.renderer.height / sourceHeight,
@@ -174,6 +194,7 @@ function resolveVisualState({
 		localTime,
 		transform,
 		opacity,
+		...(adjust?.clip && { clip: adjust.clip }),
 		effectPasses: resolveEffectPassGroups({
 			effects: params.effects,
 			animations: params.animations,
@@ -203,7 +224,8 @@ async function resolveVideoNode({
 			retime: node.params.retime,
 		});
 	const frame = await videoCache.getFrameAt({
-		mediaId: node.params.mediaId,
+		// eVoice Studio: one decoder per cache key, so two clips of one file can play at once.
+		mediaId: node.params.cacheKey ?? node.params.mediaId,
 		file: node.params.file,
 		time: mediaTimeToSeconds({ time: roundMediaTime({ time: sourceTimeTicks }) }),
 	});

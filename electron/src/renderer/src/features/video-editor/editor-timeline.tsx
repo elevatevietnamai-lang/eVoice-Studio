@@ -6,7 +6,7 @@
  */
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { ArrowRightLeftIcon, EyeIcon, EyeOffIcon } from 'lucide-react';
 import { Volume2 as Volume2Shape, VolumeX as VolumeXShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,8 @@ import {
   type ElementRef,
 } from './project';
 import { formatTime } from './format';
+import { placedTransitions } from './transitions';
+import { stickerUrl } from './stickers/library';
 import { useMediaPoster, usePeaks, Waveform } from './clip-art';
 
 export const RULER_HEIGHT = 24;
@@ -68,6 +70,18 @@ function clipLabel(project: EditorProject, element: TimelineElement): string {
 
 /** A clip's picture strip and waveform, behind its label. */
 function ClipArt({ project, element }: { project: EditorProject; element: TimelineElement }) {
+  if (element.type === 'sticker') return <StickerArt id={element.stickerId} />;
+  return <MediaArt project={project} element={element} />;
+}
+
+function StickerArt({ id }: { id: string }) {
+  const url = stickerUrl(id);
+  return url ? (
+    <img src={url} alt="" className="pointer-events-none absolute top-1 right-1 bottom-1 h-[calc(100%-0.5rem)] w-auto opacity-80" aria-hidden />
+  ) : null;
+}
+
+function MediaArt({ project, element }: { project: EditorProject; element: TimelineElement }) {
   const media = 'mediaId' in element ? findMedia(project, element.mediaId) : undefined;
   const poster = useMediaPoster(media);
   const peaks = usePeaks(element.type === 'video' && element.isSourceAudioEnabled === false ? undefined : media);
@@ -304,7 +318,9 @@ export function EditorTimeline({
                       ? 'editor.track_audio'
                       : track.type === 'text'
                         ? 'editor.track_text'
-                        : 'editor.track_overlay',
+                        : track.type === 'graphic'
+                          ? 'editor.track_sticker'
+                          : 'editor.track_overlay',
                 )}
               </span>
               {'muted' in track && (
@@ -370,6 +386,23 @@ export function EditorTimeline({
                   </div>
                 );
               })}
+              {track.id === MAIN_TRACK_ID &&
+                placedTransitions(track.elements).map((item) => (
+                  <button
+                    key={item.fromId}
+                    type="button"
+                    className="absolute top-1/2 z-10 h-5 -translate-y-1/2 rounded-sm border border-foreground/60 bg-background/80 text-[10px] leading-none"
+                    style={{ left: item.start * pixelsPerSecond, width: Math.max(10, item.seconds * pixelsPerSecond) }}
+                    aria-label={t('editor.transition_marker', { name: t(`editor.transition_${item.type}`) })}
+                    title={t(`editor.transition_${item.type}`)}
+                    onPointerDown={(event) => {
+                      event.stopPropagation();
+                      edits.select({ trackId: MAIN_TRACK_ID, elementId: item.fromId });
+                    }}
+                  >
+                    <ArrowRightLeftIcon className="mx-auto size-3" aria-hidden />
+                  </button>
+                ))}
             </div>
           </div>
         ))}

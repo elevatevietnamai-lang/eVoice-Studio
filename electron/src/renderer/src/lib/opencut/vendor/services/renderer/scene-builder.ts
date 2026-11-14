@@ -19,6 +19,15 @@ import {
 } from "../../rendering";
 
 import { colorFilterFor } from "../../../color-filter";
+import { chromaKeyFor } from "../../../chroma-key";
+import type { FrameAdjustFn } from "../../../frame-adjust";
+
+/**
+ * eVoice Studio: what the editor adds to an element for one render (never
+ * saved): a per-frame adjustment and which decoder plays its file.
+ */
+export type EditorRenderExtras = { frameAdjust?: FrameAdjustFn; cacheKey?: string };
+const extrasOf = (element: object): EditorRenderExtras => element as EditorRenderExtras;
 
 const PREVIEW_MAX_IMAGE_SIZE = 2048;
 
@@ -85,6 +94,9 @@ function buildTrackNodes({
 							effects: element.effects ?? [],
 							masks: element.masks ?? [],
 							colorFilter: colorFilterFor(element.params),
+							chromaKey: chromaKeyFor(element.params),
+							frameAdjust: extrasOf(element).frameAdjust,
+							cacheKey: extrasOf(element).cacheKey,
 						}),
 					);
 				}
@@ -103,6 +115,8 @@ function buildTrackNodes({
 							effects: element.effects ?? [],
 							masks: element.masks ?? [],
 							colorFilter: colorFilterFor(element.params),
+							chromaKey: chromaKeyFor(element.params),
+							frameAdjust: extrasOf(element).frameAdjust,
 							...(isPreview && {
 								maxSourceSize: PREVIEW_MAX_IMAGE_SIZE,
 							}),
@@ -225,6 +239,8 @@ export type BuildSceneParams = {
 	duration: number;
 	background: TBackground;
 	isPreview?: boolean;
+	/** eVoice Studio: nodes drawn over the main track and under the overlays. */
+	afterMain?: AnyBaseNode[];
 };
 
 export function buildScene({
@@ -234,23 +250,25 @@ export function buildScene({
 	duration,
 	background,
 	isPreview,
+	afterMain = [],
 }: BuildSceneParams) {
 	const rootNode = new RootNode({ duration });
 	const mediaMap = new Map(mediaAssets.map((m) => [m.id, m]));
 
-	const visibleTracks = [
-		...tracks.overlay.filter((track) => !("hidden" in track && track.hidden)),
-		...(!tracks.main.hidden ? [tracks.main] : []),
-	];
-	const orderedTracksBottomToTop = visibleTracks.slice().reverse();
+	const visibleOverlays = tracks.overlay.filter((track) => !("hidden" in track && track.hidden));
 	const mainTrack = tracks.main.hidden ? undefined : tracks.main;
 
-	const allNodes = buildTrackNodes({
-		tracks: orderedTracksBottomToTop,
-		mediaMap,
-		canvasSize,
-		isPreview,
-	});
+	// eVoice Studio: the main track, then `afterMain`, then the overlays bottom to top.
+	const allNodes = [
+		...buildTrackNodes({ tracks: mainTrack ? [mainTrack] : [], mediaMap, canvasSize, isPreview }),
+		...afterMain,
+		...buildTrackNodes({
+			tracks: visibleOverlays.slice().reverse(),
+			mediaMap,
+			canvasSize,
+			isPreview,
+		}),
+	];
 
 	if (background.type === "blur") {
 		const blurNodes = buildBlurBackgroundNodes({

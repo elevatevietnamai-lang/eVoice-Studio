@@ -31,15 +31,29 @@ import { resolveNumberAtTime } from '@/lib/opencut/vendor/animation/values';
 import { cn } from '@/lib/utils';
 import { EditorTimeline } from './editor-timeline';
 import { MediaBin } from './media-bin';
+import {
+  createProject,
+  deleteProject,
+  duplicateProject,
+  openProject,
+  readLibrary,
+  readProject,
+  renameProject,
+  saveLibraryProject,
+  type Library,
+  type OpenProject,
+} from './library';
+import { ProjectLibrary } from './project-library';
+import { AnimatedTitleDialog } from './animated-title';
+import { titleFormOf, type TitleForm } from './title-input';
 import { PropertiesPanel, type Apply } from './properties-panel';
 import { formatTime, record, redo, undo, type History } from './format';
 import {
   SHAPE_SIZE,
   allTracks,
   findElement,
-  loadProject,
   projectSeconds,
-  saveProject,
+  safeStorage,
   secondsOf,
   ticks,
   type EditorMedia,
@@ -50,7 +64,10 @@ import {
   addCaptions,
   addMedia,
   captionsFromText,
+  addSticker,
   addText,
+  addTitleClip,
+  replaceTitleClip,
   deleteElement,
   hasKeyframes,
   insertMedia,
@@ -96,7 +113,11 @@ const isTyping = (target: EventTarget | null) =>
 
 export function VideoEditorPage() {
   const { t } = useTranslation();
-  const [project, setProject] = useState<EditorProject>(() => loadProject());
+  const [library, setLibrary] = useState<Library>(() => readLibrary());
+  // The open project carries its id, so a save always lands on the project it came from.
+  const [doc, setDoc] = useState<OpenProject>(() => openProject().opened);
+  const project = doc.project;
+  const setProject = useCallback((next: EditorProject) => setDoc((current) => ({ ...current, project: next })), []);
   const [history, setHistory] = useState<History<EditorProject>>({ past: [], future: [] });
   const merge = useRef<{ key: string; at: number } | null>(null);
   const [selection, setSelection] = useState<ElementRef | null>(null);
@@ -121,8 +142,13 @@ export function VideoEditorPage() {
   const { width, height } = SHAPE_SIZE[project.shape];
   const busy = exporting !== null;
 
+  const [saveFailed, setSaveFailed] = useState(false);
   useEffect(() => {
-    saveProject(project);
+    const result = saveLibraryProject(safeStorage(), doc);
+    setLibrary(result.library);
+    setSaveFailed(!result.saved);
+  }, [doc]);
+  useEffect(() => {
     player.current?.setProject(project).catch((cause) => setError(describeError(cause)));
   }, [project]);
   useEffect(() => () => player.current?.dispose(), []);
@@ -162,6 +188,56 @@ export function VideoEditorPage() {
     setHistory(result.history);
     setProject(result.value);
     if (!findElement(result.value, selection)) setSelection(null);
+  };
+
+  /** Shows another project: a fresh undo history, nothing selected, back to the start. */
+  const switchTo = (opened: OpenProject, next: Library) => {
+    player.current?.pause();
+    merge.current = null;
+    latest.current = opened.project;
+    setDoc(opened);
+    setLibrary(next);
+    setHistory({ past: [], future: [] });
+    setSelection(null);
+    setError(null);
+    setNotice(null);
+    player.current?.show(0);
+    setPlayhead(0);
+  };
+  const libraryActions = {
+    open: (id: string) => {
+      if (id === doc.id) return;
+      const result = openProject(safeStorage(), id);
+      switchTo(result.opened, result.library);
+    },
+    create: () => {
+      const result = createProject(safeStorage());
+      switchTo(result.opened, result.library);
+    },
+    rename: (id: string, name: string) => {
+      if (id === doc.id) apply((current) => ({ ...current, name }));
+      else setLibrary(renameProject(safeStorage(), id, name));
+    },
+    duplicate: (id: string) => {
+      const source = id === doc.id ? project : readProject(safeStorage(), id);
+      const name = t('editor.project_copy_name', { name: source?.name.trim() || t('editor.untitled') });
+      setLibrary(duplicateProject(safeStorage(), id, name).library);
+    },
+    remove: (id: string) => {
+      const next = deleteProject(safeStorage(), id);
+      if (id !== doc.id) return setLibrary(next);
+      const result = openProject(safeStorage(), next.current);
+      switchTo(result.opened, result.library);
+    },
+  };
+
+  /** The animated title dialog: a new title, or the selected one to render again. */
+  const [titleDialog, setTitleDialog] = useState<{ ref: ElementRef | null; form: TitleForm | null } | null>(null);
+  const onTitleRendered = (media: EditorMedia, form: TitleForm) => {
+    const editing = titleDialog?.ref ?? null;
+    const saved = JSON.stringify(form);
+    if (editing) applySelecting((current) => replaceTitleClip(current, editing, media, saved));
+    else applySelecting((current) => addTitleClip(current, media, playhead, saved));
   };
 
   const seek = useCallback((seconds: number) => {
@@ -364,6 +440,8 @@ export function VideoEditorPage() {
     <div className="flex h-full min-h-0 flex-col">
       <WorkspaceHeader>
         <h1 className="text-sm font-medium">{t('editor.title')}</h1>
+        <span className="min-w-0 truncate text-sm text-muted-foreground">{project.name.trim() || t('editor.untitled')}</span>
+        <ProjectLibrary library={library} currentId={doc.id} actions={libraryActions} />
       </WorkspaceHeader>
       <div className="flex min-h-0 flex-1">
         <SecondarySidebar title={t('editor.media')} icon={SquarePlayIcon} size="wide" variant="controls">
@@ -372,6 +450,8 @@ export function VideoEditorPage() {
             uploading={uploading}
             onUpload={(files) => void upload(files)}
             onAddText={() => applySelecting((current) => addText(current, playhead, t('editor.text_default')))}
+            onAddSticker={(id, name) => applySelecting((current) => addSticker(current, playhead, id, name))}
+            onAddTitle={() => setTitleDialog({ ref: null, form: null })}
             missing={missing}
             captioning={captioning}
             onCaptions={() => void autoCaptions()}
@@ -388,6 +468,7 @@ export function VideoEditorPage() {
         <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-4">
           <Notice message={error} tone="error" onDismiss={() => setError(null)} />
           <Notice message={notice} tone="info" onDismiss={() => setNotice(null)} />
+          <Notice message={saveFailed ? t('editor.save_failed') : null} tone="error" onDismiss={() => setSaveFailed(false)} />
           <div className="flex min-h-0 flex-1 gap-4">
             <div className="flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-2">
               <canvas
@@ -404,7 +485,16 @@ export function VideoEditorPage() {
               />
             </div>
             <aside className="w-72 shrink-0 overflow-y-auto pr-1" aria-label={t('editor.properties')}>
-              <PropertiesPanel project={project} selection={selected ? selection : null} playhead={playhead} apply={apply} />
+              <PropertiesPanel
+                project={project}
+                selection={selected ? selection : null}
+                playhead={playhead}
+                apply={apply}
+                onEditTitle={(ref) => {
+                  const found = findElement(project, ref);
+                  if (found) setTitleDialog({ ref, form: titleFormOf(found.element) });
+                }}
+              />
             </aside>
           </div>
           <div className="flex items-center gap-1">
@@ -474,6 +564,13 @@ export function VideoEditorPage() {
           )}
         </main>
       </div>
+      <AnimatedTitleDialog
+        open={titleDialog !== null}
+        onOpenChange={(open) => !open && setTitleDialog(null)}
+        project={project}
+        initial={titleDialog?.form ?? null}
+        onRendered={onTitleRendered}
+      />
     </div>
   );
 }

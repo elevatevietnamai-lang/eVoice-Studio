@@ -17,8 +17,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { FILTER_PRESETS } from '@/lib/opencut/color-filter';
 import {
+  DEFAULT_KEY_COLOR,
+  DEFAULT_SOFTNESS,
+  DEFAULT_SPILL,
+  DEFAULT_THRESHOLD,
+} from '@/lib/opencut/chroma-key';
+import {
   EDITOR_FPS,
   EDITOR_SHAPES,
+  MAIN_TRACK_ID,
   MAX_SPEED,
   MIN_SPEED,
   findElement,
@@ -27,6 +34,7 @@ import {
 } from './project';
 import {
   TEXT_FONTS,
+  baseNumber,
   hasKeyframes,
   keyframeAt,
   localTicks,
@@ -34,9 +42,25 @@ import {
   removeKeyframe,
   setKeyframe,
   setParam,
+  setKeepPitch,
+  setMaskShape,
   setSourceAudio,
   setSpeed,
+  setStickerId,
+  setTransition,
 } from './timeline-ops';
+import { MASK_PARAMS, MASK_SHAPES, maskShapeOf } from './masks';
+import { DEFAULT_STICKER_COLOR, isRecolorable, parseStickerId, stickerId } from './stickers/library';
+import { titleFormOf } from './title-input';
+import { SparklesIcon } from 'lucide-react';
+import {
+  DEFAULT_TRANSITION_SECONDS,
+  MAX_TRANSITION_SECONDS,
+  MIN_TRANSITION_SECONDS,
+  TRANSITIONS,
+  placedTransitions,
+  transitionOf,
+} from './transitions';
 
 export type Apply = (edit: (project: EditorProject) => EditorProject, mergeKey?: string) => void;
 
@@ -90,7 +114,7 @@ function KeyframedNumber({
   const { t } = useTranslation();
   const [path] = paths;
   const value = resolveNumberAtTime({
-    baseValue: number(element.params[path]),
+    baseValue: baseNumber(element, path),
     animations: element.animations,
     propertyPath: path as never,
     localTime: localTicks(element, playhead),
@@ -139,6 +163,49 @@ function KeyframedNumber({
         onValueChange={(next) => write(single(next))}
       />
     </div>
+  );
+}
+
+/** The transition from a main-track clip into the next one. */
+function TransitionSettings({ project, selection, apply }: { project: EditorProject; selection: ElementRef; apply: Apply }) {
+  const { t } = useTranslation();
+  const found = findElement(project, selection);
+  if (!found) return null;
+  const chosen = transitionOf(found.element);
+  const type = chosen?.type ?? 'none';
+  const seconds = chosen?.seconds ?? DEFAULT_TRANSITION_SECONDS;
+  const placed = placedTransitions(project.tracks.main.elements).find((item) => item.fromId === selection.elementId);
+  const set = (nextType: string, nextSeconds: number, merge?: string) =>
+    apply((current) => setTransition(current, selection, nextType, nextSeconds), merge);
+  return (
+    <Section title={t('editor.transition')}>
+      <p className="text-xs text-muted-foreground">{t('editor.transition_hint')}</p>
+      <div className="flex flex-wrap gap-1">
+        {TRANSITIONS.map((item) => (
+          <Button
+            key={item}
+            size="xs"
+            variant={type === item ? 'secondary' : 'ghost'}
+            aria-pressed={type === item}
+            onClick={() => set(item, seconds)}
+          >
+            {t(`editor.transition_${item}`)}
+          </Button>
+        ))}
+      </div>
+      {type !== 'none' && (
+        <Row label={t('editor.transition_duration', { seconds: (placed?.seconds ?? seconds).toFixed(1) })}>
+          <Slider
+            min={MIN_TRANSITION_SECONDS}
+            max={MAX_TRANSITION_SECONDS}
+            step={0.1}
+            value={[seconds]}
+            aria-label={t('editor.transition_duration_label')}
+            onValueChange={(value) => set(type, single(value), `${selection.elementId}:transition`)}
+          />
+        </Row>
+      )}
+    </Section>
   );
 }
 
@@ -202,11 +269,13 @@ export function PropertiesPanel({
   selection,
   playhead,
   apply,
+  onEditTitle,
 }: {
   project: EditorProject;
   selection: ElementRef | null;
   playhead: number;
   apply: Apply;
+  onEditTitle?: (ref: ElementRef) => void;
 }) {
   const { t } = useTranslation();
   const found = findElement(project, selection);
@@ -215,6 +284,9 @@ export function PropertiesPanel({
   const visual = element.type !== 'audio';
   const sounding = element.type === 'video' || element.type === 'audio';
   const common = { element, selection, playhead, apply };
+  const main = [...project.tracks.main.elements].sort((a, b) => a.startTime - b.startTime);
+  const hasNext =
+    selection.trackId === MAIN_TRACK_ID && main.findIndex((item) => item.id === element.id) < main.length - 1;
   const param = (key: string, value: string | number | boolean, merge = true) =>
     apply((current) => setParam(current, selection, key, value), merge ? `${selection.elementId}:${key}` : undefined);
 
@@ -322,6 +394,38 @@ export function PropertiesPanel({
         </Section>
       )}
 
+      {titleFormOf(element) && onEditTitle && (
+        <Section title={t('editor.title_dialog')}>
+          <p className="text-xs text-muted-foreground">{t('editor.title_edit_hint')}</p>
+          <Button size="sm" variant="outline" onClick={() => onEditTitle(selection)}>
+            <SparklesIcon />
+            {t('editor.title_edit')}
+          </Button>
+        </Section>
+      )}
+
+      {element.type === 'sticker' && isRecolorable(element.stickerId) && (
+        <Section title={t('editor.sticker')}>
+          <Row label={t('editor.sticker_color')}>
+            <Input
+              type="color"
+              className="h-8 p-1"
+              value={parseStickerId(element.stickerId)?.color ?? DEFAULT_STICKER_COLOR}
+              onChange={(event) => {
+                const parsed = parseStickerId(element.stickerId);
+                if (parsed)
+                  apply(
+                    (current) => setStickerId(current, selection, stickerId(parsed.name, event.target.value)),
+                    `${selection.elementId}:sticker-color`,
+                  );
+              }}
+            />
+          </Row>
+        </Section>
+      )}
+
+      {hasNext && <TransitionSettings project={project} selection={selection} apply={apply} />}
+
       {(element.type === 'video' || element.type === 'image') && (
         <Section title={t('editor.color')}>
           <div className="flex flex-wrap gap-1">
@@ -352,6 +456,112 @@ export function PropertiesPanel({
               />
             </Row>
           ))}
+        </Section>
+      )}
+
+      {(element.type === 'video' || element.type === 'image') && (
+        <Section title={t('editor.mask')}>
+          <div className="flex flex-wrap gap-1">
+            {MASK_SHAPES.map((shape) => {
+              const active = maskShapeOf(element) === shape;
+              return (
+                <Button
+                  key={shape}
+                  size="xs"
+                  variant={active ? 'secondary' : 'ghost'}
+                  aria-pressed={active}
+                  onClick={() => apply((current) => setMaskShape(current, selection, shape))}
+                >
+                  {t(`editor.mask_${shape}`)}
+                </Button>
+              );
+            })}
+          </div>
+          {maskShapeOf(element) !== 'none' && (
+            <>
+              {(['centerX', 'centerY', 'width', 'height', 'rotation', 'feather'] as const)
+                .filter((key) => !(key === 'width' && maskShapeOf(element) === 'band'))
+                .map((key) => (
+                  <KeyframedNumber
+                    key={key}
+                    {...common}
+                    label={t(`editor.mask_${key}`)}
+                    paths={[`mask.${key}`]}
+                    min={MASK_PARAMS[key].min}
+                    max={MASK_PARAMS[key].max!}
+                    step={key === 'rotation' || key === 'feather' ? 1 : 0.01}
+                    display={(value) =>
+                      key === 'rotation' ? `${Math.round(value)}°` : key === 'feather' ? `${Math.round(value)} px` : `${Math.round(value * 100)}%`
+                    }
+                  />
+                ))}
+              <div className="flex items-center justify-between gap-2 text-xs">
+                <span className="text-muted-foreground">{t('editor.mask_invert')}</span>
+                <Switch
+                  aria-label={t('editor.mask_invert')}
+                  checked={'masks' in element && element.masks?.[0]?.params.inverted === true}
+                  onCheckedChange={(on) => param('mask.inverted', on, false)}
+                />
+              </div>
+            </>
+          )}
+        </Section>
+      )}
+
+      {(element.type === 'video' || element.type === 'image') && (
+        <Section title={t('editor.chroma')}>
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <span className="text-muted-foreground">{t('editor.chroma_enable')}</span>
+            <Switch
+              aria-label={t('editor.chroma_enable')}
+              checked={element.params['chroma.enabled'] === true}
+              onCheckedChange={(on) => param('chroma.enabled', on, false)}
+            />
+          </div>
+          {element.params['chroma.enabled'] === true && (
+            <>
+              <p className="text-xs text-muted-foreground">{t('editor.chroma_hint')}</p>
+              <div className="flex items-end gap-2">
+                <Row label={t('editor.chroma_color')}>
+                  <Input
+                    type="color"
+                    className="h-8 w-16 p-1"
+                    value={String(element.params['chroma.color'] ?? DEFAULT_KEY_COLOR)}
+                    onChange={(event) => param('chroma.color', event.target.value)}
+                  />
+                </Row>
+                {(['#00ff00', '#0000ff'] as const).map((preset) => (
+                  <Button
+                    key={preset}
+                    size="xs"
+                    variant={(element.params['chroma.color'] ?? DEFAULT_KEY_COLOR) === preset ? 'secondary' : 'ghost'}
+                    aria-pressed={(element.params['chroma.color'] ?? DEFAULT_KEY_COLOR) === preset}
+                    onClick={() => param('chroma.color', preset, false)}
+                  >
+                    {t(preset === '#00ff00' ? 'editor.chroma_green' : 'editor.chroma_blue')}
+                  </Button>
+                ))}
+              </div>
+              {(
+                [
+                  ['threshold', DEFAULT_THRESHOLD, 0, 1],
+                  ['softness', DEFAULT_SOFTNESS, 0, 0.5],
+                  ['spill', DEFAULT_SPILL, 0, 1],
+                ] as const
+              ).map(([key, fallback, min, max]) => (
+                <Row key={key} label={`${t(`editor.chroma_${key}`)} ${Math.round(number(element.params[`chroma.${key}`], fallback) * 100)}%`}>
+                  <Slider
+                    min={min}
+                    max={max}
+                    step={0.01}
+                    value={[number(element.params[`chroma.${key}`], fallback)]}
+                    aria-label={t(`editor.chroma_${key}`)}
+                    onValueChange={(value) => param(`chroma.${key}`, single(value))}
+                  />
+                </Row>
+              ))}
+            </>
+          )}
         </Section>
       )}
 
@@ -427,7 +637,21 @@ export function PropertiesPanel({
               </SelectContent>
             </Select>
           </Row>
-          {rateOf(element) !== 1 && <p className="text-xs text-muted-foreground">{t('editor.speed_pitch')}</p>}
+          {rateOf(element) !== 1 && 'retime' in element && (
+            <div className="space-y-1 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground">{t('editor.keep_pitch')}</span>
+                <Switch
+                  aria-label={t('editor.keep_pitch')}
+                  checked={element.retime?.maintainPitch === true}
+                  onCheckedChange={(on) => apply((current) => setKeepPitch(current, selection, on))}
+                />
+              </div>
+              <p className="text-muted-foreground">
+                {t(element.retime?.maintainPitch === true ? 'editor.keep_pitch_hint' : 'editor.speed_pitch')}
+              </p>
+            </div>
+          )}
         </Section>
       )}
     </div>

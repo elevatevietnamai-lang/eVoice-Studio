@@ -1,4 +1,7 @@
 import { applyColorFilter } from "../../../../color-filter";
+import { applyChromaKey, chromaKeyId } from "../../../../chroma-key";
+import { drawClipMask } from "../../../../frame-adjust";
+import { resolveMaskAtTime } from "../../../../mask-keyframes";
 import { drawCssBackground } from "../../../gradients";
 import { getMaskDefinition } from "../../../masks";
 import { incrementCounter } from "../../../diagnostics/render-perf";
@@ -92,6 +95,11 @@ async function collectNode({
 	}
 
 	if (node instanceof ColorNode) {
+		// eVoice Studio: a fading colour layer is skipped while it is clear.
+		const colorOpacity = node.params.opacityAt ? (node.resolved?.opacity ?? 0) : 1;
+		if (colorOpacity <= 0) {
+			return;
+		}
 		const textureId = `${path}:color`;
 		const { width, height } = renderer;
 		textures.set(textureId, {
@@ -113,7 +121,7 @@ async function collectNode({
 			type: "layer",
 			textureId,
 			transform: fullCanvasTransform(renderer),
-			opacity: 1,
+			opacity: Math.min(1, colorOpacity),
 			blendMode: "normal",
 			effectPassGroups: [],
 			mask: null,
@@ -241,9 +249,11 @@ async function collectVisualSourceNode({
 			: (node.resolved as ResolvedVisualSourceNodeState).sourceHeight;
 
 	const textureId = `${path}:source`;
-	// eVoice Studio: a colour look is drawn into a per-texture canvas first, so
-	// the revision carries the filter as well as the frame.
+	// eVoice Studio: a colour look and a chroma key are drawn into per-texture
+	// canvases first, so the revision carries them as well as the frame.
 	const colorFilter = node instanceof GraphicNode ? undefined : node.params.colorFilter;
+	const chromaKey = node instanceof GraphicNode ? undefined : node.params.chromaKey;
+	const keyId = chromaKeyId(chromaKey);
 	const sourceRevision =
 		node instanceof GraphicNode
 			? undefined
@@ -251,10 +261,17 @@ async function collectVisualSourceNode({
 	textures.set(textureId, {
 		kind: "external",
 		id: textureId,
-		source: applyColorFilter(textureId, source, sourceWidth, sourceHeight, colorFilter),
+		source: applyChromaKey(
+			textureId,
+			applyColorFilter(textureId, source, sourceWidth, sourceHeight, colorFilter),
+			sourceWidth,
+			sourceHeight,
+			chromaKey,
+		),
 		width: sourceWidth,
 		height: sourceHeight,
-		revision: colorFilter ? `${sourceRevision ?? ""}|${colorFilter}` : sourceRevision,
+		revision:
+			colorFilter || keyId ? `${sourceRevision ?? ""}|${colorFilter ?? ""}|${keyId}` : sourceRevision,
 	});
 
 	const transform = computeVisualTransform({
@@ -394,15 +411,33 @@ function buildMaskArtifacts({
 	mask: LayerMaskDescriptor | null;
 	strokeLayer: FrameItemDescriptor | null;
 } {
-	const mask = node.params.masks?.[0];
-	if (!mask) {
-		return { mask: null, strokeLayer: null };
-	}
-
-	const definition = getMaskDefinition(mask.type);
-
-	if (definition.isActive?.(mask.params) === false) {
-		return { mask: null, strokeLayer: null };
+	// eVoice Studio: keyframed mask params are resolved for this frame first.
+	const savedMask = node.params.masks?.[0];
+	const mask =
+		savedMask && node.resolved
+			? resolveMaskAtTime(savedMask, node.params.animations, node.resolved.localTime)
+			: savedMask;
+	// eVoice Studio: a wipe transition shows only a band of the canvas.
+	const clip = node.resolved?.clip;
+	const definition = mask ? getMaskDefinition(mask.type) : null;
+	if (!mask || !definition || definition.isActive?.(mask.params) === false) {
+		if (!clip) {
+			return { mask: null, strokeLayer: null };
+		}
+		const clipTextureId = `${path}:mask`;
+		const { width, height } = renderer;
+		textures.set(clipTextureId, {
+			kind: "rendered",
+			id: clipTextureId,
+			contentHash: `clip:${clip.from}:${clip.to}:${width}x${height}`,
+			width,
+			height,
+			draw: (ctx) => drawClipMask(ctx, width, height, clip),
+		});
+		return {
+			mask: { textureId: clipTextureId, feather: 0, inverted: false },
+			strokeLayer: null,
+		};
 	}
 
 	const { body } = definition.renderer;
@@ -418,8 +453,8 @@ function buildMaskArtifacts({
 
 	const maskTextureId = `${path}:mask`;
 	const { width: canvasWidth, height: canvasHeight } = renderer;
-	const maskContentHash = `mask:${mask.type}:${JSON.stringify(mask.params)}:${transformHash(transform)}:${canvasWidth}x${canvasHeight}:body=${body.kind}:fastPath=${usesOpaqueFastPath}`;
-	const drawMask: TextureCanvasDrawFn = (ctx) => {
+	const maskContentHash = `mask:${mask.type}:${JSON.stringify(mask.params)}:${transformHash(transform)}:${canvasWidth}x${canvasHeight}:body=${body.kind}:fastPath=${usesOpaqueFastPath}:clip=${clip ? `${clip.from}:${clip.to}` : ""}`;
+	const drawShape: TextureCanvasDrawFn = (ctx) => {
 		const { canvas: elementMaskCanvas, context: elementMaskCtx } =
 			createCanvasSurface({
 				width: Math.round(transform.width),
@@ -467,6 +502,23 @@ function buildMaskArtifacts({
 		}
 
 		drawTransformedCanvas({ ctx, source: elementMaskCanvas, transform });
+	};
+	// eVoice Studio: with a wipe, the band cuts the mask; an inverted mask is
+	// inverted here, before the cut, rather than by the compositor after it.
+	const drawMask: TextureCanvasDrawFn = (ctx) => {
+		if (!clip) {
+			drawShape(ctx);
+			return;
+		}
+		if (mask.params.inverted) {
+			ctx.fillStyle = "white";
+			ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+			ctx.globalCompositeOperation = "destination-out";
+		}
+		drawShape(ctx);
+		ctx.globalCompositeOperation = "destination-in";
+		drawClipMask(ctx, canvasWidth, canvasHeight, clip);
+		ctx.globalCompositeOperation = "source-over";
 	};
 	textures.set(maskTextureId, {
 		kind: "rendered",
@@ -536,7 +588,7 @@ function buildMaskArtifacts({
 		mask: {
 			textureId: maskTextureId,
 			feather,
-			inverted: mask.params.inverted,
+			inverted: clip ? false : mask.params.inverted,
 		},
 		strokeLayer,
 	};

@@ -3,15 +3,17 @@
  * schedule plays the preview (AudioContext) and renders the export
  * (OfflineAudioContext), so what you hear is what you export.
  *
- * Speed changes play the source faster or slower, which also changes its
- * pitch: the time-stretch library OpenCut uses (soundtouchjs) is LGPL and is
- * not shipped.
+ * A sped-up or slowed clip with Keep pitch on plays a copy of its file
+ * stretched in time at the same pitch (see time-stretch.ts); with it off (and
+ * in projects from before Keep pitch), the source plays faster or slower and
+ * its pitch moves with the speed.
  */
 import { resolveNumberAtTime } from '@/lib/opencut/vendor/animation/values';
 import type { ElementAnimations } from '@/lib/opencut/vendor/animation/types';
 import type { TimelineElement } from '@/lib/opencut/vendor/timeline/types';
 import { findMedia, secondsOf, ticks, type EditorProject } from './project';
 import { rateOf } from './timeline-ops';
+import { crossfadeGain, placedTransitions } from './transitions';
 
 export interface AudioSegment {
   mediaId: string;
@@ -21,12 +23,17 @@ export interface AudioSegment {
   /** Seconds into the source where the clip starts. */
   offset: number;
   rate: number;
+  /** Plays the time-stretched copy (`bufferKey`) so the pitch stays. */
+  keepPitch: boolean;
   volumeDb: number;
   fadeIn: number;
   fadeOut: number;
   animations: ElementAnimations | undefined;
   /** Lower this clip while another clip has sound (music under a voice). */
   duck: boolean;
+  /** Seconds this clip crossfades with the clip before and after it (main-track transitions). */
+  crossIn: number;
+  crossOut: number;
 }
 
 /** How far a ducked clip drops while something else is heard: about −12 dB. */
@@ -90,11 +97,14 @@ function segmentFor(element: TimelineElement): AudioSegment | null {
     duration: secondsOf(element.duration),
     offset: secondsOf(element.trimStart),
     rate: rateOf(element),
+    keepPitch: rateOf(element) !== 1 && 'retime' in element && element.retime?.maintainPitch === true,
     volumeDb: number(element.params.volume),
     fadeIn: Math.max(0, number(element.params.fadeIn)),
     fadeOut: Math.max(0, number(element.params.fadeOut)),
     animations: element.animations,
     duck: element.params.duck === true,
+    crossIn: 0,
+    crossOut: 0,
   };
 }
 
@@ -102,11 +112,16 @@ function segmentFor(element: TimelineElement): AudioSegment | null {
 export function audioSegments(project: EditorProject): AudioSegment[] {
   const segments: AudioSegment[] = [];
   const tracks = [project.tracks.main, ...project.tracks.overlay, ...project.tracks.audio];
+  const transitions = placedTransitions(project.tracks.main.elements);
+  const crossIn = new Map(transitions.map((item) => [item.toId, item.seconds]));
+  const crossOut = new Map(transitions.map((item) => [item.fromId, item.seconds]));
   for (const track of tracks) {
     if ('muted' in track && track.muted) continue;
     for (const element of track.elements) {
       const segment = segmentFor(element);
       if (!segment) continue;
+      segment.crossIn = crossIn.get(element.id) ?? 0;
+      segment.crossOut = crossOut.get(element.id) ?? 0;
       const media = findMedia(project, segment.mediaId);
       if (!media || media.kind === 'image' || media.has_audio === false) continue;
       segments.push(segment);
@@ -114,6 +129,10 @@ export function audioSegments(project: EditorProject): AudioSegment[] {
   }
   return segments;
 }
+
+/** Which decoded buffer a segment plays: the file, or its copy stretched to the segment's speed. */
+export const bufferKey = (segment: Pick<AudioSegment, 'mediaId' | 'rate' | 'keepPitch'>): string =>
+  segment.keepPitch ? `${segment.mediaId}@${segment.rate}` : segment.mediaId;
 
 export const dbToGain = (db: number) => (db <= -60 ? 0 : 10 ** (db / 20));
 
@@ -128,7 +147,8 @@ export function gainAt(segment: AudioSegment, local: number): number {
   let fade = 1;
   if (segment.fadeIn > 0) fade = Math.min(fade, local / segment.fadeIn);
   if (segment.fadeOut > 0) fade = Math.min(fade, (segment.duration - local) / segment.fadeOut);
-  return dbToGain(db) * Math.max(0, Math.min(1, fade));
+  const cross = crossfadeGain(local, segment.duration, segment.crossIn, segment.crossOut);
+  return dbToGain(db) * Math.max(0, Math.min(1, fade)) * cross;
 }
 
 /**
@@ -147,7 +167,7 @@ export function scheduleSegments(
 ): AudioBufferSourceNode[] {
   const sources: AudioBufferSourceNode[] = [];
   for (const segment of segments) {
-    const buffer = buffers.get(segment.mediaId);
+    const buffer = buffers.get(bufferKey(segment));
     const end = segment.start + segment.duration;
     if (!buffer || end <= from) continue;
     const local = Math.max(0, from - segment.start);
@@ -156,7 +176,9 @@ export function scheduleSegments(
     const startAt = when + Math.max(0, segment.start - from);
     const source = context.createBufferSource();
     source.buffer = buffer;
-    source.playbackRate.value = segment.rate;
+    // A stretched copy already runs at the clip's speed; the file itself is sped up.
+    const playback = segment.keepPitch ? 1 : segment.rate;
+    source.playbackRate.value = playback;
     const gain = context.createGain();
     const steps = Math.max(2, Math.ceil(remaining * CURVE_STEPS_PER_SECOND) + 1);
     const curve = new Float32Array(steps);
@@ -165,7 +187,8 @@ export function scheduleSegments(
       curve[i] = gainAt(segment, local + (remaining * i) / (steps - 1)) * (duck ? duck[i] : 1);
     gain.gain.setValueCurveAtTime(curve, startAt, remaining);
     source.connect(gain).connect(destination);
-    source.start(startAt, segment.offset + local * segment.rate, remaining * segment.rate);
+    const offset = segment.keepPitch ? segment.offset / segment.rate + local : segment.offset + local * segment.rate;
+    source.start(startAt, offset, remaining * playback);
     sources.push(source);
   }
   return sources;

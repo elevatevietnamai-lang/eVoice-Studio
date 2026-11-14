@@ -8,6 +8,7 @@ import {
   LayersIcon,
   LoaderCircleIcon,
   PlusIcon,
+  SparklesIcon,
   TypeIcon,
   UploadIcon,
 } from 'lucide-react';
@@ -15,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { apiPath } from '@/lib/api/client';
 import type { EditorMedia, EditorProject } from './project';
 import { formatTime } from './format';
+import { StickerPicker } from './sticker-picker';
 
 function Thumb({ media }: { media: EditorMedia }) {
   if (media.kind === 'image')
@@ -32,8 +34,12 @@ export function MediaBin({
   onAddText,
   captioning,
   onCaptions,
+  onAddSticker,
+  onAddTitle,
   missing,
 }: {
+  onAddTitle: () => void;
+  onAddSticker: (id: string, name: string) => void;
   missing: ReadonlySet<string>;
   project: EditorProject;
   uploading: boolean;
@@ -68,12 +74,17 @@ export function MediaBin({
           <TypeIcon />
           {t('editor.add_text')}
         </Button>
+        <Button size="sm" variant="outline" className="col-span-2" onClick={onAddTitle}>
+          <SparklesIcon />
+          {t('editor.title_add')}
+        </Button>
         <Button size="sm" variant="outline" className="col-span-2" disabled={captioning} onClick={onCaptions}>
           {captioning ? <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" /> : <CaptionsIcon />}
           {t(captioning ? 'editor.captions_working' : 'editor.captions')}
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">{t('editor.captions_hint')}</p>
+      <StickerPicker onAdd={onAddSticker} />
       {project.media.length === 0 ? (
         <p className="text-xs text-muted-foreground">{t('editor.media_empty')}</p>
       ) : (

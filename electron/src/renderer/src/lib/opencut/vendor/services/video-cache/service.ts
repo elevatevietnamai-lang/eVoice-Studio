@@ -281,6 +281,9 @@ export class VideoCache {
 			const sink = new CanvasSink(videoTrack, {
 				poolSize: 3,
 				fit: "contain",
+				// eVoice Studio: keep the alpha of transparent video (VP9 with alpha,
+				// such as rendered animated titles) instead of a black background.
+				alpha: await videoTrack.canBeTransparent(),
 			});
 
 			this.sinks.set(mediaId, {

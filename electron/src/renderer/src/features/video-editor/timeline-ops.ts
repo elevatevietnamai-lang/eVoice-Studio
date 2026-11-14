@@ -9,8 +9,10 @@
  */
 import type {
   AudioTrack,
+  GraphicTrack,
   ImageElement,
   SceneTracks,
+  StickerElement,
   TextElement,
   TextTrack,
   TimelineElement,
@@ -49,9 +51,15 @@ import {
   type EditorProject,
   type ElementRef,
 } from './project';
+import { TRANSITION_KEYS, overlapTicks } from './transitions';
+import { MASK_PARAMS, maskKeyOf, maskValue, withMaskParam, withMaskShape, type MaskShape } from './masks';
+import { TITLE_PARAM } from './title-input';
 
 export const DEFAULT_STILL_SECONDS = 3;
 export const DEFAULT_TEXT_SECONDS = 3;
+export const DEFAULT_STICKER_SECONDS = 3;
+/** A new sticker covers about a third of the frame's short side. */
+const STICKER_SCALE = 0.35;
 /** Text fonts the renderer has without a download (fontsource in main.tsx). */
 export const TEXT_FONTS = ['Inter Variable', 'Space Grotesk Variable'] as const;
 
@@ -72,6 +80,7 @@ function compatible(element: TimelineElement, track: TimelineTrack): boolean {
   if (element.type === 'video' || element.type === 'image') return track.type === 'video';
   if (element.type === 'text') return track.type === 'text';
   if (element.type === 'audio') return track.type === 'audio';
+  if (element.type === 'sticker') return track.type === 'graphic';
   return false;
 }
 
@@ -94,16 +103,18 @@ function mapTrack(project: EditorProject, trackId: string, map: (track: Timeline
   });
 }
 
-/** Clips on the main track end to end from 0:00, in their current order. */
+/**
+ * Clips on the main track end to end from 0:00, in their current order; a
+ * transition overlaps a clip's end with the next clip's start.
+ */
 function packMain(project: EditorProject): EditorProject {
   let cursor = 0;
-  const elements = [...project.tracks.main.elements]
-    .sort((a, b) => a.startTime - b.startTime)
-    .map((element) => {
-      const placed = { ...element, startTime: at(cursor) };
-      cursor += element.duration;
-      return placed;
-    });
+  const sorted = [...project.tracks.main.elements].sort((a, b) => a.startTime - b.startTime);
+  const elements = sorted.map((element, index) => {
+    const placed = { ...element, startTime: at(cursor) };
+    cursor += element.duration - overlapTicks(element, sorted[index + 1]);
+    return placed;
+  });
   return withTracks(project, { ...project.tracks, main: { ...project.tracks.main, elements } });
 }
 
@@ -116,10 +127,11 @@ function pruneTracks(project: EditorProject): EditorProject {
   });
 }
 
-function emptyTrackLike(kind: 'video' | 'text' | 'audio'): TimelineTrack {
+function emptyTrackLike(kind: 'video' | 'text' | 'audio' | 'graphic'): TimelineTrack {
   const id = newId();
   if (kind === 'audio') return { id, name: 'Audio', type: 'audio', elements: [], muted: false };
   if (kind === 'text') return { id, name: 'Text', type: 'text', elements: [], hidden: false };
+  if (kind === 'graphic') return { id, name: 'Stickers', type: 'graphic', elements: [], hidden: false } as GraphicTrack;
   return { id, name: 'Overlay', type: 'video', elements: [], muted: false, hidden: false };
 }
 
@@ -185,7 +197,8 @@ function placeFree(project: EditorProject, trackId: string | null, element: Time
   project: EditorProject;
   ref: ElementRef;
 } {
-  const kind = element.type === 'audio' ? 'audio' : element.type === 'text' ? 'text' : 'video';
+  const kind =
+    element.type === 'audio' ? 'audio' : element.type === 'text' ? 'text' : element.type === 'sticker' ? 'graphic' : 'video';
   const end = element.startTime + element.duration;
   const tracks = kind === 'audio' ? project.tracks.audio : project.tracks.overlay;
   const requested = tracks.find((track) => track.id === trackId);
@@ -291,6 +304,90 @@ export function addText(
     },
   };
   return placeFree(project, null, text);
+}
+
+/** Adds a bundled sticker at `seconds` on a sticker track. */
+export function addSticker(
+  project: EditorProject,
+  seconds: number,
+  stickerId: string,
+  name: string,
+): { project: EditorProject; ref: ElementRef } {
+  const sticker: StickerElement = {
+    id: newId(),
+    name,
+    type: 'sticker',
+    stickerId,
+    startTime: ticks(Math.max(0, seconds)),
+    duration: ticks(DEFAULT_STICKER_SECONDS),
+    trimStart: ZERO_MEDIA_TIME,
+    trimEnd: ZERO_MEDIA_TIME,
+    params: {
+      ...buildDefaultParamValues(getBuiltInElementParams({ type: 'sticker' })),
+      'transform.scaleX': STICKER_SCALE,
+      'transform.scaleY': STICKER_SCALE,
+    },
+  };
+  return placeFree(project, null, sticker);
+}
+
+/**
+ * Adds a rendered animated title (a transparent WebM) at `seconds` on a new
+ * overlay track, remembering the form it came from.
+ */
+export function addTitleClip(
+  project: EditorProject,
+  media: EditorMedia,
+  seconds: number,
+  form: string,
+): { project: EditorProject; ref: ElementRef } {
+  const placed = insertMedia(project, { ...media, has_audio: false }, seconds, 'overlay');
+  return { project: setParam(placed.project, placed.ref, TITLE_PARAM, form), ref: placed.ref };
+}
+
+/**
+ * Swaps a title clip's render for a new one (edited text), keeping where it starts and its look.
+ * A longer render that would run into the next clip on its track moves to a track of its own.
+ */
+export function replaceTitleClip(
+  project: EditorProject,
+  ref: ElementRef,
+  media: EditorMedia,
+  form: string,
+): { project: EditorProject; ref: ElementRef } {
+  const found = findElement(project, ref);
+  if (!found || found.element.type !== 'video') return { project, ref };
+  const fresh = clipFor({ ...media, has_audio: false }, found.element.startTime) as VideoElement;
+  // A new render plays at its own speed from its first frame.
+  const { retime: _retime, ...kept } = found.element;
+  const updated = {
+    ...kept,
+    mediaId: media.id,
+    name: media.name,
+    duration: fresh.duration,
+    sourceDuration: fresh.sourceDuration,
+    trimStart: ZERO_MEDIA_TIME,
+    trimEnd: ZERO_MEDIA_TIME,
+    isSourceAudioEnabled: false,
+    params: { ...found.element.params, [TITLE_PARAM]: form },
+  } as TimelineElement;
+  const without = mapTrack(
+    addMedia(project, { ...media, has_audio: false }),
+    ref.trackId,
+    (track) =>
+      ({
+        ...track,
+        elements: track.elements.filter((element) => element.id !== ref.elementId),
+      }) as TimelineTrack,
+  );
+  return placeFree(without, ref.trackId, updated);
+}
+
+/** Points a sticker at another id (a recoloured shape). */
+export function setStickerId(project: EditorProject, ref: ElementRef, stickerId: string): EditorProject {
+  return mapElement(project, ref, (element) =>
+    element.type === 'sticker' ? ({ ...element, stickerId } as TimelineElement) : element,
+  );
 }
 
 export interface CaptionSegment {
@@ -511,8 +608,12 @@ export function splitElement(
     animations: element.animations,
     splitTime: at(cut),
   });
+  // The transition into the next clip stays at the end, with the right-hand part.
+  const leftParams = { ...element.params };
+  for (const key of TRANSITION_KEYS) delete leftParams[key];
   const left = {
     ...element,
+    params: leftParams,
     duration: at(cut),
     trimEnd: source !== null ? at(source - element.trimStart - cut * rate) : element.trimEnd,
     animations: leftAnimations,
@@ -532,12 +633,47 @@ export function splitElement(
   return { project: next, ref: { trackId: track.id, elementId: right.id } };
 }
 
+/** Sets the transition from a main-track clip into the next one (`none` removes it). */
+export function setTransition(
+  project: EditorProject,
+  ref: ElementRef,
+  type: string,
+  seconds: number,
+): EditorProject {
+  if (ref.trackId !== MAIN_TRACK_ID || !findElement(project, ref)) return project;
+  let next = setParam(project, ref, 'transition.type', type);
+  next = setParam(next, ref, 'transition.duration', seconds);
+  return packMain(next);
+}
+
 export function deleteElement(project: EditorProject, ref: ElementRef): EditorProject {
   const next = removeFrom(project, ref);
   return pruneTracks(ref.trackId === MAIN_TRACK_ID ? packMain(next) : next);
 }
 
+/** A number param's value as saved, before keyframes (mask params included). */
+export function baseNumber(element: TimelineElement, path: string): number {
+  const maskKey = maskKeyOf(path);
+  if (maskKey) return maskValue(element, maskKey);
+  const value = element.params[path];
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
+function mapElement(project: EditorProject, ref: ElementRef, map: (element: TimelineElement) => TimelineElement) {
+  return mapTrack(project, ref.trackId, (track) => ({
+    ...track,
+    elements: track.elements.map((element) => (element.id === ref.elementId ? map(element) : element)),
+  }) as TimelineTrack);
+}
+
+/** Gives a clip or still a mask of `shape` (`none` removes it). */
+export function setMaskShape(project: EditorProject, ref: ElementRef, shape: MaskShape): EditorProject {
+  return mapElement(project, ref, (element) => withMaskShape(element, shape));
+}
+
 export function setParam(project: EditorProject, ref: ElementRef, key: string, value: ParamValue): EditorProject {
+  const maskKey = key === 'mask.inverted' ? 'inverted' : maskKeyOf(key);
+  if (maskKey) return mapElement(project, ref, (element) => withMaskParam(element, maskKey, value as number | boolean));
   return mapTrack(project, ref.trackId, (track) => ({
     ...track,
     elements: track.elements.map((element) =>
@@ -563,7 +699,9 @@ export function setSourceAudio(project: EditorProject, ref: ElementRef, enabled:
 
 /**
  * Plays a clip faster or slower. The clip shows the same stretch of source,
- * so it gets shorter or longer on the timeline. Audio changes pitch with speed.
+ * so it gets shorter or longer on the timeline. A clip given a speed for the
+ * first time keeps its pitch; one that already has a speed keeps its Keep
+ * pitch setting (clips from before Keep pitch stay pitch-shifted).
  */
 export function setSpeed(project: EditorProject, ref: ElementRef, rate: number): EditorProject {
   const found = findElement(project, ref);
@@ -583,10 +721,11 @@ export function setSpeed(project: EditorProject, ref: ElementRef, rate: number):
       time: at(key.time * scale),
     });
   }
+  const keepPitch = 'retime' in element && element.retime ? element.retime.maintainPitch !== false : true;
   const next = {
     ...element,
     duration,
-    retime: speed === 1 ? undefined : { rate: speed, maintainPitch: false },
+    retime: speed === 1 ? undefined : { rate: speed, maintainPitch: keepPitch },
     animations,
   } as TimelineElement;
   if (track.id === MAIN_TRACK_ID)
@@ -601,6 +740,13 @@ export function setSpeed(project: EditorProject, ref: ElementRef, rate: number):
   if (next.startTime + next.duration <= ceiling)
     return putOnTrack(removed, track.id, next);
   return pruneTracks(placeFree(removed, track.id, next).project);
+}
+
+/** Turns Keep pitch on or off for a sped-up or slowed clip. */
+export function setKeepPitch(project: EditorProject, ref: ElementRef, keep: boolean): EditorProject {
+  return mapElement(project, ref, (element) =>
+    'retime' in element && element.retime ? ({ ...element, retime: { ...element.retime, maintainPitch: keep } } as TimelineElement) : element,
+  );
 }
 
 /** Time inside the clip, in ticks, for a playhead at `seconds` (clamped to the clip). */
@@ -628,7 +774,8 @@ export function setKeyframe(
     ...track,
     elements: track.elements.map((element) => {
       if (element.id !== ref.elementId) return element;
-      const param = getElementParam({ element, key: path });
+      const maskKey = maskKeyOf(path);
+      const param = maskKey ? MASK_PARAMS[maskKey] : getElementParam({ element, key: path });
       if (!param) return element;
       return {
         ...element,

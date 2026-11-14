@@ -11,6 +11,8 @@ import { initializeGpuRenderer } from '@/lib/opencut/vendor/services/renderer/gp
 import type { RootNode } from '@/lib/opencut/vendor/services/renderer/nodes/root-node';
 import type { MediaAsset } from '@/lib/opencut/vendor/media/types';
 import type { SceneTracks } from '@/lib/opencut/vendor/timeline/types';
+import { ColorNode } from '@/lib/opencut/vendor/services/renderer/nodes/color-node';
+import type { AnyBaseNode } from '@/lib/opencut/vendor/services/renderer/nodes/base-node';
 import {
   MAX_EXPORT_SECONDS,
   SHAPE_SIZE,
@@ -19,8 +21,15 @@ import {
   type EditorMedia,
   type EditorProject,
 } from './project';
-import { audioSegments, scheduleSegments, soundActivity, type AudioSegment } from './audio-mix';
+import { audioSegments, bufferKey, scheduleSegments, soundActivity, type AudioSegment } from './audio-mix';
+import { stretchAudioBuffer } from './time-stretch';
+import { setStickerResolver } from '@/lib/opencut/vendor/stickers';
+import { stickerUrl } from './stickers/library';
 import { TEXT_FONTS } from './timeline-ops';
+import { mainForRender, placedTransitions, shadeOpacity } from './transitions';
+
+// Stickers are the editor's bundled SVGs, drawn from data URLs.
+setStickerResolver(stickerUrl);
 
 export const SAMPLE_RATE = 48_000;
 
@@ -71,6 +80,26 @@ function decodedAudio(media: EditorMedia): Promise<AudioBuffer | null> {
       .then(async (file) => sharedAudioContext().decodeAudioData(await file.arrayBuffer()))
       .catch(() => null);
     decoded.set(media.id, buffer);
+  }
+  return buffer;
+}
+
+const stretchedCache = new Map<string, Promise<AudioBuffer | null>>();
+
+/** The file's sound played `rate` times as fast at the same pitch, made once per speed. */
+function stretchedAudio(media: EditorMedia, rate: number): Promise<AudioBuffer | null> {
+  const key = `${media.id}@${rate}`;
+  let buffer = stretchedCache.get(key);
+  if (!buffer) {
+    buffer = decodedAudio(media).then((decoded) =>
+      decoded
+        ? stretchAudioBuffer(decoded, rate, (channels, length, sampleRate) =>
+            sharedAudioContext().createBuffer(channels, length, sampleRate),
+          )
+        : null,
+    );
+    buffer.catch(() => stretchedCache.delete(key));
+    stretchedCache.set(key, buffer);
   }
   return buffer;
 }
@@ -147,11 +176,14 @@ export async function loadMedia(project: EditorProject): Promise<LoadedMedia> {
         }
       }),
   );
+  // Every buffer the schedule plays, a stretched copy included, is ready before
+  // anything plays, so the preview and the export never fall back to a pitch shift.
   const buffers = new Map<string, AudioBuffer | null>();
   await Promise.all(
-    [...new Set(segments.map((segment) => segment.mediaId))].map(async (id) => {
-      const media = project.media.find((item) => item.id === id);
-      buffers.set(id, media ? await decodedAudio(media) : null);
+    [...new Map(segments.map((segment) => [bufferKey(segment), segment])).values()].map(async (segment) => {
+      const media = project.media.find((item) => item.id === segment.mediaId);
+      const buffer = !media ? null : segment.keepPitch ? await stretchedAudio(media, segment.rate) : await decodedAudio(media);
+      buffers.set(bufferKey(segment), buffer);
     }),
   );
   let activity: LoadedMedia['activity'] = null;
@@ -168,19 +200,41 @@ export async function loadMedia(project: EditorProject): Promise<LoadedMedia> {
   return { assets, buffers, segments, activity };
 }
 
+/** The black a fade through black passes through, over the main track. */
+function shadeNodes(project: EditorProject): AnyBaseNode[] {
+  return placedTransitions(project.tracks.main.elements)
+    .filter((item) => item.type === 'black')
+    .map(
+      (item) =>
+        new ColorNode({
+          color: '#000000',
+          opacityAt: (seconds) =>
+            seconds < item.start || seconds >= item.start + item.seconds ? 0 : shadeOpacity((seconds - item.start) / item.seconds),
+        }),
+    );
+}
+
 export function buildEditorScene(project: EditorProject, assets: MediaAsset[], isPreview = false): RootNode {
+  const canvasSize = SHAPE_SIZE[project.shape];
   const tracks: SceneTracks = {
-    main: project.tracks.main,
-    overlay: project.tracks.overlay,
+    main: mainForRender(project.tracks.main, canvasSize.width),
+    // Overlays are free tracks: one decoder per track and file.
+    overlay: project.tracks.overlay.map((track) => ({
+      ...track,
+      elements: track.elements.map((element) =>
+        'mediaId' in element ? { ...element, cacheKey: `${element.mediaId}#${track.id}` } : element,
+      ),
+    })) as SceneTracks['overlay'],
     audio: [],
   };
   return buildScene({
-    canvasSize: SHAPE_SIZE[project.shape],
+    canvasSize,
     tracks,
     mediaAssets: assets,
     duration: ticks(Math.max(projectSeconds(project), 0.04)),
     background: { type: 'color', color: project.background },
     isPreview,
+    afterMain: project.tracks.main.hidden ? [] : shadeNodes(project),
   });
 }
 
