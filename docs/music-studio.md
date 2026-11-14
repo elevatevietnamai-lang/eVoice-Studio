@@ -19,13 +19,23 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   app restart. The verified file is installed with `uv pip install --no-index`; everything else
   comes from `uv sync --no-install-package torch`.
 - **Generate:** describe the music, choose instrumental or add lyrics, length (10–240 s) and an
-  optional BPM. Tracks are saved to the library (`<data dir>/music`, a `.wav` plus a `.json` per track),
-  where they can be played, downloaded and deleted.
+  optional BPM. Tracks are saved to the library (`<data dir>/music`, an audio file plus a `.json` per
+  track), where they can be played, downloaded and deleted.
+- **Style tags and song sections:** *Style tags* adds genre, instrument and mood words the model
+  understands to the description (in English, the model's vocabulary). Above the lyrics, the section
+  buttons insert `[intro]`, `[verse]`, `[pre-chorus]`, `[chorus]`, `[bridge]`, `[outro]` or
+  `[instrumental]` on a line of its own at the cursor; ACE-Step uses them to shape the song.
 - **Vocal language:** with lyrics, pick the language they are sung in (ACE-Step's 50 languages; it
   starts on the app language when ACE-Step supports it). A wrong language garbles pronunciation.
 - **Advanced:** key (24 major and minor keys, or Auto), time signature (2/4, 3/4, 4/4, 6/8, or Auto)
   and seed. Each saved track records the seed the server actually used, and *Reuse seed* puts it back
-  in the form to refine a take you liked.
+  in the form to refine a take you liked. *Reuse settings* puts every setting of a saved track back.
+  - **Variants:** 1–4 versions in one run (the server allows 8; 4 keeps memory and waiting in check).
+    Each is saved as its own track, marked *Variant 1…4*, with its own seed. The library must have room
+    for all of them before the run starts.
+  - **Steps:** 4–20 (default 8, the turbo model's own setting). More steps take longer.
+  - **Sampler:** *Stable (ODE)*, the default, or *Varied (SDE)*, which adds randomness at each step.
+  - **File format:** WAV (default), FLAC or MP3; the library serves each with its own media type.
 - **Thinking:** off by default. When on, ACE-Step's 5Hz language model plans the song (its audio codes)
   before the DiT renders it, and fills a BPM, key or time signature left on Auto. The caption, lyrics
   and language stay exactly what you wrote. It is slower, and switching Thinking on or off restarts the
@@ -43,6 +53,11 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   - The server loads the model before it reports ready (eager init). If startup reports anything but
     that model loaded, the server is stopped and the track fails with a message instead of running
     without the model.
+- **Polish with the language model:** shown once Thinking's model is ready. It sends the description,
+  lyrics and settings to ACE-Step's formatter, which tidies the description and lyrics and suggests a
+  BPM, key, time signature, length and language. A dialog shows each change next to your own; nothing
+  changes until you choose *Apply changes*. Every suggestion is checked like user input (an unknown key
+  or a BPM out of range is dropped). It runs on the same language-model server as Thinking.
 - **Not available yet:** guidance (CFG), shift and the other base-model options have no effect on the
   turbo model installed here, so they are not shown. Cover, repaint and extend are planned.
 - **Memory:** the music server starts on demand, listens on a random loopback port with a random key and
@@ -50,7 +65,9 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   same time on a small GPU.
 - **API:** `GET /music/status`, `GET /music/install-stream`, `GET /music/lm` (which language model
   Thinking uses here and whether it is ready), `GET /music/lm-install-stream` (download the 0.6B model),
-  `POST /music/generate` (SSE; adds `vocal_language`, `key_scale`, `time_signature`, `thinking`),
+  `POST /music/generate` (SSE; adds `vocal_language`, `key_scale`, `time_signature`, `thinking`,
+  `batch_size`, `inference_steps`, `infer_method`, `audio_format`; a `track` event per saved variant,
+  then `done` with `tracks`), `POST /music/format` (the formatter's suggestions, nothing saved),
   `GET /music/library`, `GET /music/audio/{id}`, `DELETE /music/library/{id}`, `POST /music/stop`.
 
 ## GPU exclusion

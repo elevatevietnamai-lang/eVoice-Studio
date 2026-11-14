@@ -7,6 +7,7 @@ const state = vi.hoisted(() => ({
   tracks: [] as unknown[],
   calls: [] as string[],
   stream: vi.fn(),
+  format: null as unknown,
   lm: { model: null, ready: false, download_bytes: 0 } as {
     model: string | null;
     ready: boolean;
@@ -22,6 +23,7 @@ vi.mock('@/lib/api/client', () => ({
     if (path === '/music/status') return state.status;
     if (path === '/music/library') return { tracks: state.tracks };
     if (path === '/music/lm') return state.lm;
+    if (path === '/music/format') return state.format;
     return {};
   },
   apiPath: (path: string) => path,
@@ -74,6 +76,7 @@ beforeEach(() => {
   state.calls = [];
   state.stream.mockReset();
   state.lm = { model: null, ready: false, download_bytes: 0 };
+  state.format = null;
 });
 afterEach(cleanup);
 
@@ -272,5 +275,110 @@ it('reuses the seed a saved track was made with', async () => {
   fireEvent.click(await screen.findByText('musicStudio.reuse_seed'));
   expect((screen.getByPlaceholderText('musicStudio.seed_hint') as HTMLInputElement).value).toBe(
     '777',
+  );
+});
+
+it('sends the variants, steps, sampler and file format it shows', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.advanced'));
+  fireEvent.click(await screen.findByText('3'));
+  fireEvent.click(screen.getByText('musicStudio.sampler_sde'));
+  fireEvent.click(screen.getByText('FLAC'));
+  fireEvent.click(screen.getByText('musicStudio.generate_many'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(JSON.parse(state.stream.mock.calls[0][3].body)).toMatchObject({
+    batch_size: 3,
+    inference_steps: 8,
+    infer_method: 'sde',
+    audio_format: 'flac',
+  });
+});
+
+it('selects the first variant as soon as it is saved', async () => {
+  state.status = { installed: true, running: false };
+  const second = { ...track, id: 'bbbbbbbbbbbb', variant: 2, batch_id: 'abc123def456' };
+  state.stream.mockImplementation(async (_path: string, onEvent: (e: unknown) => boolean) => {
+    onEvent({ type: 'track', track: { ...track, variant: 1, batch_id: 'abc123def456' } });
+    onEvent({ type: 'track', track: second });
+    onEvent({ type: 'done', track, tracks: [track, second] });
+  });
+  state.tracks = [second, { ...track, variant: 1 }];
+  renderPage();
+  const generate = (await screen.findByText('musicStudio.generate')).closest(
+    'button',
+  ) as HTMLButtonElement;
+  await waitFor(() => expect(generate.disabled).toBe(false));
+  fireEvent.click(generate);
+  await waitFor(() =>
+    expect(screen.getByTestId('player').textContent).toContain('/music/audio/abc123def456'),
+  );
+});
+
+it('inserts a section tag into the lyrics and a style tag into the description', async () => {
+  state.status = { installed: true, running: false };
+  renderPage();
+  const instrumental = (await screen.findByText('musicStudio.instrumental')).closest('label');
+  fireEvent.click(instrumental?.querySelector('[role="switch"]') as HTMLElement);
+  fireEvent.click(await screen.findByText('[chorus]'));
+  const lyrics = screen.getByPlaceholderText(
+    'musicStudio.lyrics_placeholder',
+  ) as HTMLTextAreaElement;
+  expect(lyrics.value).toBe('[chorus]\n');
+  fireEvent.click(screen.getByText('musicStudio.style_tags'));
+  fireEvent.click(await screen.findByText('piano'));
+  const prompt = screen.getByPlaceholderText(
+    'musicStudio.prompt_placeholder',
+  ) as HTMLTextAreaElement;
+  expect(prompt.value.endsWith(', piano')).toBe(true);
+});
+
+it('reuses all of a saved track settings', async () => {
+  state.status = { installed: true, running: false };
+  state.tracks = [{ ...track, prompt: 'warm jazz', seed: 9, inference_steps: 12, ext: 'mp3' }];
+  state.stream.mockImplementation(async () => {});
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.reuse_settings'));
+  fireEvent.click(screen.getByText('musicStudio.generate'));
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  expect(JSON.parse(state.stream.mock.calls[0][3].body)).toMatchObject({
+    prompt: 'warm jazz',
+    seed: 9,
+    inference_steps: 12,
+    audio_format: 'mp3',
+    batch_size: 1,
+  });
+});
+
+it('offers Format only with a ready language model and shows the suggestion before applying', async () => {
+  state.status = { installed: true, running: false };
+  renderPage();
+  await screen.findByText('musicStudio.thinking_unsupported');
+  expect(screen.queryByText('musicStudio.format')).toBeNull();
+  cleanup();
+
+  state.lm = { model: 'acestep-5Hz-lm-1.7B', ready: true, download_bytes: 0 };
+  state.format = {
+    caption: 'warm lofi, vinyl crackle',
+    lyrics: '',
+    bpm: 84,
+    key_scale: '',
+    time_signature: '',
+    duration: null,
+    vocal_language: '',
+  };
+  renderPage();
+  fireEvent.click(await screen.findByText('musicStudio.format'));
+  await waitFor(() => expect(state.calls).toContain('POST /music/format'));
+  expect(await screen.findByText('musicStudio.format_title')).toBeTruthy();
+  expect(screen.getByText('warm lofi, vinyl crackle')).toBeTruthy();
+  fireEvent.click(screen.getByText('musicStudio.format_apply'));
+  const prompt = screen.getByPlaceholderText(
+    'musicStudio.prompt_placeholder',
+  ) as HTMLTextAreaElement;
+  await waitFor(() => expect(prompt.value).toBe('warm lofi, vinyl crackle'));
+  expect((screen.getByPlaceholderText('musicStudio.bpm_hint') as HTMLInputElement).value).toBe(
+    '84',
   );
 });

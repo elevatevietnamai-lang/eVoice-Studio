@@ -33,7 +33,7 @@ import tempfile
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import AsyncIterator, Callable, Optional, Protocol
+from typing import AsyncIterator, Callable, Optional, Protocol, Sequence
 
 import httpx
 
@@ -93,6 +93,13 @@ VOCAL_LANGUAGES = (
     "yue", "zh", "unknown",
 )
 TIME_SIGNATURES = ("2", "3", "4", "6")
+# Variants per run (the server allows 8; 4 keeps VRAM and wait time sane), turbo step range,
+# diffusion samplers, and the formats the library can store and serve.
+MAX_BATCH = 4
+MIN_STEPS, MAX_STEPS, DEFAULT_STEPS = 4, 20, 8
+INFER_METHODS = ("ode", "sde")
+AUDIO_FORMATS = ("wav", "flac", "mp3")
+AUDIO_MEDIA_TYPES = {"wav": "audio/wav", "flac": "audio/flac", "mp3": "audio/mpeg", "ogg": "audio/ogg"}
 _KEY_RE = re.compile(r"^([A-Ga-g])([#b♯♭]?)\s*(major|minor|maj|min|m)?$", re.IGNORECASE)
 
 
@@ -162,6 +169,9 @@ class MusicRequest:
     time_signature: str = ""
     # Thinking: the 5Hz LM writes the audio codes and fills a missing BPM, key or time signature.
     thinking: bool = False
+    batch_size: int = 1
+    inference_steps: int = DEFAULT_STEPS
+    infer_method: str = "ode"
 
     def seconds(self) -> int:
         return int(max(MIN_SECONDS, min(MAX_SECONDS, round(self.duration))))
@@ -600,9 +610,9 @@ def build_payload(req: MusicRequest) -> dict:
         "lyrics": "[Instrumental]" if req.instrumental else req.lyrics,
         "audio_duration": req.seconds(),
         "vocal_language": req.vocal_language or "en",
-        "audio_format": req.audio_format if req.audio_format in ("wav", "mp3", "flac") else "wav",
-        "batch_size": 1,
-        "inference_steps": 8,
+        "audio_format": req.audio_format if req.audio_format in AUDIO_FORMATS else "wav",
+        "batch_size": max(1, min(MAX_BATCH, int(req.batch_size or 1))),
+        "inference_steps": max(MIN_STEPS, min(MAX_STEPS, int(req.inference_steps or DEFAULT_STEPS))),
         # These default to true on the server and would invoke the language model. Thinking turns
         # on code generation only; the caption and language stay exactly what the user wrote.
         "thinking": False,
@@ -619,6 +629,9 @@ def build_payload(req: MusicRequest) -> dict:
         payload["key_scale"] = req.key_scale
     if req.time_signature in TIME_SIGNATURES:
         payload["time_signature"] = req.time_signature
+    if req.infer_method == "sde":
+        # ODE is the server default; only a change is sent, so default payloads stay as they were.
+        payload["infer_method"] = "sde"
     if req.thinking:
         # The request model defaults to vllm, which the engine does not install on any platform.
         payload["thinking"] = True
@@ -900,8 +913,52 @@ class AceStepEngine:
             except Exception:
                 pass
 
+    # ── Format (language model): tidy a caption and lyrics, and suggest BPM, key and meter
+    async def format_input(self, request: MusicRequest) -> dict:
+        """Ask the language model to format *request*; nothing is applied until the user does."""
+        llm = await self._lm_for_request()
+        base, key = await self._ensure_running(llm)
+        srv = self._server
+        srv.busy += 1
+        try:
+            params: dict = {"duration": request.seconds()}
+            if request.bpm:
+                params["bpm"] = int(request.bpm)
+            if request.key_scale:
+                params["key_scale"] = request.key_scale
+            if request.time_signature in TIME_SIGNATURES:
+                params["time_signature"] = request.time_signature
+            if not request.instrumental and request.vocal_language:
+                params["language"] = request.vocal_language
+            body = {"prompt": request.prompt.strip(),
+                    "lyrics": "[Instrumental]" if request.instrumental else request.lyrics,
+                    "temperature": 0.85, "param_obj": json.dumps(params)}
+            async with httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=300.0),
+                                         headers={"Authorization": f"Bearer {key}"}) as client:
+                r = await client.post(f"{base}/format_input", json=body)
+            if r.status_code >= 400:
+                logger.warning("music format refused: %s", r.text[:300])
+                raise RuntimeError(f"Formatting was refused by the music server (HTTP {r.status_code}).")
+            try:
+                data = _unwrap(r.json())
+            except (RuntimeError, ValueError) as exc:
+                logger.warning("music format failed: %s", exc)
+                raise RuntimeError("The language model could not format this song. Try again or edit it by hand.")
+            return clean_format_result(data)
+        finally:
+            srv.busy -= 1
+            srv.last_used = time.monotonic()
+
     # ── generation
-    async def generate(self, request: MusicRequest, out_path: str) -> AsyncIterator[dict]:
+    async def generate(self, request: MusicRequest, out_path: str | Sequence[str]) -> AsyncIterator[dict]:
+        """Generate *request* and save each variant to the matching path in *out_path*.
+
+        A single path (Dub BGM) saves the first variant. The final event carries the first
+        variant's details at the top level and every saved variant under ``tracks``.
+        """
+        paths = [out_path] if isinstance(out_path, str) else list(out_path)
+        if not paths:
+            raise ValueError("No output path for the generated music.")
         llm = await self._lm_for_request() if request.thinking else None
         yield {"type": "progress", "progress": 0.0, "message": "Starting the music engine"}
         base, key = await self._ensure_running(llm)
@@ -950,10 +1007,16 @@ class AceStepEngine:
                     if state == "succeeded":
                         results = item.get("result")
                         results = json.loads(results) if isinstance(results, str) else (results or [])
-                        first = next((x for x in results if isinstance(x, dict) and x.get("file")), {})
-                        await _download(client, base, first.get("file", ""), out_path)
+                        files = [x for x in results if isinstance(x, dict) and x.get("file")]
+                        if not files:
+                            raise RuntimeError("Music generation finished without a downloadable file.")
+                        tracks = []
+                        for index, (entry, path) in enumerate(zip(files, paths)):
+                            await _download(client, base, entry.get("file", ""), path)
+                            tracks.append({**result_details(entry, index), "path": path})
                         finished = True
-                        yield {"type": "done", "seconds": request.seconds(), **result_details(first)}
+                        first = {k: v for k, v in tracks[0].items() if k != "path"}
+                        yield {"type": "done", "seconds": request.seconds(), **first, "tracks": tracks}
                         return
                     yield {"type": "progress", "progress": min(0.1 + waited / 240.0, 0.95), "message": "Generating"}
         finally:
@@ -965,12 +1028,39 @@ class AceStepEngine:
                 self._kill_now()
 
 
-def result_details(result: dict) -> dict:
-    """The seed the server really used and the metadata it settled on (the LM may fill these)."""
+def clean_format_result(data: object) -> dict:
+    """What `/format_input` may change in the form: each field checked like user input."""
+    data = data if isinstance(data, dict) else {}
+    bpm = data.get("bpm")
+    duration = data.get("duration")
+    try:
+        key = normalize_key_scale(str(data.get("key_scale") or ""))
+    except ValueError:
+        key = ""
+    language = str(data.get("vocal_language") or "").strip().lower()
+    meter = str(data.get("time_signature") or "").strip().split("/")[0]
+    return {
+        "caption": str(data.get("caption") or "")[:1000],
+        "lyrics": str(data.get("lyrics") or "")[:8000],
+        "bpm": int(bpm) if isinstance(bpm, (int, float)) and 30 <= bpm <= 300 else None,
+        "key_scale": key,
+        "time_signature": meter if meter in TIME_SIGNATURES else "",
+        "duration": int(round(duration))
+        if isinstance(duration, (int, float)) and MIN_SECONDS <= duration <= MAX_SECONDS else None,
+        "vocal_language": language if language in VOCAL_LANGUAGES else "",
+    }
+
+
+def result_details(result: dict, index: int = 0) -> dict:
+    """The seed the server really used and the metadata it settled on (the LM may fill these).
+
+    A batch reports every variant's seed in one comma-separated ``seed_value``, in file order.
+    """
     seed = None
-    first = str(result.get("seed_value") or "").split(",")[0].strip()
-    if first.lstrip("-").isdigit():
-        seed = int(first)
+    seeds = str(result.get("seed_value") or "").split(",")
+    pick = seeds[index].strip() if index < len(seeds) else ""
+    if pick.lstrip("-").isdigit():
+        seed = int(pick)
     metas = result.get("metas") if isinstance(result.get("metas"), dict) else {}
     bpm = metas.get("bpm")
     return {"seed": seed if seed is not None and 0 <= seed <= 2**31 - 1 else None,

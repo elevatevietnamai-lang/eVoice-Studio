@@ -5,7 +5,8 @@
 * ``GET    /music/lm``                    — which language model Thinking uses here, and if it is ready
 * ``GET    /music/lm-install-stream``     — download the small language model for 6-12 GB GPUs (SSE)
 * ``POST   /music/stop``                  — stop the music server now (frees VRAM)
-* ``POST   /music/generate``              — generate a track and save it to the library (SSE)
+* ``POST   /music/generate``              — generate 1-4 variants and save them to the library (SSE)
+* ``POST   /music/format``                — the language model tidies caption and lyrics, suggests metadata
 * ``GET    /music/library``               — saved tracks, newest first
 * ``GET    /music/audio/{track_id}``      — a saved track
 * ``DELETE /music/library/{track_id}``    — remove a saved track
@@ -40,6 +41,10 @@ class GenerateBody(BaseModel):
     vocal_language: str = Field("en", max_length=8)
     time_signature: Literal["", "2", "3", "4", "6"] = ""
     thinking: bool = False
+    batch_size: int = Field(1, ge=1, le=music.MAX_BATCH)
+    inference_steps: int = Field(music.DEFAULT_STEPS, ge=music.MIN_STEPS, le=music.MAX_STEPS)
+    infer_method: Literal["ode", "sde"] = "ode"
+    audio_format: Literal["wav", "flac", "mp3"] = "wav"
 
     @field_validator("vocal_language")
     @classmethod
@@ -53,6 +58,14 @@ class GenerateBody(BaseModel):
     @classmethod
     def _known_key(cls, value: str) -> str:
         return music.normalize_key_scale(value)
+
+    def to_request(self) -> music.MusicRequest:
+        return music.MusicRequest(prompt=self.prompt, lyrics=self.lyrics, instrumental=self.instrumental,
+                                  duration=self.duration, bpm=self.bpm, key_scale=self.key_scale,
+                                  seed=self.seed, vocal_language=self.vocal_language,
+                                  time_signature=self.time_signature, thinking=self.thinking,
+                                  batch_size=self.batch_size, inference_steps=self.inference_steps,
+                                  infer_method=self.infer_method, audio_format=self.audio_format)
 
 
 def _sse(event: str, payload: dict) -> bytes:
@@ -131,33 +144,40 @@ async def music_generate(body: GenerateBody):
                 yield _sse("error", {"error": "music_not_installed",
                                      "reason": "Install the music engine first."})
                 return
-            if music_library.is_full():
+            if music_library.free_slots() < body.batch_size:
                 yield _sse("error", {"error": "music_library_full", "stage": "music",
-                                     "reason": f"The library holds {music_library.MAX_TRACKS} tracks. Delete some first."})
+                                     "reason": f"The library holds {music_library.MAX_TRACKS} tracks. "
+                                               f"Delete some first to make room for {body.batch_size}."})
                 return
-            request = music.MusicRequest(prompt=body.prompt, lyrics=body.lyrics, instrumental=body.instrumental,
-                                         duration=body.duration, bpm=body.bpm, key_scale=body.key_scale,
-                                         seed=body.seed, vocal_language=body.vocal_language,
-                                         time_signature=body.time_signature, thinking=body.thinking)
-            track_id = music_library.new_id()
-            out = str(music_library.audio_path(track_id))
+            request = body.to_request()
+            ids = [music_library.new_id() for _ in range(body.batch_size)]
+            paths = {str(music_library.audio_path(i, body.audio_format)): i for i in ids}
             result: dict = {}
             with gpu_exclusive.music_job():
-                async for event in engine.generate(request, out):
+                async for event in engine.generate(request, list(paths)):
                     if event["type"] == "progress":
                         yield _sse("progress", event)
                     elif event["type"] == "done":
                         result = event
-            # What the server really used: a random seed it picked, or metadata the LM filled.
-            record = music_library.save(
-                track_id, title=(body.prompt.strip()[:60] or "Untitled"), prompt=body.prompt,
-                lyrics=body.lyrics, instrumental=body.instrumental, duration=request.seconds(),
-                bpm=result.get("bpm") or body.bpm,
-                seed=result["seed"] if result.get("seed") is not None else body.seed,
-                key_scale=result.get("key_scale") or body.key_scale,
-                time_signature=result.get("time_signature") or body.time_signature,
-                vocal_language=body.vocal_language, thinking=body.thinking)
-            yield _sse("done", {"track": record})
+            title = body.prompt.strip()[:60] or "Untitled"
+            batch_id = ids[0] if body.batch_size > 1 else None
+            records = []
+            for index, variant in enumerate(result.get("tracks") or []):
+                # What the server really used: a random seed it picked, or metadata the LM filled.
+                records.append(music_library.save(
+                    paths[variant["path"]], title=title, prompt=body.prompt,
+                    lyrics=body.lyrics, instrumental=body.instrumental, duration=request.seconds(),
+                    bpm=variant.get("bpm") or body.bpm,
+                    seed=variant["seed"] if variant.get("seed") is not None else body.seed,
+                    key_scale=variant.get("key_scale") or body.key_scale,
+                    time_signature=variant.get("time_signature") or body.time_signature,
+                    vocal_language=body.vocal_language, thinking=body.thinking, ext=body.audio_format,
+                    inference_steps=body.inference_steps, infer_method=body.infer_method,
+                    batch_id=batch_id, variant=index + 1 if batch_id else None))
+                yield _sse("track", {"track": records[-1]})
+            if not records:
+                raise RuntimeError("Music generation finished without a downloadable file.")
+            yield _sse("done", {"track": records[0], "tracks": records})
         except music.MusicLmUnavailable as exc:
             yield _sse("error", {"error": exc.code, "error_code": exc.code, "stage": "music", "reason": str(exc)})
         except music.MusicModeBusy as exc:
@@ -169,6 +189,29 @@ async def music_generate(body: GenerateBody):
             logger.warning("music generation failed: %s", exc)
             yield _sse("error", {"error": "music_failed", "stage": "music", "reason": music.public_reason(exc)})
     return _stream(gen())
+
+
+@router.post("/music/format")
+async def music_format(body: GenerateBody):
+    """Run the language model's formatter on the form. Returns suggestions; nothing is saved."""
+    if not music.is_installed():
+        raise HTTPException(status_code=409, detail={"error_code": "music_not_installed",
+                                                     "reason": "Install the music engine first."})
+    try:
+        with gpu_exclusive.music_job():
+            return await music.get_engine().format_input(body.to_request())
+    except music.MusicLmUnavailable as exc:
+        raise HTTPException(status_code=409, detail={"error_code": exc.code, "reason": str(exc)})
+    except music.MusicModeBusy as exc:
+        raise HTTPException(status_code=409, detail={"error_code": "gpu_busy", "busy_with": "music",
+                                                     "reason": str(exc)})
+    except gpu_exclusive.GpuBusy as exc:
+        raise HTTPException(status_code=409, detail={"error_code": "gpu_busy", "busy_with": exc.busy_with,
+                                                     "reason": str(exc)})
+    except Exception as exc:
+        logger.warning("music format failed: %s", exc)
+        raise HTTPException(status_code=502, detail={"error_code": "music_format_failed",
+                                                     "reason": music.public_reason(exc)})
 
 
 @router.get("/music/library")
@@ -184,7 +227,10 @@ def music_audio(track_id: str):
         raise HTTPException(status_code=400, detail="Invalid track id")
     if not record:
         raise HTTPException(status_code=404, detail="Track not found")
-    return FileResponse(music_library.audio_path(track_id, record.get("ext", "wav")), media_type="audio/wav",
+    ext = record.get("ext", "wav")
+    return FileResponse(music_library.audio_path(track_id, ext),
+                        media_type=music.AUDIO_MEDIA_TYPES.get(ext, "application/octet-stream"),
+                        filename=f"{track_id}.{ext}", content_disposition_type="inline",
                         headers={"Cache-Control": "no-store"})
 
 

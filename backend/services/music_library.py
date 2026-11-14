@@ -70,8 +70,12 @@ def list_tracks() -> list[dict]:
     return sorted(records, key=lambda r: r.get("created_at", 0), reverse=True)
 
 
+def free_slots() -> int:
+    return max(0, MAX_TRACKS - len(list_tracks()))
+
+
 def is_full() -> bool:
-    return len(list_tracks()) >= MAX_TRACKS
+    return free_slots() == 0
 
 
 def delete(track_id: str) -> bool:

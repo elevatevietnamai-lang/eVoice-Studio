@@ -124,7 +124,7 @@ def validate(src: dict[str, str], out: dict) -> tuple[dict[str, str], dict[str, 
             bad[key] = "missing or empty"
         elif placeholders(value) != placeholders(source):
             bad[key] = "placeholders changed"
-        elif re.search(r"```|^\s*\{|</?[a-z]+>", value) and not re.search(r"</?[a-z]+>", source):
+        elif re.search(r"```|^\s*\{(?!\{)|</?[a-z]+>", value) and not re.search(r"</?[a-z]+>", source):
             bad[key] = "markup leaked in"
         elif ("\n" in source) != ("\n" in value):
             bad[key] = "line breaks changed"

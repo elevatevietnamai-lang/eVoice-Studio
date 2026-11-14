@@ -11,8 +11,10 @@ import {
   MusicIcon,
   PowerOffIcon,
   RotateCcwIcon,
+  SlidersHorizontalIcon,
   SparklesIcon,
   Trash2Icon,
+  WandSparklesIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { getBridge } from '@/components/bridge';
@@ -41,13 +43,34 @@ import { gpuBusyMessage } from '@/lib/api/failure';
 import { saveExport } from '@/lib/export-history';
 import { formatBytes } from '@/lib/format-bytes';
 import {
+  AUDIO_FORMATS,
+  BATCH_SIZES,
+  DEFAULT_STEPS,
+  INFER_METHODS,
   KEY_NOTES,
+  LYRIC_TAGS,
+  MAX_STEPS,
+  MIN_STEPS,
+  STYLE_TAGS,
   TIME_SIGNATURES,
+  appendStyleTag,
   defaultVocalLanguage,
+  insertLyricTag,
   meterLabel,
   randomSeed,
+  settingsFromTrack,
   vocalLanguageOptions,
+  type AudioFormat,
+  type InferMethod,
+  type MusicSettings,
+  type StyleGroup,
 } from './music-options';
+import {
+  MusicFormatDialog,
+  applyFormat,
+  type FormatFields,
+  type FormatSuggestion,
+} from './music-format-dialog';
 
 type MusicStatus = { installed: boolean; running: boolean };
 /** Which language model Thinking uses on this GPU (`GET /music/lm`). */
@@ -66,6 +89,13 @@ type Track = {
   key_scale?: string;
   time_signature?: string;
   thinking?: boolean;
+  vocal_language?: string;
+  ext?: string;
+  inference_steps?: number;
+  infer_method?: string;
+  // Variants made together share the first variant's id; `variant` counts from 1.
+  batch_id?: string | null;
+  variant?: number | null;
 };
 
 const STYLE_PRESETS = [
@@ -118,7 +148,15 @@ export function MusicPage() {
   const [timeSignature, setTimeSignature] = useState('');
   const [seed, setSeed] = useState('');
   const [thinking, setThinking] = useState(false);
+  const [batchSize, setBatchSize] = useState('1');
+  const [steps, setSteps] = useState(DEFAULT_STEPS);
+  const [inferMethod, setInferMethod] = useState<InferMethod>('ode');
+  const [audioFormat, setAudioFormat] = useState<AudioFormat>('wav');
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [stylesOpen, setStylesOpen] = useState(false);
+  const [formatting, setFormatting] = useState(false);
+  const [formatNext, setFormatNext] = useState<FormatFields | null>(null);
+  const lyricsRef = useRef<HTMLTextAreaElement | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [task, setTask] = useState<{
     kind: 'install' | 'generate' | 'lm';
@@ -158,6 +196,100 @@ export function MusicPage() {
       : t('musicStudio.key_major', { note });
   };
   const keyChoices = KEY_NOTES.flatMap((note) => [`${note} major`, `${note} minor`]);
+
+  const settings: MusicSettings = {
+    prompt,
+    lyrics,
+    instrumental,
+    duration,
+    bpm,
+    vocalLanguage,
+    keyScale,
+    timeSignature,
+    seed,
+    thinking,
+    batchSize,
+    steps,
+    inferMethod,
+    audioFormat,
+  };
+  const applySettings = (next: MusicSettings) => {
+    setPrompt(next.prompt);
+    setLyrics(next.lyrics);
+    setInstrumental(next.instrumental);
+    setDuration(next.duration);
+    setBpm(next.bpm);
+    setVocalLanguage(next.vocalLanguage);
+    setKeyScale(next.keyScale);
+    setTimeSignature(next.timeSignature);
+    setSeed(next.seed);
+    setThinking(next.thinking);
+    setBatchSize(next.batchSize);
+    setSteps(next.steps);
+    setInferMethod(next.inferMethod);
+    setAudioFormat(next.audioFormat);
+  };
+  const formatFields: FormatFields = {
+    prompt,
+    lyrics,
+    bpm,
+    keyScale,
+    timeSignature,
+    duration,
+    vocalLanguage,
+  };
+  const describeField = (key: keyof FormatFields, value: string) => {
+    if (!value) return '';
+    if (key === 'keyScale') return keyLabel(value);
+    if (key === 'timeSignature') return meterLabel(value);
+    if (key === 'duration') return t('musicStudio.duration_value', { seconds: Number(value) });
+    if (key === 'vocalLanguage')
+      return languages.find((item) => item.value === value)?.label ?? value;
+    return value;
+  };
+  const requestBody = () => ({
+    prompt,
+    lyrics: instrumental ? '' : lyrics,
+    instrumental,
+    duration,
+    bpm: bpm ? Number(bpm) : null,
+    vocal_language: instrumental ? 'en' : vocalLanguage,
+    key_scale: keyScale,
+    time_signature: timeSignature,
+    seed: seed ? Number(seed) : null,
+    thinking: thinking && lmReady,
+    batch_size: Number(batchSize),
+    inference_steps: steps,
+    infer_method: inferMethod,
+    audio_format: audioFormat,
+  });
+
+  const insertTag = (tag: string) => {
+    const field = lyricsRef.current;
+    const at = field ? field.selectionStart : lyrics.length;
+    const next = insertLyricTag(lyrics, at, tag);
+    setLyrics(next.text);
+    requestAnimationFrame(() => {
+      if (!field) return;
+      field.focus();
+      field.setSelectionRange(next.cursor, next.cursor);
+    });
+  };
+
+  const runFormat = async () => {
+    setFormatting(true);
+    try {
+      const suggestion = await apiJson<FormatSuggestion>('/music/format', {
+        method: 'POST',
+        body: JSON.stringify(requestBody()),
+      });
+      setFormatNext(applyFormat(formatFields, suggestion, instrumental));
+    } catch (error) {
+      toast.error(t('musicStudio.format_failed', { message: describeError(error) }));
+    } finally {
+      setFormatting(false);
+    }
+  };
 
   const downloadLm = async () => {
     setTask({ kind: 'lm', progress: 0 });
@@ -213,18 +345,8 @@ export function MusicPage() {
     setFailure(null);
     setTask({ kind: 'generate', progress: 0 });
     try {
-      const body = {
-        prompt,
-        lyrics: instrumental ? '' : lyrics,
-        instrumental,
-        duration,
-        bpm: bpm ? Number(bpm) : null,
-        vocal_language: instrumental ? 'en' : vocalLanguage,
-        key_scale: keyScale,
-        time_signature: timeSignature,
-        seed: seed ? Number(seed) : null,
-        thinking: thinking && lmReady,
-      };
+      const body = requestBody();
+      let saved = 0;
       await consumeTaskStream(
         '/music/generate',
         (event) => {
@@ -232,9 +354,16 @@ export function MusicPage() {
             setTask({ kind: 'generate', progress: Number(event.progress) || 0 });
           if (event.type === 'error')
             throw new Error(gpuBusyMessage(event) || String(event.reason || 'Music failed'));
+          if (event.type === 'track') {
+            saved += 1;
+            const track = event.track as Track | undefined;
+            if (track?.id && saved === 1) setSelectedId(track.id);
+            void queryClient.invalidateQueries({ queryKey: ['music-library'] });
+          }
           if (event.type === 'done') {
             const track = event.track as Track | undefined;
-            if (track?.id) setSelectedId(track.id);
+            if (track?.id && saved === 0) setSelectedId(track.id);
+            saved = Math.max(saved, Array.isArray(event.tracks) ? event.tracks.length : 1);
           }
           return event.type === 'done';
         },
@@ -245,7 +374,9 @@ export function MusicPage() {
           body: JSON.stringify(body),
         },
       );
-      toast.success(t('musicStudio.generated'));
+      toast.success(
+        saved > 1 ? t('musicStudio.generated_many', { count: saved }) : t('musicStudio.generated'),
+      );
       await queryClient.invalidateQueries({ queryKey: ['music-library'] });
     } catch (error) {
       if (!abort.current?.signal.aborted) {
@@ -278,7 +409,8 @@ export function MusicPage() {
 
   const download = async (track: Track) => {
     const url = apiPath(`/music/audio/${encodeURIComponent(track.id)}`);
-    const name = `${track.title.replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'music'}.wav`;
+    const base = track.title.replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'music';
+    const name = `${base}${track.variant ? ` ${track.variant}` : ''}.${track.ext || 'wav'}`;
     try {
       if (getBridge()) await saveExport(url, name);
       else {
@@ -377,6 +509,44 @@ export function MusicPage() {
               </Button>
             ))}
           </div>
+          <Collapsible open={stylesOpen} onOpenChange={setStylesOpen}>
+            <CollapsibleTrigger className="flex items-center gap-1 text-label font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+              {t('musicStudio.style_tags')}
+              <ChevronDownIcon
+                className={cn('size-3.5 transition-transform', stylesOpen && 'rotate-180')}
+                aria-hidden="true"
+              />
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="space-y-2 pt-2">
+                {(Object.keys(STYLE_TAGS) as StyleGroup[]).map((group) => (
+                  <div
+                    key={group}
+                    className="space-y-1"
+                    role="group"
+                    aria-label={t(`musicStudio.style_group_${group}`)}
+                  >
+                    <p className="text-[11px] text-muted-foreground">
+                      {t(`musicStudio.style_group_${group}`)}
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {STYLE_TAGS[group].map((tag) => (
+                        <Button
+                          key={tag}
+                          size="xs"
+                          variant="ghost"
+                          disabled={busy}
+                          onClick={() => setPrompt((value) => appendStyleTag(value, tag))}
+                        >
+                          {tag}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           <label className="flex items-center justify-between gap-2 text-xs">
             <span className="font-medium">{t('musicStudio.instrumental')}</span>
@@ -385,7 +555,26 @@ export function MusicPage() {
           {!instrumental && (
             <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
               <span className="font-medium">{t('musicStudio.lyrics')}</span>
+              <div
+                className="flex flex-wrap gap-1"
+                role="toolbar"
+                aria-label={t('musicStudio.lyric_tags')}
+              >
+                {LYRIC_TAGS.map((tag) => (
+                  <Button
+                    key={tag}
+                    size="xs"
+                    variant="ghost"
+                    disabled={busy}
+                    title={t('musicStudio.lyric_tag_insert', { tag: `[${tag}]` })}
+                    onClick={() => insertTag(tag)}
+                  >
+                    [{tag}]
+                  </Button>
+                ))}
+              </div>
               <Textarea
+                ref={lyricsRef}
                 value={lyrics}
                 maxLength={8000}
                 rows={6}
@@ -535,6 +724,90 @@ export function MusicPage() {
                     </Button>
                   </div>
                 </label>
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <span id="music-variants" className="font-medium">
+                    {t('musicStudio.variants')}
+                  </span>
+                  <ToggleGroup
+                    value={[batchSize]}
+                    disabled={busy}
+                    size="sm"
+                    aria-labelledby="music-variants"
+                    onValueChange={(value) => {
+                      const next = value[0];
+                      if (typeof next === 'string') setBatchSize(next);
+                    }}
+                  >
+                    {BATCH_SIZES.map((value) => (
+                      <ToggleGroupItem key={value} value={value}>
+                        {value}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                  <p className="leading-5 text-muted-foreground">
+                    {t('musicStudio.variants_help')}
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{t('musicStudio.steps')}</span>
+                    <span className="text-muted-foreground tabular-nums">{steps}</span>
+                  </div>
+                  <Slider
+                    min={MIN_STEPS}
+                    max={MAX_STEPS}
+                    step={1}
+                    value={[steps]}
+                    disabled={busy}
+                    aria-label={t('musicStudio.steps')}
+                    onValueChange={(value) => setSteps(Array.isArray(value) ? value[0] : value)}
+                  />
+                  <p className="leading-5 text-muted-foreground">{t('musicStudio.steps_help')}</p>
+                </div>
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <span id="music-sampler" className="font-medium">
+                    {t('musicStudio.sampler')}
+                  </span>
+                  <ToggleGroup
+                    value={[inferMethod]}
+                    disabled={busy}
+                    size="sm"
+                    aria-labelledby="music-sampler"
+                    onValueChange={(value) => {
+                      const next = value[0];
+                      if (next === 'ode' || next === 'sde') setInferMethod(next);
+                    }}
+                  >
+                    {INFER_METHODS.map((value) => (
+                      <ToggleGroupItem key={value} value={value}>
+                        {t(`musicStudio.sampler_${value}`)}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                  <p className="leading-5 text-muted-foreground">{t('musicStudio.sampler_help')}</p>
+                </div>
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <span id="music-format" className="font-medium">
+                    {t('musicStudio.audio_format')}
+                  </span>
+                  <ToggleGroup
+                    value={[audioFormat]}
+                    disabled={busy}
+                    size="sm"
+                    aria-labelledby="music-format"
+                    onValueChange={(value) => {
+                      const next = value[0];
+                      if ((AUDIO_FORMATS as readonly string[]).includes(next as string))
+                        setAudioFormat(next as AudioFormat);
+                    }}
+                  >
+                    {AUDIO_FORMATS.map((value) => (
+                      <ToggleGroupItem key={value} value={value}>
+                        {value.toUpperCase()}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                </div>
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -589,10 +862,30 @@ export function MusicPage() {
             )}
           </div>
 
+          {lmReady && (
+            <div className="space-y-1 text-xs">
+              <Button
+                className="w-full"
+                size="sm"
+                variant="secondary"
+                disabled={busy || formatting || !prompt.trim()}
+                onClick={runFormat}
+              >
+                {formatting ? (
+                  <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
+                ) : (
+                  <WandSparklesIcon />
+                )}
+                {formatting ? t('musicStudio.formatting') : t('musicStudio.format')}
+              </Button>
+              <p className="leading-5 text-muted-foreground">{t('musicStudio.format_hint')}</p>
+            </div>
+          )}
+
           <Button
             className="w-full"
             size="lg"
-            disabled={busy || !installed || !prompt.trim()}
+            disabled={busy || formatting || !installed || !prompt.trim()}
             onClick={generate}
           >
             {task?.kind === 'generate' ? (
@@ -600,7 +893,11 @@ export function MusicPage() {
             ) : (
               <SparklesIcon />
             )}
-            {task?.kind === 'generate' ? t('musicStudio.generating') : t('musicStudio.generate')}
+            {task?.kind === 'generate'
+              ? t('musicStudio.generating')
+              : Number(batchSize) > 1
+                ? t('musicStudio.generate_many', { count: Number(batchSize) })
+                : t('musicStudio.generate')}
           </Button>
           {task?.kind === 'generate' && (
             <>
@@ -644,20 +941,35 @@ export function MusicPage() {
             <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
               <div className="flex items-center justify-between gap-2">
                 <h2 className="truncate text-sm font-medium">{selected.title}</h2>
-                {typeof selected.seed === 'number' && (
+                <div className="flex shrink-0 items-center gap-1">
                   <Button
                     size="xs"
                     variant="ghost"
                     disabled={busy}
                     onClick={() => {
-                      setSeed(String(selected.seed));
+                      applySettings(settingsFromTrack(selected, settings));
                       setAdvancedOpen(true);
+                      toast.success(t('musicStudio.settings_reused'));
                     }}
                   >
-                    <RotateCcwIcon />
-                    {t('musicStudio.reuse_seed', { seed: selected.seed })}
+                    <SlidersHorizontalIcon />
+                    {t('musicStudio.reuse_settings')}
                   </Button>
-                )}
+                  {typeof selected.seed === 'number' && (
+                    <Button
+                      size="xs"
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() => {
+                        setSeed(String(selected.seed));
+                        setAdvancedOpen(true);
+                      }}
+                    >
+                      <RotateCcwIcon />
+                      {t('musicStudio.reuse_seed', { seed: selected.seed })}
+                    </Button>
+                  )}
+                </div>
               </div>
               <WaveformPlayer
                 key={selected.id}
@@ -699,6 +1011,10 @@ export function MusicPage() {
                       <span className="block text-[11px] text-muted-foreground">
                         {t('musicStudio.duration_value', { seconds: track.duration })}
                         {track.instrumental ? ` · ${t('musicStudio.instrumental')}` : ''}
+                        {track.variant
+                          ? ` · ${t('musicStudio.variant_label', { n: track.variant })}`
+                          : ''}
+                        {track.ext && track.ext !== 'wav' ? ` · ${track.ext.toUpperCase()}` : ''}
                         {' · '}
                         {new Date(track.created_at * 1000).toLocaleString()}
                       </span>
@@ -727,6 +1043,23 @@ export function MusicPage() {
           </section>
         </main>
       </div>
+      <MusicFormatDialog
+        open={formatNext !== null}
+        onOpenChange={(open) => !open && setFormatNext(null)}
+        current={formatFields}
+        next={formatNext ?? formatFields}
+        describe={describeField}
+        onApply={() => {
+          if (!formatNext) return;
+          setPrompt(formatNext.prompt);
+          setLyrics(formatNext.lyrics);
+          setBpm(formatNext.bpm);
+          setKeyScale(formatNext.keyScale);
+          setTimeSignature(formatNext.timeSignature);
+          setDuration(formatNext.duration);
+          setVocalLanguage(formatNext.vocalLanguage);
+        }}
+      />
     </div>
   );
 }

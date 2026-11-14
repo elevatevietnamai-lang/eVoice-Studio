@@ -303,6 +303,7 @@ POST /models/install/prepare
 POST /models/licenses/accept
 POST /models/licenses/revoke
 POST /models/licenses/verify/{plan_digest}
+POST /music/format
 POST /music/generate
 POST /music/stop
 POST /personas/export/{profile_id}
