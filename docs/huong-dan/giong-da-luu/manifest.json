@@ -1,0 +1,63 @@
+{
+  "slug": "giong-da-luu",
+  "title": "Quản lý giọng đã lưu",
+  "order": 3,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Danh sách giọng đã lưu",
+      "route": "/personas",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "54a6bc1440a5a3ada37de6b29483567c5eb42f3ce3a97007b051a7f865075659",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Giọng đã lưu"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Nhân bản giọng",
+          "Thiết kế",
+          "Tìm kiếm…",
+          "Tất cả",
+          "Giọng Nam Trầm",
+          "Xem trước giọng nói",
+          "Sửa hồ sơ giọng",
+          "Xóa giọng",
+          "Giọng Nữ Tin Tức",
+          "Người Kể Chuyện",
+          "English Narrator",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Tìm kiếm…"
+        ]
+      }
+    }
+  ]
+}

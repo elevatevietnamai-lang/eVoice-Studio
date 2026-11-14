@@ -1,0 +1,81 @@
+{
+  "slug": "truyen",
+  "title": "Truyện nhiều giọng",
+  "order": 8,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Truyện",
+      "route": "/stories",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "cbe06e1d347f44dfc0a96785c29f2da2e001212ee12cfaafd4240be1308b0e08",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "giọng nói",
+          "Tốc độ 1.00×",
+          "Ngôn ngữ",
+          "Định dạng",
+          "Truyện",
+          "Kịch bản",
+          "Truyện mới"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Dự án",
+          "GT Giọng Nam Trầm",
+          "GT Giọng Nữ Tin Tức",
+          "NC Người Kể Chuyện",
+          "EN English Narrator",
+          "Ngôn ngữ",
+          "M4B (chương)",
+          "MP3",
+          "Tạo",
+          "Tìm kiếm…",
+          "Nhập",
+          "Xóa kịch bản",
+          "Tách theo",
+          "Tải mẫu",
+          "Thêm dòng đầu tiên",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt",
+          "Sách nói"
+        ],
+        "fields": [
+          "Tiêu đề",
+          "Tốc độ",
+          "Số bước",
+          "CFG",
+          "Nhiệt độ vị trí",
+          "Nhập",
+          "Tự phân vai",
+          "Tách theo"
+        ]
+      }
+    }
+  ]
+}

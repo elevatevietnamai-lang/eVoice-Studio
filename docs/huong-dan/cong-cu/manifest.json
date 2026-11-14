@@ -1,0 +1,60 @@
+{
+  "slug": "cong-cu",
+  "title": "Công cụ: so sánh và chuyển giọng",
+  "order": 13,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Công cụ",
+      "route": "/tools",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "8bb37cc1ff0df290c15615d60e2bff15f85f191d259c7fcfb49bb74656c75912",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Công cụ",
+          "AI đạo diễn"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Đang tải…",
+          "AI đạo diễn",
+          "Khớp tốc độ nói",
+          "Kiểm tra tệp",
+          "So sánh giọng nói A/B",
+          "Chuyển đổi",
+          "Tìm kiếm…",
+          "Phân tích",
+          "Đang tải…",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Chỉ dẫn"
+        ]
+      }
+    }
+  ]
+}

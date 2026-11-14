@@ -1,6 +1,13 @@
 # Kế hoạch: tài liệu hướng dẫn eVoice Studio (`/tai-lieu`)
 
-Ngày lập: 2026-11-14. Trạng thái: **chỉ là kế hoạch**. Chưa viết code, chưa gọi API, chưa push hay deploy.
+Ngày lập: 2026-11-14. Trạng thái: **Pha 1, 3 (ảnh mẫu), 4 và bản preview Pha 6 đã làm**; cách chạy ở `docs/huong-dan/README.md`.
+
+Thay đổi so với kế hoạch gốc (2026-11-14):
+- Lời văn do **Gemini 4 Argon qua `agy` CLI** (`gemini-4-argon-medium`, chế độ chỉ đọc) viết, không gọi Gemini API bằng
+  API key; mục 3.1–3.2 và 6.1 về `@google/genai`, `GEMINI_API_KEY` và chi phí token không còn áp dụng.
+- Script là Python (`scripts/docs/generate_guides.py`, `check_guides.py`, `guides.py`), giống `scripts/i18n_translate_agy.py`.
+- Bước chụp "live" với model thật chưa làm; mọi ảnh dùng backend giả và dữ liệu mẫu.
+- Promo và Editor đã vào `main` nên có bài luôn. Trang Cài đặt → Hỗ trợ không được chụp vì chứa thông tin ủng hộ cá nhân.
 
 Mục tiêu:
 - Mỗi tính năng của app desktop Electron có một bài hướng dẫn bằng tiếng Việt tự nhiên.

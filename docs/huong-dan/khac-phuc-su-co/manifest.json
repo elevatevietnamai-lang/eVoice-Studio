@@ -1,0 +1,160 @@
+{
+  "slug": "khac-phuc-su-co",
+  "title": "Khắc phục sự cố",
+  "order": 17,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "nhat-ky",
+      "caption": "Nhật ký",
+      "route": "/settings/logs",
+      "file": "shots/nhat-ky.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "da683a037d14f24efbb46a45bb12fce3c05541253b7600a2bb5511a5fac69665",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Nhật ký"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Backend",
+          "Giao diện",
+          "Hỏi eVoice Studio Agent",
+          "Làm mới",
+          "Sao chép nhật ký hiển thị",
+          "Xóa",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt",
+          "Chung",
+          "Giao diện",
+          "Mô hình",
+          "Từ điển phát âm",
+          "Cập nhật",
+          "Mạng",
+          "Chia sẻ & truy cập từ xa",
+          "Xác thực",
+          "Tài khoản VoiceStudio",
+          "Thiết bị tính toán",
+          "Mức sử dụng",
+          "Quyền riêng tư",
+          "Quyền truy cập",
+          "Lưu trữ",
+          "Kiểm tra hệ thống",
+          "API eVoice Studio",
+          "Công cụ âm thanh",
+          "Nhật ký",
+          "Hỗ trợ",
+          "Quay lại"
+        ],
+        "fields": [
+          "Tìm kiếm…"
+        ]
+      }
+    },
+    {
+      "id": "chan-doan",
+      "caption": "Chẩn đoán",
+      "route": "/settings/diagnostics",
+      "file": "shots/chan-doan.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "c1c6cb0feae0a7b398eb33c38ca5b23a4de8e6b655664e309fb9cb0ce85c134d",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Kiểm tra hệ thống",
+          "Giới thiệu",
+          "Ứng dụng",
+          "Phiên bản",
+          "Xây dựng trên VoiceStudio (AGPL-3.0) và những người đóng góp",
+          "Nền tảng",
+          "Thiết bị tính toán",
+          "RAM",
+          "Python",
+          "TTS",
+          "ASR",
+          "Trình dịch",
+          "Dữ liệu giọng nói & dự án",
+          "Kết quả",
+          "Ghi công mô hình"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "@debpalash",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt",
+          "Chung",
+          "Giao diện",
+          "Mô hình",
+          "Từ điển phát âm",
+          "Cập nhật",
+          "Mạng",
+          "Chia sẻ & truy cập từ xa",
+          "Xác thực",
+          "Tài khoản VoiceStudio",
+          "Thiết bị tính toán",
+          "Mức sử dụng",
+          "Quyền riêng tư",
+          "Quyền truy cập",
+          "Lưu trữ",
+          "Kiểm tra hệ thống",
+          "API eVoice Studio",
+          "Công cụ âm thanh",
+          "Nhật ký",
+          "Hỗ trợ",
+          "Quay lại",
+          "GitHub · @kevin9327",
+          "GitHub · @psiberfunk",
+          "GitHub · @velixio",
+          "GitHub · @jaketame",
+          "GitHub · @paoloantinori",
+          "GitHub · @Chang-Jin-Lee",
+          "GitHub · @Shivendra-Coherent",
+          "GitHub · @marreiradigital",
+          "Tất cả người đóng góp"
+        ],
+        "fields": [
+          "Tìm kiếm…"
+        ]
+      }
+    }
+  ]
+}

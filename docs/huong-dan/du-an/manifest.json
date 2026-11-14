@@ -1,0 +1,77 @@
+{
+  "slug": "du-an",
+  "title": "Dự án",
+  "order": 15,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Dự án",
+      "route": "/projects",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "0fd6cb9fe08c2afd5b061764a71c5a0d35318ee38de7be80c3176ff22f69f079",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Dự án",
+          "Giọng Nam Trầm",
+          "Giọng Nữ Tin Tức",
+          "Người Kể Chuyện",
+          "English Narrator"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Tất cả 4",
+          "Dự án lồng tiếng 0",
+          "Truyện 0",
+          "Sách nói 0",
+          "Hồ sơ giọng 4",
+          "Bản chép lời 0",
+          "Lịch sử 0",
+          "Bản xuất 0",
+          "Tìm kiếm…",
+          "Lưới thẻ",
+          "Danh sách",
+          "Chọn mục đang hiển thị",
+          "Dùng giọng này",
+          "Xóa Giọng Nam Trầm",
+          "Xóa Giọng Nữ Tin Tức",
+          "Xóa Người Kể Chuyện",
+          "Xóa English Narrator",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Tìm bản lồng tiếng, giọng nhân bản, bản chép lời, bản xuất…",
+          "Chọn Giọng Nam Trầm",
+          "Chọn Giọng Nữ Tin Tức",
+          "Chọn Người Kể Chuyện",
+          "Chọn English Narrator"
+        ]
+      }
+    }
+  ]
+}
