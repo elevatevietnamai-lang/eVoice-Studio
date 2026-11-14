@@ -72,7 +72,7 @@ export function WorkspaceSidebar() {
             data-slot="rail-logo"
             onClick={() => setMenuGroup(null)}
             // A brand mark, not a control surface: no hover or pressed fill, only the focus ring.
-            className="grid size-8 shrink-0 place-items-center rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="grid size-8 shrink-0 place-items-center rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <EVoiceMark size={32} tone="ink" crop cut="full" className="size-8 shrink-0" />
           </Link>
