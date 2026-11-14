@@ -1,0 +1,72 @@
+{
+  "slug": "tich-hop",
+  "title": "Tích hợp",
+  "order": 14,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Danh sách tích hợp",
+      "route": "/integrations",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "712a4fd3aed3af2ba128aed8f440ac63efd7dcdbbc7a79293089376871a23c36",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Tích hợp",
+          "Twilio",
+          "n8n",
+          "GitHub Container Registry",
+          "Docker",
+          "Model Context Protocol",
+          "OpenAI Agents",
+          "Claude Code",
+          "Cursor",
+          "Codex CLI",
+          "VoiceStudio API"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Tìm kiếm…",
+          "Tất cả",
+          "Cuộc gọi & agent giọng nói",
+          "Tự động hóa",
+          "Agent",
+          "MCP",
+          "Công cụ nhà phát triển",
+          "Twilio Hoạt động với eVoice Studio Cuộc gọi điện thoại https://www.twilio.com",
+          "n8n Hoạt động với eVoice Studio Mẫu quy trình · API giọng nói https://n8n.io",
+          "Cursor Hoạt động với eVoice Studio Máy chủ MCP https://www.cursor.com",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Tìm kiếm…"
+        ]
+      }
+    }
+  ]
+}

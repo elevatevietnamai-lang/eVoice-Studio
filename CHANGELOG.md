@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Vietnamese user guide drafts with real app screenshots
+
+### Docs
+
+- Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)
+
 ## [0.5.7-beta.3] — 2026-11-14
 
 The first eVoice Studio release built from this repository: a Windows beta with a new white logo, a

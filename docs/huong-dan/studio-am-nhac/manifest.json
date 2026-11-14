@@ -1,0 +1,68 @@
+{
+  "slug": "studio-am-nhac",
+  "title": "Studio âm nhạc",
+  "order": 10,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Studio âm nhạc",
+      "route": "/music",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "ad1c6ee9cdb7151a00748c51d20a1eabc1d5c2f772dc03d4c535e58273778e44",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Engine nhạc",
+          "Studio âm nhạc",
+          "Thư viện nhạc"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Cài engine nhạc",
+          "Bài mới",
+          "Cover",
+          "Vẽ lại",
+          "calm lo-fi",
+          "upbeat pop",
+          "cinematic ambient",
+          "energetic electronic",
+          "acoustic guitar",
+          "Thẻ phong cách",
+          "Nâng cao",
+          "Tạo nhạc",
+          "Tìm kiếm…",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Mô tả bản nhạc",
+          "Nhịp độ (BPM, không bắt buộc)"
+        ]
+      }
+    }
+  ]
+}

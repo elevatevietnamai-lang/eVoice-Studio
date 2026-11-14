@@ -7,7 +7,9 @@
 const STAR_COUNT_URL = 'https://api.github.com/repos/debpalash/VoiceStudio';
 const STAR_COUNT_STUB = { stargazers_count: 1234 };
 
-const LOCAL_SCHEMES = new Set(['app:', 'file:', 'data:', 'blob:', 'devtools:']);
+// `promo-scene:` is the Promo page's scene preview, served by main from userData
+// (electron/src/main/promo-scene-protocol.ts); it never reaches the network.
+const LOCAL_SCHEMES = new Set(['app:', 'file:', 'data:', 'blob:', 'devtools:', 'promo-scene:']);
 const NETWORK_SCHEMES = new Set(['http:', 'https:', 'ws:', 'wss:']);
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '[::1]']);
 

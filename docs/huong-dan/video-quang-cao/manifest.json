@@ -1,0 +1,92 @@
+{
+  "slug": "video-quang-cao",
+  "title": "Video quảng cáo (Promo)",
+  "order": 18,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Video quảng cáo",
+      "route": "/promo",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "4dcbc736a65183fcf3a78a2489f718f8b20ede2cb617004a02b00dbaf8d4022f",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Nhạc",
+          "Logo",
+          "Video quảng cáo",
+          "Cảnh",
+          "Cảnh HTML tuỳ chỉnh",
+          "Tham số"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "9:16 dọc",
+          "1:1 vuông",
+          "16:9 ngang",
+          "30 fps",
+          "60 fps",
+          "Gốc",
+          "Ấm",
+          "Lạnh",
+          "Rực rỡ",
+          "Đen trắng",
+          "Thêm nhạc",
+          "Thêm lời thuyết minh (tuỳ chọn)",
+          "Thêm logo (PNG)",
+          "Xuất video",
+          "Tìm kiếm…",
+          "Thêm clip hoặc ảnh",
+          "Viết bằng AI",
+          "Cảnh",
+          "Mới",
+          "Lưu",
+          "Nhập",
+          "Xuất",
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "Phát lại",
+          "Loại",
+          "Bỏ tham số",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Cảnh",
+          "Tên",
+          "Độ dài (giây)",
+          "HTML",
+          "Khoá",
+          "Loại",
+          "Nhãn",
+          "Giá trị"
+        ]
+      }
+    }
+  ]
+}
