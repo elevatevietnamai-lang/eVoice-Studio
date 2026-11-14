@@ -4243,5 +4243,32 @@
     "timeline_outro": "Avslutning med logotyp",
     "timeline_preview": "Förhandsvisning",
     "timeline_preview_note": "Förhandsvisningen är ungefärlig; den renderade videon är exakt."
+  },
+  "appMenu": {
+    "menu": "Meny",
+    "file": "Arkiv",
+    "edit": "Redigera",
+    "view": "Visa",
+    "go": "Gå",
+    "window": "Fönster",
+    "help": "Hjälp",
+    "about": "Om {{app}}",
+    "services": "Tjänster",
+    "hide": "Göm {{app}}",
+    "hide_others": "Göm övriga",
+    "show_all": "Visa alla",
+    "quit": "Avsluta {{app}}",
+    "exit": "Avsluta",
+    "close_window": "Stäng fönster",
+    "bring_all_to_front": "Lägg alla överst",
+    "undo": "Ångra",
+    "redo": "Gör om",
+    "cut": "Klipp ut",
+    "copy": "Kopiera",
+    "paste": "Klistra in",
+    "select_all": "Markera alla",
+    "command_palette": "Kommandopalett…",
+    "toggle_full_screen": "Helskärm",
+    "settings": "Inställningar…"
   }
 }

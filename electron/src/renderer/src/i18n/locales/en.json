@@ -4243,5 +4243,32 @@
     "timeline_outro": "Logo ending",
     "timeline_preview": "Preview",
     "timeline_preview_note": "Preview is approximate; the rendered video is exact."
+  },
+  "appMenu": {
+    "menu": "Menu",
+    "file": "File",
+    "edit": "Edit",
+    "view": "View",
+    "go": "Go",
+    "window": "Window",
+    "help": "Help",
+    "about": "About {{app}}",
+    "services": "Services",
+    "hide": "Hide {{app}}",
+    "hide_others": "Hide Others",
+    "show_all": "Show All",
+    "quit": "Quit {{app}}",
+    "exit": "Exit",
+    "close_window": "Close Window",
+    "bring_all_to_front": "Bring All to Front",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "select_all": "Select All",
+    "command_palette": "Command Palette…",
+    "toggle_full_screen": "Toggle Full Screen",
+    "settings": "Settings…"
   }
 }

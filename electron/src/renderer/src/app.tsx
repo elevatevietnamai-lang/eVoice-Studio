@@ -22,6 +22,7 @@ import { ModelInstallSync } from '@/hooks/use-model-install-sync';
 import { RealtimeEventSync } from '@/hooks/use-realtime-events';
 import { GenerateBudgetSync } from '@/hooks/use-generate-budget-sync';
 import { runRendererTask } from '@/lib/global-error-recovery';
+import { appMenuLabels, openAppMenuPath } from '@/lib/app-menu';
 import { WebAuthGate } from '@/components/web-auth-gate';
 import { ModelLicenceGate } from '@/features/settings/model-licence-acceptance';
 
@@ -96,10 +97,21 @@ export function App() {
     const app = getBridge()?.app;
     if (!app) return;
     return app.onNavigate((path) => {
-      if (path === '/settings')
-        runRendererTask('Native navigation to settings', () =>
-          router.navigate({ to: '/settings' }),
-        );
+      openAppMenuPath(path, (to) =>
+        runRendererTask('Native menu navigation', () => router.navigate({ to })),
+      );
+    });
+  }, []);
+  useEffect(() => {
+    const menu = getBridge()?.app?.menu;
+    if (!menu) return;
+    void menu.setLabels(appMenuLabels(t)).catch(() => {});
+  }, [t]);
+  useEffect(() => {
+    const menu = getBridge()?.app?.menu;
+    if (!menu) return;
+    return menu.onAction((action) => {
+      if (action === 'command-palette') window.dispatchEvent(new Event('voicestudio:commands'));
     });
   }, []);
   useEffect(() => {

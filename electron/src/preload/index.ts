@@ -11,6 +11,12 @@ import type {
   AccountPublicState,
   PromoBrowserState,
 } from './index.d';
+import {
+  APP_MENU_ACTION_CHANNEL,
+  APP_MENU_LABELS_CHANNEL,
+  APP_MENU_POPUP_CHANNEL,
+  APP_NAVIGATE_CHANNEL,
+} from '../shared/app-menu';
 
 function subscribe<T>(channel: string, cb: (payload: T) => void): () => void {
   const listener = (_event: IpcRendererEvent, payload: T) => cb(payload);
@@ -68,7 +74,12 @@ const bridge: VoiceStudioBridge = {
     version: __APP_VERSION__,
     platform: process.platform,
     isDev: process.env.NODE_ENV === 'development' || !!process.env.ELECTRON_RENDERER_URL,
-    onNavigate: (callback) => subscribe<string>('app:navigate', callback),
+    onNavigate: (callback) => subscribe<string>(APP_NAVIGATE_CHANNEL, callback),
+    menu: {
+      setLabels: (labels) => ipcRenderer.invoke(APP_MENU_LABELS_CHANNEL, labels),
+      popup: (point) => ipcRenderer.invoke(APP_MENU_POPUP_CHANNEL, point),
+      onAction: (callback) => subscribe<'command-palette'>(APP_MENU_ACTION_CHANNEL, callback),
+    },
     isFullScreen: () => ipcRenderer.invoke('app:is-fullscreen'),
     onFullScreen: (callback) => subscribe<boolean>('app:fullscreen', callback),
     onPersistenceFlush: (callback) => {

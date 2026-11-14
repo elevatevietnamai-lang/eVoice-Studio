@@ -15,6 +15,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- The desktop app has a full application menu (File, Edit, View, Go, Window, Help) that opens every feature page with a shortcut: the menu bar on macOS, a menu button in the top-right corner on Windows and Linux
 - The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)
 - Burned-in subtitles use the bundled Inter font, so Latin, Cyrillic and Vietnamese captions look the same on macOS, Windows and Linux (other scripts still use a system font) (#6)
 - Karaoke on translated lines gives longer words more time instead of splitting the line evenly, and Chinese, Japanese and Thai lines highlight per character instead of all at once (#6)

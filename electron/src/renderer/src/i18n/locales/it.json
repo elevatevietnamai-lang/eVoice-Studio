@@ -4245,5 +4245,32 @@
     "timeline_outro": "Chiusura con logo",
     "timeline_preview": "Anteprima",
     "timeline_preview_note": "L’anteprima è approssimativa; il video creato è esatto."
+  },
+  "appMenu": {
+    "menu": "Menu",
+    "file": "File",
+    "edit": "Modifica",
+    "view": "Vista",
+    "go": "Vai",
+    "window": "Finestra",
+    "help": "Aiuto",
+    "about": "Informazioni su {{app}}",
+    "services": "Servizi",
+    "hide": "Nascondi {{app}}",
+    "hide_others": "Nascondi altre",
+    "show_all": "Mostra tutte",
+    "quit": "Esci da {{app}}",
+    "exit": "Esci",
+    "close_window": "Chiudi finestra",
+    "bring_all_to_front": "Porta tutto in primo piano",
+    "undo": "Annulla",
+    "redo": "Ripeti",
+    "cut": "Taglia",
+    "copy": "Copia",
+    "paste": "Incolla",
+    "select_all": "Seleziona tutto",
+    "command_palette": "Tavolozza comandi…",
+    "toggle_full_screen": "Schermo intero",
+    "settings": "Impostazioni…"
   }
 }

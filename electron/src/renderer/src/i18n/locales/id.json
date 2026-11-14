@@ -4243,5 +4243,32 @@
     "timeline_outro": "Penutup logo",
     "timeline_preview": "Pratinjau",
     "timeline_preview_note": "Pratinjau hanya perkiraan; video hasil render yang akurat."
+  },
+  "appMenu": {
+    "menu": "Menu",
+    "file": "File",
+    "edit": "Edit",
+    "view": "Tampilan",
+    "go": "Buka",
+    "window": "Jendela",
+    "help": "Bantuan",
+    "about": "Tentang {{app}}",
+    "services": "Layanan",
+    "hide": "Sembunyikan {{app}}",
+    "hide_others": "Sembunyikan Lainnya",
+    "show_all": "Tampilkan Semua",
+    "quit": "Keluar dari {{app}}",
+    "exit": "Keluar",
+    "close_window": "Tutup Jendela",
+    "bring_all_to_front": "Bawa Semua ke Depan",
+    "undo": "Urungkan",
+    "redo": "Ulangi",
+    "cut": "Potong",
+    "copy": "Salin",
+    "paste": "Tempel",
+    "select_all": "Pilih Semua",
+    "command_palette": "Palet Perintah…",
+    "toggle_full_screen": "Layar Penuh",
+    "settings": "Pengaturan…"
   }
 }

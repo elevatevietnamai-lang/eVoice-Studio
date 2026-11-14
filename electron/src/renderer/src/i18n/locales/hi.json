@@ -4243,5 +4243,32 @@
     "timeline_outro": "लोगो वाला अंत",
     "timeline_preview": "पूर्वावलोकन",
     "timeline_preview_note": "पूर्वावलोकन अनुमानित है; रेंडर हुआ वीडियो सटीक होता है।"
+  },
+  "appMenu": {
+    "menu": "मेनू",
+    "file": "फ़ाइल",
+    "edit": "संपादन",
+    "view": "दृश्य",
+    "go": "जाएँ",
+    "window": "विंडो",
+    "help": "सहायता",
+    "about": "{{app}} के बारे में",
+    "services": "सेवाएँ",
+    "hide": "{{app}} छिपाएँ",
+    "hide_others": "अन्य छिपाएँ",
+    "show_all": "सभी दिखाएँ",
+    "quit": "{{app}} बंद करें",
+    "exit": "बाहर निकलें",
+    "close_window": "विंडो बंद करें",
+    "bring_all_to_front": "सभी को आगे लाएँ",
+    "undo": "पूर्ववत करें",
+    "redo": "फिर से करें",
+    "cut": "काटें",
+    "copy": "कॉपी करें",
+    "paste": "चिपकाएँ",
+    "select_all": "सभी चुनें",
+    "command_palette": "कमांड पैलेट…",
+    "toggle_full_screen": "पूर्ण स्क्रीन",
+    "settings": "सेटिंग्स…"
   }
 }
