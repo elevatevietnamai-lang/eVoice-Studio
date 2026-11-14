@@ -22,7 +22,7 @@ vi.mock('@tanstack/react-router', async (importOriginal) => ({
   useNavigate: () => mock.navigate,
 }));
 import { SupportSettings } from './support-settings';
-import { DONATE } from './evoice-support';
+import { DONATE, isSet } from './evoice-support';
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
@@ -51,11 +51,32 @@ it('draws the bank transfer as a locally generated VietQR code', async () => {
   expect(payload).toContain('0006970416010812650311');
 });
 
-it('hides the Momo QR when its image is missing', () => {
+it('requests the Momo QR only when it is configured and shipped', () => {
   render(<SupportSettings />);
-  const momo = screen.getByRole('img', { name: 'supportEvoice.qr_alt Momo' });
-  fireEvent.error(momo);
-  expect(screen.queryByRole('img', { name: 'supportEvoice.qr_alt Momo' })).toBeNull();
+  const momo = screen.queryByRole('img', { name: 'supportEvoice.qr_alt Momo' });
+  if (!isSet(DONATE.momo.qr)) {
+    // An unset QR must not be requested: a 404 is a console error in the packaged app.
+    expect(momo).toBeNull();
+    return;
+  }
+  expect(momo).toHaveAttribute('src', DONATE.momo.qr);
+  // Files under electron/public are served from the app root, so `/donate/x.png` must be shipped.
+  const shipped = Object.keys(import.meta.glob('../../../../../public/donate/*', { eager: false }));
+  expect(shipped.some((path) => path.endsWith(DONATE.momo.qr))).toBe(true);
+});
+
+it('hides the Momo QR when its image fails to load', () => {
+  const momoConfig = DONATE.momo as { qr: string };
+  const configured = momoConfig.qr;
+  momoConfig.qr = '/donate/momo-qr.png';
+  try {
+    render(<SupportSettings />);
+    const momo = screen.getByRole('img', { name: 'supportEvoice.qr_alt Momo' });
+    fireEvent.error(momo);
+    expect(screen.queryByRole('img', { name: 'supportEvoice.qr_alt Momo' })).toBeNull();
+  } finally {
+    momoConfig.qr = configured;
+  }
 });
 
 it('lists only the contact links that are filled in and keeps the Pro page reachable', () => {

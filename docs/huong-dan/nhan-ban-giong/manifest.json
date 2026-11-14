@@ -1,0 +1,322 @@
+{
+  "slug": "nhan-ban-giong",
+  "title": "Nhân bản giọng",
+  "order": 2,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Nhân bản giọng",
+      "route": "/clone",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "9f9eb7cae42e1acdef9a461777a6ce0efd236a29811f1fd8ba41306228bfcfbe",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Nhân bản giọng",
+          "Chọn giọng đọc",
+          "Giọng đã lưu 2",
+          "Thêm giọng mới"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Giọng đã lưu",
+          "Bản thu gần đây",
+          "Giọng Nam Trầm",
+          "Xem trước giọng nói",
+          "Sửa hồ sơ giọng",
+          "Xóa giọng",
+          "Giọng Nữ Tin Tức",
+          "Người Kể Chuyện",
+          "English Narrator",
+          "Tìm kiếm…",
+          "Mới nhất",
+          "A–Z",
+          "Chỉnh sửa giọng: Giọng Nam Trầm",
+          "Chỉnh sửa giọng: Giọng Nữ Tin Tức",
+          "Thu âm",
+          "Thiết bị đầu vào",
+          "Kênh",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Đổi ảnh: Giọng Nam Trầm",
+          "Đổi ảnh: Giọng Nữ Tin Tức",
+          "Thả âm thanh vào đây — hoặc nhấp chọn. WAV, MP3, M4A…",
+          "Thiết bị đầu vào",
+          "Kênh"
+        ]
+      }
+    },
+    {
+      "id": "tai-mau-len",
+      "caption": "Thả hoặc chọn một file audio mẫu",
+      "route": "/clone",
+      "file": "shots/tai-mau-len.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "7496572d46b677bc7fdf3e48018679817d0b4abd1c3323ca6e65b42f350b670f",
+      "highlight": "Thả âm thanh vào đây — hoặc nhấp chọn. WAV, MP3, M4A…",
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Nhân bản giọng",
+          "Chọn giọng đọc",
+          "Giọng đã lưu 2",
+          "Thêm giọng mới"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Giọng đã lưu",
+          "Bản thu gần đây",
+          "Giọng Nam Trầm",
+          "Xem trước giọng nói",
+          "Sửa hồ sơ giọng",
+          "Xóa giọng",
+          "Giọng Nữ Tin Tức",
+          "Người Kể Chuyện",
+          "English Narrator",
+          "Tìm kiếm…",
+          "Mới nhất",
+          "A–Z",
+          "Chỉnh sửa giọng: Giọng Nam Trầm",
+          "Chỉnh sửa giọng: Giọng Nữ Tin Tức",
+          "Thu âm",
+          "Thiết bị đầu vào",
+          "Kênh",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Đổi ảnh: Giọng Nam Trầm",
+          "Đổi ảnh: Giọng Nữ Tin Tức",
+          "Thả âm thanh vào đây — hoặc nhấp chọn. WAV, MP3, M4A…",
+          "Thiết bị đầu vào",
+          "Kênh"
+        ]
+      }
+    },
+    {
+      "id": "thu-am",
+      "caption": "Hoặc thu âm trực tiếp",
+      "route": "/clone",
+      "file": "shots/thu-am.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "0a65055fd93aae2c6a291dd69d44f5a3e3deb675c08a57055786bd123aa5306c",
+      "highlight": "Thu âm",
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Nhân bản giọng",
+          "Chọn giọng đọc",
+          "Giọng đã lưu 2",
+          "Thêm giọng mới"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Giọng đã lưu",
+          "Bản thu gần đây",
+          "Giọng Nam Trầm",
+          "Xem trước giọng nói",
+          "Sửa hồ sơ giọng",
+          "Xóa giọng",
+          "Giọng Nữ Tin Tức",
+          "Người Kể Chuyện",
+          "English Narrator",
+          "Tìm kiếm…",
+          "Mới nhất",
+          "A–Z",
+          "Chỉnh sửa giọng: Giọng Nam Trầm",
+          "Chỉnh sửa giọng: Giọng Nữ Tin Tức",
+          "Thu âm",
+          "Thiết bị đầu vào",
+          "Kênh",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Đổi ảnh: Giọng Nam Trầm",
+          "Đổi ảnh: Giọng Nữ Tin Tức",
+          "Thả âm thanh vào đây — hoặc nhấp chọn. WAV, MP3, M4A…",
+          "Thiết bị đầu vào",
+          "Kênh"
+        ]
+      }
+    },
+    {
+      "id": "chon-giong-da-luu",
+      "caption": "Chọn một giọng đã lưu để đọc kịch bản",
+      "route": "/clone",
+      "file": "shots/chon-giong-da-luu.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a142be166b466f0d9e25d447fa66ff5837c7fdb7a264ee2938ed1cfc604cedaf",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Nhân bản giọng"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Giọng đã lưu",
+          "Bản thu gần đây",
+          "Giọng Nam Trầm",
+          "Xem trước giọng nói",
+          "Sửa hồ sơ giọng",
+          "Xóa giọng",
+          "Giọng Nữ Tin Tức",
+          "Người Kể Chuyện",
+          "English Narrator",
+          "Tìm kiếm…",
+          "Đổi giọng",
+          "Mẫu giọng nói",
+          "Nhập kịch bản",
+          "Dán",
+          "Tùy chọn dán",
+          "Chèn token biểu cảm",
+          "Ngôn ngữ",
+          "Chất lượng âm thanh: Tiêu chuẩn",
+          "Điều chỉnh giọng nói",
+          "Tổng hợp âm thanh",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Nhập kịch bản",
+          "Văn bản"
+        ]
+      }
+    },
+    {
+      "id": "nhap-kich-ban",
+      "caption": "Nhập kịch bản rồi bấm Tổng hợp âm thanh",
+      "route": "/clone",
+      "file": "shots/nhap-kich-ban.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "5493e5a9782f72168ec150097a5ee4bdcb3c80760c83940593ce2056e6d23dff",
+      "highlight": "Tổng hợp âm thanh",
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Nhân bản giọng"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Giọng đã lưu",
+          "Bản thu gần đây",
+          "Giọng Nam Trầm",
+          "Xem trước giọng nói",
+          "Sửa hồ sơ giọng",
+          "Xóa giọng",
+          "Giọng Nữ Tin Tức",
+          "Người Kể Chuyện",
+          "English Narrator",
+          "Tìm kiếm…",
+          "Đổi giọng",
+          "Mẫu giọng nói",
+          "Nhập kịch bản",
+          "Dán",
+          "Tùy chọn dán",
+          "Chèn token biểu cảm",
+          "Ngôn ngữ",
+          "Chất lượng âm thanh: Tiêu chuẩn",
+          "Điều chỉnh giọng nói",
+          "Tổng hợp âm thanh",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Nhập kịch bản",
+          "Văn bản"
+        ]
+      }
+    }
+  ]
+}

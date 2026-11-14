@@ -33,7 +33,10 @@
     "typecheck": "bun run --cwd electron typecheck",
     "lint": "bun run --cwd electron lint",
     "format": "bun run --cwd electron format",
-    "dist:dir": "bun run --cwd electron dist:dir --publish never"
+    "dist:dir": "bun run --cwd electron dist:dir --publish never",
+    "docs:capture": "node electron/tests/docs-capture/capture.mjs",
+    "docs:generate": "python scripts/docs/generate_guides.py",
+    "docs:check": "python scripts/docs/check_guides.py"
   },
   "workspaces": ["electron"],
   "devDependencies": {

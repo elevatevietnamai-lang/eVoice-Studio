@@ -1,0 +1,84 @@
+{
+  "slug": "sach-noi",
+  "title": "Sách nói",
+  "order": 9,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Sách nói",
+      "route": "/audiobook",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "36811851482b48967d125dadda836d5946152b493dd8a81a6d62647ab7c8687c",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "giọng nói",
+          "Ngôn ngữ",
+          "Định dạng",
+          "Sách nói",
+          "Kịch bản"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Sách nói",
+          "Dự án",
+          "GT Giọng Nam Trầm",
+          "GT Giọng Nữ Tin Tức",
+          "NC Người Kể Chuyện",
+          "EN English Narrator",
+          "Ngôn ngữ",
+          "M4B (chương)",
+          "MP3",
+          "Xem trước kế hoạch",
+          "Tạo sách nói",
+          "Tìm kiếm…",
+          "Nhập",
+          "Tải mẫu",
+          "Xóa kịch bản",
+          "Tạm dừng",
+          "Giọng",
+          "Chậm",
+          "Nhanh",
+          "Nhấn mạnh",
+          "Đánh vần",
+          "Phản ứng",
+          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Menu",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt",
+          "Truyện"
+        ],
+        "fields": [
+          "Tiêu đề",
+          "Số bước",
+          "CFG",
+          "Nhiệt độ vị trí",
+          "Nhập",
+          "Kịch bản"
+        ]
+      }
+    }
+  ]
+}
