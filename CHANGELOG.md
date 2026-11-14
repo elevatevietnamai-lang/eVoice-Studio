@@ -8,10 +8,24 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.3] — 2026-11-14
+
+The first eVoice Studio release built from this repository: a Windows beta with a new white logo, a
+Music Studio that writes, covers and repaints songs on your computer, a CapCut-style video editor and
+a promo video maker. Everything still runs locally; nothing is uploaded.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.3-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*) |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
-- Preview iOS and Android apps that run VoiceStudio on your phone, offline after downloading the models
-- Opt-in Beta update channel: get fixes early from Settings → Updates, and roll onto the next stable release automatically
+- Music Studio: vocal language, key and meter, up to 4 variants, cover and repaint of a track, a style reference, the optional Thinking language model and SFT/Base models
+- Video editor with projects, transitions, chroma key, masks, stickers and animated titles
+- Promo video maker with beat-cut timeline, custom HTML scenes and Write with AI
+- New white eVoice logo, a native app menu, and a more natural Vietnamese interface
+- Also in this build: preview iOS and Android apps and the opt-in Beta update channel from VoiceStudio upstream
 
 ### Changed
 
