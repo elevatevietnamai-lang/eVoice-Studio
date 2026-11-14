@@ -530,7 +530,7 @@ export function PromoTimeline({
                   data-shot={block.key}
                   className={cn(
                     'absolute top-0 flex h-full cursor-grab items-center overflow-hidden rounded-sm border bg-sky-700/70 text-[11px] text-white active:cursor-grabbing',
-                    selected ? 'z-10 border-white ring-2 ring-primary' : 'border-sky-950/60',
+                    selected ? 'z-10 border-primary ring-2 ring-primary' : 'border-sky-950/60',
                   )}
                   style={{
                     left: block.start * pps,
