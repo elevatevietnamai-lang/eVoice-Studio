@@ -31,6 +31,7 @@ aliases (also zeroed) and the arbitrary ``[border:…var(--…-border)…]`` pro
 form; the dashed drop-zone affordance; or borders kept in the functional
 waveform / segment editor and shadcn form-control primitives (allowlisted).
 """
+
 import re
 from pathlib import Path
 
@@ -163,13 +164,34 @@ def test_no_token_border_utilities_in_jsx():
     )
 
 
+# Focus rings live on the shadcn primitives (``focus-visible:ring-*`` on each one), not in a
+# global ``:focus-visible`` rule; these are the interactive primitives that must keep one.
+_FOCUS_RING_PRIMITIVES = (
+    "button",
+    "checkbox",
+    "input",
+    "select",
+    "slider",
+    "switch",
+    "tabs",
+    "textarea",
+    "toggle",
+)
+
+
 def test_focus_indicators_are_preserved():
     """Regression guard: the border removal must not strip focus a11y."""
     css = _GLOBAL_CSS.read_text(encoding="utf-8")
     assert "--color-ring:" in css, "--color-ring focus token was removed"
-    assert ":focus-visible" in css, ":focus-visible ring rules were removed"
     # The token-zeroing override must NOT have zeroed the focus ring.
     assert "--color-ring: transparent" not in css
+    missing = [
+        name
+        for name in _FOCUS_RING_PRIMITIVES
+        if "focus-visible:ring-"
+        not in (_SRC / "components" / "ui" / f"{name}.tsx").read_text(encoding="utf-8")
+    ]
+    assert not missing, f"focus-visible ring utilities were removed from: {missing}"
 
 
 if __name__ == "__main__":
