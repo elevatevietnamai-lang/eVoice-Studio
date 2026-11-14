@@ -75,8 +75,14 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   BPM, key, time signature, length and language. A dialog shows each change next to your own; nothing
   changes until you choose *Apply changes*. Every suggestion is checked like user input (an unknown key
   or a BPM out of range is dropped). It runs on the same language-model server as Thinking.
-- **Not available yet:** guidance (CFG), shift and the other base-model options have no effect on the
-  turbo model installed here, so they are not shown.
+- **Models (Advanced → Model):** *Turbo* (default, installed with the engine: 4–20 steps, no
+  guidance) or the optional *SFT* and *Base* models (about 4.8 GB each, MIT, pinned downloads of
+  `ACE-Step/acestep-v15-sft` and `ACE-Step/acestep-v15-base` into `<engines dir>/acestep/src/checkpoints`).
+  SFT and Base run 8–64 steps (32 to start) and show the options Turbo ignores: *Guidance (CFG)*
+  1–15, *Shift* 1–5, the *Guidance interval* and *Adaptive guidance (ADG)*; those are only sent for
+  them. Switching models restarts the music server with that model; a model that is not downloaded
+  is refused before the server starts, and SFT/Base run with the same offline guard as Thinking, so
+  ACE-Step's fallback can never fetch an unpinned model. Each saved track records its model.
 - **Memory:** the music server starts on demand, listens on a random loopback port with a random key and
   stops after 5 minutes idle. *Free GPU memory* stops it immediately. Do not generate music and dub at the
   same time on a small GPU.
@@ -88,6 +94,8 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   `reference_track_id`/`reference_upload_id`, `cover_strength`, `repaint_start`, `repaint_end`,
   `repaint_mode`, `repaint_strength`), `POST /music/format` (the formatter's suggestions, nothing
   saved), `POST /music/upload` (multipart `file`; returns `upload_id`, `name`, `duration`),
+  `GET /music/models` (turbo, sft, base and which are downloaded), `GET /music/model-install-stream?model=sft|base`
+  (SSE), and on generate `model`, `guidance_scale`, `shift`, `use_adg`, `cfg_interval_start`, `cfg_interval_end`,
   `GET /music/library`, `GET /music/audio/{id}`, `DELETE /music/library/{id}`, `POST /music/stop`.
 
 ## GPU exclusion

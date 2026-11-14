@@ -86,15 +86,34 @@ export function randomSeed(): number {
   return Math.floor(Math.random() * 2 ** 31);
 }
 
-/** Variants per run, turbo step range, samplers and file formats (backend `services/music.py`). */
+/** Variants per run, turbo's default steps, samplers and file formats (backend `services/music.py`). */
 export const BATCH_SIZES = ['1', '2', '3', '4'] as const;
-export const MIN_STEPS = 4;
-export const MAX_STEPS = 20;
 export const DEFAULT_STEPS = 8;
 export const INFER_METHODS = ['ode', 'sde'] as const;
 export const AUDIO_FORMATS = ['wav', 'flac', 'mp3'] as const;
 export type InferMethod = (typeof INFER_METHODS)[number];
 export type AudioFormat = (typeof AUDIO_FORMATS)[number];
+
+/**
+ * DiT models: steps as [min, max, default] and whether guidance (CFG, shift, ADG, CFG interval)
+ * applies. Mirrors `DIT_MODELS` in the backend; `test_renderer_model_table_matches_the_backend`
+ * keeps the two equal.
+ */
+export const DIT_MODELS = {
+  turbo: { steps: [4, 20, 8], guidance: false },
+  sft: { steps: [8, 64, 32], guidance: true },
+  base: { steps: [8, 64, 32], guidance: true },
+} as const;
+export type DitModel = keyof typeof DIT_MODELS;
+export const DIT_MODEL_IDS = Object.keys(DIT_MODELS) as DitModel[];
+export const GUIDANCE_RANGE = [1, 15, 7] as const;
+export const SHIFT_RANGE = [1, 5, 3] as const;
+
+/** *steps* moved into *model*'s range: kept when it fits, else that model's default. */
+export function stepsFor(model: DitModel, steps: number): number {
+  const [low, high, fallback] = DIT_MODELS[model].steps;
+  return Number.isInteger(steps) && steps >= low && steps <= high ? steps : fallback;
+}
 
 /**
  * Song-structure tags ACE-Step reads in lyrics (its own vocabulary, so they stay in English).
@@ -189,6 +208,7 @@ export interface MusicSettings {
   steps: number;
   inferMethod: InferMethod;
   audioFormat: AudioFormat;
+  model: DitModel;
 }
 
 export interface SavedTrackSettings {
@@ -205,6 +225,7 @@ export interface SavedTrackSettings {
   inference_steps?: number;
   infer_method?: string;
   ext?: string;
+  model?: string;
 }
 
 /**
@@ -215,7 +236,9 @@ export function settingsFromTrack(
   track: SavedTrackSettings,
   current: MusicSettings,
 ): MusicSettings {
-  const steps = Number(track.inference_steps);
+  const model: DitModel = DIT_MODEL_IDS.includes(track.model as DitModel)
+    ? (track.model as DitModel)
+    : 'turbo';
   return {
     ...current,
     prompt: track.prompt,
@@ -233,11 +256,11 @@ export function settingsFromTrack(
     seed: typeof track.seed === 'number' ? String(track.seed) : '',
     thinking: Boolean(track.thinking),
     batchSize: '1',
-    steps:
-      Number.isInteger(steps) && steps >= MIN_STEPS && steps <= MAX_STEPS ? steps : DEFAULT_STEPS,
+    steps: stepsFor(model, Number(track.inference_steps)),
     inferMethod: track.infer_method === 'sde' ? 'sde' : 'ode',
     audioFormat: (AUDIO_FORMATS as readonly string[]).includes(track.ext ?? '')
       ? (track.ext as AudioFormat)
       : 'wav',
+    model,
   };
 }

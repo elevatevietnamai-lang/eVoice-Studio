@@ -38,6 +38,7 @@ const current: MusicSettings = {
   steps: 8,
   inferMethod: 'ode',
   audioFormat: 'wav',
+  model: 'turbo',
 };
 
 it('reuses every setting a track was saved with, one variant at a time', () => {
@@ -74,6 +75,7 @@ it('reuses every setting a track was saved with, one variant at a time', () => {
     steps: 12,
     inferMethod: 'sde',
     audioFormat: 'flac',
+    model: 'turbo',
   });
 });
 
@@ -119,4 +121,49 @@ it('applies only what the language model filled in', () => {
   });
   // An instrumental keeps its (unused) lyrics and language.
   expect(applyFormat(fields, suggestion, true).lyrics).toBe('la');
+});
+
+it('keeps steps that fit the model and resets the rest to its default', () => {
+  expect(
+    settingsFromTrack(
+      {
+        prompt: 'x',
+        lyrics: '',
+        instrumental: true,
+        duration: 30,
+        bpm: null,
+        model: 'sft',
+        inference_steps: 48,
+      },
+      current,
+    ),
+  ).toMatchObject({ model: 'sft', steps: 48 });
+  expect(
+    settingsFromTrack(
+      {
+        prompt: 'x',
+        lyrics: '',
+        instrumental: true,
+        duration: 30,
+        bpm: null,
+        model: 'base',
+        inference_steps: 4,
+      },
+      current,
+    ),
+  ).toMatchObject({ model: 'base', steps: 32 });
+  expect(
+    settingsFromTrack(
+      {
+        prompt: 'x',
+        lyrics: '',
+        instrumental: true,
+        duration: 30,
+        bpm: null,
+        model: 'xl',
+        inference_steps: 40,
+      },
+      current,
+    ),
+  ).toMatchObject({ model: 'turbo', steps: 8 });
 });

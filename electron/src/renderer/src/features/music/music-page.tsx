@@ -46,11 +46,13 @@ import {
   AUDIO_FORMATS,
   BATCH_SIZES,
   DEFAULT_STEPS,
+  DIT_MODELS,
+  DIT_MODEL_IDS,
+  GUIDANCE_RANGE,
+  SHIFT_RANGE,
   INFER_METHODS,
   KEY_NOTES,
   LYRIC_TAGS,
-  MAX_STEPS,
-  MIN_STEPS,
   STYLE_TAGS,
   TIME_SIGNATURES,
   appendStyleTag,
@@ -59,8 +61,10 @@ import {
   meterLabel,
   randomSeed,
   settingsFromTrack,
+  stepsFor,
   vocalLanguageOptions,
   type AudioFormat,
+  type DitModel,
   type InferMethod,
   type MusicSettings,
   type StyleGroup,
@@ -172,9 +176,21 @@ export function MusicPage() {
   const [repaintMode, setRepaintMode] = useState<RepaintMode>('balanced');
   const [repaintStrength, setRepaintStrength] = useState(0.5);
   const editing = musicTask !== 'text2music';
+  const [model, setModel] = useState<DitModel>('turbo');
+  const [guidance, setGuidance] = useState<number>(GUIDANCE_RANGE[2]);
+  const [shift, setShift] = useState<number>(SHIFT_RANGE[2]);
+  const [useAdg, setUseAdg] = useState(false);
+  const [cfgInterval, setCfgInterval] = useState<[number, number]>([0, 1]);
+  const chooseModel = (next: DitModel) => {
+    setModel(next);
+    // Still on the old model's default: take the new one's; a chosen value is kept if it fits.
+    setSteps((value) =>
+      value === DIT_MODELS[model].steps[2] ? DIT_MODELS[next].steps[2] : stepsFor(next, value),
+    );
+  };
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [task, setTask] = useState<{
-    kind: 'install' | 'generate' | 'lm';
+    kind: 'install' | 'generate' | 'lm' | 'model';
     progress: number;
   } | null>(null);
   const [installStep, setInstallStep] = useState<InstallStep | null>(null);
@@ -203,6 +219,18 @@ export function MusicPage() {
   });
   const lmModel = lm.data?.model ?? null;
   const lmReady = Boolean(lm.data?.ready);
+  const models = useQuery({
+    queryKey: ['music-models'],
+    queryFn: () =>
+      apiJson<{ models: { id: DitModel; installed: boolean; download_bytes: number }[] }>(
+        '/music/models',
+      ),
+    enabled: installed,
+  });
+  const modelInfo = models.data?.models.find((item) => item.id === model);
+  const modelReady = model === 'turbo' || Boolean(modelInfo?.installed);
+  const guided = DIT_MODELS[model].guidance;
+  const [minSteps, maxSteps] = DIT_MODELS[model].steps;
   const languages = vocalLanguageOptions(i18n.language);
   const keyLabel = (value: string) => {
     const [note, mode] = value.split(' ');
@@ -227,6 +255,7 @@ export function MusicPage() {
     steps,
     inferMethod,
     audioFormat,
+    model,
   };
   const applySettings = (next: MusicSettings) => {
     setPrompt(next.prompt);
@@ -243,6 +272,7 @@ export function MusicPage() {
     setSteps(next.steps);
     setInferMethod(next.inferMethod);
     setAudioFormat(next.audioFormat);
+    setModel(next.model);
   };
   const formatFields: FormatFields = {
     prompt,
@@ -277,6 +307,16 @@ export function MusicPage() {
     inference_steps: steps,
     infer_method: inferMethod,
     audio_format: audioFormat,
+    model,
+    ...(guided
+      ? {
+          guidance_scale: guidance,
+          shift,
+          use_adg: useAdg,
+          cfg_interval_start: cfgInterval[0],
+          cfg_interval_end: cfgInterval[1],
+        }
+      : {}),
     task: musicTask,
     ...(editing ? sourceFields(source, 'source') : {}),
     ...sourceFields(reference, 'reference'),
@@ -353,6 +393,26 @@ export function MusicPage() {
     } finally {
       setTask(null);
       void queryClient.invalidateQueries({ queryKey: ['music-lm'] });
+    }
+  };
+
+  const downloadModel = async () => {
+    setTask({ kind: 'model', progress: 0 });
+    try {
+      await consumeTaskStream(
+        `/music/model-install-stream?model=${encodeURIComponent(model)}`,
+        (event) => {
+          if (event.type === 'progress')
+            setTask({ kind: 'model', progress: Number(event.progress) || 0 });
+          if (event.type === 'error') throw new Error(String(event.reason || 'Download failed'));
+          return event.type === 'done';
+        },
+      );
+    } catch (error) {
+      toast.error(t('musicStudio.model_download_failed', { message: describeError(error) }));
+    } finally {
+      setTask(null);
+      void queryClient.invalidateQueries({ queryKey: ['music-models'] });
     }
   };
 
@@ -830,6 +890,56 @@ export function MusicPage() {
             <CollapsibleContent>
               <div className="space-y-3 px-3 pb-3 text-xs">
                 <div className="flex min-w-0 flex-col gap-1.5">
+                  <span id="music-model" className="font-medium">
+                    {t('musicStudio.model')}
+                  </span>
+                  <ToggleGroup
+                    value={[model]}
+                    disabled={busy}
+                    size="sm"
+                    aria-labelledby="music-model"
+                    onValueChange={(value) => {
+                      const next = value[0];
+                      if (DIT_MODEL_IDS.includes(next as DitModel)) chooseModel(next as DitModel);
+                    }}
+                  >
+                    {DIT_MODEL_IDS.map((value) => (
+                      <ToggleGroupItem key={value} value={value}>
+                        {t(`musicStudio.model_${value}`)}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                  <p className="leading-5 text-muted-foreground">
+                    {t(`musicStudio.model_${model}_help`)}
+                  </p>
+                  {installed && !modelReady && (
+                    <Button
+                      className="w-full"
+                      size="sm"
+                      variant="secondary"
+                      disabled={busy}
+                      onClick={downloadModel}
+                    >
+                      {task?.kind === 'model' ? (
+                        <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
+                      ) : (
+                        <DownloadIcon />
+                      )}
+                      {task?.kind === 'model'
+                        ? t('musicStudio.model_downloading')
+                        : t('musicStudio.model_download', {
+                            size: formatBytes(modelInfo?.download_bytes ?? 0),
+                          })}
+                    </Button>
+                  )}
+                  {task?.kind === 'model' && (
+                    <Progress
+                      value={Math.round(task.progress * 100)}
+                      aria-label={t('musicStudio.model_downloading')}
+                    />
+                  )}
+                </div>
+                <div className="flex min-w-0 flex-col gap-1.5">
                   <span id="music-key" className="font-medium">
                     {t('musicStudio.key')}
                   </span>
@@ -931,16 +1041,88 @@ export function MusicPage() {
                     <span className="text-muted-foreground tabular-nums">{steps}</span>
                   </div>
                   <Slider
-                    min={MIN_STEPS}
-                    max={MAX_STEPS}
+                    min={minSteps}
+                    max={maxSteps}
                     step={1}
                     value={[steps]}
                     disabled={busy}
                     aria-label={t('musicStudio.steps')}
                     onValueChange={(value) => setSteps(Array.isArray(value) ? value[0] : value)}
                   />
-                  <p className="leading-5 text-muted-foreground">{t('musicStudio.steps_help')}</p>
+                  <p className="leading-5 text-muted-foreground">
+                    {t(guided ? 'musicStudio.steps_help_slow' : 'musicStudio.steps_help')}
+                  </p>
                 </div>
+                {guided && (
+                  <>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{t('musicStudio.guidance')}</span>
+                        <span className="text-muted-foreground tabular-nums">{guidance}</span>
+                      </div>
+                      <Slider
+                        min={GUIDANCE_RANGE[0]}
+                        max={GUIDANCE_RANGE[1]}
+                        step={0.5}
+                        value={[guidance]}
+                        disabled={busy}
+                        aria-label={t('musicStudio.guidance')}
+                        onValueChange={(value) =>
+                          setGuidance(Array.isArray(value) ? value[0] : value)
+                        }
+                      />
+                      <p className="leading-5 text-muted-foreground">
+                        {t('musicStudio.guidance_help')}
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{t('musicStudio.shift')}</span>
+                        <span className="text-muted-foreground tabular-nums">{shift}</span>
+                      </div>
+                      <Slider
+                        min={SHIFT_RANGE[0]}
+                        max={SHIFT_RANGE[1]}
+                        step={0.1}
+                        value={[shift]}
+                        disabled={busy}
+                        aria-label={t('musicStudio.shift')}
+                        onValueChange={(value) => setShift(Array.isArray(value) ? value[0] : value)}
+                      />
+                      <p className="leading-5 text-muted-foreground">
+                        {t('musicStudio.shift_help')}
+                      </p>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{t('musicStudio.cfg_interval')}</span>
+                        <span className="text-muted-foreground tabular-nums">
+                          {cfgInterval[0].toFixed(2)}–{cfgInterval[1].toFixed(2)}
+                        </span>
+                      </div>
+                      <Slider
+                        min={0}
+                        max={1}
+                        step={0.05}
+                        value={cfgInterval}
+                        disabled={busy}
+                        aria-label={t('musicStudio.cfg_interval')}
+                        onValueChange={(value) => {
+                          if (Array.isArray(value) && value.length === 2)
+                            setCfgInterval([value[0], value[1]]);
+                        }}
+                      />
+                      <p className="leading-5 text-muted-foreground">
+                        {t('musicStudio.cfg_interval_help')}
+                      </p>
+                    </div>
+                    <label className="flex items-center justify-between gap-2">
+                      <span className="font-medium">{t('musicStudio.adg')}</span>
+                      <Switch checked={useAdg} disabled={busy} onCheckedChange={setUseAdg} />
+                    </label>
+                    <p className="leading-5 text-muted-foreground">{t('musicStudio.adg_help')}</p>
+                  </>
+                )}
                 <div className="flex min-w-0 flex-col gap-1.5">
                   <span id="music-sampler" className="font-medium">
                     {t('musicStudio.sampler')}
@@ -1071,7 +1253,14 @@ export function MusicPage() {
           <Button
             className="w-full"
             size="lg"
-            disabled={busy || formatting || !installed || !prompt.trim() || (editing && !source)}
+            disabled={
+              busy ||
+              formatting ||
+              !installed ||
+              !modelReady ||
+              !prompt.trim() ||
+              (editing && !source)
+            }
             onClick={generate}
           >
             {task?.kind === 'generate' ? (

@@ -42,6 +42,7 @@ metadata and the backend fallback mirror it.
 - Music Studio: style tags add genre, instrument and mood words to the description, and section buttons put [verse], [chorus] and other song sections into the lyrics at the cursor (#25)
 - Music Studio: Polish with the language model tidies the description and lyrics and suggests BPM, key and meter, shown side by side before you apply them; Reuse settings brings back everything a saved track was made with (#25)
 - Music Studio covers a track in a new style or repaints one region of it, from the library or an uploaded file, and can follow a style reference track; the result is saved as a new track (#28)
+- Music Studio can use the optional SFT and Base music models (about 4.8 GB each) for more detail, with guidance, shift and adaptive guidance controls that the fast Turbo model ignores (#29)
 - Karaoke subtitles have three looks in Dub export: Sweep, Highlight (only the spoken word lights up) and Pop (a short bounce); the ASS download uses the same look (#6)
 - Audiobook and Stories can turn part of a finished render into a short audiogram video (waveform, title and cover; square, landscape or vertical) for social posts (#6)
 - Promo video: cut clips and stills into a short ad with transitions, music cut on the beat, narration, a logo watermark and a logo ending, in 9:16, 1:1 or 16:9 (#11)
