@@ -4107,7 +4107,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "Upprepningsstraff",
     "lm_negative_prompt": "Undvik (negativ prompt)",
-    "lm_reset": "Återställ standardvärden"
+    "lm_reset": "Återställ standardvärden",
+    "lora": "LoRA",
+    "lora_help": "En stiladapter tränad för en musikmodell. Den stannar på den här datorn: välj en .safetensors-fil eller en adaptermapp.",
+    "lora_enabled": "Använd denna LoRA",
+    "lora_missing": "Denna LoRA har flyttats eller tagits bort. Välj den igen.",
+    "lora_model_mismatch": "Vald för {{picked}}; den kanske inte fungerar med {{current}}.",
+    "lora_scale": "Styrka",
+    "lora_remove": "Ta bort LoRA",
+    "lora_pick_file": "Välj en LoRA-fil",
+    "lora_pick_folder": "Välj en LoRA-mapp"
   },
   "gpuBusy": {
     "dub": "Ett dubbningsjobb använder GPU:n. Vänta tills det är klart och skapa sedan musiken.",

@@ -4107,7 +4107,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "반복 페널티",
     "lm_negative_prompt": "제외할 요소 (네거티브 프롬프트)",
-    "lm_reset": "기본값 복원"
+    "lm_reset": "기본값 복원",
+    "lora": "LoRA",
+    "lora_help": "특정 음악 모델용으로 학습된 스타일 어댑터입니다. 이 컴퓨터에 저장되며, .safetensors 파일이나 어댑터 폴더를 선택하세요.",
+    "lora_enabled": "이 LoRA 사용",
+    "lora_missing": "LoRA가 이동되었거나 삭제되었습니다. 다시 선택하세요.",
+    "lora_model_mismatch": "{{picked}}용으로 선택됨 — {{current}}에서는 작동하지 않을 수 있습니다.",
+    "lora_scale": "강도",
+    "lora_remove": "LoRA 제거",
+    "lora_pick_file": "LoRA 파일 선택",
+    "lora_pick_folder": "LoRA 폴더 선택"
   },
   "gpuBusy": {
     "dub": "더빙 작업이 GPU를 사용 중입니다. 끝날 때까지 기다린 후 음악을 생성하세요.",

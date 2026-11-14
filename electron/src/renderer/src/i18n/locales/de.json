@@ -4107,7 +4107,16 @@
     "lm_top_p": "Top-P",
     "lm_repetition_penalty": "Wiederholungsstrafe",
     "lm_negative_prompt": "Vermeiden (negativer Prompt)",
-    "lm_reset": "Standardwerte wiederherstellen"
+    "lm_reset": "Standardwerte wiederherstellen",
+    "lora": "LoRA",
+    "lora_help": "Ein für ein bestimmtes Musikmodell trainierter Stil-Adapter. Er bleibt auf diesem Computer: Wähle eine .safetensors-Datei oder einen Adapter-Ordner aus.",
+    "lora_enabled": "Dieses LoRA verwenden",
+    "lora_missing": "Das LoRA wurde verschoben oder gelöscht. Bitte erneut auswählen.",
+    "lora_model_mismatch": "Für {{picked}} ausgewählt; funktioniert eventuell nicht mit {{current}}.",
+    "lora_scale": "Stärke",
+    "lora_remove": "LoRA entfernen",
+    "lora_pick_file": "LoRA-Datei auswählen",
+    "lora_pick_folder": "LoRA-Ordner auswählen"
   },
   "gpuBusy": {
     "dub": "Ein Synchronisationsauftrag nutzt gerade die GPU. Warte, bis er fertig ist, und erzeuge dann die Musik.",

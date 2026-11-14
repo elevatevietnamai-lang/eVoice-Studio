@@ -3352,6 +3352,61 @@
     "title": "LongformSpan",
     "type": "object"
    },
+   "LoraChange": {
+    "properties": {
+     "enabled": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Enabled"
+     },
+     "scale": {
+      "anyOf": [
+       {
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Scale"
+     }
+    },
+    "title": "LoraChange",
+    "type": "object"
+   },
+   "LoraPick": {
+    "properties": {
+     "authorization": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Authorization",
+      "type": "string"
+     },
+     "model": {
+      "default": "turbo",
+      "enum": [
+       "turbo",
+       "sft",
+       "base"
+      ],
+      "title": "Model",
+      "type": "string"
+     }
+    },
+    "required": [
+     "authorization"
+    ],
+    "title": "LoraPick",
+    "type": "object"
+   },
    "MissingModel": {
     "properties": {
      "label": {
@@ -17365,6 +17420,104 @@
      }
     },
     "summary": "Music Lm Install Stream"
+   }
+  },
+  "/music/lora": {
+   "delete": {
+    "operationId": "music_lora_remove_music_lora_delete",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lora Remove"
+   },
+   "get": {
+    "operationId": "music_lora_music_lora_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lora"
+   },
+   "patch": {
+    "operationId": "music_lora_change_music_lora_patch",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoraChange"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Lora Change"
+   },
+   "post": {
+    "operationId": "music_lora_pick_music_lora_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoraPick"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Lora Pick"
    }
   },
   "/music/model-install-stream": {

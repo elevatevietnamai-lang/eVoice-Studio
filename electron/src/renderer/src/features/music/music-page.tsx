@@ -82,6 +82,7 @@ import {
   type StyleGroup,
 } from './music-options';
 import { MusicSourcePicker, sourceFields, type MusicSource } from './music-source-picker';
+import { MusicLora } from './music-lora';
 import {
   MusicFormatDialog,
   applyFormat,
@@ -1278,6 +1279,7 @@ export function MusicPage() {
                   disabled={busy}
                   onChange={setReference}
                 />
+                <MusicLora model={model} disabled={busy} />
               </div>
             </CollapsibleContent>
           </Collapsible>
