@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 import logo from '../../../../../../docs/logo.svg?raw';
-import { BARS, COLORS, EVoiceMark, SPARK } from './evoice-mark';
+import { BARS, COLORS, EVoiceMark, SPARK, TILE } from './evoice-mark';
 
 afterEach(cleanup);
 
@@ -49,6 +49,14 @@ it('keeps the tile in both themes when asked, and drops it on request', () => {
   rerender(<EVoiceMark size={64} tile="none" />);
   expect(svg().querySelector('rect')).toBeNull();
   expect(svg().querySelector('[data-part="bare"]')?.getAttribute('class') ?? '').not.toContain('hidden');
+});
+
+it('fills a small tile like docs/logo-small.svg so the mark is not lost at 32 px and below', () => {
+  const { container, rerender } = render(<EVoiceMark size={24} tile="always" />);
+  const inner = () => container.querySelector('[data-part="tiled"] > g')!.getAttribute('transform');
+  expect(inner()).toContain(`scale(${TILE.small.scale})`);
+  rerender(<EVoiceMark size={56} tile="always" />);
+  expect(inner()).toContain(`scale(${TILE.full.scale})`);
 });
 
 it('follows the theme in mono tone, without a tile', () => {

@@ -21,12 +21,16 @@ export const COLORS = { mark: '#FFFFFF', tile: '#030305' };
 /** At this size and below, `cut="auto"` draws solid bars. */
 export const SMALL_MAX = 20;
 /**
- * On a tile the mark sits where `docs/logo.svg` puts it: 37.5 of 64 units tall, so the 310-unit
- * ink box scales by 37.5/64 and stays centred. The tile's corner matches the icon's 14.5/64.
+ * On a tile the mark sits where the app icon puts it: `docs/logo.svg` draws it 37.5 of 64 units
+ * tall with a 14.5/64 corner, and `docs/logo-small.svg` (32 px and below) 47.5/64 with 12.5/64, so
+ * a small tile is not mostly empty. The 310-unit ink box scales by that share and stays centred.
  */
-const TILE_SCALE = 37.5 / 64;
-const TILE_OFFSET = 170 * (1 - TILE_SCALE);
-const TILE_RADIUS = (14.5 / 64) * 340;
+export const TILE = {
+  full: { scale: 37.5 / 64, radius: (14.5 / 64) * 340 },
+  small: { scale: 47.5 / 64, radius: (12.5 / 64) * 340 },
+};
+/** At this size and below a tiled mark uses the `docs/logo-small.svg` proportions. */
+export const SMALL_TILE_MAX = 32;
 
 export interface EVoiceMarkProps extends Omit<
   SVGProps<SVGSVGElement>,
@@ -60,6 +64,8 @@ export function EVoiceMark({
   const white = tone === 'white';
   const tiled = white && tile !== 'none';
   const fill = white ? COLORS.mark : 'currentColor';
+  const tileCut = size <= SMALL_TILE_MAX ? TILE.small : TILE.full;
+  const tileOffset = 170 * (1 - tileCut.scale);
   const ink = (
     <>
       <path d={small ? BARS.small : BARS.full} fill={fill} />
@@ -83,8 +89,8 @@ export function EVoiceMark({
       {tiled ? (
         // In `auto` the tiled copy shows in the light theme and the bare copy in the dark one.
         <g data-part="tiled" className={cn(tile === 'auto' && 'dark:hidden')}>
-          <rect width="340" height="340" rx={TILE_RADIUS} fill={COLORS.tile} />
-          <g transform={`translate(${TILE_OFFSET} ${TILE_OFFSET}) scale(${TILE_SCALE})`}>{ink}</g>
+          <rect width="340" height="340" rx={tileCut.radius} fill={COLORS.tile} />
+          <g transform={`translate(${tileOffset} ${tileOffset}) scale(${tileCut.scale})`}>{ink}</g>
         </g>
       ) : null}
       {!tiled || tile === 'auto' ? (
