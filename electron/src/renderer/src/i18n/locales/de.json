@@ -1280,6 +1280,7 @@
     "shortcut": "Diktatverknüpfung",
     "shortcut_reset": "Auf Standard zurücksetzen",
     "updater_desktop": "Updater läuft nur in der Desktop-App.",
+    "updater_off_build": "Die Suche nach Updates ist in diesem Build deaktiviert. Neue Versionen gibt es auf der Website, von der du die App geladen hast.",
     "mcp_title": "MCP-Stimmzuordnungen",
     "mcp_desc": "Gib jedem MCP-Agenten eine eigene Stimme, indem du seine Client-ID einem Stimmprofil zuordnest.",
     "mcp_hint": "Agenten verbinden sich über /mcp mit eVoice Studio und weisen sich mit einer Client-ID wie claude-code aus. Ordne diese ID zu, damit der Agent immer diese Stimme verwendet.",
@@ -2981,6 +2982,21 @@
     "cancelled": "Abgebrochen",
     "fitting": "Timing anpassen"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio unterstützen",
+    "hero_body": "eVoice Studio ist kostenlos und läuft vollständig auf deinem Computer. Wenn es dir hilft, sorgt ein Beitrag dafür, dass es besser wird.",
+    "momo_title": "Momo",
+    "bank_title": "Banküberweisung ({{bank}})",
+    "phone": "Telefonnummer",
+    "account": "Kontonummer",
+    "holder": "Kontoinhaber",
+    "copy": "{{label}} kopieren",
+    "qr_alt": "QR-Code für {{method}}",
+    "scan_hint": "Scanne den Code mit deiner Banking- oder Momo-App oder kopiere die Angaben.",
+    "paypal_title": "PayPal (außerhalb Vietnams)",
+    "paypal_body": "Du unterstützt aus dem Ausland? Sende einen beliebigen Betrag über PayPal.",
+    "paypal_any": "Anderer Betrag"
+  },
   "supportPlans": {
     "remove": "Sponsorenleiste entfernen",
     "title": "Free und Pro im Vergleich",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "Musikstudio",
     "engine_title": "Musik-Engine",
-    "engine_help": "Installieren Sie die lokale KI-Musik-Engine (ACE-Step) einmalig. Der Download umfasst etwa 8 GB; die Engine läuft auf diesem Computer, nichts wird hochgeladen.",
+    "engine_help": "Installieren Sie die lokale KI-Musik-Engine (ACE-Step) einmalig. Der Download umfasst etwa 15 GB; die Engine läuft auf diesem Computer, nichts wird hochgeladen.",
     "engine_install": "Musik-Engine installieren",
     "engine_installing": "Wird installiert…",
+    "install_step_source": "Engine-Quellcode wird geladen…",
+    "install_step_engine": "Python-Umgebung wird eingerichtet: bisher {{amount}} geladen",
+    "install_step_model": "Musikmodell wird geladen: {{done}} von {{total}}",
     "engine_installed": "Musik-Engine installiert.",
     "engine_install_failed": "Installation fehlgeschlagen: {{message}}",
     "engine_stopped": "Musik-Engine gestoppt und GPU-Speicher freigegeben.",

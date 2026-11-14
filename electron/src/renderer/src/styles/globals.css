@@ -650,7 +650,8 @@ details > summary .lucide-chevron-right {
         0 8px 28px -12px var(--material-shadow);
     }
     html[data-glass='true'][data-theme-id] .composer-surface {
-      border-radius: 1.125rem;
+      /* The composer is a card: it keeps the card radius in the glass theme too (DESIGN.md scale). */
+      border-radius: var(--card-radius);
       padding: 0.75rem;
       box-shadow:
         inset 0 1px 0 var(--material-edge),

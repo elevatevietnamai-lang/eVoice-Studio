@@ -529,7 +529,7 @@ export function ProjectsPage() {
                   void save(false);
                 }}
               >
-                <label htmlFor="project-name" className="text-sm font-medium">
+                <label htmlFor="project-name" className="block text-label font-medium">
                   {t('sidebar.save_project')}
                 </label>
                 <div className="flex flex-wrap gap-2">

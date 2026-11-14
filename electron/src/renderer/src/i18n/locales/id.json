@@ -1280,6 +1280,7 @@
     "shortcut": "Pintasan dikte",
     "shortcut_reset": "Atur ulang ke default",
     "updater_desktop": "Updater hanya berjalan di aplikasi desktop.",
+    "updater_off_build": "Pemeriksaan pembaruan dimatikan di build ini. Unduh versi baru dari situs tempat Anda mengunduhnya.",
     "mcp_title": "Pengikatan suara MCP",
     "mcp_desc": "Berikan setiap agen MCP suaranya sendiri dengan mengikat ID klien ke profil suara.",
     "mcp_hint": "Agen terhubung ke eVoice Studio melalui /mcp dan mengenali diri dengan ID klien, seperti claude-code. Ikat ID tersebut agar agen selalu memakai suara ini.",
@@ -2981,6 +2982,21 @@
     "cancelled": "Dibatalkan",
     "fitting": "Menyesuaikan waktu"
   },
+  "supportEvoice": {
+    "hero_title": "Dukung eVoice Studio",
+    "hero_body": "eVoice Studio gratis dan berjalan sepenuhnya di komputer Anda. Jika membantu pekerjaan Anda, kontribusi Anda membuatnya terus berkembang.",
+    "momo_title": "Momo",
+    "bank_title": "Transfer bank ({{bank}})",
+    "phone": "Nomor telepon",
+    "account": "Nomor rekening",
+    "holder": "Pemilik rekening",
+    "copy": "Salin {{label}}",
+    "qr_alt": "Kode QR {{method}}",
+    "scan_hint": "Pindai kode dengan aplikasi bank atau Momo, atau salin detailnya.",
+    "paypal_title": "PayPal (di luar Vietnam)",
+    "paypal_body": "Mendukung dari luar negeri? Kirim jumlah berapa pun lewat PayPal.",
+    "paypal_any": "Jumlah lain"
+  },
   "supportPlans": {
     "remove": "Hapus bilah sponsor",
     "title": "Gratis vs Pro",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "Studio Musik",
     "engine_title": "Engine musik",
-    "engine_help": "Instal engine musik AI lokal (ACE-Step) sekali. Mengunduh sekitar 8 GB dan berjalan di komputer ini; tidak ada yang diunggah.",
+    "engine_help": "Instal engine musik AI lokal (ACE-Step) sekali. Mengunduh sekitar 15 GB dan berjalan di komputer ini; tidak ada yang diunggah.",
     "engine_install": "Instal engine musik",
     "engine_installing": "Menginstal…",
+    "install_step_source": "Mengunduh kode sumber engine…",
+    "install_step_engine": "Menyiapkan lingkungan Python: {{amount}} sudah diunduh",
+    "install_step_model": "Mengunduh model musik: {{done}} dari {{total}}",
     "engine_installed": "Engine musik terinstal.",
     "engine_install_failed": "Instalasi gagal: {{message}}",
     "engine_stopped": "Engine musik dihentikan dan memori GPU dikosongkan.",

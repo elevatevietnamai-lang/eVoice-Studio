@@ -1,3 +1,4 @@
+import { Textarea } from '@/components/ui/textarea';
 import { DubProjects } from './dub-projects';
 import { Reveal } from '@/components/motion';
 import { Menu } from '@base-ui/react/menu';
@@ -1173,7 +1174,7 @@ export function DubPage() {
                   })
                 }
               />
-              <label className="block space-y-2 text-xs">
+              <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                 <span>{t('dub.num_speakers_label')}</span>
                 <Input
                   type="number"
@@ -1349,7 +1350,7 @@ export function DubPage() {
                 ))}
               </div>
               {segmentPreview && (
-                <div className="space-y-2 border-t border-border/50 pt-3">
+                <div className="space-y-1.5 border-t border-border/50 pt-3">
                   <div className="flex items-center gap-2 text-xs font-medium">
                     <HeadphonesIcon className="size-3.5 text-primary" />
                     <span className="mr-auto">{t('dub.live_preview')}</span>
@@ -1492,11 +1493,11 @@ export function DubPage() {
               )}
             </div>
             {(session.quality === 'agent' || provider?.id === 'openai') && (
-              <div className="space-y-2 border-t border-border/50 pt-3">
-                <label htmlFor="dub-translation-instructions" className="text-xs font-medium">
+              <div className="space-y-1.5 border-t border-border/50 pt-3">
+                <label htmlFor="dub-translation-instructions" className="block text-label font-medium">
                   {t('dubStyle.label')}
                 </label>
-                <textarea
+                <Textarea
                   id="dub-translation-instructions"
                   aria-describedby="dub-translation-instructions-help"
                   rows={4}
@@ -1506,7 +1507,7 @@ export function DubPage() {
                   onChange={(event) =>
                     setDubTranslationOptions({ translationInstructions: event.target.value })
                   }
-                  className="w-full resize-y rounded-lg border border-input bg-background/40 px-3 py-2 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+                  className="resize-y"
                 />
                 <p
                   id="dub-translation-instructions-help"
@@ -1720,7 +1721,7 @@ export function DubPage() {
                   ).map((knob) => {
                     const current = session.fitOptions?.[knob.key] ?? knob.defaultValue;
                     return (
-                      <label key={knob.key} className="block space-y-1 text-xs">
+                      <label key={knob.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                         <span className="flex justify-between">
                           <span>{t(knob.label)}</span>
                           <span className="tabular-nums">{current.toFixed(2)}×</span>
@@ -1799,7 +1800,7 @@ export function DubPage() {
                   },
                 ] as const
               ).map((knob) => (
-                <label key={knob.key} className="block space-y-2 text-xs">
+                <label key={knob.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                   <span className="flex justify-between">
                     <span>{t('clone.' + knob.label)}</span>
                     <span className="tabular-nums">{session[knob.key] ?? knob.defaultValue}</span>
@@ -1821,7 +1822,7 @@ export function DubPage() {
                   />
                 </label>
               ))}
-              <label className="block space-y-2 text-xs">
+              <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                 <span>{t('dub.style')}</span>
                 <Input
                   value={session.instruct || ''}
@@ -2571,7 +2572,7 @@ export function DubPage() {
                                 <div className="ml-auto flex shrink-0 flex-wrap justify-end gap-1">
                                   {segment.translate_error && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive"
+                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive"
                                       title={t('segment.translate_error_title', {
                                         error: segment.translate_error,
                                       })}
@@ -2582,7 +2583,7 @@ export function DubPage() {
                                   )}
                                   {segment.translate_degraded && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning"
+                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[11px] font-medium text-warning"
                                       title={t('segment.translate_degraded_title', {
                                         reason: segment.translate_degraded,
                                       })}
@@ -2593,7 +2594,7 @@ export function DubPage() {
                                   )}
                                   {segment.plan?.status === 'tight' && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning"
+                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[11px] font-medium text-warning"
                                       title={t('segment.plan_tight_title', {
                                         est: segment.plan.est_dur_s.toFixed(1),
                                         avail: segment.plan.available_s.toFixed(1),
@@ -2605,7 +2606,7 @@ export function DubPage() {
                                   )}
                                   {segment.plan?.status === 'impossible' && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive"
+                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive"
                                       title={t('segment.plan_impossible_title', {
                                         est: segment.plan.est_dur_s.toFixed(1),
                                         avail: segment.plan.available_s.toFixed(1),
@@ -2620,7 +2621,7 @@ export function DubPage() {
                                   )}
                                   {segment.fit_status?.status === 'overflows' && (
                                     <span
-                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] font-medium text-destructive"
+                                      className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-1.5 py-0.5 text-[11px] font-medium text-destructive"
                                       title={t('segment.fit_overflows_title', {
                                         seconds: (segment.fit_status.overflow_s || 0).toFixed(1),
                                       })}
@@ -2635,7 +2636,7 @@ export function DubPage() {
                               )}
                               {segment.qc_flagged && (
                                 <span
-                                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning"
+                                  className="inline-flex shrink-0 items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[11px] font-medium text-warning"
                                   title={segment.qc_recognized || t('dub.qc_btn')}
                                 >
                                   <AlertCircleIcon className="size-3" />
@@ -2735,12 +2736,12 @@ export function DubPage() {
                               </div>
                             </div>
                             {editingSegmentId === segment.id ? (
-                              <textarea
+                              <Textarea
                                 data-segment-id={segment.id}
                                 aria-label={t('clone.text_label') + ' ' + (index + 1)}
                                 rows={1}
                                 autoFocus
-                                className="min-h-8 max-h-32 w-full resize-y overflow-y-auto rounded-sm border border-input bg-background/35 px-2 py-1 text-sm leading-5 outline-none transition-[background-color,border-color,box-shadow] [field-sizing:content] focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                                className="min-h-8 max-h-32 resize-y overflow-y-auto py-1 leading-5"
                                 disabled={busy || Boolean(session.recovery)}
                                 value={segment.text}
                                 onBlur={() => setEditingSegmentId(null)}
@@ -2854,7 +2855,7 @@ export function DubPage() {
                                     ))}
                                   </div>
                                   <div className="mt-3 grid grid-cols-2 gap-2">
-                                    <label className="space-y-1">
+                                    <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                                       <span>{t('player.volume')}</span>
                                       <Input
                                         type="number"
@@ -2872,7 +2873,7 @@ export function DubPage() {
                                         }}
                                       />
                                     </label>
-                                    <label className="space-y-1">
+                                    <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                                       <span>{t('clone.speed')}</span>
                                       <Input
                                         type="number"
@@ -2895,7 +2896,7 @@ export function DubPage() {
                                         }}
                                       />
                                     </label>
-                                    <label className="col-span-2 space-y-1">
+                                    <label className="col-span-2 flex min-w-0 flex-col gap-1.5 text-label font-medium">
                                       <span>{t('tools.direction')}</span>
                                       <Input
                                         value={segment.direction || ''}

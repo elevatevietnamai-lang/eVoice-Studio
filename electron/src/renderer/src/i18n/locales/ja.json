@@ -1280,6 +1280,7 @@
     "shortcut": "ディクテーションのショートカット",
     "shortcut_reset": "デフォルトにリセットする",
     "updater_desktop": "アップデーターはデスクトップ アプリでのみ実行されます。",
+    "updater_off_build": "このビルドでは更新の確認がオフになっています。新しいバージョンはダウンロード元のサイトから入手してください。",
     "mcp_title": "MCP 音声の割り当て",
     "mcp_desc": "クライアント ID を音声プロファイルに割り当て、MCP エージェントごとに声を設定します。",
     "mcp_hint": "エージェントは /mcp で eVoice Studio に接続し、claude-code などのクライアント ID で識別されます。ID を割り当てると、そのエージェントは常にこの音声を使います。",
@@ -2981,6 +2982,21 @@
     "cancelled": "キャンセル済み",
     "fitting": "タイミングを調整中"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio を支援",
+    "hero_body": "eVoice Studio は無料で、すべてお使いの PC 上で動作します。お役に立っていれば、ご支援が今後の改善につながります。",
+    "momo_title": "Momo",
+    "bank_title": "銀行振込 ({{bank}})",
+    "phone": "電話番号",
+    "account": "口座番号",
+    "holder": "口座名義",
+    "copy": "{{label}}をコピー",
+    "qr_alt": "{{method}} の QR コード",
+    "scan_hint": "銀行アプリまたは Momo でコードを読み取るか、情報をコピーしてください。",
+    "paypal_title": "PayPal（ベトナム国外）",
+    "paypal_body": "海外からのご支援は PayPal で任意の金額をお送りいただけます。",
+    "paypal_any": "その他の金額"
+  },
   "supportPlans": {
     "remove": "スポンサー欄を非表示にする",
     "title": "無料版とProの比較",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "ミュージックスタジオ",
     "engine_title": "音楽エンジン",
-    "engine_help": "ローカル AI 音楽エンジン (ACE-Step) をインストールします（初回のみ）。約 8 GB をダウンロードし、この PC 上で実行されます。外部へのアップロードは行われません。",
+    "engine_help": "ローカル AI 音楽エンジン (ACE-Step) をインストールします（初回のみ）。約 15 GB をダウンロードし、この PC 上で実行されます。外部へのアップロードは行われません。",
     "engine_install": "音楽エンジンをインストール",
     "engine_installing": "インストール中…",
+    "install_step_source": "エンジンのソースをダウンロード中…",
+    "install_step_engine": "Python 環境を準備中: これまでに {{amount}} をダウンロード",
+    "install_step_model": "音楽モデルをダウンロード中: {{done}} / {{total}}",
     "engine_installed": "音楽エンジンをインストールしました。",
     "engine_install_failed": "インストールに失敗しました: {{message}}",
     "engine_stopped": "音楽エンジンを停止し、GPU メモリを解放しました。",

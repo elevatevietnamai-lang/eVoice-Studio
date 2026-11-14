@@ -501,7 +501,7 @@ function WorkflowCanvas({
                   <span>
                     {t(`workflows.step_${kind}`)}
                     {['agent', 'call'].includes(kind) && (
-                      <small className="block text-[10px] text-muted-foreground">
+                      <small className="block text-[11px] text-muted-foreground">
                         {t('workflows.local_draft')}
                       </small>
                     )}

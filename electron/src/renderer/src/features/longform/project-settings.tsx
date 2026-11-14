@@ -95,7 +95,7 @@ export function ProjectSettings({
       {!bare && (
         <summary className="cursor-pointer text-sm font-medium">{t('stories.projects')}</summary>
       )}
-      <label className="block space-y-1 text-xs">
+      <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
         {t('stories.projectName')}
         <Input
           value={name}

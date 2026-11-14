@@ -34,7 +34,7 @@ export function ProfileAvatar({
       {src && failed !== src ? (
         <>
           <img src={src} alt="" className="size-full object-cover" onError={() => setFailed(src)} />
-          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pt-2 pb-0.5 text-center text-[10px] leading-[14px] font-semibold text-white">
+          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pt-2 pb-0.5 text-center text-[11px] leading-[14px] font-semibold text-white">
             {profileInitials(name)}
           </span>
         </>

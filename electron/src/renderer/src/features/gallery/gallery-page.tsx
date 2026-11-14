@@ -355,7 +355,7 @@ export function GalleryPage() {
                       </Button>
                       <h2 className="min-w-0 truncate text-sm font-medium">{item.name}</h2>
                     </div>
-                    <p className="flex-1 text-xs leading-5 text-muted-foreground">
+                    <p className="flex-1 text-xs leading-5 text-pretty text-muted-foreground">
                       {item.instruct}
                     </p>
                     <div className="flex items-center justify-between gap-2">

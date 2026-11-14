@@ -15,8 +15,12 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- The Support page asks for donations to eVoice Studio by Momo or bank transfer (with a VietQR code made on your computer) and links to the eVoice website, instead of the upstream VoiceStudio donation and community links
+- Installing the music engine no longer stops at the model download or restarts the 3 GB PyTorch download after a dropped connection, and its button and progress show how many GB are downloaded
+- eVoice Studio builds no longer check for updates or offer upstream VoiceStudio releases; Settings → Updates says checks are off until eVoice has its own release feed
 - The desktop app has a full application menu (File, Edit, View, Go, Window, Help) that opens every feature page with a shortcut: the menu bar on macOS, a menu button in the top-right corner on Windows and Linux
 - The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)
+- New eVoice Studio logo on the app icon, installers, browser tab, tray, and the iOS and Android launchers: four voice bars in an orange-to-pink gradient with a star
 - Burned-in subtitles use the bundled Inter font, so Latin, Cyrillic and Vietnamese captions look the same on macOS, Windows and Linux (other scripts still use a system font) (#6)
 - Karaoke on translated lines gives longer words more time instead of splitting the line evenly, and Chinese, Japanese and Thai lines highlight per character instead of all at once (#6)
 - The sidebar is a slim icon rail beside each section's own pane: Home and Clone get a Saved voices / Recent takes column, Design gets a Saved voices tab, and the full navigation is one click away (#3234)

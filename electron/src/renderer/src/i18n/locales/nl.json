@@ -1280,6 +1280,7 @@
     "shortcut": "Snelkoppeling voor dicteren",
     "shortcut_reset": "Resetten naar standaard",
     "updater_desktop": "Updater werkt alleen in de desktop-app.",
+    "updater_off_build": "Zoeken naar updates staat uit in deze build. Download nieuwe versies van de site waar je de app vandaan hebt.",
     "mcp_title": "MCP-stemkoppelingen",
     "mcp_desc": "Geef elke MCP-agent een eigen stem door de client-ID aan een stemprofiel te koppelen.",
     "mcp_hint": "Agenten verbinden met eVoice Studio via /mcp en identificeren zich met een client-ID, zoals claude-code. Koppel die ID zodat de agent altijd deze stem gebruikt.",
@@ -2981,6 +2982,21 @@
     "cancelled": "Geannuleerd",
     "fitting": "Timing aanpassen"
   },
+  "supportEvoice": {
+    "hero_title": "Steun eVoice Studio",
+    "hero_body": "eVoice Studio is gratis en draait volledig op je computer. Heb je er iets aan, dan helpt een bijdrage om het te blijven verbeteren.",
+    "momo_title": "Momo",
+    "bank_title": "Bankoverschrijving ({{bank}})",
+    "phone": "Telefoonnummer",
+    "account": "Rekeningnummer",
+    "holder": "Rekeninghouder",
+    "copy": "{{label}} kopiëren",
+    "qr_alt": "QR-code voor {{method}}",
+    "scan_hint": "Scan de code met je bank- of Momo-app, of kopieer de gegevens.",
+    "paypal_title": "PayPal (buiten Vietnam)",
+    "paypal_body": "Steun je vanuit het buitenland? Stuur elk bedrag via PayPal.",
+    "paypal_any": "Ander bedrag"
+  },
   "supportPlans": {
     "remove": "Sponsorbalk verwijderen",
     "title": "Gratis versus Pro",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "Muziekstudio",
     "engine_title": "Muziek-engine",
-    "engine_help": "Installeer eenmalig de lokale AI-muziek-engine (ACE-Step). Deze downloadt ongeveer 8 GB en draait op deze computer; er wordt niets geüpload.",
+    "engine_help": "Installeer eenmalig de lokale AI-muziek-engine (ACE-Step). Deze downloadt ongeveer 15 GB en draait op deze computer; er wordt niets geüpload.",
     "engine_install": "Muziek-engine installeren",
     "engine_installing": "Installeren…",
+    "install_step_source": "Broncode van de engine downloaden…",
+    "install_step_engine": "Python-omgeving instellen: tot nu toe {{amount}} gedownload",
+    "install_step_model": "Muziekmodel downloaden: {{done}} van {{total}}",
     "engine_installed": "Muziek-engine geïnstalleerd.",
     "engine_install_failed": "Installatie mislukt: {{message}}",
     "engine_stopped": "Muziek-engine gestopt en GPU-geheugen vrijgemaakt.",

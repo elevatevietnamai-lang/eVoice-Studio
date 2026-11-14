@@ -4,8 +4,20 @@ A page of its own (`/music`, "Music Studio" in the sidebar and command palette) 
 locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI background music** panel in Dub.
 
 - **Install:** the first visit shows *Install music engine*. It downloads the pinned ACE-Step source,
-  its Python environment (`uv sync --locked`, torch included) and the model, about 8 GB in total, into
-  `<engines dir>/acestep`. Nothing is uploaded; generation runs on this computer.
+  its Python environment (`uv sync --locked`, torch included) and the model (about 10 GB on its own),
+  about 15 GB in total, into `<engines dir>/acestep`. Nothing is uploaded; generation runs on this computer.
+- **Install progress:** the two long steps print almost nothing, so the backend measures bytes on disk
+  every few seconds: the Python environment shows the amount downloaded so far (its total is not known
+  up front), the model shows downloaded of total. A step whose bytes stop growing for 20 minutes is
+  stopped with an error; files already downloaded are kept, so trying again resumes. Hugging Face's
+  progress bars are switched off for the model step: their carriage-return redraws overflowed the
+  line reader and aborted the install.
+- **PyTorch download:** on Windows and Linux x64 the CUDA torch wheel (about 3 GB) is not left to
+  `uv`, which restarts a dropped transfer from zero. `uv sync --dry-run` names the torch version to
+  install, the wheel and its SHA-256 come from the engine's `uv.lock`, and the backend downloads it
+  with HTTP Range into `<engines dir>/acestep/.wheels`, continuing after a dropped connection or an
+  app restart. The verified file is installed with `uv pip install --no-index`; everything else
+  comes from `uv sync --no-install-package torch`.
 - **Generate:** describe the music, choose instrumental or add lyrics, length (10–240 s) and an
   optional BPM. Tracks are saved to the library (`<data dir>/music`, a `.wav` plus a `.json` per track),
   where they can be played, downloaded and deleted.

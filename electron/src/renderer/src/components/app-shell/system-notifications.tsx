@@ -205,7 +205,7 @@ export function SystemNotifications({
         {visible.length > 0 && (
           <span
             className={cn(
-              'absolute top-0.5 right-0.5 min-w-4 rounded-full px-1 text-center text-[10px] leading-4 font-semibold ring-2 ring-background',
+              'absolute top-0.5 right-0.5 min-w-4 rounded-full px-1 text-center text-[11px] leading-4 font-semibold ring-2 ring-background',
               visible.some((note) => note.level === 'error')
                 ? 'bg-destructive text-white'
                 : 'bg-primary text-primary-foreground',

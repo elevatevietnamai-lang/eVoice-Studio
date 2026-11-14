@@ -101,7 +101,7 @@
   border: 1px solid color-mix(in srgb, var(--primary) 35%, var(--border));
   border-radius: var(--card-radius);
   color: var(--primary);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -146,7 +146,7 @@
 }
 .pro-seat-picker span {
   color: var(--muted-foreground);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 650;
   text-transform: uppercase;
   letter-spacing: 0.08em;

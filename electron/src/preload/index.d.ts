@@ -121,6 +121,9 @@ export interface UpdateState {
   etaSeconds?: number;
   lastCheckedAt?: number;
   error?: string;
+  /** Why the status is `unsupported`: `build` = this build ships with update checks off
+   * (config/app.json `applicationUpdates: false`). Absent for dev runs, store builds and the web. */
+  unsupportedReason?: 'build';
 }
 export interface UpdateReleaseInfo {
   version: string;

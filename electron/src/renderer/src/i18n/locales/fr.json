@@ -1282,6 +1282,7 @@
     "shortcut": "Raccourci de dictée",
     "shortcut_reset": "Réinitialiser aux valeurs par défaut",
     "updater_desktop": "Le programme de mise à jour ne s'exécute que dans l'application de bureau.",
+    "updater_off_build": "La recherche de mises à jour est désactivée dans cette version. Téléchargez les nouvelles versions depuis le site où vous l’avez obtenue.",
     "mcp_title": "Affectations vocales MCP",
     "mcp_desc": "Donnez une voix à chaque agent MCP en associant son identifiant client à un profil vocal.",
     "mcp_hint": "Les agents se connectent à eVoice Studio via /mcp et s’identifient avec un identifiant client, comme claude-code. Associez cet identifiant pour que l’agent utilise toujours cette voix.",
@@ -2983,6 +2984,21 @@
     "cancelled": "Annulé",
     "fitting": "Ajustement du minutage"
   },
+  "supportEvoice": {
+    "hero_title": "Soutenir eVoice Studio",
+    "hero_body": "eVoice Studio est gratuit et fonctionne entièrement sur votre ordinateur. S’il vous est utile, une contribution l’aide à progresser.",
+    "momo_title": "Momo",
+    "bank_title": "Virement bancaire ({{bank}})",
+    "phone": "Numéro de téléphone",
+    "account": "Numéro de compte",
+    "holder": "Titulaire du compte",
+    "copy": "Copier {{label}}",
+    "qr_alt": "QR code {{method}}",
+    "scan_hint": "Scannez le code avec votre app bancaire ou Momo, ou copiez les informations.",
+    "paypal_title": "PayPal (hors Vietnam)",
+    "paypal_body": "Vous soutenez depuis l’étranger ? Envoyez le montant de votre choix via PayPal.",
+    "paypal_any": "Autre montant"
+  },
   "supportPlans": {
     "remove": "Retirer la barre des sponsors",
     "title": "Gratuit ou Pro",
@@ -3953,9 +3969,12 @@
   "musicStudio": {
     "title": "Studio musical",
     "engine_title": "Moteur musical",
-    "engine_help": "Installez une seule fois le moteur musical IA local (ACE-Step). Il télécharge environ 8 GB et s'exécute sur cet ordinateur ; rien n'est envoyé en ligne.",
+    "engine_help": "Installez une seule fois le moteur musical IA local (ACE-Step). Il télécharge environ 15 GB et s'exécute sur cet ordinateur ; rien n'est envoyé en ligne.",
     "engine_install": "Installer le moteur musical",
     "engine_installing": "Installation…",
+    "install_step_source": "Téléchargement du code source du moteur…",
+    "install_step_engine": "Préparation de l’environnement Python : {{amount}} téléchargés pour l’instant",
+    "install_step_model": "Téléchargement du modèle musical : {{done}} sur {{total}}",
     "engine_installed": "Moteur musical installé.",
     "engine_install_failed": "Échec de l'installation : {{message}}",
     "engine_stopped": "Moteur musical arrêté et mémoire GPU libérée.",

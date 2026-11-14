@@ -497,8 +497,8 @@ export function SystemRecommendations() {
                     <span
                       className={
                         selected
-                          ? 'rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-primary'
-                          : 'rounded-full bg-muted/60 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground'
+                          ? 'rounded-full bg-muted px-1.5 py-0.5 text-[11px] font-medium text-primary'
+                          : 'rounded-full bg-muted/60 px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground'
                       }
                     >
                       {t(
@@ -511,7 +511,7 @@ export function SystemRecommendations() {
                     </span>
                   )}
                   {model.required && (
-                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-primary">
+                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] uppercase tracking-wide text-primary">
                       {t('models.req_tag')}
                     </span>
                   )}

@@ -274,7 +274,7 @@ export function EditorTimeline({
             {ticks.map((at) => (
               <span
                 key={at}
-                className="absolute top-0 h-full border-l border-border pl-1 text-[10px] tabular-nums text-muted-foreground"
+                className="absolute top-0 h-full border-l border-border pl-1 text-[11px] tabular-nums text-muted-foreground"
                 style={{ left: at * pixelsPerSecond }}
               >
                 {Number.isInteger(at) ? formatTime(at, false) : ''}

@@ -1,3 +1,4 @@
+import { Textarea } from '@/components/ui/textarea';
 import { VoicesSidebar } from '@/features/clone/voices-sidebar';
 import { Reveal } from '@/components/motion';
 import { WandSparklesIcon } from 'lucide-react';
@@ -185,11 +186,11 @@ export function DesignPage() {
           libraryLabel={t('clone.saved_profiles')}
           className="space-y-3"
         >
-          <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
+          <section className="space-y-1.5 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <div className="flex items-center justify-between gap-2">
               <label
                 htmlFor="voice-description"
-                className="flex min-w-0 items-center gap-2 text-sm font-medium"
+                className="flex min-w-0 items-center gap-2 text-label font-medium"
               >
                 <SparklesIcon className="size-4 shrink-0 text-primary" aria-hidden="true" />
                 {t('clone.describe_label')}
@@ -212,11 +213,11 @@ export function DesignPage() {
                 </Button>
               )}
             </div>
-            <textarea
+            <Textarea
               id="voice-description"
               maxLength={2000}
               disabled={generation.isGenerating}
-              className="min-h-24 w-full resize-y rounded-lg border border-input bg-background/35 p-3 text-sm leading-5 outline-none transition-[border-color,background-color,box-shadow] focus-visible:border-ring focus-visible:bg-background/50 focus-visible:ring-[3px] focus-visible:ring-ring/50"
+              className="min-h-24 resize-y leading-5"
               value={description}
               placeholder={t('clone.describe_placeholder')}
               onChange={(event) => {
@@ -500,7 +501,7 @@ export function DesignPage() {
                 setCloneSetting('language', preset.language || 'Auto');
               }}
             />
-            <label htmlFor="design-script" className="text-sm font-medium">
+            <label htmlFor="design-script" className="block text-label font-medium">
               {t('clone.text_label')}
             </label>
             <textarea

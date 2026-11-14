@@ -1280,6 +1280,7 @@
     "shortcut": "Dikte kısayolu",
     "shortcut_reset": "Varsayılana sıfırla",
     "updater_desktop": "Güncelleyici yalnızca masaüstü uygulamasında çalışır.",
+    "updater_off_build": "Bu sürümde güncelleme denetimi kapalı. Yeni sürümleri uygulamayı indirdiğiniz siteden alın.",
     "mcp_title": "MCP ses bağları",
     "mcp_desc": "İstemci kimliğini bir ses profiline bağlayarak her MCP aracısına kendi sesini verin.",
     "mcp_hint": "Aracılar /mcp üzerinden eVoice Studio'ya bağlanır ve claude-code gibi bir istemci kimliğiyle kendilerini tanıtır. Aracının her zaman bu sesi kullanması için kimliği bağlayın.",
@@ -2981,6 +2982,21 @@
     "cancelled": "İptal edildi",
     "fitting": "Zamanlama ayarlanıyor"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio'yu destekleyin",
+    "hero_body": "eVoice Studio ücretsizdir ve tamamen bilgisayarınızda çalışır. İşinize yarıyorsa katkınız gelişmeye devam etmesini sağlar.",
+    "momo_title": "Momo",
+    "bank_title": "Banka havalesi ({{bank}})",
+    "phone": "Telefon numarası",
+    "account": "Hesap numarası",
+    "holder": "Hesap sahibi",
+    "copy": "{{label}} kopyala",
+    "qr_alt": "{{method}} QR kodu",
+    "scan_hint": "Kodu banka veya Momo uygulamanızla tarayın ya da bilgileri kopyalayın.",
+    "paypal_title": "PayPal (Vietnam dışından)",
+    "paypal_body": "Yurt dışından mı destekliyorsunuz? PayPal ile dilediğiniz tutarı gönderin.",
+    "paypal_any": "Başka tutar"
+  },
   "supportPlans": {
     "remove": "Sponsor çubuğunu kaldır",
     "title": "Ücretsiz ve Pro",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "Müzik Stüdyosu",
     "engine_title": "Müzik motoru",
-    "engine_help": "Yerel yapay zeka müzik motorunu (ACE-Step) bir kez kurun. Yaklaşık 8 GB indirir ve bu bilgisayarda çalışır; hiçbir veri karşıya yüklenmez.",
+    "engine_help": "Yerel yapay zeka müzik motorunu (ACE-Step) bir kez kurun. Yaklaşık 15 GB indirir ve bu bilgisayarda çalışır; hiçbir veri karşıya yüklenmez.",
     "engine_install": "Müzik motorunu kur",
     "engine_installing": "Kuruluyor…",
+    "install_step_source": "Motorun kaynak kodu indiriliyor…",
+    "install_step_engine": "Python ortamı hazırlanıyor: şu ana kadar {{amount}} indirildi",
+    "install_step_model": "Müzik modeli indiriliyor: {{done}} / {{total}}",
     "engine_installed": "Müzik motoru kuruldu.",
     "engine_install_failed": "Kurulum başarısız: {{message}}",
     "engine_stopped": "Müzik motoru durduruldu ve GPU belleği boşaltıldı.",

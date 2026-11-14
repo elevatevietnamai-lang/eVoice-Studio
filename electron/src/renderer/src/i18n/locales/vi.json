@@ -1280,6 +1280,7 @@
     "shortcut": "Phím tắt đọc chính tả",
     "shortcut_reset": "Đặt lại về mặc định",
     "updater_desktop": "Trình cập nhật chỉ chạy trên ứng dụng máy tính.",
+    "updater_off_build": "Bản này đã tắt kiểm tra cập nhật. Hãy tải phiên bản mới từ trang bạn đã tải ứng dụng.",
     "mcp_title": "Liên kết giọng nói MCP",
     "mcp_desc": "Cấp cho mỗi tác nhân MCP một giọng riêng bằng cách liên kết ID máy khách với hồ sơ giọng nói.",
     "mcp_hint": "Tác nhân kết nối với eVoice Studio tại /mcp và tự nhận dạng bằng ID máy khách, chẳng hạn claude-code. Liên kết ID để tác nhân luôn dùng giọng này.",
@@ -2981,6 +2982,21 @@
     "cancelled": "Đã hủy",
     "fitting": "Đang căn chỉnh thời lượng"
   },
+  "supportEvoice": {
+    "hero_title": "Ủng hộ eVoice Studio",
+    "hero_body": "eVoice Studio miễn phí và chạy hoàn toàn trên máy của bạn. Nếu app giúp ích cho công việc, khoản ủng hộ của bạn giúp app tiếp tục được cải thiện.",
+    "momo_title": "Momo",
+    "bank_title": "Chuyển khoản ({{bank}})",
+    "phone": "Số điện thoại",
+    "account": "Số tài khoản",
+    "holder": "Chủ tài khoản",
+    "copy": "Sao chép {{label}}",
+    "qr_alt": "Mã QR {{method}}",
+    "scan_hint": "Quét mã bằng app ngân hàng hoặc Momo, hoặc sao chép thông tin.",
+    "paypal_title": "PayPal (ngoài Việt Nam)",
+    "paypal_body": "Ủng hộ từ nước ngoài? Gửi số tiền bất kỳ qua PayPal.",
+    "paypal_any": "Số tiền khác"
+  },
   "supportPlans": {
     "remove": "Ẩn thanh tài trợ",
     "title": "Miễn phí và Pro",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "Studio âm nhạc",
     "engine_title": "Engine nhạc",
-    "engine_help": "Cài engine nhạc AI chạy trên máy (ACE-Step) một lần. Cần tải khoảng 8 GB và chạy ngay trên máy này; không có gì được tải lên.",
+    "engine_help": "Cài engine nhạc AI chạy trên máy (ACE-Step) một lần. Cần tải khoảng 15 GB và chạy ngay trên máy này; không có gì được tải lên.",
     "engine_install": "Cài engine nhạc",
     "engine_installing": "Đang cài…",
+    "install_step_source": "Đang tải mã nguồn engine…",
+    "install_step_engine": "Đang cài môi trường Python: đã tải {{amount}}",
+    "install_step_model": "Đang tải mô hình nhạc: {{done}} / {{total}}",
     "engine_installed": "Đã cài engine nhạc.",
     "engine_install_failed": "Cài đặt thất bại: {{message}}",
     "engine_stopped": "Đã dừng engine nhạc và giải phóng bộ nhớ GPU.",

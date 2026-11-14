@@ -1280,6 +1280,7 @@
     "shortcut": "聽寫快捷鍵",
     "shortcut_reset": "重設為預設值",
     "updater_desktop": "更新程式僅在桌面應用程式中運行。",
+    "updater_off_build": "此版本已關閉更新檢查。請從你下載本應用程式的網站取得新版本。",
     "mcp_title": "MCP 語音綁定",
     "mcp_desc": "將用戶端 ID 綁定至語音設定檔，讓每個 MCP 代理使用自己的聲音。",
     "mcp_hint": "代理透過 /mcp 連線至 eVoice Studio，並使用用戶端 ID（例如 claude-code）識別自己。綁定該 ID 後，代理將一律使用此聲音。",
@@ -2981,6 +2982,21 @@
     "cancelled": "已取消",
     "fitting": "正在調整時間"
   },
+  "supportEvoice": {
+    "hero_title": "支持 eVoice Studio",
+    "hero_body": "eVoice Studio 免費，且完全在你的電腦上執行。如果它對你的工作有幫助，你的支持能讓它持續改進。",
+    "momo_title": "Momo",
+    "bank_title": "銀行轉帳 ({{bank}})",
+    "phone": "電話號碼",
+    "account": "帳號",
+    "holder": "戶名",
+    "copy": "複製{{label}}",
+    "qr_alt": "{{method}} QR 碼",
+    "scan_hint": "用銀行 App 或 Momo 掃描條碼，或複製帳戶資訊。",
+    "paypal_title": "PayPal（越南境外）",
+    "paypal_body": "在海外支持？可透過 PayPal 寄送任意金額。",
+    "paypal_any": "其他金額"
+  },
   "supportPlans": {
     "remove": "移除贊助商列",
     "title": "免費版與 Pro 比較",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "音樂工作室",
     "engine_title": "音樂引擎",
-    "engine_help": "僅需安裝一次本機 AI 音樂引擎 (ACE-Step)。將下載約 8 GB 並在此電腦上執行；不會上傳任何資料。",
+    "engine_help": "僅需安裝一次本機 AI 音樂引擎 (ACE-Step)。將下載約 15 GB 並在此電腦上執行；不會上傳任何資料。",
     "engine_install": "安裝音樂引擎",
     "engine_installing": "正在安裝…",
+    "install_step_source": "正在下載引擎原始碼…",
+    "install_step_engine": "正在設定 Python 環境：已下載 {{amount}}",
+    "install_step_model": "正在下載音樂模型：{{done}} / {{total}}",
     "engine_installed": "已安裝音樂引擎。",
     "engine_install_failed": "安裝失敗：{{message}}",
     "engine_stopped": "音樂引擎已停止，並已釋放 GPU 記憶體。",

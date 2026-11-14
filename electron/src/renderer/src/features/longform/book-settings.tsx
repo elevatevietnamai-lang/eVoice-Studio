@@ -65,7 +65,7 @@ export function BookSettings({
       <details className="space-y-3">
         <summary className="cursor-pointer text-sm font-medium">{t('audiobook.details')}</summary>
         {metadataFields.map((field) => (
-          <label key={field} className="block space-y-1 text-xs text-muted-foreground">
+          <label key={field} className="flex min-w-0 flex-col gap-1.5 text-label font-medium text-muted-foreground">
             {t('audiobook.meta_' + field)}
             <Input
               disabled={disabled}

@@ -92,7 +92,7 @@ export function WebAuthGate({ children }: { children: ReactNode }) {
         </CardHeader>
         <CardContent>
           <form className="space-y-3" onSubmit={submit}>
-            <label className="block space-y-1.5 text-xs font-medium" htmlFor="web-auth-credential">
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium" htmlFor="web-auth-credential">
               <span>{t(apiKey ? 'settings.remote_backend_key' : 'network.pin')}</span>
               <Input
                 id="web-auth-credential"

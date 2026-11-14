@@ -136,7 +136,7 @@ export function QualityControls({
                       <CheckIcon aria-hidden="true" className="size-3 shrink-0 text-primary" />
                     )}
                   </span>
-                  <span className="truncate font-mono text-[10px] tabular-nums text-muted-foreground">
+                  <span className="truncate font-mono text-[11px] tabular-nums text-muted-foreground">
                     {t(`cloneQuality.bits${value}`)}
                   </span>
                 </button>

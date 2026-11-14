@@ -918,7 +918,7 @@ export function TwilioSetup({ hero, rail }: IntegrationPanelProps) {
       <div className="twilio-field">
         {disclosureSupported ? (
           <>
-            <label htmlFor="twilio-disclosure" className="twilio-field-label">
+            <label htmlFor="twilio-disclosure" className="twilio-field-label block">
               {t('twilioIntegration.disclosure')}
             </label>
             <Textarea

@@ -75,7 +75,7 @@ export function LanguagePicker({
           )}
         </span>
         <span
-          className="shrink-0 font-mono text-[10px] uppercase text-muted-foreground"
+          className="shrink-0 font-mono text-[11px] uppercase text-muted-foreground"
           aria-hidden="true"
         >
           {option.code}

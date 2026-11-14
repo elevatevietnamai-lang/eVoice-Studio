@@ -1284,6 +1284,7 @@
     "shortcut": "Skrót do dyktowania",
     "shortcut_reset": "Przywróć ustawienia domyślne",
     "updater_desktop": "Updater działa tylko w aplikacji komputerowej.",
+    "updater_off_build": "Sprawdzanie aktualizacji jest wyłączone w tej wersji. Nowe wersje pobierz ze strony, z której pobrano aplikację.",
     "mcp_title": "Powiązania głosowe MCP",
     "mcp_desc": "Nadaj każdemu agentowi MCP własny głos, wiążąc jego identyfikator klienta z profilem głosu.",
     "mcp_hint": "Agenci łączą się z eVoice Studio przez /mcp i identyfikują się za pomocą identyfikatora klienta, np. claude-code. Powiąż ten identyfikator, aby agent zawsze używał tego głosu.",
@@ -2985,6 +2986,21 @@
     "cancelled": "Anulowano",
     "fitting": "Dostosowywanie czasu"
   },
+  "supportEvoice": {
+    "hero_title": "Wesprzyj eVoice Studio",
+    "hero_body": "eVoice Studio jest darmowe i działa w całości na Twoim komputerze. Jeśli pomaga Ci w pracy, wsparcie pozwala je dalej rozwijać.",
+    "momo_title": "Momo",
+    "bank_title": "Przelew bankowy ({{bank}})",
+    "phone": "Numer telefonu",
+    "account": "Numer konta",
+    "holder": "Właściciel konta",
+    "copy": "Kopiuj: {{label}}",
+    "qr_alt": "Kod QR {{method}}",
+    "scan_hint": "Zeskanuj kod aplikacją banku lub Momo albo skopiuj dane.",
+    "paypal_title": "PayPal (poza Wietnamem)",
+    "paypal_body": "Wspierasz z zagranicy? Wyślij dowolną kwotę przez PayPal.",
+    "paypal_any": "Inna kwota"
+  },
   "supportPlans": {
     "remove": "Usuń pasek sponsorów",
     "title": "Darmowa a Pro",
@@ -3957,9 +3973,12 @@
   "musicStudio": {
     "title": "Studio muzyczne",
     "engine_title": "Silnik muzyczny",
-    "engine_help": "Zainstaluj jednorazowo lokalny silnik muzyczny AI (ACE-Step). Pobiera około 8 GB i działa na tym komputerze; nic nie jest wysyłane do sieci.",
+    "engine_help": "Zainstaluj jednorazowo lokalny silnik muzyczny AI (ACE-Step). Pobiera około 15 GB i działa na tym komputerze; nic nie jest wysyłane do sieci.",
     "engine_install": "Zainstaluj silnik muzyczny",
     "engine_installing": "Instalowanie…",
+    "install_step_source": "Pobieranie kodu źródłowego silnika…",
+    "install_step_engine": "Przygotowywanie środowiska Python: pobrano dotąd {{amount}}",
+    "install_step_model": "Pobieranie modelu muzycznego: {{done}} z {{total}}",
     "engine_installed": "Silnik muzyczny zainstalowany.",
     "engine_install_failed": "Instalacja nie powiodła się: {{message}}",
     "engine_stopped": "Silnik muzyczny zatrzymany, pamięć GPU zwolniona.",

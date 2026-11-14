@@ -261,7 +261,7 @@ export function TrimAudio({
             </div>
             <div className="flex flex-wrap items-end gap-4">
               {(['start', 'end'] as const).map((key) => (
-                <label key={key} className="flex flex-col gap-2 text-xs">
+                <label key={key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                   <span>{t('trimmer.' + key + '_label')}</span>
                   <Input
                     type="number"

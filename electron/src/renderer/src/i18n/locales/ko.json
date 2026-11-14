@@ -1356,6 +1356,7 @@
     "shortcut": "받아쓰기 단축키",
     "shortcut_reset": "기본값으로 재설정",
     "updater_desktop": "업데이터는 데스크톱 앱에서만 실행됩니다.",
+    "updater_off_build": "이 빌드에서는 업데이트 확인이 꺼져 있습니다. 새 버전은 내려받은 사이트에서 받으세요.",
     "mcp_title": "MCP 음성 연결",
     "mcp_desc": "각 MCP 에이전트의 클라이언트 ID를 음성 프로필에 연결해 고유한 음성을 지정하세요.",
     "mcp_hint": "에이전트는 /mcp에서 VoiceStudio에 연결하고 claude-code 같은 클라이언트 ID로 자신을 식별합니다. ID를 연결하면 에이전트가 항상 이 음성을 사용합니다.",
@@ -2981,6 +2982,21 @@
     "cancelled": "취소됨",
     "fitting": "타이밍 조정 중"
   },
+  "supportEvoice": {
+    "hero_title": "eVoice Studio 후원하기",
+    "hero_body": "eVoice Studio는 무료이며 모두 내 컴퓨터에서 실행됩니다. 도움이 되었다면 후원이 앱을 계속 발전시킵니다.",
+    "momo_title": "Momo",
+    "bank_title": "계좌 이체 ({{bank}})",
+    "phone": "전화번호",
+    "account": "계좌번호",
+    "holder": "예금주",
+    "copy": "{{label}} 복사",
+    "qr_alt": "{{method}} QR 코드",
+    "scan_hint": "은행 앱이나 Momo로 코드를 스캔하거나 정보를 복사하세요.",
+    "paypal_title": "PayPal (베트남 외 지역)",
+    "paypal_body": "해외에서 후원하시나요? PayPal로 원하는 금액을 보내세요.",
+    "paypal_any": "다른 금액"
+  },
   "supportPlans": {
     "remove": "스폰서 바 제거",
     "title": "무료와 Pro 비교",
@@ -3951,9 +3967,12 @@
   "musicStudio": {
     "title": "뮤직 스튜디오",
     "engine_title": "음악 엔진",
-    "engine_help": "로컬 AI 음악 엔진(ACE-Step)을 한 번만 설치하세요. 약 8 GB를 다운로드하며 이 컴퓨터에서 실행되므로 아무것도 업로드되지 않습니다.",
+    "engine_help": "로컬 AI 음악 엔진(ACE-Step)을 한 번만 설치하세요. 약 15 GB를 다운로드하며 이 컴퓨터에서 실행되므로 아무것도 업로드되지 않습니다.",
     "engine_install": "음악 엔진 설치",
     "engine_installing": "설치 중…",
+    "install_step_source": "엔진 소스를 다운로드하는 중…",
+    "install_step_engine": "Python 환경 준비 중: 지금까지 {{amount}} 다운로드",
+    "install_step_model": "음악 모델 다운로드 중: {{done}} / {{total}}",
     "engine_installed": "음악 엔진이 설치되었습니다.",
     "engine_install_failed": "설치 실패: {{message}}",
     "engine_stopped": "음악 엔진이 중지되고 GPU 메모리가 해제되었습니다.",

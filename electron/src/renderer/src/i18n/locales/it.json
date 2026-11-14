@@ -1282,6 +1282,7 @@
     "shortcut": "Scorciatoia per la dettatura",
     "shortcut_reset": "Ripristina le impostazioni predefinite",
     "updater_desktop": "Il programma di aggiornamento viene eseguito solo nell'app desktop.",
+    "updater_off_build": "Il controllo degli aggiornamenti è disattivato in questa build. Scarica le nuove versioni dal sito da cui l’hai ottenuta.",
     "mcp_title": "Associazioni vocali MCP",
     "mcp_desc": "Assegna una voce a ogni agente MCP collegando il suo ID client a un profilo vocale.",
     "mcp_hint": "Gli agenti si connettono a eVoice Studio tramite /mcp e si identificano con un ID client, come claude-code. Associa l’ID affinché l’agente usi sempre questa voce.",
@@ -2983,6 +2984,21 @@
     "cancelled": "Annullato",
     "fitting": "Regolazione dei tempi"
   },
+  "supportEvoice": {
+    "hero_title": "Sostieni eVoice Studio",
+    "hero_body": "eVoice Studio è gratuito e funziona interamente sul tuo computer. Se ti è utile, un contributo lo aiuta a migliorare.",
+    "momo_title": "Momo",
+    "bank_title": "Bonifico bancario ({{bank}})",
+    "phone": "Numero di telefono",
+    "account": "Numero di conto",
+    "holder": "Intestatario",
+    "copy": "Copia {{label}}",
+    "qr_alt": "Codice QR {{method}}",
+    "scan_hint": "Scansiona il codice con l’app della banca o Momo, oppure copia i dati.",
+    "paypal_title": "PayPal (fuori dal Vietnam)",
+    "paypal_body": "Sostieni dall’estero? Invia l’importo che preferisci con PayPal.",
+    "paypal_any": "Altro importo"
+  },
   "supportPlans": {
     "remove": "Rimuovi barra sponsor",
     "title": "Gratis o Pro",
@@ -3953,9 +3969,12 @@
   "musicStudio": {
     "title": "Studio musicale",
     "engine_title": "Motore musicale",
-    "engine_help": "Installa una sola volta il motore musicale IA locale (ACE-Step). Scarica circa 8 GB e funziona su questo computer; non viene caricato nulla online.",
+    "engine_help": "Installa una sola volta il motore musicale IA locale (ACE-Step). Scarica circa 15 GB e funziona su questo computer; non viene caricato nulla online.",
     "engine_install": "Installa motore musicale",
     "engine_installing": "Installazione…",
+    "install_step_source": "Download del codice sorgente del motore…",
+    "install_step_engine": "Preparazione dell’ambiente Python: {{amount}} scaricati finora",
+    "install_step_model": "Download del modello musicale: {{done}} di {{total}}",
     "engine_installed": "Motore musicale installato.",
     "engine_install_failed": "Installazione non riuscita: {{message}}",
     "engine_stopped": "Motore musicale arrestato e memoria GPU liberata.",

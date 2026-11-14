@@ -120,7 +120,7 @@ export function NewCallForm({
       }}
     >
       <div className="space-y-1.5">
-        <label htmlFor={`${ids}-to`} className="text-sm font-medium">
+        <label htmlFor={`${ids}-to`} className="block text-label font-medium">
           {t('calls.number_label')}
         </label>
         <Input
@@ -156,7 +156,7 @@ export function NewCallForm({
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor={`${ids}-brief`} className="text-sm font-medium">
+        <label htmlFor={`${ids}-brief`} className="block text-label font-medium">
           {t('calls.brief_label')}
         </label>
         <Textarea

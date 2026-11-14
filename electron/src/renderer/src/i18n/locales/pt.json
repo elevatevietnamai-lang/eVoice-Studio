@@ -1282,6 +1282,7 @@
     "shortcut": "Atalho de ditado",
     "shortcut_reset": "Redefinir para o padrão",
     "updater_desktop": "O atualizador só é executado no aplicativo de desktop.",
+    "updater_off_build": "A verificação de atualizações está desativada nesta versão. Baixe as novas versões no site de onde você a obteve.",
     "mcp_title": "Associações de voz MCP",
     "mcp_desc": "Dê uma voz a cada agente MCP associando o ID do cliente a um perfil de voz.",
     "mcp_hint": "Os agentes se conectam ao eVoice Studio em /mcp e se identificam com um ID de cliente, como claude-code. Associe esse ID para que o agente sempre use esta voz.",
@@ -2983,6 +2984,21 @@
     "cancelled": "Cancelado",
     "fitting": "Ajustando o tempo"
   },
+  "supportEvoice": {
+    "hero_title": "Apoie o eVoice Studio",
+    "hero_body": "O eVoice Studio é gratuito e roda inteiramente no seu computador. Se ele ajuda no seu trabalho, uma contribuição o mantém evoluindo.",
+    "momo_title": "Momo",
+    "bank_title": "Transferência bancária ({{bank}})",
+    "phone": "Número de telefone",
+    "account": "Número da conta",
+    "holder": "Titular da conta",
+    "copy": "Copiar {{label}}",
+    "qr_alt": "Código QR {{method}}",
+    "scan_hint": "Leia o código com o app do banco ou Momo, ou copie os dados.",
+    "paypal_title": "PayPal (fora do Vietnã)",
+    "paypal_body": "Apoiando do exterior? Envie qualquer valor pelo PayPal.",
+    "paypal_any": "Outro valor"
+  },
   "supportPlans": {
     "remove": "Remover barra de patrocinadores",
     "title": "Grátis vs Pro",
@@ -3953,9 +3969,12 @@
   "musicStudio": {
     "title": "Estúdio Musical",
     "engine_title": "Motor de música",
-    "engine_help": "Instale o motor local de música por IA (ACE-Step) uma única vez. Ele baixa cerca de 8 GB e roda neste computador; nada é enviado.",
+    "engine_help": "Instale o motor local de música por IA (ACE-Step) uma única vez. Ele baixa cerca de 15 GB e roda neste computador; nada é enviado.",
     "engine_install": "Instalar motor de música",
     "engine_installing": "Instalando…",
+    "install_step_source": "Baixando o código-fonte do motor…",
+    "install_step_engine": "Preparando o ambiente Python: {{amount}} baixados até agora",
+    "install_step_model": "Baixando o modelo de música: {{done}} de {{total}}",
     "engine_installed": "Motor de música instalado.",
     "engine_install_failed": "Falha na instalação: {{message}}",
     "engine_stopped": "Motor de música parado e memória da GPU liberada.",

@@ -80,7 +80,7 @@ const nextKey = () => `${Date.now().toString(36)}-${(shotCounter += 1)}`;
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block space-y-1 text-xs">
+    <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
       <span className="text-muted-foreground">{label}</span>
       {children}
     </label>

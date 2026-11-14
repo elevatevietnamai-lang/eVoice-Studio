@@ -20,10 +20,13 @@ import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
 import { gpuBusyMessage } from '@/lib/api/failure';
 import { saveExport } from '@/lib/export-history';
+import { formatBytes } from '@/lib/format-bytes';
 
 type MusicStatus = { installed: boolean; running: boolean };
 type Track = {
@@ -45,8 +48,34 @@ const STYLE_PRESETS = [
   'acoustic guitar, cozy, 95 bpm',
 ];
 
-const fieldClass =
-  'h-8 w-full rounded-lg border border-input bg-background/40 px-2.5 text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50';
+interface InstallStep {
+  stage: 'source' | 'engine' | 'model';
+  bytes: number;
+  total: number | null;
+  log: string;
+}
+
+/** The install's long steps report bytes on disk; the Python environment has no known total. */
+/** Short amount for the install button: done of total when the step knows its size. */
+export function installAmount(step: InstallStep | null): string | null {
+  if (!step || step.stage === 'source') return null;
+  if (step.total) return `${formatBytes(step.bytes)} / ${formatBytes(step.total)}`;
+  return step.bytes > 0 ? formatBytes(step.bytes) : null;
+}
+
+function installStepLabel(step: InstallStep) {
+  if (step.stage === 'source') return { key: 'musicStudio.install_step_source', values: {} };
+  if (step.stage === 'engine')
+    return {
+      key: 'musicStudio.install_step_engine',
+      // While the torch wheel downloads the step knows its size; uv's own downloads do not.
+      values: { amount: installAmount(step) ?? formatBytes(step.bytes) },
+    };
+  return {
+    key: 'musicStudio.install_step_model',
+    values: { done: formatBytes(step.bytes), total: formatBytes(step.total ?? 0) },
+  };
+}
 
 export function MusicPage() {
   const { t } = useTranslation();
@@ -58,6 +87,7 @@ export function MusicPage() {
   const [bpm, setBpm] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [task, setTask] = useState<{ kind: 'install' | 'generate'; progress: number } | null>(null);
+  const [installStep, setInstallStep] = useState<InstallStep | null>(null);
   const abort = useRef<AbortController | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
 
@@ -77,10 +107,22 @@ export function MusicPage() {
 
   const install = async () => {
     setTask({ kind: 'install', progress: 0 });
+    setInstallStep(null);
     try {
       await consumeTaskStream('/music/install-stream', (event) => {
-        if (event.type === 'progress')
+        if (event.type === 'progress') {
           setTask({ kind: 'install', progress: Number(event.progress) || 0 });
+          const stage = event.stage;
+          if (stage === 'source' || stage === 'engine' || stage === 'model')
+            setInstallStep((step) => ({
+              stage,
+              bytes: Number(event.bytes) || 0,
+              total: Number(event.total) || null,
+              log: step?.stage === stage ? step.log : '',
+            }));
+        }
+        if (event.type === 'log')
+          setInstallStep((step) => (step ? { ...step, log: String(event.message || '') } : step));
         if (event.type === 'error') throw new Error(String(event.reason || 'Install failed'));
         return event.type === 'done';
       });
@@ -89,6 +131,7 @@ export function MusicPage() {
       toast.error(t('musicStudio.engine_install_failed', { message: describeError(error) }));
     } finally {
       setTask(null);
+      setInstallStep(null);
       void queryClient.invalidateQueries({ queryKey: ['music-status'] });
     }
   };
@@ -191,7 +234,7 @@ export function MusicPage() {
               <p className="text-xs leading-5 text-muted-foreground">
                 {t('musicStudio.engine_help')}
               </p>
-              <Button className="w-full" size="sm" disabled={busy} onClick={install}>
+              <Button className="w-full" disabled={busy} onClick={install}>
                 {task?.kind === 'install' ? (
                   <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
                 ) : (
@@ -200,6 +243,14 @@ export function MusicPage() {
                 {task?.kind === 'install'
                   ? t('musicStudio.engine_installing')
                   : t('musicStudio.engine_install')}
+                {task?.kind === 'install' && installAmount(installStep) && (
+                  <span
+                    className="ml-auto text-xs tabular-nums opacity-80"
+                    data-slot="install-amount"
+                  >
+                    {installAmount(installStep)}
+                  </span>
+                )}
               </Button>
               {task?.kind === 'install' && (
                 <Progress
@@ -207,10 +258,25 @@ export function MusicPage() {
                   aria-label={t('musicStudio.engine_installing')}
                 />
               )}
+              {task?.kind === 'install' && installStep && (
+                <div className="space-y-0.5 text-xs leading-5" aria-live="polite">
+                  <p className="text-muted-foreground tabular-nums">
+                    {t(installStepLabel(installStep).key, installStepLabel(installStep).values)}
+                  </p>
+                  {installStep.log && (
+                    <p
+                      className="truncate font-mono text-[11px] text-muted-foreground"
+                      title={installStep.log}
+                    >
+                      {installStep.log}
+                    </p>
+                  )}
+                </div>
+              )}
             </section>
           ) : null}
 
-          <label className="block space-y-1.5 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="font-medium">{t('musicStudio.prompt')}</span>
             <Textarea
               value={prompt}
@@ -240,7 +306,7 @@ export function MusicPage() {
             <Switch checked={instrumental} disabled={busy} onCheckedChange={setInstrumental} />
           </label>
           {!instrumental && (
-            <label className="block space-y-1.5 text-xs">
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
               <span className="font-medium">{t('musicStudio.lyrics')}</span>
               <Textarea
                 value={lyrics}
@@ -270,10 +336,9 @@ export function MusicPage() {
               onValueChange={(value) => setDuration(Array.isArray(value) ? value[0] : value)}
             />
           </div>
-          <label className="block space-y-1.5 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="font-medium">{t('musicStudio.bpm')}</span>
-            <input
-              className={fieldClass}
+            <Input
               inputMode="numeric"
               value={bpm}
               disabled={busy}
@@ -284,7 +349,7 @@ export function MusicPage() {
 
           <Button
             className="w-full"
-            size="sm"
+            size="lg"
             disabled={busy || !installed || !prompt.trim()}
             onClick={generate}
           >
@@ -358,7 +423,13 @@ export function MusicPage() {
                 {tracks.map((track) => (
                   <li
                     key={track.id}
-                    className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2"
+                    // The chosen track is lit flat, like every selected row (DESIGN.md).
+                    className={cn(
+                      'flex items-center gap-2 rounded-lg border border-border/60 px-2.5 py-2 transition-colors',
+                      selected?.id === track.id
+                        ? 'bg-accent'
+                        : 'bg-background/35 hover:bg-accent/50',
+                    )}
                   >
                     <button
                       type="button"

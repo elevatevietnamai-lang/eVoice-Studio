@@ -34,7 +34,7 @@ function VoiceIcon({ choice }: { choice: VoiceChoice }) {
       <ProfileAvatar
         name={choice.profile.name}
         imageUrl={choice.profile.image_url}
-        className="size-5 text-[10px]"
+        className="size-5 text-[11px]"
       />
     );
   if (choice.kind === 'preset') return <SparklesIcon className="size-4 text-primary" />;
@@ -124,7 +124,7 @@ export function CastingBoard({
           3
         </span>
         {t('dub.cast')}
-        <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] tabular-nums text-muted-foreground">
+        <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
           {speakers.length}
         </span>
         <ChevronDownIcon className="ml-auto size-4 text-muted-foreground transition-transform group-open:rotate-180" />
@@ -191,7 +191,7 @@ export function CastingBoard({
                 <div className="mb-2 flex min-w-0 items-center gap-2">
                   <UserRoundIcon className="size-3.5 shrink-0 text-muted-foreground" />
                   <span className="min-w-0 flex-1 truncate text-xs font-medium">{speaker}</span>
-                  <span className="max-w-32 truncate text-[10px] text-muted-foreground">
+                  <span className="max-w-32 truncate text-[11px] text-muted-foreground">
                     {selected.label}
                   </span>
                 </div>
@@ -224,7 +224,7 @@ export function CastingBoard({
                             <ProfileAvatar
                               name={profile.name}
                               imageUrl={profile.image_url}
-                              className="size-5 text-[10px]"
+                              className="size-5 text-[11px]"
                             />
                             {profile.name}
                           </SelectItem>

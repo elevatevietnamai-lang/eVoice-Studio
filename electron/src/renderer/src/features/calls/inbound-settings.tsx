@@ -95,7 +95,7 @@ export function InboundSettings({
           </div>
           {mode === 'agent' && (
             <div className="space-y-1.5">
-              <label htmlFor={`${ids}-brief`} className="text-sm font-medium">
+              <label htmlFor={`${ids}-brief`} className="block text-label font-medium">
                 {t('calls.inbound_brief')}
               </label>
               <Textarea

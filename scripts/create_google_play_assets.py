@@ -30,13 +30,14 @@ def font(size, weight):
 
 def icon():
     # Play masks a full-bleed square, so draw what the adaptive launcher icon shows
-    # (mobile/android/scripts/generate_brand_resources.py): the logo scaled to 0.9
-    # of 64 units, 25.2 units in from each edge of 108, on the theme canvas.
+    # (mobile/android/scripts/generate_brand_resources.py): the 64-unit logo scaled
+    # by 56/37.5 so the mark is 56 of 108 units, centred, on the theme canvas.
     size, scale = 512, 512 / 108
+    logo_scale = 56 / 37.5
     image = Image.new("RGB", (size, size), dark_colors()["canvas"])
-    side = round(64 * 0.9 * scale)
+    side = round(64 * logo_scale * scale)
     logo = Image.open(ROOT / "docs/logo.png").convert("RGBA").resize((side, side), Image.LANCZOS)
-    image.paste(logo, (round(25.2 * scale),) * 2, logo)
+    image.paste(logo, (round((54 - 32 * logo_scale) * scale),) * 2, logo)
     return image
 
 

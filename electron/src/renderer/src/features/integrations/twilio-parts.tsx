@@ -101,7 +101,7 @@ export function CopyField({ label, value, hint }: { label: string; value: string
   const id = useId();
   return (
     <div className="twilio-copy">
-      <span id={`${id}-label`} className="twilio-field-label">
+      <span id={`${id}-label`} className="twilio-field-label block">
         {label}
       </span>
       <div className="twilio-copy-row">
@@ -137,7 +137,7 @@ export function Field({
 }) {
   return (
     <div className={wide ? 'twilio-field twilio-field-wide' : 'twilio-field'}>
-      <label htmlFor={htmlFor} className="twilio-field-label">
+      <label htmlFor={htmlFor} className="twilio-field-label block">
         {label}
       </label>
       {children}

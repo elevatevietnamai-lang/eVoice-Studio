@@ -34,6 +34,7 @@ import { cn } from '@/lib/utils';
 import type { RuntimeRegion } from '../../../preload/index.d';
 import { getBridge, isMac } from './bridge';
 import { ExternalLink } from './external-link';
+import { formatBytes } from '@/lib/format-bytes';
 
 interface BackendGateProps {
   children: ReactNode;
@@ -57,13 +58,6 @@ function useElapsedSeconds(elapsedMs: number, running: boolean): number {
     return () => window.clearInterval(id);
   }, [elapsedMs, running]);
   return seconds;
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes >= 1024 ** 3)
-    return `${(bytes / 1024 ** 3).toFixed(bytes < 10 * 1024 ** 3 ? 1 : 0)} GB`;
-  if (bytes >= 1024 ** 2) return `${Math.round(bytes / 1024 ** 2)} MB`;
-  return `${Math.max(0, Math.round(bytes / 1024))} KB`;
 }
 
 function formatEta(seconds: number): string {
@@ -393,7 +387,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                 </div>
               )}
               <div className="grid w-full grid-cols-2 gap-2">
-                <label className="space-y-1 text-left text-xs text-muted-foreground">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium text-left text-muted-foreground">
                   <span>{t('settings.language')}</span>
                   <Select
                     items={APP_LANGUAGE_ITEMS}
@@ -415,7 +409,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                     </SelectContent>
                   </Select>
                 </label>
-                <label className="space-y-1 text-left text-xs text-muted-foreground">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium text-left text-muted-foreground">
                   <span>{t('firstrun.region_label')}</span>
                   <Select
                     items={regionItems}
