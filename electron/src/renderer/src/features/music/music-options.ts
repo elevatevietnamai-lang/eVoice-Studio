@@ -117,6 +117,28 @@ export const DIT_MODEL_IDS = Object.keys(DIT_MODELS) as DitModel[];
 export const GUIDANCE_RANGE = [1, 15, 7] as const;
 export const SHIFT_RANGE = [1, 5, 3] as const;
 
+/**
+ * Instruments ACE-Step names for its stem tasks, in its own order (backend `TRACK_NAMES`).
+ * Extract pulls one out of a song, Lego adds one, Complete finishes an arrangement with several.
+ */
+export const TRACK_NAMES = [
+  'woodwinds',
+  'brass',
+  'fx',
+  'synth',
+  'strings',
+  'percussion',
+  'keyboard',
+  'guitar',
+  'bass',
+  'drums',
+  'backing_vocals',
+  'vocals',
+] as const;
+export type TrackName = (typeof TRACK_NAMES)[number];
+/** Tasks only the Base model runs (backend `BASE_TASKS`). */
+export const BASE_TASKS = ['extract', 'lego', 'complete'] as const;
+
 /** Extend: [min, max, default] seconds of new music, and of the source redone with it. */
 export const EXTEND_SECONDS = [5, 120, 30] as const;
 export const EXTEND_OVERLAP = [0, 10, 2] as const;

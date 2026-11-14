@@ -534,3 +534,39 @@ it('sends guidance only for a model that takes it, with the steps of that model'
     cfg_interval_end: 1,
   });
 });
+
+it('offers the stem tasks only on the Base model and sends the instruments picked', async () => {
+  state.status = { installed: true, running: false };
+  state.stream.mockImplementation(async () => {});
+  const { container } = renderPage();
+  const extract = (await screen.findByText('musicStudio.task_extract')).closest('button');
+  expect(
+    extract?.hasAttribute('disabled') || extract?.getAttribute('aria-disabled') === 'true',
+  ).toBe(true);
+  expect(screen.getByText('musicStudio.task_base_only')).toBeTruthy();
+  fireEvent.click(screen.getByText('musicStudio.advanced'));
+  fireEvent.click(await screen.findByText('musicStudio.model_base'));
+  await waitFor(() => expect(screen.queryByText('musicStudio.task_base_only')).toBeNull());
+  fireEvent.click(screen.getByText('musicStudio.task_complete'));
+  const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+  fireEvent.change(input, { target: { files: [new File(['ID3'], 'demo.mp3')] } });
+  expect(await screen.findByText('demo.mp3')).toBeTruthy();
+  // Drums and bass start picked; drop drums, add strings.
+  fireEvent.click(screen.getByText('musicStudio.track_drums'));
+  fireEvent.click(screen.getByText('musicStudio.track_strings'));
+  const generate = screen.getByText('musicStudio.generate').closest('button') as HTMLButtonElement;
+  await waitFor(() => expect(generate.disabled).toBe(false));
+  fireEvent.click(generate);
+  await waitFor(() => expect(state.stream).toHaveBeenCalled());
+  const body = JSON.parse(state.stream.mock.calls[0][3].body);
+  expect(body).toMatchObject({
+    task: 'complete',
+    model: 'base',
+    source_upload_id: 'fedcba987654',
+    track_classes: ['bass', 'strings'],
+  });
+  expect(body).not.toHaveProperty('track_name');
+  // Leaving Base goes back to a new song.
+  fireEvent.click(screen.getByText('musicStudio.model_turbo'));
+  await waitFor(() => expect(screen.getByText('musicStudio.task_text2music_help')).toBeTruthy());
+});

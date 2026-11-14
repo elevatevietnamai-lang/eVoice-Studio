@@ -44,6 +44,7 @@ import { saveExport } from '@/lib/export-history';
 import { formatBytes } from '@/lib/format-bytes';
 import {
   AUDIO_FORMATS,
+  BASE_TASKS,
   BATCH_SIZES,
   DEFAULT_STEPS,
   DIT_MODELS,
@@ -62,6 +63,7 @@ import {
   LYRIC_TAGS,
   STYLE_TAGS,
   TIME_SIGNATURES,
+  TRACK_NAMES,
   appendStyleTag,
   changedLmValues,
   defaultLmValues,
@@ -80,6 +82,7 @@ import {
   type LmValues,
   type MusicSettings,
   type StyleGroup,
+  type TrackName,
 } from './music-options';
 import { MusicSourcePicker, sourceFields, type MusicSource } from './music-source-picker';
 import { MusicLora } from './music-lora';
@@ -117,8 +120,9 @@ type Track = {
   task?: string;
 };
 
-type MusicTask = 'text2music' | 'cover' | 'repaint' | 'extend';
-const MUSIC_TASKS: MusicTask[] = ['text2music', 'cover', 'repaint', 'extend'];
+type MusicTask = 'text2music' | 'cover' | 'repaint' | 'extend' | (typeof BASE_TASKS)[number];
+const MUSIC_TASKS: MusicTask[] = ['text2music', 'cover', 'repaint', 'extend', ...BASE_TASKS];
+const isBaseTask = (task: MusicTask) => (BASE_TASKS as readonly string[]).includes(task);
 const REPAINT_MODES = ['conservative', 'balanced', 'aggressive'] as const;
 type RepaintMode = (typeof REPAINT_MODES)[number];
 
@@ -194,6 +198,9 @@ export function MusicPage() {
   const [expertOpen, setExpertOpen] = useState(false);
   const [lmValues, setLmValues] = useState<LmValues>(defaultLmValues);
   const [lmNegative, setLmNegative] = useState('');
+  const [trackName, setTrackName] = useState<TrackName>('vocals');
+  const [trackClasses, setTrackClasses] = useState<TrackName[]>(['drums', 'bass']);
+  const [globalCaption, setGlobalCaption] = useState('');
   const editing = musicTask !== 'text2music';
   const regenerating = musicTask === 'repaint' || musicTask === 'extend';
   const [model, setModel] = useState<DitModel>('turbo');
@@ -203,6 +210,8 @@ export function MusicPage() {
   const [cfgInterval, setCfgInterval] = useState<[number, number]>([0, 1]);
   const chooseModel = (next: DitModel) => {
     setModel(next);
+    // Stem tasks only run on Base: leaving it goes back to a new song.
+    if (next !== 'base' && isBaseTask(musicTask)) setMusicTask('text2music');
     // Still on the old model's default: take the new one's; a chosen value is kept if it fits.
     setSteps((value) =>
       value === DIT_MODELS[model].steps[2] ? DIT_MODELS[next].steps[2] : stepsFor(next, value),
@@ -349,6 +358,9 @@ export function MusicPage() {
       ? { extend_side: extendSide, extend_seconds: extendSeconds, extend_overlap: extendOverlap }
       : {}),
     ...(regenerating ? { repaint_mode: repaintMode, repaint_strength: repaintStrength } : {}),
+    ...(musicTask === 'extract' || musicTask === 'lego' ? { track_name: trackName } : {}),
+    ...(musicTask === 'complete' ? { track_classes: trackClasses } : {}),
+    ...(musicTask === 'lego' && globalCaption.trim() ? { global_caption: globalCaption } : {}),
   });
   // The most the source can grow: its engine limit, and the slider's own range.
   const extendMax = source
@@ -634,7 +646,11 @@ export function MusicPage() {
               }}
             >
               {MUSIC_TASKS.map((value) => (
-                <ToggleGroupItem key={value} value={value}>
+                <ToggleGroupItem
+                  key={value}
+                  value={value}
+                  disabled={isBaseTask(value) && !(model === 'base' && modelReady)}
+                >
                   {t(`musicStudio.task_${value}`)}
                 </ToggleGroupItem>
               ))}
@@ -642,6 +658,9 @@ export function MusicPage() {
             <p className="leading-5 text-muted-foreground">
               {t(`musicStudio.task_${musicTask}_help`)}
             </p>
+            {model !== 'base' && (
+              <p className="leading-5 text-muted-foreground">{t('musicStudio.task_base_only')}</p>
+            )}
           </div>
           {editing && (
             <MusicSourcePicker
@@ -673,6 +692,55 @@ export function MusicPage() {
               <p className="leading-5 text-muted-foreground">
                 {t('musicStudio.cover_strength_help')}
               </p>
+            </div>
+          )}
+          {isBaseTask(musicTask) && (
+            <div className="space-y-3 text-xs">
+              <div className="space-y-1.5">
+                <span className="font-medium">
+                  {musicTask === 'complete'
+                    ? t('musicStudio.track_classes')
+                    : t(`musicStudio.track_name_${musicTask}`)}
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {TRACK_NAMES.map((name) => {
+                    const on =
+                      musicTask === 'complete' ? trackClasses.includes(name) : trackName === name;
+                    return (
+                      <Button
+                        key={name}
+                        size="xs"
+                        variant={on ? 'secondary' : 'ghost'}
+                        aria-pressed={on}
+                        disabled={busy}
+                        onClick={() => {
+                          if (musicTask !== 'complete') setTrackName(name);
+                          else
+                            setTrackClasses((current) =>
+                              current.includes(name)
+                                ? current.filter((item) => item !== name)
+                                : [...current, name],
+                            );
+                        }}
+                      >
+                        {t(`musicStudio.track_${name}`)}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </div>
+              {musicTask === 'lego' && (
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="font-medium">{t('musicStudio.global_caption')}</span>
+                  <Input
+                    value={globalCaption}
+                    maxLength={1000}
+                    disabled={busy}
+                    placeholder={t('musicStudio.global_caption_placeholder')}
+                    onChange={(event) => setGlobalCaption(event.target.value)}
+                  />
+                </label>
+              )}
             </div>
           )}
           {musicTask === 'extend' && source && (
@@ -1437,7 +1505,8 @@ export function MusicPage() {
               !installed ||
               !modelReady ||
               !prompt.trim() ||
-              (editing && !source)
+              (editing && !source) ||
+              (musicTask === 'complete' && trackClasses.length === 0)
             }
             onClick={generate}
           >

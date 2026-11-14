@@ -71,6 +71,14 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
     default 70 %) sets how much of the source survives; low values are a looser style transfer.
   - *Repaint* regenerates the region you select (it starts on the middle third) and keeps the rest.
     *How much to change*: Little, Balanced (with a strength) or Freely.
+  - **Extract, Add layer and Complete (Base model only):** ACE-Step trained these stem tasks into the
+    Base model alone, so the modes stay disabled until *Base* is selected and downloaded, and choosing
+    another model goes back to *New song*. Each takes a source like Cover. *Extract* pulls one
+    instrument (vocals, drums, bass, guitar, strings…, ACE-Step's 12 names) out of the song as a new
+    track. *Add layer* (`lego`) adds one instrument: the description says what it plays, and the
+    optional *whole song* field describes the full mix (`global_caption`). *Complete* finishes an
+    unfinished arrangement with the instruments you pick (`track_classes`). Thinking is not used for
+    these tasks; ACE-Step skips the language model for them.
   - **Style reference** (under Advanced, any mode): an optional track or upload whose sound,
     instruments and mood the new music follows.
   - **Uploads stay local and are named by id only.** `POST /music/upload` stores the file under
@@ -121,6 +129,7 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   then `done` with `tracks`; `task`, `source_track_id`/`source_upload_id`,
   `reference_track_id`/`reference_upload_id`, `cover_strength`, `repaint_start`, `repaint_end`,
   `repaint_mode`, `repaint_strength`; `task=extend` with `extend_side`, `extend_seconds`, `extend_overlap`;
+  on the Base model `task=extract|lego|complete` with `track_name`, `track_classes`, `global_caption`;
   with Thinking `lm_temperature`, `lm_cfg_scale`, `lm_top_k`, `lm_top_p`, `lm_repetition_penalty`,
   `lm_negative_prompt`), `POST /music/format` (the formatter's suggestions, nothing
   saved), `POST /music/upload` (multipart `file`; returns `upload_id`, `name`, `duration`),

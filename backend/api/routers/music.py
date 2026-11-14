@@ -55,7 +55,7 @@ class GenerateBody(BaseModel):
     audio_format: Literal["wav", "flac", "mp3"] = "wav"
     # Edits (cover, repaint) and a style reference. Audio is named by a library track id or an
     # upload id from POST /music/upload, never by a path.
-    task: Literal["text2music", "cover", "repaint", "extend"] = "text2music"
+    task: Literal["text2music", "cover", "repaint", "extend", "extract", "lego", "complete"] = "text2music"
     source_track_id: str | None = Field(None, max_length=12)
     source_upload_id: str | None = Field(None, max_length=12)
     reference_track_id: str | None = Field(None, max_length=12)
@@ -65,6 +65,11 @@ class GenerateBody(BaseModel):
     repaint_end: float | None = Field(None, ge=0.0, le=music.MAX_SOURCE_SECONDS)
     repaint_mode: Literal["conservative", "balanced", "aggressive"] = "balanced"
     repaint_strength: float = Field(0.5, ge=0.0, le=1.0)
+    # Base-only stem tasks: one instrument to extract or add, the instruments to complete with, and
+    # for lego a description of the whole song.
+    track_name: str = Field("", max_length=24)
+    track_classes: list[str] = Field(default_factory=list, max_length=len(music.TRACK_NAMES))
+    global_caption: str = Field("", max_length=1000)
     # Extend: seconds of new music after the end (or before the start) of the source.
     extend_side: Literal["end", "start"] = "end"
     extend_seconds: float = Field(music.EXTEND_SECONDS[2], ge=music.EXTEND_SECONDS[0], le=music.EXTEND_SECONDS[1])
@@ -96,9 +101,17 @@ class GenerateBody(BaseModel):
             raise ValueError("The CFG interval must end after it starts.")
         sources = [v for v in (self.source_track_id, self.source_upload_id) if v]
         if self.task != "text2music" and len(sources) != 1:
-            raise ValueError("A cover, repaint or extend needs one source track or uploaded file.")
+            raise ValueError("An edit of a song needs one source track or uploaded file.")
         if self.task == "text2music" and sources:
-            raise ValueError("A source track is only used for a cover, repaint or extend.")
+            raise ValueError("A source track is only used to edit a song.")
+        if self.task in music.BASE_TASKS:
+            if self.model != "base":
+                raise ValueError("Extract, Lego and Complete only run on the Base model.")
+            if self.task in ("extract", "lego") and self.track_name not in music.TRACK_NAMES:
+                raise ValueError("Pick the instrument to extract or add.")
+            if self.task == "complete" and (not self.track_classes
+                                            or any(c not in music.TRACK_NAMES for c in self.track_classes)):
+                raise ValueError("Pick the instruments to complete the song with.")
         if self.reference_track_id and self.reference_upload_id:
             raise ValueError("Pick one style reference.")
         if self.task == "repaint" and self.repaint_end is not None and self.repaint_end <= self.repaint_start:
@@ -132,6 +145,8 @@ class GenerateBody(BaseModel):
                                   use_adg=self.use_adg, cfg_interval_start=self.cfg_interval_start,
                                   cfg_interval_end=self.cfg_interval_end, extend_side=self.extend_side,
                                   extend_seconds=self.extend_seconds, extend_overlap=self.extend_overlap,
+                                  track_name=self.track_name, track_classes=list(self.track_classes),
+                                  global_caption=self.global_caption,
                                   lm_params=self.lm_params(), lm_negative_prompt=self.lm_negative_prompt)
 
     def lm_params(self) -> dict:
@@ -321,6 +336,8 @@ async def music_generate(body: GenerateBody):
                     task=body.task, source_id=body.source_track_id, model=body.model,
                     **({"extend_side": body.extend_side, "extend_seconds": body.extend_seconds}
                        if body.task == "extend" else {}),
+                    **({"track_name": body.track_name} if body.task in ("extract", "lego") else {}),
+                    **({"track_classes": body.track_classes} if body.task == "complete" else {}),
                     **({"lm_params": body.lm_params()} if body.thinking and body.lm_params() else {}),
                     **({"lora": lora_used} if lora_used else {})))
                 yield _sse("track", {"track": records[-1]})

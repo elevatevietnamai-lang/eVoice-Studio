@@ -298,6 +298,10 @@ API pin: `/v1/lora/load` (`lora_path`, `adapter_name`), `/v1/lora/unload`, `/v1/
 - **Custom timesteps:** REST tại pin bỏ qua `timesteps` (xem 8.3).
 - **Training LoRA**, AudioMass, Demucs, chia sẻ/LAN: giữ như mục 2.
 
+### 8.6b Kết quả (2026-11-15)
+
+Đã merge: PR-5 #33 (kiểm chứng thật + 5 lỗi), PR-6 #34 (Extend, tham số LM; 8.3 bỏ), PR-7 #35 (LoRA), PR-8 #36 (Extract/Lego/Complete).
+
 ### 8.7 Thứ tự PR
 
 5. PR-5: kiểm chứng thật (8.0) + sửa lỗi phát hiện được.
