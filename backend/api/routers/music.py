@@ -51,7 +51,7 @@ class GenerateBody(BaseModel):
     audio_format: Literal["wav", "flac", "mp3"] = "wav"
     # Edits (cover, repaint) and a style reference. Audio is named by a library track id or an
     # upload id from POST /music/upload, never by a path.
-    task: Literal["text2music", "cover", "repaint"] = "text2music"
+    task: Literal["text2music", "cover", "repaint", "extend"] = "text2music"
     source_track_id: str | None = Field(None, max_length=12)
     source_upload_id: str | None = Field(None, max_length=12)
     reference_track_id: str | None = Field(None, max_length=12)
@@ -61,6 +61,20 @@ class GenerateBody(BaseModel):
     repaint_end: float | None = Field(None, ge=0.0, le=music.MAX_SOURCE_SECONDS)
     repaint_mode: Literal["conservative", "balanced", "aggressive"] = "balanced"
     repaint_strength: float = Field(0.5, ge=0.0, le=1.0)
+    # Extend: seconds of new music after the end (or before the start) of the source.
+    extend_side: Literal["end", "start"] = "end"
+    extend_seconds: float = Field(music.EXTEND_SECONDS[2], ge=music.EXTEND_SECONDS[0], le=music.EXTEND_SECONDS[1])
+    extend_overlap: float = Field(music.EXTEND_OVERLAP[2], ge=music.EXTEND_OVERLAP[0], le=music.EXTEND_OVERLAP[1])
+    # Language-model sampling, used with Thinking only. Null keeps the server's own default.
+    lm_temperature: float | None = Field(None, ge=music.LM_PARAMS["lm_temperature"][0],
+                                         le=music.LM_PARAMS["lm_temperature"][1])
+    lm_cfg_scale: float | None = Field(None, ge=music.LM_PARAMS["lm_cfg_scale"][0],
+                                       le=music.LM_PARAMS["lm_cfg_scale"][1])
+    lm_top_k: int | None = Field(None, ge=music.LM_PARAMS["lm_top_k"][0], le=music.LM_PARAMS["lm_top_k"][1])
+    lm_top_p: float | None = Field(None, ge=music.LM_PARAMS["lm_top_p"][0], le=music.LM_PARAMS["lm_top_p"][1])
+    lm_repetition_penalty: float | None = Field(None, ge=music.LM_PARAMS["lm_repetition_penalty"][0],
+                                                le=music.LM_PARAMS["lm_repetition_penalty"][1])
+    lm_negative_prompt: str = Field("", max_length=music.LM_NEGATIVE_PROMPT_MAX)
     # DiT model; guidance, shift, ADG and the CFG interval only apply to SFT and base.
     model: Literal["turbo", "sft", "base"] = "turbo"
     guidance_scale: float = Field(music.GUIDANCE_RANGE[2], ge=music.GUIDANCE_RANGE[0], le=music.GUIDANCE_RANGE[1])
@@ -78,9 +92,9 @@ class GenerateBody(BaseModel):
             raise ValueError("The CFG interval must end after it starts.")
         sources = [v for v in (self.source_track_id, self.source_upload_id) if v]
         if self.task != "text2music" and len(sources) != 1:
-            raise ValueError("A cover or repaint needs one source track or uploaded file.")
+            raise ValueError("A cover, repaint or extend needs one source track or uploaded file.")
         if self.task == "text2music" and sources:
-            raise ValueError("A source track is only used for a cover or repaint.")
+            raise ValueError("A source track is only used for a cover, repaint or extend.")
         if self.reference_track_id and self.reference_upload_id:
             raise ValueError("Pick one style reference.")
         if self.task == "repaint" and self.repaint_end is not None and self.repaint_end <= self.repaint_start:
@@ -112,7 +126,12 @@ class GenerateBody(BaseModel):
                                   repaint_mode=self.repaint_mode, repaint_strength=self.repaint_strength,
                                   model=self.model, guidance_scale=self.guidance_scale, shift=self.shift,
                                   use_adg=self.use_adg, cfg_interval_start=self.cfg_interval_start,
-                                  cfg_interval_end=self.cfg_interval_end)
+                                  cfg_interval_end=self.cfg_interval_end, extend_side=self.extend_side,
+                                  extend_seconds=self.extend_seconds, extend_overlap=self.extend_overlap,
+                                  lm_params=self.lm_params(), lm_negative_prompt=self.lm_negative_prompt)
+
+    def lm_params(self) -> dict:
+        return {name: getattr(self, name) for name in music.LM_PARAMS if getattr(self, name) is not None}
 
 
 async def _audio_for(track_id: str | None, upload_id: str | None) -> str | None:
@@ -139,6 +158,9 @@ async def resolve_audio(body: GenerateBody) -> music.MusicRequest:
     if seconds > music.MAX_SOURCE_SECONDS:
         raise ValueError(f"The source is longer than {music.MAX_SOURCE_SECONDS // 60} minutes.")
     request.src_seconds = seconds
+    if body.task == "extend" and seconds + body.extend_seconds > music.MAX_SOURCE_SECONDS:
+        raise ValueError(f"The extended song would be longer than {music.MAX_SOURCE_SECONDS // 60} minutes. "
+                         "Add fewer seconds.")
     if body.task == "repaint":
         end = body.repaint_end if body.repaint_end is not None else seconds
         if body.repaint_start >= seconds or end > seconds + 0.5:
@@ -277,7 +299,10 @@ async def music_generate(body: GenerateBody):
                     vocal_language=body.vocal_language, thinking=body.thinking, ext=body.audio_format,
                     inference_steps=body.inference_steps, infer_method=body.infer_method,
                     batch_id=batch_id, variant=index + 1 if batch_id else None,
-                    task=body.task, source_id=body.source_track_id, model=body.model))
+                    task=body.task, source_id=body.source_track_id, model=body.model,
+                    **({"extend_side": body.extend_side, "extend_seconds": body.extend_seconds}
+                       if body.task == "extend" else {}),
+                    **({"lm_params": body.lm_params()} if body.thinking and body.lm_params() else {})))
                 yield _sse("track", {"track": records[-1]})
             if not records:
                 raise RuntimeError("Music generation finished without a downloadable file.")

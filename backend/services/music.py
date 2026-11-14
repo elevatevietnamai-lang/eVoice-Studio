@@ -136,9 +136,27 @@ def dit_on_disk(model: str) -> bool:
 
 # Edits of existing audio: a cover re-renders a song in a new style; a repaint regenerates one
 # region and keeps the rest. Sources can be longer than a new track (ACE-Step allows 600 s).
-TASK_TYPES = ("text2music", "cover", "repaint")
+# Extend is a repaint past the source's end (or before its start): the server pads the source with
+# silence and fills it, keeping the original intact (checked on the pinned revision, 2026-11-14).
+TASK_TYPES = ("text2music", "cover", "repaint", "extend")
+EDIT_TASKS = ("cover", "repaint", "extend")
 REPAINT_MODES = ("conservative", "balanced", "aggressive")
 MAX_SOURCE_SECONDS = 600
+EXTEND_SIDES = ("end", "start")
+# (min, max, default) seconds of new music, and of the source regenerated with it for a smooth join.
+EXTEND_SECONDS = (5, 120, 30)
+EXTEND_OVERLAP = (0, 10, 2)
+# The 5Hz language model's sampling options (Thinking only): (min, max, server default). A value left
+# at None is not sent, so the server keeps its own default. lm_top_k None means off.
+LM_PARAMS = {
+    "lm_temperature": (0.1, 2.0, 0.85),
+    "lm_cfg_scale": (1.0, 5.0, 2.5),
+    "lm_top_k": (1, 200, None),
+    "lm_top_p": (0.1, 1.0, 0.9),
+    "lm_repetition_penalty": (1.0, 2.0, 1.0),
+}
+LM_NEGATIVE_PROMPT_DEFAULT = "NO USER INPUT"
+LM_NEGATIVE_PROMPT_MAX = 500
 AUDIO_MEDIA_TYPES = {"wav": "audio/wav", "flac": "audio/flac", "mp3": "audio/mpeg", "ogg": "audio/ogg"}
 _KEY_RE = re.compile(r"^([A-Ga-g])([#b♯♭]?)\s*(major|minor|maj|min|m)?$", re.IGNORECASE)
 
@@ -230,10 +248,24 @@ class MusicRequest:
     use_adg: bool = False
     cfg_interval_start: float = 0.0
     cfg_interval_end: float = 1.0
+    # Extend: new seconds on one side, plus `extend_overlap` seconds of the source redone with them.
+    extend_side: str = "end"
+    extend_seconds: float = EXTEND_SECONDS[2]
+    extend_overlap: float = EXTEND_OVERLAP[2]
+    # Language-model sampling (Thinking only); only the values set here are sent.
+    lm_params: Optional[dict] = None
+    lm_negative_prompt: str = ""
     # One seed per variant, picked by the backend just before the run (see variant_seeds).
     seeds: Optional[list[int]] = None
 
+    def extension(self) -> float:
+        low, high, _default = EXTEND_SECONDS
+        return max(float(low), min(float(high), float(self.extend_seconds)))
+
     def seconds(self) -> int:
+        if self.task_type == "extend" and self.src_seconds:
+            total = self.src_seconds + self.extension()
+            return int(max(1, min(MAX_SOURCE_SECONDS, round(total))))
         if self.task_type != "text2music" and self.src_seconds:
             # An edit keeps the source's length.
             return int(max(1, min(MAX_SOURCE_SECONDS, round(self.src_seconds))))
@@ -242,7 +274,7 @@ class MusicRequest:
     def uploads(self) -> dict[str, str]:
         """Files sent with the request: ACE-Step reads absolute paths only from its own temp dir."""
         files = {}
-        if self.task_type in ("cover", "repaint") and self.src_path:
+        if self.task_type in EDIT_TASKS and self.src_path:
             files["src_audio"] = self.src_path
         if self.ref_path:
             files["ref_audio"] = self.ref_path
@@ -730,14 +762,26 @@ def build_payload(req: MusicRequest) -> dict:
         payload["use_adg"] = bool(req.use_adg)
         payload["cfg_interval_start"] = round(start, 3)
         payload["cfg_interval_end"] = round(max(start, min(1.0, float(req.cfg_interval_end))), 3)
-    if req.task_type in ("cover", "repaint"):
-        payload["task_type"] = req.task_type
+    if req.task_type in EDIT_TASKS:
+        payload["task_type"] = "repaint" if req.task_type == "extend" else req.task_type
     if req.task_type == "cover":
         payload["audio_cover_strength"] = round(max(0.0, min(1.0, float(req.cover_strength))), 3)
     if req.task_type == "repaint":
         end = req.repaint_end if req.repaint_end is not None else req.seconds()
         payload["repainting_start"] = round(max(0.0, float(req.repaint_start)), 2)
         payload["repainting_end"] = round(max(payload["repainting_start"], min(float(end), req.seconds())), 2)
+        payload["repaint_mode"] = req.repaint_mode if req.repaint_mode in REPAINT_MODES else "balanced"
+        payload["repaint_strength"] = round(max(0.0, min(1.0, float(req.repaint_strength))), 3)
+    if req.task_type == "extend":
+        source = float(req.src_seconds or 0.0)
+        more = req.extension()
+        overlap = max(0.0, min(float(EXTEND_OVERLAP[1]), float(req.extend_overlap), source))
+        if req.extend_side == "start":
+            # Negative start pads the source on the left; the first `overlap` seconds are redone.
+            payload["repainting_start"], payload["repainting_end"] = round(-more, 2), round(overlap, 2)
+        else:
+            payload["repainting_start"] = round(source - overlap, 2)
+            payload["repainting_end"] = round(source + more, 2)
         payload["repaint_mode"] = req.repaint_mode if req.repaint_mode in REPAINT_MODES else "balanced"
         payload["repaint_strength"] = round(max(0.0, min(1.0, float(req.repaint_strength))), 3)
     if req.infer_method == "sde":
@@ -747,6 +791,14 @@ def build_payload(req: MusicRequest) -> dict:
         # The request model defaults to vllm, which the engine does not install on any platform.
         payload["thinking"] = True
         payload["lm_backend"] = "pt"
+        for name, value in (req.lm_params or {}).items():
+            if name in LM_PARAMS and value is not None:
+                low, high, _default = LM_PARAMS[name]
+                value = max(low, min(high, value))
+                payload[name] = int(value) if name == "lm_top_k" else round(float(value), 3)
+        negative = (req.lm_negative_prompt or "").strip()[:LM_NEGATIVE_PROMPT_MAX]
+        if negative and negative != LM_NEGATIVE_PROMPT_DEFAULT:
+            payload["lm_negative_prompt"] = negative
     return payload
 
 

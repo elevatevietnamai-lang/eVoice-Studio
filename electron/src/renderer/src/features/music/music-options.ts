@@ -117,6 +117,55 @@ export const DIT_MODEL_IDS = Object.keys(DIT_MODELS) as DitModel[];
 export const GUIDANCE_RANGE = [1, 15, 7] as const;
 export const SHIFT_RANGE = [1, 5, 3] as const;
 
+/** Extend: [min, max, default] seconds of new music, and of the source redone with it. */
+export const EXTEND_SECONDS = [5, 120, 30] as const;
+export const EXTEND_OVERLAP = [0, 10, 2] as const;
+export const EXTEND_SIDES = ['end', 'start'] as const;
+export type ExtendSide = (typeof EXTEND_SIDES)[number];
+/** The longest source plus extension the engine accepts (backend `MAX_SOURCE_SECONDS`). */
+export const MAX_SOURCE_SECONDS = 600;
+
+/**
+ * The language model's sampling options (Thinking only): range [min, max, server default] and the
+ * slider step. `null` as the default means off. Mirrors `LM_PARAMS` in the backend.
+ */
+export const LM_PARAMS = {
+  lm_temperature: { range: [0.1, 2, 0.85], step: 0.05 },
+  lm_cfg_scale: { range: [1, 5, 2.5], step: 0.1 },
+  lm_top_k: { range: [1, 200, null], step: 1 },
+  lm_top_p: { range: [0.1, 1, 0.9], step: 0.05 },
+  lm_repetition_penalty: { range: [1, 2, 1], step: 0.05 },
+} as const;
+export type LmParam = keyof typeof LM_PARAMS;
+export const LM_PARAM_IDS = Object.keys(LM_PARAMS) as LmParam[];
+export const LM_NEGATIVE_PROMPT_DEFAULT = 'NO USER INPUT';
+export type LmValues = Record<LmParam, number | null>;
+
+/** Every option at the server's default. */
+export function defaultLmValues(): LmValues {
+  return Object.fromEntries(LM_PARAM_IDS.map((id) => [id, LM_PARAMS[id].range[2]])) as LmValues;
+}
+
+/** Only the options moved off the server's default, so an untouched form sends nothing new. */
+export function changedLmValues(
+  values: LmValues,
+  negative: string,
+): Record<string, number | string> {
+  const out: Record<string, number | string> = {};
+  for (const id of LM_PARAM_IDS) {
+    const value = values[id];
+    if (value !== null && value !== LM_PARAMS[id].range[2]) out[id] = value;
+  }
+  const text = negative.trim();
+  if (text && text !== LM_NEGATIVE_PROMPT_DEFAULT) out.lm_negative_prompt = text;
+  return out;
+}
+
+/** The new song's length: the source plus the extension, at most the engine's limit. */
+export function extendedLength(sourceSeconds: number, extendSeconds: number): number {
+  return Math.min(MAX_SOURCE_SECONDS, Math.round(sourceSeconds + extendSeconds));
+}
+
 /** *steps* moved into *model*'s range: kept when it fits, else that model's default. */
 export function stepsFor(model: DitModel, steps: number): number {
   const [low, high, fallback] = DIT_MODELS[model].steps;
