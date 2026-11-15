@@ -6,7 +6,7 @@ order: 3
 group: voice
 updated: 2026-11-15
 app_version: 0.5.7-beta.3
-status: draft
+status: approved
 ---
 
 ## Tính năng này làm gì
@@ -37,9 +37,8 @@ Bấm **Sửa hồ sơ giọng** trên giọng bạn muốn chỉnh sửa để 
 
 Nhập tên mới cho hồ sơ hoặc cập nhật nội dung phiên âm và phong cách của giọng. Nếu không dùng ảnh riêng, ứng dụng tự tạo ảnh chữ cái đầu từ từ đầu tiên và từ cuối cùng trong tên giọng.
 
-Bấm **Đổi ảnh** hoặc thao tác tại vùng **Nhấp hoặc thả ảnh vào. PNG, JPG hoặc WebP tối đa 5 MB.** để tải ảnh đại diện từ máy lên; ảnh sẽ được cắt về kích thước 256 × 256 và xóa siêu dữ liệu gốc khi lưu trên máy. Bạn cũng có thể tìm ảnh trực tuyến theo tên giọng khi bật tìm kiếm ảnh (ứng dụng chỉ tải tối đa 5 ảnh thu nhỏ hợp lệ về máy) hoặc bấm **Xóa ảnh** để quay về chữ cái đầu.
+Bấm **Đổi ảnh** hoặc thao tác tại vùng **Nhấp hoặc thả ảnh vào. PNG, JPG hoặc WebP tối đa 5 MB.** để tải ảnh đại diện từ máy lên; ảnh sẽ được cắt về kích thước 256 × 256 và xóa siêu dữ liệu gốc khi lưu trên máy. Bấm **Xóa ảnh** để quay về chữ cái đầu.
 
-<!-- TODO: kiểm tra -->
 
 Bấm **Lưu** để áp dụng các thay đổi, hoặc bấm **Đóng** để đóng khung chỉnh sửa.
 
@@ -47,17 +46,16 @@ Bấm **Lưu** để áp dụng các thay đổi, hoặc bấm **Đóng** để 
 
 Chọn **Sửa hồ sơ giọng** trên một giọng nhân bản cần đổi tệp âm thanh gốc.
 
-Chọn thao tác thay mẫu tham chiếu trong khung chỉnh sửa để tải lên tệp âm thanh mới hoặc thu âm trực tiếp (hỗ trợ WAV, MP3, M4A, FLAC, OGG, Opus, AAC và WebM tối đa 128 MiB). Khi chọn tệp mới, ô phiên âm sẽ được xóa trống; bạn có thể tự nhập lời thoại hoặc để trống cho model đọc chính tả cục bộ tự phiên âm. Nếu đổi ý, bạn có thể hủy tệp mới để giữ lại mẫu hiện tại.
+Bấm **Thay mẫu tham chiếu** trong khung chỉnh sửa rồi chọn tệp âm thanh mới hoặc thu âm trực tiếp (WAV, MP3, M4A, FLAC, OGG, Opus, AAC hoặc WebM). Khi chọn tệp mới, ô phiên âm được xóa trống; bạn có thể tự nhập lời thoại hoặc để trống để app tự chép lời clip mới. Nếu đổi ý, bấm **Giữ mẫu tham chiếu hiện tại**.
 
-<!-- TODO: kiểm tra -->
 
 Bấm **Lưu** để cập nhật mẫu âm thanh vào cùng hồ sơ mà không làm mất lịch sử hay tên giọng. Lưu ý rằng việc thay mẫu âm thanh mới sẽ xóa bản thu đã khóa và trạng thái xác minh giọng chính chủ trước đó của hồ sơ này. Các giọng tạo từ **Thiết kế** được chỉnh sửa bằng công thức mô tả thay vì thay tệp âm thanh mẫu.
 
 ### 4. Xuất và nhập giọng
 
-Chọn giọng lấy từ **Thư viện** hoặc nguồn bên ngoài để đưa vào danh sách **Giọng đã lưu** trên máy. Nếu bạn đã thay mẫu âm thanh của một giọng tải từ **Thư viện**, ứng dụng coi đó là bản chỉnh sửa riêng của bạn; khi nhập lại giọng đó lần nữa, một hồ sơ riêng biệt sẽ được tạo thêm mà không ghi đè lên giọng bạn đã sửa.
+Để xuất, mở **Sửa hồ sơ giọng** trên giọng cần chia sẻ rồi bấm **Xuất hồ sơ giọng**. Bật **Kèm clip giọng** nếu muốn gửi kèm clip tham chiếu gốc; để tắt (khuyên dùng) thì gói chỉ chứa bản nghe thử có dấu bản quyền âm thanh.
 
-<!-- TODO: kiểm tra -->
+Để nhập, mở **Thư viện**, chọn mục **Đã nhập** rồi bấm **Nhập gói giọng mẫu .ovsvoice** và chọn tệp (tối đa 100 MB). Giọng nhập vào xuất hiện trong danh sách **Giọng đã lưu**. Nếu bạn đã thay mẫu âm thanh của một giọng tải từ **Thư viện**, khi nhập lại giọng đó app tạo một hồ sơ riêng, không ghi đè bản bạn đã sửa.
 
 ### 5. Xóa giọng
 

@@ -6,7 +6,7 @@ order: 15
 group: library
 updated: 2026-11-15
 app_version: 0.5.7-beta.3
-status: draft
+status: approved
 ---
 
 ## Tính năng này làm gì
@@ -33,16 +33,14 @@ Trang **Dự án** tập hợp toàn bộ dữ liệu làm việc của bạn tr
 
 1. Bấm vào tên một **Dự án lồng tiếng**, **Truyện** hoặc **Sách nói** trong danh sách, sau đó bấm **Xác nhận** để mở và nạp lại bản nháp vào không gian làm việc tương ứng (hoặc bấm **Hủy** nếu muốn giữ bản nháp hiện tại). Với **Hồ sơ giọng**, bấm **Dùng giọng này** để chuyển sang phần nhân bản giọng với hồ sơ đó.
 2. Bấm biểu tượng cây bút bên cạnh dự án để đổi tên, nhập tên mới vào ô nhập rồi nhấn phím Enter (hoặc bấm **Hủy** để bỏ qua).
-3. Mở dự án lồng tiếng đang làm việc rồi lưu thành bản sao mới từ khung lưu dự án ở đầu trang khi bạn muốn nhân bản dự án để thử phương án khác mà vẫn giữ nguyên bản gốc.
-<!-- TODO: kiểm tra -->
+3. Để nhân bản một **Truyện** hoặc **Sách nói**, mở dự án đó rồi bấm **Lưu bản sao** trong phần cài đặt dự án; bản gốc giữ nguyên. Dự án lồng tiếng hiện chưa có nút nhân bản.
 4. Bấm biểu tượng thùng rác ở cuối dòng để xóa một mục, hoặc đánh dấu vào các ô chọn (có thể bấm **Chọn mục đang hiển thị** để chọn nhanh toàn bộ danh sách đang lọc) rồi bấm **Xóa** trong hộp thoại xác nhận.
 
 ### 3. Chuyển dự án lồng tiếng thành truyện
 
-<!-- TODO: kiểm tra -->
-
-1. Mở **Dự án lồng tiếng** bạn muốn chuyển đổi hoặc kiểm tra các đoạn thoại đã có trong **Bản chép lời** và **Lịch sử**.
-2. Đưa nội dung kịch bản sang phần **Truyện** để tiếp tục gán giọng đọc cho từng đoạn và biên tập theo bố cục truyện nhiều giọng.
+1. Mở **Dự án lồng tiếng** cần chuyển trong trang **Lồng tiếng**.
+2. Bấm **Tạo câu chuyện** ở đầu trang. Nếu phần **Truyện** đang có kịch bản, app hỏi xác nhận vì kịch bản và dàn giọng đọc ở đó sẽ được thay bằng người nói và lời thoại của bản lồng tiếng; bản lồng tiếng giữ nguyên.
+3. Tiếp tục gán giọng và biên tập trong trang **Truyện**.
 
 ## Mẹo
 

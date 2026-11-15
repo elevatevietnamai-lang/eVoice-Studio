@@ -6,7 +6,7 @@ order: 16
 group: library
 updated: 2026-11-15
 app_version: 0.5.7-beta.3
-status: draft
+status: approved
 ---
 
 ## Tính năng này làm gì
@@ -85,7 +85,7 @@ Trang **Cài đặt** tập trung các tùy chọn cấu hình của eVoice Stud
 3. Bật hoặc tắt công tắc **Dấu thủy vân ẩn** để quyết định việc nhúng dấu nhận biết âm thanh do AI tạo vào các tệp âm thanh xuất ra từ thời điểm đó trở đi.
 4. Nhập số lượng vào ô **Số bản thu cần giữ** tại mục **Lịch sử tạo** rồi bấm **Lưu** để tự động dọn các bản thu cũ chưa gắn sao sau mỗi lần tạo mới.
 
-### 8. Cập nhật (Ổn định/Beta)
+### 8. Cập nhật
 
 ![Kiểm tra trạng thái cập nhật, bản sao lưu cơ sở dữ liệu và danh sách bản phát hành](shots/cap-nhat.png)
 
@@ -93,7 +93,7 @@ Trang **Cài đặt** tập trung các tùy chọn cấu hình của eVoice Stud
 2. Xem mục **Bản sao lưu cơ sở dữ liệu** để biết thông tin bản sao lưu tự động trước mỗi lần nâng cấp cơ sở dữ liệu.
 3. Kiểm tra danh sách trong mục **Bản phát hành** để xem thông tin các bản phát hành hiện có.
 
-<!-- TODO: kiểm tra giao diện chọn kênh Ổn định / Beta khi bản dựng bật trình cập nhật tự động -->
+Bản eVoice Studio hiện tại không tự tải bản mới. Khi có phiên bản mới, tải bộ cài từ trang tải về rồi cài đè lên bản cũ; giọng, dự án và cài đặt được giữ nguyên.
 
 ## Mẹo
 
