@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "Trummor",
     "track_backing_vocals": "Körsång",
-    "track_vocals": "Sång"
+    "track_vocals": "Sång",
+    "format_lyrics_kept": "Modellen ändrade orden i din låttext, så din egen låttext behålls som du skrev den."
   },
   "gpuBusy": {
     "dub": "Ett dubbningsjobb använder GPU:n. Vänta tills det är klart och skapa sedan musiken.",

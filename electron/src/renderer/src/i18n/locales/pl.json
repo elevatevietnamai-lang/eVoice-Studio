@@ -4146,7 +4146,8 @@
     "track_bass": "Bass",
     "track_drums": "Perkusja",
     "track_backing_vocals": "Chórki",
-    "track_vocals": "Wokal"
+    "track_vocals": "Wokal",
+    "format_lyrics_kept": "Model zmienił słowa Twojego tekstu, więc zachowano go w oryginalnej wersji."
   },
   "gpuBusy": {
     "dub": "Zadanie dubbingu korzysta z GPU. Poczekaj na jego zakończenie, a potem wygeneruj muzykę.",

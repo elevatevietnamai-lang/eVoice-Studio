@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "Davul",
     "track_backing_vocals": "Geri vokaller",
-    "track_vocals": "Vokaller"
+    "track_vocals": "Vokaller",
+    "format_lyrics_kept": "Model şarkı sözlerinizin kelimelerini değiştirdiği için sözleriniz yazdığınız şekliyle korundu."
   },
   "gpuBusy": {
     "dub": "Bir dublaj işi GPU'yu kullanıyor. Bitmesini bekleyin, sonra müziği oluşturun.",

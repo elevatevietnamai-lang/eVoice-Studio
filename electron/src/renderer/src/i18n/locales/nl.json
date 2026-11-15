@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "Drums",
     "track_backing_vocals": "Achtergrondzang",
-    "track_vocals": "Zang"
+    "track_vocals": "Zang",
+    "format_lyrics_kept": "Het model heeft de woorden van je songtekst gewijzigd, dus je eigen songtekst blijft zoals je die hebt geschreven."
   },
   "gpuBusy": {
     "dub": "Een nasynchronisatietaak gebruikt de GPU. Wacht tot die klaar is en maak dan de muziek.",

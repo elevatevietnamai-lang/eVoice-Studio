@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "드럼",
     "track_backing_vocals": "코러스",
-    "track_vocals": "보컬"
+    "track_vocals": "보컬",
+    "format_lyrics_kept": "모델이 가사의 단어를 바꿨기 때문에, 작성하신 가사를 그대로 유지합니다."
   },
   "gpuBusy": {
     "dub": "더빙 작업이 GPU를 사용 중입니다. 끝날 때까지 기다린 후 음악을 생성하세요.",

@@ -96,8 +96,11 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   lyrics and settings to ACE-Step's formatter, which tidies the description and lyrics and suggests a
   BPM, key, time signature, length and language. A dialog shows each change next to your own; nothing
   changes until you choose *Apply changes*. Every suggestion is checked like user input (an unknown key
-  or a BPM out of range is dropped). It runs on the same language-model server as Thinking. The 0.6B
-  model writes English well but garbles Vietnamese lyrics; review them before applying.
+  or a BPM out of range is dropped). It runs on the same language-model server as Thinking. Format may
+  add section tags and repeat your lines, but not change what is sung: if a sung line differs from
+  yours (case, punctuation and spacing aside) or one goes missing, your lyrics stay and the dialog
+  says so (`lyrics_kept` in the response). The 0.6B model needs this: in a real run it slipped junk
+  lines into about one result in four, in English as well as Vietnamese.
 - **Models (Advanced → Model):** *Turbo* (default, installed with the engine: 4–8 steps, no
   guidance) or the optional *SFT* and *Base* models (about 4.8 GB each, MIT, pinned downloads of
   `ACE-Step/acestep-v15-sft` and `ACE-Step/acestep-v15-base` into `<engines dir>/acestep/src/checkpoints`).
