@@ -2515,6 +2515,12 @@
       "title": "Extend Side",
       "type": "string"
      },
+     "global_caption": {
+      "default": "",
+      "maxLength": 1000,
+      "title": "Global Caption",
+      "type": "string"
+     },
      "guidance_scale": {
       "default": 7.0,
       "maximum": 15.0,
@@ -2753,7 +2759,10 @@
        "text2music",
        "cover",
        "repaint",
-       "extend"
+       "extend",
+       "extract",
+       "lego",
+       "complete"
       ],
       "title": "Task",
       "type": "string"
@@ -2773,6 +2782,20 @@
        "6"
       ],
       "title": "Time Signature",
+      "type": "string"
+     },
+     "track_classes": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Track Classes",
+      "type": "array"
+     },
+     "track_name": {
+      "default": "",
+      "maxLength": 24,
+      "title": "Track Name",
       "type": "string"
      },
      "use_adg": {

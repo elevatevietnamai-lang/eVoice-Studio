@@ -138,8 +138,14 @@ def dit_on_disk(model: str) -> bool:
 # region and keeps the rest. Sources can be longer than a new track (ACE-Step allows 600 s).
 # Extend is a repaint past the source's end (or before its start): the server pads the source with
 # silence and fills it, keeping the original intact (checked on the pinned revision, 2026-11-14).
-TASK_TYPES = ("text2music", "cover", "repaint", "extend")
-EDIT_TASKS = ("cover", "repaint", "extend")
+TASK_TYPES = ("text2music", "cover", "repaint", "extend", "extract", "lego", "complete")
+# Stem tasks only the Base DiT was trained for (TASK_TYPES_BASE at the pinned revision): pull one
+# instrument out of a song (extract), add one (lego), or finish an arrangement with several (complete).
+BASE_TASKS = ("extract", "lego", "complete")
+EDIT_TASKS = ("cover", "repaint", "extend", *BASE_TASKS)
+# ACE-Step's instrument names (acestep/constants.py TRACK_NAMES), in its order.
+TRACK_NAMES = ("woodwinds", "brass", "fx", "synth", "strings", "percussion", "keyboard", "guitar", "bass",
+               "drums", "backing_vocals", "vocals")
 REPAINT_MODES = ("conservative", "balanced", "aggressive")
 MAX_SOURCE_SECONDS = 600
 EXTEND_SIDES = ("end", "start")
@@ -271,6 +277,11 @@ class MusicRequest:
     # Language-model sampling (Thinking only); only the values set here are sent.
     lm_params: Optional[dict] = None
     lm_negative_prompt: str = ""
+    # Base-only stem tasks: the instrument to extract or add, the ones to complete with, and (for
+    # lego) a description of the whole song next to the prompt that describes the new layer.
+    track_name: str = ""
+    track_classes: Optional[list[str]] = None
+    global_caption: str = ""
     # A LoRA the user authorized through the desktop file picker (resolved by the backend, never a
     # client path), and its strength.
     lora_path: Optional[str] = None
@@ -784,6 +795,14 @@ def build_payload(req: MusicRequest) -> dict:
         payload["cfg_interval_end"] = round(max(start, min(1.0, float(req.cfg_interval_end))), 3)
     if req.task_type in EDIT_TASKS:
         payload["task_type"] = "repaint" if req.task_type == "extend" else req.task_type
+    if req.task_type in ("extract", "lego") and req.track_name in TRACK_NAMES:
+        payload["track_name"] = req.track_name
+    if req.task_type == "complete":
+        classes = [name for name in TRACK_NAMES if name in (req.track_classes or [])]
+        if classes:
+            payload["track_classes"] = classes
+    if req.task_type == "lego" and req.global_caption.strip():
+        payload["global_caption"] = req.global_caption.strip()[:1000]
     if req.task_type == "cover":
         payload["audio_cover_strength"] = round(max(0.0, min(1.0, float(req.cover_strength))), 3)
     if req.task_type == "repaint":
@@ -1307,9 +1326,11 @@ async def _lora_call(client: httpx.AsyncClient, base: str, path: str, body: Opti
                            "for the selected model, or turn it off.")
 
 
-def form_fields(payload: dict) -> dict[str, str]:
+def form_fields(payload: dict) -> dict[str, str | list[str]]:
     """A JSON payload as multipart form fields (ACE-Step parses 'true'/'false' and numbers)."""
-    return {k: (json.dumps(v) if isinstance(v, bool) else str(v)) for k, v in payload.items()}
+    # A list (track_classes) becomes one field per item, which the server reads back as a list.
+    return {k: ([str(i) for i in v] if isinstance(v, list) else json.dumps(v) if isinstance(v, bool) else str(v))
+            for k, v in payload.items()}
 
 
 async def _release(client: httpx.AsyncClient, base: str, request: MusicRequest) -> httpx.Response:

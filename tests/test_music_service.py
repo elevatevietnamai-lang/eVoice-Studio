@@ -1301,3 +1301,74 @@ def test_a_lora_starts_the_server_with_the_model_loaded(tmp_path, monkeypatch):
     assert len(spawned) == 2 and "ACESTEP_NO_INIT" not in spawned[0]
     assert spawned[1]["ACESTEP_NO_INIT"] == "false"
     engine._kill_now()
+
+
+# ── Phase 4b: Base-only stem tasks
+
+
+def test_stem_tasks_send_their_instruments_and_nothing_for_other_tasks():
+    ex = music.build_payload(music.MusicRequest(prompt="x", model="base", task_type="extract", src_path="s.wav",
+                                                src_seconds=30, track_name="vocals"))
+    assert (ex["task_type"], ex["track_name"], ex["audio_duration"]) == ("extract", "vocals", 30)
+    assert "repainting_start" not in ex and "global_caption" not in ex
+    lego = music.build_payload(music.MusicRequest(prompt="warm bass line", model="base", task_type="lego",
+                                                  src_path="s.wav", src_seconds=30, track_name="bass",
+                                                  global_caption=" lo-fi hip hop "))
+    assert (lego["task_type"], lego["track_name"], lego["global_caption"]) == ("lego", "bass", "lo-fi hip hop")
+    done = music.build_payload(music.MusicRequest(prompt="x", model="base", task_type="complete", src_path="s.wav",
+                                                  src_seconds=30, track_classes=["drums", "evil", "bass"]))
+    # Unknown names are dropped and the server's own order is kept.
+    assert done["track_classes"] == ["bass", "drums"] and "track_name" not in done
+    plain = music.build_payload(music.MusicRequest(prompt="x", track_name="vocals", global_caption="y"))
+    assert not {"track_name", "track_classes", "global_caption", "task_type"} & set(plain)
+    assert music.MusicRequest(prompt="x", task_type="lego", src_path="s.wav").uploads() == {"src_audio": "s.wav"}
+
+
+def test_track_classes_go_out_as_one_multipart_field_each(tmp_path):
+    src = tmp_path / "s.wav"
+    src.write_bytes(b"RIFF")
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["body"] = request.content
+        return httpx.Response(200, json=_wrap({"task_id": "t"}))
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            await music._release(client, "http://x", music.MusicRequest(
+                prompt="x", model="base", task_type="complete", src_path=str(src), src_seconds=30,
+                track_classes=["drums", "bass"]))
+
+    asyncio.run(run())
+    body = seen["body"]
+    assert body.count(b'name="track_classes"') == 2
+    assert b'name="track_classes"\r\n\r\nbass' in body and b'name="track_classes"\r\n\r\ndrums' in body
+
+
+def test_stem_tasks_need_the_base_model_and_known_instruments():
+    from pydantic import ValidationError
+    from api.routers.music import GenerateBody
+
+    src = {"source_track_id": "0123456789ab"}
+    ok = GenerateBody(prompt="x", task="extract", model="base", track_name="vocals", inference_steps=32, **src)
+    assert ok.to_request().track_name == "vocals"
+    GenerateBody(prompt="x", task="complete", model="base", track_classes=["bass", "drums"], inference_steps=32, **src)
+    for bad in ({"task": "extract", "model": "sft", "track_name": "vocals", "inference_steps": 32},
+                {"task": "extract", "track_name": "vocals"},
+                {"task": "lego", "model": "base", "track_name": "kazoo", "inference_steps": 32},
+                {"task": "complete", "model": "base", "inference_steps": 32},
+                {"task": "complete", "model": "base", "track_classes": ["bass", "kazoo"], "inference_steps": 32},
+                {"task": "extract", "model": "base", "track_name": "vocals", "inference_steps": 32,
+                 "source_track_id": None}):
+        with pytest.raises(ValidationError):
+            GenerateBody(prompt="x", **{**src, **bad})
+
+
+def test_renderer_track_list_matches_the_backend():
+    import re
+
+    source = (Path(__file__).resolve().parents[1] / "electron/src/renderer/src/features/music/music-options.ts"
+              ).read_text(encoding="utf-8")
+    block = re.search(r"TRACK_NAMES = \[(.*?)\] as const", source, re.S)
+    assert block, "TRACK_NAMES not found in music-options.ts"
+    assert tuple(re.findall(r"'([a-z_]+)'", block.group(1))) == music.TRACK_NAMES

@@ -12,12 +12,13 @@ metadata and the backend fallback mirror it.
 
 - Vietnamese user guide drafts with real app screenshots
 - Music Studio fixes from a full run on a real GPU: reused seeds reproduce the track again
-- Music Studio extends a song after its end or before its start, and can use your own LoRA
+- Music Studio extends a song after its end or before its start, can use your own LoRA, and on the Base model extracts, adds or completes instruments
 
 ### Added
 
 - Music Studio: *Extend* adds up to 2 minutes before or after a track with a smooth join, and Thinking gets expert language-model options (#34)
 - Music Studio: use a LoRA from your computer, picked in the desktop app's file dialog, with a strength slider and an on/off switch (#35)
+- Music Studio on the Base model: *Extract* one instrument from a song, *Add layer* with a new one, or *Complete* an arrangement with the instruments you pick (#37)
 
 ### Docs
 
