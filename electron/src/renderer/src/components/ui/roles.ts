@@ -222,7 +222,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--muted', '--foreground', '--muted-foreground', '--ring'],
     type: 'text-ui',
     motion: 'feedback',
-    motionNote: 'Active indicator and text colour change over 200 ms; panel content swaps with no slide.',
+    motionNote: 'Active indicator and text colour change over 200 ms; the new panel fades in over 260 ms (`--motion-panel`, `--ease-settle`) with no slide.',
   },
   textarea: {
     role: 'input',

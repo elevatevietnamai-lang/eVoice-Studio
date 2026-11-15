@@ -14,12 +14,9 @@ export function CommandSearch({ className }: { className?: string }) {
   const { t } = useTranslation();
   const label = t('preferences.search');
   return (
-    <ShellTooltip
-      side="bottom"
-      label={label}
-      hint={t('shell.search_hint')}
-      accelerator="CmdOrCtrl+K"
-    >
+    // The wide field already shows "Search…" and its shortcut, so the tooltip says what it finds;
+    // the shortcut stays for the narrow icon-only button.
+    <ShellTooltip side="bottom" label={t('shell.search_hint')} accelerator="CmdOrCtrl+K">
       <button
         type="button"
         aria-label={label}
