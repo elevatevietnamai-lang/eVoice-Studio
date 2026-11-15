@@ -273,6 +273,8 @@ Kiểm chứng 2026-11-15: `release_task_request_builder.py` không đọc trư�
 
 Kiểm lại 2026-11-15 trên `main` của ACE-Step-1.5 (lần sửa cuối của `acestep/api/http/release_task_request_builder.py` là 2026-03-16): builder vẫn không đọc `timesteps`. Nghĩa là đổi pin cũng không giúp được. Chỉ làm được khi upstream sửa builder (một dòng `timesteps=parser.str("timesteps")`). Không vá mã ACE-Step khi cài. `shift` và `inference_steps` (đã có cho SFT/Base) thay được phần lớn công dụng.
 
+Đã gửi bản sửa lên upstream: https://github.com/ace-step/ACE-Step-1.5/pull/1383 (issue #1382). Bước tiếp theo: upstream merge → đổi revision pin → làm UI timesteps.
+
 `timesteps` (chuỗi số phân tách dấu phẩy) **thay thế** `inference_steps` và `shift`.
 - Đặt trong mục "Chuyên gia", tắt mặc định. Khi bật: ẩn steps và shift, hiện ô nhập kèm một preset (lịch 9 bước trong tài liệu ACE-Step).
 - Validate ở backend: 2–64 giá trị, giảm dần, trong [0, 1], kết thúc bằng 0; chuẩn hóa thành chuỗi trước khi gửi. Áp dụng cho mọi model (server tự xử lý); chạy thử ở 8.0 trên turbo xem có tác dụng không, nếu không thì chỉ hiện với SFT/base.
@@ -297,7 +299,7 @@ API pin: `/v1/lora/load` (`lora_path`, `adapter_name`), `/v1/lora/unload`, `/v1/
 ### 8.6 Không làm
 
 - **Auto score / LRC:** API REST tại pin không có endpoint nào (chỉ có trong Gradio). Không làm cho tới khi đổi revision pin có endpoint.
-- **Custom timesteps:** REST bỏ qua `timesteps`, cả ở pin lẫn `main` upstream (xem 8.3). Chờ upstream sửa: https://github.com/ace-step/ACE-Step-1.5/issues/1382.
+- **Custom timesteps:** REST bỏ qua `timesteps`, cả ở pin lẫn `main` upstream (xem 8.3). Chờ upstream merge PR https://github.com/ace-step/ACE-Step-1.5/pull/1383 (issue #1382).
 - **Training LoRA**, AudioMass, Demucs, chia sẻ/LAN: giữ như mục 2.
 
 ### 8.6b Kết quả (2026-11-15)
