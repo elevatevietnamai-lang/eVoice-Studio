@@ -32,6 +32,7 @@ metadata and the backend fallback mirror it.
 
 - Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
 - Music Studio: *Polish* keeps your lyrics when the language model changes their words (the small model sometimes slips in junk lines) and says so (#39)
+- Music Studio: a LoRA track no longer fails with "the music server exited while starting" when the server restarts after more than 5 minutes idle (#40)
 - The analytics consent prompt says why saving your choice failed (for example a browser origin the server does not trust) instead of only "Something went wrong" (#38)
 - Music Studio: *Reuse seed* now reproduces a track (seeds were reported but not used, and seeds above 2.1 billion were lost), M4A uploads work for cover and style reference, Turbo steps stop at 8 where the engine stops, and tracks no longer save the key "N/A" (#33)
 

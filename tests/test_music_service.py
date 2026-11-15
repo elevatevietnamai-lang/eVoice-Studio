@@ -6,6 +6,7 @@ import io
 import json
 import sys
 import tarfile
+import time
 from pathlib import Path
 
 import httpx
@@ -679,6 +680,34 @@ def test_library_cleans_not_available_metadata_saved_by_older_builds(tmp_path, m
     # Reusing its settings must not be refused.
     GenerateBody(prompt="x", key_scale=record["key_scale"], time_signature=record["time_signature"])
     assert GenerateBody(prompt="x", seed=music.MAX_SEED).seed == 2**32 - 1
+
+
+def test_idle_reaper_never_stops_a_server_that_is_starting(monkeypatch):
+    # Real run 2026-11-15: the reaper left over from an LM server stopped the eager LoRA server
+    # it was replaced by, 67 s into its start, because the old server's last use was > 5 min ago.
+    engine = music.AceStepEngine()
+    srv = engine._server
+    srv.last_used = time.monotonic() - music.IDLE_STOP_SECONDS - 60
+    alive = iter([True, True, False])
+    monkeypatch.setattr(engine, "_alive", lambda: next(alive))
+    stopped = []
+
+    async def stop():
+        stopped.append(True)
+
+    monkeypatch.setattr(engine, "stop", stop)
+    real_sleep = asyncio.sleep
+    monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
+
+    async def run():
+        async with srv.lock:  # _ensure_running holds it while the server starts
+            await engine._reap_idle()
+
+    asyncio.run(run())
+    assert stopped == []
+    alive = iter([True])
+    asyncio.run(engine._reap_idle())  # once the start is over, an idle server still stops
+    assert stopped == [True]
 
 
 def _mock_server(monkeypatch, handler):
