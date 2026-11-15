@@ -6,7 +6,7 @@ order: 13
 group: more
 updated: 2026-11-15
 app_version: 0.5.7-beta.3
-status: draft
+status: approved
 ---
 
 ## Tính năng này làm gì

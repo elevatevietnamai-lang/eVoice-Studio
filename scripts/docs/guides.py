@@ -129,7 +129,7 @@ GUIDES: tuple[Guide, ...] = (
           (f"{FEATURES}/projects/projects-page.tsx",)),
     Guide(16, "cai-dat", "Cài đặt", "library",
           "Một bài chia mục theo ảnh: Chung · Giao diện · Model · Mạng và mirror Hugging Face · Hiệu năng · Lưu trữ · "
-          "Quyền riêng tư · Cập nhật (Ổn định/Beta)",
+          "Quyền riêng tư · Cập nhật (bản eVoice không tự cập nhật: tải bộ cài mới rồi cài đè)",
           ("settings", "appearance", "privacy", "storage", "performance", "updates", "network"),
           ("docs/electron-privacy.md", "docs/electron-storage.md", "docs/electron-performance.md"),
           (f"{FEATURES}/settings/settings-page.tsx",)),
