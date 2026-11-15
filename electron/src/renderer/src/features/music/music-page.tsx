@@ -639,6 +639,8 @@ export function MusicPage() {
               value={[musicTask]}
               disabled={busy}
               size="sm"
+              // Seven modes do not fit one row of the control column: they wrap instead of clipping.
+              className="flex-wrap"
               aria-labelledby="music-task"
               onValueChange={(value) => {
                 const next = value[0];
