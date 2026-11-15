@@ -295,7 +295,7 @@ export function SavedVoices({
               <li
                 key={profile.id}
                 className={cn(
-                  'group/profile relative flex items-center gap-2 rounded-lg px-2 transition-colors duration-150 hover:bg-(--sidebar-row-hover)',
+                  'group/profile relative flex items-center gap-2 rounded-lg px-2 transition-colors hover:bg-(--sidebar-row-hover)',
                   library ? 'py-3' : 'h-9',
                   row && 'absolute right-2 left-2 top-0',
                   active &&
@@ -336,7 +336,7 @@ export function SavedVoices({
                     </p>
                   )}
                 </div>
-                <div className="absolute right-2 z-20 flex items-center gap-0.5 rounded-lg bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-1 [&>*]:rounded-sm opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity duration-150 group-hover/profile:opacity-100 group-focus-within/profile:opacity-100">
+                <div className="absolute right-2 z-20 flex items-center gap-0.5 rounded-lg bg-sidebar bg-[linear-gradient(var(--sidebar-accent),var(--sidebar-accent))] p-1 [&>*]:rounded-sm opacity-0 shadow-sm ring-1 ring-sidebar-border/50 transition-opacity group-hover/profile:opacity-100 group-focus-within/profile:opacity-100">
                   {profile.ref_audio_path ||
                   profile.locked_audio_path ||
                   profile.kind === 'design' ? (
@@ -419,7 +419,7 @@ function TakeRow({ item, onStar, onReuse, onDelete }: TakeRowProps) {
   return (
     <div
       className={cn(
-        'group relative flex h-9 min-w-0 items-center rounded-lg px-2 transition-colors duration-150 hover:bg-(--sidebar-row-hover)',
+        'group relative flex h-9 min-w-0 items-center rounded-lg px-2 transition-colors hover:bg-(--sidebar-row-hover)',
         selected?.id === item.id && 'bg-sidebar-accent',
       )}
     >

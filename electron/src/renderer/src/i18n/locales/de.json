@@ -4164,7 +4164,8 @@
   "windowControls": {
     "minimize": "Minimieren",
     "maximize": "Maximieren",
-    "restore": "Wiederherstellen"
+    "restore": "Wiederherstellen",
+    "close_window": "Fenster schließen"
   },
   "editor": {
     "title": "Videoeditor",
@@ -4673,5 +4674,17 @@
     "command_palette": "Befehlspalette…",
     "toggle_full_screen": "Vollbild ein/aus",
     "settings": "Einstellungen…"
+  },
+  "shell": {
+    "home_hint": "Übersicht, Verknüpfungen und letzte Stimmen",
+    "logo_hint": "Zur Startseite",
+    "app_menu": "Anwendungsmenü",
+    "app_menu_hint": "Alle Seiten, Befehle und Tastenkürzel",
+    "settings_hint": "Modelle, Darstellung, Speicher und Updates",
+    "performance_hint": "Geschwindigkeit und Qualität abwägen",
+    "notifications": "Benachrichtigungen",
+    "search_hint": "Seiten, Stimmen und Befehle finden",
+    "group_system": "Systemstatus",
+    "group_app": "App"
   }
 }

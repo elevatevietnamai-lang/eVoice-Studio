@@ -10,13 +10,24 @@ import {
 
 /**
  * Motion tokens from the Elevate brand (DESIGN.md): quiet, short, never blocking.
- * Seconds, for the `motion` library; the CSS twins are 160 / 240 / 480 ms.
+ * Seconds, for the `motion` library; the CSS twins in globals.css are `--motion-fast` /
+ * `--motion-base` / `--motion-slow` (160 / 240 / 480 ms), `--motion-hover` (200 ms),
+ * `--motion-panel` (260 ms), `--ease-standard` and `--ease-settle` (globals.test.ts keeps them equal).
  */
 export const motionTokens = {
   fast: 0.16,
   base: 0.24,
   slow: 0.48,
+  /** Hover and press feedback; also every `transition-*` utility's default. */
+  hover: 0.2,
+  /** A page switch: the content and its panel column settle in together. */
+  panel: 0.26,
+  /** A rail group menu opening; it closes in `exit`. */
+  reveal: 0.34,
+  exit: 0.2,
   ease: [0.22, 1, 0.36, 1],
+  /** Ease-out cubic: it keeps moving through the last third, where ease-out quint has already stopped. */
+  settle: [0.33, 1, 0.68, 1],
 } as const;
 
 /** App-wide defaults. `reducedMotion="user"` makes every motion component honor the OS setting. */
@@ -101,13 +112,14 @@ export function StaggerItem(props: Omit<HTMLMotionProps<'div'>, 'variants'>) {
 }
 
 /**
- * A page switch settles in from 60% opacity over 120 ms, never from blank: the old page has no
- * exit, so a fade from 0 flashed the empty background. The control panel column runs the same
- * fade (`.secondary-sidebar` in globals.css) so both columns change together. Enter only, opacity
- * only, so layout and scroll never jump; keyed on the top-level segment so nested pages keep state.
+ * A page switch settles in from 60% opacity over 260 ms (`--motion-panel`), never from blank: the
+ * old page has no exit, so a fade from 0 flashed the empty background. The control panel column
+ * runs the same fade (`.secondary-sidebar` in globals.css) so both columns change together. Enter
+ * only, opacity only, so layout and scroll never jump; keyed on the top-level segment so nested
+ * pages keep state.
  */
 export const ROUTE_FADE_FROM = 0.6;
-export const ROUTE_FADE_SECONDS = 0.12;
+export const ROUTE_FADE_SECONDS = motionTokens.panel;
 
 export function RouteFade({ segment, children }: { segment: string; children: ReactNode }) {
   return (
@@ -116,46 +128,61 @@ export function RouteFade({ segment, children }: { segment: string; children: Re
       className="h-full min-h-0"
       initial={{ opacity: ROUTE_FADE_FROM }}
       animate={{ opacity: 1 }}
-      transition={{ duration: ROUTE_FADE_SECONDS, ease: motionTokens.ease }}
+      transition={{ duration: ROUTE_FADE_SECONDS, ease: motionTokens.settle }}
     >
       {children}
     </motion.div>
   );
 }
 
-/** Ease-out cubic: it keeps moving through the last third, where ease-out quint has already stopped. */
-const settle = [0.33, 1, 0.68, 1] as const;
+const settle = motionTokens.settle;
 
 const menuVariants: Variants = {
   hidden: {},
-  visible: { transition: { delayChildren: 0.08, staggerChildren: 0.06 } },
+  visible: { transition: { delayChildren: 0.06, staggerChildren: 0.035 } },
 };
 const menuItemVariants: Variants = {
-  hidden: { opacity: 0, y: 6 },
+  hidden: { opacity: 0, y: 4 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.32, ease: settle },
+    transition: { duration: motionTokens.reveal, ease: settle },
   },
 };
 
 /**
- * The rail group menu's surface wipes open from the rail side over 280 ms and closes the same way
- * in 180 ms. It stays fully opaque (a clip, not a fade), so the page panel under it never shows
- * through, and it never pops in as an empty block before its items.
+ * The rail group menu's surface wipes open from the rail side over 340 ms and closes the same way
+ * in 200 ms. It stays fully opaque (a clip, not a fade), so the page panel under it never shows
+ * through, and it never pops in as an empty block before its items. `will-change` keeps the wipe
+ * on its own layer so the page beside it does not repaint every frame.
+ *
+ * Reduced motion: the wipe is movement, so it becomes a short cross-fade instead (`motion`'s
+ * `reducedMotion="user"` only drops transforms, not clip-path).
  */
-export const menuSurfaceMotion = {
-  initial: { clipPath: 'inset(0px 100% 0px 0px)' },
-  animate: { clipPath: 'inset(0px 0% 0px 0px)', transition: { duration: 0.28, ease: settle } },
-  exit: {
-    clipPath: 'inset(0px 100% 0px 0px)',
-    transition: { duration: 0.18, ease: [0.32, 0, 0.67, 0] },
-  },
-} as const;
+export function menuSurfaceMotion(reduced: boolean) {
+  if (reduced)
+    return {
+      initial: { opacity: 0 },
+      animate: { opacity: 1, transition: { duration: motionTokens.fast, ease: settle } },
+      exit: { opacity: 0, transition: { duration: motionTokens.fast, ease: settle } },
+    } as const;
+  return {
+    style: { willChange: 'clip-path' },
+    initial: { clipPath: 'inset(0px 100% 0px 0px)' },
+    animate: {
+      clipPath: 'inset(0px 0% 0px 0px)',
+      transition: { duration: motionTokens.reveal, ease: settle },
+    },
+    exit: {
+      clipPath: 'inset(0px 100% 0px 0px)',
+      transition: { duration: motionTokens.exit, ease: [0.32, 0, 0.67, 0] },
+    },
+  } as const;
+}
 
 /**
- * A menu's items settling in one after another (60 ms apart, 320 ms each, rising 6 px) while the
- * surface opens, slow enough to read as a cascade rather than a flash.
+ * A menu's items settling in one after another (35 ms apart, 340 ms each, rising 4 px) while the
+ * surface opens: a soft cascade that still has the last row in place within half a second.
  */
 export function MenuReveal(
   props: Omit<HTMLMotionProps<'nav'>, 'variants' | 'initial' | 'animate'>,

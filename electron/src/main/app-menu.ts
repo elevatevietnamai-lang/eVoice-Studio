@@ -10,11 +10,13 @@ import type {
 import {
   APP_MENU_ACTION_CHANNEL,
   APP_MENU_HOME,
+  APP_MENU_HOME_ACCELERATOR,
   APP_MENU_LABEL_IDS,
   APP_MENU_LABELS_CHANNEL,
   APP_MENU_PAGES,
   APP_MENU_POPUP_CHANNEL,
   APP_MENU_SETTINGS,
+  APP_MENU_SETTINGS_ACCELERATOR,
   APP_MENU_SUPPORT,
   APP_NAVIGATE_CHANNEL,
   RENDERER_OWNED_ACCELERATORS,
@@ -25,7 +27,7 @@ import {
 import { DESKTOP_APP_NAME } from './app-identity';
 import { activateLiveWindow, sendToLiveWindow } from './window-safety';
 
-export const HOME_ACCELERATOR = 'CmdOrCtrl+Shift+H';
+export const HOME_ACCELERATOR = APP_MENU_HOME_ACCELERATOR;
 export const SUPPORT_ACCELERATOR = 'F1';
 
 export interface AppMenuCommands {
@@ -72,7 +74,7 @@ export function createApplicationMenuTemplate({
     click: () => commands.navigate(path),
   });
   const settings: MenuItemConstructorOptions = {
-    ...page(APP_MENU_SETTINGS, labels.settings!, 'CmdOrCtrl+,'),
+    ...page(APP_MENU_SETTINGS, labels.settings!, APP_MENU_SETTINGS_ACCELERATOR),
   };
   const separator: MenuItemConstructorOptions = { type: 'separator' };
 

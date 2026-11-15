@@ -48,6 +48,7 @@ import {
   relaxWhenBackendBusy,
 } from '@/lib/status-polling';
 import { segmentedFrameClass } from '@/components/segmented';
+import { ShellTooltip } from './shell-tooltip';
 
 type BackendStage = ReturnType<typeof useBackendStatus>['stage'];
 
@@ -151,6 +152,7 @@ export function StatusBar({
   const { t } = useTranslation();
   const { level, chooseLevel } = useEngineDetailLevel();
   const [deviceOpen, setDeviceOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const profile = usePerformanceProfile();
   const [appliedProfile, setAppliedProfile] = useState<PerformanceProfileState | null>(null);
   const enginesRefreshing = useIsFetching({ queryKey: ['engines'] }) > 0;
@@ -582,20 +584,25 @@ export function StatusBar({
   };
   // The icon rail has no room for the slider, so the gauge opens it as a popover.
   const railProfile = (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <button
-            type="button"
-            aria-label={t('performanceProfile.title')}
-            title={t('performanceProfile.title')}
-            // In the macOS rail's two-column footer the gauge takes its own row above Settings.
-            className={cn(engineLinkClass, compact ? 'size-10' : 'h-7 w-full')}
-          />
-        }
+    <Popover open={profileOpen} onOpenChange={setProfileOpen}>
+      <ShellTooltip
+        side="right"
+        disabled={profileOpen}
+        label={t('performanceProfile.title')}
+        hint={t('shell.performance_hint')}
       >
-        <GaugeIcon className={engineIconClass} aria-hidden="true" />
-      </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <button
+              type="button"
+              aria-label={t('performanceProfile.title')}
+              className={cn(engineLinkClass, compact ? 'size-10' : 'h-7 w-full')}
+            />
+          }
+        >
+          <GaugeIcon className={engineIconClass} aria-hidden="true" />
+        </PopoverTrigger>
+      </ShellTooltip>
       <PopoverContent
         side="right"
         align="end"
@@ -610,34 +617,41 @@ export function StatusBar({
   );
   const iconDevicePopover = (
     <Popover open={deviceOpen} onOpenChange={setDeviceOpen}>
-      <PopoverTrigger
-        render={
-          <button
-            type="button"
-            aria-label={`${deviceLabel}: ${stageText}`}
-            className={cn(
-              engineLinkClass,
-              'relative',
-              compact ? 'size-10' : 'h-7 w-full',
-              !compact && !deviceIconOnly && 'justify-start gap-2 px-2',
-            )}
-          />
-        }
+      <ShellTooltip
+        side="right"
+        disabled={deviceOpen || !compact}
+        label={deviceLabel}
+        hint={stageText}
       >
-        <CpuIcon className={engineIconClass} aria-hidden="true" />
-        {!compact && !deviceIconOnly && <span className="min-w-0 truncate">{deviceLabel}</span>}
-        <span
-          className={cn(
-            compact
-              ? 'absolute end-2 top-2 size-2 rounded-full ring-2 ring-sidebar'
-              : deviceIconOnly
-                ? 'absolute end-1.5 top-1 size-1.5 rounded-full'
-                : 'ml-auto size-1.5 shrink-0 rounded-full',
-            stageDot,
-          )}
-          aria-hidden="true"
-        />
-      </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <button
+              type="button"
+              aria-label={`${deviceLabel}: ${stageText}`}
+              className={cn(
+                engineLinkClass,
+                'relative',
+                compact ? 'size-10' : 'h-7 w-full',
+                !compact && !deviceIconOnly && 'justify-start gap-2 px-2',
+              )}
+            />
+          }
+        >
+          <CpuIcon className={engineIconClass} aria-hidden="true" />
+          {!compact && !deviceIconOnly && <span className="min-w-0 truncate">{deviceLabel}</span>}
+          <span
+            className={cn(
+              compact
+                ? 'absolute end-2 top-2 size-2 rounded-full ring-2 ring-sidebar'
+                : deviceIconOnly
+                  ? 'absolute end-1.5 top-1 size-1.5 rounded-full'
+                  : 'ml-auto size-1.5 shrink-0 rounded-full',
+              stageDot,
+            )}
+            aria-hidden="true"
+          />
+        </PopoverTrigger>
+      </ShellTooltip>
       {deviceContent}
     </Popover>
   );

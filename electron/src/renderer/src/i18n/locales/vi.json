@@ -4164,7 +4164,8 @@
   "windowControls": {
     "minimize": "Thu nhỏ",
     "maximize": "Phóng to",
-    "restore": "Khôi phục"
+    "restore": "Khôi phục",
+    "close_window": "Đóng cửa sổ"
   },
   "editor": {
     "title": "Dựng video",
@@ -4673,5 +4674,17 @@
     "command_palette": "Bảng lệnh…",
     "toggle_full_screen": "Bật/tắt toàn màn hình",
     "settings": "Cài đặt…"
+  },
+  "shell": {
+    "home_hint": "Tổng quan, lối tắt và giọng gần đây",
+    "logo_hint": "Về Trang chủ",
+    "app_menu": "Menu ứng dụng",
+    "app_menu_hint": "Mọi trang, lệnh và phím tắt",
+    "settings_hint": "Model, giao diện, lưu trữ và cập nhật",
+    "performance_hint": "Cân bằng tốc độ và chất lượng",
+    "notifications": "Thông báo",
+    "search_hint": "Tìm trang, giọng nói và lệnh",
+    "group_system": "Trạng thái hệ thống",
+    "group_app": "Ứng dụng"
   }
 }

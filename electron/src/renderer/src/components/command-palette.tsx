@@ -373,7 +373,7 @@ export function CommandPalette() {
                     aria-selected={active === index}
                     tabIndex={-1}
                     className={cn(
-                      'group flex h-10 w-full items-center gap-3 rounded-lg px-2.5 text-left text-sm text-foreground outline-none transition-colors duration-160',
+                      'group flex h-10 w-full items-center gap-3 rounded-lg px-2.5 text-left text-sm text-foreground outline-none transition-colors ',
                       active === index ? 'bg-(--sidebar-row-selected)' : 'hover:bg-accent',
                     )}
                     onMouseMove={() => setActive(index)}
@@ -381,7 +381,7 @@ export function CommandPalette() {
                   >
                     <Icon
                       className={cn(
-                        'size-4 shrink-0 transition-colors duration-160',
+                        'size-4 shrink-0 transition-colors ',
                         active === index ? 'text-foreground' : 'text-muted-foreground',
                       )}
                     />

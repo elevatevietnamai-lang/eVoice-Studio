@@ -4164,7 +4164,8 @@
   "windowControls": {
     "minimize": "Minimaliseren",
     "maximize": "Maximaliseren",
-    "restore": "Herstellen"
+    "restore": "Herstellen",
+    "close_window": "Venster sluiten"
   },
   "editor": {
     "title": "Video-editor",
@@ -4673,5 +4674,17 @@
     "command_palette": "Opdrachtpalet…",
     "toggle_full_screen": "Volledig scherm",
     "settings": "Instellingen…"
+  },
+  "shell": {
+    "home_hint": "Overzicht, snelkoppelingen en recente stemmen",
+    "logo_hint": "Naar Start",
+    "app_menu": "Applicatiemenu",
+    "app_menu_hint": "Elke pagina, opdracht en sneltoets",
+    "settings_hint": "Modellen, weergave, opslag en updates",
+    "performance_hint": "Snelheid en kwaliteit in balans",
+    "notifications": "Meldingen",
+    "search_hint": "Zoek pagina’s, stemmen en opdrachten",
+    "group_system": "Systeemstatus",
+    "group_app": "App"
   }
 }

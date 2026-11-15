@@ -109,6 +109,24 @@ export const APP_MENU_PAGES: readonly AppMenuPage[] = [
 
 export const APP_MENU_HOME = '/';
 export const APP_MENU_SETTINGS = '/settings';
+/** Shortcuts for Home and Settings, shown in the menu and in the rail's tooltips. */
+export const APP_MENU_HOME_ACCELERATOR = 'CmdOrCtrl+Shift+H';
+export const APP_MENU_SETTINGS_ACCELERATOR = 'CmdOrCtrl+,';
+
+/**
+ * An Electron accelerator as the user reads it: `CmdOrCtrl+Shift+H` is `⌘⇧H` on macOS and
+ * `Ctrl+Shift+H` elsewhere.
+ */
+export function formatAccelerator(accelerator: string, mac: boolean): string {
+  const parts = accelerator.split('+').map((part) => {
+    const key = part.toLowerCase();
+    if (key === 'cmdorctrl' || key === 'commandorcontrol') return mac ? '⌘' : 'Ctrl';
+    if (key === 'shift') return mac ? '⇧' : 'Shift';
+    if (key === 'alt' || key === 'option') return mac ? '⌥' : 'Alt';
+    return part.length === 1 ? part.toUpperCase() : part;
+  });
+  return parts.join(mac ? '' : '+');
+}
 export const APP_MENU_SUPPORT = '/settings/support';
 
 /** Every path the menu may ask the renderer to open. */

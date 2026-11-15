@@ -4164,7 +4164,8 @@
   "windowControls": {
     "minimize": "최소화",
     "maximize": "최대화",
-    "restore": "이전 크기로"
+    "restore": "이전 크기로",
+    "close_window": "창 닫기"
   },
   "editor": {
     "title": "동영상 편집기",
@@ -4673,5 +4674,17 @@
     "command_palette": "명령 팔레트…",
     "toggle_full_screen": "전체 화면 전환",
     "settings": "설정…"
+  },
+  "shell": {
+    "home_hint": "개요, 바로 가기 및 최근 음성",
+    "logo_hint": "홈으로 이동",
+    "app_menu": "애플리케이션 메뉴",
+    "app_menu_hint": "모든 페이지, 명령 및 단축키",
+    "settings_hint": "모델, 모양, 저장 공간 및 업데이트",
+    "performance_hint": "속도와 품질 균형",
+    "notifications": "알림",
+    "search_hint": "페이지, 음성 및 명령 찾기",
+    "group_system": "시스템 상태",
+    "group_app": "앱"
   }
 }

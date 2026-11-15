@@ -69,7 +69,7 @@ export function AccountMenu({ className }: { className?: string }) {
         aria-label={name || t('account.menu_settings')}
         data-slot="account-menu"
         className={cn(
-          'flex h-8 max-w-56 min-w-0 items-center gap-2 rounded-full border border-border bg-card py-0.5 pr-3 pl-0.5 outline-none transition-colors duration-160 hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50',
+          'flex h-8 max-w-56 min-w-0 items-center gap-2 rounded-full border border-border bg-card py-0.5 pr-3 pl-0.5 outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50',
           className,
         )}
       >

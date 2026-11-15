@@ -4164,7 +4164,8 @@
   "windowControls": {
     "minimize": "Küçült",
     "maximize": "Ekranı kapla",
-    "restore": "Geri yükle"
+    "restore": "Geri yükle",
+    "close_window": "Pencereyi kapat"
   },
   "editor": {
     "title": "Video düzenleyici",
@@ -4673,5 +4674,17 @@
     "command_palette": "Komut Paleti…",
     "toggle_full_screen": "Tam Ekran",
     "settings": "Ayarlar…"
+  },
+  "shell": {
+    "home_hint": "Genel bakış, kısayollar ve son sesler",
+    "logo_hint": "Ana sayfaya git",
+    "app_menu": "Uygulama menüsü",
+    "app_menu_hint": "Her sayfa, komut ve kısayol",
+    "settings_hint": "Modeller, görünüm, depolama ve güncellemeler",
+    "performance_hint": "Hız ile kaliteyi dengeleyin",
+    "notifications": "Bildirimler",
+    "search_hint": "Sayfa, ses ve komut bulun",
+    "group_system": "Sistem durumu",
+    "group_app": "Uygulama"
   }
 }

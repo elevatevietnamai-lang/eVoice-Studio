@@ -4164,7 +4164,8 @@
   "windowControls": {
     "minimize": "छोटा करें",
     "maximize": "बड़ा करें",
-    "restore": "पहले जैसा करें"
+    "restore": "पहले जैसा करें",
+    "close_window": "विंडो बंद करें"
   },
   "editor": {
     "title": "वीडियो एडिटर",
@@ -4673,5 +4674,17 @@
     "command_palette": "कमांड पैलेट…",
     "toggle_full_screen": "पूर्ण स्क्रीन",
     "settings": "सेटिंग्स…"
+  },
+  "shell": {
+    "home_hint": "अवलोकन, शॉर्टकट और हाल की आवाज़ें",
+    "logo_hint": "होम पर जाएँ",
+    "app_menu": "ऐप मेनू",
+    "app_menu_hint": "हर पेज, कमांड और शॉर्टकट",
+    "settings_hint": "मॉडल, रूप, स्टोरेज और अपडेट",
+    "performance_hint": "गति और गुणवत्ता में संतुलन",
+    "notifications": "सूचनाएँ",
+    "search_hint": "पेज, आवाज़ें और कमांड खोजें",
+    "group_system": "सिस्टम स्थिति",
+    "group_app": "ऐप"
   }
 }

@@ -359,10 +359,10 @@ export function ModelSettings({
                   })}
                 >
                   <span className="flex items-center gap-2.5">
-                    <Icon className="size-4 text-muted-foreground transition-colors duration-150 group-hover:text-foreground" />
+                    <Icon className="size-4 text-muted-foreground transition-colors group-hover:text-foreground" />
                     {t('engineSidebar.' + item)}
                   </span>
-                  <ChevronRightIcon className="text-muted-foreground transition-colors duration-150 group-hover:text-foreground" />
+                  <ChevronRightIcon className="text-muted-foreground transition-colors group-hover:text-foreground" />
                 </Link>
               );
             })(),
@@ -589,7 +589,7 @@ export function ModelSettings({
                 <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground">
                   {t('modelSettings.unavailable')}
                   <span className="text-xs tabular-nums">{unavailableRows.length}</span>
-                  <ChevronRightIcon className="ml-auto size-4 transition-transform duration-150 group-open:rotate-90" />
+                  <ChevronRightIcon className="ml-auto size-4 transition-transform duration-(--motion-fast) group-open:rotate-90" />
                 </summary>
                 <div className="border-t border-border/50 [&>*+*]:border-t [&>*+*]:border-border/50">
                   {unavailableRows.map(renderRow)}

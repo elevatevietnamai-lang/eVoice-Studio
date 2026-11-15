@@ -14,7 +14,7 @@ stars identify creation. The product voice is clear, calm, and direct.
 | README mark | `docs/logo.png` and `docs/logo-256.png` |
 | Browser icon | `electron/public/favicon.svg` (a copy of `docs/logo-small.svg`), plus `favicon.ico`, `apple-touch-icon.png`, `icon-192/512.png`, `maskable-512.png` and `site.webmanifest` |
 | Social avatar | `electron/public/social/voicestudio.jpg` |
-| In-app mark (Electron) | `EVoiceMark` in `electron/src/renderer/src/components/brand/evoice-mark.tsx` (white; `tile="auto"` adds the near-black tile in the light theme, `tile="always"` in both; `tone="mono"` draws `currentColor` with no tile) |
+| In-app mark (Electron) | `EVoiceMark` in `electron/src/renderer/src/components/brand/evoice-mark.tsx` (white; `tile="auto"` adds the near-black tile in the light theme, `tile="always"` in both; `tone="mono"` draws `currentColor` with no tile; `tone="ink"` is the bare app-chrome mark, white in the dark theme and `#030305` in the light one, and `crop` trims it to its ink box, as in the rail logo) |
 | In-app mark (shared legacy chrome) | `electron/src/shared/components/brand/VoiceStudioMark.jsx` (one colour) |
 | Desktop/platform icons | `electron/build/icons/` |
 | iOS App Store icon | `mobile/ios/VoiceStudio/AppIcon.svg` → `Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png` |
@@ -63,7 +63,7 @@ star, which would otherwise blur into a few pixels.
 
 The mark is white everywhere. A white mark needs a dark ground: on light
 surfaces put it on the `#030305` tile (`EVoiceMark` does this in the light
-theme), and never drop it bare on white. The retired orange-to-pink gradient
+theme), and never drop it bare on white. The one bare mark on a light surface is the app chrome's `tone="ink"` mark (the rail logo), drawn in the `#030305` ink instead of white, never the white mark. The retired orange-to-pink gradient
 must not return; `tests/test_voicestudio_branding.py` checks the sources. Keep the bars and both
 stars together; do not put text inside the icon or add another enclosing ring.
 

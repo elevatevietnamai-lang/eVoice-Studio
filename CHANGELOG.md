@@ -20,6 +20,10 @@ metadata and the backend fallback mirror it.
 - Music Studio: use a LoRA from your computer, picked in the desktop app's file dialog, with a strength slider and an on/off switch (#35)
 - Music Studio on the Base model: *Extract* one instrument from a song, *Add layer* with a new one, or *Complete* an arrangement with the instruments you pick (#37)
 
+### Changed
+
+- Menu bar: the app menu moves beside Settings in the rail, the logo is the bare mark for dark and light, hovers and panels animate smoothly, and every frame control has a tooltip with its shortcut (#36)
+
 ### Docs
 
 - Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)

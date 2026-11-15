@@ -167,7 +167,7 @@ export function CastingBoard({
                 key={speaker}
                 data-speaker={speaker}
                 className={cn(
-                  'rounded-lg border border-border/50 bg-background/25 p-2 transition-[background-color,border-color,box-shadow] duration-150',
+                  'rounded-lg border border-border/50 bg-background/25 p-2 transition-[background-color,border-color,box-shadow]',
                   dropTarget === speaker && 'border-foreground/30 bg-accent',
                 )}
                 onDragOver={(event) => {

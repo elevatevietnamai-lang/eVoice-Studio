@@ -62,7 +62,7 @@ function VoiceCard({
     <div
       data-slot="voice-card"
       className={cn(
-        'group/card relative flex h-[68px] min-w-0 items-center gap-3 rounded-(--card-radius) border bg-card/40 px-3 transition-[background-color,border-color,box-shadow] duration-150 hover:border-border hover:bg-accent has-[[data-choose]:focus-visible]:ring-2 has-[[data-choose]:focus-visible]:ring-ring',
+        'group/card relative flex h-[68px] min-w-0 items-center gap-3 rounded-(--card-radius) border bg-card/40 px-3 transition-[background-color,border-color,box-shadow] hover:border-border hover:bg-accent has-[[data-choose]:focus-visible]:ring-2 has-[[data-choose]:focus-visible]:ring-ring',
         current ? 'border-foreground/30 bg-accent' : 'border-border/60',
       )}
     >

@@ -4164,7 +4164,8 @@
   "windowControls": {
     "minimize": "ย่อ",
     "maximize": "ขยาย",
-    "restore": "คืนค่า"
+    "restore": "คืนค่า",
+    "close_window": "ปิดหน้าต่าง"
   },
   "editor": {
     "title": "ตัวตัดต่อวิดีโอ",
@@ -4673,5 +4674,17 @@
     "command_palette": "แผงคำสั่ง…",
     "toggle_full_screen": "เต็มหน้าจอ",
     "settings": "การตั้งค่า…"
+  },
+  "shell": {
+    "home_hint": "ภาพรวม ทางลัด และเสียงล่าสุด",
+    "logo_hint": "ไปที่หน้าแรก",
+    "app_menu": "เมนูแอป",
+    "app_menu_hint": "ทุกหน้า คำสั่ง และปุ่มลัด",
+    "settings_hint": "โมเดล รูปลักษณ์ พื้นที่จัดเก็บ และการอัปเดต",
+    "performance_hint": "ปรับสมดุลความเร็วและคุณภาพ",
+    "notifications": "การแจ้งเตือน",
+    "search_hint": "ค้นหาหน้า เสียง และคำสั่ง",
+    "group_system": "สถานะระบบ",
+    "group_app": "แอป"
   }
 }
