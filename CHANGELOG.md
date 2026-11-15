@@ -13,6 +13,10 @@ metadata and the backend fallback mirror it.
 - Vietnamese user guide drafts with real app screenshots
 - Music Studio fixes from a full run on a real GPU: reused seeds reproduce the track again
 
+### Changed
+
+- Menu bar: the app menu moves beside Settings in the rail, the logo is the bare mark for dark and light, hovers and panels animate smoothly, and every frame control has a tooltip with its shortcut (#36)
+
 ### Docs
 
 - Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)
