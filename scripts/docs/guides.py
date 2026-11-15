@@ -42,11 +42,15 @@ class Guide:
 
 GUIDES: tuple[Guide, ...] = (
     Guide(1, "bat-dau", "Bắt đầu với eVoice Studio", "start",
-          "Cài app trên Windows, macOS, Linux → lần mở đầu: kiểm tra hệ thống, gói model, quyền riêng tư "
+          "Cài app: bản beta eVoice Studio hiện CHỈ có bộ cài Windows 10/11 x64, file "
+          "eVoice-Studio-Electron-<phiên bản>-win-x64.exe tải từ trang Releases của "
+          "github.com/elevatevietnamai-lang/eVoice-Studio (hoặc nút tải trên evoice.elevatemarketing.vn); bộ cài chưa ký "
+          "số nên SmartScreen có thể cảnh báo (Thông tin thêm → Vẫn chạy); macOS và Linux chưa có, không viết cách cài "
+          "cho hai hệ này và không nhắc tên file hay lệnh của VoiceStudio gốc → lần mở đầu: kiểm tra hệ thống, gói model, quyền riêng tư "
           "(hỏi đồng ý analytics, mặc định tắt) → tải model đầu tiên ở Cài đặt → Model → tham quan thanh "
           "điều hướng và Trang chủ → đổi ngôn ngữ và theme ở Cài đặt → Giao diện",
           ("nav", "homeUi", "setup", "settings", "appearance"),
-          ("docs/install/windows.md", "docs/install/macos.md", "docs/install/linux.md", "docs/downloading-models.md",
+          ("docs/install/windows.md", "docs/downloading-models.md",
            "docs/electron-launchpad.md"),
           (f"{FEATURES}/home/home-page.tsx",)),
     Guide(2, "nhan-ban-giong", "Nhân bản giọng", "voice",

@@ -1,71 +1,76 @@
 ---
 title: Quy trình tự động
-description: Hướng dẫn tạo, kết nối các bước và chạy quy trình xử lý văn bản, âm thanh tự động ngay trên máy trong eVoice Studio.
+description: Ghép các bước đọc, chép lời, dịch, đổi giọng và chuẩn hóa âm thanh trên khung vẽ để chạy hàng loạt ngay trên máy.
 slug: quy-trinh
 order: 12
 group: more
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-Trang **Quy trình** giúp bạn ghép nhiều bước xử lý văn bản và âm thanh thành một chuỗi tự động trên khung vẽ để chạy hàng loạt cho nhiều mục đầu vào cùng lúc. Bạn có thể kết hợp đọc văn bản, chép lời, dịch, đổi giọng, chuẩn hóa âm lượng hoặc rẽ nhánh theo điều kiện ngay trên máy. Các quy trình và kết quả chạy được lưu cục bộ để bạn tạm dừng, tiếp tục hoặc tải về khi cần.
+Trang **Quy trình** giúp bạn ghép các bước xử lý văn bản và âm thanh trên một khung vẽ trực quan để chạy tự động qua danh sách nhiều mục đầu vào ngay trên máy. Bạn có thể nối các bước từ kịch bản hoặc tệp âm thanh qua chép lời, dịch, đọc văn bản, chuyển đổi giọng, rẽ nhánh theo điều kiện và chuẩn hóa âm lượng mà không cần thao tác lặp lại từng mục. Toàn bộ bản nháp, tiến trình chạy và kết quả đều lưu cục bộ để bạn dừng hoặc chạy tiếp bất cứ lúc nào.
 
 ## Cần chuẩn bị
 
-- Kịch bản văn bản (tối đa 50 mục mỗi lần chạy, mỗi kịch bản tối đa 20.000 ký tự, ngăn cách bằng dòng `---` hoặc nhập từ tệp) hoặc các tệp âm thanh đầu vào (tối đa 64 MiB mỗi tệp).
-- Hồ sơ giọng nói đã tạo sẵn nếu quy trình có dùng bước **Nói** hoặc **Chuyển đổi**.
-- Các model tương ứng đã sẵn sàng trên máy cho những bước bạn sử dụng như **Chép lời**, **Dịch**, **Nói** hoặc **Chuyển đổi**.
+- Thiết bị ở trạng thái **Thiết bị cục bộ: Engine sẵn sàng** ở thanh bên trái.
+- Ít nhất một giọng đã lưu nếu quy trình có bước **Nói** hoặc **Chuyển đổi**.
+- Nội dung đầu vào: danh sách kịch bản văn bản (tối đa 50 mục mỗi lần chạy, mỗi kịch bản tối đa 20.000 ký tự, phân cách nhau bằng dòng `---` hoặc nhập từ tệp) hoặc các tệp âm thanh (tối đa 50 clip, mỗi tệp tối đa 64 MiB).
 
 ## Các bước
 
-### 1. Tạo quy trình
+### 1. Tạo quy trình mới hoặc chọn mẫu có sẵn
 
-![Giao diện trang Quy trình trong eVoice Studio](shots/mo-trang.png)
+![Trang Quy trình với danh sách mẫu, bảng thêm bước và khung vẽ các bước nối sẵn](shots/mo-trang.png)
 
-- Bấm biểu tượng **Thêm** ở thanh điều hướng bên trái để mở trang **Quy trình**.
-- Bấm nút dấu cộng (**Quy trình mới**) ở khung **Quy trình** bên trái để tạo quy trình trống, hoặc chọn một mẫu có sẵn trong mục **Mẫu** như **Thuyết minh hàng loạt**, **Thuyết minh hàng loạt · Chuẩn hóa âm thanh**, **Âm thanh thành bản chép lời**, **Đổi giọng nói**, **Dịch và thuyết minh**, **Đặt nhà hàng**, **Đổi lịch hẹn** hoặc **Hỏi giờ mở cửa**.
+- Bấm biểu tượng công cụ ở thanh điều hướng bên trái (mục **Thêm**) để mở trang **Quy trình**.
+- Bấm nút **Quy trình mới** (biểu tượng dấu cộng ở góc phải mục **Quy trình**) để tạo bản nháp trống, hoặc chọn một mẫu dựng sẵn trong mục **Mẫu** như **Thuyết minh hàng loạt**, **Thuyết minh hàng loạt · Chuẩn hóa âm thanh**, **Âm thanh thành bản chép lời**, **Đổi giọng nói** hay **Dịch và thuyết minh**.
 - Nhập tên dễ nhớ vào ô **Tên** ở thanh công cụ phía trên khung vẽ để thay cho tên mặc định **Quy trình chưa có tên**.
-- Bấm **Tạo bản sao** nếu bạn muốn nhân bản quy trình hiện tại, hoặc bấm **Xóa** rồi chọn **Xóa** (hoặc **Hủy**) trong hộp thoại xác nhận khi muốn bỏ một quy trình không còn dùng.
 
-### 2. Nối các bước
+### 2. Thêm và nối các bước trên khung vẽ
 
-- Bấm vào các mục trong danh sách **Thêm bước** ở cột trái để đưa bước mới lên khung vẽ, gồm bước đầu vào (**Bắt đầu** cho văn bản hoặc **Clip nguồn** cho âm thanh), các bước xử lý (**Nói**, **Chuyển đổi**, **Chép lời**, **Dịch**, **Chuẩn hóa âm thanh**, **Điều kiện**) và bước đích **Kết thúc**.
-- Kéo dây nối từ chấm tròn bên phải của bước trước sang chấm tròn bên trái của bước tiếp theo để tạo luồng xử lý. Với bước **Điều kiện**, nối cả hai cổng đầu ra **Có** (khi khớp điều kiện) và **Không** (khi không khớp) tới các nhánh tiếp theo.
-- Bấm chọn từng bước trên khung vẽ để mở bảng **Chi tiết bước** ở bên phải, sau đó đặt **Tên bước** và cấu hình dữ liệu đầu vào, giọng đọc, ngôn ngữ hoặc mức âm lượng. Với bước **Điều kiện**, nhập cụm từ vào **Văn bản cần tìm** và chọn kiểu **Khớp** là **Chứa**, **Đúng bằng**, **Bắt đầu bằng** hoặc **Kết thúc bằng**.
-- Bấm **Xóa bước** trong bảng **Chi tiết bước** hoặc nhấn phím `Delete` / `Backspace` trên bàn phím nếu muốn gỡ bước đang chọn khỏi khung vẽ.
+- Bấm vào bước cần dùng trong mục **Thêm bước** ở cột trái để đưa lên khung vẽ:
+  - Bước đầu vào: **Bắt đầu** (nhận danh sách kịch bản văn bản) hoặc **Clip nguồn** (nhận danh sách tệp âm thanh).
+  - Bước xử lý: **Nói**, **Chép lời**, **Dịch**, **Chuyển đổi**, **Chuẩn hóa âm thanh** và **Điều kiện**.
+  - Bước đích: **Kết thúc** để xuất kết quả đầu ra.
+- Kéo các khối trên khung vẽ để sắp xếp vị trí, hoặc chọn một bước rồi dùng các phím mũi tên trên bàn phím để di chuyển.
+- Kéo từ chấm tròn bên phải của bước trước sang chấm tròn bên trái của bước tiếp theo để nối đường dẫn dữ liệu. Các bước phải khớp kiểu dữ liệu: văn bản đi vào **Dịch**, **Nói** hoặc **Điều kiện**; âm thanh đi vào **Chép lời** hoặc **Chuyển đổi**; giọng đọc tạo ra đi vào **Chuẩn hóa âm thanh**.
+- Chọn từng bước trên khung vẽ để mở bảng **Chi tiết bước** ở bên phải, đặt **Tên bước** và cấu hình thông số riêng. Với bước **Điều kiện**, nhập cụm từ vào **Văn bản cần tìm**, chọn kiểu **Khớp** (**Chứa**, **Đúng bằng**, **Bắt đầu bằng** hoặc **Kết thúc bằng**), rồi nối đủ cả hai nhánh **Có** (cổng trên) và **Không** (cổng dưới).
+- Bấm **Xóa bước** trong bảng **Chi tiết bước** hoặc nhấn phím `Delete` / `Backspace` khi đang chọn một bước hay đường nối để gỡ khỏi khung vẽ.
 
-### 3. Chạy
+### 3. Chạy quy trình
 
-- Bấm **Chạy quy trình** ở góc trên bên phải khung vẽ để mở bảng chạy quy trình.
-- Chọn bắt đầu chạy để ứng dụng kiểm tra tính tương thích giữa các bước và lần lượt xử lý từng mục theo thứ tự.
-- Bấm **Dừng** bất cứ lúc nào nếu bạn muốn tạm ngắt quá trình; các bước đã hoàn tất được lưu lại làm điểm đánh dấu để lần chạy sau tiếp tục từ chỗ đang dở. Nếu có mục bị lỗi, quy trình sẽ dừng lại để bạn bấm **Thử lại**.
+- Bấm **Chạy quy trình** ở góc trên bên phải khung vẽ để mở bảng chạy và kiểm tra tính hợp lệ của toàn bộ sơ đồ.
+- Chọn hoặc kiểm tra danh sách mục đầu vào từ bước **Bắt đầu** hoặc **Clip nguồn**, sau đó xác nhận bắt đầu chạy.
+- Theo dõi từng mục được xử lý tuần tự qua các bước trên sơ đồ. Nếu muốn tạm nghỉ, bấm **Dừng**; các bước đã hoàn thành đều được lưu dấu mốc để lần chạy tiếp theo tiếp tục ngay từ bước dở dang mà không phải tạo lại từ đầu.
 
-### 4. Xem kết quả
+### 4. Xem và lưu kết quả
 
-- Bấm **Phát** trên từng mục đã hoàn thành để nghe thử kết quả âm thanh hoặc xem văn bản đầu ra ngay trong bảng chạy quy trình.
-- Bấm **Lưu** để mở hộp thoại lưu tệp của hệ thống và xuất kết quả về máy dưới dạng `.wav` (đối với âm thanh) hoặc `.txt` (đối với văn bản).
+- Bấm **Phát** trên từng mục đã hoàn thành để nghe thử kết quả âm thanh hoặc xem nội dung văn bản đầu ra ngay trong bảng chạy.
+- Bấm **Lưu** trên mục bạn muốn xuất để mở hộp thoại lưu tệp của hệ điều hành (kết quả văn bản lưu thành tệp `.txt`, âm thanh lưu thành tệp `.wav`). Ứng dụng không tự động tải tệp xuống khi bạn chưa bấm **Lưu**.
 
 ## Mẹo
 
-- Dùng các nút **Zoom In**, **Zoom Out** và **Fit View** ở góc dưới bên trái khung vẽ để thu phóng hoặc căn chỉnh toàn bộ sơ đồ khi quy trình có nhiều bước.
-- Ngăn cách nhiều đoạn kịch bản trong bước **Bắt đầu** bằng một dòng chỉ có `---` để chạy hàng loạt tới 50 mục trong một lần.
-- Khi dùng bước **Điều kiện**, ứng dụng tự bỏ qua chữ hoa/thường và khoảng trắng thừa ở hai đầu chuỗi; bạn có thể cho một nhánh nối thẳng tới **Kết thúc** nếu muốn giữ nguyên văn bản của nhánh đó.
-- Di chuyển vị trí các bước trên khung vẽ hoặc đổi **Tên bước** không làm mất tiến độ đã chạy; chỉ khi bạn thay đổi thiết lập xử lý (như giọng nói, ngôn ngữ, câu điều kiện) hoặc đổi dây nối thì kết quả cũ mới cần chạy lại.
+- Bấm **Tạo bản sao** trên thanh công cụ khi muốn thử nghiệm thay đổi giọng đọc, nhánh **Điều kiện** hoặc mức **Chuẩn hóa âm thanh** mà vẫn giữ nguyên quy trình gốc cùng kết quả đã chạy.
+- Dùng các nút **Zoom In**, **Zoom Out** và **Fit View** ở góc dưới bên trái khung vẽ để bao quát toàn bộ sơ đồ khi quy trình có nhiều nhánh.
+- Hai nhánh xuất phát từ bước **Điều kiện** có thể gộp lại vào một bước chung phía sau, miễn là cả hai nhánh đều trả về cùng một kiểu dữ liệu (cùng là văn bản hoặc cùng là âm thanh). Nếu nối trực tiếp một nhánh từ **Điều kiện** tới **Kết thúc**, văn bản đầu vào sẽ được giữ nguyên để xuất ra tệp `.txt`.
+- Nhóm mẫu **Đặt nhà hàng**, **Đổi lịch hẹn**, **Hỏi giờ mở cửa** và hai bước **Trợ lý AI**, **Cuộc gọi** có nhãn **Bản nháp cục bộ** dùng để phác thảo kịch bản cuộc gọi; khi chọn bước **Cuộc gọi**, bạn có thể bấm **Chuẩn bị cuộc gọi** hoặc nút **Cuộc gọi** trên thanh tiêu đề để chuyển thông tin sang màn hình cuộc gọi.
 
 ## Lỗi thường gặp
 
-- Không chạy được quy trình có bước **Trợ lý AI** hoặc **Cuộc gọi**: Hai bước này hiện có nhãn **Bản nháp cục bộ**, chỉ dùng để phác thảo trên khung vẽ hoặc bấm **Chuẩn bị cuộc gọi** để chuyển sang trang **Cuộc gọi**, chưa hỗ trợ thực thi tự động trong luồng chạy.
-- Quy trình báo lỗi không tương thích ngay khi bấm **Chạy quy trình**: Kiểm tra lại thứ tự nối dây giữa các bước. Văn bản chỉ nối được vào **Dịch**, **Nói**, **Điều kiện** hoặc **Kết thúc**; âm thanh chỉ nối được vào **Chép lời**, **Chuyển đổi**, **Chuẩn hóa âm thanh** hoặc **Kết thúc**.
-- Lỗi tại bước **Điều kiện**: Bước **Điều kiện** chỉ nhận dữ liệu đầu vào là văn bản (không nhận âm thanh) và bắt buộc phải nối đủ cả hai cổng **Có** và **Không**. Nếu hai nhánh gộp lại vào chung một bước phía sau, cả hai nhánh phải xuất ra cùng một kiểu dữ liệu (cùng là văn bản hoặc cùng là âm thanh).
-- Nút **Xóa** quy trình bị mờ: Bạn không thể xóa khi danh sách **Quy trình** chỉ còn duy nhất một quy trình hoặc khi quy trình đang trong lúc chạy.
+- không chạy được quy trình khi trên khung vẽ có bước **Trợ lý AI** hoặc **Cuộc gọi**: hai bước này chỉ là **Bản nháp cục bộ** để thiết kế kịch bản, không thực thi trong luồng xử lý hàng loạt. Hãy chọn bước đó và bấm **Xóa bước** trước khi bấm **Chạy quy trình**.
+- báo lỗi không khớp kiểu dữ liệu hoặc thiếu kết nối trước khi chạy: kiểm tra lại thứ tự nối giữa các bước (ví dụ: không nối đầu ra âm thanh vào bước **Điều kiện** hoặc **Dịch**, chỉ nối bước **Chuẩn hóa âm thanh** ngay sau bước tạo giọng đọc) và đảm bảo cả hai cổng **Có** lẫn **Không** của bước **Điều kiện** đều đã được nối tới bước đích.
+- một mục bị lỗi làm quy trình dừng lại giữa chừng: quy trình không tự bỏ qua mục lỗi để tránh mất dấu dữ liệu. Hãy xem thông báo lỗi tại mục đó, chỉnh lại đầu vào hoặc kiểm tra model rồi bấm **Thử lại** để chạy tiếp từ dấu mốc đã lưu.
+- kết quả đã chạy bị đặt lại khi chỉnh sửa quy trình: việc đổi giọng đọc, ngôn ngữ, tốc độ, mức chuẩn hóa, cụm từ trong **Điều kiện** hoặc đường nối sẽ làm mới tiến trình chạy. Nếu chỉ đổi **Tên**, **Tên bước** hoặc kéo vị trí các khối trên khung vẽ thì kết quả đã hoàn thành vẫn được giữ nguyên.
+- nút **Xóa** quy trình bị mờ không bấm được: ứng dụng luôn giữ lại ít nhất một quy trình trong danh sách. Hãy bấm **Quy trình mới** trước nếu bạn muốn xóa quy trình hiện tại.
 
 ## Bài liên quan
 
 - [Bắt đầu với eVoice Studio](../bat-dau/)
 - [Quản lý giọng đã lưu](../giong-da-luu/)
-- [Lồng tiếng hàng loạt](../long-tieng-hang-loat/)
 - [Phiên âm và đọc chính tả](../phien-am/)
 - [Công cụ: so sánh và chuyển giọng](../cong-cu/)
+- [Lồng tiếng hàng loạt](../long-tieng-hang-loat/)
+- [Khắc phục sự cố](../khac-phuc-su-co/)

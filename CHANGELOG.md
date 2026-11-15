@@ -27,6 +27,7 @@ metadata and the backend fallback mirror it.
 ### Docs
 
 - Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)
+- User guide screenshots retaken after the menu bar redesign, and the Getting started article now covers only the Windows installer the beta ships (#43)
 
 ### Fixed
 
