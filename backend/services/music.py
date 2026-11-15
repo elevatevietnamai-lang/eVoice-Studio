@@ -1101,6 +1101,8 @@ class AceStepEngine:
                 srv.eager = bool(eager or llm)
                 srv.lora = None
                 logger.info("starting ACE-Step on 127.0.0.1:%s", srv.port)
+                # A new server is not idle, whatever the one before it last did.
+                srv.last_used = time.monotonic()
                 log_file = open(engine_dir() / "server.log", "wb")
                 try:
                     srv.proc = spawn_owned([str(venv_python()), "-m", "acestep.api_server"], env=env,
@@ -1148,7 +1150,10 @@ class AceStepEngine:
         srv = self._server
         while self._alive():
             await asyncio.sleep(30)
-            if srv.busy == 0 and time.monotonic() - srv.last_used > IDLE_STOP_SECONDS:
+            # The lock is held while a server starts or restarts (an eager start with a LoRA takes
+            # over a minute), and a reaper outlives the server it was started for.
+            if (srv.busy == 0 and not srv.lock.locked()
+                    and time.monotonic() - srv.last_used > IDLE_STOP_SECONDS):
                 logger.info("stopping idle ACE-Step server")
                 await self.stop()
                 return

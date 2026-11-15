@@ -119,8 +119,11 @@ locally with ACE-Step 1.5 (MIT). The same engine powers the optional **AI backgr
   model is selected. While a LoRA is on, the music server loads its model at startup (a LoRA needs it
   in memory) and the LoRA is loaded again after any restart. Saved tracks record its name and strength.
   Nothing is downloaded, and the LoRA's license is yours to check. Training LoRAs is not part of the app.
+  Checked with ACE-Step's own PEFT LoRA (`ACE-Step-v1.5-chinese-new-year-LoRA`, 88 MB) on Turbo: a
+  40 s track takes about 9 s and 6.9 GB once loaded, strength 50 % changes it less than 100 %, and 0 %
+  gives the same audio as off.
 - **Memory:** the music server starts on demand, listens on a random loopback port with a random key and
-  stops after 5 minutes idle. *Free GPU memory* stops it immediately. Measured on an RTX 3060 12 GB
+  stops after 5 minutes idle (never while it is starting). *Free GPU memory* stops it immediately. Measured on an RTX 3060 12 GB
   (Windows): the first start takes about 3 minutes, then a 30–40 s Turbo track takes 6–8 s and about
   7.3 GB; Thinking with the 0.6B model 27 s (85 s when it restarts the server); repaint and cover up to
   9.7 GB; SFT at 32 steps about 22 s. Do not generate music and dub at the
