@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { BarChart3Icon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { apiJson } from '@/lib/api/client';
+import { apiJson, describeError } from '@/lib/api/client';
 import { useBackendStatus } from '@/hooks/use-backend-status';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { setupWasStarted } from '@/lib/setup-progress';
@@ -60,7 +60,8 @@ export function AnalyticsConsent({
   const { t } = useTranslation();
   const client = useQueryClient();
   const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
+  // The server's reason (a 403 names the origin setting to change), or a generic one.
+  const [failed, setFailed] = useState<string | null>(null);
   const pending = useRef(false);
   const query = useQuery({
     queryKey: analyticsKey,
@@ -78,7 +79,7 @@ export function AnalyticsConsent({
     if (pending.current) return;
     pending.current = true;
     setBusy(true);
-    setFailed(false);
+    setFailed(null);
     try {
       await apiJson('/api/settings/analytics', {
         method: 'PUT',
@@ -90,8 +91,8 @@ export function AnalyticsConsent({
         prompted: true,
       }));
       onDone?.(enabled);
-    } catch {
-      setFailed(true);
+    } catch (error) {
+      setFailed(describeError(error) || t('common.error'));
     } finally {
       pending.current = false;
       setBusy(false);
@@ -115,7 +116,7 @@ export function AnalyticsConsent({
         onClick={() => {
           const url = 'https://github.com/debpalash/VoiceStudio#-faq';
           const bridge = getBridge();
-          if (bridge) void bridge.files.openExternal(url).catch(() => setFailed(true));
+          if (bridge) void bridge.files.openExternal(url).catch(() => setFailed(t('common.error')));
           else window.open(url, '_blank', 'noopener,noreferrer');
         }}
       >
@@ -132,7 +133,7 @@ export function AnalyticsConsent({
       <Reveal>
         {failed && (
           <p role="alert" className="text-sm text-destructive">
-            {t('common.error')}
+            {failed}
           </p>
         )}
       </Reveal>

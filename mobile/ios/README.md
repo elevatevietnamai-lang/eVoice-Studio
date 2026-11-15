@@ -180,7 +180,7 @@ References: [Apple's Liquid Glass adoption guide](https://developer.apple.com/do
 Home leads with the "VoiceStudio.sh Open Source" title and Electron's tapered cluster of
 GitHub contributor avatars (more than 10 commits, ending with "All"). The avatars are
 bundled in `Resources/Contributors.xcassets`, mirror
-`electron/src/renderer/src/features/home/home-contributors-data.ts` (guarded by
+`electron/src/renderer/src/features/settings/credits-contributors-data.ts` (guarded by
 `tests/test_mobile_contract.py`) and are never fetched at runtime; tapping one opens the
 profile in the browser. Dub is one big source card with an animated vector mark
 (`DubGlyph`, static under Reduce Motion), language and voice tiles, a consent row and live

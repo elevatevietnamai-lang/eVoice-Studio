@@ -2,7 +2,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, expect, it, vi } from 'vitest';
 const mock = vi.hoisted(() => ({ api: vi.fn() }));
-vi.mock('@/lib/api/client', () => ({ apiJson: mock.api }));
+vi.mock('@/lib/api/client', () => ({
+  apiJson: mock.api,
+  describeError: (error: Error) => error.message,
+}));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
 import { AnalyticsConsent } from './analytics-consent';
 afterEach(() => {
@@ -47,7 +50,8 @@ it('leaves consent unprompted and retryable after a failed write', async () => {
     .mockRejectedValue(new Error('offline'));
   const client = mount();
   fireEvent.click(await screen.findByRole('button', { name: 'consent.no' }));
-  await screen.findByRole('alert');
+  // The reason reaches the user (a 403 names the origin setting), not a bare "error".
+  expect(await screen.findByRole('alert')).toHaveTextContent('offline');
   expect(client.getQueryData(['privacy', 'analytics'])).toMatchObject({
     prompted: false,
     opted_in: false,

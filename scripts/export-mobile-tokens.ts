@@ -290,7 +290,8 @@ const outputs: [string, string][] = [
 if (process.argv.includes('--check')) {
   const stale = outputs.filter(([path, body]) => {
     try {
-      return readFileSync(path, 'utf8') !== body;
+      // Windows checkouts with core.autocrlf hold CRLF; only the content counts.
+      return readFileSync(path, 'utf8').replace(/\r\n/g, '\n') !== body;
     } catch {
       return true;
     }
