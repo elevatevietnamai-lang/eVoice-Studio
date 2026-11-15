@@ -28,6 +28,7 @@ metadata and the backend fallback mirror it.
 
 - Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)
 - User guide screenshots retaken after the menu bar redesign, and the Getting started article now covers only the Windows installer the beta ships (#43)
+- The Vietnamese user guide is reviewed and published: all 19 articles approved, with the update, project copy and voice import steps checked against the app (#48)
 
 ### Fixed
 
