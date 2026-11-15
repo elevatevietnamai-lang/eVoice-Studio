@@ -58,6 +58,9 @@ _ALLOWED_FILES = {
     "README_JA.md",                               # Japanese README (a translation)
     "docs/data_preparation.md",                   # multilingual example payloads
     "docs/voice-design.md",                       # EN/CJK attribute mapping table
+    "docs/huong-dan/thiet-ke-giong/index.md",     # names the app's own 四川话 dialect preset button
+    "docs/huong-dan/thiet-ke-giong/manifest.json",  # same preset label, checked against the UI
+    "scripts/docs/check_guides.py",               # strips full-width colons when matching guide labels
     "docs/engines/omnivoice.md",                  # pinyin pronunciation-control example (functional CJK)
     "docs/superpowers/specs/2026-05-31-voice-gallery-design.md",  # Chinese-dialect taxonomy reference table
     "examples/README.md",                         # multilingual example payloads
