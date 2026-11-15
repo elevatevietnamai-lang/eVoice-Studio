@@ -300,7 +300,7 @@ API pin: `/v1/lora/load` (`lora_path`, `adapter_name`), `/v1/lora/unload`, `/v1/
 
 ### 8.6b Kết quả (2026-11-15)
 
-Đã merge: PR-5 #33 (kiểm chứng thật + 5 lỗi), PR-6 #34 (Extend, tham số LM; 8.3 bỏ), PR-7 #35 (LoRA), PR-8 #36 (Extract/Lego/Complete).
+Đã merge: PR-5 #33 (kiểm chứng thật + 5 lỗi), PR-6 #34 (Extend, tham số LM; 8.3 bỏ), PR-7 #35 (LoRA), PR-8 #37 (Extract/Lego/Complete).
 
 ### 8.7 Thứ tự PR
 

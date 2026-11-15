@@ -18,7 +18,7 @@ metadata and the backend fallback mirror it.
 
 - Music Studio: *Extend* adds up to 2 minutes before or after a track with a smooth join, and Thinking gets expert language-model options (#34)
 - Music Studio: use a LoRA from your computer, picked in the desktop app's file dialog, with a strength slider and an on/off switch (#35)
-- Music Studio on the Base model: *Extract* one instrument from a song, *Add layer* with a new one, or *Complete* an arrangement with the instruments you pick (#36)
+- Music Studio on the Base model: *Extract* one instrument from a song, *Add layer* with a new one, or *Complete* an arrangement with the instruments you pick (#37)
 
 ### Docs
 
