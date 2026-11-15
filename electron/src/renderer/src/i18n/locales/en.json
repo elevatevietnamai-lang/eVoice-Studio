@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "Drums",
     "track_backing_vocals": "Backing vocals",
-    "track_vocals": "Vocals"
+    "track_vocals": "Vocals",
+    "format_lyrics_kept": "The model changed the words of your lyrics, so your own lyrics stay as you wrote them."
   },
   "gpuBusy": {
     "dub": "A dubbing job is using the GPU. Wait for it to finish, then generate music.",

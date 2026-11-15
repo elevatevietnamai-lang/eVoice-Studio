@@ -184,6 +184,7 @@ export function MusicPage() {
   const [stylesOpen, setStylesOpen] = useState(false);
   const [formatting, setFormatting] = useState(false);
   const [formatNext, setFormatNext] = useState<FormatFields | null>(null);
+  const [formatLyricsKept, setFormatLyricsKept] = useState(false);
   const lyricsRef = useRef<HTMLTextAreaElement | null>(null);
   const [musicTask, setMusicTask] = useState<MusicTask>('text2music');
   const [source, setSource] = useState<MusicSource | null>(null);
@@ -409,6 +410,7 @@ export function MusicPage() {
         method: 'POST',
         body: JSON.stringify(requestBody()),
       });
+      setFormatLyricsKept(!instrumental && Boolean(suggestion.lyrics_kept));
       setFormatNext(applyFormat(formatFields, suggestion, instrumental));
     } catch (error) {
       toast.error(t('musicStudio.format_failed', { message: describeError(error) }));
@@ -1700,6 +1702,7 @@ export function MusicPage() {
         current={formatFields}
         next={formatNext ?? formatFields}
         describe={describeField}
+        lyricsKept={formatLyricsKept}
         onApply={() => {
           if (!formatNext) return;
           setPrompt(formatNext.prompt);

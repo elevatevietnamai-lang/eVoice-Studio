@@ -4142,7 +4142,8 @@
     "track_bass": "Bass",
     "track_drums": "Bateria",
     "track_backing_vocals": "Vocais de apoio",
-    "track_vocals": "Vocais"
+    "track_vocals": "Vocais",
+    "format_lyrics_kept": "O modelo alterou as palavras da sua letra, por isso a sua letra permanece como você a escreveu."
   },
   "gpuBusy": {
     "dub": "Uma tarefa de dublagem está usando a GPU. Aguarde terminar e depois gere a música.",

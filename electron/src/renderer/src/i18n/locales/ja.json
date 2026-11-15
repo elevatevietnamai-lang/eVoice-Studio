@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "ドラム",
     "track_backing_vocals": "コーラス",
-    "track_vocals": "ボーカル"
+    "track_vocals": "ボーカル",
+    "format_lyrics_kept": "モデルによって歌詞の言葉が変更されたため、元の歌詞をそのまま維持しました。"
   },
   "gpuBusy": {
     "dub": "吹き替えジョブがGPUを使用中です。完了するまで待ってから音楽を生成してください。",

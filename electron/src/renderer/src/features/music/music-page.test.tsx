@@ -382,6 +382,7 @@ it('offers Format only with a ready language model and shows the suggestion befo
   await waitFor(() => expect(state.calls).toContain('POST /music/format'));
   expect(await screen.findByText('musicStudio.format_title')).toBeTruthy();
   expect(screen.getByText('warm lofi, vinyl crackle')).toBeTruthy();
+  expect(screen.queryByText('musicStudio.format_lyrics_kept')).toBeNull();
   fireEvent.click(screen.getByText('musicStudio.format_apply'));
   const prompt = screen.getByPlaceholderText(
     'musicStudio.prompt_placeholder',
@@ -390,6 +391,33 @@ it('offers Format only with a ready language model and shows the suggestion befo
   expect((screen.getByPlaceholderText('musicStudio.bpm_hint') as HTMLInputElement).value).toBe(
     '84',
   );
+});
+
+it('says Format kept your lyrics when the model changed their words', async () => {
+  state.status = { installed: true, running: false };
+  state.lm = { model: 'acestep-5Hz-lm-0.6B', ready: true, download_bytes: 0 };
+  state.format = {
+    caption: '',
+    lyrics: '',
+    lyrics_kept: true,
+    bpm: 72,
+    key_scale: '',
+    time_signature: '',
+    duration: null,
+    vocal_language: '',
+  };
+  renderPage();
+  const instrumental = (await screen.findByText('musicStudio.instrumental')).closest('label');
+  fireEvent.click(instrumental?.querySelector('[role="switch"]') as HTMLElement);
+  fireEvent.change(screen.getByPlaceholderText('musicStudio.lyrics_placeholder'), {
+    target: { value: 'Chiều nay mưa rơi' },
+  });
+  fireEvent.click(await screen.findByText('musicStudio.format'));
+  expect(await screen.findByText('musicStudio.format_lyrics_kept')).toBeTruthy();
+  fireEvent.click(screen.getByText('musicStudio.format_apply'));
+  expect(
+    (screen.getByPlaceholderText('musicStudio.lyrics_placeholder') as HTMLTextAreaElement).value,
+  ).toBe('Chiều nay mưa rơi');
 });
 
 it('covers the selected track with its id and strength, never a path', async () => {

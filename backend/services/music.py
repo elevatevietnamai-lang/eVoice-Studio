@@ -31,6 +31,7 @@ import sys
 import tarfile
 import tempfile
 import time
+import unicodedata
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import AsyncIterator, Callable, Optional, Protocol, Sequence
@@ -1220,7 +1221,7 @@ class AceStepEngine:
             except (RuntimeError, ValueError) as exc:
                 logger.warning("music format failed: %s", exc)
                 raise RuntimeError("The language model could not format this song. Try again or edit it by hand.")
-            return clean_format_result(data)
+            return clean_format_result(data, "" if request.instrumental else request.lyrics)
         finally:
             srv.busy -= 1
             srv.last_used = time.monotonic()
@@ -1363,15 +1364,49 @@ def clean_meter(value: object) -> str:
     return meter if meter in TIME_SIGNATURES else ""
 
 
-def clean_format_result(data: object) -> dict:
-    """What `/format_input` may change in the form: each field checked like user input."""
+_TAG_LINE = re.compile(r"^\s*(\[[^\]]*\]\s*)+$")
+
+
+def _sung_lines(text: str) -> set[str]:
+    """The lines a singer sings, compared loosely: section tags like ``[Verse]`` left out,
+    case, punctuation and spacing ignored."""
+    lines = set()
+    for line in unicodedata.normalize("NFC", text).splitlines():
+        if not line.strip() or _TAG_LINE.match(line):
+            continue
+        words = " ".join(re.sub(r"[^\w\s]", " ", line.casefold()).split())
+        if words:
+            lines.add(words)
+    return lines
+
+
+def lyrics_changed_words(before: str, after: str) -> bool:
+    """Whether a formatter changed what is sung instead of only arranging it.
+
+    Format may add or reorder section tags and repeat the user's lines, but every sung line must
+    still be one of theirs and none may go missing. The 0.6B model sometimes writes junk lines
+    into lyrics in any language (seen in English and Vietnamese), so such a result is not offered.
+    """
+    mine = _sung_lines(before)
+    return bool(mine) and _sung_lines(after) != mine
+
+
+def clean_format_result(data: object, user_lyrics: str = "") -> dict:
+    """What `/format_input` may change in the form: each field checked like user input.
+
+    Lyrics whose sung words the model changed come back empty with ``lyrics_kept`` set, so the
+    form keeps the user's own words.
+    """
     data = data if isinstance(data, dict) else {}
+    lyrics = str(data.get("lyrics") or "")[:8000]
+    kept = bool(lyrics.strip()) and lyrics_changed_words(user_lyrics, lyrics)
     bpm = data.get("bpm")
     duration = data.get("duration")
     language = str(data.get("vocal_language") or "").strip().lower()
     return {
         "caption": str(data.get("caption") or "")[:1000],
-        "lyrics": str(data.get("lyrics") or "")[:8000],
+        "lyrics": "" if kept else lyrics,
+        "lyrics_kept": kept,
         "bpm": int(bpm) if isinstance(bpm, (int, float)) and 30 <= bpm <= 300 else None,
         "key_scale": clean_key(data.get("key_scale")),
         "time_signature": clean_meter(data.get("time_signature")),

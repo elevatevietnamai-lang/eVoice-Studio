@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "鼓组",
     "track_backing_vocals": "和声",
-    "track_vocals": "人声"
+    "track_vocals": "人声",
+    "format_lyrics_kept": "模型改动了您的歌词内容，因此已保留您原本输入的歌词。"
   },
   "gpuBusy": {
     "dub": "配音任务正在使用 GPU。请等待其完成后再生成音乐。",

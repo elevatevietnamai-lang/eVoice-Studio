@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "Drum",
     "track_backing_vocals": "Vokal latar",
-    "track_vocals": "Vokal"
+    "track_vocals": "Vokal",
+    "format_lyrics_kept": "Model mengubah kata-kata pada lirik Anda, jadi lirik asli Anda tetap seperti yang Anda tulis."
   },
   "gpuBusy": {
     "dub": "Tugas dubbing sedang memakai GPU. Tunggu sampai selesai, lalu buat musik.",

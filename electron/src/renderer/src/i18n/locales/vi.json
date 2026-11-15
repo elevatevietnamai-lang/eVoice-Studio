@@ -4140,7 +4140,8 @@
     "track_bass": "Bass",
     "track_drums": "Trống",
     "track_backing_vocals": "Bè hát",
-    "track_vocals": "Giọng hát"
+    "track_vocals": "Giọng hát",
+    "format_lyrics_kept": "Mô hình đã đổi lời bài hát của bạn, nên lời gốc được giữ nguyên như bạn viết."
   },
   "gpuBusy": {
     "dub": "Tác vụ lồng tiếng đang dùng GPU. Đợi xong rồi tạo nhạc.",

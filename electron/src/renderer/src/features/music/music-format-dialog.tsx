@@ -14,6 +14,8 @@ import {
 export interface FormatSuggestion {
   caption: string;
   lyrics: string;
+  /** The model changed the sung words, so `lyrics` is empty and the user's own stay. */
+  lyrics_kept?: boolean;
   bpm: number | null;
   key_scale: string;
   time_signature: string;
@@ -67,6 +69,7 @@ export function MusicFormatDialog({
   next,
   describe,
   onApply,
+  lyricsKept = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -75,6 +78,8 @@ export function MusicFormatDialog({
   /** How a field value reads in the UI (key names, meters, language names). */
   describe: (key: keyof FormatFields, value: string) => string;
   onApply: () => void;
+  /** Say that the model's lyrics were dropped because it changed the words. */
+  lyricsKept?: boolean;
 }) {
   const { t } = useTranslation();
   const rows: Row[] = (
@@ -104,6 +109,11 @@ export function MusicFormatDialog({
           <DialogTitle>{t('musicStudio.format_title')}</DialogTitle>
           <DialogDescription>{t('musicStudio.format_help')}</DialogDescription>
         </DialogHeader>
+        {lyricsKept && (
+          <p role="note" className="text-sm text-muted-foreground">
+            {t('musicStudio.format_lyrics_kept')}
+          </p>
+        )}
         {rows.length === 0 ? (
           <p role="status" className="text-sm text-muted-foreground">
             {t('musicStudio.format_unchanged')}

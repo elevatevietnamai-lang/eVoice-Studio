@@ -725,13 +725,49 @@ def test_clean_format_result_checks_every_field_like_user_input():
     assert music.clean_format_result({
         "caption": "c" * 2000, "lyrics": "[verse]\nhi", "bpm": 120.0, "key_scale": "f#m",
         "time_signature": "3/4", "duration": 95.4, "vocal_language": "VI"}) == {
-        "caption": "c" * 1000, "lyrics": "[verse]\nhi", "bpm": 120, "key_scale": "F# minor",
-        "time_signature": "3", "duration": 95, "vocal_language": "vi"}
+        "caption": "c" * 1000, "lyrics": "[verse]\nhi", "lyrics_kept": False, "bpm": 120,
+        "key_scale": "F# minor", "time_signature": "3", "duration": 95, "vocal_language": "vi"}
     assert music.clean_format_result({"bpm": 900, "key_scale": "H dorian", "time_signature": "5",
                                       "duration": 9999, "vocal_language": "xx"}) == {
-        "caption": "", "lyrics": "", "bpm": None, "key_scale": "", "time_signature": "",
-        "duration": None, "vocal_language": ""}
+        "caption": "", "lyrics": "", "lyrics_kept": False, "bpm": None, "key_scale": "",
+        "time_signature": "", "duration": None, "vocal_language": ""}
     assert music.clean_format_result(None)["caption"] == ""
+
+
+_VI = "[Verse]\nChiều nay mưa rơi trên phố vắng\nEm đi qua những con đường quen\n[Chorus]\nAnh vẫn chờ em nơi góc phố"
+
+
+def test_format_keeps_the_users_words_when_the_model_changes_them():
+    # Real 0.6B outputs (2026-11-15): one run only added structure, the next garbled a line.
+    arranged = ("[Intro - Piano]\n\n[Verse]\nChiều nay mưa rơi trên phố vắng\nEm đi qua những con đường quen\n\n"
+                "[Chorus]\nAnh vẫn chờ em nơi góc phố.\n\n[Outro]\n[humming]\n[Chorus]\nanh vẫn  chờ em nơi góc phố")
+    garbled = "[Verse]\nChiều nay mưa rơi trên phố vắng\nEm đi qua những con đường quen\n[Chorus]\nAnh vẫn chờ em объявлidì 10"
+    dropped = "[Verse]\nChiều nay mưa rơi trên phố vắng\n[Chorus]\nAnh vẫn chờ em nơi góc phố"
+    out = music.clean_format_result({"lyrics": arranged}, _VI)
+    assert out["lyrics"] == arranged and out["lyrics_kept"] is False
+    for bad in (garbled, dropped):
+        out = music.clean_format_result({"lyrics": bad, "bpm": 70}, _VI)
+        assert out["lyrics"] == "" and out["lyrics_kept"] is True and out["bpm"] == 70
+    # With no lyrics of their own, the model may write them; empty output is never "kept".
+    assert music.clean_format_result({"lyrics": garbled}, "")["lyrics"] == garbled
+    assert music.clean_format_result({"lyrics": ""}, _VI)["lyrics_kept"] is False
+
+
+def test_format_input_compares_with_the_users_lyrics(monkeypatch):
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=_wrap({"lyrics": "[verse]\nsomething else"}))
+
+    engine = _mock_server(monkeypatch, handler)
+
+    async def lm():
+        return music.LM_SMALL
+
+    monkeypatch.setattr(engine, "_lm_for_request", lm)
+    sung = asyncio.run(engine.format_input(music.MusicRequest(prompt="x", lyrics="la la", instrumental=False)))
+    assert sung["lyrics_kept"] is True and sung["lyrics"] == ""
+    engine._server.busy = 0
+    inst = asyncio.run(engine.format_input(music.MusicRequest(prompt="x", lyrics="la la", instrumental=True)))
+    assert inst["lyrics_kept"] is False
 
 
 def test_format_input_runs_on_the_lm_server_and_returns_only_suggestions(tmp_path, monkeypatch):
