@@ -271,6 +271,8 @@ Chỉ hiện khi Thinking bật (LM có nạp). Mặc định lấy đúng mặc
 
 Kiểm chứng 2026-11-15: `release_task_request_builder.py` không đọc trường `timesteps` (nó chỉ có trong model Pydantic), nên REST luôn bỏ qua. Chạy thật lịch 9 và 12 giá trị trên turbo cho kết quả giống hệt mặc định (corr 1.0). Chuyển sang mục 8.6 cho tới khi đổi revision pin. Bản kế hoạch gốc giữ bên dưới để tham khảo.
 
+Kiểm lại 2026-11-15 trên `main` của ACE-Step-1.5 (lần sửa cuối của `acestep/api/http/release_task_request_builder.py` là 2026-03-16): builder vẫn không đọc `timesteps`. Nghĩa là đổi pin cũng không giúp được. Chỉ làm được khi upstream sửa builder (một dòng `timesteps=parser.str("timesteps")`). Không vá mã ACE-Step khi cài. `shift` và `inference_steps` (đã có cho SFT/Base) thay được phần lớn công dụng.
+
 `timesteps` (chuỗi số phân tách dấu phẩy) **thay thế** `inference_steps` và `shift`.
 - Đặt trong mục "Chuyên gia", tắt mặc định. Khi bật: ẩn steps và shift, hiện ô nhập kèm một preset (lịch 9 bước trong tài liệu ACE-Step).
 - Validate ở backend: 2–64 giá trị, giảm dần, trong [0, 1], kết thúc bằng 0; chuẩn hóa thành chuỗi trước khi gửi. Áp dụng cho mọi model (server tự xử lý); chạy thử ở 8.0 trên turbo xem có tác dụng không, nếu không thì chỉ hiện với SFT/base.
@@ -295,12 +297,14 @@ API pin: `/v1/lora/load` (`lora_path`, `adapter_name`), `/v1/lora/unload`, `/v1/
 ### 8.6 Không làm
 
 - **Auto score / LRC:** API REST tại pin không có endpoint nào (chỉ có trong Gradio). Không làm cho tới khi đổi revision pin có endpoint.
-- **Custom timesteps:** REST tại pin bỏ qua `timesteps` (xem 8.3).
+- **Custom timesteps:** REST bỏ qua `timesteps`, cả ở pin lẫn `main` upstream (xem 8.3). Chờ upstream sửa.
 - **Training LoRA**, AudioMass, Demucs, chia sẻ/LAN: giữ như mục 2.
 
 ### 8.6b Kết quả (2026-11-15)
 
 Đã merge: PR-5 #33 (kiểm chứng thật + 5 lỗi), PR-6 #34 (Extend, tham số LM; 8.3 bỏ), PR-7 #35 (LoRA), PR-8 #37 (Extract/Lego/Complete).
+
+Phần còn lại: #38 (guard đỏ trên main, test chập chờn, lỗi consent), #39 (Format giữ lời khi LM đổi chữ), #40 (reaper dừng server đang khởi động; LoRA thật của ACE-Step chạy đúng). Chưa làm: chạy thật trên macOS và Linux; 8.3 chờ upstream.
 
 ### 8.7 Thứ tự PR
 
