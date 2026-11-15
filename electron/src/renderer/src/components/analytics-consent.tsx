@@ -60,7 +60,7 @@ export function AnalyticsConsent({
   const { t } = useTranslation();
   const client = useQueryClient();
   const [busy, setBusy] = useState(false);
-  // The server's reason (a 403 names the origin setting to change), or a generic one.
+  // null: no error; otherwise the server's reason (a 403 names the origin setting), or ''.
   const [failed, setFailed] = useState<string | null>(null);
   const pending = useRef(false);
   const query = useQuery({
@@ -92,7 +92,7 @@ export function AnalyticsConsent({
       }));
       onDone?.(enabled);
     } catch (error) {
-      setFailed(describeError(error) || t('common.error'));
+      setFailed(describeError(error));
     } finally {
       pending.current = false;
       setBusy(false);
@@ -116,7 +116,7 @@ export function AnalyticsConsent({
         onClick={() => {
           const url = 'https://github.com/debpalash/VoiceStudio#-faq';
           const bridge = getBridge();
-          if (bridge) void bridge.files.openExternal(url).catch(() => setFailed(t('common.error')));
+          if (bridge) void bridge.files.openExternal(url).catch(() => setFailed(''));
           else window.open(url, '_blank', 'noopener,noreferrer');
         }}
       >
@@ -131,10 +131,11 @@ export function AnalyticsConsent({
         </Button>
       </div>
       <Reveal>
-        {failed && (
-          <p role="alert" className="text-sm text-destructive">
-            {failed}
-          </p>
+        {failed !== null && (
+          <div role="alert" className="space-y-0.5 text-sm">
+            <p className="text-destructive">{t('common.error')}</p>
+            {failed && <p className="text-xs text-muted-foreground">{failed}</p>}
+          </div>
         )}
       </Reveal>
     </section>
