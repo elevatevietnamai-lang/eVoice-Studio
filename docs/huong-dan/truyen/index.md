@@ -1,87 +1,90 @@
 ---
 title: Truyện nhiều giọng
-description: Hướng dẫn tạo truyện nhiều giọng trên eVoice Studio: dán hoặc nhập văn bản, tự phân vai, gán giọng cho từng nhân vật và xuất file âm thanh.
+description: Hướng dẫn tạo truyện nhiều giọng trên eVoice Studio: nhập kịch bản, tự phân vai, gán giọng cho từng nhân vật, nghe thử từng dòng và xuất file âm thanh.
 slug: truyen
 order: 8
 group: stories
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-Trang **Truyện** giúp bạn biên tập kịch bản hoặc truyện dài thành sách nói nhiều track với giọng đọc riêng cho từng nhân vật. Bạn có thể dán văn bản hoặc nhập tệp có sẵn, tự động nhận diện lời thoại để phân vai, nghe thử từng dòng và xuất thành file âm thanh hoàn chỉnh ngay trên máy.
+Trang **Truyện** giúp bạn biên tập kịch bản hội thoại hoặc truyện dài thành sách nói nhiều track với giọng đọc riêng cho từng nhân vật. Toàn bộ quá trình phân tách lời thoại, tổng hợp âm thanh và ghép chương đều chạy cục bộ trên máy của bạn. Bạn có thể nghe thử từng dòng, điều chỉnh tốc độ hoặc sắc thái riêng rồi xuất ra file hoàn chỉnh hay tải từng bản âm thanh theo nhân vật.
 
 ## Cần chuẩn bị
 
-- Chuẩn bị ít nhất một hồ sơ giọng đã lưu trong ứng dụng (tạo từ tính năng **Nhân bản giọng** hoặc **Thiết kế giọng**).
-- Chuẩn bị nội dung truyện hoặc kịch bản dưới dạng văn bản thuần hoặc tệp `.txt`, `.md`, `.srt`, `.vtt`, `.epub`, `.pdf`.
-- Kiểm tra biểu tượng trạng thái ở góc dưới thanh bên trái hiện **✅ Mọi thứ đều ổn — không phát hiện vấn đề** và **Thiết bị cục bộ: Engine sẵn sàng**.
+- Ít nhất một hồ sơ giọng đã tạo trong **Nhân bản giọng** hoặc **Thiết kế giọng**.
+- Văn bản truyện hoặc kịch bản cần đọc (dán trực tiếp hoặc dùng file `.txt`, `.md`, `.srt`, `.vtt`, `.epub`, `.pdf`).
+- Engine tổng hợp giọng ở trạng thái sẵn sàng trên thiết bị cục bộ.
 
 ## Các bước
 
-### 1. Mở trang Truyện và nhập kịch bản
+### 1. Mở trang Truyện và nhập nội dung
 
-![Giao diện trang Truyện](shots/mo-trang.png)
+Bấm **Truyện** trên thanh điều hướng bên trái để mở không gian biên tập.
 
-- Bấm biểu tượng **Truyện** trên thanh điều hướng bên trái để mở trang biên tập.
-- Nhập tên tác phẩm vào ô **Tiêu đề** ở cột thiết lập bên trái (mặc định là **Truyện không tên**).
-- Chọn một giọng đọc mặc định trong danh sách **giọng nói** cho người dẫn chuyện hoặc các dòng chưa gán nhân vật riêng.
-- Bấm nút **Nhập** ở góc trên bên phải khung **Kịch bản** để tải tệp truyện (`.txt`, `.md`, `.srt`, `.vtt`, `.epub`, `.pdf`) từ máy tính.
-- Bấm **Tải mẫu** nếu bạn muốn nạp nhanh một kịch bản mẫu để làm quen, hoặc bấm **Thêm dòng đầu tiên** để tự gõ từng dòng thoại từ đầu.
+![Giao diện trang Truyện trong eVoice Studio](shots/mo-trang.png)
 
-### 2. Tự phân vai hoặc tách văn bản thành dòng
+Nhập tên cho tác phẩm vào ô **Tiêu đề** ở bảng bên trái. Tại vùng **Kịch bản**, thực hiện một trong các cách sau để đưa nội dung vào:
 
-- Bấm mở mục **Tự phân vai** phía trên khung **Kịch bản**.
-- Nhập hoặc dán đoạn văn bản dài vào ô văn bản (nếu bạn chưa dùng nút **Nhập** ở bước trước).
-- Chọn cách chia đoạn tại mục **Tách theo** gồm **Câu**, **Đoạn văn** hoặc **Chương**, rồi bấm **Tách thành dòng** để đưa từng đoạn vào danh sách dòng.
-- Bấm **Tự phân vai** nếu văn bản có lời thoại hoặc tên người nói để bộ phân tích cục bộ tự động tách dòng, nhận diện nhân vật và gán các hồ sơ giọng sẵn có.
+- Bấm **Nhập** để chọn file `.txt`, `.md`, `.srt`, `.vtt`, `.epub` hoặc `.pdf` từ máy tính.
+- Bấm **Tải mẫu** nếu bạn muốn thử ngay bằng kịch bản mẫu có sẵn, hoặc bấm **Thêm dòng đầu tiên** để tự gõ từng câu thoại.
+- Mở mục **Dán & tách**, dán đoạn văn dài vào ô văn bản, chọn kiểu **Tách theo** (**Đoạn văn**, **Câu** hoặc **Chương**), chỉnh **Ký tự tối đa mỗi đoạn** nếu tách theo câu, rồi bấm **Tách thành dòng**.
+
+### 2. Tự phân vai từ kịch bản
+
+Mở mục **Tự phân vai** phía trên vùng kịch bản khi bạn có sẵn văn bản hội thoại hoặc kịch bản phân vai.
+
+Dán văn bản hoặc dùng nội dung vừa đưa vào từ bước **Nhập**, sau đó chạy **Tự phân vai**. Bộ phân tích cục bộ trên máy sẽ tự tách các dòng thoại, nhận diện tên người nói, thêm vào **Dàn nhân vật** và gán các hồ sơ giọng hiện có cho nhân vật mới mà không cần kết nối mạng.
 
 ### 3. Gán giọng cho từng nhân vật
 
-- Bấm mở thẻ **Dàn nhân vật — gán giọng cho từng nhân vật** ở cột bên trái.
-- Bấm **Thêm nhân vật** và điền **Tên nhân vật** nếu bạn muốn tạo thêm vai mới ngoài danh sách đã tự phân vai.
-- Chọn giọng đọc tương ứng cho mỗi nhân vật trong **Dàn nhân vật** từ các hồ sơ giọng đã lưu trên máy.
-- Bấm **Xóa nhân vật** bên cạnh tên nhân vật nếu không còn dùng vai đó trong kịch bản.
+Chọn một hồ sơ trong mục **giọng nói** ở cột bên trái để làm giọng đọc mặc định cho toàn bộ truyện.
 
-### 4. Nghe thử và chỉnh sửa từng đoạn
+Mở thẻ **Dàn nhân vật — gán giọng cho từng nhân vật** ở cột bên trái để quản lý giọng theo vai:
 
-- Nhập hoặc sửa nội dung trực tiếp trên từng dòng trong khung **Kịch bản**.
-- Bấm **Chèn khoảng ngắt [pause 0.5s]** khi cần thêm khoảng nghỉ ngắn giữa câu, hoặc bấm **Đặt giọng giữa câu** để đổi giọng cho phần văn bản đang bôi đen.
-- Kéo thanh trượt **Tốc độ** ở cột bên trái để chỉnh tốc độ đọc chung cho toàn bộ truyện, hoặc bấm **Dùng cho mọi dòng** để áp dụng tốc độ chung cho cả các dòng đã chỉnh riêng.
-- Bấm **Chuyển lên** hoặc **Chuyển xuống** để sắp xếp lại thứ tự dòng, bấm **Thêm dòng** hoặc **Thêm chương** để chèn nội dung mới, hoặc bấm **Xóa dòng** để bỏ dòng không cần thiết.
-- Bấm **Xem trước dòng này** trên dòng bất kỳ để nghe thử giọng đọc và nhịp ngắt trước khi tổng hợp toàn bộ truyện.
+- Bấm **Thêm nhân vật**, nhập **Tên nhân vật** và chọn giọng tương ứng cho từng vai.
+- Chọn nhân vật hoặc giọng riêng trên từng dòng thoại trong vùng **Kịch bản** nếu muốn ghi đè giọng **Mặc định**.
+- Bôi đen một cụm từ trong dòng rồi bấm **Đặt giọng giữa câu** khi cần đổi giọng ngay trong cùng một câu, hoặc bấm **Khôi phục giọng của dòng** để quay về giọng ban đầu.
 
-### 5. Tạo truyện âm thanh
+### 4. Tinh chỉnh và nghe thử từng đoạn
 
-- Chọn ngôn ngữ đầu ra tại mục **Ngôn ngữ** ở cột bên trái.
-- Chọn định dạng đầu ra tại mục **Định dạng** là **M4B (chương)** hoặc **MP3**.
-- Bấm mở **Tùy chỉnh đọc** nếu cần điều chỉnh các thông số tổng hợp như **Số bước**, **CFG** hoặc **Nhiệt độ vị trí**.
-- Bấm nút **Tạo** ở cuối cột bên trái để bắt đầu tổng hợp âm thanh cho toàn bộ kịch bản.
-- Bấm **Dừng** nếu bạn muốn ngắt quá trình tạo giữa chừng; tiến độ các chương đã xong được lưu lại để bạn bấm **Tiếp tục** sau đó mà không phải tạo lại từ đầu.
+Chỉnh thanh trượt **Tốc độ** ở cột bên trái để đặt tốc độ đọc chung cho các dòng chưa đặt tốc độ riêng. Nếu nhiều dòng đang dùng tốc độ riêng và bạn muốn đồng bộ lại, bấm **Dùng cho mọi dòng**.
 
-### 6. Xuất file âm thanh
+Trên từng dòng thoại trong **Kịch bản**, bạn có thể:
 
-- Bấm **Phát** trên trình phát hiện ra ở cuối trang sau khi quá trình tạo hoàn tất để kiểm tra lại toàn bộ bản thu.
-- Bấm nút tải xuống ở khung kết quả để lưu file **M4B (chương)** hoặc **MP3** (kèm tệp mốc thời gian chương `.txt` nếu kịch bản có chia chương) về máy tính.
-- Bấm mở mục **Bản âm thanh theo nhân vật** ở cuối khung **Kịch bản** nếu bạn muốn kết xuất và tải riêng từng file WAV cho mỗi nhân vật.
+- Bấm **Chèn khoảng ngắt [pause 0.5s]** hoặc gõ trực tiếp cú pháp `[pause 0.5s]` vào văn bản để tạo khoảng lặng.
+- Mở **Sắc thái & tốc độ** của dòng để chỉnh tốc độ riêng hoặc chọn sắc thái như **Cười**, **Thở dài**, **Câu hỏi**, **Bất ngờ**, **Xác nhận**, **Hừm** khi engine đang dùng hỗ trợ biểu cảm.
+- Bấm **Chuyển lên**, **Chuyển xuống** để đổi thứ tự dòng, **Thêm dòng** hoặc **Thêm chương** để mở rộng cấu trúc truyện.
+- Bấm **Xem trước dòng này** để nghe thử ngay đoạn thoại đó trước khi tạo toàn bộ truyện.
 
-<!-- TODO: kiểm tra tên nút tải xuống trên giao diện tiếng Việt sau khi tạo xong -->
+### 5. Tạo truyện hoàn chỉnh
+
+Chọn **Ngôn ngữ** đầu ra và chọn **Định dạng** xuất là **M4B (chương)** hoặc **MP3** ở bảng bên trái. Bạn cũng có thể mở **Tùy chỉnh đọc** để chỉnh thông số tổng hợp nâng cao và mở **Bìa & chi tiết** để thêm ảnh bìa hoặc thông tin sách.
+
+Bấm **Tạo** ở cuối bảng bên trái để bắt đầu tổng hợp âm thanh. Trong lúc máy đang xử lý từng chương, bạn có thể bấm **Dừng** bất cứ lúc nào; nếu quá trình bị gián đoạn, bấm **Tiếp tục** trong mục khôi phục để chạy tiếp các chương còn lại từ bộ nhớ đệm mà không phải tạo lại từ đầu.
+
+### 6. Nghe lại và xuất file
+
+Nghe lại thành phẩm ngay trên trình phát âm thanh xuất hiện ở cuối trang sau khi tạo xong, rồi bấm nút tải xuống để lưu file `.m4b` hoặc `.mp3` về máy.
+
+Mở thêm mục **Bản âm thanh theo nhân vật** ở cuối vùng kịch bản nếu bạn muốn kết xuất và tải riêng từng file WAV cho mỗi nhân vật để hậu kỳ ngoài. Để lưu lại toàn bộ kịch bản và thiết lập cho lần làm việc sau, chuyển sang tab **Dự án** ở đầu bảng bên trái và bấm **Lưu**.
 
 ## Mẹo
 
-- Chuyển sang tab **Dự án** ở đầu cột bên trái và bấm **Lưu** để cất bản thảo cùng cấu hình nhân vật thành dự án riêng, tiện mở lại khi làm truyện dài nhiều kỳ.
-- Giữ định dạng tiêu đề chương bắt đầu bằng dấu `# ` trên một dòng riêng khi nhập văn bản để ứng dụng tự nhận diện mốc chương khi xuất **M4B (chương)**.
-- Dùng nút **Xóa kịch bản** ở góc trên bên phải khi muốn xóa nhanh toàn bộ các dòng và chương trong bản thảo mà vẫn giữ nguyên **Dàn nhân vật** đã thiết lập.
+- Dùng định dạng **M4B (chương)** khi truyện có nhiều chương để trình phát sách nói nhận diện được mục lục chương tự động; bạn cũng có thể tải kèm file mốc thời gian chương dạng `.txt` sau khi tạo xong.
+- Khi mọi dòng thoại trong kịch bản đều đã được gán giọng qua nhân vật hoặc giọng riêng của dòng, bạn có thể bấm **Tạo** ngay cả khi chưa chọn giọng mặc định.
+- Bấm **Xóa kịch bản** ở góc trên bên phải khi muốn làm trống toàn bộ các dòng và chương để viết tập mới mà vẫn giữ nguyên **Dàn nhân vật** đã thiết lập.
 
 ## Lỗi thường gặp
 
-- hiển thị thông báo **Chưa có hồ sơ giọng nào — nhân bản giọng hoặc thiết kế giọng trước.** ở mục **giọng nói**: máy chưa có giọng đọc nào được lưu. Bạn hãy mở trang **Nhân bản giọng** hoặc **Thiết kế giọng** để tạo ít nhất một hồ sơ giọng rồi quay lại trang **Truyện**.
-- bấm **Tự phân vai** nhưng hiện thông báo **Chưa có gì để tự phân vai — dán hoặc nhập truyện trước.**: vùng văn bản chờ xử lý đang trống. Bạn hãy dán nội dung truyện vào khung hoặc bấm **Nhập** để chọn tệp văn bản trước.
-- nút **Tạo** bị mờ và không bấm được: kiểm tra dòng thông báo ngay phía trên nút **Tạo** (ví dụ chưa có dòng thoại nào, có dòng chưa gán giọng khi chưa chọn giọng mặc định, hoặc hồ sơ giọng đã gán cho nhân vật bị xóa). Bạn hãy bổ sung dòng thoại hoặc chọn lại giọng hợp lệ trong **Dàn nhân vật**.
-- hiện thông báo **Không đọc được tệp này. Thử chọn tệp khác.** khi bấm **Nhập**: tệp tải lên bị hỏng hoặc sai cấu trúc. Bạn hãy kiểm tra lại tệp nguồn và thử nhập lại bằng định dạng `.txt` hoặc `.md`.
-- hiện thông báo **Không mã hóa được MP3 — đã tải về WAV thay thế.** hoặc **Xuất thất bại — kiểm tra xem máy chủ nền có đang chạy không.**: kiểm tra lại trạng thái engine ở góc dưới bên trái cửa sổ và bấm **Thử lại** khi engine đã sẵn sàng.
+- nút **Tạo** bị khóa và báo chưa có hồ sơ giọng: bạn thấy thông báo **Chưa có hồ sơ giọng nào — nhân bản giọng hoặc thiết kế giọng trước.** Hãy mở trang nhân bản hoặc thiết kế giọng để lưu ít nhất một giọng trước khi quay lại **Truyện**.
+- không dùng được tính năng tự phân vai: ứng dụng báo **Chưa có gì để tự phân vai — dán hoặc nhập truyện trước.** Hãy dán nội dung hoặc bấm **Nhập** để tải văn bản vào trước khi chạy **Tự phân vai**.
+- không tạo được âm thanh do giọng đã bị xóa: nếu một nhân vật hoặc dòng thoại đang gắn với hồ sơ giọng đã bị xóa khỏi máy, nút **Tạo** sẽ bị chặn để tránh đổi giọng ngoài ý muốn. Hãy mở **Dàn nhân vật — gán giọng cho từng nhân vật** hoặc dòng thoại đó để chọn lại giọng khác hoặc chuyển về **Mặc định**.
+- không đọc được file khi nhập: khi gặp thông báo **Không đọc được tệp này. Thử chọn tệp khác.**, hãy kiểm tra lại định dạng file (`.txt`, `.md`, `.srt`, `.vtt`, `.epub`, `.pdf`) và đảm bảo file không bị lỗi cấu trúc.
+- tải về file WAV thay vì MP3 hoặc xuất thất bại: nếu hiện thông báo **Không mã hóa được MP3 — đã tải về WAV thay thế.** hoặc **Xuất thất bại — kiểm tra xem máy chủ nền có đang chạy không.**, hãy kiểm tra trạng thái engine ở thanh dưới cùng và thử xuất lại.
 
 ## Bài liên quan
 

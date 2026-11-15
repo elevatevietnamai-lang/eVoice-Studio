@@ -1,76 +1,75 @@
 ---
 title: Studio âm nhạc
-description: Hướng dẫn cài engine ACE-Step, viết mô tả và lời bài hát để tạo nhạc ngay trên máy với eVoice Studio.
+description: Tạo nhạc có lời và nhạc không lời ngay trên máy bằng engine ACE-Step trong eVoice Studio.
 slug: studio-am-nhac
 order: 10
 group: stories
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-**Studio âm nhạc** tạo bản nhạc không lời hoặc có lời hát bằng engine ACE-Step 1.5 ngay trên máy của bạn. Bạn cũng có thể phối lại phong cách của một bài sẵn có bằng chế độ **Cover** hoặc sửa một đoạn nhạc bất kỳ bằng chế độ **Vẽ lại**. Mọi khâu tạo nhạc diễn ra cục bộ, không tải dữ liệu âm thanh của bạn lên mạng.
+**Studio âm nhạc** giúp bạn sáng tác nhạc có lời hoặc nhạc không lời ngay trên máy tính bằng engine ACE-Step. Ngoài việc tạo bài mới từ mô tả và lời hát, bạn còn có thể tạo bản cover, vẽ lại một đoạn, kéo dài thời lượng hoặc tách và thêm nhạc cụ cho bản nhạc sẵn có. Toàn bộ quá trình xử lý diễn ra cục bộ trên máy và lưu trực tiếp vào thư viện cá nhân.
 
 ## Cần chuẩn bị
 
-- Khoảng 15 GB dung lượng ổ cứng trống để tải mã nguồn engine ACE-Step, môi trường Python và model tạo nhạc lần đầu.
-- Kết nối mạng trong lần đầu bấm **Cài engine nhạc** (hoặc khi bạn chủ động tải thêm model mở rộng); sau khi cài xong, tính năng chạy hoàn toàn ngoại tuyến.
-- Nếu muốn bật **Thinking (chất lượng cao)**, máy cần GPU có hơn 6 GB bộ nhớ (từ 6 GB đến 12 GB dùng model 0.6B cần tải thêm khoảng 1,4 GB; trên 12 GB dùng model 1.7B đi kèm khi cài engine).
+- Dung lượng ổ cứng trống tối thiểu khoảng 15 GB để cài đặt engine ACE-Step và model mặc định trong lần đầu sử dụng (cần thêm khoảng 1,4 GB đến 4,8 GB nếu tải thêm model ngôn ngữ hoặc các model mở rộng).
+- Kết nối mạng trong lần đầu tiên bấm tải engine hoặc khi tải thêm model phụ trợ; sau khi tải xong, tính năng chạy hoàn toàn ngoại tuyến.
+- GPU có trên 6 GB bộ nhớ nếu bạn muốn bật chế độ **Thinking (chất lượng cao)**.
+- File âm thanh định dạng WAV, MP3, FLAC, OGG hoặc M4A (tối đa 100 MB và 10 phút) nếu bạn muốn tải nhạc từ ngoài vào để làm **Bài gốc** hoặc **Âm thanh tham chiếu**.
 
 ## Các bước
 
-### 1. Cài engine ACE-Step trong lần đầu mở trang
-
-Mở mục **Studio âm nhạc** từ thanh điều hướng hoặc hộp **Tìm kiếm…**.
+### 1. Mở Studio âm nhạc và cài engine ACE-Step
 
 ![Giao diện trang Studio âm nhạc khi mở lần đầu](shots/mo-trang.png)
 
-Bấm nút **Cài engine nhạc** trong khung **Engine nhạc** ở cột bên trái để tải engine và model về máy. Chờ thanh tiến trình chạy xong cho đến khi ứng dụng báo **Đã cài engine nhạc.**; nếu mạng bị ngắt giữa chừng, bạn chỉ cần bấm cài lại để tiếp tục từ phần đã tải.
+1. Chọn **Truyện** ở thanh điều hướng bên trái hoặc mở từ tìm kiếm nhanh để vào **Studio âm nhạc**.
+2. Bấm **Cài engine nhạc** trong khung **Engine nhạc** nếu bạn mở tính năng này lần đầu tiên.
+3. Chờ ứng dụng tải mã nguồn, môi trường Python và model về máy (tổng dung lượng khoảng 15 GB). Nếu kết nối mạng bị ngắt giữa chừng, các phần đã tải vẫn được giữ lại để bạn bấm cài tiếp mà không phải tải lại từ đầu.
 
-### 2. Viết mô tả và lời bài hát
+### 2. Chọn chế độ và viết mô tả, lời bài hát
 
-Chọn **Bài mới** ở mục **Chế độ** để sáng tác bài nhạc mới từ đầu.
+1. Chọn **Bài mới** tại mục **Chế độ** để sáng tác từ đầu. Ngoài ra, bạn có thể chọn **Cover**, **Vẽ lại**, **Kéo dài**, hoặc các chế độ xử lý nhạc cụ gồm **Tách**, **Thêm lớp**, **Hoàn thiện** (ba chế độ cuối cần chọn model Base trong phần **Nâng cao**).
+2. Nhập phong cách, nhạc cụ và nhịp điệu mong muốn vào ô **Mô tả bản nhạc**, hoặc bấm chọn nhanh các mẫu gợi ý như **calm lo-fi**, **upbeat pop**, **cinematic ambient**, **energetic electronic**, **acoustic guitar**.
+3. Bấm **Thẻ phong cách** nếu muốn mở danh sách từ khóa gợi ý theo **Thể loại**, **Nhạc cụ** và **Cảm xúc** để ghép thêm vào ô mô tả.
+4. Giữ công tắc **Không lời** bật nếu bạn chỉ muốn tạo nhạc nền. Nếu muốn tạo bài có giọng hát, hãy tắt **Không lời**, nhập nội dung vào ô **Lời bài hát** (có thể bấm các thẻ cấu trúc như `[verse]`, `[chorus]` để định hình bố cục đoạn hát) và chọn **Ngôn ngữ giọng hát** phù hợp.
+5. Kéo thanh trượt **Độ dài** để chọn thời lượng bản nhạc (từ 10 đến 240 giây) và nhập **Nhịp độ (BPM, không bắt buộc)** hoặc để trống cho máy tự chọn **Tự động**.
 
-Nhập phong cách, nhạc cụ và nhịp điệu mong muốn vào ô **Mô tả bản nhạc**, hoặc bấm chọn nhanh các mẫu gợi ý như **calm lo-fi**, **upbeat pop**, **cinematic ambient**, **energetic electronic**, **acoustic guitar**. Bấm mở **Thẻ phong cách** nếu bạn muốn chèn thêm từ khóa theo **Thể loại**, **Nhạc cụ** và **Cảm xúc**.
+### 3. Tinh chỉnh nâng cao và tạo nhạc
 
-Giữ công tắc **Không lời** bật nếu bạn chỉ cần nhạc nền. Tắt công tắc **Không lời** khi muốn tạo bài hát có giọng ca, sau đó nhập lời vào ô **Lời bài hát**, bấm các nút gắn nhãn cấu trúc bài như `[verse]`, `[chorus]`, `[bridge]` để định hình bố cục và chọn đúng **Ngôn ngữ giọng hát**.
+1. Mở mục **Nâng cao** nếu bạn muốn đổi **Mô hình** (mặc định là Turbo 8 bước, hoặc tải thêm SFT và Base), chọn **Giọng (key)**, **Nhịp**, nhập **Seed ngẫu nhiên mới**, chọn **Số bản** muốn tạo cùng lúc (từ 1 đến 4 bản), chỉnh **Số bước**, **Cách lấy mẫu** (**Ổn định (ODE)** hoặc **Biến hoá (SDE)**), chọn **Định dạng file** (WAV, FLAC, MP3), chọn **Âm thanh tham chiếu** hoặc gắn thêm file LoRA.
+2. Bật **Thinking (chất lượng cao)** nếu máy có GPU trên 6 GB bộ nhớ để mô hình ngôn ngữ lên bố cục bài trước khi dựng nhạc và tự điền BPM, giọng hoặc nhịp còn để trống. Khi mô hình ngôn ngữ đã sẵn sàng, bạn cũng có thể bấm **Trau chuốt bằng mô hình ngôn ngữ** rồi bấm **Áp dụng** để nhận gợi ý chỉnh sửa mô tả và thông số.
+3. Bấm **Tạo nhạc** và chờ quá trình xử lý hoàn tất. Ở bài đầu tiên, hệ thống có thể mất vài phút để nạp model vào bộ nhớ.
 
-Kéo thanh trượt **Độ dài** để chọn thời lượng từ 10 đến 240 giây và nhập số vào ô **Nhịp độ (BPM, không bắt buộc)** (hoặc để trống ở mức **Tự động**). Nếu cần chỉnh **Mô hình**, **Giọng (key)**, **Nhịp**, **Số bản** (1–4 bản cùng lúc), **Số bước**, **Cách lấy mẫu**, **Định dạng file** (WAV, FLAC, MP3) hoặc chọn **Âm thanh tham chiếu**, hãy bấm mở khung **Nâng cao**.
+### 4. Nghe thử, chỉnh sửa tiếp và tải về
 
-### 3. Tạo bản nhạc
-
-Bật **Thinking (chất lượng cao)** nếu GPU của bạn hỗ trợ và bạn muốn mô hình ngôn ngữ lên bố cục trước khi dựng âm thanh, hoặc bấm **Trau chuốt bằng mô hình ngôn ngữ** rồi chọn **Áp dụng** để nhận gợi ý chỉnh mô tả và thông số.
-
-Bấm **Tạo nhạc** ở cuối cột bên trái. Trong lúc nút chuyển sang trạng thái **Đang tạo…**, bài đầu tiên có thể mất vài phút để nạp model vào bộ nhớ. Khi hoàn tất, ứng dụng thông báo **Đã lưu bài nhạc vào thư viện.**
-
-### 4. Nghe thử, tải về và quản lý trong thư viện
-
-Chọn bài vừa tạo trong danh sách **Thư viện nhạc** ở khung bên phải để mở trình phát sóng âm và bấm **Phát** hoặc **Tạm dừng** để nghe thử.
-
-Bấm biểu tượng **Tải bài nhạc** trên dòng bài nhạc để lưu file âm thanh (WAV, FLAC hoặc MP3) về máy, hoặc bấm **Xóa bài nhạc** khi không cần giữ lại.
-
-Bấm **Dùng lại thiết lập** trên khung bài đang chọn nếu bạn muốn nạp lại toàn bộ thông số của bài đó vào biểu mẫu bên trái để tinh chỉnh tiếp. Bạn cũng có thể chuyển sang chế độ **Cover** hoặc **Vẽ lại** để biến tấu dựa trên **Bài gốc** lấy bằng nút **Chọn từ thư viện** hoặc **Tải lên** từ máy.
+1. Bấm vào bản nhạc vừa xuất hiện trong danh sách **Thư viện nhạc** ở khung bên phải để phát và xem dạng sóng âm thanh.
+2. Sử dụng các nút thao tác nhanh trên bản nhạc đang chọn gồm **Dùng lại thiết lập** để đưa toàn bộ thông số của bài đó quay lại biểu mẫu, hoặc chọn **Cover**, **Vẽ lại**, **Kéo dài** để lấy bài nhạc này làm **Bài gốc** cho lần biến tấu tiếp theo.
+3. Bấm nút **Tải bài nhạc** (biểu tượng tải xuống) cạnh tên bài trong danh sách **Thư viện nhạc** để lưu file âm thanh về máy, hoặc bấm **Xóa bài nhạc** (biểu tượng thùng rác) nếu không muốn giữ lại.
 
 ## Mẹo
 
-- Bấm nút **Giải phóng bộ nhớ GPU** ở cuối cột trái sau khi tạo nhạc xong nếu bạn sắp chuyển sang lồng tiếng hoặc phiên âm trên máy có ít bộ nhớ GPU.
-- Khi tạo bài có lời hát, hãy chọn **Ngôn ngữ giọng hát** khớp với ngôn ngữ bạn viết trong ô **Lời bài hát** để giọng hát phát âm rõ chữ.
-- Trong mục **Nâng cao**, giữ **Cách lấy mẫu** ở mức **Ổn định (ODE)** khi bạn muốn cùng một seed cho ra kết quả nhất quán, hoặc chọn **Biến hoá (SDE)** và tăng **Số bản** lên 2–4 để có nhiều phương án lựa chọn trong một lần chạy.
-- Ở chế độ **Cover**, giảm thanh trượt **Giữ giống bản gốc** xuống thấp nếu bạn muốn đổi phong cách mạnh hơn so với bài gốc. Ở chế độ **Vẽ lại**, khoanh vùng **Đoạn cần tạo lại** vào đúng phần nhạc bị phô để sửa riêng đoạn đó mà vẫn giữ nguyên phần còn lại.
+- Kết hợp từ khóa bằng tiếng Anh từ mục **Thẻ phong cách** vào ô **Mô tả bản nhạc** giúp model ACE-Step nhận diện thể loại, nhạc cụ và sắc thái âm nhạc chính xác hơn.
+- Khi viết **Lời bài hát**, hãy đặt các nhãn phân đoạn như `[intro]`, `[verse]`, `[chorus]`, `[bridge]`, `[outro]` trên từng dòng riêng biệt để định hướng rõ cấu trúc bài hát.
+- Trong mục **Nâng cao**, chọn **Số bản** từ 2 đến 4 khi bạn muốn thử nhiều biến thể cùng lúc cho một ý tưởng; ứng dụng sẽ lưu mỗi biến thể thành một bài riêng trong **Thư viện nhạc** để bạn so sánh.
+- Sau khi tạo nhạc xong, nếu chưa cần tạo bài tiếp theo và muốn dành VRAM cho việc lồng tiếng hoặc phiên âm, hãy bấm **Giải phóng bộ nhớ GPU** ở cuối cột điều khiển bên trái (nếu không bấm, engine nhạc cũng sẽ tự dừng sau 5 phút nghỉ).
 
 ## Lỗi thường gặp
 
-- Không bấm được nút **Tạo nhạc**: Kiểm tra xem bạn đã cài xong **Engine nhạc** chưa, ô **Mô tả bản nhạc** đã có nội dung chưa, và nếu đang ở chế độ **Cover** hoặc **Vẽ lại** thì đã chọn **Bài gốc** chưa.
-- Báo lỗi GPU đang bận khi bấm **Tạo nhạc**: Engine tạo nhạc ACE-Step không dùng chung GPU cùng lúc với tác vụ lồng tiếng hoặc chép lời. Hãy đợi tác vụ lồng tiếng/phiên âm chạy xong rồi tạo nhạc lại.
-- Không bật được công tắc **Thinking (chất lượng cao)**: Tính năng này báo **Thinking cần GPU có hơn 6 GB bộ nhớ.** trên các máy chỉ chạy CPU hoặc có GPU từ 6 GB trở xuống. Với GPU từ 6–12 GB, hãy bấm nút tải mô hình ngôn ngữ 0.6B trước khi bật.
-- Tải engine bị dừng sau thời gian dài mạng chập chờn: Nếu quá trình tải không nhận thêm dữ liệu mới trong 20 phút, ứng dụng sẽ dừng bước cài và giữ nguyên các file đã tải về; bạn chỉ cần bấm **Cài engine nhạc** lại để tiếp tục.
+- các nút chế độ **Tách**, **Thêm lớp** và **Hoàn thiện** bị mờ không bấm được: các chế độ xử lý từng lớp nhạc cụ này chỉ hoạt động trên model Base. Bạn hãy mở mục **Nâng cao**, chọn Base tại phần **Mô hình** và tải model này về máy trước khi sử dụng.
+- công tắc **Thinking (chất lượng cao)** không bật được và báo cần GPU có hơn 6 GB bộ nhớ: tính năng này yêu cầu GPU rời có trên 6 GB VRAM. Với GPU từ 6 GB đến 12 GB, bạn cần bấm tải thêm mô hình ngôn ngữ 0.6B (khoảng 1,4 GB) ngay bên dưới công tắc trước khi bật.
+- báo lỗi GPU đang bận khi bấm **Tạo nhạc**: engine nhạc ACE-Step không dùng chung GPU cùng lúc với các tác vụ lồng tiếng, phiên âm hoặc xóa phụ đề cứng. Bạn hãy chờ tác vụ đang chạy hoàn tất rồi bấm **Tạo nhạc** lại.
+- giọng hát phát âm sai hoặc không rõ lời: kiểm tra lại mục **Ngôn ngữ giọng hát** dưới ô **Lời bài hát** và chọn đúng ngôn ngữ bạn đã dùng để viết lời.
+- quá trình cài đặt **Engine nhạc** bị dừng giữa chừng do mạng chậm: ứng dụng tự động giữ lại các file đã tải trên ổ cứng, bạn chỉ cần kiểm tra lại kết nối mạng và bấm **Cài engine nhạc** để tiếp tục từ phần đang dở.
 
 ## Bài liên quan
 
-- [Bắt đầu với eVoice Studio](../bat-dau/)
+- [Lồng tiếng video](../long-tieng-video/)
 - [Truyện nhiều giọng](../truyen/)
 - [Sách nói](../sach-noi/)
-- [Lồng tiếng video](../long-tieng-video/)
+- [Video quảng cáo (Promo)](../video-quang-cao/)
+- [Trình dựng video](../trinh-dung-video/)
 - [Khắc phục sự cố](../khac-phuc-su-co/)

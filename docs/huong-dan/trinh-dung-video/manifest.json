@@ -16,7 +16,7 @@
       "file": "shots/mo-trang.png",
       "width": 1440,
       "height": 900,
-      "sha256": "9995a166fdaf49c66eef6be1b0e5e5fb6f8878a823af0c750a0e1d7211b21e0c",
+      "sha256": "127a14937cbb5a7f5df7ddf9485f1b515e961567b7c5fd985e430e25ca961f94",
       "highlight": null,
       "labels": {
         "title": "eVoice Studio",
@@ -32,6 +32,7 @@
           "Thêm",
           "Tốc độ / chất lượng",
           "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
           "Nhập",
           "Thêm chữ",
           "Tiêu đề hoạt hình",
@@ -63,8 +64,7 @@
           "Xuất video",
           "Tắt tiếng track",
           "Ẩn track",
-          "✅ Mọi thứ đều ổn — không phát hiện vấn đề",
-          "Menu",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
           "Đóng",
           "Hỏi eVoice Studio Agent"
         ],

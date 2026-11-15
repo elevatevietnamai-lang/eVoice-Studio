@@ -1,37 +1,23 @@
 ---
 title: Khắc phục sự cố
-description: Đọc nhật ký, kiểm tra hệ thống, nhờ trợ lý cục bộ sửa lỗi và báo lỗi từ eVoice Studio.
+description: Hướng dẫn đọc nhật ký, chạy kiểm tra hệ thống, dùng trợ lý sửa lỗi và gửi báo lỗi trên eVoice Studio.
 slug: khac-phuc-su-co
 order: 17
 group: library
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-Trang **Nhật ký** và **Kiểm tra hệ thống** trong **Cài đặt** giúp bạn xem
----
-title: Khắc phục sự cố
-description: Đọc nhật ký, kiểm tra hệ thống, dùng trợ lý sửa lỗi cục bộ và báo lỗi qua GitHub cho eVoice Studio.
-slug: khac-phuc-su-co
-order: 17
-group: library
-updated: 2026-11-14
-app_version: 0.5.7-beta.3
-status: draft
----
-
-## Tính năng này làm gì
-
-Trang **Nhật ký** và **Kiểm tra hệ thống** giúp bạn theo dõi hoạt động của backend và giao diện ngay trên máy tính. Khi gặp sự cố tạo giọng, nhận diện giọng nói hoặc khởi động, bạn có thể lọc dòng lỗi, dùng **Hỏi eVoice Studio Agent** để chẩn đoán hoặc gửi báo cáo lỗi qua trình duyệt. Toàn bộ nhật ký được lưu cục bộ và tự động ẩn đường dẫn cá nhân cùng khóa xác thực trước khi xuất.
+Bộ công cụ khắc phục sự cố giúp bạn xem nhật ký hoạt động, kiểm tra trạng thái phần cứng cùng các engine trên máy và tự xử lý lỗi phát sinh. Mọi thông tin chẩn đoán đều được thu thập cục bộ trên máy của bạn và tự động ẩn đường dẫn cá nhân hay khóa bảo mật trước khi bạn sao chép hoặc gửi báo cáo.
 
 ## Cần chuẩn bị
 
-- Ứng dụng eVoice Studio đang mở trên máy của bạn.
-- Nếu muốn dùng tính năng tự động chẩn đoán và sửa lỗi bằng trợ lý dòng lệnh, máy cần cài sẵn một trong các công cụ: Codex, Claude Code, OpenCode hoặc Pi.
-- Nếu muốn sửa trực tiếp mã nguồn ứng dụng, bạn cần một thư mục mã nguồn VoiceStudio có quyền ghi trên ổ đĩa.
+- Mở sẵn eVoice Studio trên máy tính.
+- Nếu muốn dùng trợ lý sửa lỗi cục bộ cho mã nguồn, bạn cần cài sẵn một trong các công cụ dòng lệnh được hỗ trợ (Codex, Claude Code, OpenCode hoặc Pi) và mở thư mục mã nguồn có quyền ghi. Các thao tác kiểm tra hoặc khôi phục cài đặt ứng dụng thông thường không cần mã nguồn.
+- Chỉ cần kết nối mạng và trình duyệt khi bạn muốn tải lại model bị thiếu hoặc gửi báo cáo lỗi lên GitHub.
 
 ## Các bước
 
@@ -39,50 +25,52 @@ Trang **Nhật ký** và **Kiểm tra hệ thống** giúp bạn theo dõi hoạ
 
 ![Màn hình Nhật ký trong Cài đặt](shots/nhat-ky.png)
 
-1. Mở **Cài đặt** ở thanh điều hướng bên trái, sau đó chọn **Nhật ký**.
-2. Chọn **Backend** để xem nhật ký xử lý của máy chủ cục bộ, hoặc chọn **Giao diện** để xem nhật ký bảng điều khiển giao diện.
-3. Nhập từ khóa vào ô **Tìm kiếm…** để lọc nhanh các dòng đang hiển thị. Các dòng lỗi hiển thị màu đỏ, cảnh báo màu vàng, và trạng thái sẵn sàng màu xanh lá.
-4. Bấm **Làm mới** nếu muốn cập nhật ngay lập tức (màn hình cũng tự làm mới mỗi ba giây khi bạn đang cuộn ở cuối trang).
-5. Bấm **Sao chép nhật ký hiển thị** để chép các dòng đang lọc vào bộ nhớ tạm, hoặc bấm **Xóa** (biểu tượng thùng rác) và xác nhận để làm trống nhật ký hiện tại.
+1. Bấm vào **Cài đặt** ở thanh điều hướng bên trái, sau đó chọn **Nhật ký**.
+2. Chọn **Backend** để xem nhật ký xử lý của hệ thống hoặc chọn **Giao diện** để xem nhật ký bảng điều khiển giao diện.
+3. Nhập từ khóa vào ô **Tìm kiếm…** để lọc nhanh các dòng nhật ký đang hiển thị. Các dòng lỗi hiển thị màu đỏ, cảnh báo màu vàng và sự kiện sẵn sàng màu xanh lá.
+4. Bấm **Làm mới** để cập nhật ngay ngoài chu kỳ tự làm mới mỗi ba giây, hoặc cuộn lên trên nếu bạn muốn tạm dừng cuộn tự động.
+5. Bấm **Sao chép nhật ký hiển thị** để chép các dòng đang lọc vào bộ nhớ tạm, hoặc bấm **Xóa** và xác nhận để dọn trống nhật ký hiện tại.
 
 ### 2. Chạy chẩn đoán
 
 ![Màn hình Kiểm tra hệ thống trong Cài đặt](shots/chan-doan.png)
 
-1. Từ menu **Cài đặt**, bấm vào **Kiểm tra hệ thống**.
-2. Xem mục **Giới thiệu** để kiểm tra thông tin **Ứng dụng**, **Phiên bản**, **Nền tảng**, **Thiết bị tính toán** (GPU hoặc CPU), **RAM** và phiên bản **Python**.
-3. Kiểm tra trạng thái hoạt động của các nhóm mô hình gồm **TTS**, **ASR** và **Trình dịch**. Khi mới mở trang, các mục này có thể hiện **Đang tải…** trong vài giây.
-4. Đối chiếu đường dẫn lưu trữ tại dòng **Dữ liệu giọng nói & dự án** và **Kết quả** để biết thư mục đang chứa dữ liệu trên ổ đĩa và kiểm tra dung lượng trống khi cần.
+1. Chọn **Kiểm tra hệ thống** trong trình đơn **Cài đặt** để mở bảng thông tin và trạng thái máy.
+2. Xem mục **Giới thiệu** để đối chiếu **Ứng dụng**, **Phiên bản** và **Nền tảng** hiện tại.
+3. Kiểm tra từng hạng mục phần cứng và môi trường gồm **Thiết bị tính toán**, **RAM** và **Python** để biết máy đang nhận GPU hay CPU.
+4. Đối chiếu trạng thái sẵn sàng của các thành phần xử lý gồm **TTS**, **ASR**, **Trình dịch**, **Dữ liệu giọng nói & dự án** và dòng tổng hợp tại **Kết quả**.
+5. Cuộn xuống mục **Ghi công mô hình** nếu bạn cần xem thông tin ghi công và điều khoản riêng của các model đang được hỗ trợ.
 
 ### 3. Dùng trợ lý sửa lỗi
 
-1. Tại thanh công cụ của trang **Nhật ký** (hoặc nút nổi bên cạnh phải màn hình), bấm **Hỏi eVoice Studio Agent**. Khung trò chuyện sẽ mở ra và tự động đính kèm các dòng lỗi hoặc cảnh báo đang hiển thị.
-2. Chọn công cụ trợ lý đã cài trên máy của bạn và nhập mô tả vào ô **Đã xảy ra lỗi gì? Mô tả các bước thực hiện, lỗi hiển thị hoặc kết quả mong đợi.**.
-3. Chọn chế độ chỉ đọc để kiểm tra trạng thái ứng dụng qua cầu nối API cục bộ, hoặc bật chế độ tự động thực hiện để trợ lý chọn engine, cài đặt model còn thiếu và khởi động lại backend khi cần.
-4. Khi gặp thông báo thiếu thành phần trên màn hình làm việc, bấm **Sửa lỗi** để ứng dụng tự chọn engine tương thích hoặc cài đặt model phù hợp với phần cứng của bạn.
-5. Nếu bạn đang chạy từ bản mã nguồn có quyền ghi và muốn trợ lý sửa lỗi code, hãy đợi thông báo **Đã sửa xong. Xem lại thay đổi và tạo PR khi các bài kiểm tra liên quan đạt yêu cầu.** rồi kiểm tra lại các thay đổi trước khi áp dụng.
+1. Bấm **Hỏi eVoice Studio Agent** trên thanh công cụ của màn hình **Nhật ký** (hoặc nút nổi ở cạnh phải màn hình) để mở khung trợ lý mà không che khuất nội dung đang xem. Khi mở từ **Nhật ký**, các dòng lỗi và cảnh báo đang hiển thị sẽ được nạp sẵn làm ngữ cảnh.
+2. Chọn công cụ trợ lý đã cài trên máy và nhập mô tả vào ô có gợi ý **Đã xảy ra lỗi gì? Mô tả các bước thực hiện, lỗi hiển thị hoặc kết quả mong đợi.**
+3. Chọn chế độ **Chẩn đoán** nếu bạn chỉ muốn trợ lý kiểm tra trạng thái qua cầu nối API chỉ đọc, hoặc bấm **Sửa lỗi** khi gặp thông báo thiếu engine hay model để ứng dụng tự chọn engine tương thích, tải model cần thiết và kích hoạt lại.
+4. Bấm **Dừng** bất cứ lúc nào nếu bạn muốn hủy quá trình chuẩn bị hoặc dừng tiến trình trợ lý đang chạy.
 
 ### 4. Báo lỗi qua GitHub bằng URL điền sẵn
 
-1. Khi xuất hiện hộp thoại lỗi hoặc thông báo sự cố backend, bấm **Báo lỗi** (hoặc **Báo lỗi (sao chép thông tin chẩn đoán)** trên bảng nhật ký).
-2. Ứng dụng sẽ tự động loại bỏ tên thư mục người dùng cùng các chuỗi giống token xác thực, sau đó mở trình duyệt web của bạn tới trang tạo issue trên GitHub với nội dung chẩn đoán được điền sẵn hoặc thông báo **Đã sao chép báo cáo chẩn đoán — dán vào GitHub issue.**.
-3. Xem lại nội dung trên trình duyệt của bạn, bổ sung các bước tái hiện lỗi và bấm gửi trực tiếp từ trình duyệt. Ứng dụng không tự gửi dữ liệu ngầm nếu bạn không bấm gửi trên GitHub.
+1. Bấm **Báo lỗi** trên thông báo sự cố hoặc chọn **Báo lỗi (sao chép thông tin chẩn đoán)** trong bảng nhật ký khi bạn không thể tự khắc phục lỗi.
+2. Kiểm tra thông báo **Đã sao chép báo cáo chẩn đoán — dán vào GitHub issue.** hoặc cửa sổ trình duyệt mở ra với URL GitHub đã điền sẵn thông tin.
+3. Xem lại nội dung báo cáo trên trình duyệt của bạn. Ứng dụng đã tự lược bỏ đường dẫn thư mục cá nhân và các chuỗi giống khóa truy cập trước khi tạo nội dung.
+4. Bấm gửi issue trực tiếp từ trình duyệt của bạn để hoàn tất báo cáo.
 
 ## Mẹo
 
-- Khi bạn cuộn lên để đọc các dòng cũ trong **Nhật ký**, tính năng tự cuộn xuống cuối sẽ tạm dừng để không làm trôi mất dòng bạn đang đọc; cuộn xuống đáy để bật lại.
-- Trợ lý trong **Hỏi eVoice Studio Agent** chỉ chạy khi bạn bấm gửi yêu cầu; việc mở khung trò chuyện không tự động gọi bất kỳ kết nối mạng hay tiến trình nào.
-- Khi cần dừng một tiến trình sửa lỗi hoặc cài đặt đang chạy trong khung trợ lý, bạn có thể bấm **Dừng** bất kỳ lúc nào.
+- Khi chi tiết lỗi tổng hợp giọng nói xuất hiện, bạn có thể bấm trực tiếp vào liên kết trong thông báo để mở thẳng đến trang **Nhật ký**.
+- Khi một tác vụ trên GPU chạy lâu khiến backend bận, chấm trạng thái chỉ chuyển sang màu vàng và giữ nguyên không gian làm việc; bạn chỉ cần đợi tác vụ hoàn tất thay vì khởi động lại ứng dụng.
+- Nếu giao diện gặp sự cố hiển thị tạm thời, bạn có thể dùng tùy chọn **Tải lại giao diện** để nạp lại mà không làm gián đoạn backend.
 
 ## Lỗi thường gặp
 
-- màn hình hiện **Nhật ký hệ thống trống. Hoạt động sẽ hiện tại đây khi backend ghi lại.** hoặc **Chưa có nhật ký bảng điều khiển giao diện.**: hệ thống vừa khởi động hoặc vừa được xóa nhật ký; hãy chạy thử một tác vụ tạo giọng hoặc bấm **Làm mới** sau vài giây.
-- tác vụ tạo âm thanh hoặc phiên âm chạy quá lâu và báo không kết nối được backend: một tác vụ nặng trên GPU hoặc CPU đang chiếm hết bộ nhớ (VRAM hoặc RAM) khiến hàng đợi bị nghẽn; hãy đợi tác vụ hiện tại kết thúc, đóng bớt ứng dụng nặng, hoặc chọn model nhỏ hơn (như faster-whisper bản medium/small) rồi bấm **Thử lại**.
-- không tải được model có điều kiện cấp phép trên Hugging Face (lỗi 401 hoặc báo gated repo): mở trang của model đó trên Hugging Face bằng trình duyệt để chấp nhận điều khoản sử dụng, lưu token đọc vào mục **Xác thực** trong **Cài đặt**, sau đó thử tải lại.
-- thiếu công cụ xử lý âm thanh hoặc nhập video thất bại: mở **Cài đặt**, chọn **Công cụ âm thanh** để kiểm tra đường dẫn FFmpeg hoặc cập nhật yt-dlp khi có nhu cầu sử dụng.
-- hệ thống báo lỗi thiếu tệp thư viện Python dù đã cài đặt trước đó: phần mềm diệt virus hoặc dịch vụ đồng bộ đám mây (như OneDrive) có thể đã khóa hoặc cách ly tệp trong môi trường Python; hãy đặt thư mục môi trường ở ổ đĩa cục bộ thông thường và thêm vào danh sách loại trừ của trình diệt virus.
-- khung trợ lý hiện **Chưa cài đặt** và **Cài đặt Codex, Claude Code, OpenCode hoặc Pi để sửa lỗi cục bộ.**: máy của bạn chưa có công cụ dòng lệnh tương ứng; hãy cài đặt một trong các công cụ trên nếu muốn dùng trợ lý, hoặc dùng **Sao chép nhật ký hiển thị** để tự kiểm tra.
-- khung trợ lý hiện **Mở bản mã nguồn VoiceStudio có quyền ghi để trợ lý có thể sửa lỗi.**: tác vụ sửa mã nguồn đòi hỏi thư mục repo có quyền ghi; nếu bạn chỉ dùng bản cài đặt đóng gói thông thường, hãy dùng chế độ thao tác ứng dụng để cấu hình lại engine và model mà không cần mã nguồn.
+- hiện thông báo **Nhật ký hệ thống trống. Hoạt động sẽ hiện tại đây khi backend ghi lại.** hoặc **Chưa có nhật ký bảng điều khiển giao diện.**: hệ thống chưa phát sinh sự kiện mới hoặc bạn vừa xóa nhật ký. Hãy thực hiện lại thao tác gây lỗi rồi bấm **Làm mới**.
+- hiện thông báo **Không thể sao chép nhật ký**: quyền truy cập bộ nhớ tạm thời bị gián đoạn. Hãy bấm **Làm mới** và thử bấm lại **Sao chép nhật ký hiển thị**.
+- hiện thông báo **Cài đặt Codex, Claude Code, OpenCode hoặc Pi để sửa lỗi cục bộ.**: máy của bạn chưa cài công cụ dòng lệnh nào được hỗ trợ. Hãy cài một trong các công cụ trên trước khi dùng trợ lý sửa lỗi.
+- hiện thông báo **Mở bản mã nguồn VoiceStudio có quyền ghi để trợ lý có thể sửa lỗi.**: bạn đang yêu cầu sửa mã nguồn từ bản cài đặt đóng gói hoặc thư mục chỉ đọc. Với nhu cầu cài đặt model và chọn lại engine trong ứng dụng, chỉ cần dùng chế độ khôi phục ứng dụng mà không cần chọn thư mục mã nguồn.
+- quá trình tạo giọng hoặc chép lời báo hết bộ nhớ hệ thống hoặc thiếu gói phụ thuộc Python: đóng bớt ứng dụng nặng, giải phóng model không dùng, hoặc mở mục **Mô hình** để cài đặt lại engine bị thiếu rồi bấm **Thử lại**.
+- báo lỗi không tìm thấy công cụ xử lý đa phương tiện (FFmpeg hoặc yt-dlp): mở **Cài đặt**, chọn **Công cụ âm thanh** để khôi phục bản đi kèm của ứng dụng hoặc trỏ sang bản có sẵn trên hệ thống.
+- không thể ghi âm trên macOS hoặc thiếu quyền hệ thống: mở **Cài đặt**, chọn **Quyền truy cập** để kiểm tra trạng thái cấp quyền micro và mở thẳng phần cài đặt hệ điều hành.
+- tải model bị dừng giữa chừng do đầy ổ đĩa: mở **Cài đặt**, chọn **Lưu trữ** để kiểm tra dung lượng trống, dọn bớt dữ liệu hoặc chuyển thư mục lưu trữ sang ổ đĩa khác rồi bấm **Thử lại**.
 
 ## Bài liên quan
 

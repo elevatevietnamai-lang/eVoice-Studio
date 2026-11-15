@@ -4,72 +4,72 @@ description: Hướng dẫn thêm nhiều video, chọn ngôn ngữ đích, bậ
 slug: long-tieng-hang-loat
 order: 7
 group: dub
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-Trang **Lồng tiếng hàng loạt** giúp bạn dịch và lồng tiếng nhiều tệp video cùng lúc sang một hoặc nhiều ngôn ngữ đích ngay trên máy. Bạn có thể thiết lập sẵn giọng đọc, tùy chọn giữ nhạc nền và bật chế độ tự động xử lý mỗi khi có video mới thêm vào thư mục.
+Trang **Lồng tiếng hàng loạt** giúp bạn lồng tiếng nhiều tệp video sang một hoặc nhiều ngôn ngữ đích trong cùng một lượt chạy trên máy cục bộ. Ứng dụng tự động tách âm thanh, chép lời, dịch, tạo giọng nói và trộn âm thanh cho từng video trong hàng đợi. Bạn cũng có thể bật **Theo dõi thư mục** để tự động đưa các video mới vào hàng đợi.
 
 ## Cần chuẩn bị
 
-- Một hoặc nhiều tệp video cần lồng tiếng (định dạng `.mp4`, `.mkv`, `.mov` hoặc `.webm`).
-- Model nhận diện giọng nói, engine dịch thuật và tạo giọng nói đã sẵn sàng trên máy.
-- Hồ sơ giọng đã lưu hoặc mẫu giọng cài sẵn nếu bạn muốn dùng giọng đọc riêng thay cho giọng mặc định.
+- Một hoặc nhiều tệp video cần lồng tiếng (định dạng `mp4`, `mkv`, `mov` hoặc `webm`).
+- Engine nhận diện giọng nói, dịch thuật và tạo giọng nói đã sẵn sàng trên máy cho các ngôn ngữ bạn muốn dùng.
+- Giọng đã lưu hoặc mẫu cài sẵn nếu bạn không muốn dùng giọng mặc định.
 
 ## Các bước
 
-### 1. Mở trang và thêm nhiều video
+### 1. Thêm nhiều video vào danh sách chờ
 
-Bấm vào **Lồng tiếng** trên thanh điều hướng bên trái để mở không gian làm việc **Lồng tiếng hàng loạt**, hoặc tìm nhanh qua ô **Tìm kiếm…**.
+Mở mục **Lồng tiếng** trên thanh điều hướng bên trái rồi chọn **Lồng tiếng hàng loạt**, hoặc dùng ô **Tìm kiếm…** để chuyển nhanh tới trang này.
 
-![Giao diện trang Lồng tiếng hàng loạt](shots/mo-trang.png)
+![Trang Lồng tiếng hàng loạt](shots/mo-trang.png)
 
-Bấm nút **Thêm video** ở cột bên trái (hoặc kéo thả trực tiếp các tệp video vào khung **Thả video ở trên để bắt đầu lồng tiếng hàng loạt.**). Các tệp hợp lệ sẽ hiện trong danh sách kèm dung lượng; nếu chọn nhầm tệp, bạn bấm nút xóa bên cạnh tên tệp để bỏ ra khỏi danh sách chờ.
+Bấm **Thêm video** ở cột bên trái (hoặc ở giữa màn hình khi danh sách trống) để chọn nhiều tệp cùng lúc từ máy tính. Bạn cũng có thể kéo thả trực tiếp các tệp video vào khung **Thả video ở trên để bắt đầu lồng tiếng hàng loạt.** Nếu muốn bỏ bớt tệp trước khi gửi, bấm nút **Xóa** cạnh tên tệp đó.
 
-### 2. Chọn ngôn ngữ và cấu hình chung
+### 2. Chọn ngôn ngữ đích và cấu hình chung
 
-Chọn ngôn ngữ cần xuất trong khung **NGÔN NGỮ ĐÍCH**. Mặc định thẻ **Spanish** được chọn sẵn; bạn mở hộp chọn **Ngôn ngữ** để thêm các ngôn ngữ đích khác hoặc bấm dấu đóng trên thẻ **Spanish** để gỡ bỏ.
+Chọn một hoặc nhiều ngôn ngữ trong khung **NGÔN NGỮ ĐÍCH**. Mỗi ngôn ngữ đã chọn hiển thị thành một thẻ nhỏ bên dưới; bấm dấu đóng trên thẻ nếu bạn muốn gỡ ngôn ngữ đó.
 
-Bấm mở mục **GIỌNG NÓI** nếu muốn đổi giọng đọc:
-- Chọn **Mặc định** để dùng giọng tiêu chuẩn của engine.
-- Chọn một giọng trong danh sách hồ sơ nhân bản giọng hoặc dưới mục **Mẫu cài sẵn**.
+Mở mục **GIỌNG NÓI** để chọn giọng lồng tiếng. Chọn **Mặc định**, chọn một giọng bạn đã lưu, hoặc chọn trong nhóm **Mẫu cài sẵn**.
 
-Bật hoặc tắt công tắc **Giữ âm thanh nền (nhạc/hiệu ứng)** tùy theo nhu cầu giữ lại tiếng nhạc và hiệu ứng gốc của video.
+Bật hoặc tắt công tắc **Giữ âm thanh nền (nhạc/hiệu ứng)** tùy theo bạn muốn giữ lại nhạc nền và tiếng động gốc hay chỉ xuất giọng đọc mới. Sau khi thiết lập xong, bấm **Thêm vào hàng đợi** để đưa toàn bộ video vào danh sách xử lý. Các tệp gửi thành công sẽ rời khỏi danh sách chờ tải lên và chuyển sang hàng đợi.
 
 ### 3. Bật thư mục theo dõi (watch folder)
 
-Bấm vào **Theo dõi thư mục** ở cuối cột bên trái và chọn một thư mục trên máy tính nếu bạn muốn tự động hóa quy trình. Khi tính năng này hoạt động, mỗi tệp video mới chép hoàn tất vào thư mục đó sẽ tự động được đưa vào hàng đợi với ngôn ngữ đích, giọng nói và tùy chọn **Giữ âm thanh nền (nhạc/hiệu ứng)** đang chọn. Trong lúc theo dõi, bạn có thể bấm **Tạm dừng**, **Tiếp tục** hoặc **Dừng** bất cứ lúc nào.
+Bấm **Theo dõi thư mục** ở cuối cột bên trái và chọn một thư mục trên máy tính. Khi tính năng này hoạt động, mỗi tệp video mới được chép xong vào thư mục đó sẽ tự động được đưa vào hàng đợi với cấu hình ngôn ngữ, giọng nói và âm thanh nền bạn đang chọn. Bạn có thể bấm **Tạm dừng**, **Tiếp tục** hoặc **Dừng** bất cứ lúc nào.
 
-### 4. Đưa vào hàng đợi và theo dõi tiến độ
+### 4. Theo dõi và quản lý hàng đợi
 
-Bấm **Thêm vào hàng đợi** để bắt đầu gửi danh sách video đi xử lý. Các tệp gửi thành công sẽ chuyển sang danh sách tác vụ bên phải; những tệp chưa gửi được vẫn nằm lại ở cột bên trái để bạn kiểm tra.
+Chọn các thẻ **Đang xử lý**, **Đã hoàn thành** hoặc **Thất bại** ở phía trên khung chính để lọc danh sách tác vụ, hoặc bấm **Làm mới** để cập nhật trạng thái ngay lập tức.
 
-Chọn các thẻ trạng thái ở phía trên vùng danh sách để kiểm tra tiến độ:
-- **Đang xử lý**: hiển thị các video đang chờ (**đang chờ**) hoặc đang chạy (**đang chạy**) qua từng công đoạn (**🎬 Đang tách âm thanh…**, **📝 Đang chép lời…**, **🌐 Đang dịch…**, **🗣️ Đang tạo giọng nói…**, **🎛️ Đang trộn âm thanh…**, **✅ Hoàn tất**) kèm phần trăm hoàn thành. Bạn có thể bấm **Hủy** nếu muốn dừng tác vụ đang chạy.
-- **Đã hoàn thành**: liệt kê các video đã xử lý xong (**xong**). Bạn bấm nút tải xuống ứng với từng ngôn ngữ để lưu tệp `.mp4` về máy, hoặc bấm **Xóa** (và xác nhận **Xóa** lần nữa, hoặc **Hủy**) để dọn khỏi danh sách.
-- **Thất bại**: liệt kê các tác vụ gặp sự cố (**thất bại**) hoặc bị dừng (**đã hủy**). Bạn có thể mở **Thêm thông tin** để xem chi tiết lỗi và bấm **Thử lại** để chạy lại tác vụ.
+Theo dõi tiến độ của từng video qua các bước **🎬 Đang tách âm thanh…**, **📝 Đang chép lời…**, **🌐 Đang dịch…**, **🗣️ Đang tạo giọng nói…**, **🎛️ Đang trộn âm thanh…** và **✅ Hoàn tất** cùng phần trăm hoàn thành.
 
-Bấm **Làm mới** ở góc phải phía trên danh sách khi cần cập nhật trạng thái ngay lập tức.
+- Với tác vụ nằm trong **Đang xử lý**, bấm **Hủy** nếu bạn muốn dừng tác vụ đó.
+- Với tác vụ trong **Đã hoàn thành**, bấm nút xuất tương ứng với từng mã ngôn ngữ để mở hộp thoại lưu tệp video `.mp4` về máy.
+- Với tác vụ trong **Thất bại**, bấm **Thêm thông tin** để xem chi tiết nguyên nhân, sau đó bấm **Thử lại** để chạy lại.
+- Để dọn một bản ghi đã kết thúc khỏi danh sách, bấm **Xóa** rồi bấm **Xóa** thêm lần nữa để xác nhận (hoặc bấm **Hủy** để giữ lại).
 
 ## Mẹo
 
-- Bạn có thể chọn nhiều ngôn ngữ trong **NGÔN NGỮ ĐÍCH** cho cùng một đợt chạy; ứng dụng sẽ tự nhân số lượng video với số ngôn ngữ để xử lý lần lượt và xuất tệp riêng cho từng ngôn ngữ.
-- Hãy thiết lập xong **NGÔN NGỮ ĐÍCH**, **GIỌNG NÓI** và **Giữ âm thanh nền (nhạc/hiệu ứng)** trước khi bấm **Theo dõi thư mục** để mọi video chép vào thư mục đều dùng đúng cấu hình mong muốn.
-- Hàng đợi tác vụ được lưu trong bộ nhớ tạm khi ứng dụng đang chạy; bạn nên đợi các tác vụ trong **Đang xử lý** hoàn tất trước khi đóng hoàn toàn ứng dụng.
+- Chọn nhiều ngôn ngữ trong mục **NGÔN NGỮ ĐÍCH** trước khi bấm **Thêm vào hàng đợi** để ứng dụng xuất riêng từng bản video cho mỗi ngôn ngữ trong cùng một lần gửi.
+- Tải lại giao diện không làm mất hay nhân đôi các tác vụ đang chạy, nhưng hàng đợi được giữ trong bộ nhớ nên bạn hãy đợi các tác vụ hoàn tất trước khi đóng hẳn ứng dụng.
+- Bật **Giữ âm thanh nền (nhạc/hiệu ứng)** khi lồng tiếng vlog, phim hoặc video hướng dẫn có nhạc nền để bản lồng tiếng tự nhiên hơn.
 
 ## Lỗi thường gặp
 
-- Nút **Thêm vào hàng đợi** bị mờ không bấm được: kiểm tra xem bạn đã thêm ít nhất một tệp video, đã chọn ít nhất một ngôn ngữ trong **NGÔN NGỮ ĐÍCH**, và model hoặc engine dịch hiển thị ở dòng trạng thái đã tải xong chưa (không còn báo **Đang tải…**).
-- Tác vụ chuyển sang thẻ **Thất bại** do thiếu gói ngôn ngữ dịch hoặc chưa chấp nhận giấy phép model: mở thẻ **Thất bại**, xem thông báo trên thẻ tác vụ, xác nhận giấy phép hoặc cài đặt gói ngôn ngữ khi được hỏi rồi bấm **Thử lại**.
-- Xuất hiện thông báo **Không thể theo dõi thư mục đó — chọn lại để thử lại.** khi bật thư mục theo dõi: kiểm tra lại quyền truy cập thư mục trên máy tính, sau đó bấm **Theo dõi thư mục** và chọn lại thư mục một lần nữa.
+- nút **Thêm vào hàng đợi** bị mờ không bấm được: kiểm tra xem bạn đã thêm ít nhất một video, chọn ít nhất một ngôn ngữ trong **NGÔN NGỮ ĐÍCH**, và phần engine không báo **Không có sẵn**.
+- một số tệp vẫn nằm lại ở khung tải lên sau khi bấm **Thêm vào hàng đợi**: các tệp gửi thành công đã vào hàng đợi, chỉ những tệp gặp lỗi mới giữ lại trong danh sách để bạn kiểm tra thông báo lỗi và bấm **Thêm vào hàng đợi** lại.
+- xuất hiện thông báo **Không thể theo dõi thư mục đó — chọn lại để thử lại.**: bấm **Theo dõi thư mục** và chọn lại thư mục có quyền truy cập hợp lệ trên máy của bạn.
+- tác vụ chuyển sang thẻ **Thất bại** do thiếu gói dịch hoặc chưa chấp nhận giấy phép model: mở thẻ **Thất bại**, xem mục **Thêm thông tin**, xác nhận giấy phép hoặc cài đặt gói ngôn ngữ khi được hỏi rồi bấm **Thử lại**.
 
 ## Bài liên quan
 
 - [Lồng tiếng video](../long-tieng-video/)
 - [Nhân bản giọng](../nhan-ban-giong/)
 - [Quản lý giọng đã lưu](../giong-da-luu/)
+- [Phiên âm và đọc chính tả](../phien-am/)
 - [Quy trình tự động](../quy-trinh/)
 - [Khắc phục sự cố](../khac-phuc-su-co/)

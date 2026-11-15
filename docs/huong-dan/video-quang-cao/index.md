@@ -1,91 +1,97 @@
 ---
 title: Video quảng cáo (Promo)
-description: Ghép clip, ảnh, nhạc nền, lời thuyết minh và mẫu cảnh thành video quảng cáo ngắn ngay trên máy tính với eVoice Studio.
+description: Ghép clip, ảnh, nhạc nền, cảnh HTML và tiêu đề động thành video quảng cáo ngắn ngay trên máy với eVoice Studio.
 slug: video-quang-cao
 order: 18
 group: dub
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-Trang **Video quảng cáo** giúp bạn ghép các đoạn video ngắn và ảnh tĩnh thành một file MP4 hoàn chỉnh kèm hiệu ứng chuyển cảnh, nhạc nền, lời thuyết minh, logo và lớp phủ tiêu đề. Toàn bộ quá trình dựng và xuất video chạy cục bộ trên CPU của máy bạn bằng công cụ ffmpeg đi kèm, không gửi dữ liệu ra ngoài mạng.
+Trang **Video quảng cáo** ghép các đoạn video ngắn, ảnh tĩnh, nhạc nền, lời thuyết minh và logo thành một tệp MP4 hoàn chỉnh kèm hiệu ứng chuyển cảnh. Bạn có thể chèn thêm **Cảnh HTML tuỳ chỉnh** hoặc **Tiêu đề động** để tạo phần mở đầu, bảng giá, chữ chạy hay thẻ liên hệ. Toàn bộ quá trình dựng và xuất video chạy trực tiếp trên CPU của máy bằng công cụ media đi kèm, không gửi tệp ra ngoài.
 
 ## Cần chuẩn bị
 
-- Các đoạn video hoặc ảnh tĩnh định dạng `.png`, `.jpg`, `.webp`, `.bmp` (tối đa 40 cảnh, mỗi tệp không quá 4 GB, tổng thời lượng video tối đa 5 phút).
-- Tệp nhạc nền hoặc bản thu thuyết minh nếu muốn chèn âm thanh.
-- Ảnh logo định dạng PNG có nền trong suốt (dung lượng tối đa 20 MB) nếu muốn đóng dấu thương hiệu hoặc tạo màn hình kết.
-- Công cụ ffmpeg đã cài sẵn trong bước thiết lập đầu tiên của ứng dụng.
-- Nếu muốn xuất **Tiêu đề động** hoặc **Cảnh HTML tuỳ chỉnh** thành video trên ứng dụng máy tính, lần đầu sử dụng bạn cần xác nhận tải gói Chrome Headless Shell (khoảng 271 MB).
+- Các tệp video hoặc ảnh tĩnh (`.png`, `.jpg`, `.webp`, `.bmp`), tối đa 40 cảnh và dung lượng mỗi tệp không quá 4 GB.
+- Tệp nhạc nền, tệp âm thanh lời thuyết minh và ảnh logo định dạng PNG nền trong suốt (không bắt buộc, logo tối đa 20 MB).
+- Nếu muốn kết xuất **Tiêu đề động** hoặc **Cảnh HTML tuỳ chỉnh** thành video trên ứng dụng máy tính, bạn cần bật **Tiêu đề động** lần đầu để ứng dụng tải Chrome Headless Shell (khoảng 271 MB) sau khi bạn xác nhận.
+- Nếu muốn dùng **Viết bằng AI**, bạn cần cấu hình sẵn nhà cung cấp trong **Cài đặt** → **Nhà cung cấp LLM** (có thể dùng model nội bộ như Ollama, LM Studio hoặc dịch vụ trực tuyến do bạn tự bật).
 
 ## Các bước
 
-### 1. Mở trang Video quảng cáo
+### 1. Mở trang Video quảng cáo và chọn định dạng
 
-1. Bấm **Lồng tiếng** trên thanh điều hướng chính rồi mở trang **Video quảng cáo**.
-2. Chọn tỷ lệ khung hình ở mục **Khổ hình** ở cột bên trái: **9:16 dọc**, **1:1 vuông** hoặc **16:9 ngang**.
-3. Chọn **Tốc độ khung hình** là **30 fps** hoặc **60 fps**.
-4. Chọn bộ lọc màu tại mục **Tông màu** (**Gốc**, **Ấm**, **Lạnh**, **Rực rỡ** hoặc **Đen trắng**) để đồng bộ màu sắc giữa tất cả các cảnh.
+Bấm vào **Lồng tiếng** trên thanh điều hướng bên trái để mở nhóm công cụ video và chuyển sang trang **Video quảng cáo**.
 
-![Trang Video quảng cáo](shots/mo-trang.png)
+![Giao diện trang Video quảng cáo trong eVoice Studio](shots/mo-trang.png)
 
-### 2. Thêm clip, ảnh và nhạc
+Chọn tỉ lệ khung hình ở mục **Khổ hình**: **9:16 dọc** (1080×1920), **1:1 vuông** (1080×1080) hoặc **16:9 ngang** (1920×1080). Chọn **Tốc độ khung hình** là **30 fps** hoặc **60 fps**, sau đó chọn **Tông màu** (**Gốc**, **Ấm**, **Lạnh**, **Rực rỡ** hoặc **Đen trắng**) để đồng bộ màu sắc giữa tất cả các cảnh.
 
-1. Bấm **Thêm clip hoặc ảnh** ở góc phải mục **Cảnh** và chọn các tệp video hoặc hình ảnh từ máy tính.
-2. Nhập thời lượng (từ 0,5 đến 60 giây) vào ô **Độ dài (s)** của từng cảnh.
-3. Nhập mốc lấy hình vào ô **Bắt đầu (s)** nếu cảnh là video, hoặc chọn kiểu **Chuyển động** (**Đứng yên**, **Phóng to dần**, **Thu nhỏ dần**) nếu cảnh là ảnh tĩnh.
-4. Chọn hiệu ứng ở mục **Chuyển cảnh vào** cho các cảnh từ vị trí thứ hai trở đi (**Cắt thẳng**, **Mờ dần**, **Loé sáng**, **Tối dần**, **Trượt**, **Đẩy**, **Quét**, **Phóng**, **Vòng tròn** hoặc **Nhoè**) và kéo thanh **Độ dài chuyển cảnh (giây)**.
-5. Chọn cách căn hình ở mục **Khung hình** gồm **Lấp đầy khung** hoặc **Giữ nguyên ảnh**.
-6. Bấm **Thêm nhạc** ở cột trái để chọn nhạc nền, kéo thanh **Âm lượng nhạc** và bật **Cắt theo nhịp nhạc** nếu muốn ứng dụng tự căn điểm chuyển cảnh khớp với phách nhạc.
-7. Bấm **Thêm lời thuyết minh (tuỳ chọn)** để chèn file giọng đọc; nhạc nền sẽ tự động hạ nhỏ dưới giọng thuyết minh.
-8. Bấm **Thêm logo (PNG)** ở mục **Logo**, chọn góc hiển thị (**Tắt**, **Trên trái**, **Trên giữa**, **Trên phải**, **Dưới trái**, **Dưới giữa**, **Dưới phải**), rồi chỉnh **Logo kết thúc (giây)** (tối đa 10 giây) và **Nền đoạn kết**.
+### 2. Thêm clip, ảnh, nhạc và logo
+
+Bấm **Thêm clip hoặc ảnh** ở khung **Cảnh** bên phải để chọn các tệp video hoặc hình ảnh từ máy tính. Với mỗi cảnh trong danh sách, bạn điều chỉnh:
+
+- Nhập **Độ dài (s)** (từ 0,5 đến 60 giây, tổng thời lượng toàn video tối đa 5 phút).
+- Nhập thời điểm **Bắt đầu (s)** nếu cảnh là video, hoặc chọn hiệu ứng **Chuyển động** (**Đứng yên**, **Phóng to dần**, **Thu nhỏ dần**) nếu cảnh là ảnh tĩnh.
+- Chọn kiểu **Chuyển cảnh vào** cho các cảnh từ vị trí thứ hai trở đi (**Cắt thẳng**, **Mờ dần**, **Loé sáng**, **Tối dần**, **Trượt**, **Đẩy**, **Quét**, **Phóng**, **Vòng tròn**, **Nhoè**) và kéo thanh trượt **Độ dài chuyển cảnh (giây)**.
+- Chọn cách căn **Khung hình** là **Lấp đầy khung** hoặc **Giữ nguyên ảnh**.
+- Bấm nút **Lên trên**, **Xuống dưới** để đổi thứ tự cảnh, **Xoá** để bỏ một cảnh hoặc **Xoá hết** để làm trống danh sách.
+
+Chọn thêm âm thanh và nhận diện thương hiệu ở cột bên trái:
+
+- Bấm **Thêm nhạc** tại mục **Nhạc**, kéo thanh **Âm lượng nhạc** và bật **Cắt theo nhịp nhạc** nếu muốn điểm chuyển cảnh tự khớp vào nhịp bài nhạc.
+- Bấm **Thêm lời thuyết minh (tuỳ chọn)** để lồng giọng đọc lên trên nhạc nền (nhạc nền sẽ tự giảm âm lượng dưới lời thuyết minh).
+- Bấm **Thêm logo (PNG)** tại mục **Logo**, chọn góc đóng dấu (**Tắt**, **Trên trái**, **Trên phải**, **Dưới trái**, **Dưới phải**) hoặc cấu hình **Logo kết thúc (giây)** (tối đa 10 giây) cùng màu **Nền đoạn kết**.
 
 ### 3. Chọn mẫu cảnh và tiêu đề động
 
-1. Chọn một mẫu có sẵn trong danh sách **Cảnh** của mục **Cảnh HTML tuỳ chỉnh** như **Tiêu đề đơn giản**, **Tên và chức danh**, **Đếm ngược**, **Giá và khuyến mãi**, **Chữ chạy**, **Kêu gọi hành động**, **Mở đầu**, **Kết thúc** hoặc **Slide chữ**.
-2. Nhập tên vào ô **Tên**, thời lượng (từ 1 đến 60 giây) vào ô **Độ dài (giây)** và chỉnh nội dung tại khu vực **Tham số** (các cột **Khoá**, **Loại**, **Nhãn**, **Giá trị**).
-3. Bấm các thẻ **HTML**, **CSS**, **JavaScript** nếu bạn muốn tự sửa mã nguồn, hoặc bấm **Viết bằng AI** để tạo bản nháp cảnh bằng nhà cung cấp LLM đã bật trong **Cài đặt**.
-4. Bấm **Phát lại** dưới khung xem trước bên phải để kiểm tra chuyển động của cảnh.
-5. Bấm **Thêm làm lớp phủ** để đè cảnh có nền trong suốt lên video, hoặc bấm **Thêm làm shot** để chèn cảnh thành một đoạn độc lập ở cuối danh sách **Cảnh**.
-6. Cuộn xuống mục **Tiêu đề động** nếu muốn dùng các mẫu tiêu đề dựng sẵn (**Từ khoá**, **Tiêu đề phát sáng**, **Chữ viết tay**, **Thanh tìm kiếm**, **Thẻ liên hệ**, **Logo xuất hiện**), điền nội dung rồi bấm **Tạo lớp phủ** để đưa vào danh sách **Lớp phủ**.
+Chọn một mẫu có sẵn trong mục **Cảnh HTML tuỳ chỉnh** tại trình đơn thả xuống **Cảnh** (như **Tiêu đề đơn giản**, **Tên và chức danh**, **Đếm ngược**, **Giá và khuyến mãi**, **Chữ chạy**, **Kêu gọi hành động**, **Mở đầu**, **Kết thúc**, **Slide chữ**):
+
+- Nhập **Tên** và **Độ dài (giây)** cho cảnh, sau đó sửa nội dung trong danh sách **Tham số** (gồm **Khoá**, **Loại**, **Nhãn**, **Giá trị**) hoặc sửa trực tiếp mã trong các thẻ **HTML**, **CSS**, **JavaScript**.
+- Bấm **Viết bằng AI** nếu muốn tạo cảnh mới từ mô tả ngắn, chọn kiểu **Lớp phủ** hoặc **Shot toàn khung**, nhập **Mô tả cảnh** rồi bấm **Viết cảnh**.
+- Bấm **Lưu** để cất cảnh vào máy, hoặc dùng **Nhập** và **Xuất** để chia sẻ cảnh dưới dạng tệp `.html` hoặc `.zip`.
+- Bấm **Thêm làm lớp phủ** để đè cảnh lên video hoặc **Thêm làm shot** để chèn cảnh thành một đoạn độc lập ở cuối danh sách **Cảnh**.
+
+Chọn thêm mẫu trong mục **Tiêu đề động** bên dưới nếu bạn cần các hiệu ứng chữ dựng sẵn (**Từ khoá**, **Tiêu đề phát sáng**, **Chữ viết tay**, **Thanh tìm kiếm**, **Thẻ liên hệ**, **Logo xuất hiện**). Điền nội dung, chọn **Màu chữ**, **Màu nhấn**, **Vị trí**, chọn **Hiện cùng** một cảnh cụ thể hoặc **Tính từ đầu video**, rồi bấm **Tạo lớp phủ** (tối đa 12 lớp phủ trong một video).
 
 ### 4. Xem trước và chỉnh trên timeline
 
-1. Bấm **Phát** dưới khung **Xem trước** (hoặc nhấn phím Space khi đang chọn timeline) để xem thử toàn bộ video cùng nhạc nền, lời thuyết minh, logo và lớp phủ.
-2. Kéo mép phải của một cảnh trên timeline để đổi độ dài, kéo mép trái của cảnh video để cắt điểm bắt đầu, hoặc kéo cả khối cảnh để đổi thứ tự.
-3. Kéo khối tiêu đề trên timeline để đổi thời điểm xuất hiện, hoặc thả tiêu đề vào một cảnh để gắn nó đi theo cảnh đó.
-4. Bấm **Cắt tại đầu phát (S)** để tách đôi cảnh đang chọn tại vị trí con trỏ phát, hoặc bấm **Xoá mục đang chọn** để bỏ cảnh hay lớp phủ.
+Bấm **Phát lại** dưới khung xem trước của **Cảnh HTML tuỳ chỉnh** hoặc **Xem trước mẫu** để kiểm tra chuyển động của từng cảnh.
+
+Khi danh sách **Cảnh** đã có ít nhất một mục, khung **Xem trước** và thanh timeline sẽ hiện ra phía trên danh sách:
+
+- Bấm **Phát** hoặc **Tạm dừng** (hoặc phím Space khi đang chọn timeline) để xem thử toàn bộ video cùng nhạc, lời thuyết minh, lớp phủ và logo.
+- Kéo mép phải của cảnh trên timeline để chỉnh độ dài, kéo mép trái của clip để cắt điểm bắt đầu, kéo thân cảnh để đổi thứ tự hoặc kéo lớp phủ để dời thời điểm xuất hiện.
+- Bấm **Cắt tại đầu phát (S)** để tách đôi cảnh tại vị trí con trỏ, bấm **Bám theo nhịp và điểm cắt** để bật/tắt chế độ tự hít vào phách nhạc, hoặc dùng **Hoàn tác (Ctrl+Z)** và **Làm lại (Ctrl+Shift+Z)** khi cần quay lại thao tác trước.
 
 ### 5. Xuất video
 
-1. Kiểm tra tổng thời lượng hiển thị phía trên nút xuất ở cột bên trái.
-2. Bấm **Xuất video** và đợi ứng dụng ghép các cảnh.
-3. Xem lại thành phẩm trong khung **Kết quả** khi quá trình xử lý hoàn tất.
-4. Bấm **Lưu video** để lưu tệp MP4 về máy tính.
+Kiểm tra tổng thời lượng hiển thị ở cuối cột bên trái rồi bấm **Xuất video**. Khi trạng thái **Đang xuất video…** hoàn tất, khung **Kết quả** sẽ xuất hiện ở đầu trang kèm trình phát để bạn kiểm tra lại thành phẩm; bấm **Lưu video** để chọn nơi lưu tệp MP4 về máy.
 
 ## Mẹo
 
-- Bấm **Lên trên** hoặc **Xuống dưới** trên từng dòng trong danh sách **Cảnh** khi bạn muốn đổi vị trí cảnh nhanh mà không cần kéo trên timeline.
-- Dùng **Hoàn tác (Ctrl+Z)** và **Làm lại (Ctrl+Shift+Z)** trên thanh công cụ timeline để quay lại hoặc khôi phục bất kỳ thao tác chỉnh sửa nào.
-- Bấm **Lưu** trong mục **Cảnh HTML tuỳ chỉnh** để cất mẫu cảnh đã chỉnh vào máy cho những video sau, hoặc dùng **Xuất** và **Nhập** để chia sẻ cảnh dưới dạng tệp `.html` hoặc `.zip`.
-- Khi bật **Cắt theo nhịp nhạc**, bạn có thể gắn lớp phủ theo cảnh tại mục **Hiện cùng** để tiêu đề tự dịch chuyển khớp theo cảnh mỗi khi điểm cắt thay đổi.
+- Bật **Cắt theo nhịp nhạc** sau khi thêm nhạc nền để ứng dụng tự dò nhịp và dời các điểm cắt cảnh vào đúng phách; thời lượng từng cảnh trong danh sách cũng sẽ tự cập nhật theo nhịp đã khớp.
+- Khi chèn lớp phủ ở mục **Tiêu đề động**, hãy chọn một cảnh cụ thể trong ô **Hiện cùng** thay vì **Tính từ đầu video** để lớp phủ luôn đi theo cảnh đó khi bạn đổi thứ tự hoặc cắt theo nhịp nhạc.
+- Trong **Cảnh HTML tuỳ chỉnh**, hãy viết hiệu ứng bằng CSS animation hoặc `scene.onFrame(time => ...)` trong thẻ **JavaScript** để chuyển động khớp chính xác từng khung hình khi xuất video.
+- Nếu vừa đổi **Khổ hình** (ví dụ từ **9:16 dọc** sang **16:9 ngang**), bạn hãy kết xuất lại các shot tạo từ **Cảnh HTML tuỳ chỉnh** để bố cục khớp với tỉ lệ khung hình mới.
 
 ## Lỗi thường gặp
 
-- tệp nguồn bị xoá hoặc đổi thư mục dữ liệu khiến cảnh, nhạc hoặc logo hiện báo đỏ **Mất tệp** và nút **Xuất video** bị khoá: bấm **Xoá tệp bị mất** ở cột bên trái để gỡ toàn bộ tệp lỗi, hoặc chọn lại tệp mới cho mục đó.
-- tổng thời lượng hoặc số lượng vượt mức cho phép nên xuất hiện thông báo **Video dài tối đa 5 phút.**, **Video có tối đa 40 cảnh.** hoặc **Video có tối đa 12 lớp phủ.**: rút ngắn **Độ dài (s)** của các cảnh hoặc bấm **Xoá** bớt cảnh và lớp phủ trước khi xuất.
-- không thêm được cảnh tuỳ chỉnh vào video và hiện thông báo **Để dựng cảnh thành video, hãy bật tiêu đề hoạt hình ở phần bên dưới trước.** hoặc **Bật tiêu đề động trước.**: cuộn xuống mục **Tiêu đề động**, bật tính năng này và bấm **Tải về** để ứng dụng tải gói dựng hình một lần về máy.
-- cảnh trong danh sách hiện cảnh báo **Cảnh này được dựng cho khổ khác; hãy dựng lại cho khổ hiện tại.**: sau khi đổi **Khổ hình** (ví dụ từ **9:16 dọc** sang **16:9 ngang**), hãy mở lại cảnh đó trong mục **Cảnh HTML tuỳ chỉnh** và bấm **Thêm làm shot** lại để tránh bị cắt mất nội dung.
-- mẫu **Logo xuất hiện** báo **Thêm logo ở mục Logo trước.** hoặc **Logo lớn hơn 20 MB.**: bấm **Thêm logo (PNG)** ở cột bên trái và chọn một tệp ảnh nhỏ hơn 20 MB trước khi tạo tiêu đề.
-- tính năng **Viết bằng AI** báo chưa bật nhà cung cấp LLM: mở **Cài đặt**, thiết lập một nhà cung cấp LLM cục bộ hoặc trực tuyến rồi quay lại bấm **Kiểm tra lại**.
+- nút **Xuất video** bị mờ và hiện thông báo **Mất tệp** cạnh cảnh, nhạc hoặc logo: tệp gốc trong thư mục dữ liệu đã bị xoá hoặc di chuyển. Bạn hãy bấm **Xoá tệp bị mất** ở cột bên trái hoặc chọn lại tệp mới cho mục bị thiếu.
+- không bấm được **Thêm làm lớp phủ**, **Thêm làm shot** hoặc **Tạo lớp phủ** và hiện thông báo **Để dựng cảnh thành video, hãy bật tiêu đề hoạt hình ở phần bên dưới trước.** hoặc **Bật tiêu đề động trước.**: bạn hãy cuộn xuống mục **Tiêu đề động**, bật tính năng này và bấm **Tải về** khi được hỏi để cài đặt công cụ kết xuất một lần.
+- hiện thông báo **ffmpeg chưa sẵn sàng. Hoàn tất cài công cụ media rồi thử lại.**: công cụ xử lý media cục bộ chưa cài xong. Bạn hãy chờ quá trình thiết lập hoàn tất hoặc kiểm tra lại trong trang **Cài đặt**.
+- cửa sổ **Viết bằng AI** báo **Tính năng AI đang tắt (LLM đặt là Tắt). Bật lại trong Cài đặt → Nhà cung cấp LLM.**: bạn hãy mở **Cài đặt**, thiết lập một nhà cung cấp LLM rồi quay lại bấm **Kiểm tra lại**.
+- xuất cảnh tuỳ chỉnh bị dừng kèm thông báo **Dựng quá lâu nên đã dừng. Có thể một script trong cảnh bị treo.**: kiểm tra lại mã trong thẻ **JavaScript** của cảnh để tránh vòng lặp vô tận, sau đó bấm **Phát lại** để thử trước khi thêm vào video.
+- cảnh báo **Cảnh này được dựng cho khổ khác; hãy dựng lại cho khổ hiện tại.** xuất hiện trên dòng cảnh: xoá cảnh đó khỏi danh sách **Cảnh**, mở lại cảnh trong **Cảnh HTML tuỳ chỉnh** và bấm **Thêm làm shot** để dựng lại theo khổ hình mới.
 
 ## Bài liên quan
 
-- [Lồng tiếng video](../long-tieng-video/)
 - [Trình dựng video](../trinh-dung-video/)
+- [Lồng tiếng video](../long-tieng-video/)
 - [Studio âm nhạc](../studio-am-nhac/)
 - [Nhân bản giọng](../nhan-ban-giong/)
 - [Cài đặt](../cai-dat/)
+- [Khắc phục sự cố](../khac-phuc-su-co/)

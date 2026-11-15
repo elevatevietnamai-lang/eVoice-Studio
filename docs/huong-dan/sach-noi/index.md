@@ -1,85 +1,86 @@
 ---
 title: Sách nói
-description: Tạo sách nói nhiều chương từ bản thảo hoặc file sách, gán giọng đọc, nghe kèm chữ chạy theo audio và xuất file M4B hoặc MP3 ngay trên máy.
+description: Tạo sách nói có phân chương từ văn bản, tùy chỉnh giọng đọc và xuất file M4B hoặc MP3 ngay trên máy với eVoice Studio.
 slug: sach-noi
 order: 9
 group: stories
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-Trang **Sách nói** biến bản thảo dài hoặc file sách điện tử thành sách nói hoàn chỉnh có chia chương rõ ràng. Bạn có thể chèn thẻ đánh dấu nhịp nghỉ, gán nhiều giọng đọc cho từng vai, nghe thử từng chương và xuất ra file âm thanh hoặc video ngắn ngay trên máy. Toàn bộ quá trình tổng hợp giọng chạy cục bộ trên GPU hoặc CPU mà không cần kết nối mạng.
+Trang **Sách nói** biến bản thảo hoặc tài liệu dài thành sách nói hoàn chỉnh có phân chia chương rõ ràng. Bạn có thể gán giọng đọc cho người kể chuyện và từng vai trong truyện, nghe thử từng chương trước khi tổng hợp toàn bộ, rồi theo dõi chữ chạy theo âm thanh sau khi tạo xong. Mọi quá trình xử lý đều chạy cục bộ trên máy của bạn mà không cần gửi văn bản lên mạng.
 
 ## Cần chuẩn bị
 
-- Ít nhất một giọng đọc trong mục [Quản lý giọng đã lưu](../giong-da-luu/) hoặc vừa tạo tại trang [Nhân bản giọng](../nhan-ban-giong/).
-- Engine giọng nói ở trạng thái **Thiết bị cục bộ: Engine sẵn sàng** (kiểm tra trong trang [Cài đặt](../cai-dat/) nếu chưa tải model).
-- Nội dung văn bản hoặc file sách định dạng `.txt`, `.md`, `.epub` hoặc `.pdf`.
+- Ít nhất một giọng đọc đã tạo hoặc lưu sẵn trong mục **Giọng nói**.
+- Trạng thái dưới góc trái hiển thị **Thiết bị cục bộ: Engine sẵn sàng**.
+- Bản thảo sách dạng văn bản hoặc file tài liệu (`.txt`, `.md`, `.epub`, `.pdf`) để nhập vào ứng dụng.
 
 ## Các bước
 
-### 1. Mở trang và nhập sách
+### 1. Nhập sách
 
-Bấm vào mục **Truyện** trên thanh điều hướng bên trái rồi chọn **Sách nói** ở góc trên (hoặc tìm trong ô **Tìm kiếm…**).
+![Trang Sách nói trong eVoice Studio](shots/mo-trang.png)
 
-![Giao diện trang Sách nói với bảng cài đặt bên trái và khung Kịch bản bên phải](shots/mo-trang.png)
+- Chọn **Truyện** ở thanh điều hướng bên trái, sau đó bấm **Sách nói** trên thanh tiêu đề nếu bạn đang ở giao diện truyện nhiều giọng.
+- Nhập tên tác phẩm vào ô **Tiêu đề** ở khung bên trái.
+- Gõ hoặc dán nội dung trực tiếp vào vùng **Kịch bản** ở khung chính.
+- Bấm **Nhập** ở góc trên bên phải khung **Kịch bản** nếu bạn muốn tải nội dung từ file `.txt`, `.md`, `.epub` hoặc `.pdf` trên máy.
+- Bấm **Tải mẫu** khi khung soạn thảo đang trống để chèn nhanh một kịch bản mẫu và làm quen với định dạng.
+- Bấm **Xóa kịch bản** nếu bạn muốn xóa toàn bộ nội dung hiện tại để làm lại từ đầu.
 
-Nhập tên sách vào ô **Tiêu đề** ở cột bên trái (mặc định là **Sách nói không tiêu đề**). Tại khung **Kịch bản** bên phải, bấm nút **Nhập** để tải file `.txt`, `.md`, `.epub` hoặc `.pdf` từ máy tính, hoặc gõ trực tiếp nội dung vào khung soạn thảo. Nếu muốn thử nhanh, bấm **Tải mẫu** để điền kịch bản mẫu; khi cần làm trống toàn bộ nội dung, bấm **Xóa kịch bản**.
+### 2. Đánh dấu chương và chèn thẻ đọc
 
-### 2. Đánh dấu chương và nhịp đọc
-
-Nhập ký hiệu `# Tên chương` ở đầu dòng (ví dụ `# Chương một`) để tách chương mới. Khi bạn nhập file `.epub` hoặc bản thảo đã có tiêu đề Markdown cấp 1, ứng dụng tự giữ nguyên cấu trúc chương.
-
-Bấm các nút trên thanh công cụ phía trên khung **Kịch bản** để chèn thẻ điều khiển vào vị trí con trỏ:
-
-- **Tạm dừng**: chèn khoảng nghỉ (ví dụ `[pause 500ms]`).
-- **Giọng**: chèn thẻ đổi người đọc theo dạng `[voice:NAME]`.
-- **Chậm** hoặc **Nhanh**: điều chỉnh tốc độ đọc cho đoạn văn bản.
-- **Nhấn mạnh**, **Đánh vần**, **Phản ứng**: thêm sắc thái nhấn giọng, đọc từng chữ cái hoặc biểu cảm.
+- Bắt đầu một dòng mới bằng ký hiệu `# ` kèm tên chương (ví dụ: `# Chương một`) để đánh dấu mốc chương mới trong sách nói.
+- Đặt con trỏ tại vị trí cần điều chỉnh trong **Kịch bản**, sau đó bấm các nút trên thanh công cụ phía trên vùng soạn thảo để chèn nhanh thẻ điều khiển:
+  - Bấm **Tạm dừng** để thêm khoảng nghỉ (ví dụ: `[pause 500ms]`).
+  - Bấm **Giọng** để chèn thẻ đổi người đọc (ví dụ: `[voice:narrator]`).
+  - Bấm **Chậm**, **Nhanh** hoặc **Nhấn mạnh** để điều chỉnh nhịp độ và trọng âm cho đoạn văn bản.
+  - Bấm **Đánh vần** hoặc **Phản ứng** để chèn thẻ đọc từng chữ cái hoặc biểu cảm tương ứng.
 
 ### 3. Cài đặt giọng đọc và thông tin sách
 
-Chọn một giọng mặc định trong danh sách **giọng nói** ở cột bên trái. Chọn ngôn ngữ đầu ra tại mục **Ngôn ngữ** (mặc định là **Tự động**) và chọn kiểu file tại mục **Định dạng** gồm **M4B (chương)** hoặc **MP3**.
+- Chọn giọng đọc chính cho toàn bộ sách trong danh sách **giọng nói** ở cột bên trái.
+- Chọn ngôn ngữ đầu ra tại mục **Ngôn ngữ** (hoặc để **Tự động**).
+- Chọn **M4B (chương)** hoặc **MP3** tại mục **Định dạng**. Định dạng **M4B (chương)** lưu kèm danh sách mốc chương bên trong file âm thanh.
+- Mở mục **Dàn giọng** để gán từng tên thẻ `[voice:NAME]` có trong kịch bản vào một giọng đọc đã lưu.
+- Mở mục **Tùy chỉnh đọc** nếu bạn muốn chỉnh sâu các thông số tổng hợp như **Số bước**, **CFG**, **Nhiệt độ vị trí**, **Đọc khác nhau cho dòng lặp**, **Khoảng nghỉ giữa các dòng**, **Khoảng nghỉ giữa các đoạn**, **Cắt khoảng lặng của engine**, hoặc chỉnh **Mô tả cảm xúc** và **Mức độ cảm xúc** khi dùng engine IndexTTS2.
+- Mở mục **Bìa & chi tiết** để bấm **Thêm bìa** (ảnh JPEG hoặc PNG) và điền các thông tin gồm **Tác giả**, **Người kể chuyện**, **Năm**, **Thể loại**, **Mô tả**, hoặc thiết lập từ điển **Phát âm** bằng nút **Thêm từ** cho những từ cần cách đọc riêng.
+- Mở mục **Âm lượng** để giữ **Âm lượng: tắt** hoặc chọn chuẩn hóa theo **Chuẩn hóa (ACX)** hay **Chuẩn hóa (podcast)**.
 
-Bấm mở các thẻ thu gọn bên dưới để thiết lập chi tiết hơn:
+### 4. Tạo sách nói
 
-- **Dàn giọng**: gán giọng đọc đã lưu cho từng thẻ `[voice:NAME]` xuất hiện trong kịch bản.
-- **Tùy chỉnh đọc**: chỉnh **Số bước**, **CFG**, **Nhiệt độ vị trí**, bật **Đọc khác nhau cho dòng lặp**, chỉnh **Khoảng nghỉ giữa các dòng**, **Khoảng nghỉ giữa các đoạn**, hoặc bật **Cắt khoảng lặng của engine**. Nếu dùng engine IndexTTS2, bạn có thể nhập thêm **Mô tả cảm xúc** và **Mức độ cảm xúc**.
-- **Bìa & chi tiết**: bấm **Thêm bìa** để tải ảnh bìa (JPEG/PNG), điền **Tác giả**, **Người kể chuyện**, **Năm**, **Thể loại**, **Mô tả**, và thiết lập bảng **Phát âm** (**Thêm từ**, điền ô **Từ** và **Đọc là…** cho các từ viết tắt hoặc tên riêng).
-- **Âm lượng**: giữ **Âm lượng: tắt** hoặc chọn chuẩn hóa âm lượng **Chuẩn hóa (ACX)** hay **Chuẩn hóa (podcast)**.
-
-### 4. Xem trước và tạo sách nói
-
-Bấm mở mục **Xem trước kế hoạch** để kiểm tra danh sách chương được tách từ kịch bản và nghe thử từng chương trước khi xuất toàn bộ. Khi mọi thiết lập hợp lệ (hiện thông báo **✅ Mọi thứ đều ổn — không phát hiện vấn đề**), bấm nút **Tạo sách nói** ở góc dưới bên trái.
-
-Trong lúc máy đang tổng hợp và hiện trạng thái **Đang ghép sách nói…**, bạn có thể bấm **Dừng** bất cứ lúc nào. Các chương đã hoàn thành được giữ lại trong bộ nhớ đệm; lần sau bạn chỉ cần bấm **Tiếp tục** trong mục **Sách nói bị gián đoạn** để ghép nốt những chương còn lại.
+- Mở mục **Xem trước kế hoạch** ở cột bên trái nếu bạn muốn kiểm tra cấu trúc các chương và nghe thử từng chương trước khi tạo toàn bộ sách.
+- Bấm **Tạo sách nói** ở góc dưới bên trái để bắt đầu tổng hợp âm thanh.
+- Bấm **Dừng** bất cứ lúc nào nếu bạn muốn tạm ngưng; các chương đã hoàn thành được lưu lại trong bộ nhớ đệm. Khi bạn bấm **Tạo sách nói** lại hoặc bấm **Tiếp tục** tại mục **Sách nói bị gián đoạn**, ứng dụng sẽ dùng lại các chương đã xong và chỉ tổng hợp phần còn lại.
 
 ### 5. Nghe với chữ chạy theo audio
 
-Chọn khu vực **Sách nói đã sẵn sàng** hiện ra ở cuối trang sau khi quá trình tạo hoàn tất. Bấm **Phát** trên trình phát để nghe toàn bộ sách nói, chuyển nhanh giữa các chương và bật chế độ **Đọc theo** để chữ trong kịch bản tự động cuộn và tô sáng khớp với giọng đọc đang phát.
+- Khi quá trình tổng hợp hoàn tất, mục **Sách nói đã sẵn sàng** xuất hiện ở cuối khung bên phải.
+- Bấm **Phát** trên trình phát âm thanh để nghe lại tác phẩm và dùng mục **Đọc theo** để theo dõi nội dung kịch bản chạy đồng bộ theo giọng đọc cũng như chuyển nhanh giữa các chương.
 
-### 6. Xuất file âm thanh và video ngắn
+### 6. Xuất file và tạo clip audiogram
 
-Bấm **Tải xuống** ở góc phải mục **Sách nói đã sẵn sàng** để lưu file `.m4b` hoặc `.mp3` về máy. Nếu bạn dùng định dạng **MP3** hoặc cần mốc thời gian đăng kèm mô tả podcast, bấm **Tải danh sách chương (.txt)** để lưu bảng mốc giờ từng chương.
-
-Nếu muốn trích một đoạn ngắn đăng mạng xã hội, mở khung **Clip audiogram** ngay bên dưới trình phát: nhập thời điểm **Bắt đầu (m:ss)**, **Độ dài (giây)**, chọn **Khổ** khung hình (**Vuông**, **Ngang** hoặc **Dọc**), điền **Tiêu đề trên video** rồi bấm **Tạo video**.
+- Bấm **Tải xuống** ở góc phải mục **Sách nói đã sẵn sàng** để lưu file sách nói (`.m4b` hoặc `.mp3`) về máy.
+- Bấm **Tải danh sách chương (.txt)** để lưu file văn bản ghi lại mốc thời gian và tiêu đề từng chương, tiện dùng cho mô tả podcast hoặc trình phát không đọc được mốc chương nhúng sẵn.
+- Mở mục **Clip audiogram** bên dưới trình phát nếu bạn muốn trích một đoạn ngắn làm video đăng mạng xã hội: nhập thời điểm **Bắt đầu (m:ss)**, **Độ dài (giây)**, chọn **Khổ** (**Vuông**, **Ngang** hoặc **Dọc**), điền **Tiêu đề trên video** rồi bấm **Tạo video**.
 
 ## Mẹo
 
-- Chọn định dạng **M4B (chương)** khi nghe trên các ứng dụng sách nói chuyên dụng để giữ nguyên danh mục chương và ảnh bìa bên trong một file duy nhất.
-- Chuyển sang thẻ **Dự án** ở đầu cột bên trái rồi bấm **Lưu** để cất giữ toàn bộ kịch bản, dàn giọng và thiết lập cho những cuốn sách làm dở.
-- Khai báo trước tên nhân vật nước ngoài hoặc thuật ngữ chuyên ngành trong phần **Phát âm** để giọng đọc thống nhất xuyên suốt các chương mà không phải sửa lại văn bản gốc.
-- Khi nghe thử trong **Xem trước kế hoạch**, các chương đã nghe thử sẽ được lưu vào bộ nhớ đệm và tái sử dụng ngay khi bạn bấm **Tạo sách nói**, giúp tiết kiệm thời gian chờ.
+- Chuyển sang thẻ **Dự án** ở đầu cột bên trái để lưu lại toàn bộ kịch bản, dàn giọng và cài đặt hiện tại thành dự án riêng, giúp bạn dễ dàng quản lý nhiều đầu sách khác nhau.
+- Nghe thử trong **Xem trước kế hoạch** dùng chung bộ nhớ đệm với lúc xuất thật; những chương bạn đã nghe thử và không chỉnh sửa lại sẽ được ghép ngay khi bấm **Tạo sách nói** mà không cần tổng hợp lại.
+- Khi nhập file `.epub`, ứng dụng tự động nhận diện mục lục để tách chương và lược bỏ các trang phụ ở đầu sách như trang bìa hay trang bản quyền.
 
 ## Lỗi thường gặp
 
-- Nút **Tạo sách nói** bị khóa kèm thông báo **Viết hoặc nhập kịch bản để tạo.** hoặc **Chọn giọng mặc định hoặc gán giọng cho từng dòng.**: kiểm tra lại xem khung **Kịch bản** đã có nội dung chưa và bạn đã bấm chọn một hồ sơ trong mục **giọng nói** chưa.
-- Thông báo **Một từ phát âm bị liệt kê hai lần. Xóa mục trùng để tạo.**: mở thẻ **Bìa & chi tiết**, tìm đến mục **Phát âm** và bấm **Xóa** ở dòng từ vựng bị lặp.
-- Thông báo **Engine giọng nói chưa sẵn sàng. Kiểm tra Cài đặt → Engine.**: mở trang [Cài đặt](../cai-dat/) để kiểm tra trạng thái model hoặc bấm **Tốc độ / chất lượng** trên thanh trạng thái dưới cùng để chọn engine đã cài đặt.
-- Thông báo **Đang tạo một sách nói khác. Chờ hoàn tất hoặc dừng lại trước.**: chờ tiến trình đang chạy ở trang **Truyện** hoặc **Sách nói** kết thúc, hoặc bấm **Dừng** trước khi tạo bản mới.
+- Nút **Tạo sách nói** bị mờ và hiện dòng nhắc **Viết hoặc nhập kịch bản để tạo.**: vùng **Kịch bản** đang để trống hoặc chỉ có tiêu đề chương. Bạn hãy nhập nội dung văn bản cần đọc hoặc bấm **Tải mẫu**.
+- Thông báo **Chọn giọng mặc định hoặc gán giọng cho từng dòng.**: bạn chưa chọn giọng trong danh sách **giọng nói** ở cột bên trái, hoặc có thẻ `[voice:NAME]` đang gán cho một giọng đã bị xóa. Hãy chọn một giọng mặc định và kiểm tra lại mục **Dàn giọng**.
+- Thông báo **Một từ phát âm bị liệt kê hai lần. Xóa mục trùng để tạo.**: trong bảng **Phát âm** có hai dòng trùng cùng một từ. Bạn hãy mở phần **Phát âm** và bấm **Xóa** ở dòng bị trùng để mỗi từ chỉ giữ một cách đọc.
+- Thông báo **Engine giọng nói chưa sẵn sàng. Kiểm tra Cài đặt → Engine.**: model giọng đọc chưa tải xong hoặc engine gặp sự cố. Bạn hãy mở **Cài đặt** để kiểm tra trạng thái engine trước khi tạo lại.
+- Thông báo **Đang tạo một sách nói khác. Chờ hoàn tất hoặc dừng lại trước.**: đang có một tiến trình tạo sách nói hoặc truyện chạy nền. Bạn hãy chờ tiến trình đó xong hoặc bấm **Dừng** trước khi bắt đầu sách mới.
 
 ## Bài liên quan
 

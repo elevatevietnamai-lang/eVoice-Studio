@@ -1,104 +1,85 @@
 ---
 title: Bắt đầu với eVoice Studio
-description: Cài đặt eVoice Studio trên Windows, macOS và Linux, hoàn tất thiết lập lần đầu, tải model giọng nói và làm quen với giao diện ứng dụng.
+description: Hướng dẫn cài đặt eVoice Studio trên Windows, hoàn tất kiểm tra hệ thống lần đầu, tải mô hình, làm quen Trang chủ và chỉnh giao diện.
 slug: bat-dau
 order: 1
 group: start
-updated: 2026-11-14
+updated: 2026-11-15
 app_version: 0.5.7-beta.3
 status: draft
 ---
 
 ## Tính năng này làm gì
 
-Bài viết này hướng dẫn bạn cài đặt eVoice Studio trên máy tính, chạy kiểm tra hệ thống trong lần mở đầu tiên và tải model về máy. Sau vài phút thiết lập, bạn có thể nhân bản giọng, lồng tiếng video, tạo truyện nhiều giọng và dựng âm thanh trực tiếp trên thiết bị của mình mà không cần gửi dữ liệu ra ngoài.
+eVoice Studio là ứng dụng máy tính để lồng tiếng, nhân bản giọng nói và tạo âm thanh ngay trên máy của bạn. Mọi tác vụ xử lý giọng nói, chép lời và dựng nội dung đều chạy cục bộ mà không cần gửi dữ liệu âm thanh lên đám mây. Bài hướng dẫn này giúp bạn cài đặt ứng dụng trên Windows, thiết lập lần đầu, tải model và làm quen giao diện chính.
 
 ## Cần chuẩn bị
 
-- Máy tính chạy một trong các hệ điều hành sau:
-  - Windows 10 hoặc 11 bản 64-bit (x64), hoặc **Windows trên ARM** (thử nghiệm, chạy qua giả lập CPU).
-  - macOS 13.3 (Ventura) trở lên trên máy dùng chip Apple Silicon (M1/M2/M3/M4…). Máy Mac dùng chip Intel chỉ mở được giao diện khi nối với **Backend từ xa**.
-  - Linux x86_64 có môi trường đồ họa (X11 hoặc Wayland).
-- Khoảng 10 GB dung lượng ổ đĩa trống cho ứng dụng, môi trường Python đi kèm và trọng số model (khoảng 5 GB nếu máy chạy hoàn toàn trên CPU).
-- Kết nối mạng trong lần chạy đầu tiên để tải môi trường Python, công cụ âm thanh và model từ Hugging Face. Sau khi tải xong, ứng dụng hoạt động hoàn toàn cục bộ trên máy.
-- Tùy chọn: GPU NVIDIA có cài driver trên Windows/Linux để tăng tốc CUDA, hoặc GPU AMD trên Linux với ROCm. Trên máy Mac Apple Silicon, ứng dụng tự động tăng tốc bằng phần cứng của máy.
+- Máy tính chạy Windows 10 hoặc Windows 11 bản 64-bit (x64). Bản beta hiện tại của eVoice Studio chỉ có bộ cài cho Windows 10/11 x64, chưa có bản cho macOS và Linux.
+- Tối thiểu khoảng 10 GB dung lượng ổ đĩa trống cho ứng dụng, môi trường Python đi kèm và các model tải về (khoảng 5 GB nếu chỉ chạy bằng CPU).
+- Tùy chọn: GPU NVIDIA đã cài driver để tăng tốc bằng CUDA. Nếu máy không có GPU rời NVIDIA, ứng dụng vẫn chạy đầy đủ trên CPU.
+- Kết nối mạng trong lần mở đầu tiên hoặc khi bạn chủ động tải công cụ âm thanh và model từ Hugging Face.
 
 ## Các bước
 
-### 1. Cài đặt ứng dụng trên Windows, macOS hoặc Linux
+### 1. Tải và cài đặt eVoice Studio trên Windows
 
-<!-- TODO: kiểm tra — bản beta eVoice Studio hiện chỉ có bộ cài Windows; các dòng macOS/Linux và lệnh curl lấy từ tài liệu VoiceStudio gốc -->
+1. Tải file bộ cài `eVoice-Studio-Electron-<phiên bản>-win-x64.exe` từ trang Releases tại `https://github.com/elevatevietnamai-lang/eVoice-Studio` hoặc bấm nút tải trên trang `https://evoice.elevatemarketing.vn`.
+2. Mở file `.exe` vừa tải về để chạy trình cài đặt. Vì bộ cài bản beta chưa ký số, Windows SmartScreen có thể hiện hộp thoại cảnh báo: hãy bấm `Thông tin thêm` rồi chọn `Vẫn chạy`.
+3. Chọn thư mục cài đặt theo hướng dẫn trên màn hình. Trình cài đặt chạy dưới quyền người dùng hiện tại, không yêu cầu quyền quản trị viên (Administrator), và tự thiết lập Python cùng công cụ âm thanh trong lần khởi động đầu tiên.
 
-Chọn cách cài đặt phù hợp với hệ điều hành của bạn:
+### 2. Hoàn tất thiết lập trong lần mở đầu tiên
 
-- Trên Windows: Tải bộ cài đặt `.exe` (`win-x64` hoặc `win-arm64`) từ trang phát hành chính thức và mở tệp để cài đặt cho tài khoản hiện tại mà không cần quyền quản trị. Bạn cũng có thể mở PowerShell thông thường và chạy lệnh `irm https://voicestudio.sh/install | iex`.
-- Trên macOS: Tải tệp DMG bản `mac-arm64` cho máy Apple Silicon, mở tệp và kéo ứng dụng vào thư mục `/Applications`. Bạn cũng có thể mở Terminal và chạy lệnh `curl -fsSL https://voicestudio.sh/install | sh`.
-- Trên Linux: Tải gói `.AppImage` (chạy lệnh `chmod +x` rồi mở trực tiếp, không cần cài thêm `libfuse2`) hoặc gói `.deb` cho Debian/Ubuntu (cài bằng lệnh `sudo apt install ./VoiceStudio-Electron-<version>-linux-x64.deb`). Bạn cũng có thể chạy lệnh `curl -fsSL https://voicestudio.sh/install | sh` để cài đặt tự động vào `~/.local/bin/VoiceStudio`.
-
-### 2. Hoàn tất kiểm tra hệ thống và thiết lập lần mở đầu
-
-Mở eVoice Studio lần đầu tiên và làm theo trình thiết lập khởi đầu:
-
-1. Xem kết quả tại bước **Kiểm tra hệ thống**. Ứng dụng tự động kiểm tra phần cứng, dung lượng trống và cài đặt môi trường Python cùng công cụ âm thanh đi kèm. Nếu máy không có GPU rời, trình cài đặt sẽ chọn gói chạy trên CPU gọn nhẹ hơn. Bấm **Kiểm tra lại** nếu bạn vừa thay đổi thiết bị hoặc dung lượng ổ đĩa.
-2. Bấm **Mọi thứ đã ổn — tiếp tục** để chuyển sang bước chọn gói model khởi đầu tại mục **Cài đặt mô hình**.
-3. Xem lại tùy chọn ở mục **Quyền riêng tư** khi được hỏi về việc gửi dữ liệu thống kê sử dụng (analytics). Tùy chọn này mặc định tắt để mọi hoạt động của bạn ở lại trên máy; bạn có thể giữ nguyên trạng thái tắt hoặc bật lên tùy ý.
-4. Bấm **Vào studio** để mở màn hình chính của ứng dụng.
+1. Chờ bước **Kiểm tra hệ thống** tự động dò phần cứng (GPU NVIDIA hoặc CPU), dung lượng ổ đĩa và kết nối tới máy chủ tải model. Nếu cần kiểm tra lại sau khi giải phóng ổ đĩa hoặc đổi mạng, bấm **Kiểm tra lại**, sau đó bấm **Mọi thứ đã ổn — tiếp tục**.
+2. Chọn gói model phù hợp với cấu hình máy ở bước **Cài đặt mô hình** (ứng dụng tự gợi ý gói nhẹ nếu máy chỉ dùng CPU).
+3. Xem mục **Quyền riêng tư** khi ứng dụng hỏi về việc chia sẻ dữ liệu thống kê sử dụng (analytics). Tùy chọn này mặc định tắt; bạn có thể giữ nguyên trạng thái tắt để không gửi dữ liệu nào ra ngoài.
+4. Bấm **Vào studio** để hoàn tất thiết lập và mở màn hình chính.
 
 ### 3. Tham quan thanh điều hướng và Trang chủ
 
-![Trang chủ của eVoice Studio với các thẻ tính năng và thanh điều hướng bên trái](shots/trang-chu.png)
+![Trang chủ của eVoice Studio](shots/trang-chu.png)
 
-Làm quen với các khu vực chính trên màn hình **Trang chủ**:
+1. Quan sát thanh điều hướng bên trái để chuyển nhanh giữa các nhóm công cụ: **Giọng nói**, **Truyện**, **Lồng tiếng** và **Thêm**, hoặc kiểm tra trạng thái phần cứng ở các nút **Tốc độ / chất lượng** và **Thiết bị cục bộ: Engine sẵn sàng** ở góc dưới bên trái.
+2. Bấm vào các thẻ tính năng chính trên **Trang chủ** gồm **Nhân bản giọng**, **Thiết kế**, **Lồng tiếng**, hoặc các không gian làm việc khác như **Thư viện**, **Truyện**, **Sách nói**, **Studio âm nhạc**, **Dựng video**, **Video quảng cáo**, **Chép lời**, **Quy trình** và **Công cụ**.
+3. Chọn nhanh một hồ sơ trong cột **Giọng đã lưu** hoặc **Bản thu gần đây** ở bên trái, hoặc bấm **Dùng giọng này** ngay tại mục **Giọng đã lưu** bên dưới **Trang chủ** để mở thẳng không gian nhân bản giọng với giọng đó.
+4. Nhập từ khóa vào ô **Tìm kiếm…** (hoặc nhấn `Ctrl+K`) trên thanh tiêu đề để tìm nhanh tính năng, hoặc bấm **Hỏi eVoice Studio Agent** ở cạnh phải khi cần trợ giúp.
 
-1. Nhìn sang cột biểu tượng bên trái cùng để chuyển nhanh giữa các nhóm công cụ: **Trang chủ**, **Giọng nói**, **Truyện**, **Lồng tiếng**, **Thêm**, **Dự án** và các nút trạng thái ở góc dưới gồm **Tốc độ / chất lượng**, **Thiết bị cục bộ: Engine sẵn sàng**, **Cài đặt**.
-2. Xem danh sách bên cạnh thanh điều hướng khi đang ở mục **Giọng nói**: bạn có thể chuyển giữa hai thẻ **Giọng đã lưu** và **Bản thu gần đây** để nghe thử hoặc mở lại các giọng sẵn có như **Giọng Nam Trầm**, **Giọng Nữ Tin Tức**, **Người Kể Chuyện** hay **English Narrator**.
-3. Bấm vào một thẻ tính năng ở giữa màn hình để bắt đầu công việc tương ứng:
-   - Hàng đầu gồm ba công cụ chính: **Nhân bản giọng**, **Thiết kế** và **Lồng tiếng**.
-   - Các hàng tiếp theo mở **Thư viện**, **Truyện**, **Sách nói**, **Studio âm nhạc**, **Dựng video**, **Video quảng cáo**, **Chép lời**, **Quy trình** và **Công cụ**.
-4. Bấm vào ô **Tìm kiếm…** ở thanh trên cùng (hoặc nhấn phím tắt `Ctrl K`) khi cần tìm nhanh một tính năng, hoặc bấm nút **Dùng giọng này** ở khu vực **Giọng đã lưu** phía dưới để nạp ngay giọng đó vào không gian làm việc.
+### 4. Tải model đầu tiên và cấu hình máy chủ tải
 
-### 4. Tải model đầu tiên trong Cài đặt
+![Trang Mô hình trong Cài đặt](shots/tai-model.png)
 
-![Trang Mô hình trong Cài đặt với các nhóm TTS, ASR, Đọc chính tả, Phân tách người nói, Dịch thuật và LLM](shots/tai-model.png)
-
-Tải trước các model cần dùng để quá trình tạo giọng và lồng tiếng diễn ra liền mạch:
-
-1. Bấm biểu tượng bánh răng **Cài đặt** ở góc dưới bên trái, sau đó chọn mục **Mô hình** ở trình đơn bên trái.
-2. Chọn nhóm model bạn muốn cài đặt trong phần **Mô hình**, bao gồm **TTS** (tổng hợp tiếng nói), **ASR** (nhận diện giọng nói), **Đọc chính tả**, **Phân tách người nói**, **Dịch thuật** hoặc **LLM**, rồi chọn tải gói trọng số phù hợp với cấu hình máy.
-3. Bật công tắc tại mục **Xem trước giọng nói** nếu bạn muốn ứng dụng tải sẵn các đoạn âm thanh mẫu để nghe thử giọng ngay cả khi model giọng nói chưa tải xong.
-4. Giữ nguyên tùy chọn **Tự động** ở phần **Máy chủ gương Hugging Face** để ứng dụng tự chọn máy chủ nhanh nhất khi tải, hoặc chọn **Official huggingface.co**, hoặc nhập địa chỉ `https://` vào ô **URL mirror tùy chỉnh** rồi bấm **Lưu**. Bạn có thể bấm **Kiểm tra máy chủ** để đo lại tốc độ kết nối bất cứ lúc nào.
+1. Bấm biểu tượng bánh răng ở góc dưới bên trái để mở **Cài đặt**, sau đó chọn **Mô hình** ở trình đơn bên trái.
+2. Chọn nhóm model bạn cần dùng trong phần **Mô hình** (chẳng hạn TTS để tạo giọng nói, ASR để chép lời, đọc chính tả, phân tách người nói, dịch thuật hoặc LLM) rồi bấm tải model đầu tiên về máy.
+3. Bật tùy chọn trong mục **Xem trước giọng nói** nếu bạn muốn tải sẵn các đoạn âm thanh mẫu để nghe thử giọng ngay cả khi model chưa tải xong (mặc định tắt để không tự tạo kết nối mạng).
+4. Kiểm tra mục **Máy chủ gương Hugging Face** nếu mạng tải chậm: ứng dụng mặc định để tự động chọn máy chủ nhanh nhất, hoặc bạn có thể chọn **Official huggingface.co**, nhập địa chỉ vào ô **URL mirror tùy chỉnh** rồi bấm **Lưu**, và bấm **Kiểm tra máy chủ** để đo tốc độ kết nối.
 
 ### 5. Đổi ngôn ngữ và chủ đề giao diện
 
-![Trang Giao diện trong Cài đặt với các bảng màu Sáng và Tối](shots/giao-dien.png)
+![Chọn chủ đề trong Cài đặt Giao diện](shots/giao-dien.png)
 
-Tùy chỉnh ngôn ngữ hiển thị và màu sắc ứng dụng theo sở thích của bạn:
-
-1. Trong **Cài đặt**, bấm vào mục **Chung** ở thanh bên trái, tìm đến phần **Ngôn ngữ** (**Chọn ngôn ngữ giao diện**) và chọn ngôn ngữ bạn muốn sử dụng.
-2. Chuyển sang mục **Giao diện** ở thanh bên trái để đổi màu sắc hiển thị.
-3. Tại dòng **Chủ đề**, bấm chọn **Sáng**, **Tối** hoặc **Hệ thống** để giao diện tự động đổi theo giờ của hệ điều hành.
-4. Chọn một bảng màu cụ thể trong danh sách **Sáng** hoặc **Tối** như **Studio**, **VoiceStudio Original**, **Canopy**, **Current**, **Hearth**, **Orchid**, **VoiceStudio Classic** hoặc **Studio Classic**. Nếu chọn bảng màu khác **Studio**, bạn có thể bật thêm công tắc **Hiệu ứng kính**.
-5. Bấm nút **Đặt lại về mặc định** ở góc trên bên phải nếu bạn muốn khôi phục toàn bộ thiết lập giao diện về như lúc mới cài.
+1. Chọn mục **Giao diện** trong thanh bên của **Cài đặt** để mở các tùy chỉnh hiển thị, hoặc qua mục **Ngôn ngữ** và dùng ô **Chọn ngôn ngữ giao diện** khi muốn đổi ngôn ngữ hiển thị của ứng dụng.
+2. Chọn chế độ màu tại mục **Chủ đề** bằng cách bấm **Sáng**, **Tối** hoặc **Hệ thống** để tự động đổi theo giao diện Windows.
+3. Bấm chọn bảng màu bạn thích trong danh sách **Sáng** hoặc **Tối** như **Studio**, **VoiceStudio Original**, **Canopy**, **Current**, **Hearth**, **Orchid**, **VoiceStudio Classic** hoặc **Studio Classic**.
+4. Bật công tắc **Hiệu ứng kính** nếu bạn đang dùng bảng màu hỗ trợ hiệu ứng trong mờ (chủ đề **Studio** là giao diện phẳng nên không dùng hiệu ứng kính), hoặc bấm **Đặt lại về mặc định** ở góc trên bên phải để khôi phục giao diện ban đầu.
 
 ## Mẹo
 
-- Nếu máy tính không có GPU rời NVIDIA, bạn vẫn dùng được đầy đủ tính năng trên CPU bằng cách chọn các engine nhẹ (như KittenTTS, Supertonic-3, PocketTTS) và model Whisper nhỏ trong mục **Mô hình**.
-- Khi cần cài toàn bộ môi trường Python, dữ liệu và bộ nhớ đệm model sang ổ đĩa ngoài trên Windows, bạn có thể chọn thư mục trên ổ đĩa đó ngay từ màn hình thiết lập đầu tiên hoặc di chuyển dữ liệu sau trong **Cài đặt** → **Lưu trữ**.
-- Bấm vào biểu tượng logo eVoice Studio ở góc trên cùng bên trái bất cứ lúc nào để quay về **Trang chủ** mà không làm mất tiến độ ở không gian làm việc đang mở.
-- Thêm token Hugging Face miễn phí trong mục **Cài đặt** → **Xác thực** giúp tăng giới hạn băng thông khi tải các model dung lượng lớn và mở khóa model **Phân tách người nói**.
+- Nếu ổ `C:` còn ít dung lượng, bạn có thể chuyển dữ liệu giọng nói, dự án và bộ nhớ đệm sang ổ đĩa khác trong **Cài đặt** → **Lưu trữ**, hoặc đặt biến môi trường `OMNIVOICE_ENGINES_DIR` trước khi mở ứng dụng để lưu các môi trường engine sang ổ đĩa khác.
+- Khi tải các model lớn hoặc model yêu cầu cấp quyền trên Hugging Face, hãy vào **Cài đặt** → **Xác thực** và nhập **Token HuggingFace** để tăng giới hạn tốc độ tải và giảm tình trạng ngắt quãng.
+- Trình tải của eVoice Studio tự chia nhỏ file để tải đa luồng và lưu tiến trình liên tục; nếu mạng bị ngắt giữa chừng, lần tải tiếp theo sẽ nối tiếp phần đang dở thay vì tải lại từ đầu.
 
 ## Lỗi thường gặp
 
-- macOS báo không thể mở ứng dụng vì chưa xác minh được nhà phát triển hoặc báo tệp bị hỏng: trong Finder, bấm chuột phải (hoặc giữ phím Control rồi bấm) vào biểu tượng ứng dụng, chọn **Mở** rồi xác nhận mở trong hộp thoại hiện ra. Trên macOS 15 Sequoia trở lên, mở phần cài đặt quyền riêng tư và bảo mật của hệ thống để cho phép mở ứng dụng, hoặc chạy lệnh `xattr -dr com.apple.quarantine "/Applications/VoiceStudio.app"` trong Terminal.
-- cài đặt trên máy Mac báo lỗi không tìm thấy bản dựng PyTorch cho nền tảng `x86_64`: máy Mac chip Intel không hỗ trợ chạy backend cục bộ (hãy nối sang **Backend từ xa** trên một máy khác), còn nếu bạn đang dùng máy Mac Apple Silicon thì hãy tải và cài lại đúng gói cài đặt đuôi `mac-arm64.dmg`.
-- cửa sổ ứng dụng trên Linux bị trắng xóa hoặc báo lỗi tiến trình GPU khi khởi động: mở ứng dụng từ dòng lệnh kèm cờ tắt tăng tốc phần cứng cho giao diện `./VoiceStudio-Electron-*-linux-x64.AppImage --disable-gpu`, hoặc thêm `--ozone-platform=x11` nếu đang dùng phiên Wayland.
-- quá trình tải model dừng ở bước kiểm tra thông tin hoặc tải rất chậm: vào **Cài đặt** → **Mô hình**, bấm **Kiểm tra máy chủ** ở mục **Máy chủ gương Hugging Face** để ứng dụng chọn lại máy chủ nhanh hơn, hoặc thêm token trong mục **Xác thực** để tránh bị giới hạn lượt tải.
-- báo lỗi tràn bộ nhớ (`CUDA out of memory` hoặc lỗi biên dịch Triton) trên Windows khi tạo giọng lần đầu ở máy có ít hơn 16 GB VRAM: vào **Cài đặt** → **Thiết bị tính toán** và bật tùy chọn **Tắt torch.compile** để chạy trực tiếp không qua bước biên dịch nhân.
+- Windows SmartScreen chặn không cho mở bộ cài: do bản beta chưa ký số, bạn bấm vào `Thông tin thêm` trên cửa sổ cảnh báo của Windows rồi bấm `Vẫn chạy` để tiếp tục cài đặt.
+- Tải model bị đứng ở bước chuẩn bị hoặc tốc độ rất chậm: vào **Cài đặt** → **Mô hình**, tìm mục **Máy chủ gương Hugging Face**, bấm **Kiểm tra máy chủ** hoặc nhập mirror vào **URL mirror tùy chỉnh** rồi bấm **Lưu**; bạn cũng nên thêm **Token HuggingFace** trong **Cài đặt** → **Xác thực** để tránh bị giới hạn lượt tải.
+- Không dùng được GPU trên máy dùng card AMD Radeon hoặc đồ họa tích hợp: trên Windows, tăng tốc GPU cho các engine PyTorch chỉ hỗ trợ GPU NVIDIA (CUDA), nên máy dùng card AMD hoặc Intel sẽ tự chạy trên CPU. Bạn có thể kiểm tra chi tiết từng engine tại mục **Tăng tốc GPU** hoặc chọn các model nhẹ dành cho CPU.
+- Báo lỗi thiếu bộ nhớ VRAM (`CUDA out of memory` hoặc lỗi biên dịch Triton) trong lần tạo âm thanh đầu tiên trên Windows: mở **Cài đặt**, tìm tùy chọn **Tắt torch.compile** và bật lên để các engine chạy trực tiếp mà không tốn thêm VRAM cho bước biên dịch.
+- Báo thiếu dung lượng ổ đĩa khi tải model: ngoài dung lượng của chính model đó, ứng dụng luôn giữ lại tối thiểu 2 GB trống trên ổ đĩa chứa bộ nhớ đệm. Hãy dọn bớt file tạm hoặc đổi thư mục lưu trong **Cài đặt** → **Lưu trữ**.
 
 ## Bài liên quan
 
 - [Nhân bản giọng](../nhan-ban-giong/)
-- [Thiết kế giọng bằng mô tả](../thiet-ke-giong/)
+- [Thư viện giọng](../thu-vien-giong/)
 - [Lồng tiếng video](../long-tieng-video/)
 - [Cài đặt](../cai-dat/)
 - [Khắc phục sự cố](../khac-phuc-su-co/)

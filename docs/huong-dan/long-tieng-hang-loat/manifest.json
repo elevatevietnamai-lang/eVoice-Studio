@@ -16,13 +16,14 @@
       "file": "shots/mo-trang.png",
       "width": 1440,
       "height": 900,
-      "sha256": "790195ea4f07761760675f45870eb4a0fe320549eb5c0100ad113f6ec1a973d0",
+      "sha256": "4b31e86c1c50d653d92a3f4b8cb0d051463ae160c266a6182008992cac4f4fbd",
       "highlight": null,
       "labels": {
         "title": "eVoice Studio",
         "headings": [
           "NGÔN NGỮ ĐÍCH",
-          "Lồng tiếng hàng loạt"
+          "Lồng tiếng hàng loạt",
+          "Không có tác vụ đang xử lý."
         ],
         "buttons": [
           "Giọng nói",
@@ -30,7 +31,8 @@
           "Lồng tiếng",
           "Thêm",
           "Tốc độ / chất lượng",
-          "Thiết bị cục bộ: Đang tải…",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
           "Thêm video",
           "Ngôn ngữ",
           "Spanish",
@@ -41,8 +43,7 @@
           "Đã hoàn thành",
           "Thất bại",
           "Làm mới",
-          "Đang tải…",
-          "Menu",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
           "Thu nhỏ",
           "Phóng to",
           "Đóng",
