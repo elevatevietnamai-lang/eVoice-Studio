@@ -51,7 +51,9 @@ it('leaves consent unprompted and retryable after a failed write', async () => {
   const client = mount();
   fireEvent.click(await screen.findByRole('button', { name: 'consent.no' }));
   // The reason reaches the user (a 403 names the origin setting), not a bare "error".
-  expect(await screen.findByRole('alert')).toHaveTextContent('offline');
+  const alert = await screen.findByRole('alert');
+  expect(alert).toHaveTextContent('common.error');
+  expect(alert).toHaveTextContent('offline');
   expect(client.getQueryData(['privacy', 'analytics'])).toMatchObject({
     prompted: false,
     opted_in: false,
