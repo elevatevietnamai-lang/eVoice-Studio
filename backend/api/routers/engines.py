@@ -336,6 +336,16 @@ async def install_argos_packs(request: ArgosPackRequest):
             source,
             targets,
         )
+    except translation_engines.ArgosPackUnavailable as exc:
+        # Typed so the UI can say it in the user's language and point at NLLB.
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": exc.code,
+                "message": str(exc),
+                "pairs": [f"{source} → {target}" for source, target in exc.pairs],
+            },
+        ) from exc
     except (ImportError, ValueError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 

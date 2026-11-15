@@ -333,6 +333,33 @@ export const setDubQuality = (quality: DubSession['quality']) => {
   if (['idle', 'editing', 'done'].includes(dubSession.state.phase) && !dubSession.state.recovery)
     patch({ quality, ...(quality === 'agent' ? {} : { agentCli: undefined }) });
 };
+/** Production preferences a new source inherits from the previous one. One
+ * list for every reset path (new file, new link, discarded recovery, removed
+ * source) so a newly added option cannot be kept by one path and silently
+ * dropped by another, as ``hardsubFirst`` was. */
+export function carriedDubPreferences(current: DubSession): Partial<DubSession> {
+  return {
+    target: current.target,
+    multiTargets: current.multiTargets,
+    quality: current.quality,
+    agentCli: current.agentCli,
+    autoGlossary: current.autoGlossary,
+    reflectPass: current.reflectPass,
+    condenseSuggest: current.condenseSuggest,
+    dialect: current.dialect,
+    translationInstructions: current.translationInstructions,
+    timingStrategy: current.timingStrategy,
+    voiceMatch: current.voiceMatch,
+    sourceLanguage: current.sourceLanguage,
+    numSpeakers: current.numSpeakers,
+    fitOptions: current.fitOptions,
+    steps: current.steps,
+    guidance: current.guidance,
+    speed: current.speed,
+    instruct: current.instruct,
+    hardsubFirst: current.hardsubFirst,
+  };
+}
 export const setDubHardsubFirst = (hardsubFirst: boolean) => {
   if (['idle', 'editing', 'done'].includes(dubSession.state.phase) && !dubSession.state.recovery)
     patch({ hardsubFirst });
@@ -1009,24 +1036,7 @@ export async function uploadDub(file: File) {
       : 'video';
   dubSession.setState((current) => ({
     ...initial,
-    target: current.target,
-    multiTargets: current.multiTargets,
-    quality: current.quality,
-    agentCli: current.agentCli,
-    autoGlossary: current.autoGlossary,
-    reflectPass: current.reflectPass,
-    condenseSuggest: current.condenseSuggest,
-    dialect: current.dialect,
-    translationInstructions: current.translationInstructions,
-    timingStrategy: current.timingStrategy,
-    voiceMatch: current.voiceMatch,
-    sourceLanguage: current.sourceLanguage,
-    numSpeakers: current.numSpeakers,
-    fitOptions: current.fitOptions,
-    steps: current.steps,
-    guidance: current.guidance,
-    speed: current.speed,
-    instruct: current.instruct,
+    ...carriedDubPreferences(current),
     jobId,
     filename: file.name,
     inputType,
@@ -1064,24 +1074,7 @@ export async function ingestDubUrl(value: string, cookieFile?: File, fetchSubs =
   const jobId = crypto.randomUUID();
   dubSession.setState((current) => ({
     ...initial,
-    target: current.target,
-    multiTargets: current.multiTargets,
-    quality: current.quality,
-    agentCli: current.agentCli,
-    autoGlossary: current.autoGlossary,
-    reflectPass: current.reflectPass,
-    condenseSuggest: current.condenseSuggest,
-    dialect: current.dialect,
-    translationInstructions: current.translationInstructions,
-    timingStrategy: current.timingStrategy,
-    voiceMatch: current.voiceMatch,
-    sourceLanguage: current.sourceLanguage,
-    numSpeakers: current.numSpeakers,
-    fitOptions: current.fitOptions,
-    steps: current.steps,
-    guidance: current.guidance,
-    speed: current.speed,
-    instruct: current.instruct,
+    ...carriedDubPreferences(current),
     jobId,
     filename: url,
     inputType: 'video',
@@ -1869,24 +1862,7 @@ export function discardDubRecovery(): void {
   clearDubEditHistory();
   dubSession.setState(() => ({
     ...initial,
-    target: current.target,
-    multiTargets: current.multiTargets,
-    quality: current.quality,
-    agentCli: current.agentCli,
-    autoGlossary: current.autoGlossary,
-    reflectPass: current.reflectPass,
-    condenseSuggest: current.condenseSuggest,
-    dialect: current.dialect,
-    translationInstructions: current.translationInstructions,
-    timingStrategy: current.timingStrategy,
-    voiceMatch: current.voiceMatch,
-    sourceLanguage: current.sourceLanguage,
-    numSpeakers: current.numSpeakers,
-    fitOptions: current.fitOptions,
-    steps: current.steps,
-    guidance: current.guidance,
-    speed: current.speed,
-    instruct: current.instruct,
+    ...carriedDubPreferences(current),
     exportOptions: current.exportOptions,
   }));
   persist();
@@ -1911,24 +1887,7 @@ export function resetDubSession(): boolean {
   clearDubEditHistory();
   dubSession.setState(() => ({
     ...initial,
-    target: current.target,
-    multiTargets: current.multiTargets,
-    quality: current.quality,
-    agentCli: current.agentCli,
-    autoGlossary: current.autoGlossary,
-    reflectPass: current.reflectPass,
-    condenseSuggest: current.condenseSuggest,
-    dialect: current.dialect,
-    translationInstructions: current.translationInstructions,
-    timingStrategy: current.timingStrategy,
-    voiceMatch: current.voiceMatch,
-    sourceLanguage: current.sourceLanguage,
-    numSpeakers: current.numSpeakers,
-    fitOptions: current.fitOptions,
-    steps: current.steps,
-    guidance: current.guidance,
-    speed: current.speed,
-    instruct: current.instruct,
+    ...carriedDubPreferences(current),
     exportOptions: current.exportOptions,
   }));
   persist();

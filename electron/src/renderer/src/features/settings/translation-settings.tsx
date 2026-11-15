@@ -67,7 +67,11 @@ export function TranslationSettings() {
         client.invalidateQueries({ queryKey: ['performance-profile'] }),
       ]);
       if (!install) {
-        const feedback = engineSelectionFeedback(result, 'translation');
+        const feedback = engineSelectionFeedback(
+          result,
+          t('engineSidebar.translation'),
+          query.data?.engines.find((engine) => engine.id === result.active)?.display_name,
+        );
         toast.success(t(feedback.key, feedback.values));
       }
     } catch (error) {

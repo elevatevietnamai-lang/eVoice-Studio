@@ -1322,6 +1322,21 @@ def describe_exception(exc: BaseException) -> str:
     return text
 
 
+#: Classes whose remedy is about fetching the SOURCE VIDEO (a CDN drop, DRM,
+#: a bot check, a link shape, the download folder). Their classify() triggers
+#: include generic words — "timed out", "broken pipe" — that any later stage
+#: produces too, so the hint is only true while the video is being fetched.
+_VIDEO_SOURCE_TOPICS = frozenset({
+    "VIDEO_DOWNLOAD_OS_ERROR",
+    "VIDEO_DOWNLOAD_BOT_CHECK",
+    "VIDEO_DRM_PROTECTED",
+    "VIDEO_DOWNLOAD_NETWORK",
+    "UNSUPPORTED_VIDEO_URL",
+})
+#: The build_failure stages that fetch the source video (dub_pipeline).
+VIDEO_SOURCE_STAGES = frozenset({"download", "ingest"})
+
+
 def build_failure(
     exc_or_msg: Any,
     *,
@@ -1349,6 +1364,10 @@ def build_failure(
     raw = strip_ffmpeg_banner(strip_ansi(raw))
     reason = sanitize(raw) or error_class
     docs_topic = classify(raw)
+    if docs_topic in _VIDEO_SOURCE_TOPICS and stage not in VIDEO_SOURCE_STAGES:
+        # A transcribe or model-load "timed out" is not a video-server drop:
+        # attaching that hint sent users to retry a download that had worked.
+        docs_topic = ""
     # HF_MIRROR_UNREACHABLE's hint is dynamic (it names the configured mirror)
     # so it can't live in the static _HINTS table.
     hint = hf_mirror_hint(raw) if docs_topic == "HF_MIRROR_UNREACHABLE" else _HINTS.get(docs_topic, "")
