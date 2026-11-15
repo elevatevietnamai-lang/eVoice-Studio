@@ -297,7 +297,7 @@ API pin: `/v1/lora/load` (`lora_path`, `adapter_name`), `/v1/lora/unload`, `/v1/
 ### 8.6 Không làm
 
 - **Auto score / LRC:** API REST tại pin không có endpoint nào (chỉ có trong Gradio). Không làm cho tới khi đổi revision pin có endpoint.
-- **Custom timesteps:** REST bỏ qua `timesteps`, cả ở pin lẫn `main` upstream (xem 8.3). Chờ upstream sửa.
+- **Custom timesteps:** REST bỏ qua `timesteps`, cả ở pin lẫn `main` upstream (xem 8.3). Chờ upstream sửa: https://github.com/ace-step/ACE-Step-1.5/issues/1382.
 - **Training LoRA**, AudioMass, Demucs, chia sẻ/LAN: giữ như mục 2.
 
 ### 8.6b Kết quả (2026-11-15)
