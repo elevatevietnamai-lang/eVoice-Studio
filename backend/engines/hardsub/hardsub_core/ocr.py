@@ -259,7 +259,7 @@ def _join_lines(lines) -> str:
     return "\n".join(uniq)
 
 
-def group_samples(samples: list[Sample], sample_period: float, sim_thr: float = 0.6,
+def group_samples(samples: list[Sample], sample_period: float, sim_thr: float = 0.7,
                   gap_tolerance: int = 1, min_samples: int = 2, fps: float = 25.0) -> list[Segment]:
     """Gộp các mẫu liên tiếp có chữ giống nhau thành một câu phụ đề."""
     segs: list[Segment] = []

@@ -223,3 +223,17 @@ def test_small_off_centre_text_is_not_a_subtitle(ocr):
     assert h == 32.0
     assert 10.0 < h * ocr.SMALL_TEXT_RATIO <= 32.0
     assert ocr.subtitle_line_height([(0.0, [([0.0, 0.0, 100.0, 10.0], "x")])], W) == 0.0
+
+
+def test_consecutive_subtitles_sharing_words_stay_apart(ocr):
+    """Two different lines with common words ("...是我们的...方向") must not merge into one cue;
+    once the UI text around them was filtered out, the 0.6 threshold dropped the second line."""
+    S = ocr.Sample
+    box = [[300.0, 480.0, 700.0, 515.0]]
+    samples = [S(i * 0.25, "先是我们的图片方向", box) for i in range(6)]
+    samples += [S((6 + i) * 0.25, "其次就是我们的视频方向", box) for i in range(6)]
+    segs = ocr.group_samples(samples, 0.25)
+    assert [s.text for s in segs] == ["先是我们的图片方向", "其次就是我们的视频方向"]
+    # OCR jitter on one line still groups
+    jitter = [S(i * 0.25, "上存参考图或提示词" + ("口" if i % 2 else ""), box) for i in range(6)]
+    assert len(ocr.group_samples(jitter, 0.25)) == 1
