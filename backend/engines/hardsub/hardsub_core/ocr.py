@@ -10,11 +10,38 @@ from difflib import SequenceMatcher
 import cv2
 import numpy as np
 
-from .hw import ort_providers
+from .hw import gpu_fallback, ort_providers
 from .subs import Segment
 
 CJK_RE = re.compile(r"[㐀-䶿一-鿿豈-﫿]")
 PUNCT_RE = re.compile(r"[\s\.,，。!！?？:：;；、\"'“”‘’《》<>()（）\-—…·~]+")
+
+
+def _heuristic_cudnn() -> None:
+    """RapidOCR creates its CUDA sessions with cudnn_conv_algo_search=EXHAUSTIVE, which
+    benchmarks every convolution again for each new input shape. Recognition gets a new width
+    for almost every line, so a 3-minute video paid that search hundreds of times. HEURISTIC
+    picks an algorithm straight away and was as fast once warm (measured on an RTX 3060)."""
+    try:
+        from rapidocr_onnxruntime.utils import infer_engine as ie
+    except Exception:
+        return
+    cls = getattr(ie, "OrtInferSession", None)
+    orig = getattr(cls, "_get_ep_list", None)
+    if orig is None or getattr(orig, "_hardsub_heuristic", False):
+        return
+
+    def _get_ep_list(self):
+        eps = orig(self)
+        out = []
+        for ep in eps:
+            if isinstance(ep, tuple) and ep[0] == "CUDAExecutionProvider" and isinstance(ep[1], dict):
+                ep = (ep[0], {**ep[1], "cudnn_conv_algo_search": "HEURISTIC"})
+            out.append(ep)
+        return out
+
+    _get_ep_list._hardsub_heuristic = True
+    cls._get_ep_list = _get_ep_list
 
 
 class OcrEngine:
@@ -23,9 +50,14 @@ class OcrEngine:
 
     def __init__(self, prefer_gpu: bool = True):
         use_cuda = prefer_gpu and "CUDAExecutionProvider" in ort_providers(True)
+        # What we asked onnxruntime for; compared with what the sessions really got (see active).
+        self.requested = ("CUDAExecutionProvider", "CPUExecutionProvider") if use_cuda \
+            else ("CPUExecutionProvider",)
         self._new_api = False
         try:
             from rapidocr_onnxruntime import RapidOCR
+            if use_cuda:
+                _heuristic_cudnn()
             try:
                 self.engine = RapidOCR(det_use_cuda=use_cuda, cls_use_cuda=use_cuda, rec_use_cuda=use_cuda)
             except TypeError:
@@ -35,6 +67,36 @@ class OcrEngine:
             params = {"EngineConfig.onnxruntime.use_cuda": True} if use_cuda else None
             self.engine = RapidOCR(params=params) if params else RapidOCR()
             self._new_api = True
+
+    @property
+    def active(self) -> tuple[str, ...]:
+        """Providers of the text-recognition session as onnxruntime really created it."""
+        for part in ("text_rec", "text_det"):
+            model = getattr(self.engine, part, None)
+            infer = getattr(model, "infer", None) or getattr(model, "session", None)
+            sess = getattr(infer, "session", infer)
+            get = getattr(sess, "get_providers", None)
+            if callable(get):
+                try:
+                    return tuple(get())
+                except Exception:
+                    pass
+        return ()
+
+    def recognize(self, crops: list) -> list[tuple[str, float]] | None:
+        """Text of each crop (one line each) without running detection, or None when the
+        installed RapidOCR has no separate recognizer. Detection upscales the band several times
+        and is most of an OCR call; when the line's box is already known it is not needed."""
+        rec = getattr(self.engine, "text_rec", None)
+        if self._new_api or rec is None or not crops:
+            return None
+        res, _ = rec(crops)
+        return [(str(t), float(sc)) for t, sc, *_ in res]
+
+    @property
+    def gpu_fallback(self) -> bool:
+        active = self.active
+        return bool(active) and gpu_fallback(self.requested, active)
 
     def __call__(self, img: np.ndarray):
         out = []
@@ -87,7 +149,7 @@ def scan_video(path: str, info, region: tuple[float, float], sample_fps: float,
     min_h, max_h = H * 0.015, H * 0.18
 
     cap = cv2.VideoCapture(path)
-    samples: list[Sample] = []
+    raw: list[tuple[float, list]] = []
     idx = 0
     total = max(1, info.frames)
     while True:
@@ -108,17 +170,70 @@ def scan_video(path: str, info, region: tuple[float, float], sample_fps: float,
                 if cjk_only and not CJK_RE.search(text):
                     continue
                 lines.append((box, text))
-            lines.sort(key=lambda r: (round(r[0][1] / max(1.0, (r[0][3] - r[0][1]) * 0.6)), r[0][0]))
-            text = _join_lines(lines)
-            samples.append(Sample(idx / info.fps, text, [b for b, _ in lines]))
-            if progress and len(samples) % 10 == 0:
+            raw.append((idx / info.fps, lines))
+            if progress and len(raw) % 10 == 0:
                 progress(min(idx / total, 1.0), f"OCR {idx / info.fps:.0f}s / {info.duration:.0f}s")
         else:
             if not cap.grab():
                 break
         idx += 1
     cap.release()
+    static = static_overlays(raw, step / info.fps)
+    min_line = subtitle_line_height(raw, W) * SMALL_TEXT_RATIO
+    samples: list[Sample] = []
+    for t, lines in raw:
+        lines = [ln for ln in lines
+                 if _overlay_key(*ln) not in static and ln[0][3] - ln[0][1] >= min_line]
+        lines.sort(key=lambda r: (round(r[0][1] / max(1.0, (r[0][3] - r[0][1]) * 0.6)), r[0][0]))
+        samples.append(Sample(t, _join_lines(lines), [b for b, _ in lines]))
     return samples
+
+
+# A line under this share of the subtitle line height is UI or on-screen text, not a subtitle
+# (app labels ~10 px or a speech bubble ~17 px against ~32 px subtitles in a 576p recording).
+SMALL_TEXT_RATIO = 0.6
+
+
+def subtitle_line_height(raw: list[tuple[float, list]], width: float) -> float:
+    """Median height of the horizontally centred lines (subtitles are centred; UI labels and
+    stickers mostly are not). 0 when nothing is centred, which disables the size filter."""
+    hs = sorted(b[3] - b[1] for _, lines in raw for b, _ in lines
+                if abs((b[0] + b[2]) / 2 - width / 2) < width * 0.1)
+    return float(hs[len(hs) // 2]) if hs else 0.0
+
+
+def _overlay_key(box, text) -> tuple:
+    """Same text at (about) the same place: OCR boxes jitter by a few pixels between frames."""
+    q = max(8.0, (box[3] - box[1]))
+    return _norm(text), round((box[0] + box[2]) / 2 / q), round((box[1] + box[3]) / 2 / q)
+
+
+def static_overlays(raw: list[tuple[float, list]], sample_period: float, min_seconds: float = 10.0,
+                    min_share: float = 0.25, min_run_seconds: float = 15.0) -> set:
+    """Text that never changes inside the subtitle band: app UI in a screen recording
+    (labels such as "width / height / batch size"), a channel watermark, a fixed caption sticker.
+    Real subtitles change every few seconds, so a line is dropped only when the same text sits at
+    the same spot for at
+    least `min_seconds` in total AND covers `min_share` of the video or stays `min_run_seconds`
+    without a break. Short videos keep everything (`min_seconds`)."""
+    if not raw:
+        return set()
+    seen: dict[tuple, list[int]] = {}
+    for i, (_, lines) in enumerate(raw):
+        for key in {_overlay_key(b, t) for b, t in lines}:
+            if key[0]:
+                seen.setdefault(key, []).append(i)
+    static = set()
+    for key, idxs in seen.items():
+        if len(idxs) * sample_period < min_seconds:
+            continue
+        run = best = 1
+        for a, b in zip(idxs, idxs[1:]):
+            run = run + 1 if b - a <= 2 else 1  # one missed read does not break a run
+            best = max(best, run)
+        if len(idxs) >= min_share * len(raw) or best * sample_period >= min_run_seconds:
+            static.add(key)
+    return static
 
 
 def _join_lines(lines) -> str:
@@ -144,7 +259,7 @@ def _join_lines(lines) -> str:
     return "\n".join(uniq)
 
 
-def group_samples(samples: list[Sample], sample_period: float, sim_thr: float = 0.6,
+def group_samples(samples: list[Sample], sample_period: float, sim_thr: float = 0.7,
                   gap_tolerance: int = 1, min_samples: int = 2, fps: float = 25.0) -> list[Segment]:
     """Gộp các mẫu liên tiếp có chữ giống nhau thành một câu phụ đề."""
     segs: list[Segment] = []
@@ -213,6 +328,7 @@ def refine_boundaries(path, info, segs: list[Segment], engine, step: int,
         return segs
     cap = cv2.VideoCapture(path)
     cache: dict[int, np.ndarray | None] = {}
+    recognize = getattr(engine, "recognize", None)
 
     def frame_at(i):
         if i not in cache:
@@ -230,12 +346,26 @@ def refine_boundaries(path, info, segs: list[Segment], engine, step: int,
         y1 = int(max(0, min(b[1] for b in s.boxes) - 8))
         y2 = int(min(info.height, max(b[3] for b in s.boxes) + 8))
 
+        lines = sorted(s.boxes, key=lambda b: (b[1], b[0]))
+
         def has_text(i):
             fr = frame_at(i)
             if fr is None:
                 return False
             engine.frame_index = i  # gợi ý cho engine giả lập khi test; RapidOCR bỏ qua
-            txt = "".join(t for _, t, sc in engine(fr[y1:y2]) if sc >= min_score)
+            got = None
+            if recognize:  # vị trí từng dòng đã biết: chỉ nhận dạng, bỏ bước dò chữ
+                crops = []
+                for b in lines:
+                    pad = (b[3] - b[1]) * 0.15
+                    bx1, by1 = int(max(0, b[0] - pad)), int(max(0, b[1] - pad))
+                    bx2, by2 = int(min(info.width, b[2] + pad)), int(min(info.height, b[3] + pad))
+                    if bx2 - bx1 > 1 and by2 - by1 > 1:
+                        crops.append(fr[by1:by2, bx1:bx2])
+                got = recognize(crops)
+            if got is None:
+                got = [(t, sc) for _, t, sc in engine(fr[y1:y2])]
+            txt = "".join(t for t, sc in got if sc >= min_score)
             return _similar(txt, s.text.replace("\n", ""), sim_thr)
 
         lo, hi = max(-1, f_first - step), f_first  # lo: không có chữ, hi: có chữ
@@ -263,8 +393,8 @@ def refine_boundaries(path, info, segs: list[Segment], engine, step: int,
 
 
 def extract_ocr(path, info, region, sample_fps, prefer_gpu=True, min_score=0.6,
-                cjk_only=True, progress=None) -> list[Segment]:
-    engine = OcrEngine(prefer_gpu)
+                cjk_only=True, progress=None, engine=None) -> list[Segment]:
+    engine = engine or OcrEngine(prefer_gpu)
     samples = scan_video(path, info, region, sample_fps, engine, min_score, cjk_only, progress)
     step = max(1, int(round(info.fps / sample_fps)))
     segs = group_samples(samples, step / info.fps, min_samples=2 if sample_fps >= 3 else 1,

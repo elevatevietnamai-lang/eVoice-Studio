@@ -115,6 +115,10 @@ a promo video maker. Everything still runs locally; nothing is uploaded.
 
 ### Fixed
 
+- Reading on-screen subtitles runs on NVIDIA GPUs again: the engine pinned a CUDA 13 onnxruntime next to CUDA 12 libraries and quietly read on the CPU; existing installs ask to install again, which only updates the changed packages (#49)
+- Reading on-screen subtitles is about four times faster: frame-exact timing re-reads only the known subtitle lines, and the GPU no longer re-benchmarks for every line width (#49)
+- On-screen subtitles warn in the panel and during reading or removal when GPU acceleration fails and the engine falls back to the CPU (#49)
+- On-screen subtitle reading leaves out text that never changes inside the band (app labels in a screen recording, a watermark) and text much smaller than the subtitle line (#49)
 - Buttons and dropdowns no longer stay outlined in white after you click them or pick an option; the focus ring still shows when you move with the keyboard (#24)
 - Promo video: a saved draft whose files are gone marks them as missing and blocks Render, with one button to remove them, instead of a black preview and a failed render (#12)
 - First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)

@@ -3967,6 +3967,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Usunięto",
     "engine_line": "Silnik gotowy · {{accel}}",
+    "gpu_fallback": "Akceleracja GPU nie uruchomiła się, więc odczyt działa na CPU i jest znacznie wolniejszy. Zainstaluj ponownie silnik napisów, aby to naprawić.",
     "skip_asr": "Wideo ma napisy wtopione w obraz",
     "skip_asr_help": "Pomiń rozpoznawanie mowy po przesłaniu. Zamiast tego odczytaj napisy z obrazu (szybciej i dokładniej w przypadku wideo z napisami)."
   },

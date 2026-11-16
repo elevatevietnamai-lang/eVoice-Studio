@@ -51,37 +51,47 @@ class Progress:
               "message": message})
 
 
+GPU_FALLBACK = ("GPU acceleration did not start (onnxruntime fell back to the CPU), so reading "
+                "will be slow. Reinstall the on-screen subtitle engine to repair it.")
+
+
 def cmd_probe(_args):
     import onnxruntime as ort
     enc, _ = hw.video_encoder(True)
-    ocr_ok = True
+    ocr_ok, active, fallback = True, [], False
     try:
-        from hardsub_core.ocr import OcrEngine  # noqa: F401
-        import rapidocr_onnxruntime  # noqa: F401
+        from hardsub_core.ocr import OcrEngine
+        # Build the real OCR sessions: get_available_providers() lists CUDA even when its DLLs
+        # cannot load, and only a created session shows the provider that actually runs.
+        engine = OcrEngine(True)
+        active, fallback = list(engine.active), engine.gpu_fallback
     except Exception:
-        try:
-            import rapidocr  # noqa: F401
-        except Exception:
-            ocr_ok = False
+        ocr_ok = False
     emit({"type": "result", "providers": list(ort.get_available_providers()),
-          "encoder": enc, "ocr": ocr_ok, "python": sys.version.split()[0]})
+          "active_providers": active, "accelerator": hw.accelerator(active),
+          "gpu_fallback": fallback, "encoder": enc, "ocr": ocr_ok, "python": sys.version.split()[0]})
 
 
 def cmd_ocr(args):
     from hardsub_core.video import probe
-    from hardsub_core.ocr import extract_ocr
+    from hardsub_core.ocr import OcrEngine, extract_ocr
 
     info = probe(args.video)
     emit({"type": "progress", "progress": 0.0, "message": "Loading OCR model"})
+    engine = OcrEngine(not args.cpu)
+    accel = hw.accelerator(engine.active)
+    emit({"type": "log", "message": f"OCR providers: {list(engine.active)}"})
+    if engine.gpu_fallback:
+        emit({"type": "warning", "code": "gpu_fallback", "message": GPU_FALLBACK})
     segs = extract_ocr(args.video, info, (args.top, args.bottom), args.fps,
                        prefer_gpu=not args.cpu, min_score=args.min_score,
-                       cjk_only=not args.any_script, progress=Progress(0.0, 0.98))
+                       cjk_only=not args.any_script, progress=Progress(0.0, 0.98), engine=engine)
     cues = [s.to_dict() for s in segs]
     payload = {"width": info.width, "height": info.height, "fps": info.fps,
                "duration": info.duration, "region": [args.top, args.bottom], "cues": cues}
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False)
-    emit({"type": "result", "count": len(cues), "out": args.out})
+    emit({"type": "result", "count": len(cues), "out": args.out, "accelerator": accel})
 
 
 def cmd_clean(args):
@@ -98,7 +108,8 @@ def cmd_clean(args):
     t0 = time.time()
     remove_subtitles(args.video, args.out, info, segs, method=args.method, models_dir=args.models,
                      prefer_gpu=not args.cpu, progress=Progress(0.0, 0.99),
-                     log=lambda m: emit({"type": "log", "message": m}))
+                     log=lambda m: emit({"type": "log", "message": m}),
+                     warn=lambda code: emit({"type": "warning", "code": code, "message": GPU_FALLBACK}))
     emit({"type": "result", "out": args.out, "seconds": round(time.time() - t0, 1)})
 
 

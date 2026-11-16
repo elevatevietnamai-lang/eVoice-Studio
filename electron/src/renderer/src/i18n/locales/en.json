@@ -3961,6 +3961,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Removed",
     "engine_line": "Engine ready · {{accel}}",
+    "gpu_fallback": "GPU acceleration did not start, so reading runs on the CPU and is much slower. Install the subtitle engine again to repair it.",
     "skip_asr": "Video has on-screen subtitles",
     "skip_asr_help": "Skip speech recognition after upload. Read the subtitles from the picture instead (faster and more accurate for subtitled videos)."
   },

@@ -61,6 +61,31 @@ def ort_providers(prefer_gpu: bool = True) -> tuple[str, ...]:
     return tuple(order)
 
 
+GPU_PROVIDERS = ("TensorrtExecutionProvider", "CUDAExecutionProvider", "CoreMLExecutionProvider",
+                 "DmlExecutionProvider")
+
+
+def accelerator(providers) -> str:
+    """Short name of the first accelerated provider in `providers`, or "CPU"."""
+    names = {"TensorrtExecutionProvider": "CUDA", "CUDAExecutionProvider": "CUDA",
+             "CoreMLExecutionProvider": "CoreML", "DmlExecutionProvider": "DirectML"}
+    for p in providers or ():
+        if p in names:
+            return names[p]
+    return "CPU"
+
+
+def gpu_fallback(requested, active) -> bool:
+    """True when a GPU provider was asked for but the session runs on the CPU.
+
+    onnxruntime does not raise when a listed provider fails to load (a missing CUDA/cuDNN DLL,
+    a wheel built for another CUDA major): it quietly drops it. `get_available_providers()` still
+    lists it, so the only truth is the provider list of a session that was actually created.
+    """
+    wanted = any(p in GPU_PROVIDERS for p in requested or ())
+    return wanted and accelerator(active) == "CPU"
+
+
 def local_inputs_only(cmd: list) -> list:
     """Limit every ffmpeg input (or ffprobe's single input) to plain files and pipes.
 

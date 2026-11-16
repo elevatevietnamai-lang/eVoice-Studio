@@ -143,6 +143,13 @@ async def hardsub_frame(job_id: str, t: float = Query(0.0, ge=0.0), width: int =
     return Response(out, media_type="image/jpeg", headers={"Cache-Control": "no-store"})
 
 
+def _engine_warning(event: dict, stage: str) -> bytes:
+    """Pass an engine warning (e.g. ``gpu_fallback``) to the UI and the backend log."""
+    code = str(event.get("code") or "engine_warning")
+    logger.warning("hardsub %s: %s (%s)", stage, code, event.get("message", ""))
+    return _sse("warning", {"code": code, "stage": stage, "message": event.get("message", "")})
+
+
 @router.get("/dub/hardsub/ocr-stream/{job_id}", dependencies=[Depends(reject_cross_site_get)])
 async def hardsub_ocr_stream(
     job_id: str,
@@ -176,6 +183,8 @@ async def hardsub_ocr_stream(
                     if event.get("type") == "progress":
                         yield _sse("progress", {"progress": event.get("progress", 0),
                                                 "message": event.get("message", "")})
+                    elif event.get("type") == "warning":
+                        yield _engine_warning(event, "ocr")
                 with open(out, encoding="utf-8") as f:
                     data = json.load(f)
                 os.replace(out, os.path.join(job_dir, CUES_FILE))
@@ -279,6 +288,8 @@ async def hardsub_clean_stream(job_id: str, method: str = Query("lama", pattern=
                                                 "message": event.get("message", "")})
                     elif kind == "log":
                         yield _sse("log", {"message": event.get("message", "")})
+                    elif kind == "warning":
+                        yield _engine_warning(event, "inpaint")
                 final = os.path.join(job_dir, CLEAN_FILE)
                 os.replace(tmp, final)
                 with dub_pipeline._dub_jobs_lock:

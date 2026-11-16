@@ -29,6 +29,8 @@ export function SetupHardsubEngine() {
       await consumeTaskStream('/dub/hardsub/install-stream', (event) => {
         if (event.type === 'progress') setProgress(Number(event.progress) || 0);
         if (event.type === 'log') setLog(String(event.message || ''));
+        if (event.type === 'warning' && event.code === 'gpu_fallback')
+          toast.warning(t('dub_hardsub.gpu_fallback'));
         if (event.type === 'error') throw new Error(String(event.reason || 'Install failed'));
         return event.type === 'done';
       });

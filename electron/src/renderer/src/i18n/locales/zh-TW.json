@@ -3961,6 +3961,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "已移除",
     "engine_line": "引擎就緒 · {{accel}}",
+    "gpu_fallback": "GPU 加速未能啟動，辨識改在 CPU 上執行，速度會慢很多。請重新安裝字幕引擎進行修復。",
     "skip_asr": "影片含有畫面內嵌字幕",
     "skip_asr_help": "上傳後略過語音辨識，改為直接從畫面讀取字幕（對含內嵌字幕的影片更快且更準確）。"
   },

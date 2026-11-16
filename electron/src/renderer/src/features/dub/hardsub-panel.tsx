@@ -26,7 +26,16 @@ import {
 } from './dub-session';
 import { segmentedFrameClass } from '@/components/segmented';
 
-type EngineStatus = { installed: boolean; engine?: { providers?: string[]; encoder?: string } };
+type EngineStatus = {
+  installed: boolean;
+  engine?: {
+    providers?: string[];
+    /** Provider the OCR session really runs on; `providers` only lists what is installed. */
+    accelerator?: string;
+    gpu_fallback?: boolean;
+    encoder?: string;
+  };
+};
 
 const REGION_KEY = 'voicestudio.dub.hardsubRegion';
 
@@ -130,6 +139,8 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
         if (event.type === 'progress')
           setTask({ kind: 'install', progress: Number(event.progress) || 0 });
         if (event.type === 'log') setInstallLog(String(event.message || ''));
+        if (event.type === 'warning' && event.code === 'gpu_fallback')
+          toast.warning(t('dub_hardsub.gpu_fallback'));
         if (event.type === 'error') throw new Error(String(event.reason || 'Install failed'));
         return event.type === 'done';
       });
@@ -424,9 +435,16 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <CaptionsOffIcon className="size-3" />
               {t('dub_hardsub.engine_line', {
-                accel: acceleratorLabel(status.data?.engine?.providers),
+                accel:
+                  status.data?.engine?.accelerator ??
+                  acceleratorLabel(status.data?.engine?.providers),
               })}
             </p>
+            {status.data?.engine?.gpu_fallback && (
+              <p className="text-[11px] leading-4 text-amber-600 dark:text-amber-400">
+                {t('dub_hardsub.gpu_fallback')}
+              </p>
+            )}
           </>
         )}
       </div>
