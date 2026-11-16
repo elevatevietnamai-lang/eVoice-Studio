@@ -93,7 +93,11 @@ Trang **Cài đặt** tập trung các tùy chọn cấu hình của eVoice Stud
 2. Xem mục **Bản sao lưu cơ sở dữ liệu** để biết thông tin bản sao lưu tự động trước mỗi lần nâng cấp cơ sở dữ liệu.
 3. Kiểm tra danh sách trong mục **Bản phát hành** để xem thông tin các bản phát hành hiện có.
 
-Bản eVoice Studio hiện tại không tự tải bản mới. Khi có phiên bản mới, tải bộ cài từ trang tải về rồi cài đè lên bản cũ; giọng, dự án và cài đặt được giữ nguyên.
+eVoice Studio tự kiểm tra bản mới khoảng 10 giây sau khi mở và cứ 6 tiếng một lần; bấm **Kiểm tra ngay** để kiểm tra lúc khác. Khi có bản mới, bấm **Tải bản cập nhật**, đợi tải xong rồi bấm **Cài đặt và khởi động lại**. Ứng dụng không bao giờ tự tải hay tự cài khi bạn chưa bấm. Giọng, dự án và cài đặt được giữ nguyên.
+
+Bản cài đặt Beta mặc định theo kênh **Beta**; đổi ở mục **Kênh cập nhật** nếu bạn chỉ muốn nhận bản **Ổn định**.
+
+Bản 0.5.7-beta.3 trở về trước đã tắt kiểm tra cập nhật. Bạn cần tải bộ cài của bản kế tiếp từ trang tải về và cài đè lên bản cũ một lần; từ đó trở đi, bản mới sẽ hiện ngay trong ứng dụng.
 
 ## Mẹo
 
