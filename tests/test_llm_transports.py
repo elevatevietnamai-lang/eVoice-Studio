@@ -26,6 +26,20 @@ def test_cli_never_auto_activates_or_needs_an_api_key(registry, monkeypatch):
     assert registry.describe(registry.get_provider("codex-cli"))["supports_model_listing"] is False
 
 
+def test_every_cli_provider_is_accepted_by_the_electron_bridge(registry, monkeypatch):
+    """A CLI provider the Electron bridge rejects can never answer (Antigravity was added to both)."""
+    import re
+    from pathlib import Path
+    bridge = (Path(__file__).resolve().parents[1] / "electron" / "src" / "main" / "llm-agent-bridge.ts").read_text(encoding="utf-8")
+    allowed = set(re.findall(r"'([a-z]+)'", re.search(r"!\[([^\]]+)\]\.includes\(body\.agent\)", bridge).group(1)))
+    cli = {p.sdk_provider for p in registry.all_providers() if p.transport == "cli"}
+    assert "agy" in cli
+    assert cli == allowed
+    monkeypatch.setenv("VOICESTUDIO_LLM_AGENTS", '["agy"]')
+    assert registry.is_configured(registry.get_provider("agy-cli"))
+    assert registry.active_provider_id() is None
+
+
 @pytest.mark.parametrize("provider,model,expected", [
     ("anthropic", "claude-test", "anthropic/claude-test"),
     ("sdk", "deepseek/chat-test", "deepseek/chat-test"),

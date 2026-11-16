@@ -17,7 +17,7 @@ Trang **Lồng tiếng** giúp bạn tách giọng nói khỏi nhạc nền, ch�
 
 - Một tệp video hoặc âm thanh trên máy (hỗ trợ MP4, MOV, MKV, WEBM, MP3, WAV, FLAC, M4A), hoặc liên kết video hợp lệ khi bạn cần tải từ mạng.
 - Đã cài đặt model nhận dạng giọng nói và engine tổng hợp giọng trong mục **Cài đặt**.
-- Nếu muốn dùng **Dịch bằng agent**, máy cần cài sẵn một công cụ agent cục bộ (Codex, Claude Code, OpenCode hoặc Pi) hoặc cấu hình LLM trong phần cài đặt.
+- Nếu muốn dùng **Dịch bằng agent**, máy cần cài sẵn một công cụ agent cục bộ (Codex, Claude Code, OpenCode, Pi hoặc Antigravity `agy`) hoặc cấu hình LLM trong phần cài đặt.
 - Dung lượng ổ đĩa trống đủ để lưu bản sao nguồn và các tệp âm thanh tách ra trong lúc xử lý.
 
 ## Các bước
@@ -111,7 +111,7 @@ Chuyển sang thẻ **Dự án** ở đầu cột bên trái hoặc mở mục *
 ## Lỗi thường gặp
 
 - ứng dụng báo tệp nguồn bị hỏng hoặc không đọc được khi tải lên: kiểm tra xem tệp gốc có phát bình thường bằng trình xem video trên máy hay không và ổ đĩa còn đủ chỗ trống không, sau đó chép lại tệp nguyên vẹn rồi bấm **Đổi tệp** để tải lại.
-- nút **Dịch bằng agent** bị mờ không bấm được: máy của bạn chưa cài đặt agent dòng lệnh cục bộ (Codex, Claude Code, OpenCode, Pi) và chưa cấu hình LLM; hãy cài một trong các công cụ trên hoặc chuyển sang dùng **Dịch thuật**.
+- nút **Dịch bằng agent** bị mờ không bấm được: máy của bạn chưa cài đặt agent dòng lệnh cục bộ (Codex, Claude Code, OpenCode, Pi, Antigravity) và chưa cấu hình LLM; hãy cài một trong các công cụ trên hoặc chuyển sang dùng **Dịch thuật**.
 - chất lượng dịch tự chuyển về **Nhanh** khi bạn chọn **Điện ảnh** hoặc **Tự động căn chỉnh**: các chế độ này cần có LLM hoạt động; hãy kiểm tra lại cấu hình LLM trong mục **Cài đặt** rồi bấm **Dịch lại**.
 - không bật được **In phụ đề vào video** khi xuất: chế độ căn thời gian **Kéo giãn video** không hỗ trợ in cứng phụ đề trực tiếp; hãy xuất phụ đề rời hoặc đổi mục **Căn thời gian** sang **Khớp khẩu hình** hoặc **Khớp thông minh**.
 - quá trình chép lời hoặc tạo lồng tiếng bị gián đoạn giữa chừng: bấm **Tiếp tục** hoặc **Thử lại** trên thanh thông báo khôi phục ở đầu danh sách đoạn để chạy tiếp mà không cần tải lại video từ đầu.

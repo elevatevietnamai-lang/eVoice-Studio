@@ -18,6 +18,7 @@ import codexIcon from '@lobehub/icons-static-svg/icons/codex-color.svg';
 import claudeIcon from '@lobehub/icons-static-svg/icons/claudecode-color.svg';
 import openCodeIcon from '@lobehub/icons-static-svg/icons/opencode.svg';
 import piIcon from '@lobehub/icons-static-svg/icons/pi.svg';
+import antigravityIcon from '@lobehub/icons-static-svg/icons/antigravity-color.svg';
 import { getBridge } from '@/components/bridge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -45,7 +46,13 @@ import { AgentDockFrame } from './agent-dock-frame';
 import './voice-studio-agent.css';
 import { Checkbox } from '@/components/ui/checkbox';
 
-const icons = { codex: codexIcon, claude: claudeIcon, opencode: openCodeIcon, pi: piIcon };
+const icons = {
+  codex: codexIcon,
+  claude: claudeIcon,
+  opencode: openCodeIcon,
+  pi: piIcon,
+  agy: antigravityIcon,
+};
 const labels: Record<AgentFeature, string> = {
   repair: 'agentWorkspace.repair',
   setup: 'agentWorkspace.setup',
@@ -101,9 +108,11 @@ export function VoiceStudioAgent() {
   // The mount load and the panel-open refresh both scan, and their answers
   // can arrive out of order: an older scan never replaces a newer one.
   const scans = useRef({ issued: 0, applied: 0 });
-  const showAgents = (scan: number, found: RepairAgentInfo[]) => {
+  const showAgents = (scan: number, scanned: RepairAgentInfo[]) => {
     if (scan < scans.current.applied) return;
     scans.current.applied = scan;
+    // Translation-only CLIs (Antigravity) have no repair or app-operation mode.
+    const found = scanned.filter((agent) => !agent.translationOnly);
     setAgents(found);
     setSelected((current) =>
       found.some((agent) => agent.id === current && agent.available)
