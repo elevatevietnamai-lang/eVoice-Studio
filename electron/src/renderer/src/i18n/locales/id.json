@@ -3945,6 +3945,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Dihapus",
     "engine_line": "Engine siap · {{accel}}",
+    "gpu_fallback": "Akselerasi GPU tidak berjalan, jadi pembacaan dilakukan di CPU dan jauh lebih lambat. Instal ulang mesin subtitel untuk memperbaikinya.",
     "skip_asr": "Video memiliki subtitle di layar",
     "skip_asr_help": "Lewati pengenalan suara setelah video diunggah. Baca subtitle dari gambar sebagai gantinya (lebih cepat dan akurat untuk video bersubtitle)."
   },

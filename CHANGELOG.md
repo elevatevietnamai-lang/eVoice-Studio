@@ -45,6 +45,10 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- Reading on-screen subtitles runs on NVIDIA GPUs again: the engine pinned a CUDA 13 onnxruntime next to CUDA 12 libraries and quietly read on the CPU; existing installs ask to install again, which only updates the changed packages
+- Reading on-screen subtitles is about four times faster: frame-exact timing re-reads only the known subtitle lines, and the GPU no longer re-benchmarks for every line width
+- On-screen subtitles warn in the panel and during reading or removal when GPU acceleration fails and the engine falls back to the CPU
+- On-screen subtitle reading leaves out text that never changes inside the band (app labels in a screen recording, a watermark) and text much smaller than the subtitle line
 - Promo video: a saved draft whose files are gone marks them as missing and blocks Render, with one button to remove them, instead of a black preview and a failed render (#12)
 - First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)
 - iPhone Settings → About and licence receipts show the full app version (`0.5.7-beta.2`), like Android, instead of only `0.5.7` (#3273)

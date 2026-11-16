@@ -24,7 +24,16 @@ import {
   useDubSession,
 } from './dub-session';
 
-type EngineStatus = { installed: boolean; engine?: { providers?: string[]; encoder?: string } };
+type EngineStatus = {
+  installed: boolean;
+  engine?: {
+    providers?: string[];
+    /** Provider the OCR session really runs on (newer engines); `providers` only lists what is installed. */
+    accelerator?: string;
+    gpu_fallback?: boolean;
+    encoder?: string;
+  };
+};
 
 const REGION_KEY = 'voicestudio.dub.hardsubRegion';
 
@@ -128,6 +137,8 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
         if (event.type === 'progress')
           setTask({ kind: 'install', progress: Number(event.progress) || 0 });
         if (event.type === 'log') setInstallLog(String(event.message || ''));
+        if (event.type === 'warning' && event.code === 'gpu_fallback')
+          toast.warning(t('dub_hardsub.gpu_fallback'));
         if (event.type === 'error') throw new Error(String(event.reason || 'Install failed'));
         return event.type === 'done';
       });
@@ -197,7 +208,12 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             <p className="text-xs leading-5 text-muted-foreground">
               {t('dub_hardsub.install_help')}
             </p>
-            <Button size="sm" variant="outline" disabled={locked || status.isLoading} onClick={install}>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={locked || status.isLoading}
+              onClick={install}
+            >
               {task?.kind === 'install' ? (
                 <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
               ) : (
@@ -207,9 +223,14 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             </Button>
             {task?.kind === 'install' && (
               <div className="space-y-1">
-                <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_hardsub.install')} />
+                <Progress
+                  value={Math.round(task.progress * 100)}
+                  aria-label={t('dub_hardsub.install')}
+                />
                 {installLog && (
-                  <p className="truncate font-mono text-[10px] text-muted-foreground">{installLog}</p>
+                  <p className="truncate font-mono text-[10px] text-muted-foreground">
+                    {installLog}
+                  </p>
                 )}
               </div>
             )}
@@ -265,7 +286,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 />
                 <div
                   className="pointer-events-none absolute inset-x-0 border-y-2 border-amber-400"
-                  style={{ top: `${region[0] * 100}%`, height: `${(region[1] - region[0]) * 100}%` }}
+                  style={{
+                    top: `${region[0] * 100}%`,
+                    height: `${(region[1] - region[0]) * 100}%`,
+                  }}
                 />
               </div>
               <p className="text-[11px] leading-4 text-muted-foreground">
@@ -295,7 +319,9 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                     max={100}
                     value={Math.round(region[0] * 100)}
                     disabled={locked}
-                    onChange={(event) => updateRegion([Number(event.target.value) / 100, region[1]])}
+                    onChange={(event) =>
+                      updateRegion([Number(event.target.value) / 100, region[1]])
+                    }
                   />
                 </label>
                 <label className="space-y-1">
@@ -307,7 +333,9 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                     max={100}
                     value={Math.round(region[1] * 100)}
                     disabled={locked}
-                    onChange={(event) => updateRegion([region[0], Number(event.target.value) / 100])}
+                    onChange={(event) =>
+                      updateRegion([region[0], Number(event.target.value) / 100])
+                    }
                   />
                 </label>
               </div>
@@ -338,7 +366,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 {hs?.cue_count ? t('dub_hardsub.read_again') : t('dub_hardsub.read')}
               </Button>
               {task?.kind === 'ocr' && (
-                <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_hardsub.read')} />
+                <Progress
+                  value={Math.round(task.progress * 100)}
+                  aria-label={t('dub_hardsub.read')}
+                />
               )}
               <p className="text-[11px] leading-4 text-muted-foreground">
                 {t('dub_hardsub.read_help')}
@@ -378,7 +409,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 {hs?.cleaned ? t('dub_hardsub.remove_again') : t('dub_hardsub.remove')}
               </Button>
               {task?.kind === 'clean' && (
-                <Progress value={Math.round(task.progress * 100)} aria-label={t('dub_hardsub.remove')} />
+                <Progress
+                  value={Math.round(task.progress * 100)}
+                  aria-label={t('dub_hardsub.remove')}
+                />
               )}
               {!hs?.cue_count && (
                 <p className="text-[11px] leading-4 text-muted-foreground">
@@ -401,9 +435,16 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <CaptionsOffIcon className="size-3" />
               {t('dub_hardsub.engine_line', {
-                accel: acceleratorLabel(status.data?.engine?.providers),
+                accel:
+                  status.data?.engine?.accelerator ??
+                  acceleratorLabel(status.data?.engine?.providers),
               })}
             </p>
+            {status.data?.engine?.gpu_fallback && (
+              <p className="text-[11px] leading-4 text-amber-600 dark:text-amber-400">
+                {t('dub_hardsub.gpu_fallback')}
+              </p>
+            )}
           </>
         )}
       </div>

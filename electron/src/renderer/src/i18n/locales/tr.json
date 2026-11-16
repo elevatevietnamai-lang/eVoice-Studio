@@ -3945,6 +3945,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Kaldırıldı",
     "engine_line": "Motor hazır · {{accel}}",
+    "gpu_fallback": "GPU hızlandırması başlamadı, bu yüzden okuma CPU üzerinde çalışıyor ve çok daha yavaş. Düzeltmek için altyazı motorunu yeniden yükleyin.",
     "skip_asr": "Videoda gömülü altyazı var",
     "skip_asr_help": "Yüklemeden sonra konuşma tanımayı atlayın. Bunun yerine altyazıları görüntüden okuyun (altyazılı videolar için daha hızlı ve daha doğru)."
   },

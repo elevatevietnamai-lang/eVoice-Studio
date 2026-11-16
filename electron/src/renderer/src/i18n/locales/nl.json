@@ -3945,6 +3945,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Verwijderd",
     "engine_line": "Engine gereed · {{accel}}",
+    "gpu_fallback": "GPU-versnelling is niet gestart, dus het lezen draait op de CPU en is veel trager. Installeer de ondertitelengine opnieuw om dit te herstellen.",
     "skip_asr": "Video heeft ondertitels in beeld",
     "skip_asr_help": "Sla spraakherkenning na het uploaden over. Lees in plaats daarvan de ondertitels direct uit het beeld (sneller en nauwkeuriger bij ondertitelde video's)."
   },

@@ -29,6 +29,8 @@ export function SetupHardsubEngine() {
       await consumeTaskStream('/dub/hardsub/install-stream', (event) => {
         if (event.type === 'progress') setProgress(Number(event.progress) || 0);
         if (event.type === 'log') setLog(String(event.message || ''));
+        if (event.type === 'warning' && event.code === 'gpu_fallback')
+          toast.warning(t('dub_hardsub.gpu_fallback'));
         if (event.type === 'error') throw new Error(String(event.reason || 'Install failed'));
         return event.type === 'done';
       });
@@ -59,7 +61,10 @@ export function SetupHardsubEngine() {
       </Button>
       {installing && (
         <div className="space-y-1">
-          <Progress value={Math.round((progress ?? 0) * 100)} aria-label={t('dub_hardsub.install')} />
+          <Progress
+            value={Math.round((progress ?? 0) * 100)}
+            aria-label={t('dub_hardsub.install')}
+          />
           {log && <p className="truncate font-mono text-[10px] text-muted-foreground">{log}</p>}
         </div>
       )}

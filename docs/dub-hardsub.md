@@ -6,13 +6,25 @@ burned into the picture. Dub can read them and remove them:
 1. **Install subtitle engine** (once). OCR (RapidOCR / PP-OCR models) and the
    frame-reconstruction code install into their own environment under
    `<engines dir>/hardsub/.venv`; the app's own Python stays untouched.
-   NVIDIA GPUs get `onnxruntime-gpu`, Windows AMD/Intel GPUs DirectML, Apple
-   Silicon CoreML, everything else CPU.
+   NVIDIA GPUs get `onnxruntime-gpu` (the CUDA 12 build, with its CUDA 12 and
+   cuDNN 9 wheels), Windows AMD/Intel GPUs DirectML, Apple Silicon CoreML,
+   everything else CPU. The install check builds the real OCR sessions, so the
+   engine line shows the accelerator that actually runs. If onnxruntime falls
+   back to the CPU (a CUDA library that does not load), the panel and every
+   read or removal say so; installing again repairs it. When an app update
+   changes the engine's pinned packages, the panel asks to install again and
+   only the changed packages are fetched.
 2. **Subtitle area** — drag on the frame to mark the band that holds the
    subtitles. A tight band avoids picking up signs or logos.
 3. **Read on-screen subtitles** replaces the transcript with the on-screen
    lines, timed to the frame. Cast/voice references from a previous
    transcription carry over by time overlap, like an `.srt` import.
+   Text that never changes inside the band (app labels in a screen recording,
+   a watermark, a fixed caption sticker) is left out: a line is dropped when
+   the same text stays at the same spot for at least 10 seconds and covers a
+   quarter of the video or 15 unbroken seconds. Lines much smaller than the
+   centred subtitle line (under 60% of its height, such as interface labels or
+   a speech bubble) are left out too.
 4. **Remove subtitles from video** rebuilds the covered pixels:
    real background revealed in neighbouring frames (camera motion compensated,
    accepted only when the surroundings still match), then the previous clean

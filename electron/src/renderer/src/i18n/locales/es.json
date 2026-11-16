@@ -3947,6 +3947,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Eliminados",
     "engine_line": "Motor listo · {{accel}}",
+    "gpu_fallback": "La aceleración por GPU no se inició, así que la lectura se ejecuta en la CPU y es mucho más lenta. Vuelve a instalar el motor de subtítulos para repararlo.",
     "skip_asr": "El video tiene subtítulos en pantalla",
     "skip_asr_help": "Omitir el reconocimiento de voz tras subir el archivo. En su lugar, leer los subtítulos de la imagen (más rápido y preciso en videos subtitulados)."
   },

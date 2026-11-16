@@ -3947,6 +3947,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Supprimés",
     "engine_line": "Moteur prêt · {{accel}}",
+    "gpu_fallback": "L’accélération GPU n’a pas démarré : la lecture s’exécute sur le CPU et est beaucoup plus lente. Réinstallez le moteur de sous-titres pour corriger cela.",
     "skip_asr": "La vidéo contient des sous-titres incrustés",
     "skip_asr_help": "Ignorer la reconnaissance vocale après l'importation. Lire plutôt les sous-titres directement sur l'image (plus rapide et plus précis pour les vidéos sous-titrées)."
   },

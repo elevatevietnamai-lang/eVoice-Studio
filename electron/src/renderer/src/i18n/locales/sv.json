@@ -3945,6 +3945,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Borttagna",
     "engine_line": "Motor redo · {{accel}}",
+    "gpu_fallback": "GPU-accelerationen startade inte, så läsningen körs på processorn och går mycket långsammare. Installera undertextmotorn igen för att åtgärda det.",
     "skip_asr": "Videon har inbrända undertexter",
     "skip_asr_help": "Hoppa över taligenkänning efter uppladdning. Läs undertexterna direkt från bilden i stället (snabbare och mer exakt för textade videor)."
   },

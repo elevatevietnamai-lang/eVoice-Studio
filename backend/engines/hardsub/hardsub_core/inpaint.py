@@ -25,7 +25,7 @@ from collections import deque
 import cv2
 import numpy as np
 
-from .hw import ort_providers
+from .hw import gpu_fallback, ort_providers
 from .subs import Segment
 from .video import VideoInfo, VideoWriter
 
@@ -94,7 +94,8 @@ class LamaOnnx:
         so = ort.SessionOptions()
         so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         self.sess = None
-        for provs in (list(ort_providers(prefer_gpu)), ["CPUExecutionProvider"]):
+        requested = list(ort_providers(prefer_gpu))
+        for provs in (requested, ["CPUExecutionProvider"]):
             try:
                 self.sess = ort.InferenceSession(model_path, so, providers=provs)
                 break
@@ -102,6 +103,8 @@ class LamaOnnx:
                 continue
         if self.sess is None:
             raise RuntimeError("Không khởi tạo được LaMa ONNX")
+        # onnxruntime drops a GPU provider that fails to load without raising.
+        self.gpu_fallback = gpu_fallback(requested, self.sess.get_providers())
         ins = self.sess.get_inputs()
         names = [i.name for i in ins]
         self.img_name = next((n for n in names if "image" in n.lower()), names[0])
@@ -133,7 +136,7 @@ def _tent(n: int) -> np.ndarray:
 class Filler:
     """Lấp vùng thiếu bằng AI (LaMa, chia ô vuông theo chiều ngang) hoặc OpenCV."""
 
-    def __init__(self, method: str, models_dir: str, prefer_gpu: bool, log=print):
+    def __init__(self, method: str, models_dir: str, prefer_gpu: bool, log=print, warn=None):
         if method not in METHODS:
             raise ValueError(f"method phải thuộc {METHODS}")
         self.requested = "sttn" if method == "opencv" else method
@@ -142,6 +145,8 @@ class Filler:
         if method in ("lama", "propainter"):
             try:
                 self.lama = LamaOnnx(ensure_lama(models_dir, log), prefer_gpu)
+                if self.lama.gpu_fallback and warn:
+                    warn("gpu_fallback")
             except Exception as e:
                 log(f"⚠️ Không dùng được LaMa ({e}). Chuyển sang OpenCV.")
                 self.method = "sttn"
@@ -339,12 +344,12 @@ class MaskPlan:
 def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segment],
                      method: str = "lama", models_dir: str = "models", prefer_gpu: bool = True,
                      time_margin: float = 0.08, window_sec: float = 2.5,
-                     use_temporal: bool = True, progress=None, log=print) -> str:
+                     use_temporal: bool = True, progress=None, log=print, warn=None) -> str:
     """Tạo video sạch phụ đề. method: 'sttn' | 'lama' | 'propainter' | 'opencv' (= sttn)."""
     plan = MaskPlan(segs, info, time_margin)
     if plan.empty:
         raise RuntimeError("Không có vị trí phụ đề (box) nào để xóa.")
-    filler = Filler(method, models_dir, prefer_gpu, log)
+    filler = Filler(method, models_dir, prefer_gpu, log, warn)
     by0, by1 = plan.by0, plan.by1
     Wn = max(2, int(round(window_sec * info.fps)))
 

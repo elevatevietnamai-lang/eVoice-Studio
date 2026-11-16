@@ -1,5 +1,11 @@
-onnxruntime-gpu>=1.19
+# onnxruntime-gpu 1.27+ on PyPI is built for CUDA 13 (cublasLt64_13 / libcublasLt.so.13) and
+# silently falls back to the CPU next to these CUDA 12 wheels. 1.26 is the last CUDA 12 build,
+# and CUDA 12 also keeps pre-Turing GPUs and older drivers working. Moving to CUDA 13 means
+# swapping every nvidia-*-cu12 below for its CUDA 13 wheel in the same commit;
+# tests/test_hardsub_providers.py checks that the two stay in step.
+onnxruntime-gpu>=1.19,<1.27
 nvidia-cublas-cu12
 nvidia-cudnn-cu12>=9,<10
 nvidia-cuda-runtime-cu12
 nvidia-cufft-cu12
+nvidia-curand-cu12
