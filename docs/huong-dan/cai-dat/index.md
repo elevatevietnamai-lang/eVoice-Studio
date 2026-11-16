@@ -97,7 +97,7 @@ eVoice Studio tự kiểm tra bản mới khoảng 10 giây sau khi mở và c�
 
 Bản cài đặt Beta mặc định theo kênh **Beta**; đổi ở mục **Kênh cập nhật** nếu bạn chỉ muốn nhận bản **Ổn định**.
 
-Bản 0.5.7-beta.3 trở về trước đã tắt kiểm tra cập nhật. Bạn cần tải bộ cài của bản kế tiếp từ trang tải về và cài đè lên bản cũ một lần; từ đó trở đi, bản mới sẽ hiện ngay trong ứng dụng.
+Bản 0.5.7-beta.3 trở về trước đã tắt kiểm tra cập nhật. Bạn cần tải bộ cài bản 0.5.7-beta.4 (hoặc mới hơn) từ trang tải về và cài đè lên bản cũ một lần; từ đó trở đi, bản mới sẽ hiện ngay trong ứng dụng.
 
 ## Mẹo
 

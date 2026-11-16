@@ -6,13 +6,24 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/).
 `package.json` is the maintained app-version source of truth; Electron package
 metadata and the backend fallback mirror it.
 
-## [Unreleased]
+## [0.5.7-beta.4] — 2026-11-16
+
+From this beta on, eVoice Studio updates itself: install it once by hand and later betas arrive in
+**Settings → Updates**. It also reads burned-in subtitles on NVIDIA GPUs again, about four times
+faster, can translate dubs with the Antigravity CLI, and ships the reviewed Vietnamese user guide.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.4-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.3 need this one manual install; after that they update in the app |
+| macOS, Linux | Not built for this beta yet |
 
 **Highlights**
 
-- Vietnamese user guide drafts with real app screenshots
-- Music Studio fixes from a full run on a real GPU: reused seeds reproduce the track again
-- Music Studio extends a song after its end or before its start, can use your own LoRA, and on the Base model extracts, adds or completes instruments
+- In-app updates from eVoice Studio's own releases, on the Beta channel by default
+- Reading on-screen subtitles runs on the GPU again and is about four times faster
+- Translate with Agent can use the Antigravity CLI (`agy`)
+- Music Studio extends songs, uses your own LoRA, and extracts, adds or completes instruments on the Base model
+- The Vietnamese user guide: 19 reviewed articles with real app screenshots
 
 ### Added
 
@@ -36,6 +47,10 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- Reading on-screen subtitles runs on NVIDIA GPUs again: the engine pinned a CUDA 13 onnxruntime next to CUDA 12 libraries and quietly read on the CPU; existing installs ask to install again, which only updates the changed packages (#49)
+- Reading on-screen subtitles is about four times faster: frame-exact timing re-reads only the known subtitle lines, and the GPU no longer re-benchmarks for every line width (#49)
+- On-screen subtitles warn in the panel and during reading or removal when GPU acceleration fails and the engine falls back to the CPU (#49)
+- On-screen subtitle reading leaves out text that never changes inside the band (app labels in a screen recording, a watermark) and text much smaller than the subtitle line (#49)
 - Voice Clone: a reference longer than 20 s starts about twice as fast. The recognizer that picks its best 15 s now loads once instead of once per window, and frees its GPU memory afterwards (#51)
 - Voice Clone: the Recent takes button no longer sits under the search field on mid-width windows. It shows only its icon until the pane is wide enough for the label (#51)
 - The rail no longer hides section icons in windows up to 680 px tall, and text set with the label and caption sizes keeps its colour (#50)
@@ -120,10 +135,6 @@ a promo video maker. Everything still runs locally; nothing is uploaded.
 
 ### Fixed
 
-- Reading on-screen subtitles runs on NVIDIA GPUs again: the engine pinned a CUDA 13 onnxruntime next to CUDA 12 libraries and quietly read on the CPU; existing installs ask to install again, which only updates the changed packages (#49)
-- Reading on-screen subtitles is about four times faster: frame-exact timing re-reads only the known subtitle lines, and the GPU no longer re-benchmarks for every line width (#49)
-- On-screen subtitles warn in the panel and during reading or removal when GPU acceleration fails and the engine falls back to the CPU (#49)
-- On-screen subtitle reading leaves out text that never changes inside the band (app labels in a screen recording, a watermark) and text much smaller than the subtitle line (#49)
 - Buttons and dropdowns no longer stay outlined in white after you click them or pick an option; the focus ring still shows when you move with the keyboard (#24)
 - Promo video: a saved draft whose files are gone marks them as missing and blocks Render, with one button to remove them, instead of a black preview and a failed render (#12)
 - First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)
