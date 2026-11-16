@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { createPortal } from 'react-dom';
 import { Search, ChevronDown, Check, Star, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { cn } from '@/lib/utils';
 import { VirtualSearchableSelect } from './VirtualSearchableSelect';
 
 const MAX_DISPLAY = 200;
@@ -49,7 +50,8 @@ function ClassicSearchableSelect({
   renderOption,
   disabled = false,
   buttonStyle,
-  buttonClassName = 'input-base',
+  // The same field as the Select and Input controls; callers may still override it.
+  buttonClassName = 'h-8 rounded-(--control-radius) border border-input bg-control-fill px-2 text-sm text-foreground',
   ariaLabel,
   size = 'md',
   menuClassName = '',
@@ -278,7 +280,12 @@ function ClassicSearchableSelect({
     <div ref={wrapRef} className="ss-wrap relative w-full">
       <button
         type="button"
-        className={`${buttonClassName} flex items-center justify-between gap-[6px] w-full text-left cursor-pointer [font-family:inherit] disabled:cursor-not-allowed disabled:opacity-50 ${triggerSizeCls}`}
+        // Merged so the caller's classes win over the size defaults.
+        className={cn(
+          'flex items-center justify-between gap-[6px] w-full text-left cursor-pointer [font-family:inherit] disabled:cursor-not-allowed disabled:opacity-50',
+          triggerSizeCls,
+          buttonClassName,
+        )}
         style={buttonStyle}
         onClick={() => !disabled && setOpen((o) => !o)}
         disabled={disabled}

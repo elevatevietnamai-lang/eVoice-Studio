@@ -1,4 +1,5 @@
 import QRCode from 'qrcode';
+import { Reveal } from '@/components/motion';
 import {
   CheckIcon,
   CopyIcon,
@@ -320,7 +321,7 @@ export function SharingSettings() {
               );
             })}
             {state.pin && (
-              <div className="flex min-h-28 flex-col items-center justify-center rounded-(--card-radius) border border-border/60 bg-primary/5 p-3 text-center">
+              <div className="flex min-h-28 flex-col items-center justify-center rounded-(--card-radius) border border-border/60 bg-muted/30 p-3 text-center">
                 <ShieldCheckIcon aria-hidden="true" className="mb-2 size-5 text-primary" />
                 <span className="text-xs text-muted-foreground">{t('network.pin')}</span>
                 <strong className="font-mono text-xl tracking-[0.18em]">{state.pin}</strong>
@@ -328,21 +329,23 @@ export function SharingSettings() {
             )}
           </div>
         )}
-        {(network.isError || networkError) && (
-          <p role="alert" className="px-4 py-3 text-sm text-destructive">
-            {networkError || t('common.error')}
-          </p>
-        )}
+        <Reveal>
+          {(network.isError || networkError) && (
+            <p role="alert" className="px-4 py-3 text-sm text-destructive">
+              {networkError || t('common.error')}
+            </p>
+          )}
+        </Reveal>
       </SettingsSection>
 
       {ports.data && (
         <SettingsSection icon={NetworkIcon} title={t('sharing.ports_title')}>
           <SettingsRow id="sharing-backend-port" title={t('sharing.backend_port')}>
-            <code className="rounded-md bg-muted px-2 py-1 text-xs">{ports.data.backend_port}</code>
+            <code className="rounded-lg bg-muted px-2 py-1 text-xs">{ports.data.backend_port}</code>
           </SettingsRow>
           {ports.data.ui_port !== null && (
             <SettingsRow id="sharing-ui-port" title={t('sharing.ui_port')}>
-              <code className="rounded-md bg-muted px-2 py-1 text-xs">{ports.data.ui_port}</code>
+              <code className="rounded-lg bg-muted px-2 py-1 text-xs">{ports.data.ui_port}</code>
             </SettingsRow>
           )}
           <SettingsRow
@@ -367,11 +370,13 @@ export function SharingSettings() {
               {portBusy ? t('common.saving') : t('common.save')}
             </Button>
           </SettingsRow>
-          {portError && (
-            <p role="alert" className="px-4 py-3 text-sm text-destructive">
-              {portError}
-            </p>
-          )}
+          <Reveal>
+            {portError && (
+              <p role="alert" className="px-4 py-3 text-sm text-destructive">
+                {portError}
+              </p>
+            )}
+          </Reveal>
         </SettingsSection>
       )}
 
@@ -427,7 +432,7 @@ export function SharingSettings() {
         </SettingsRow>
         {tailscaleUrl && (
           <div className="flex flex-wrap items-center gap-2 px-4 py-3">
-            <code className="min-w-0 flex-1 break-all rounded-md bg-muted px-2 py-1 text-xs">
+            <code className="min-w-0 flex-1 break-all rounded-lg bg-muted px-2 py-1 text-xs">
               {tailscaleUrl}
             </code>
             <Button
@@ -445,11 +450,13 @@ export function SharingSettings() {
             )}
           </div>
         )}
-        {(tailscale.isError || tailscaleError) && (
-          <p role="alert" className="px-4 py-3 text-sm text-destructive">
-            {tailscaleError || t('common.error')}
-          </p>
-        )}
+        <Reveal>
+          {(tailscale.isError || tailscaleError) && (
+            <p role="alert" className="px-4 py-3 text-sm text-destructive">
+              {tailscaleError || t('common.error')}
+            </p>
+          )}
+        </Reveal>
       </SettingsSection>
       <McpBindingsSettings />
     </>

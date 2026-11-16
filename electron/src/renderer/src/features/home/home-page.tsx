@@ -150,46 +150,44 @@ export function HomePage() {
               >
                 {group.map(({ to, label, description }) => (
                   <StaggerItem key={to} className="min-w-0">
-                  <Link
-                    to={to}
-                    data-destination={to}
-                    className={`home-destination group ${groupIndex === 0 ? 'home-destination--primary' : 'home-destination--secondary'}`}
-                  >
-                    <div
-                      className="home-destination-icon flex size-10 items-center justify-center rounded-lg bg-secondary text-foreground"
+                    <Link
+                      to={to}
+                      data-destination={to}
+                      className={`home-destination group ${groupIndex === 0 ? 'home-destination--primary' : 'home-destination--secondary'}`}
                     >
-                      <HomeFeatureIcon destination={to} />
-                    </div>
-                    {groupIndex === 0 && (
-                      <svg
-                        className="home-card-art"
-                        viewBox="0 0 160 72"
-                        fill="none"
-                        aria-hidden="true"
-                      >
-                        {to === '/clone' ? (
-                          <path d="M8 36h12m8-10v20m10-32v44m10-24v4m10-30v56m10-42v28m10-36v44m10-22h12m8-10v20m10-32v44m10-24v4m10-16v28m10-18h6" />
-                        ) : to === '/design' ? (
-                          <>
-                            <path d="M8 48c24 0 24-24 48-24s24 24 48 24 24-24 48-24" />
-                            <path d="M8 32c24 0 24-12 48-12s24 40 48 40 24-40 48-40" />
-                            <path d="M8 58c24 0 24-42 48-42s24 22 48 22 24-22 48-22" />
-                          </>
-                        ) : (
-                          <>
-                            <rect x="15" y="12" width="88" height="31" rx="8" />
-                            <rect x="57" y="31" width="88" height="31" rx="8" />
-                            <path d="M29 27h12m6 0h28m-4 19h23m6 0h29" />
-                          </>
-                        )}
-                      </svg>
-                    )}
-                    <div className="home-destination-copy">
-                      <h3>{label}</h3>
-                      <p>{description}</p>
-                    </div>
-                    <ArrowRightIcon className="home-destination-arrow" aria-hidden="true" />
-                  </Link>
+                      <div className="home-destination-icon flex size-10 items-center justify-center rounded-lg bg-secondary text-foreground">
+                        <HomeFeatureIcon destination={to} />
+                      </div>
+                      {groupIndex === 0 && (
+                        <svg
+                          className="home-card-art"
+                          viewBox="0 0 160 72"
+                          fill="none"
+                          aria-hidden="true"
+                        >
+                          {to === '/clone' ? (
+                            <path d="M8 36h12m8-10v20m10-32v44m10-24v4m10-30v56m10-42v28m10-36v44m10-22h12m8-10v20m10-32v44m10-24v4m10-16v28m10-18h6" />
+                          ) : to === '/design' ? (
+                            <>
+                              <path d="M8 48c24 0 24-24 48-24s24 24 48 24 24-24 48-24" />
+                              <path d="M8 32c24 0 24-12 48-12s24 40 48 40 24-40 48-40" />
+                              <path d="M8 58c24 0 24-42 48-42s24 22 48 22 24-22 48-22" />
+                            </>
+                          ) : (
+                            <>
+                              <rect x="15" y="12" width="88" height="31" rx="8" />
+                              <rect x="57" y="31" width="88" height="31" rx="8" />
+                              <path d="M29 27h12m6 0h28m-4 19h23m6 0h29" />
+                            </>
+                          )}
+                        </svg>
+                      )}
+                      <div className="home-destination-copy">
+                        <h3>{label}</h3>
+                        <p>{description}</p>
+                      </div>
+                      <ArrowRightIcon className="home-destination-arrow" aria-hidden="true" />
+                    </Link>
                   </StaggerItem>
                 ))}
               </Stagger>
@@ -215,7 +213,7 @@ export function HomePage() {
                   <Link
                     key={record.id}
                     to="/projects"
-                    className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   >
                     <FolderOpenIcon className="size-4 shrink-0 text-primary" />
                     <span className="min-w-0 flex-1">
@@ -267,7 +265,7 @@ export function HomePage() {
                     <button
                       key={item.kind + ':' + item.project.id}
                       type="button"
-                      className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+                      className="group flex min-w-0 items-center gap-3 rounded-(--card-radius) border border-border/50 bg-card/20 px-3 py-2.5 text-left outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
                       onClick={() => void openProject(item)}
                     >
                       <Icon className="size-4 shrink-0 text-primary" />
@@ -300,11 +298,11 @@ export function HomePage() {
                       {t('projects.all')}
                     </Link>
                   </div>
-                  <div className="grid gap-1 rounded-(--card-radius) border border-border/70 bg-card/30 p-2 @3xl:grid-cols-2">
+                  <div className="grid gap-1 rounded-(--card-radius) border border-border/70 bg-card/30 p-1 @3xl:grid-cols-2">
                     {profiles.slice(0, 4).map((profile) => (
                       <div
                         key={profile.id}
-                        className="flex min-w-0 items-center gap-3 rounded-lg px-2.5 py-2 hover:bg-accent"
+                        className="flex min-w-0 items-center gap-3 rounded-lg px-2.5 py-2"
                       >
                         <ProfileAvatar name={profile.name} imageUrl={profile.image_url} />
                         <span className="min-w-0 flex-1 truncate text-sm font-medium">

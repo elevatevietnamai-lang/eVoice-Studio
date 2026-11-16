@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -16,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { apiFetch, apiJson } from '@/lib/api/client';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
+import { ShellTooltip } from './shell-tooltip';
 import type { UpdateState } from '../../../../preload/index.d';
 
 interface SystemNotification {
@@ -71,7 +73,7 @@ function notificationRoute(note: SystemNotification) {
 function levelStyle(level: SystemNotification['level']) {
   if (level === 'error') return 'border-destructive/45 bg-destructive/8 text-destructive';
   if (level === 'warn') return 'border-warning/45 bg-warning/8 text-warning-foreground';
-  return 'border-primary/35 bg-primary/8 text-primary';
+  return 'border-border bg-muted text-foreground';
 }
 
 function LevelIcon({ level }: { level: SystemNotification['level'] }) {
@@ -92,6 +94,7 @@ export function SystemNotifications({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(loadDismissed);
+  const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState<UpdateState | null>(null);
   const query = useQuery({
     queryKey: ['system-notifications'],
@@ -185,64 +188,83 @@ export function SystemNotifications({
             ? 'preferences.loading'
             : 'logs.all_clear',
     );
+  // The status line without its leading emoji: the tooltip and the accessible name read cleanly.
+  const status = triggerLabel.replace(/^\p{Extended_Pictographic}\p{Mn}*\s*/u, '');
+  const trigger = (
+    <PopoverTrigger
+      render={
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            'relative shrink-0 text-muted-foreground hover:text-foreground',
+            titlebar && 'app-no-drag',
+          )}
+          aria-label={`${t('shell.notifications')}: ${status}`}
+        />
+      }
+    >
+      <BellIcon className="size-[18px]" />
+      {visible.length > 0 && (
+        <span
+          className={cn(
+            'absolute top-0.5 right-0.5 min-w-4 rounded-full px-1 text-center text-[11px] leading-4 font-semibold ring-2 ring-background',
+            visible.some((note) => note.level === 'error')
+              ? 'bg-destructive text-white'
+              : 'bg-primary text-primary-foreground',
+          )}
+          aria-hidden="true"
+        >
+          {visible.length > 9 ? '9+' : visible.length}
+        </span>
+      )}
+    </PopoverTrigger>
+  );
   return (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(
-              'relative shrink-0 text-muted-foreground hover:text-foreground',
-              titlebar && 'app-no-drag',
-            )}
-            aria-label={triggerLabel}
-          />
-        }
-      >
-        <BellIcon className="size-[18px]" />
-        {visible.length > 0 && (
-          <span
-            className={cn(
-              'absolute top-0.5 right-0.5 min-w-4 rounded-full px-1 text-center text-[10px] leading-4 font-semibold ring-2 ring-background',
-              visible.some((note) => note.level === 'error')
-                ? 'bg-destructive text-white'
-                : 'bg-primary text-primary-foreground',
-            )}
-            aria-hidden="true"
-          >
-            {visible.length > 9 ? '9+' : visible.length}
-          </span>
-        )}
-      </PopoverTrigger>
+    <Popover open={open} onOpenChange={setOpen}>
+      {titlebar ? (
+        <ShellTooltip side="bottom" disabled={open} label={t('shell.notifications')} hint={status}>
+          {trigger}
+        </ShellTooltip>
+      ) : (
+        trigger
+      )}
       <PopoverContent
         side={titlebar ? 'bottom' : compact ? 'right' : 'top'}
         align={titlebar ? 'end' : 'start'}
         className="max-h-[min(28rem,calc(100vh-2rem))] w-[min(22rem,calc(100vw-2rem))] space-y-1 overflow-y-auto p-1.5"
       >
-        {!enabled && visible.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-            {t('modelSettings.unavailable')}
-          </p>
-        )}
-        {enabled && query.isPending && visible.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-            {t('preferences.loading')}
-          </p>
-        )}
-        {enabled && !query.isPending && !query.isError && visible.length === 0 && (
-          <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-            {t('logs.all_clear')}
-          </p>
-        )}
-        {query.isError && (
-          <div className="flex items-center justify-between gap-2 px-2 py-1.5 text-xs text-destructive">
-            <span>{t('common.error')}</span>
-            <Button size="xs" variant="ghost" onClick={() => void query.refetch()}>
-              {t('common.retry')}
-            </Button>
-          </div>
-        )}
+        <Reveal>
+          {!enabled && visible.length === 0 && (
+            <p className="px-3 py-4 text-center text-xs text-muted-foreground">
+              {t('modelSettings.unavailable')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {enabled && query.isPending && visible.length === 0 && (
+            <p className="px-3 py-4 text-center text-xs text-muted-foreground">
+              {t('preferences.loading')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {enabled && !query.isPending && !query.isError && visible.length === 0 && (
+            <p className="px-3 py-4 text-center text-xs text-muted-foreground">
+              {t('logs.all_clear')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {query.isError && (
+            <div className="flex items-center justify-between gap-2 px-2 py-1.5 text-xs text-destructive">
+              <span>{t('common.error')}</span>
+              <Button size="xs" variant="ghost" onClick={() => void query.refetch()}>
+                {t('common.retry')}
+              </Button>
+            </div>
+          )}
+        </Reveal>
         {visible.map((note) => {
           const actionable = Boolean(note.action);
           const actionLabel =

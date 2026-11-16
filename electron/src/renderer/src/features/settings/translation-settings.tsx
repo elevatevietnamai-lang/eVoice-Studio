@@ -1,4 +1,5 @@
 import { useBackendStatus } from '@/hooks/use-backend-status';
+import { Reveal } from '@/components/motion';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { LanguagesIcon } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
@@ -163,14 +164,16 @@ export function TranslationSettings() {
           )}
         </>
       )}
-      {failed && (
-        <SettingsActionError
-          className="m-4"
-          title={t('modelSettings.failed')}
-          detail={failed}
-          onDismiss={() => setFailed(null)}
-        />
-      )}
+      <Reveal>
+        {failed && (
+          <SettingsActionError
+            className="m-4"
+            title={t('modelSettings.failed')}
+            detail={failed}
+            onDismiss={() => setFailed(null)}
+          />
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }

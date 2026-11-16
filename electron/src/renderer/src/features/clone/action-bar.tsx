@@ -1,4 +1,5 @@
 import { PipelineFailure } from '@/components/pipeline-failure';
+import { Reveal } from '@/components/motion';
 import { InstallSttButton } from './install-stt-button';
 import { openTake } from '@/lib/store/takes';
 import { setWorkspace } from '@/lib/store/workspace';
@@ -47,6 +48,7 @@ import { PresetVoicePicker } from './preset-voice-picker';
 import { QualityControls } from './quality-controls';
 import { CloneDemoAction } from './clone-demo';
 import { useCloneDemo } from '@/hooks/use-clone-demo';
+import { segmentedFrameClass } from '@/components/segmented';
 
 type NumericKey = 'steps' | 'cfg' | 'speed' | 'tShift' | 'posTemp' | 'classTemp' | 'layerPenalty';
 
@@ -138,10 +140,7 @@ function SliderRow({ spec, value }: SliderRowProps) {
   return (
     <div className="flex min-w-0 flex-col gap-2 px-1 py-2">
       <div className="flex items-center justify-between gap-2">
-        <span
-          id={labelId}
-          className="inline-flex items-center gap-1.5 text-xs font-medium"
-        >
+        <span id={labelId} className="inline-flex items-center gap-1.5 text-xs font-medium">
           <Icon className="size-3.5 text-muted-foreground" aria-hidden="true" />
           {t(spec.labelKey)}
         </span>
@@ -236,7 +235,7 @@ function Overrides({ settings }: OverridesProps) {
         />
       </div>
       <details className="group border-t border-border/50 pt-2.5">
-        <summary className="flex cursor-pointer list-none items-center justify-between rounded px-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded px-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
           {t('voiceControls.advanced')}
           <ChevronDownIcon
             className="size-3.5 transition-transform group-open:rotate-180"
@@ -365,14 +364,14 @@ export function ActionBar() {
               blocker === 'cloning'
                 ? 'convert.cloning_required'
                 : blocker === 'engine'
-                ? demo
-                  ? 'demo.prerendered_chip'
-                  : 'engines.none_ready_title'
-                : blocker === 'reference'
-                  ? 'tts_errors.upload_or_select'
-                  : blocker === 'text'
-                    ? 'tts_errors.enter_text'
-                    : 'preferences.loading',
+                  ? demo
+                    ? 'demo.prerendered_chip'
+                    : 'engines.none_ready_title'
+                  : blocker === 'reference'
+                    ? 'tts_errors.upload_or_select'
+                    : blocker === 'text'
+                      ? 'tts_errors.enter_text'
+                      : 'preferences.loading',
             )}
           </span>
           {blocker === 'reference' && (
@@ -390,7 +389,7 @@ export function ActionBar() {
               <Button
                 variant="ghost"
                 size="xs"
-                onClick={() => setWorkspace({ panelCollapsed: false, libraryTab: 'voices' })}
+                onClick={() => setWorkspace({ libraryTab: 'voices' })}
               >
                 {t('clone.saved_profiles')}
               </Button>
@@ -407,17 +406,19 @@ export function ActionBar() {
           )}
         </div>
       )}
-      {error && (
-        <PipelineFailure
-          className="mb-3"
-          fallback={error}
-          action={errorTopic === 'REFERENCE_STT_MISSING' ? <InstallSttButton /> : undefined}
-          onDismiss={clearError}
-        />
-      )}
+      <Reveal>
+        {error && (
+          <PipelineFailure
+            className="mb-3"
+            fallback={error}
+            action={errorTopic === 'REFERENCE_STT_MISSING' ? <InstallSttButton /> : undefined}
+            onDismiss={clearError}
+          />
+        )}
+      </Reveal>
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1 rounded-lg bg-background/50 p-1 ring-1 ring-border/50">
-          <EngineLanguagePicker />
+        <div className={cn(segmentedFrameClass, 'flex items-center')}>
+          <EngineLanguagePicker size="sm" />
           <PresetVoicePicker disabled={isGenerating} />
           <span aria-hidden="true" className="mx-1 h-4 w-px bg-border" />
           <QualityControls disabled={isGenerating} />

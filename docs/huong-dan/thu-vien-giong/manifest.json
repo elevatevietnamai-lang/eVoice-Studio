@@ -1,0 +1,60 @@
+{
+  "slug": "thu-vien-giong",
+  "title": "Thư viện giọng",
+  "order": 5,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Thư viện giọng",
+      "route": "/gallery",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "83e67e0750d13859eddbfcff2e52c4a4041b67276f065c8d486f1930e295f578",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Thư viện"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Tất cả",
+          "Yêu thích",
+          "thì thầm",
+          "Đặt lại",
+          "Tìm kiếm…",
+          "Nguyên mẫu",
+          "Cộng đồng",
+          "Đã nhập",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Tìm kiếm…"
+        ]
+      }
+    }
+  ]
+}

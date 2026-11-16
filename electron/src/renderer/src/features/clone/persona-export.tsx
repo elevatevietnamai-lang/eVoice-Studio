@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { DownloadIcon } from 'lucide-react';
 import { toast } from 'sonner';
@@ -6,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { getBridge } from '@/components/bridge';
 import { apiFetch, apiPath, ApiError } from '@/lib/api/client';
 import { saveBackendFile } from '@/lib/native-save';
+import { Checkbox } from '@/components/ui/checkbox';
 
 function exportPath(profileId: string, includeReference: boolean): string {
   return (
@@ -82,23 +84,23 @@ export function PersonaExport({
         {t('voice_profile.persona_export')}
       </summary>
       <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={includeReference}
           disabled={busy || disabled}
-          onChange={(event) => setIncludeReference(event.target.checked)}
-          className="accent-primary"
+          onCheckedChange={(checked) => setIncludeReference(checked)}
         />
         {t('voice_profile.persona_include_ref')}
       </label>
       <p className="text-xs leading-5 text-muted-foreground">
         {t('voice_profile.persona_include_ref_hint')}
       </p>
-      {issue && (
-        <p role="alert" className="text-xs text-destructive">
-          {t(issue)}
-        </p>
-      )}
+      <Reveal>
+        {issue && (
+          <p role="alert" className="text-xs text-destructive">
+            {t(issue)}
+          </p>
+        )}
+      </Reveal>
       <Button
         type="button"
         size="sm"

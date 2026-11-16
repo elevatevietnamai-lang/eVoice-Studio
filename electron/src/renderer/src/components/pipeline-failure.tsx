@@ -1,4 +1,5 @@
 import { AlertCircleIcon, CopyIcon, XIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
@@ -61,9 +62,11 @@ export function PipelineFailure({
           <p className="break-words font-medium text-destructive">
             {visibleFailure?.reason || fallback}
           </p>
-          {visibleFailure?.hint && (
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">{visibleFailure.hint}</p>
-          )}
+          <Reveal>
+            {visibleFailure?.hint && (
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">{visibleFailure.hint}</p>
+            )}
+          </Reveal>
         </div>
         {action}
         {onDismiss && (
@@ -78,27 +81,29 @@ export function PipelineFailure({
           </Button>
         )}
       </div>
-      {(docs || visibleFailure?.diagnostic) && (
-        <div className="mt-2 flex flex-wrap items-center gap-2 pl-7">
-          {docs && <ExternalLink href={docs}>{t('dub.open_docs')}</ExternalLink>}
-          {visibleFailure?.diagnostic && (
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() =>
-                void navigator.clipboard
-                  .writeText(visibleFailure.diagnostic!)
-                  .then(() => toast.success(t('dub.diagnostic_copied')))
-                  .catch(() => toast.error(t('dub.copy_failed')))
-              }
-            >
-              <CopyIcon />
-              {t('dub.copy_diagnostic')}
-            </Button>
-          )}
-        </div>
-      )}
+      <Reveal>
+        {(docs || visibleFailure?.diagnostic) && (
+          <div className="mt-2 flex flex-wrap items-center gap-2 pl-7">
+            {docs && <ExternalLink href={docs}>{t('dub.open_docs')}</ExternalLink>}
+            {visibleFailure?.diagnostic && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  void navigator.clipboard
+                    .writeText(visibleFailure.diagnostic!)
+                    .then(() => toast.success(t('dub.diagnostic_copied')))
+                    .catch(() => toast.error(t('dub.copy_failed')))
+                }
+              >
+                <CopyIcon />
+                {t('dub.copy_diagnostic')}
+              </Button>
+            )}
+          </div>
+        )}
+      </Reveal>
     </div>
   );
 }

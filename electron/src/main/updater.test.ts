@@ -384,6 +384,19 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.checkForUpdates).not.toHaveBeenCalled();
   });
 
+  test('never contacts a release feed when the build ships with updates off', async () => {
+    const feed = vi.fn();
+    const updater = new DesktopUpdater('direct', feed as unknown as typeof fetch, false);
+    expect(updater.snapshot()).toMatchObject({ status: 'unsupported', unsupportedReason: 'build' });
+    await updater.check();
+    await updater.download();
+    updater.install();
+    expect(feed).not.toHaveBeenCalled();
+    expect(mocks.autoUpdater.setFeedURL).not.toHaveBeenCalled();
+    expect(mocks.autoUpdater.checkForUpdates).not.toHaveBeenCalled();
+    expect(mocks.autoUpdater.downloadUpdate).not.toHaveBeenCalled();
+  });
+
   test('stays unsupported when a package manager owns the install', async () => {
     vi.stubEnv('VOICESTUDIO_DISABLE_UPDATER', '1');
     try {

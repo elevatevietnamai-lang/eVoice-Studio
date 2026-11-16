@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { KeyRoundIcon } from 'lucide-react';
 import { exchangeApiKey } from '@shared/api/authSession';
@@ -79,7 +80,7 @@ export function WebAuthGate({ children }: { children: ReactNode }) {
     >
       <Card className="w-full max-w-md">
         <CardHeader>
-          <div className="mb-2 flex size-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+          <div className="mb-2 flex size-9 items-center justify-center rounded-lg bg-muted text-foreground">
             <KeyRoundIcon className="size-5" />
           </div>
           <CardTitle>
@@ -91,7 +92,7 @@ export function WebAuthGate({ children }: { children: ReactNode }) {
         </CardHeader>
         <CardContent>
           <form className="space-y-3" onSubmit={submit}>
-            <label className="block space-y-1.5 text-xs font-medium" htmlFor="web-auth-credential">
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium" htmlFor="web-auth-credential">
               <span>{t(apiKey ? 'settings.remote_backend_key' : 'network.pin')}</span>
               <Input
                 id="web-auth-credential"
@@ -104,13 +105,15 @@ export function WebAuthGate({ children }: { children: ReactNode }) {
                 autoFocus
               />
             </label>
-            {errorStatus !== undefined && (
-              <p className="text-xs text-destructive" role="alert">
-                {errorStatus
-                  ? t('settings.remote_backend_error_http', { status: errorStatus })
-                  : t('settings.remote_backend_error_network')}
-              </p>
-            )}
+            <Reveal>
+              {errorStatus !== undefined && (
+                <p className="text-xs text-destructive" role="alert">
+                  {errorStatus
+                    ? t('settings.remote_backend_error_http', { status: errorStatus })
+                    : t('settings.remote_backend_error_network')}
+                </p>
+              )}
+            </Reveal>
             <Button className="w-full" type="submit" disabled={pending || !value.trim()}>
               {t('network.connect')}
             </Button>

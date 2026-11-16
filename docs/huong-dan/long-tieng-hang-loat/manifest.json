@@ -1,0 +1,64 @@
+{
+  "slug": "long-tieng-hang-loat",
+  "title": "Lồng tiếng hàng loạt",
+  "order": 7,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Lồng tiếng hàng loạt",
+      "route": "/batch",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "4b31e86c1c50d653d92a3f4b8cb0d051463ae160c266a6182008992cac4f4fbd",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "NGÔN NGỮ ĐÍCH",
+          "Lồng tiếng hàng loạt",
+          "Không có tác vụ đang xử lý."
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Thêm video",
+          "Ngôn ngữ",
+          "Spanish",
+          "Thêm vào hàng đợi",
+          "Theo dõi thư mục",
+          "Tìm kiếm…",
+          "Đang xử lý",
+          "Đã hoàn thành",
+          "Thất bại",
+          "Làm mới",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Giữ âm thanh nền (nhạc/hiệu ứng)"
+        ]
+      }
+    }
+  ]
+}

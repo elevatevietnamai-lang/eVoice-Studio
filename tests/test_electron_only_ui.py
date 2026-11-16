@@ -55,12 +55,14 @@ def test_home_keeps_creation_actions_with_open_source_heading():
         encoding="utf-8"
     )
     assert "t('nav.home')" in home
-    assert "t('homeUi.title')" in home
+    # The eVoice redesign heads Home with the product name and its tagline.
+    assert "{PRODUCT_NAME}" in home
     assert "t('homeUi.subtitle')" in home
-    assert "<HomeContributors />" in home
     assert "group.map(" in home
-    assert "browser.open('https://voicestudio.sh')" in home
     assert "PanelLeftOpenIcon" not in home
+    # Upstream contributor credits moved from Home to Settings -> About.
+    about = ROOT / "electron/src/renderer/src/features/settings/diagnostics-settings.tsx"
+    assert "<CreditsContributors />" in about.read_text(encoding="utf-8")
 
 
 def test_install_smokes_build_the_pull_request_checkout_on_every_os():

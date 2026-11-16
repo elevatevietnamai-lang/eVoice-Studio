@@ -1,9 +1,12 @@
 // @vitest-environment node
+import childProcess from 'node:child_process';
 import dns from 'node:dns';
 import { createServer, type AddressInfo, connect } from 'node:net';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  CHROME_OFFLINE_FLAGS,
   connectTarget,
+  installChromeOfflineFlags,
   installNetworkGuard,
   isLoopbackHost,
   type BlockedAttempt,
@@ -92,5 +95,34 @@ describe('installNetworkGuard', () => {
     expect(dns.lookup).not.toBe(original);
     undo();
     expect(dns.lookup).toBe(original);
+  });
+});
+
+describe('installChromeOfflineFlags', () => {
+  it('adds the offline flags to Chrome launches only, and counts them', () => {
+    const calls: unknown[][] = [];
+    const original = childProcess.spawn;
+    childProcess.spawn = ((...args: unknown[]) => {
+      calls.push(args);
+      return {} as never;
+    }) as typeof childProcess.spawn;
+    const chrome = '/app/promo-browser/chrome-headless-shell';
+    const guard = installChromeOfflineFlags(chrome);
+    try {
+      childProcess.spawn(chrome, ['--headless', '--proxy-server=http://evil:8080'], {});
+      childProcess.spawn('/bin/ffmpeg', ['-i', 'x'], {});
+      expect(calls[0][1]).toEqual(['--headless', ...CHROME_OFFLINE_FLAGS]);
+      expect(calls[1][1]).toEqual(['-i', 'x']);
+      expect(guard.launches()).toBe(1);
+    } finally {
+      guard.remove();
+      childProcess.spawn = original;
+    }
+  });
+
+  it('keeps the loopback bypass Chrome needs to reach the producer', () => {
+    // `<-loopback>` would send 127.0.0.1 through the refusing proxy too.
+    expect(CHROME_OFFLINE_FLAGS.join(' ')).not.toContain('<-loopback>');
+    expect(CHROME_OFFLINE_FLAGS).toContain('--proxy-server=http://127.0.0.1:9');
   });
 });

@@ -383,7 +383,7 @@ def test_ios_home_contributors_match_electron_snapshot():
     """The iOS Home cluster mirrors Electron's bundled snapshot, avatars included (offline)."""
     import re
 
-    data = (ROOT / "electron/src/renderer/src/features/home/home-contributors-data.ts").read_text()
+    data = (ROOT / "electron/src/renderer/src/features/settings/credits-contributors-data.ts").read_text()
     electron = re.findall(r"login: '([^']+)'", data)
     swift = (ROOT / "mobile/ios/VoiceStudio/Features/HomeContributors.swift").read_text()
     ios = re.findall(r'"([^"]+)"', re.search(r"static let logins = \[(.*?)\]", swift, re.S).group(1))
@@ -395,9 +395,9 @@ def test_ios_home_contributors_match_electron_snapshot():
 def test_android_home_contributors_match_electron_snapshot():
     import re
 
-    electron = re.findall(r"login: '([^']+)'", (ROOT / "electron/src/renderer/src/features/home/home-contributors-data.ts").read_text())
+    electron = re.findall(r"login: '([^']+)'", (ROOT / "electron/src/renderer/src/features/settings/credits-contributors-data.ts").read_text())
     kotlin = (ROOT / "mobile/android/features/src/main/kotlin/com/voicestudio/mobile/features/HomeContributors.kt").read_text()
     android = re.findall(r'"([^"]+)"', re.search(r"val logins = listOf\((.*?)\)", kotlin, re.S).group(1))
     assert android == electron
     for login in electron:  # the Gradle catalog task copies these into the APK assets
-        assert list((ROOT / "electron/src/renderer/src/features/home/contributors").glob(f"{login}.*"))
+        assert list((ROOT / "electron/src/renderer/src/features/settings/contributors").glob(f"{login}.*"))

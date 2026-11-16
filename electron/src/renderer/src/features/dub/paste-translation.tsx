@@ -1,4 +1,5 @@
 import { readTextFile } from '@shared/utils/readTextFile';
+import { Reveal } from '@/components/motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangleIcon, ClipboardPasteIcon, FileTextIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -80,9 +81,9 @@ export function PasteTranslation({ segments, disabled, onApply, onClose }: Paste
   };
 
   return (
-    <section className="rounded-(--card-radius) border border-primary/20 bg-primary/[0.035]">
+    <section className="rounded-(--card-radius) border border-border bg-card">
       <div className="flex items-start gap-3 border-b border-border/50 px-4 py-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
           <ClipboardPasteIcon className="size-4" />
         </div>
         <div className="min-w-0 flex-1">
@@ -147,18 +148,22 @@ export function PasteTranslation({ segments, disabled, onApply, onClose }: Paste
             </span>
           )}
         </div>
-        {(parseFailed || (plan && plan.matchedCount === 0)) && (
-          <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
-            <AlertTriangleIcon className="size-3.5" />
-            {t('dub.paste_translation_none_matched')}
-          </p>
-        )}
-        {readFailed && (
-          <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
-            <AlertTriangleIcon className="size-3.5" />
-            {t('scriptEdit.import_failed')}
-          </p>
-        )}
+        <Reveal>
+          {(parseFailed || (plan && plan.matchedCount === 0)) && (
+            <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
+              <AlertTriangleIcon className="size-3.5" />
+              {t('dub.paste_translation_none_matched')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {readFailed && (
+            <p role="alert" className="flex items-center gap-2 text-xs text-destructive">
+              <AlertTriangleIcon className="size-3.5" />
+              {t('scriptEdit.import_failed')}
+            </p>
+          )}
+        </Reveal>
         {plan && plan.unusedCount > 0 && (
           <p className="text-xs text-warning">
             {t('dub.paste_translation_unused', { count: plan.unusedCount })}
@@ -180,13 +185,15 @@ export function PasteTranslation({ segments, disabled, onApply, onClose }: Paste
                 </span>
               </div>
             ))}
-            {plan.rows.length > PREVIEW_LIMIT && (
-              <p className="px-3 py-2 text-center text-xs text-muted-foreground">
-                {t('dub.paste_translation_more_rows', {
-                  count: plan.rows.length - PREVIEW_LIMIT,
-                })}
-              </p>
-            )}
+            <Reveal>
+              {plan.rows.length > PREVIEW_LIMIT && (
+                <p className="px-3 py-2 text-center text-xs text-muted-foreground">
+                  {t('dub.paste_translation_more_rows', {
+                    count: plan.rows.length - PREVIEW_LIMIT,
+                  })}
+                </p>
+              )}
+            </Reveal>
           </div>
         )}
         <div className="flex justify-end gap-2">

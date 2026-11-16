@@ -1473,6 +1473,20 @@
     "title": "Body_lock_profile_profiles__profile_id__lock_post",
     "type": "object"
    },
+   "Body_music_upload_music_upload_post": {
+    "properties": {
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "title": "Body_music_upload_music_upload_post",
+    "type": "object"
+   },
    "Body_normalize_workflow_speech_tools_normalize_speech_post": {
     "properties": {
      "audio": {
@@ -2193,6 +2207,20 @@
     "title": "DubSegment",
     "type": "object"
    },
+   "EditorFinalizeRequest": {
+    "properties": {
+     "media_id": {
+      "maxLength": 32,
+      "title": "Media Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "media_id"
+    ],
+    "title": "EditorFinalizeRequest",
+    "type": "object"
+   },
    "EffectPresetEntry": {
     "additionalProperties": true,
     "description": "One DSP effect preset.",
@@ -2406,6 +2434,23 @@
    },
    "GenerateBody": {
     "properties": {
+     "audio_format": {
+      "default": "wav",
+      "enum": [
+       "wav",
+       "flac",
+       "mp3"
+      ],
+      "title": "Audio Format",
+      "type": "string"
+     },
+     "batch_size": {
+      "default": 1,
+      "maximum": 4.0,
+      "minimum": 1.0,
+      "title": "Batch Size",
+      "type": "integer"
+     },
      "bpm": {
       "anyOf": [
        {
@@ -2419,12 +2464,85 @@
       ],
       "title": "Bpm"
      },
+     "cfg_interval_end": {
+      "default": 1.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Cfg Interval End",
+      "type": "number"
+     },
+     "cfg_interval_start": {
+      "default": 0.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Cfg Interval Start",
+      "type": "number"
+     },
+     "cover_strength": {
+      "default": 0.7,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Cover Strength",
+      "type": "number"
+     },
      "duration": {
       "default": 60.0,
       "maximum": 240.0,
       "minimum": 10.0,
       "title": "Duration",
       "type": "number"
+     },
+     "extend_overlap": {
+      "default": 2,
+      "maximum": 10.0,
+      "minimum": 0.0,
+      "title": "Extend Overlap",
+      "type": "number"
+     },
+     "extend_seconds": {
+      "default": 30,
+      "maximum": 120.0,
+      "minimum": 5.0,
+      "title": "Extend Seconds",
+      "type": "number"
+     },
+     "extend_side": {
+      "default": "end",
+      "enum": [
+       "end",
+       "start"
+      ],
+      "title": "Extend Side",
+      "type": "string"
+     },
+     "global_caption": {
+      "default": "",
+      "maxLength": 1000,
+      "title": "Global Caption",
+      "type": "string"
+     },
+     "guidance_scale": {
+      "default": 7.0,
+      "maximum": 15.0,
+      "minimum": 1.0,
+      "title": "Guidance Scale",
+      "type": "number"
+     },
+     "infer_method": {
+      "default": "ode",
+      "enum": [
+       "ode",
+       "sde"
+      ],
+      "title": "Infer Method",
+      "type": "string"
+     },
+     "inference_steps": {
+      "default": 8,
+      "maximum": 64.0,
+      "minimum": 4.0,
+      "title": "Inference Steps",
+      "type": "integer"
      },
      "instrumental": {
       "default": true,
@@ -2437,10 +2555,91 @@
       "title": "Key Scale",
       "type": "string"
      },
+     "lm_cfg_scale": {
+      "anyOf": [
+       {
+        "maximum": 5.0,
+        "minimum": 1.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Cfg Scale"
+     },
+     "lm_negative_prompt": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Lm Negative Prompt",
+      "type": "string"
+     },
+     "lm_repetition_penalty": {
+      "anyOf": [
+       {
+        "maximum": 2.0,
+        "minimum": 1.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Repetition Penalty"
+     },
+     "lm_temperature": {
+      "anyOf": [
+       {
+        "maximum": 2.0,
+        "minimum": 0.1,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Temperature"
+     },
+     "lm_top_k": {
+      "anyOf": [
+       {
+        "maximum": 200.0,
+        "minimum": 1.0,
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Top K"
+     },
+     "lm_top_p": {
+      "anyOf": [
+       {
+        "maximum": 1.0,
+        "minimum": 0.1,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lm Top P"
+     },
      "lyrics": {
       "default": "",
       "maxLength": 8000,
       "title": "Lyrics",
+      "type": "string"
+     },
+     "model": {
+      "default": "turbo",
+      "enum": [
+       "turbo",
+       "sft",
+       "base"
+      ],
+      "title": "Model",
       "type": "string"
      },
      "prompt": {
@@ -2449,10 +2648,71 @@
       "title": "Prompt",
       "type": "string"
      },
+     "reference_track_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reference Track Id"
+     },
+     "reference_upload_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Reference Upload Id"
+     },
+     "repaint_end": {
+      "anyOf": [
+       {
+        "maximum": 600.0,
+        "minimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Repaint End"
+     },
+     "repaint_mode": {
+      "default": "balanced",
+      "enum": [
+       "conservative",
+       "balanced",
+       "aggressive"
+      ],
+      "title": "Repaint Mode",
+      "type": "string"
+     },
+     "repaint_start": {
+      "default": 0.0,
+      "maximum": 600.0,
+      "minimum": 0.0,
+      "title": "Repaint Start",
+      "type": "number"
+     },
+     "repaint_strength": {
+      "default": 0.5,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Repaint Strength",
+      "type": "number"
+     },
      "seed": {
       "anyOf": [
        {
-        "maximum": 2147483647.0,
+        "maximum": 4294967295.0,
         "minimum": 0.0,
         "type": "integer"
        },
@@ -2461,6 +2721,87 @@
        }
       ],
       "title": "Seed"
+     },
+     "shift": {
+      "default": 3.0,
+      "maximum": 5.0,
+      "minimum": 1.0,
+      "title": "Shift",
+      "type": "number"
+     },
+     "source_track_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Track Id"
+     },
+     "source_upload_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source Upload Id"
+     },
+     "task": {
+      "default": "text2music",
+      "enum": [
+       "text2music",
+       "cover",
+       "repaint",
+       "extend",
+       "extract",
+       "lego",
+       "complete"
+      ],
+      "title": "Task",
+      "type": "string"
+     },
+     "thinking": {
+      "default": false,
+      "title": "Thinking",
+      "type": "boolean"
+     },
+     "time_signature": {
+      "default": "",
+      "enum": [
+       "",
+       "2",
+       "3",
+       "4",
+       "6"
+      ],
+      "title": "Time Signature",
+      "type": "string"
+     },
+     "track_classes": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Track Classes",
+      "type": "array"
+     },
+     "track_name": {
+      "default": "",
+      "maxLength": 24,
+      "title": "Track Name",
+      "type": "string"
+     },
+     "use_adg": {
+      "default": false,
+      "title": "Use Adg",
+      "type": "boolean"
      },
      "vocal_language": {
       "default": "en",
@@ -3032,6 +3373,61 @@
      "text"
     ],
     "title": "LongformSpan",
+    "type": "object"
+   },
+   "LoraChange": {
+    "properties": {
+     "enabled": {
+      "anyOf": [
+       {
+        "type": "boolean"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Enabled"
+     },
+     "scale": {
+      "anyOf": [
+       {
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Scale"
+     }
+    },
+    "title": "LoraChange",
+    "type": "object"
+   },
+   "LoraPick": {
+    "properties": {
+     "authorization": {
+      "maxLength": 64,
+      "minLength": 64,
+      "title": "Authorization",
+      "type": "string"
+     },
+     "model": {
+      "default": "turbo",
+      "enum": [
+       "turbo",
+       "sft",
+       "base"
+      ],
+      "title": "Model",
+      "type": "string"
+     }
+    },
+    "required": [
+     "authorization"
+    ],
+    "title": "LoraPick",
     "type": "object"
    },
    "MissingModel": {
@@ -3889,6 +4285,44 @@
      "repo_id"
     ],
     "title": "RevokeRequest",
+    "type": "object"
+   },
+   "SceneWriterRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "description": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Description",
+      "type": "string"
+     },
+     "language": {
+      "default": "en",
+      "maxLength": 16,
+      "title": "Language",
+      "type": "string"
+     },
+     "provider_id": {
+      "maxLength": 64,
+      "minLength": 1,
+      "title": "Provider Id",
+      "type": "string"
+     },
+     "shape": {
+      "default": "overlay",
+      "enum": [
+       "overlay",
+       "shot"
+      ],
+      "title": "Shape",
+      "type": "string"
+     }
+    },
+    "required": [
+     "description",
+     "provider_id"
+    ],
+    "title": "SceneWriterRequest",
     "type": "object"
    },
    "SegmentPreviewRequest": {
@@ -13356,6 +13790,47 @@
     "summary": "Dub Export Vtt"
    }
   },
+  "/editor/finalize": {
+   "post": {
+    "description": "Turn a video editor export into an MP4 (H.264 + AAC).\n\nThe editor encodes in the app with WebCodecs; where the system has no\nH.264 encoder it writes WebM (VP9 + Opus) instead, and this converts it so\nevery platform saves the same MP4. Returns the new media like\n``/promo/media``.",
+    "operationId": "editor_finalize_editor_finalize_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EditorFinalizeRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Editor Finalize Editor Finalize Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Editor Finalize"
+   }
+  },
   "/engines": {
    "get": {
     "operationId": "list_all_engines_engines_get",
@@ -16796,6 +17271,43 @@
     "summary": "Music Audio"
    }
   },
+  "/music/format": {
+   "post": {
+    "description": "Run the language model's formatter on the form. Returns suggestions; nothing is saved.",
+    "operationId": "music_format_music_format_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/GenerateBody"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Format"
+   }
+  },
   "/music/generate": {
    "post": {
     "operationId": "music_generate_music_generate_post",
@@ -16901,6 +17413,193 @@
     "summary": "Music Delete"
    }
   },
+  "/music/lm": {
+   "get": {
+    "operationId": "music_lm_music_lm_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lm"
+   }
+  },
+  "/music/lm-install-stream": {
+   "get": {
+    "operationId": "music_lm_install_stream_music_lm_install_stream_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lm Install Stream"
+   }
+  },
+  "/music/lora": {
+   "delete": {
+    "operationId": "music_lora_remove_music_lora_delete",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lora Remove"
+   },
+   "get": {
+    "operationId": "music_lora_music_lora_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Lora"
+   },
+   "patch": {
+    "operationId": "music_lora_change_music_lora_patch",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoraChange"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Lora Change"
+   },
+   "post": {
+    "operationId": "music_lora_pick_music_lora_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoraPick"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Lora Pick"
+   }
+  },
+  "/music/model-install-stream": {
+   "get": {
+    "operationId": "music_model_install_stream_music_model_install_stream_get",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "model",
+      "required": true,
+      "schema": {
+       "enum": [
+        "sft",
+        "base"
+       ],
+       "title": "Model",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Model Install Stream"
+   }
+  },
+  "/music/models": {
+   "get": {
+    "operationId": "music_models_music_models_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Music Models"
+   }
+  },
   "/music/status": {
    "get": {
     "operationId": "music_status_music_status_get",
@@ -16931,6 +17630,43 @@
      }
     },
     "summary": "Music Stop"
+   }
+  },
+  "/music/upload": {
+   "post": {
+    "description": "Store a source or reference audio file under the library and return its id and length.",
+    "operationId": "music_upload_music_upload_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_music_upload_music_upload_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Music Upload"
    }
   },
   "/personalities": {
@@ -18171,6 +18907,66 @@
      }
     },
     "summary": "Promo Render"
+   }
+  },
+  "/promo/scene-writer": {
+   "get": {
+    "description": "Which LLM provider a scene description would be sent to, and whether it\nis ready. Nothing is sent by this call.",
+    "operationId": "promo_scene_writer_promo_scene_writer_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Scene Writer Promo Scene Writer Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Promo Scene Writer"
+   },
+   "post": {
+    "description": "Draft a scene from a description with the provider the user confirmed.\nErrors carry ``detail = \"scene_writer:<code>\"`` for a localized message.",
+    "operationId": "promo_scene_write_promo_scene_writer_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SceneWriterRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Promo Scene Write Promo Scene Writer Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Promo Scene Write"
    }
   },
   "/pronunciation": {

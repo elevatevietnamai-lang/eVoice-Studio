@@ -74,9 +74,10 @@
   --text-editor: 1rem;
   --text-editor--line-height: 1.75rem;
   --color-zinc-25: oklch(99.2% 0 0);
-  /* Elevate motion: every `transition-*` utility gets the brand timing unless it sets its own. */
-  --default-transition-duration: 160ms;
-  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Elevate motion: every `transition-*` utility gets the hover timing (`--motion-hover`,
+     `--ease-settle` below) unless it sets its own, so hovers across the app move as one. */
+  --default-transition-duration: var(--motion-hover);
+  --default-transition-timing-function: var(--ease-settle);
 }
 
 :root {
@@ -93,6 +94,13 @@
   --motion-base: 240ms;
   --motion-slow: 480ms;
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Hover and press feedback. Ease-out cubic keeps moving through the last third of the change;
+     the quint `--ease-standard` lands most of a 160 ms colour change in its first 50 ms, which
+     reads as a snap. Twins of `motionTokens.hover` / `.settle` (components/motion). */
+  --motion-hover: 200ms;
+  --ease-settle: cubic-bezier(0.33, 1, 0.68, 1);
+  /* A page's panel column and content settling in on a switch (`motionTokens.panel`). */
+  --motion-panel: 260ms;
   --workspace-gap: 1rem;
   --workspace-inset: 1.5rem;
   --glass-blur: 12px;
@@ -194,10 +202,10 @@ html[data-theme-id=''] {
     cursor: pointer;
   }
   :is(button, select, input, [role='button'], [role='tab'], [role='menuitem'], [role='option']):is(
-      :disabled,
-      [aria-disabled='true'],
-      [data-disabled]
-    ) {
+    :disabled,
+    [aria-disabled='true'],
+    [data-disabled]
+  ) {
     cursor: not-allowed;
   }
   ::selection {
@@ -343,6 +351,16 @@ html[data-theme-id=''] {
 [data-slot='workspace-pane-content'] :is(h2, summary) > .lucide:first-child {
   color: color-mix(in srgb, var(--primary) 76%, var(--muted-foreground));
 }
+/* Expanding cards: every <details> opens and closes in one height animation run by
+   lib/details-motion.ts. A ::details-content transition here would close in two steps (height,
+   then a late content-visibility switch), so none is set. */
+:root {
+  interpolate-size: allow-keywords;
+}
+details > summary .lucide-chevron-down,
+details > summary .lucide-chevron-right {
+  transition: transform var(--motion-fast) var(--ease-standard);
+}
 [data-slot='secondary-sidebar-content'] details > summary,
 [data-slot='workspace-pane-content'] details > summary {
   min-height: 2rem;
@@ -352,14 +370,6 @@ html[data-theme-id=''] {
 [data-slot='secondary-sidebar-content'] details[open] > summary,
 [data-slot='workspace-pane-content'] details[open] > summary {
   color: var(--foreground);
-}
-[data-slot='secondary-sidebar-content'] > :is(section, form, details):hover,
-[data-slot='workspace-pane-content'] > :is(section, form, details):hover {
-  border-color: color-mix(in srgb, var(--border) 72%, var(--foreground));
-}
-[data-slot='secondary-sidebar-content'] > :is(section, form, details):focus-within,
-[data-slot='workspace-pane-content'] > :is(section, form, details):focus-within {
-  border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
 }
 .secondary-sidebar[data-variant='navigation']
   [data-slot='secondary-sidebar-content']
@@ -423,7 +433,8 @@ html[data-theme-id=''] {
   border-color: color-mix(in srgb, var(--border) 88%, transparent);
   background: color-mix(in srgb, var(--card) 54%, transparent);
   transition-property: border-color, background-color;
-  transition-duration: 150ms;
+  transition-duration: var(--motion-hover);
+  transition-timing-function: var(--ease-settle);
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
@@ -464,12 +475,6 @@ html[data-theme-id=''] {
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  > :is(section, form, details, div[class~='rounded-(--card-radius)']):hover {
-  border-color: color-mix(in srgb, var(--border) 76%, var(--foreground));
-  background-color: color-mix(in srgb, var(--card) 60%, transparent);
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
   :is(h2, legend, summary, label) {
   text-wrap: pretty;
 }
@@ -481,29 +486,8 @@ html[data-theme-id=''] {
 }
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
-  :is(input, textarea, [role='combobox']):focus-visible {
-  background-color: color-mix(in srgb, var(--background) 72%, transparent);
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
-  :is(input, textarea, [role='combobox']) {
-  background-color: color-mix(in srgb, var(--background) 52%, transparent);
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
-  :is(input, textarea, [role='combobox']) {
-  border-color: color-mix(in srgb, var(--border) 82%, var(--foreground));
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
   :is(input, textarea)::placeholder {
   color: color-mix(in srgb, var(--muted-foreground) 82%, transparent);
-}
-.secondary-sidebar[data-variant='library']
-  [data-slot='secondary-sidebar-content']
-  > input:first-child {
-  flex: none;
-  background: color-mix(in srgb, var(--background) 55%, transparent);
 }
 .secondary-sidebar[data-variant='library'] [data-slot='secondary-sidebar-content'] {
   overflow: hidden;
@@ -516,16 +500,10 @@ html[data-theme-id=''] {
 }
 .secondary-sidebar[data-variant='library']
   [data-slot='secondary-sidebar-content']
-  button[aria-pressed='true'] {
-  border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
-  background: color-mix(in srgb, var(--primary) 8%, transparent);
-  box-shadow: inset 2px 0 0 var(--primary);
-}
-.secondary-sidebar[data-variant='library']
-  [data-slot='secondary-sidebar-content']
   button[aria-pressed] {
   transition-property: color, background-color, border-color, box-shadow;
-  transition-duration: 150ms;
+  transition-duration: var(--motion-hover);
+  transition-timing-function: var(--ease-settle);
 }
 .secondary-sidebar[data-variant='library']
   [data-slot='secondary-sidebar-content']
@@ -602,11 +580,11 @@ html[data-theme-id=''] {
   box-shadow: none;
 }
 .performance-tier-button:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--primary) 5.5%, transparent);
+  background: var(--accent);
 }
 .performance-tier-button[data-selected='true'] {
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 34%, transparent);
+  background: var(--accent);
+  color: var(--foreground);
 }
 
 /* Glass belongs to the named palettes only ([data-theme-id]); the default Studio theme is flat.
@@ -682,7 +660,8 @@ html[data-theme-id=''] {
         0 8px 28px -12px var(--material-shadow);
     }
     html[data-glass='true'][data-theme-id] .composer-surface {
-      border-radius: 1.125rem;
+      /* The composer is a card: it keeps the card radius in the glass theme too (DESIGN.md scale). */
+      border-radius: var(--card-radius);
       padding: 0.75rem;
       box-shadow:
         inset 0 1px 0 var(--material-edge),
@@ -702,47 +681,57 @@ html[data-theme-id='heritage'] {
   --glass-light-color: #ad82d9;
 }
 
-/* Keep controls opaque: Glass mode clears the bg-background surface utility. */
-[data-slot='switch'].app-switch {
-  background: color-mix(in srgb, var(--foreground) 32%, var(--background));
-  border-color: color-mix(in srgb, var(--foreground) 55%, var(--background));
-  transition-property: background-color, border-color, box-shadow;
-}
-[data-slot='switch'].app-switch[data-checked] {
-  background: var(--primary);
-  border-color: var(--primary);
-}
-[data-slot='switch-thumb'].app-switch-thumb {
-  background: var(--foreground);
-  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
-}
-[data-slot='switch'][data-checked] .app-switch-thumb {
-  background: var(--primary-foreground);
-}
-[data-slot='switch'].app-switch:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 3px;
-}
-@media (prefers-reduced-motion: reduce) {
-  [data-slot='switch'].app-switch {
-    transition: none;
+/* Messages that appear (status, alert, inline notices) settle in instead of popping: a fade and a
+   4 px rise over 240 ms when the element is inserted. Their exit is `Reveal` (motion/index.tsx).
+   In the base layer with zero specificity, so an element's own transition and translate utilities
+   still win. */
+@layer base {
+  :where([role='alert'], [role='status'], [data-slot='alert'], [data-reveal]) {
+    transition:
+      opacity var(--motion-base) var(--ease-standard),
+      translate var(--motion-base) var(--ease-standard);
+    @starting-style {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :where([role='alert'], [role='status'], [data-slot='alert'], [data-reveal]) {
+      @starting-style {
+        translate: none;
+      }
+    }
   }
 }
 
-/* A control panel opening: content waits for the width (240 ms), then fades in. */
-@keyframes secondary-sidebar-content-in {
+/* A page switch: the panel column settles in with the content (RouteFade, motion/index.tsx). */
+@keyframes route-settle {
   from {
-    opacity: 0;
+    opacity: 0.6;
   }
   to {
     opacity: 1;
   }
 }
-.secondary-sidebar[data-expanding] > :not([role='separator']) {
-  animation: secondary-sidebar-content-in 180ms var(--ease-standard) 200ms both;
+.secondary-sidebar {
+  animation: route-settle var(--motion-panel) var(--ease-settle) both;
 }
 @media (prefers-reduced-motion: reduce) {
-  .secondary-sidebar[data-expanding] > :not([role='separator']) {
+  .secondary-sidebar {
     animation: none;
   }
+}
+
+/* Focus after a click shows no ring (lib/input-modality.ts). Browsers also match :focus-visible
+   when a popup hands focus back to its trigger, which left clicked buttons and dropdowns outlined
+   in the white ring colour. Keyboard focus and text fields keep their ring. Unlayered, so it wins
+   over the utilities' focus-visible:ring and focus-visible:border-ring. */
+html[data-input-modality='pointer'] :focus-visible:not(input, textarea, [contenteditable='true']) {
+  --tw-ring-shadow: 0 0 #0000;
+  --ring: transparent;
+  outline-color: transparent;
+}
+/* A dropdown keeps its own border instead of losing it. */
+html[data-input-modality='pointer'] [data-slot='select-trigger']:focus-visible {
+  --ring: var(--input);
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { LoaderCircleIcon, ScaleIcon } from 'lucide-react';
@@ -157,11 +158,13 @@ export function EngineLicense({ id, name }: { id: LicensedEngine; name: string }
           </div>
 
           <p className="text-xs leading-5 text-muted-foreground">{t(license.footer)}</p>
-          {failed && (
-            <p role="alert" className="text-sm text-destructive">
-              {t('license.accept_error', { message: failed })}
-            </p>
-          )}
+          <Reveal>
+            {failed && (
+              <p role="alert" className="text-sm text-destructive">
+                {t('license.accept_error', { message: failed })}
+              </p>
+            )}
+          </Reveal>
           <DialogFooter>
             <Button variant="ghost" disabled={busy} onClick={() => setOpen(false)}>
               {t('common.cancel')}

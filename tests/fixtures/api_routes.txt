@@ -20,6 +20,7 @@ DELETE /marketplace/{filename}
 DELETE /models/licenses/receipts/{plan_digest}
 DELETE /models/{repo_id:path}
 DELETE /music/library/{track_id}
+DELETE /music/lora
 DELETE /profiles/{profile_id}
 DELETE /profiles/{profile_id}/attestation
 DELETE /profiles/{profile_id}/consent
@@ -155,6 +156,11 @@ GET /models/licenses/receipts/{plan_digest}
 GET /music/audio/{track_id}
 GET /music/install-stream
 GET /music/library
+GET /music/lm
+GET /music/lm-install-stream
+GET /music/lora
+GET /music/model-install-stream
+GET /music/models
 GET /music/status
 GET /openapi.json
 GET /personalities
@@ -167,6 +173,8 @@ GET /profiles/{profile_id}/image
 GET /profiles/{profile_id}/usage
 GET /projects
 GET /projects/{project_id}
+GET /promo/beats/{media_id}
+GET /promo/scene-writer
 GET /pronunciation
 GET /pronunciation/export
 GET /setup/download-stream
@@ -198,6 +206,7 @@ GET /v1/models
 GET /v1/models/{model_id:path}
 GET /watermark/status
 PATCH /gallery/voices/{voice_id}
+PATCH /music/lora
 PATCH /projects/{project_id}
 POST /api/auth/session
 POST /api/auth/ws-ticket
@@ -253,6 +262,7 @@ POST /dub/transcribe/{job_id}
 POST /dub/translate
 POST /dub/upload
 POST /dub/use-downloaded-captions/{job_id}
+POST /editor/finalize
 POST /engines/audiocpp/runtime/install
 POST /engines/diarisation/select
 POST /engines/select
@@ -298,8 +308,11 @@ POST /models/install/prepare
 POST /models/licenses/accept
 POST /models/licenses/revoke
 POST /models/licenses/verify/{plan_digest}
+POST /music/format
 POST /music/generate
+POST /music/lora
 POST /music/stop
+POST /music/upload
 POST /personas/export/{profile_id}
 POST /personas/import
 POST /personas/inspect
@@ -312,6 +325,7 @@ POST /profiles/{profile_id}/unlock
 POST /projects
 POST /promo/media
 POST /promo/render
+POST /promo/scene-writer
 POST /pronunciation
 POST /pronunciation/import
 POST /pronunciation/test

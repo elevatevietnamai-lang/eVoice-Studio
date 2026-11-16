@@ -10,11 +10,61 @@ metadata and the backend fallback mirror it.
 
 **Highlights**
 
-- Preview iOS and Android apps that run VoiceStudio on your phone, offline after downloading the models
-- Opt-in Beta update channel: get fixes early from Settings → Updates, and roll onto the next stable release automatically
+- Vietnamese user guide drafts with real app screenshots
+- Music Studio fixes from a full run on a real GPU: reused seeds reproduce the track again
+- Music Studio extends a song after its end or before its start, can use your own LoRA, and on the Base model extracts, adds or completes instruments
+
+### Added
+
+- Music Studio: *Extend* adds up to 2 minutes before or after a track with a smooth join, and Thinking gets expert language-model options (#34)
+- Music Studio: use a LoRA from your computer, picked in the desktop app's file dialog, with a strength slider and an on/off switch (#35)
+- Music Studio on the Base model: *Extract* one instrument from a song, *Add layer* with a new one, or *Complete* an arrangement with the instruments you pick (#37)
 
 ### Changed
 
+- Menu bar: the app menu moves beside Settings in the rail, the logo is the bare mark for dark and light, hovers and panels animate smoothly, and every frame control has a tooltip with its shortcut (#36)
+
+### Docs
+
+- Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)
+- User guide screenshots retaken after the menu bar redesign, and the Getting started article now covers only the Windows installer the beta ships (#43)
+- The Vietnamese user guide is reviewed and published: all 19 articles approved, with the update, project copy and voice import steps checked against the app (#48)
+
+### Fixed
+
+- Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
+- Music Studio: *Polish* keeps your lyrics when the language model changes their words (the small model sometimes slips in junk lines) and says so (#39)
+- Music Studio: a LoRA track no longer fails with "the music server exited while starting" when the server restarts after more than 5 minutes idle (#40)
+- The analytics consent prompt says why saving your choice failed (for example a browser origin the server does not trust) instead of only "Something went wrong" (#38)
+- Music Studio: *Reuse seed* now reproduces a track (seeds were reported but not used, and seeds above 2.1 billion were lost), M4A uploads work for cover and style reference, Turbo steps stop at 8 where the engine stops, and tracks no longer save the key "N/A" (#33)
+
+## [0.5.7-beta.3] — 2026-11-14
+
+The first eVoice Studio release built from this repository: a Windows beta with a new white logo, a
+Music Studio that writes, covers and repaints songs on your computer, a CapCut-style video editor and
+a promo video maker. Everything still runs locally; nothing is uploaded.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.3-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*) |
+| macOS, Linux | Not built for this beta yet |
+
+**Highlights**
+
+- Music Studio: vocal language, key and meter, up to 4 variants, cover and repaint of a track, a style reference, the optional Thinking language model and SFT/Base models
+- Video editor with projects, transitions, chroma key, masks, stickers and animated titles
+- Promo video maker with beat-cut timeline, custom HTML scenes and Write with AI
+- New white eVoice logo, a native app menu, and a more natural Vietnamese interface
+- Also in this build: preview iOS and Android apps and the opt-in Beta update channel from VoiceStudio upstream
+
+### Changed
+
+- The Support page asks for donations to eVoice Studio by Momo or bank transfer (with a VietQR code made on your computer) and links to the eVoice website, instead of the upstream VoiceStudio donation and community links
+- Installing the music engine no longer stops at the model download or restarts the 3 GB PyTorch download after a dropped connection, and its button and progress show how many GB are downloaded
+- eVoice Studio builds no longer check for updates or offer upstream VoiceStudio releases; Settings → Updates says checks are off until eVoice has its own release feed
+- The desktop app has a full application menu (File, Edit, View, Go, Window, Help) that opens every feature page with a shortcut: the menu bar on macOS, a menu button in the top-right corner on Windows and Linux
+- The Vietnamese interface reads more naturally: clearer wording, one term per concept, and seconds shown where they were missing (#9)
+- New eVoice Studio logo on the app icon, installers, browser tab, tray, and the iOS and Android launchers: four white voice bars with a star on a near-black tile; in the light theme the in-app logo sits on the same tile so it stays visible (#16, #18)
 - Burned-in subtitles use the bundled Inter font, so Latin, Cyrillic and Vietnamese captions look the same on macOS, Windows and Linux (other scripts still use a system font) (#6)
 - Karaoke on translated lines gives longer words more time instead of splitting the line evenly, and Chinese, Japanese and Thai lines highlight per character instead of all at once (#6)
 - The sidebar is a slim icon rail beside each section's own pane: Home and Clone get a Saved voices / Recent takes column, Design gets a Saved voices tab, and the full navigation is one click away (#3234)
@@ -30,12 +80,30 @@ metadata and the backend fallback mirror it.
 
 ### Added
 
+- Music Studio can sing in the language of your lyrics, and lets you set the key, time signature and seed under Advanced; each saved track keeps its seed so you can reuse it (#19)
+- Music Studio's optional Thinking mode lets a language model plan the song before it is rendered, for better structure and lyrics that fit; GPUs with 6–12 GB first download a small 1.4 GB model (#19)
+- Music Studio makes up to 4 variants in one run, each saved as its own track with its own seed, and adds steps, a stable or varied sampler, and WAV, FLAC or MP3 files under Advanced (#25)
+- Music Studio: style tags add genre, instrument and mood words to the description, and section buttons put [verse], [chorus] and other song sections into the lyrics at the cursor (#25)
+- Music Studio: Polish with the language model tidies the description and lyrics and suggests BPM, key and meter, shown side by side before you apply them; Reuse settings brings back everything a saved track was made with (#25)
+- Music Studio covers a track in a new style or repaints one region of it, from the library or an uploaded file, and can follow a style reference track; the result is saved as a new track (#28)
+- Music Studio can use the optional SFT and Base music models (about 4.8 GB each) for more detail, with guidance, shift and adaptive guidance controls that the fast Turbo model ignores (#29)
 - Karaoke subtitles have three looks in Dub export: Sweep, Highlight (only the spoken word lights up) and Pop (a short bounce); the ASS download uses the same look (#6)
 - Audiobook and Stories can turn part of a finished render into a short audiogram video (waveform, title and cover; square, landscape or vertical) for social posts (#6)
 - Promo video: cut clips and stills into a short ad with transitions, music cut on the beat, narration, a logo watermark and a logo ending, in 9:16, 1:1 or 16:9 (#11)
 - Promo video in the desktop app: animated titles rendered on your computer and laid over the video (keyword, glowing title, handwriting, typed search bar, contact card, logo reveal) with a live preview, a 3×3 position and a shot to ride on, so titles stay on their shot when cuts move to the beat; turning them on downloads Chrome Headless Shell once (about 271 MB) after you confirm (#11)
 - Promo video: the logo watermark can also sit in the middle of the top or bottom edge (#11)
+- Promo video in the desktop app: custom HTML scenes with a sandboxed live preview, text, colour and image fields, saving and `.html`/`.zip` import and export, used as an overlay or a full-frame shot (intro, outro and text slide built in); scenes run with no network or file access(#23)
+- Promo video: **Write with AI** drafts a scene from your description with the LLM provider you set up in Settings, named before anything is sent; the result opens as an unsaved draft in the sandboxed preview(#23)
+- Promo video: built-in scene overlays for a lower third, a 5-to-1 countdown, a price and offer tag, a scrolling ticker and a call to action, all editable(#23)
 - Promo video timeline: drag to trim, reorder, split and move titles over a beat grid and music waveform, with a live preview, undo and redo; with Cut on the beat it shows the cuts exactly as they render (#11)
+- Video editor: a CapCut-style multi-track editor with a magnetic main track, overlays, titles and audio tracks, keyframes, colour looks, speed, fades, music that ducks under voices, auto captions from local speech recognition, and MP4 export whose frames match the preview; built on OpenCut's renderer ([guide](docs/electron-video-editor.md)) (#13)
+- Video editor projects: a project library to open, create, rename, duplicate and delete projects; the project from the first release moves in untouched ([guide](docs/electron-video-editor.md#projects)) (#22)
+- Video editor transitions between main-track clips: dissolve, fade through black, slide, push, zoom and wipe, with their length; the clips overlap and their sound crossfades, in the preview and the export alike (#22)
+- Video editor chroma key: remove a green, blue or picked background colour from a clip or still, with strength, edge softness and spill removal (#22)
+- Video editor masks: rectangle, circle or horizontal band on a clip or still, with position, size, rotation and softness you can keyframe, and invert (#22)
+- Video editor speed changes keep the pitch of voices (Keep pitch, on for newly sped clips) with a time-stretch written for the app; clips sped in older projects sound as before (#22)
+- Video editor stickers: shapes, arrows and frames in any colour, and Fluent Emoji, bundled with the app so nothing is downloaded (#22)
+- Video editor animated titles: the Promo video title templates rendered with your text and laid over the video on their own track, editable afterwards; turned on from the Promo video page (#22)
 - The phone apps have a Report action on every generated result: pick a reason, add an optional note, and it reaches the VoiceStudio team only when you tap Send (#3268, #3276, #3281)
 - The phone apps run speech, dictation, voice cloning and dubbing on the phone itself, offline once you download the models; pairing a computer is optional ([guide](docs/mobile.md)) (#2969)
 - Beta update channel: choose Stable or Beta under Settings → Updates; betas are `-beta.N` prereleases that never reach Stable users, and Docker gets matching `:beta` tags ([guide](docs/update-channels.md)) (#3175)
@@ -49,6 +117,7 @@ metadata and the backend fallback mirror it.
 - Reading on-screen subtitles is about four times faster: frame-exact timing re-reads only the known subtitle lines, and the GPU no longer re-benchmarks for every line width
 - On-screen subtitles warn in the panel and during reading or removal when GPU acceleration fails and the engine falls back to the CPU
 - On-screen subtitle reading leaves out text that never changes inside the band (app labels in a screen recording, a watermark) and text much smaller than the subtitle line
+- Buttons and dropdowns no longer stay outlined in white after you click them or pick an option; the focus ring still shows when you move with the keyboard (#24)
 - Promo video: a saved draft whose files are gone marks them as missing and blocks Render, with one button to remove them, instead of a black preview and a failed render (#12)
 - First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)
 - iPhone Settings → About and licence receipts show the full app version (`0.5.7-beta.2`), like Android, instead of only `0.5.7` (#3273)

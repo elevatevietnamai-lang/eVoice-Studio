@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { SimpleSelect } from '@/components/simple-select';
 import { Progress } from '@/components/ui/progress';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
@@ -23,12 +24,13 @@ import {
   syncDubHardsub,
   useDubSession,
 } from './dub-session';
+import { segmentedFrameClass } from '@/components/segmented';
 
 type EngineStatus = {
   installed: boolean;
   engine?: {
     providers?: string[];
-    /** Provider the OCR session really runs on (newer engines); `providers` only lists what is installed. */
+    /** Provider the OCR session really runs on; `providers` only lists what is installed. */
     accelerator?: string;
     gpu_fallback?: boolean;
     encoder?: string;
@@ -190,11 +192,11 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
         <ScanTextIcon className="size-3.5 text-primary" />
         <span className="mr-auto">{t('dub_hardsub.title')}</span>
         {hs?.cleaned ? (
-          <span className="rounded bg-emerald-500/12 px-1.5 py-0.5 text-[10px] text-emerald-600 dark:text-emerald-400">
+          <span className="rounded bg-emerald-500/12 px-1.5 py-0.5 text-[11px] text-emerald-600 dark:text-emerald-400">
             {t('dub_hardsub.badge_cleaned')}
           </span>
         ) : hs?.cue_count ? (
-          <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary">
+          <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-primary">
             {t('dub_hardsub.badge_read', { count: hs.cue_count })}
           </span>
         ) : null}
@@ -228,7 +230,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                   aria-label={t('dub_hardsub.install')}
                 />
                 {installLog && (
-                  <p className="truncate font-mono text-[10px] text-muted-foreground">
+                  <p className="truncate font-mono text-[11px] text-muted-foreground">
                     {installLog}
                   </p>
                 )}
@@ -252,7 +254,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 aria-valuenow={Math.round(region[0] * 100)}
                 tabIndex={0}
                 className={cn(
-                  'relative overflow-hidden rounded-md border border-border/60 bg-black select-none',
+                  'relative overflow-hidden rounded-lg border border-border/60 bg-black select-none',
                   locked ? 'cursor-not-allowed opacity-70' : 'cursor-crosshair',
                 )}
                 onPointerDown={onPointerDown}
@@ -310,7 +312,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 <span className="w-10 text-right tabular-nums">{frameAt.toFixed(1)}s</span>
               </label>
               <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
-                <label className="space-y-1">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                   <span>{t('dub_hardsub.top_edge')}</span>
                   <input
                     type="range"
@@ -324,7 +326,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                     }
                   />
                 </label>
-                <label className="space-y-1">
+                <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
                   <span>{t('dub_hardsub.bottom_edge')}</span>
                   <input
                     type="range"
@@ -342,21 +344,19 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             </div>
 
             <div className="space-y-2 border-t border-border/50 pt-3">
-              <label className="flex items-center justify-between gap-2 text-xs">
+              <div className="flex items-center justify-between gap-2 text-xs">
                 <span>{t('dub_hardsub.scan_rate')}</span>
-                <select
-                  className="h-7 rounded-md border border-border/60 bg-background px-2 text-xs"
-                  value={fps}
+                <SimpleSelect
+                  label={t('dub_hardsub.scan_rate')}
+                  value={String(fps)}
+                  items={[2, 4, 6, 8].map((value) => ({
+                    value: String(value),
+                    label: t('dub_hardsub.scan_rate_value', { count: value }),
+                  }))}
                   disabled={locked}
-                  onChange={(event) => setFps(Number(event.target.value))}
-                >
-                  {[2, 4, 6, 8].map((value) => (
-                    <option key={value} value={value}>
-                      {t('dub_hardsub.scan_rate_value', { count: value })}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onValueChange={(value) => setFps(Number(value))}
+                />
+              </div>
               <Button className="w-full" size="sm" disabled={locked} onClick={readSubtitles}>
                 {task?.kind === 'ocr' ? (
                   <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
@@ -377,7 +377,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
             </div>
 
             <div className="space-y-2 border-t border-border/50 pt-3">
-              <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted/40 p-1">
+              <div className={cn(segmentedFrameClass, 'grid grid-cols-3')}>
                 {(['sttn', 'lama', 'propainter'] as const).map((value) => (
                   <Button
                     key={value}
@@ -432,7 +432,7 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 </Button>
               )}
             </div>
-            <p className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <CaptionsOffIcon className="size-3" />
               {t('dub_hardsub.engine_line', {
                 accel:

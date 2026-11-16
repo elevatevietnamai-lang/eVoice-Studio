@@ -1,4 +1,5 @@
 import { BotIcon, LoaderCircleIcon, Trash2Icon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -107,15 +108,17 @@ export function McpBindingsSettings() {
           <ExternalLink href={MCP_DOCS_URL}>{t('common.learn_more')}</ExternalLink>
         </SettingsRow>
 
-        {(bindings.isError || error) && (
-          <div className="p-4">
-            <SettingsActionError
-              title={bindings.isError ? t('settings.mcp_load_failed') : error}
-              detail={bindings.isError ? describeError(bindings.error) : undefined}
-              onDismiss={error ? () => setError('') : undefined}
-            />
-          </div>
-        )}
+        <Reveal>
+          {(bindings.isError || error) && (
+            <div className="p-4">
+              <SettingsActionError
+                title={bindings.isError ? t('settings.mcp_load_failed') : error}
+                detail={bindings.isError ? describeError(bindings.error) : undefined}
+                onDismiss={error ? () => setError('') : undefined}
+              />
+            </div>
+          )}
+        </Reveal>
 
         {bindings.isPending ? (
           <div className="flex min-h-16 items-center justify-center p-4 text-muted-foreground">

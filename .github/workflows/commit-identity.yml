@@ -27,6 +27,8 @@ concurrency:
 jobs:
   identities:
     name: Commit identities
+    # Checks the upstream maintainer identity rules; a fork's own commits fail it.
+    if: github.repository == 'debpalash/VoiceStudio' || vars.FULL_CI == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:

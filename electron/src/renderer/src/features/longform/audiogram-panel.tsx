@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, LoaderCircleIcon, VideoIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getBridge } from '@/components/bridge';
@@ -88,7 +89,7 @@ export function AudiogramPanel({
           {t('audiobook.audiogram_hint', { max: MAX_CLIP_SECONDS })}
         </p>
         <div className="grid grid-cols-2 gap-2">
-          <label className="space-y-1 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="text-muted-foreground">{t('audiobook.audiogram_start')}</span>
             <Input
               value={start}
@@ -97,7 +98,7 @@ export function AudiogramPanel({
               onChange={(event) => setStart(event.target.value)}
             />
           </label>
-          <label className="space-y-1 text-xs">
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             <span className="text-muted-foreground">{t('audiobook.audiogram_length')}</span>
             <Input
               type="number"
@@ -124,7 +125,7 @@ export function AudiogramPanel({
             ))}
           </div>
         </div>
-        <label className="block space-y-1 text-xs">
+        <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
           <span className="text-muted-foreground">{t('audiobook.audiogram_title')}</span>
           <Input
             value={caption}
@@ -137,9 +138,11 @@ export function AudiogramPanel({
           {t(busy ? 'audiobook.audiogram_rendering' : 'audiobook.audiogram_create')}
         </Button>
       </fieldset>
-      {error && (
-        <PipelineFailure fallback={error} onDismiss={() => setError(null)} className="text-xs" />
-      )}
+      <Reveal>
+        {error && (
+          <PipelineFailure fallback={error} onDismiss={() => setError(null)} className="text-xs" />
+        )}
+      </Reveal>
     </details>
   );
 }

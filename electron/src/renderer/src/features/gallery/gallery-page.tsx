@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion';
 import {
   AudioLinesIcon,
   ChevronRightIcon,
@@ -30,10 +31,7 @@ import { ProfileAvatar } from '@/components/profile-avatar';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { queryKeys } from '@/lib/query';
 import type { Profile } from '@/lib/api/types';
-import type {
-  ArchetypePage,
-  ArchetypeCategory,
-} from '@shared/api/archetypes-types';
+import type { ArchetypePage, ArchetypeCategory } from '@shared/api/archetypes-types';
 import { mergeDescribedAttrs } from '@shared/utils/voiceInstruct';
 import { STORAGE, readDraft } from '@/features/design/design-draft';
 import { setCloneSetting } from '@/lib/store/clone-settings';
@@ -309,28 +307,30 @@ export function GalleryPage() {
           <section className="min-w-0 flex-1 overflow-y-auto p-6">
             <div className="mx-auto max-w-6xl space-y-5">
               <p className="text-sm text-muted-foreground">{t('gallery.subtitle')}</p>
-              {(error || requestError) && (
-                <PipelineFailure
-                  fallback={error || describeError(requestError)}
-                  action={
-                    requestError ? (
-                      <Button
-                        size="xs"
-                        variant="ghost"
-                        onClick={() => {
-                          void categories.refetch();
-                          if (favoritesOnly) void favoriteResults.refetch();
-                          else void catalogue.refetch();
-                        }}
-                      >
-                        {t('common.retry')}
-                      </Button>
-                    ) : undefined
-                  }
-                  onDismiss={error ? () => setError(null) : undefined}
-                />
-              )}
-              {loading && <p role="status">{t('common.loading')}</p>}
+              <Reveal>
+                {(error || requestError) && (
+                  <PipelineFailure
+                    fallback={error || describeError(requestError)}
+                    action={
+                      requestError ? (
+                        <Button
+                          size="xs"
+                          variant="ghost"
+                          onClick={() => {
+                            void categories.refetch();
+                            if (favoritesOnly) void favoriteResults.refetch();
+                            else void catalogue.refetch();
+                          }}
+                        >
+                          {t('common.retry')}
+                        </Button>
+                      ) : undefined
+                    }
+                    onDismiss={error ? () => setError(null) : undefined}
+                  />
+                )}
+              </Reveal>
+              <Reveal>{loading && <p role="status">{t('common.loading')}</p>}</Reveal>
               {!loading && !items.length && (
                 <p className="py-10 text-center text-muted-foreground">{t('gallery.no_matches')}</p>
               )}
@@ -355,7 +355,7 @@ export function GalleryPage() {
                       </Button>
                       <h2 className="min-w-0 truncate text-sm font-medium">{item.name}</h2>
                     </div>
-                    <p className="flex-1 text-xs leading-5 text-muted-foreground">
+                    <p className="flex-1 text-xs leading-5 text-pretty text-muted-foreground">
                       {item.instruct}
                     </p>
                     <div className="flex items-center justify-between gap-2">

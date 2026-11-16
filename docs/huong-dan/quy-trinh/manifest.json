@@ -1,0 +1,81 @@
+{
+  "slug": "quy-trinh",
+  "title": "Quy trình tự động",
+  "order": 12,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Quy trình",
+      "route": "/calls",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "cd6dc216b17b19dc68371cb3954ed3948d58b23a61f3adb089bedf98c19c5908",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Quy trình"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Cuộc gọi",
+          "Tìm kiếm…",
+          "Quy trình mới",
+          "Quy trình chưa có tên",
+          "Thuyết minh hàng loạt",
+          "Thuyết minh hàng loạt · Chuẩn hóa âm thanh",
+          "Âm thanh thành bản chép lời",
+          "Đổi giọng nói",
+          "Dịch và thuyết minh",
+          "Đặt nhà hàng",
+          "Đổi lịch hẹn",
+          "Hỏi giờ mở cửa",
+          "Bắt đầu",
+          "Trợ lý AI",
+          "Nói",
+          "Điều kiện",
+          "Chuẩn hóa âm thanh",
+          "Clip nguồn",
+          "Chép lời",
+          "Dịch",
+          "Chuyển đổi",
+          "Kết thúc",
+          "Chạy quy trình",
+          "Tạo bản sao",
+          "Xóa",
+          "Zoom In",
+          "Zoom Out",
+          "Fit View",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt",
+          "React Flow attribution"
+        ],
+        "fields": [
+          "Tên"
+        ]
+      }
+    }
+  ]
+}

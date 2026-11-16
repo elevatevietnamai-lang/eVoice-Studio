@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
@@ -87,7 +88,7 @@ export function ProfileUsagePanel({ id }: { id: string }) {
               </span>
             </Button>
             {pending === project.project_id && (
-              <div className="space-y-2 rounded-md bg-muted/40 p-3 text-xs">
+              <div className="space-y-2 rounded-lg bg-muted/40 p-3 text-xs">
                 <p>{t('projectActions.open', { name: project.project_name })}</p>
                 <div className="flex gap-2">
                   <Button
@@ -113,9 +114,15 @@ export function ProfileUsagePanel({ id }: { id: string }) {
           </li>
         ))}
       </ul>
-      {failed && (
-        <PipelineFailure fallback={failed} onDismiss={() => setFailed(null)} className="text-xs" />
-      )}
+      <Reveal>
+        {failed && (
+          <PipelineFailure
+            fallback={failed}
+            onDismiss={() => setFailed(null)}
+            className="text-xs"
+          />
+        )}
+      </Reveal>
     </section>
   );
 }

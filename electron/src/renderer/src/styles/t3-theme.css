@@ -58,8 +58,9 @@
   --destructive-foreground: var(--error-foreground);
   --info: var(--color-blue-600);
   --info-foreground: var(--color-blue-800);
-  --success: var(--color-emerald-700);
-  --success-foreground: var(--color-emerald-800);
+  /* Elevate: success is monochrome (graphite / white); warning and error keep a hue. */
+  --success: var(--brand-graphite);
+  --success-foreground: var(--brand-graphite);
   --warning: var(--color-amber-700);
   --warning-foreground: var(--color-amber-800);
   --warning-surface: color-mix(in srgb, var(--warning) 8%, transparent);
@@ -114,9 +115,9 @@
     --ring: var(--brand-white);
     --info: var(--color-blue-500);
     --info-foreground: var(--color-blue-400);
-    --success: var(--color-emerald-500);
+    --success: var(--brand-white);
     --warning: var(--color-amber-500);
-    --success-foreground: var(--color-emerald-400);
+    --success-foreground: var(--brand-white);
     --warning-foreground: var(--color-amber-400);
     --warning-surface: color-mix(in srgb, var(--warning) 16%, transparent);
     --update-foreground: var(--color-blue-400);

@@ -5,7 +5,7 @@
  *
  * Motion vocabulary (durations come from DESIGN.md: fast 160 ms, base 240 ms, slow 480 ms):
  * - `none`: no animation beyond the colour transition every control gets from globals.css.
- * - `feedback`: a state change (hover, press, checked) shown with a 160 ms colour or opacity change.
+ * - `feedback`: a state change (hover, press, checked) shown with a 200 ms colour or opacity change (`--motion-hover`, `--ease-settle`).
  * - `enter-exit`: appears and disappears with an opacity fade, plus a small drift for floating layers.
  * - `loop`: continuous activity indicator; the only allowed loops, and always reducible.
  * - `morph`: the icon changes shape when state changes (MorphIcon).
@@ -41,7 +41,7 @@ export interface ComponentSpec {
   avoid?: string;
 }
 
-const press = 'Colour and opacity change over 160 ms; no scale or bounce.';
+const press = 'Colour and opacity change over 200 ms (`--motion-hover`); no scale or bounce.';
 
 export const componentRoles: Record<string, ComponentSpec> = {
   alert: {
@@ -80,6 +80,15 @@ export const componentRoles: Record<string, ComponentSpec> = {
     motionNote: 'Optional FadeIn (8 px drift, 240 ms) on first mount; Stagger (40 ms) for grids.',
     avoid: 'No shadows; depth comes from the border and surface step.',
   },
+  checkbox: {
+    role: 'selection',
+    use: 'One choice in a form or list that takes effect on Save or on a later action.',
+    tokens: ['--primary', '--primary-foreground', '--input', '--ring'],
+    type: 'text-ui',
+    motion: 'feedback',
+    motionNote: 'Box fill and check mark change with the default 200 ms transition.',
+    avoid: 'Do not use the native checkbox input; it ignores the theme.',
+  },
   collapsible: {
     role: 'structure',
     use: 'Disclosure that hides secondary content.',
@@ -103,7 +112,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--input', '--background', '--foreground', '--placeholder', '--ring', '--destructive'],
     type: 'text-ui',
     motion: 'feedback',
-    motionNote: 'Border and ring colour over 160 ms on focus.',
+    motionNote: 'Border and ring colour over 200 ms on focus.',
     avoid: 'Do not use a placeholder as the only label.',
   },
   kbd: {
@@ -146,7 +155,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--border', '--muted-foreground'],
     type: 'inherit',
     motion: 'feedback',
-    motionNote: 'Focus ring only; the scrollbar thumb changes colour over 160 ms.',
+    motionNote: 'Focus ring only; the scrollbar thumb changes colour over 200 ms.',
   },
   select: {
     role: 'selection',
@@ -154,7 +163,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--input', '--popover', '--popover-foreground', '--accent', '--ring'],
     type: 'text-ui',
     motion: 'enter-exit',
-    motionNote: 'List fades in and scales from 97% over 160 ms (Base UI start and end styles); items change colour over 160 ms.',
+    motionNote: 'List fades in and scales from 97% over 160 ms (Base UI start and end styles); items change colour over 200 ms.',
   },
   separator: {
     role: 'structure',
@@ -179,7 +188,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--primary', '--secondary', '--ring'],
     type: 'text-label',
     motion: 'feedback',
-    motionNote: 'Thumb ring on focus over 160 ms; the value follows the pointer.',
+    motionNote: 'Thumb ring on focus over 200 ms; the value follows the pointer.',
   },
   sonner: {
     role: 'feedback',
@@ -204,7 +213,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--primary', '--input', '--ring'],
     type: 'text-ui',
     motion: 'feedback',
-    motionNote: 'Thumb translates and track colour changes with the default 160 ms transition.',
+    motionNote: 'Thumb translates and track colour changes with the default 200 ms transition.',
     avoid: 'Do not use when a Save step is needed; use a checkbox.',
   },
   tabs: {
@@ -213,7 +222,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--muted', '--foreground', '--muted-foreground', '--ring'],
     type: 'text-ui',
     motion: 'feedback',
-    motionNote: 'Active indicator and text colour change over 160 ms; panel content swaps with no slide.',
+    motionNote: 'Active indicator and text colour change over 200 ms; the new panel fades in over 260 ms (`--motion-panel`, `--ease-settle`) with no slide.',
   },
   textarea: {
     role: 'input',
@@ -221,7 +230,7 @@ export const componentRoles: Record<string, ComponentSpec> = {
     tokens: ['--input', '--background', '--foreground', '--placeholder', '--ring'],
     type: 'text-editor',
     motion: 'feedback',
-    motionNote: 'Border and ring colour over 160 ms on focus.',
+    motionNote: 'Border and ring colour over 200 ms on focus.',
   },
   'toggle-group': {
     role: 'selection',
@@ -260,6 +269,6 @@ export const motionKit = {
     'Container that reveals StaggerItem children 40 ms apart. For grids and lists of at most about 12 items.',
   StaggerItem: 'Child of Stagger.',
   RouteFade:
-    'App shell wraps the routed page: opacity-only fade over 160 ms, keyed on the top-level route segment.',
+    'App shell wraps the routed page: opacity-only fade from 60% over 260 ms (`--motion-panel`), keyed on the top-level route segment.',
   MorphIcon: 'See morph-icon above.',
 } as const;

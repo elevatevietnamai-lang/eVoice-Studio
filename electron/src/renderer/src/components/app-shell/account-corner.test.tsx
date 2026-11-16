@@ -29,6 +29,12 @@ it('puts the notifications bell to the right of the account control', () => {
   expect(bell).toHaveAttribute('data-titlebar', 'true');
 });
 
+it('keeps the application menu out of the corner, away from the window buttons', () => {
+  render(<AccountCorner notificationsEnabled />);
+  expect(screen.getAllByRole('button')).toHaveLength(2);
+  expect(document.querySelector('[data-slot="app-menu-button"]')).toBeNull();
+});
+
 it('sits left of the Windows/Linux window buttons, and at the corner on macOS', () => {
   const { unmount } = render(<AccountCorner notificationsEnabled={false} />);
   const corner = () => document.querySelector('[data-slot="account-corner"]')!;

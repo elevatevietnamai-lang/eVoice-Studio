@@ -27,6 +27,7 @@ _KINDS = {
     "soni_input",
     "soni_output_dir",
     "sidecar_dir",
+    "music_lora",
 }
 _AUTH_DIR = os.path.join(DATA_DIR, ".path-authorizations")
 

@@ -121,6 +121,9 @@ export interface UpdateState {
   etaSeconds?: number;
   lastCheckedAt?: number;
   error?: string;
+  /** Why the status is `unsupported`: `build` = this build ships with update checks off
+   * (config/app.json `applicationUpdates: false`). Absent for dev runs, store builds and the web. */
+  unsupportedReason?: 'build';
 }
 export interface UpdateReleaseInfo {
   version: string;
@@ -389,6 +392,56 @@ export type PromoOverlayResult =
   | { ok: true; media: PromoOverlayMedia }
   | { ok: false; code: string; detail?: string };
 
+/** A custom HTML scene; mirrors PromoScene in main/promo-scenes.ts. */
+export interface PromoSceneParam {
+  key: string;
+  type: 'text' | 'color' | 'image';
+  label: string;
+  /** Text; `#rrggbb`; or for an image a promo media id, `asset:<name>` or ''. */
+  value: string;
+}
+
+export interface PromoScene {
+  id: string | null;
+  name: string;
+  html: string;
+  css: string;
+  js: string;
+  params: PromoSceneParam[];
+  /** Files the scene references as `assets/<name>`; `data` is base64. */
+  assets: { name: string; data: string }[];
+  duration: number;
+}
+
+export interface PromoSceneSummary {
+  id: string;
+  name: string;
+  duration: number;
+  updatedAt: number;
+}
+
+/** Mirrors SceneProblem in main/promo-scenes.ts. */
+export type PromoSceneProblem =
+  | { code: 'remote_url'; detail: string }
+  | { code: 'css_import' }
+  | { code: 'unknown_font'; detail: string }
+  | { code: 'timer_animation' };
+
+export interface PromoSceneRequest {
+  scene: PromoScene;
+  width: number;
+  height: number;
+  /** A transparent layer over the shots, or a full-frame shot of its own. */
+  mode?: 'overlay' | 'shot';
+}
+
+type PromoSceneFailure = {
+  ok: false;
+  code: string;
+  detail?: string;
+  problems?: PromoSceneProblem[];
+};
+
 export interface VoiceStudioBridge {
   /** VoiceStudio Cloud account; never carries a token. */
   account: {
@@ -451,6 +504,14 @@ export interface VoiceStudioBridge {
     platform: NodeJS.Platform;
     isDev: boolean;
     onNavigate(callback: (path: string) => void): () => void;
+    /** The native application menu (`src/shared/app-menu.ts`). */
+    menu: {
+      /** Translated labels keyed by menu label id or page path; main rebuilds the menu. */
+      setLabels(labels: Record<string, string>): Promise<void>;
+      /** Opens the whole menu at a window point (the Windows and Linux menu button). */
+      popup(point: { x: number; y: number }): Promise<void>;
+      onAction(callback: (action: 'command-palette') => void): () => void;
+    };
     /** Native fullscreen state (macOS hides the traffic lights there); the callback fires on every change. */
     isFullScreen(): Promise<boolean>;
     onFullScreen(callback: (fullscreen: boolean) => void): () => void;
@@ -467,6 +528,26 @@ export interface VoiceStudioBridge {
     /** A self-contained page of the template for a sandboxed srcdoc frame. */
     previewTemplate(input: PromoOverlayInput): Promise<PromoPreviewResult>;
     onRenderProgress(callback: (percent: number) => void): () => void;
+    /** Custom HTML scenes: saved copies, files, a sandboxed preview and renders. */
+    scenes: {
+      list(): Promise<PromoSceneSummary[]>;
+      get(id: string): Promise<PromoScene | null>;
+      save(scene: PromoScene): Promise<{ ok: true; scene: PromoScene } | PromoSceneFailure>;
+      remove(id: string): Promise<void>;
+      /** Opens a file dialog for a `.html` or `.zip` scene; nothing is saved. */
+      importFile(): Promise<
+        { ok: true; scene: PromoScene; problems: PromoSceneProblem[] } | PromoSceneFailure
+      >;
+      exportFile(scene: PromoScene): Promise<{ ok: true } | PromoSceneFailure>;
+      /** A `promo-scene:` URL for an `<iframe sandbox="allow-scripts">`. */
+      preview(
+        request: PromoSceneRequest,
+      ): Promise<{ ok: true; url: string; problems: PromoSceneProblem[] } | PromoSceneFailure>;
+      render(
+        request: PromoSceneRequest,
+        fps: number,
+      ): Promise<{ ok: true; media: PromoOverlayMedia } | PromoSceneFailure>;
+    };
   };
   backend: {
     getStatus(): Promise<BackendStatus>;
@@ -527,6 +608,8 @@ export interface VoiceStudioBridge {
     authorizeMediaTool(kind: 'ffmpeg' | 'ffprobe'): Promise<AuthorizedPathSelection | null>;
     /** Authorize a chosen model cache directory, or the platform default when reset is true. */
     authorizeModelsDirectory(reset?: boolean): Promise<AuthorizedPathSelection | null>;
+    /** Pick a music LoRA (a .safetensors file or an adapter folder) and authorize it for the backend. */
+    authorizeMusicLora(pick: 'file' | 'folder'): Promise<AuthorizedPathSelection | null>;
     extractScript(input: { name: string; data: Uint8Array }): Promise<string>;
     /** Native "Save as…" for a generated take: main fetches the URL and writes the file. */
     saveAudio(req: SaveAudioRequest): Promise<SaveAudioResult>;

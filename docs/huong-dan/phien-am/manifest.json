@@ -1,0 +1,57 @@
+{
+  "slug": "phien-am",
+  "title": "Phiên âm và đọc chính tả",
+  "order": 11,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Chép lời",
+      "route": "/transcriptions",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "849f159b03ab2327dcd59589a501a1bfd06f3a176b449e786ce06b2ab95f77e9",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Chép lời",
+          "Chưa có bản chép lời nào"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Tìm kiếm…",
+          "Nhanh",
+          "Chính xác",
+          "Bắt đầu đọc chính tả",
+          "Tải âm thanh lên",
+          "Thu âm",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": []
+      }
+    }
+  ]
+}

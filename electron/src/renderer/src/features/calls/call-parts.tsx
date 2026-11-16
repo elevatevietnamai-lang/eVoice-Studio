@@ -81,7 +81,7 @@ export function StatusTimeline({ status, failed }: { status: string; failed?: bo
             <span
               className={cn(
                 'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 whitespace-nowrap',
-                active && !done && 'border-primary/50 bg-primary/10 text-foreground',
+                active && !done && 'border-foreground/30 bg-accent text-foreground',
                 done &&
                   !(failed && phase === 'ended') &&
                   'border-transparent bg-muted text-foreground',
@@ -122,7 +122,7 @@ export function AgentStateIndicator({ state }: { state: AgentState | null }) {
       data-agent-state={state}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium',
-        state === 'speaking' && 'border-primary/40 bg-primary/10 text-foreground',
+        state === 'speaking' && 'border-foreground/30 bg-accent text-foreground',
         state === 'thinking' && 'border-warning/40 bg-warning/10 text-warning-foreground',
         state === 'listening' && 'border-border bg-muted/50 text-muted-foreground',
       )}

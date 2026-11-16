@@ -1,4 +1,5 @@
 import { CheckIcon, GaugeIcon, GlobeIcon, ServerIcon } from 'lucide-react';
+import { Reveal } from '@/components/motion';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -149,31 +150,39 @@ export function MirrorSettings() {
               </Button>
             </form>
           </SettingsRow>
-          {state.restart_required && (
-            <p role="status" className="p-4 text-xs text-muted-foreground">
-              {t('models.mirror_restart_note')}
-            </p>
-          )}
+          <Reveal>
+            {state.restart_required && (
+              <p role="status" className="p-4 text-xs text-muted-foreground">
+                {t('models.mirror_restart_note')}
+              </p>
+            )}
+          </Reveal>
         </>
       )}
-      {query.isPending && (
-        <p role="status" className="p-4 text-sm text-muted-foreground">
-          {t('preferences.loading')}
-        </p>
-      )}
-      {action.saved && (
-        <p role="status" className="p-4 text-xs text-muted-foreground">
-          {t('models.mirror_saved')}
-        </p>
-      )}
-      {(query.isError || action.error) && (
-        <p role="alert" className="p-4 text-sm text-destructive">
-          {t('common.error')}{' '}
-          <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
-            {t('common.retry')}
-          </Button>
-        </p>
-      )}
+      <Reveal>
+        {query.isPending && (
+          <p role="status" className="p-4 text-sm text-muted-foreground">
+            {t('preferences.loading')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {action.saved && (
+          <p role="status" className="p-4 text-xs text-muted-foreground">
+            {t('models.mirror_saved')}
+          </p>
+        )}
+      </Reveal>
+      <Reveal>
+        {(query.isError || action.error) && (
+          <p role="alert" className="p-4 text-sm text-destructive">
+            {t('common.error')}{' '}
+            <Button size="sm" variant="ghost" onClick={() => void query.refetch()}>
+              {t('common.retry')}
+            </Button>
+          </p>
+        )}
+      </Reveal>
     </SettingsSection>
   );
 }

@@ -16,6 +16,20 @@ function requiredPort(value, key) {
 
 export const PRODUCT_NAME = requiredString(rawConfig.productName, "productName");
 export const APP_ID = requiredString(rawConfig.appId, "appId");
+function optionalBoolean(value, key, fallback) {
+  if (value === undefined) return fallback;
+  if (typeof value !== "boolean") {
+    throw new TypeError(`config/app.json: ${key} must be true or false`);
+  }
+  return value;
+}
+
+/** In-app update checks. eVoice turns them off until it has its own release feed. */
+export const APPLICATION_UPDATES = optionalBoolean(
+  rawConfig.applicationUpdates,
+  "applicationUpdates",
+  true,
+);
 export const DEFAULT_BACKEND_PORT = requiredPort(rawConfig.ports?.backend, "backend");
 export const DEFAULT_WEB_PORT = requiredPort(rawConfig.ports?.web, "web");
 export const DEFAULT_ELECTRON_DEV_PORT = requiredPort(rawConfig.ports?.electronDev, "electronDev");
@@ -34,6 +48,7 @@ if (DEFAULT_ELECTRON_PROXY_PORT > 65535 || configuredPorts.includes(DEFAULT_ELEC
 export const APP_CONFIG = Object.freeze({
   productName: PRODUCT_NAME,
   appId: APP_ID,
+  applicationUpdates: APPLICATION_UPDATES,
   ports: Object.freeze({
     backend: DEFAULT_BACKEND_PORT,
     web: DEFAULT_WEB_PORT,

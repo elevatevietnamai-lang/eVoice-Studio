@@ -10,7 +10,9 @@ const CORNER_GAP = 12;
 
 /**
  * The window's top-right corner, on every page: the account control (photo and
- * name, or Sign in) with the notifications bell to its right.
+ * name, or Sign in) with the notifications bell to its right. The application menu button is not
+ * here: next to the window buttons it read as a fourth one, so it sits in the rail's app group
+ * (workspace-sidebar.tsx).
  *
  * Windows/Linux show the app's own window buttons (window-controls.tsx, 138px) on the right,
  * so the corner sits just left of them (148px); on macOS it sits at the edge. While it

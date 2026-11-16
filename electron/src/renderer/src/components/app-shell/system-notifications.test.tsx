@@ -84,7 +84,9 @@ describe('SystemNotifications desktop updates', () => {
       </QueryClientProvider>,
     );
 
-    const trigger = await screen.findByRole('button', { name: 'modelSettings.unavailable' });
+    const trigger = await screen.findByRole('button', {
+      name: 'shell.notifications: modelSettings.unavailable',
+    });
     expect(trigger).toBeEnabled();
     expect(trigger).toHaveClass('app-no-drag');
     fireEvent.click(trigger);

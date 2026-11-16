@@ -11,6 +11,12 @@ import type {
   AccountPublicState,
   PromoBrowserState,
 } from './index.d';
+import {
+  APP_MENU_ACTION_CHANNEL,
+  APP_MENU_LABELS_CHANNEL,
+  APP_MENU_POPUP_CHANNEL,
+  APP_NAVIGATE_CHANNEL,
+} from '../shared/app-menu';
 
 function subscribe<T>(channel: string, cb: (payload: T) => void): () => void {
   const listener = (_event: IpcRendererEvent, payload: T) => cb(payload);
@@ -68,7 +74,12 @@ const bridge: VoiceStudioBridge = {
     version: __APP_VERSION__,
     platform: process.platform,
     isDev: process.env.NODE_ENV === 'development' || !!process.env.ELECTRON_RENDERER_URL,
-    onNavigate: (callback) => subscribe<string>('app:navigate', callback),
+    onNavigate: (callback) => subscribe<string>(APP_NAVIGATE_CHANNEL, callback),
+    menu: {
+      setLabels: (labels) => ipcRenderer.invoke(APP_MENU_LABELS_CHANNEL, labels),
+      popup: (point) => ipcRenderer.invoke(APP_MENU_POPUP_CHANNEL, point),
+      onAction: (callback) => subscribe<'command-palette'>(APP_MENU_ACTION_CHANNEL, callback),
+    },
     isFullScreen: () => ipcRenderer.invoke('app:is-fullscreen'),
     onFullScreen: (callback) => subscribe<boolean>('app:fullscreen', callback),
     onPersistenceFlush: (callback) => {
@@ -104,6 +115,16 @@ const bridge: VoiceStudioBridge = {
     cancelRender: () => ipcRenderer.invoke('promo:renderCancel'),
     previewTemplate: (input) => ipcRenderer.invoke('promo:previewTemplate', input),
     onRenderProgress: (cb) => subscribe<number>('promo:renderProgress', cb),
+    scenes: {
+      list: () => ipcRenderer.invoke('promo:sceneList'),
+      get: (id) => ipcRenderer.invoke('promo:sceneGet', id),
+      save: (scene) => ipcRenderer.invoke('promo:sceneSave', scene),
+      remove: (id) => ipcRenderer.invoke('promo:sceneDelete', id),
+      importFile: () => ipcRenderer.invoke('promo:sceneImport'),
+      exportFile: (scene) => ipcRenderer.invoke('promo:sceneExport', scene),
+      preview: (request) => ipcRenderer.invoke('promo:scenePreview', request),
+      render: (request, fps) => ipcRenderer.invoke('promo:sceneRender', request, fps),
+    },
   },
   backend: {
     getStatus: () => ipcRenderer.invoke('backend:getStatus') as Promise<BackendStatus>,
@@ -156,6 +177,7 @@ const bridge: VoiceStudioBridge = {
     authorizeMediaTool: (kind) => ipcRenderer.invoke('files:authorizeMediaTool', kind),
     authorizeModelsDirectory: (reset = false) =>
       ipcRenderer.invoke('files:authorizeModelsDirectory', reset),
+    authorizeMusicLora: (pick) => ipcRenderer.invoke('files:authorizeMusicLora', pick),
     extractScript: (input) => ipcRenderer.invoke('files:extractScript', input) as Promise<string>,
     saveAudio: (req: SaveAudioRequest) =>
       ipcRenderer.invoke('files:saveAudio', req) as Promise<SaveAudioResult>,

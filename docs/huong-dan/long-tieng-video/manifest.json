@@ -1,0 +1,225 @@
+{
+  "slug": "long-tieng-video",
+  "title": "Lồng tiếng video",
+  "order": 6,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Lồng tiếng",
+      "route": "/dub",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "829c412dc5236ace116ba7838a2bf01e2f41a6e46964231e6590de902b1c08a7",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "1 Tải lên và chép lời",
+          "2 Lồng tiếng sang",
+          "Lồng tiếng",
+          "Studio lồng tiếng video"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Dự án",
+          "Chọn tệp…",
+          "Ngôn ngữ",
+          "Dịch bằng agent",
+          "Dịch thuật",
+          "Nhanh",
+          "Tự động căn chỉnh",
+          "Điện ảnh",
+          "Tìm kiếm…",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "…hoặc dán URL YouTube/video",
+          "Tự động",
+          "Video có phụ đề trên hình"
+        ]
+      }
+    },
+    {
+      "id": "chon-tep",
+      "caption": "Chọn video hoặc dán URL",
+      "route": "/dub",
+      "file": "shots/chon-tep.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "7a233e94c6f88f0c5366f18a9e69bc2c4f0b05a1de911d322564af9c42c4f005",
+      "highlight": "Chọn tệp…",
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "1 Tải lên và chép lời",
+          "2 Lồng tiếng sang",
+          "Lồng tiếng",
+          "Studio lồng tiếng video"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Dự án",
+          "Chọn tệp…",
+          "Ngôn ngữ",
+          "Dịch bằng agent",
+          "Dịch thuật",
+          "Nhanh",
+          "Tự động căn chỉnh",
+          "Điện ảnh",
+          "Tìm kiếm…",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "…hoặc dán URL YouTube/video",
+          "Tự động",
+          "Video có phụ đề trên hình"
+        ]
+      }
+    },
+    {
+      "id": "ngon-ngu-dich",
+      "caption": "Chọn ngôn ngữ lồng tiếng",
+      "route": "/dub",
+      "file": "shots/ngon-ngu-dich.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "a5e3bde4201ed03e776c28e1e23e5ade9a111085b956e2ee6b4cebb36e2a73d5",
+      "highlight": "Lồng tiếng sang",
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "1 Tải lên và chép lời",
+          "2 Lồng tiếng sang",
+          "Lồng tiếng",
+          "Studio lồng tiếng video"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Dự án",
+          "Chọn tệp…",
+          "Ngôn ngữ",
+          "Dịch bằng agent",
+          "Dịch thuật",
+          "Nhanh",
+          "Tự động căn chỉnh",
+          "Điện ảnh",
+          "Tìm kiếm…",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "…hoặc dán URL YouTube/video",
+          "Tự động",
+          "Video có phụ đề trên hình"
+        ]
+      }
+    },
+    {
+      "id": "trinh-dich",
+      "caption": "Chọn cách dịch",
+      "route": "/dub",
+      "file": "shots/trinh-dich.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "694f1e72584539bf0a6ef75afc81912dc85cc438a4ef32113a60737301123c92",
+      "highlight": "Dịch bằng agent",
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "1 Tải lên và chép lời",
+          "2 Lồng tiếng sang",
+          "Lồng tiếng",
+          "Studio lồng tiếng video"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Dự án",
+          "Chọn tệp…",
+          "Ngôn ngữ",
+          "Dịch bằng agent",
+          "Dịch thuật",
+          "Nhanh",
+          "Tự động căn chỉnh",
+          "Điện ảnh",
+          "Tìm kiếm…",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "…hoặc dán URL YouTube/video",
+          "Tự động",
+          "Video có phụ đề trên hình"
+        ]
+      }
+    }
+  ]
+}

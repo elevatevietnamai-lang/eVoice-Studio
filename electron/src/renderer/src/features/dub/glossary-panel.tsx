@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import {
   BookOpenIcon,
   CheckIcon,
@@ -148,9 +149,9 @@ export function GlossaryPanel({
   };
 
   return (
-    <section className="rounded-(--card-radius) border border-primary/20 bg-primary/[0.035]">
+    <section className="rounded-(--card-radius) border border-border bg-card">
       <div className="flex items-start gap-3 border-b border-border/50 px-4 py-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
           <BookOpenIcon className="size-4" />
         </div>
         <div className="min-w-0 flex-1">
@@ -180,17 +181,21 @@ export function GlossaryPanel({
         </Button>
       </div>
       <div className="space-y-3 p-4">
-        {loading && (
-          <p role="status" className="flex items-center gap-2 text-xs text-muted-foreground">
-            <LoaderCircleIcon className="size-3.5 animate-spin" />
-            {t('common.loading')}
-          </p>
-        )}
-        {!loading && !terms.length && (
-          <p role="status" className="text-xs text-muted-foreground">
-            {t('glossary.no_terms')}
-          </p>
-        )}
+        <Reveal>
+          {loading && (
+            <p role="status" className="flex items-center gap-2 text-xs text-muted-foreground">
+              <LoaderCircleIcon className="size-3.5 animate-spin" />
+              {t('common.loading')}
+            </p>
+          )}
+        </Reveal>
+        <Reveal>
+          {!loading && !terms.length && (
+            <p role="status" className="text-xs text-muted-foreground">
+              {t('glossary.no_terms')}
+            </p>
+          )}
+        </Reveal>
         {terms.length > 0 && (
           <div className="divide-y divide-border/40 overflow-hidden rounded-lg border border-border/60 bg-background/30">
             {terms.map((term) =>

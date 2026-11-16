@@ -30,7 +30,7 @@ import kotlin.math.min
 
 /**
  * Human GitHub contributors with more than 10 commits, mirroring
- * `electron/src/renderer/src/features/home/home-contributors-data.ts`. Avatars are copied from
+ * `electron/src/renderer/src/features/settings/credits-contributors-data.ts`. Avatars are copied from
  * Electron's bundle into the APK assets at build time: nothing is fetched at runtime.
  */
 object HomeContributors {

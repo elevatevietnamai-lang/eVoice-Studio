@@ -47,11 +47,15 @@ it('uses the same image update path for upload and searched portraits', async ()
   const upload = new File(['upload'], 'upload.png', { type: 'image/png' });
   fireEvent.change(input, { target: { files: [upload] } });
   await waitFor(() => expect(mock.update).toHaveBeenCalledWith('voice/1', upload));
+  // A save in flight ignores new files, so let the first one finish before searching.
+  await screen.findByText('cloneFlow.photo_hint');
 
   fireEvent.click(screen.getByRole('button', { name: 'choose searched portrait' }));
   await waitFor(() => expect(mock.update).toHaveBeenCalledTimes(2));
   expect(mock.update.mock.calls[1][1].name).toBe('search.jpg');
-  expect(client.getQueryData<Profile[]>(queryKeys.profiles)?.[0].image_url).toBe(
-    '/portrait/search.jpg',
+  await waitFor(() =>
+    expect(client.getQueryData<Profile[]>(queryKeys.profiles)?.[0].image_url).toBe(
+      '/portrait/search.jpg',
+    ),
   );
 });

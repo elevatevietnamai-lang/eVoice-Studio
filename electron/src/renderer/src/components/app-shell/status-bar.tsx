@@ -47,6 +47,8 @@ import {
   modelStatusPollMs,
   relaxWhenBackendBusy,
 } from '@/lib/status-polling';
+import { segmentedFrameClass } from '@/components/segmented';
+import { ShellTooltip } from './shell-tooltip';
 
 type BackendStage = ReturnType<typeof useBackendStatus>['stage'];
 
@@ -93,7 +95,7 @@ function DeviceMetric({
         <span className="ml-auto tabular-nums text-muted-foreground">{value}</span>
       </div>
       {(detail || meta) && (
-        <div className="flex min-w-0 items-center gap-2 text-[10px] leading-none text-muted-foreground">
+        <div className="flex min-w-0 items-center gap-2 text-[11px] leading-4 text-muted-foreground">
           {detail && (
             <span className="min-w-0 flex-1 truncate" title={detail}>
               {detail}
@@ -116,14 +118,13 @@ function engineStateClass(state: string) {
   if (state === 'engineRuntime.loading' || state === 'engineRuntime.working')
     return 'bg-warning animate-pulse motion-reduce:animate-none';
   if (state === 'engineRuntime.ready') return 'bg-success';
-  if (state === 'engineRuntime.idle')
-    return 'bg-primary';
+  if (state === 'engineRuntime.idle') return 'bg-primary';
   if (state === 'modelSettings.unavailable') return 'bg-destructive';
   return 'bg-muted-foreground/45';
 }
 
 const engineLinkClass =
-  'group/engine-icon relative flex min-w-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring';
+  'group/engine-icon relative flex min-w-0 items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
 const engineIconClass = 'size-5';
 
 const DOT: Record<BackendStage, string> = {
@@ -151,6 +152,7 @@ export function StatusBar({
   const { t } = useTranslation();
   const { level, chooseLevel } = useEngineDetailLevel();
   const [deviceOpen, setDeviceOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const profile = usePerformanceProfile();
   const [appliedProfile, setAppliedProfile] = useState<PerformanceProfileState | null>(null);
   const enginesRefreshing = useIsFetching({ queryKey: ['engines'] }) > 0;
@@ -345,7 +347,7 @@ export function StatusBar({
         <button
           type="button"
           onClick={() => void deviceUsage.refetch()}
-          className="w-full rounded-lg border border-border/55 bg-muted/20 px-3 py-2 text-left text-xs text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-lg border border-border/55 bg-muted/20 px-3 py-2 text-left text-xs text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
         >
           {t('common.retry')}
         </button>
@@ -547,7 +549,7 @@ export function StatusBar({
       role="radiogroup"
       data-slot="engine-view-toggle"
       aria-label={t('sidebarTools.title')}
-      className="flex shrink-0 items-center gap-0.5 rounded-md bg-sidebar-accent/35 p-0.5 ring-1 ring-inset ring-sidebar-border/50"
+      className={cn(segmentedFrameClass, 'flex shrink-0 items-center')}
     >
       {engineDetailLevels.map((value) => {
         const label = t(value === 'models' ? 'modelSettings.models' : 'sidebarTools.' + value);
@@ -562,7 +564,7 @@ export function StatusBar({
             title={label}
             onClick={() => chooseLevel(value)}
             className={cn(
-              'grid size-6 place-items-center rounded-[5px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+              'grid size-6 place-items-center rounded-[5px] outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
               level === value
                 ? 'bg-background text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground',
@@ -582,20 +584,25 @@ export function StatusBar({
   };
   // The icon rail has no room for the slider, so the gauge opens it as a popover.
   const railProfile = (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <button
-            type="button"
-            aria-label={t('performanceProfile.title')}
-            title={t('performanceProfile.title')}
-            // In the macOS rail's two-column footer the gauge takes its own row above Settings.
-            className={cn(engineLinkClass, compact ? 'size-10' : 'h-7 w-full')}
-          />
-        }
+    <Popover open={profileOpen} onOpenChange={setProfileOpen}>
+      <ShellTooltip
+        side="right"
+        disabled={profileOpen}
+        label={t('performanceProfile.title')}
+        hint={t('shell.performance_hint')}
       >
-        <GaugeIcon className={engineIconClass} aria-hidden="true" />
-      </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <button
+              type="button"
+              aria-label={t('performanceProfile.title')}
+              className={cn(engineLinkClass, compact ? 'size-10' : 'h-7 w-full')}
+            />
+          }
+        >
+          <GaugeIcon className={engineIconClass} aria-hidden="true" />
+        </PopoverTrigger>
+      </ShellTooltip>
       <PopoverContent
         side="right"
         align="end"
@@ -610,42 +617,47 @@ export function StatusBar({
   );
   const iconDevicePopover = (
     <Popover open={deviceOpen} onOpenChange={setDeviceOpen}>
-      <PopoverTrigger
-        render={
-          <button
-            type="button"
-            aria-label={`${deviceLabel}: ${stageText}`}
-            className={cn(
-              engineLinkClass,
-              'relative',
-              compact ? 'size-10' : 'h-7 w-full',
-              !compact && !deviceIconOnly && 'justify-start gap-2 px-2',
-            )}
-          />
-        }
+      <ShellTooltip
+        side="right"
+        disabled={deviceOpen || !compact}
+        label={deviceLabel}
+        hint={stageText}
       >
-        <CpuIcon className={engineIconClass} aria-hidden="true" />
-        {!compact && !deviceIconOnly && <span className="min-w-0 truncate">{deviceLabel}</span>}
-        <span
-          className={cn(
-            compact
-              ? 'absolute end-2 top-2 size-2 rounded-full ring-2 ring-sidebar'
-              : deviceIconOnly
-                ? 'absolute end-1.5 top-1 size-1.5 rounded-full'
-                : 'ml-auto size-1.5 shrink-0 rounded-full',
-            stageDot,
-          )}
-          aria-hidden="true"
-        />
-      </PopoverTrigger>
+        <PopoverTrigger
+          render={
+            <button
+              type="button"
+              aria-label={`${deviceLabel}: ${stageText}`}
+              className={cn(
+                engineLinkClass,
+                'relative',
+                compact ? 'size-10' : 'h-7 w-full',
+                !compact && !deviceIconOnly && 'justify-start gap-2 px-2',
+              )}
+            />
+          }
+        >
+          <CpuIcon className={engineIconClass} aria-hidden="true" />
+          {!compact && !deviceIconOnly && <span className="min-w-0 truncate">{deviceLabel}</span>}
+          <span
+            className={cn(
+              compact
+                ? 'absolute end-2 top-2 size-2 rounded-full ring-2 ring-sidebar'
+                : deviceIconOnly
+                  ? 'absolute end-1.5 top-1 size-1.5 rounded-full'
+                  : 'ml-auto size-1.5 shrink-0 rounded-full',
+              stageDot,
+            )}
+            aria-hidden="true"
+          />
+        </PopoverTrigger>
+      </ShellTooltip>
       {deviceContent}
     </Popover>
   );
   if (compact) {
     return (
-      <footer
-        className="flex shrink-0 flex-col items-center gap-1 text-muted-foreground"
-      >
+      <footer className="flex shrink-0 flex-col items-center gap-1 text-muted-foreground">
         {railProfile}
         {iconDevicePopover}
       </footer>
@@ -662,7 +674,7 @@ export function StatusBar({
                   <button
                     type="button"
                     aria-label={`${deviceLabel}: ${stageText}`}
-                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-md px-2 py-1 text-left outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-2 focus-visible:ring-ring"
+                    className="group/status flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1 text-left outline-none transition-colors hover:bg-(--sidebar-row-hover) focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   />
                 }
               >

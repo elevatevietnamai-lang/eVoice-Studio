@@ -44,7 +44,7 @@
 
 .repair-dock-status {
   gap: 0.35rem;
-  font-size: 0.625rem;
+  font-size: 11px;
   line-height: 1rem;
   color: var(--muted-foreground);
 }
@@ -263,7 +263,7 @@
   background: transparent;
   padding: 0 0.25rem 0.25rem 0;
   font-family: var(--font-mono);
-  font-size: 0.625rem;
+  font-size: 11px;
   line-height: 0.9375rem;
 }
 

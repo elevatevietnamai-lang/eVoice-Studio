@@ -2,7 +2,7 @@ import SwiftUI
 import VoiceStudioKit
 
 /// Human GitHub contributors with more than 10 commits, mirroring
-/// `electron/src/renderer/src/features/home/home-contributors-data.ts`.
+/// `electron/src/renderer/src/features/settings/credits-contributors-data.ts`.
 /// Avatars are bundled (Contributors.xcassets): nothing is fetched at runtime.
 enum HomeContributors {
     static let logins = ["debpalash", "kevin9327", "psiberfunk", "velixio", "jaketame", "paoloantinori", "Chang-Jin-Lee", "Shivendra-Coherent", "marreiradigital"]

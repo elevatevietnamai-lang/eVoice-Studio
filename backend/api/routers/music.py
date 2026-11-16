@@ -2,8 +2,18 @@
 
 * ``GET    /music/status``                — engine installed / running
 * ``GET    /music/install-stream``        — install the engine and download the model (SSE)
+* ``GET    /music/lm``                    — which language model Thinking uses here, and if it is ready
+* ``GET    /music/lm-install-stream``     — download the small language model for 6-12 GB GPUs (SSE)
 * ``POST   /music/stop``                  — stop the music server now (frees VRAM)
-* ``POST   /music/generate``              — generate a track and save it to the library (SSE)
+* ``POST   /music/generate``              — generate 1-4 variants and save them to the library (SSE)
+* ``POST   /music/format``                — the language model tidies caption and lyrics, suggests metadata
+* ``POST   /music/upload``                — store a source or reference audio file; returns its id
+* ``GET    /music/models``                — the DiT models (turbo, SFT, base) and which are downloaded
+* ``GET    /music/model-install-stream``  — download the pinned SFT or base model (SSE)
+* ``GET    /music/lora``                  — the LoRA picked in the desktop app (name, strength, on/off)
+* ``POST   /music/lora``                  — use a LoRA authorized by the desktop file picker (token only)
+* ``PATCH  /music/lora``                  — change its strength or turn it on or off
+* ``DELETE /music/lora``                  — stop using it
 * ``GET    /music/library``               — saved tracks, newest first
 * ``GET    /music/audio/{track_id}``      — a saved track
 * ``DELETE /music/library/{track_id}``    — remove a saved track
@@ -13,9 +23,11 @@ from __future__ import annotations
 import json
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
-from pydantic import BaseModel, Field
+from typing import Literal
+
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from api.dependencies import require_admin, require_desktop
 from core.browser_guard import reject_cross_site_get
@@ -32,8 +44,161 @@ class GenerateBody(BaseModel):
     duration: float = Field(60.0, ge=music.MIN_SECONDS, le=music.MAX_SECONDS)
     bpm: int | None = Field(None, ge=30, le=300)
     key_scale: str = Field("", max_length=24)
-    seed: int | None = Field(None, ge=0, le=2**31 - 1)
+    seed: int | None = Field(None, ge=0, le=music.MAX_SEED)
     vocal_language: str = Field("en", max_length=8)
+    time_signature: Literal["", "2", "3", "4", "6"] = ""
+    thinking: bool = False
+    batch_size: int = Field(1, ge=1, le=music.MAX_BATCH)
+    # Bounds per model are checked below (turbo 4-20, SFT/base 8-64).
+    inference_steps: int = Field(music.DEFAULT_STEPS, ge=music.MIN_STEPS, le=64)
+    infer_method: Literal["ode", "sde"] = "ode"
+    audio_format: Literal["wav", "flac", "mp3"] = "wav"
+    # Edits (cover, repaint) and a style reference. Audio is named by a library track id or an
+    # upload id from POST /music/upload, never by a path.
+    task: Literal["text2music", "cover", "repaint", "extend", "extract", "lego", "complete"] = "text2music"
+    source_track_id: str | None = Field(None, max_length=12)
+    source_upload_id: str | None = Field(None, max_length=12)
+    reference_track_id: str | None = Field(None, max_length=12)
+    reference_upload_id: str | None = Field(None, max_length=12)
+    cover_strength: float = Field(0.7, ge=0.0, le=1.0)
+    repaint_start: float = Field(0.0, ge=0.0, le=music.MAX_SOURCE_SECONDS)
+    repaint_end: float | None = Field(None, ge=0.0, le=music.MAX_SOURCE_SECONDS)
+    repaint_mode: Literal["conservative", "balanced", "aggressive"] = "balanced"
+    repaint_strength: float = Field(0.5, ge=0.0, le=1.0)
+    # Base-only stem tasks: one instrument to extract or add, the instruments to complete with, and
+    # for lego a description of the whole song.
+    track_name: str = Field("", max_length=24)
+    track_classes: list[str] = Field(default_factory=list, max_length=len(music.TRACK_NAMES))
+    global_caption: str = Field("", max_length=1000)
+    # Extend: seconds of new music after the end (or before the start) of the source.
+    extend_side: Literal["end", "start"] = "end"
+    extend_seconds: float = Field(music.EXTEND_SECONDS[2], ge=music.EXTEND_SECONDS[0], le=music.EXTEND_SECONDS[1])
+    extend_overlap: float = Field(music.EXTEND_OVERLAP[2], ge=music.EXTEND_OVERLAP[0], le=music.EXTEND_OVERLAP[1])
+    # Language-model sampling, used with Thinking only. Null keeps the server's own default.
+    lm_temperature: float | None = Field(None, ge=music.LM_PARAMS["lm_temperature"][0],
+                                         le=music.LM_PARAMS["lm_temperature"][1])
+    lm_cfg_scale: float | None = Field(None, ge=music.LM_PARAMS["lm_cfg_scale"][0],
+                                       le=music.LM_PARAMS["lm_cfg_scale"][1])
+    lm_top_k: int | None = Field(None, ge=music.LM_PARAMS["lm_top_k"][0], le=music.LM_PARAMS["lm_top_k"][1])
+    lm_top_p: float | None = Field(None, ge=music.LM_PARAMS["lm_top_p"][0], le=music.LM_PARAMS["lm_top_p"][1])
+    lm_repetition_penalty: float | None = Field(None, ge=music.LM_PARAMS["lm_repetition_penalty"][0],
+                                                le=music.LM_PARAMS["lm_repetition_penalty"][1])
+    lm_negative_prompt: str = Field("", max_length=music.LM_NEGATIVE_PROMPT_MAX)
+    # DiT model; guidance, shift, ADG and the CFG interval only apply to SFT and base.
+    model: Literal["turbo", "sft", "base"] = "turbo"
+    guidance_scale: float = Field(music.GUIDANCE_RANGE[2], ge=music.GUIDANCE_RANGE[0], le=music.GUIDANCE_RANGE[1])
+    shift: float = Field(music.SHIFT_RANGE[2], ge=music.SHIFT_RANGE[0], le=music.SHIFT_RANGE[1])
+    use_adg: bool = False
+    cfg_interval_start: float = Field(0.0, ge=0.0, le=1.0)
+    cfg_interval_end: float = Field(1.0, ge=0.0, le=1.0)
+
+    @model_validator(mode="after")
+    def _one_source(self) -> "GenerateBody":
+        low, high, _default = music.DIT_MODELS[self.model]["steps"]
+        if not low <= self.inference_steps <= high:
+            raise ValueError(f"The {self.model} model takes {low}-{high} steps.")
+        if self.cfg_interval_end < self.cfg_interval_start:
+            raise ValueError("The CFG interval must end after it starts.")
+        sources = [v for v in (self.source_track_id, self.source_upload_id) if v]
+        if self.task != "text2music" and len(sources) != 1:
+            raise ValueError("An edit of a song needs one source track or uploaded file.")
+        if self.task == "text2music" and sources:
+            raise ValueError("A source track is only used to edit a song.")
+        if self.task in music.BASE_TASKS:
+            if self.model != "base":
+                raise ValueError("Extract, Lego and Complete only run on the Base model.")
+            if self.task in ("extract", "lego") and self.track_name not in music.TRACK_NAMES:
+                raise ValueError("Pick the instrument to extract or add.")
+            if self.task == "complete" and (not self.track_classes
+                                            or any(c not in music.TRACK_NAMES for c in self.track_classes)):
+                raise ValueError("Pick the instruments to complete the song with.")
+        if self.reference_track_id and self.reference_upload_id:
+            raise ValueError("Pick one style reference.")
+        if self.task == "repaint" and self.repaint_end is not None and self.repaint_end <= self.repaint_start:
+            raise ValueError("The repaint region must end after it starts.")
+        return self
+
+    @field_validator("vocal_language")
+    @classmethod
+    def _known_language(cls, value: str) -> str:
+        value = (value or "en").strip().lower()
+        if value not in music.VOCAL_LANGUAGES:
+            raise ValueError("Unsupported vocal language")
+        return value
+
+    @field_validator("key_scale")
+    @classmethod
+    def _known_key(cls, value: str) -> str:
+        return music.normalize_key_scale(value)
+
+    def to_request(self) -> music.MusicRequest:
+        return music.MusicRequest(prompt=self.prompt, lyrics=self.lyrics, instrumental=self.instrumental,
+                                  duration=self.duration, bpm=self.bpm, key_scale=self.key_scale,
+                                  seed=self.seed, vocal_language=self.vocal_language,
+                                  time_signature=self.time_signature, thinking=self.thinking,
+                                  batch_size=self.batch_size, inference_steps=self.inference_steps,
+                                  infer_method=self.infer_method, audio_format=self.audio_format,
+                                  task_type=self.task, cover_strength=self.cover_strength,
+                                  repaint_start=self.repaint_start, repaint_end=self.repaint_end,
+                                  repaint_mode=self.repaint_mode, repaint_strength=self.repaint_strength,
+                                  model=self.model, guidance_scale=self.guidance_scale, shift=self.shift,
+                                  use_adg=self.use_adg, cfg_interval_start=self.cfg_interval_start,
+                                  cfg_interval_end=self.cfg_interval_end, extend_side=self.extend_side,
+                                  extend_seconds=self.extend_seconds, extend_overlap=self.extend_overlap,
+                                  track_name=self.track_name, track_classes=list(self.track_classes),
+                                  global_caption=self.global_caption,
+                                  lm_params=self.lm_params(), lm_negative_prompt=self.lm_negative_prompt)
+
+    def lm_params(self) -> dict:
+        return {name: getattr(self, name) for name in music.LM_PARAMS if getattr(self, name) is not None}
+
+
+async def _audio_for(track_id: str | None, upload_id: str | None) -> str | None:
+    if track_id:
+        return str(music_library.resolve_track_audio(track_id))
+    if upload_id:
+        # Uploads kept from before the engine-readable conversion are converted on first use.
+        return str(await music_library.engine_readable(music_library.resolve_upload(upload_id)))
+    return None
+
+
+def _apply_lora_choice(request: music.MusicRequest) -> dict | None:
+    """Attach the chosen LoRA (when on and still on disk) to *request*; returns what was used."""
+    lora = music_library.get_lora()
+    if not lora or not lora.get("enabled", True):
+        return None
+    try:
+        music.lora_kind(lora["path"])
+    except ValueError:
+        raise ValueError("The LoRA file was moved or deleted. Pick it again or remove it.")
+    request.lora_path = lora["path"]
+    request.lora_scale = float(lora.get("scale", 1.0))
+    return {"name": lora.get("name", ""), "scale": request.lora_scale}
+
+
+async def resolve_audio(body: GenerateBody) -> music.MusicRequest:
+    """The request with source and reference files resolved under the library (ValueError if not)."""
+    from services.ffmpeg_utils import probe_duration
+
+    request = body.to_request()
+    request.ref_path = await _audio_for(body.reference_track_id, body.reference_upload_id)
+    if body.task == "text2music":
+        return request
+    request.src_path = await _audio_for(body.source_track_id, body.source_upload_id)
+    seconds = await probe_duration(request.src_path, allowed_root=str(music_library.library_dir()))
+    if not seconds:
+        raise ValueError("Could not read the source audio.")
+    if seconds > music.MAX_SOURCE_SECONDS:
+        raise ValueError(f"The source is longer than {music.MAX_SOURCE_SECONDS // 60} minutes.")
+    request.src_seconds = seconds
+    if body.task == "extend" and seconds + body.extend_seconds > music.MAX_SOURCE_SECONDS:
+        raise ValueError(f"The extended song would be longer than {music.MAX_SOURCE_SECONDS // 60} minutes. "
+                         "Add fewer seconds.")
+    if body.task == "repaint":
+        end = body.repaint_end if body.repaint_end is not None else seconds
+        if body.repaint_start >= seconds or end > seconds + 0.5:
+            raise ValueError("The repaint region is outside the source audio.")
+    return request
 
 
 def _sse(event: str, payload: dict) -> bytes:
@@ -63,6 +228,50 @@ async def music_install_stream():
     return _stream(gen())
 
 
+@router.get("/music/lm", dependencies=[Depends(reject_cross_site_get)])
+async def music_lm():
+    if not music.is_installed():
+        return {"model": None, "ready": False, "download_bytes": 0, "installed": False}
+    try:
+        return {**await music.get_engine().lm_status(), "installed": True}
+    except Exception as exc:
+        logger.warning("music LM probe failed: %s", exc)
+        raise HTTPException(status_code=503, detail=music.public_reason(exc))
+
+
+@router.get("/music/lm-install-stream",
+            dependencies=[Depends(reject_cross_site_get), Depends(require_admin), Depends(require_desktop)])
+async def music_lm_install_stream():
+    async def gen():
+        try:
+            async for event in music.get_engine().install_lm():
+                yield _sse("done" if event["type"] == "done" else event["type"], event)
+        except Exception as exc:
+            logger.warning("music LM download failed: %s", exc)
+            yield _sse("error", {"error": "music_lm_install_failed", "stage": "install",
+                                 "reason": (str(exc) or type(exc).__name__)[-1200:]})
+    return _stream(gen())
+
+
+@router.get("/music/models", dependencies=[Depends(reject_cross_site_get)])
+def music_models():
+    return {"models": music.get_engine().models_status()}
+
+
+@router.get("/music/model-install-stream",
+            dependencies=[Depends(reject_cross_site_get), Depends(require_admin), Depends(require_desktop)])
+async def music_model_install_stream(model: Literal["sft", "base"]):
+    async def gen():
+        try:
+            async for event in music.get_engine().install_model(model):
+                yield _sse("done" if event["type"] == "done" else event["type"], event)
+        except Exception as exc:
+            logger.warning("music model download failed: %s", exc)
+            yield _sse("error", {"error": "music_model_install_failed", "stage": "install",
+                                 "reason": (str(exc) or type(exc).__name__)[-1200:]})
+    return _stream(gen())
+
+
 async def _stop_idle_music() -> None:
     engine = music.get_engine()
     if not engine.is_busy():
@@ -87,30 +296,203 @@ async def music_generate(body: GenerateBody):
                 yield _sse("error", {"error": "music_not_installed",
                                      "reason": "Install the music engine first."})
                 return
-            if music_library.is_full():
+            if music_library.free_slots() < body.batch_size:
                 yield _sse("error", {"error": "music_library_full", "stage": "music",
-                                     "reason": f"The library holds {music_library.MAX_TRACKS} tracks. Delete some first."})
+                                     "reason": f"The library holds {music_library.MAX_TRACKS} tracks. "
+                                               f"Delete some first to make room for {body.batch_size}."})
                 return
-            request = music.MusicRequest(prompt=body.prompt, lyrics=body.lyrics, instrumental=body.instrumental,
-                                         duration=body.duration, bpm=body.bpm, key_scale=body.key_scale,
-                                         seed=body.seed, vocal_language=body.vocal_language)
-            track_id = music_library.new_id()
-            out = str(music_library.audio_path(track_id))
+            try:
+                request = await resolve_audio(body)
+                lora_used = _apply_lora_choice(request)
+            except ValueError as exc:
+                yield _sse("error", {"error": "music_source_invalid", "error_code": "music_source_invalid",
+                                     "stage": "music", "reason": str(exc)})
+                return
+            ids = [music_library.new_id() for _ in range(body.batch_size)]
+            paths = {str(music_library.audio_path(i, body.audio_format)): i for i in ids}
+            result: dict = {}
             with gpu_exclusive.music_job():
-                async for event in engine.generate(request, out):
+                async for event in engine.generate(request, list(paths)):
                     if event["type"] == "progress":
                         yield _sse("progress", event)
-            record = music_library.save(
-                track_id, title=(body.prompt.strip()[:60] or "Untitled"), prompt=body.prompt,
-                lyrics=body.lyrics, instrumental=body.instrumental, duration=request.seconds(),
-                bpm=body.bpm, seed=body.seed)
-            yield _sse("done", {"track": record})
+                    elif event["type"] == "done":
+                        result = event
+            title = body.prompt.strip()[:60] or "Untitled"
+            batch_id = ids[0] if body.batch_size > 1 else None
+            records = []
+            for index, variant in enumerate(result.get("tracks") or []):
+                # What the server really used: a random seed it picked, or metadata the LM filled.
+                records.append(music_library.save(
+                    paths[variant["path"]], title=title, prompt=body.prompt,
+                    lyrics=body.lyrics, instrumental=body.instrumental, duration=request.seconds(),
+                    bpm=variant.get("bpm") or body.bpm,
+                    # Only the first variant runs on the requested seed; the server draws the rest.
+                    seed=variant["seed"] if variant.get("seed") is not None else (body.seed if index == 0 else None),
+                    key_scale=variant.get("key_scale") or body.key_scale,
+                    time_signature=variant.get("time_signature") or body.time_signature,
+                    vocal_language=body.vocal_language, thinking=body.thinking, ext=body.audio_format,
+                    inference_steps=body.inference_steps, infer_method=body.infer_method,
+                    batch_id=batch_id, variant=index + 1 if batch_id else None,
+                    task=body.task, source_id=body.source_track_id, model=body.model,
+                    **({"extend_side": body.extend_side, "extend_seconds": body.extend_seconds}
+                       if body.task == "extend" else {}),
+                    **({"track_name": body.track_name} if body.task in ("extract", "lego") else {}),
+                    **({"track_classes": body.track_classes} if body.task == "complete" else {}),
+                    **({"lm_params": body.lm_params()} if body.thinking and body.lm_params() else {}),
+                    **({"lora": lora_used} if lora_used else {})))
+                yield _sse("track", {"track": records[-1]})
+            if not records:
+                raise RuntimeError("Music generation finished without a downloadable file.")
+            yield _sse("done", {"track": records[0], "tracks": records})
+        except music.MusicLmUnavailable as exc:
+            yield _sse("error", {"error": exc.code, "error_code": exc.code, "stage": "music", "reason": str(exc)})
+        except music.MusicModeBusy as exc:
+            yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": "music",
+                                 "stage": "music", "reason": str(exc)})
         except gpu_exclusive.GpuBusy as exc:
             yield _sse("error", {"error": "gpu_busy", "error_code": "gpu_busy", "busy_with": exc.busy_with, "stage": "music", "reason": str(exc)})
         except Exception as exc:
             logger.warning("music generation failed: %s", exc)
             yield _sse("error", {"error": "music_failed", "stage": "music", "reason": music.public_reason(exc)})
     return _stream(gen())
+
+
+@router.post("/music/format")
+async def music_format(body: GenerateBody):
+    """Run the language model's formatter on the form. Returns suggestions; nothing is saved."""
+    if not music.is_installed():
+        raise HTTPException(status_code=409, detail={"error_code": "music_not_installed",
+                                                     "reason": "Install the music engine first."})
+    try:
+        with gpu_exclusive.music_job():
+            return await music.get_engine().format_input(await resolve_audio(body))
+    except music.MusicLmUnavailable as exc:
+        raise HTTPException(status_code=409, detail={"error_code": exc.code, "reason": str(exc)})
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={"error_code": "music_source_invalid", "reason": str(exc)})
+    except music.MusicModeBusy as exc:
+        raise HTTPException(status_code=409, detail={"error_code": "gpu_busy", "busy_with": "music",
+                                                     "reason": str(exc)})
+    except gpu_exclusive.GpuBusy as exc:
+        raise HTTPException(status_code=409, detail={"error_code": "gpu_busy", "busy_with": exc.busy_with,
+                                                     "reason": str(exc)})
+    except Exception as exc:
+        logger.warning("music format failed: %s", exc)
+        raise HTTPException(status_code=502, detail={"error_code": "music_format_failed",
+                                                     "reason": music.public_reason(exc)})
+
+
+class LoraPick(BaseModel):
+    # One-shot grant written by Electron main after its native file picker (never a path).
+    authorization: str = Field(..., min_length=64, max_length=64)
+    # The DiT the LoRA is meant for, so the page can warn when another model is selected.
+    model: Literal["turbo", "sft", "base"] = "turbo"
+
+
+class LoraChange(BaseModel):
+    scale: float | None = Field(None, ge=0.0, le=1.0)
+    enabled: bool | None = None
+
+
+def _lora_view(lora: dict | None) -> dict:
+    if not lora:
+        return {"selected": False}
+    return {"selected": True, "name": lora.get("name", ""), "kind": lora.get("kind", ""),
+            "scale": lora.get("scale", 1.0), "enabled": lora.get("enabled", True),
+            "model": lora.get("model", "turbo"), "available": _on_disk(lora["path"])}
+
+
+def _on_disk(path: str) -> bool:
+    try:
+        music.lora_kind(path)
+        return True
+    except ValueError:
+        return False
+
+
+@router.get("/music/lora", dependencies=[Depends(reject_cross_site_get)])
+def music_lora():
+    return _lora_view(music_library.get_lora())
+
+
+@router.post("/music/lora", dependencies=[Depends(require_admin), Depends(require_desktop)])
+def music_lora_pick(body: LoraPick):
+    from pathlib import Path
+
+    from core.path_authorization import PathAuthorizationError, consume
+
+    try:
+        path = consume(body.authorization, "music_lora")
+        kind = music.lora_kind(path)
+    except PathAuthorizationError:
+        raise HTTPException(status_code=403, detail={"error_code": "music_lora_unauthorized",
+                                                     "reason": "Pick the LoRA again in the app."})
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={"error_code": "music_lora_invalid", "reason": str(exc)})
+    lora = {"path": path, "name": Path(path).name[-120:], "kind": kind, "scale": 1.0, "enabled": True,
+            "model": body.model}
+    music_library.save_lora(lora)
+    return _lora_view(lora)
+
+
+@router.patch("/music/lora", dependencies=[Depends(require_admin)])
+def music_lora_change(body: LoraChange):
+    lora = music_library.get_lora()
+    if not lora:
+        raise HTTPException(status_code=404, detail="No LoRA is selected")
+    if body.scale is not None:
+        lora["scale"] = round(body.scale, 3)
+    if body.enabled is not None:
+        lora["enabled"] = body.enabled
+    music_library.save_lora(lora)
+    return _lora_view(lora)
+
+
+@router.delete("/music/lora", dependencies=[Depends(require_admin)])
+def music_lora_remove():
+    music_library.save_lora(None)
+    return {"selected": False}
+
+
+_UPLOAD_CHUNK = 1024 * 1024
+
+
+@router.post("/music/upload")
+async def music_upload(file: UploadFile = File(...)):
+    """Store a source or reference audio file under the library and return its id and length."""
+    from services.ffmpeg_utils import probe_duration
+
+    try:
+        ext = music_library.upload_ext(file.filename or "")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={"error_code": "music_upload_type", "reason": str(exc)})
+    upload_id = music_library.new_id()
+    path = music_library.upload_path(upload_id, ext)
+    stored = path
+    size = 0
+    try:
+        with open(path, "wb") as out:
+            while chunk := await file.read(_UPLOAD_CHUNK):
+                size += len(chunk)
+                if size > music_library.MAX_UPLOAD_BYTES:
+                    raise ValueError(f"The file is larger than {music_library.MAX_UPLOAD_BYTES // 2**20} MB.")
+                out.write(chunk)
+        seconds = await probe_duration(str(path), allowed_root=str(music_library.library_dir()))
+        if not seconds:
+            raise ValueError("That file has no audio this app can read.")
+        if seconds > music.MAX_SOURCE_SECONDS:
+            raise ValueError(f"The file is longer than {music.MAX_SOURCE_SECONDS // 60} minutes.")
+        stored = await music_library.engine_readable(path)
+    except ValueError as exc:
+        path.unlink(missing_ok=True)
+        stored.unlink(missing_ok=True)
+        raise HTTPException(status_code=400, detail={"error_code": "music_upload_invalid", "reason": str(exc)})
+    except BaseException:
+        path.unlink(missing_ok=True)
+        stored.unlink(missing_ok=True)
+        raise
+    music_library.prune_uploads()
+    return {"upload_id": upload_id, "name": (file.filename or "")[-120:], "duration": round(seconds, 2)}
 
 
 @router.get("/music/library")
@@ -126,7 +508,10 @@ def music_audio(track_id: str):
         raise HTTPException(status_code=400, detail="Invalid track id")
     if not record:
         raise HTTPException(status_code=404, detail="Track not found")
-    return FileResponse(music_library.audio_path(track_id, record.get("ext", "wav")), media_type="audio/wav",
+    ext = record.get("ext", "wav")
+    return FileResponse(music_library.audio_path(track_id, ext),
+                        media_type=music.AUDIO_MEDIA_TYPES.get(ext, "application/octet-stream"),
+                        filename=f"{track_id}.{ext}", content_disposition_type="inline",
                         headers={"Cache-Control": "no-store"})
 
 

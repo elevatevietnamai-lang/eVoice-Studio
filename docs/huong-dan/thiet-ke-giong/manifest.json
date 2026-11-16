@@ -1,0 +1,71 @@
+{
+  "slug": "thiet-ke-giong",
+  "title": "Thiết kế giọng bằng mô tả",
+  "order": 4,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Thiết kế giọng",
+      "route": "/design",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "78d8b19981d21747c34e5b8da197848f2856eeef102b4c8104969b26a5bb2ccb",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Thiết kế"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Thiết kế",
+          "Giọng đã lưu",
+          "Sửa hồ sơ giọng: Người Kể Chuyện",
+          "Xem trước giọng nói",
+          "Đĩnh đạc",
+          "Trẻ nhỏ hào hứng",
+          "Thì thầm",
+          "Ngạc nhiên",
+          "Người cao tuổi",
+          "四川话",
+          "Lưu thành hồ sơ giọng",
+          "Tìm kiếm…",
+          "Đổi giọng",
+          "Ngôn ngữ",
+          "Chất lượng âm thanh: Tiêu chuẩn",
+          "Điều chỉnh giọng nói",
+          "Tổng hợp âm thanh",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Thu nhỏ",
+          "Phóng to",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Mô tả giọng nói",
+          "Tên hồ sơ",
+          "Văn bản"
+        ]
+      }
+    }
+  ]
+}

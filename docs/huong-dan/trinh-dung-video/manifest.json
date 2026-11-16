@@ -1,0 +1,84 @@
+{
+  "slug": "trinh-dung-video",
+  "title": "Trình dựng video",
+  "order": 19,
+  "app_version": "0.5.7-beta.3",
+  "theme": "dark",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "steps": [
+    {
+      "id": "mo-trang",
+      "caption": "Trang Trình dựng video",
+      "route": "/editor",
+      "file": "shots/mo-trang.png",
+      "width": 1440,
+      "height": 900,
+      "sha256": "127a14937cbb5a7f5df7ddf9485f1b515e961567b7c5fd985e430e25ca961f94",
+      "highlight": null,
+      "labels": {
+        "title": "eVoice Studio",
+        "headings": [
+          "Sticker",
+          "Dựng video",
+          "Dự án"
+        ],
+        "buttons": [
+          "Giọng nói",
+          "Truyện",
+          "Lồng tiếng",
+          "Thêm",
+          "Tốc độ / chất lượng",
+          "Thiết bị cục bộ: Engine sẵn sàng",
+          "Menu ứng dụng",
+          "Nhập",
+          "Thêm chữ",
+          "Tiêu đề hoạt hình",
+          "Phụ đề tự động",
+          "Hình khối",
+          "Mũi tên",
+          "Khung",
+          "Emoji",
+          "Thêm Hình khối 1",
+          "Thêm Hình khối 2",
+          "Thêm Hình khối 3",
+          "Thêm Hình khối 4",
+          "Thêm Hình khối 5",
+          "Thêm Hình khối 6",
+          "Dự án",
+          "Tìm kiếm…",
+          "9:16 dọc",
+          "1:1 vuông",
+          "16:9 ngang",
+          "30 fps",
+          "60 fps",
+          "Phát",
+          "Tách tại đầu phát (S)",
+          "Xoá (Del)",
+          "Hoàn tác (Ctrl+Z)",
+          "Làm lại (Ctrl+Shift+Z)",
+          "Thu nhỏ",
+          "Phóng to",
+          "Xuất video",
+          "Tắt tiếng track",
+          "Ẩn track",
+          "Thông báo: Mọi thứ đều ổn — không phát hiện vấn đề",
+          "Đóng",
+          "Hỏi eVoice Studio Agent"
+        ],
+        "links": [
+          "eVoice Studio v0.5.7-beta.3",
+          "Trang chủ",
+          "Dự án",
+          "Cài đặt"
+        ],
+        "fields": [
+          "Tên",
+          "Nền"
+        ]
+      }
+    }
+  ]
+}

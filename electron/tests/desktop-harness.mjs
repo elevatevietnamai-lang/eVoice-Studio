@@ -81,12 +81,27 @@ const slug = (name) =>
     .replace(/^-|-$/g, '')
     .toLowerCase();
 
-async function launch({ profile, backendPort, seed }) {
+/**
+ * localStorage entries written before the first page load. `seed: true` is the default English
+ * run; an object picks the UI language and, optionally, a saved theme (`{ mode, light, dark }`).
+ */
+export function seedEntries(seed) {
+  if (!seed) return [];
+  const { locale = 'en', theme } = seed === true ? {} : seed;
+  return [
+    ['voicestudio.setup.complete.v1', '1'],
+    ['voicestudio.locale', locale],
+    ...(theme ? [['voicestudio.theme.v2', JSON.stringify(theme)]] : []),
+  ];
+}
+
+async function launch({ profile, backendPort, seed, extraArgs = [], window: size }) {
   // VS Code terminals export ELECTRON_RUN_AS_NODE=1, which makes Electron boot as plain Node.
   const { ELECTRON_RUN_AS_NODE: _runAsNode, ...inherited } = process.env;
   const app = await electron.launch({
     executablePath: electronExecutable(),
     args: [
+      ...extraArgs,
       // Preloaded into the main process before the app's own code, so no request precedes it.
       '-r',
       join(workspaceRoot, 'electron/tests/fixtures/request-guard.cjs'),
@@ -112,20 +127,18 @@ async function launch({ profile, backendPort, seed }) {
   const context = app.context();
   await context.tracing.start({ screenshots: true, snapshots: true });
   await context.route(STAR_COUNT_URL, (route) => route.fulfill({ json: STAR_COUNT_STUB }));
-  if (seed) {
+  const entries = seedEntries(seed);
+  if (entries.length) {
     // Only fill gaps: this runs on every page load and must not undo what a test persisted.
-    await context.addInitScript(() => {
+    await context.addInitScript((pairs) => {
       try {
-        for (const [key, value] of [
-          ['voicestudio.setup.complete.v1', '1'],
-          ['voicestudio.locale', 'en'],
-        ]) {
+        for (const [key, value] of pairs) {
           if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
         }
       } catch {
         // Some documents (data: URLs, the blank-window fallback) have no storage access.
       }
-    });
+    }, entries);
   }
   let page;
   try {
@@ -153,6 +166,15 @@ async function launch({ profile, backendPort, seed }) {
       errors.push(`console: ${text}`);
     }
   });
+  if (size) {
+    // Content size, not window size, so the frame and the OS display scale cannot skew shots.
+    await app.evaluate(({ BrowserWindow }, { width, height }) => {
+      for (const win of BrowserWindow.getAllWindows()) {
+        if (win.isMaximized()) win.unmaximize();
+        win.setContentSize(width, height);
+      }
+    }, size);
+  }
   // The main-process guard predates the app; one reload also replays the first page's console.
   await page.reload();
   return { app, page, errors };
@@ -164,7 +186,15 @@ async function launch({ profile, backendPort, seed }) {
  * trace, a screenshot and the app logs are saved to ARTIFACT_DIR/<test name>/.
  */
 export async function withApp(t, options, body) {
-  const { profile: given, fixtures, seed = true, backend: backendMode = 'up' } = options;
+  const {
+    profile: given,
+    fixtures,
+    seed = true,
+    backend: backendMode = 'up',
+    extraArgs,
+    window,
+    appVersion = 'desktop-ui-test',
+  } = options;
   const profile = given ?? makeProfile();
   // Like the real backend, report a data directory (inside the profile) for path authorization.
   const dataDir = join(profile, 'data');
@@ -175,7 +205,7 @@ export async function withApp(t, options, body) {
           fixtures: {
             '/system/info': {
               ...DEFAULT_FIXTURES['/system/info'],
-              app_version: 'desktop-ui-test',
+              app_version: appVersion,
               data_dir: dataDir,
             },
             ...fixtures,
@@ -189,7 +219,7 @@ export async function withApp(t, options, body) {
     // With the dev proxy on an OS-assigned port, the backend port is the only one
     // picked ahead of time, so it is the only one worth re-picking on a collision.
     const started = await launchWithFreshPorts(
-      () => launch({ profile, backendPort, seed }),
+      () => launch({ profile, backendPort, seed, extraArgs, window }),
       async () => {
         backendPort = await freePort();
       },
