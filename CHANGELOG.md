@@ -23,6 +23,7 @@ metadata and the backend fallback mirror it.
 ### Changed
 
 - Menu bar: the app menu moves beside Settings in the rail, the logo is the bare mark for dark and light, hovers and panels animate smoothly, and every frame control has a tooltip with its shortcut (#36)
+- The rail's section menu matches the panel under it: section name in sentence case with its icon, and each page icon in the same tile (#50)
 
 ### Docs
 
@@ -32,6 +33,7 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- The rail no longer hides section icons in windows up to 680 px tall, and text set with the label and caption sizes keeps its colour (#50)
 - Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
 - Music Studio: *Polish* keeps your lyrics when the language model changes their words (the small model sometimes slips in junk lines) and says so (#39)
 - Music Studio: a LoRA track no longer fails with "the music server exited while starting" when the server restarts after more than 5 minutes idle (#40)
