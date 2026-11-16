@@ -565,15 +565,6 @@ details > summary .lucide-chevron-right {
 .brand-sidebar .text-muted-foreground {
   color: var(--sidebar-muted-foreground);
 }
-.brand-sidebar:has(#sidebar-engine-details:not([data-detail-level='simple']))
-  [data-slot='workspace-navigation'] {
-  max-height: 32vh;
-}
-@media (max-height: 680px) {
-  .brand-sidebar [data-slot='workspace-navigation'] {
-    max-height: 32vh;
-  }
-}
 
 .performance-tier-button {
   background: transparent;
