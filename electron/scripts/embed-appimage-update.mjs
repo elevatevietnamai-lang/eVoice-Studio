@@ -8,6 +8,7 @@ import { createRequire } from 'node:module';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
+import { UPDATE_REPOSITORY } from '../../config/app-config.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const releaseDir = resolve(root, process.argv[2] || 'release');
@@ -25,7 +26,7 @@ assert(
 const isBeta = channel === 'electron-beta-linux-x64';
 const releaseTag = `v${version}`;
 const manifestPath = resolve(releaseDir, `${channel}-linux.yml`);
-const updateInfo = `gh-releases-zsync|debpalash|VoiceStudio|${
+const updateInfo = `gh-releases-zsync|${UPDATE_REPOSITORY.replace('/', '|')}|${
   isBeta ? releaseTag : 'latest'
 }|VoiceStudio-Electron-*-linux-x64.AppImage.zsync`;
 
@@ -93,7 +94,7 @@ const { appendBlockmap } = require(
 const { size, sha512, blockMapSize } = await appendBlockmap(image);
 assert.equal((await stat(image)).size, size);
 
-const url = `https://github.com/debpalash/VoiceStudio/releases/download/${releaseTag}/${filename}`;
+const url = `https://github.com/${UPDATE_REPOSITORY}/releases/download/${releaseTag}/${filename}`;
 execFileSync('zsyncmake', ['-u', url, '-o', zsync, image], { stdio: 'inherit' });
 
 const manifest = readFileSync(manifestPath, 'utf8');

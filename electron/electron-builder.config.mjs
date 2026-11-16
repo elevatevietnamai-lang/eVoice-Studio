@@ -9,7 +9,12 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { packageNativeHelper } from './native-helper-build.mjs';
 import { repairSnapArtifacts } from './snap-template-payload.mjs';
-import { APP_ID, PRODUCT_NAME } from '../config/app-config.mjs';
+import {
+  APP_ID,
+  PRODUCT_NAME,
+  UPDATE_REPOSITORY,
+  defaultUpdateChannel,
+} from '../config/app-config.mjs';
 import { DISTRIBUTION_PROFILE, DISTRIBUTION_TARGET } from '../config/distributions.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -24,10 +29,11 @@ const artifactLabel =
   }[DISTRIBUTION_TARGET] ?? 'Electron';
 const artifactPrefix = `${PRODUCT_NAME.replace(/[^A-Za-z0-9]+/g, '-')}-${artifactLabel}`;
 // Stable and Beta are the Electron update feeds (Beta = `-beta.N` prereleases,
-// stamped by electron-release.yml). Packaging rehearsals from main are stamped
-// stable; they are review artifacts and are never published.
+// stamped by electron-release.yml). Without that stamp the version decides, so
+// a beta built and published by hand still lands on the Beta feed.
 const updateChannel =
-  process.env.VOICESTUDIO_UPDATE_CHANNEL || `electron-stable-${process.platform}-${process.arch}`;
+  process.env.VOICESTUDIO_UPDATE_CHANNEL ||
+  defaultUpdateChannel(version, process.platform, process.arch);
 if (
   !/^electron-(?:(?:microsoft-store-)?stable|beta)-(?:win32|darwin|linux)-(?:x64|arm64)$/.test(
     updateChannel,
@@ -35,7 +41,7 @@ if (
 ) {
   throw new Error(`Unsupported Electron update channel: ${updateChannel}`);
 }
-const updateUrl = 'https://github.com/debpalash/VoiceStudio/releases/latest/download';
+const updateUrl = `https://github.com/${UPDATE_REPOSITORY}/releases/latest/download`;
 
 export function distributionPackaging(target = DISTRIBUTION_TARGET) {
   if (target === 'snap-store') {

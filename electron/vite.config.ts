@@ -3,6 +3,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { UPDATE_REPOSITORY } from '../config/app-config.mjs';
 
 export default defineConfig({
   // `vp fmt` / `vp check` read Oxfmt settings from here, not from .oxfmtrc.json
@@ -17,6 +18,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify('0.0.0-test'),
     __DISTRIBUTION_TARGET__: JSON.stringify('direct'),
     __APP_UPDATES__: true,
+    __UPDATE_REPOSITORY__: JSON.stringify(UPDATE_REPOSITORY),
     __WEB_DEPLOYMENT__: false,
   },
   resolve: {

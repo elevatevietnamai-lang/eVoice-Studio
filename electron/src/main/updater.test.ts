@@ -1,3 +1,4 @@
+import { UPDATE_REPOSITORY } from '../../../config/app-config.mjs';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => {
@@ -107,7 +108,7 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.channel).toBe(`electron-stable-${process.platform}-${process.arch}`);
     expect(mocks.autoUpdater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
-      url: 'https://github.com/debpalash/VoiceStudio/releases/latest/download',
+      url: `https://github.com/${UPDATE_REPOSITORY}/releases/latest/download`,
       channel: `electron-stable-${process.platform}-${process.arch}`,
     });
 
@@ -150,7 +151,7 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.channel).toBe(channel);
     expect(mocks.autoUpdater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
-      url: 'https://github.com/debpalash/VoiceStudio/releases/download/v0.5.7',
+      url: `https://github.com/${UPDATE_REPOSITORY}/releases/download/v0.5.7`,
       channel,
     });
   });
@@ -236,6 +237,22 @@ describe('DesktopUpdater', () => {
     expect(readSavedUpdateChannel()).toBe('stable');
   });
 
+  test('with no saved choice, a beta build follows Beta and a stable build follows Stable', () => {
+    mocks.disk.file = undefined;
+    expect(readSavedUpdateChannel(undefined, '0.5.7-beta.3')).toBe('beta');
+    expect(readSavedUpdateChannel(undefined, '0.5.8')).toBe('stable');
+    mocks.app.getVersion.mockReturnValueOnce('0.5.7-beta.3');
+    expect(new DesktopUpdater().snapshot().channel).toBe('beta');
+    mocks.disk.file = '{"channel":"stable"}';
+    expect(readSavedUpdateChannel(undefined, '0.5.7-beta.3')).toBe('stable');
+    mocks.disk.file = undefined;
+  });
+
+  test('update feeds come from config/app.json updateRepository, not the upstream project', () => {
+    expect(UPDATE_REPOSITORY).toMatch(/^[\w.-]+\/[\w.-]+$/);
+    expect(UPDATE_REPOSITORY).not.toBe('debpalash/VoiceStudio');
+  });
+
   test('a saved Beta choice survives restarts and checks the newest beta or stable release', async () => {
     const platform = process.platform;
     const arch = process.arch;
@@ -264,7 +281,7 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.channel).toBe(`electron-beta-${platform}-${arch}`);
     expect(mocks.autoUpdater.setFeedURL).toHaveBeenLastCalledWith({
       provider: 'generic',
-      url: 'https://github.com/debpalash/VoiceStudio/releases/download/v0.5.9-beta.10',
+      url: `https://github.com/${UPDATE_REPOSITORY}/releases/download/v0.5.9-beta.10`,
       channel: `electron-beta-${platform}-${arch}`,
     });
   });
@@ -287,7 +304,7 @@ describe('DesktopUpdater', () => {
       ),
     );
     expect(feed).toEqual({
-      url: 'https://github.com/debpalash/VoiceStudio/releases/download/v0.5.9',
+      url: `https://github.com/${UPDATE_REPOSITORY}/releases/download/v0.5.9`,
       channel: `electron-stable-${process.platform}-${process.arch}`,
     });
   });
@@ -468,7 +485,7 @@ describe('DesktopUpdater', () => {
       },
     ]);
     expect(fetcher).toHaveBeenCalledWith(
-      expect.stringContaining('/debpalash/VoiceStudio/releases?per_page=30'),
+      expect.stringContaining(`/${UPDATE_REPOSITORY}/releases?per_page=30`),
       expect.objectContaining({
         headers: expect.objectContaining({ 'User-Agent': 'VoiceStudio' }),
         signal: expect.any(AbortSignal),
