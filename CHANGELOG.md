@@ -6,6 +6,18 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/).
 `package.json` is the maintained app-version source of truth; Electron package
 metadata and the backend fallback mirror it.
 
+## [Unreleased]
+
+### Fixed
+
+- Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#56)
+- A failed transcription no longer suggests the video server dropped the download (#56)
+- Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#56)
+- "Video has burned-in subtitles" stays on after you choose a file or paste a link, so the transcript is read from the subtitles (#56)
+- LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#56)
+- NLLB no longer repeats one phrase over and over on long segments (#56)
+- Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#56)
+
 ## [0.5.7-beta.4] — 2026-11-16
 
 From this beta on, eVoice Studio updates itself: install it once by hand and later betas arrive in
@@ -54,13 +66,6 @@ faster, can translate dubs with the Antigravity CLI, and ships the reviewed Viet
 - Voice Clone: a reference longer than 20 s starts about twice as fast. The recognizer that picks its best 15 s now loads once instead of once per window, and frees its GPU memory afterwards (#51)
 - Voice Clone: the Recent takes button no longer sits under the search field on mid-width windows. It shows only its icon until the pane is wide enough for the label (#51)
 - The rail no longer hides section icons in windows up to 680 px tall, and text set with the label and caption sizes keeps its colour (#50)
-- Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#54)
-- A failed transcription no longer suggests the video server dropped the download (#54)
-- Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#54)
-- "Video has burned-in subtitles" stays on after you choose a file or paste a link, so the transcript is read from the subtitles (#54)
-- LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#54)
-- NLLB no longer repeats one phrase over and over on long segments (#54)
-- Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#54)
 - Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
 - Music Studio: *Polish* keeps your lyrics when the language model changes their words (the small model sometimes slips in junk lines) and says so (#39)
 - Music Studio: a LoRA track no longer fails with "the music server exited while starting" when the server restarts after more than 5 minutes idle (#40)
