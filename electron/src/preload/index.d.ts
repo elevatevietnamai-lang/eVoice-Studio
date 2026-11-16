@@ -161,13 +161,15 @@ export interface SaveDataRequest {
   suggestedName: string;
 }
 
-export type RepairAgentId = 'codex' | 'claude' | 'opencode' | 'pi';
+export type RepairAgentId = 'codex' | 'claude' | 'opencode' | 'pi' | 'agy';
 export type RepairAgentStatus = 'idle' | 'running' | 'complete' | 'failed' | 'stopped';
 export interface RepairAgentInfo {
   id: RepairAgentId;
   label: string;
   available: boolean;
   version: string;
+  /** Offered for dub translation and LLM completions, never for repair runs. */
+  translationOnly?: boolean;
 }
 export interface RepairAgentRunRequest {
   workspace?: 'app' | 'source';

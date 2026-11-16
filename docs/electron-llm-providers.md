@@ -13,7 +13,7 @@ The same provider and per-skill selectors support three transports:
 | --- | --- |
 | OpenAI-compatible SDK | OpenAI, Gemini, Mistral, Cohere, DeepSeek, xAI, Together, Fireworks, Perplexity, Qwen, Kimi, MiniMax, Z.AI, OpenRouter and other listed hosts; key, model, optional endpoint override |
 | Native LiteLLM SDK | Anthropic directly; Amazon Bedrock; Google Vertex AI; other LiteLLM providers using `provider/model` |
-| Installed CLI | Claude Code, Codex, Pi and OpenCode using their existing CLI login; model is optional |
+| Installed CLI | Claude Code, Codex, Pi, OpenCode and Antigravity (`agy`) using their existing CLI login; model is optional |
 
 Azure OpenAI uses the resource's `/openai/v1` base URL and the deployment name
 as Model. Bedrock accepts a Bedrock API key or an existing `AWS_PROFILE` /
@@ -37,6 +37,15 @@ do not advertise desktop CLI providers as configured. Install/sign in to a CLI
 outside the app, then restart VoiceStudio to refresh discovery. CLI startup can
 exceed dictation's short latency budget; Ollama or a direct API is preferable for
 live cleanup. Existing batch agent dubbing remains available in the Dubbing tab.
+
+Antigravity cannot switch its tools off, and its headless runs default to Auto mode.
+VoiceStudio therefore starts it with strict tool review, no trusted workspaces, and
+deny rules for commands, file reads and writes, URL reads and MCP tools, and sends
+the prompt as one stream-json message on stdin. Web search, which goes to the same
+Google account the model runs on, is the only tool left. Antigravity is offered for
+translation and LLM completions only, not for Ask VoiceStudio Agent repair runs.
+Model IDs come from `agy models` (for example `gemini-3.8-flash-low`); leave the model
+empty to use the CLI's own default. A spent Antigravity quota shows as a rate-limit error.
 
 SDK imports are lazy and LiteLLM telemetry and remote pricing-map downloads are
 disabled. Reading the provider catalogue starts no CLI and performs no cloud
@@ -64,6 +73,7 @@ Provider protocol references: [LiteLLM](https://docs.litellm.ai/docs/providers),
 [Claude Code](https://code.claude.com/docs/en/cli-reference),
 [Pi](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/cli.md),
 [OpenCode](https://opencode.ai/docs/cli/),
+Antigravity (`agy --help`, `agy models`),
 [Google Cloud Translation](https://cloud.google.com/translate/docs/reference/rest/v2/translate),
 [Amazon Translate](https://docs.aws.amazon.com/translate/latest/APIReference/API_TranslateText.html),
 [DeepL](https://developers.deepl.com/api-reference/translate),

@@ -46,12 +46,43 @@ export const REPAIR_CHANNELS = {
   translationEvent: 'repair:translationEvent',
 } as const;
 
-const DEFINITIONS: Array<{ id: RepairAgentId; label: string; command: string }> = [
+const DEFINITIONS: Array<{
+  id: RepairAgentId;
+  label: string;
+  command: string;
+  translationOnly?: boolean;
+}> = [
   { id: 'codex', label: 'Codex', command: 'codex' },
   { id: 'claude', label: 'Claude Code', command: 'claude' },
   { id: 'opencode', label: 'OpenCode', command: 'opencode' },
   { id: 'pi', label: 'Pi', command: 'pi' },
+  // Antigravity has no repair launch mode here: it translates and completes text only.
+  { id: 'agy', label: 'Antigravity', command: 'agy', translationOnly: true },
 ];
+
+/**
+ * Antigravity cannot switch its tools off, and headless runs default to Auto mode.
+ * Strict review with nobody to approve, plus deny rules for every rule kind it
+ * enforces (commands, file reads and writes, URLs, MCP), leaves it text-only.
+ */
+export const AGY_TRANSLATION_SETTINGS = {
+  toolPermission: 'strict',
+  agentMode: '',
+  trustedWorkspaces: [],
+  permissions: {
+    deny: [
+      'command(*)',
+      'unsandboxed(*)',
+      'read_file(*)',
+      'read_file(/)',
+      'write_file(*)',
+      'write_file(/)',
+      'read_url(*)',
+      'execute_url(*)',
+      'mcp(*)',
+    ],
+  },
+};
 const MAX_REPORT = 12_000;
 const MAX_CONTEXT = 50_000;
 const MAX_OUTPUT = 250_000;
@@ -517,6 +548,19 @@ export function translationLaunchArgs(agent: RepairAgentId): string[] {
       '{"mcpServers":{}}',
     ];
   if (agent === 'opencode') return ['run', '--format', 'json', '--pure'];
+  if (agent === 'agy')
+    // The prompt arrives on stdin (stream-json): a long one would overflow the
+    // Windows command line. `-p=` is attached so it never swallows the next flag.
+    return [
+      '--input-format',
+      'stream-json',
+      '--output-format',
+      'stream-json',
+      '--disable-slash-commands',
+      '--settings',
+      JSON.stringify(AGY_TRANSLATION_SETTINGS),
+      '-p=',
+    ];
   return [
     '--print',
     '--mode',
@@ -531,10 +575,32 @@ export function translationLaunchArgs(agent: RepairAgentId): string[] {
   ];
 }
 
+/** What the agent reads on stdin: Antigravity takes one stream-json user message. */
+export function translationStdin(agent: RepairAgentId, prompt: string): string {
+  return agent === 'agy'
+    ? JSON.stringify({ event: 'user', message: { role: 'user', content: prompt } }) + '\n'
+    : prompt;
+}
+
+function agyFailureName(result: { status?: unknown; error?: unknown }): string {
+  if (result.status !== 'ERROR') return '';
+  const error = String(result.error ?? '');
+  if (/quota|rate.?limit|RESOURCE_EXHAUSTED|\b429\b/i.test(error)) return 'AgentRateLimitError';
+  if (/authenticat|sign.?in|log.?in|\b40[13]\b/i.test(error)) return 'AgentAuthenticationError';
+  if (/model/i.test(error) && /not found|unknown|unsupported|\b404\b/i.test(error))
+    return 'AgentModelError';
+  return '';
+}
+
 export function agentProviderFailure(output: string): Error | null {
   for (const line of output.split(/\r?\n/)) {
     try {
       const event = JSON.parse(line);
+      if (event.event === 'result' && event.result && typeof event.result === 'object') {
+        const name = agyFailureName(event.result);
+        if (name) return Object.assign(new Error('Agent provider rejected the request'), { name });
+        continue;
+      }
       if (event.type !== 'error' && !event.is_api_error_message) continue;
       const status = event.error?.data?.statusCode ?? event.api_error_status;
       let name = '';
@@ -595,6 +661,10 @@ export function parseDubAgentTranslations(
       for (const key of ['result', 'text', 'delta']) {
         if (typeof parsed[key] === 'string') candidates.push(...jsonObjects(parsed[key]));
       }
+      // Antigravity: {"event":"result","result":{"status":"SUCCESS","response":"..."}}
+      const final = parsed.result as Record<string, unknown> | undefined;
+      if (final && typeof final === 'object' && typeof final.response === 'string')
+        candidates.push(...jsonObjects(final.response));
       const message = parsed.message as Record<string, unknown> | undefined;
       if (typeof message?.content === 'string') candidates.push(...jsonObjects(message.content));
       if (Array.isArray(message?.content)) {
@@ -760,6 +830,7 @@ export async function registerRepairAgents(
           label: definition.label,
           available: Boolean(command),
           version: command ? await versionOf(command) : '',
+          ...(definition.translationOnly ? { translationOnly: true } : {}),
         };
       }),
     );
@@ -809,7 +880,10 @@ export async function registerRepairAgents(
       workspaceRoot = null;
       state = { ...state, workspaceAvailable: false, workspacePath: undefined };
     }
-    if (!request || !DEFINITIONS.some((item) => item.id === request.agent))
+    if (
+      !request ||
+      !DEFINITIONS.some((item) => item.id === request.agent && !item.translationOnly)
+    )
       throw new Error('Unknown repair agent');
     if (request.mode !== 'diagnose' && request.mode !== 'fix')
       throw new Error('Invalid repair mode');
@@ -1065,7 +1139,7 @@ export async function registerRepairAgents(
           }),
         );
         if (request.agent === 'opencode') translationChild.stdin.end();
-        else translationChild.stdin.end(prompt);
+        else translationChild.stdin.end(translationStdin(request.agent, prompt));
       });
     } catch (error) {
       flushLog();
