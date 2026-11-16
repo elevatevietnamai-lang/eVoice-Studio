@@ -64,6 +64,8 @@ function assembleDirs(
       ? [
           join(env.APPDATA || join(home, 'AppData', 'Roaming'), 'npm'),
           join(env.LOCALAPPDATA || join(home, 'AppData', 'Local'), 'Programs', 'claude'),
+          // Antigravity's installer; on macOS/Linux it uses ~/.local/bin (or Homebrew).
+          join(env.LOCALAPPDATA || join(home, 'AppData', 'Local'), 'agy', 'bin'),
         ]
       : ['/opt/homebrew/bin', '/usr/local/bin', join(home, '.npm-global', 'bin'), ...nvm];
   return [...new Set([...inherited, ...common, ...extra])];
