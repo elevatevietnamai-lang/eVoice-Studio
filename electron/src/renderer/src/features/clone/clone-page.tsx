@@ -150,8 +150,8 @@ export function ClonePage() {
             </div>
             <CommandSearch className="ml-auto" />
             <div className="flex shrink-0 items-center gap-1">
-              {/* The search field is centred absolutely from @3xl, so on a mid-width pane a
-                  labelled button here runs under it. The label returns once the pane leaves room. */}
+              {/* The search field is centred absolutely from @3xl; with the 192px window-control inset a
+                  labelled button here runs under it below a ~1090px pane, so the label waits for @6xl. */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -160,7 +160,7 @@ export function ClonePage() {
                 onClick={() => setLibraryTab('takes')}
               >
                 <HistoryIcon data-icon="inline-start" />
-                <span className="hidden @5xl:inline">{t('clone.history_title')}</span>
+                <span className="hidden @6xl:inline">{t('clone.history_title')}</span>
               </Button>
             </div>
           </header>
