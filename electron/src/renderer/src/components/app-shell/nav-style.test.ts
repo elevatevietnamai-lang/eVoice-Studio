@@ -31,3 +31,12 @@ it('keeps the menu, sidebar, header and status bar flat and token-driven', () =>
     expect(source, file).not.toMatch(/data-(?:tone|motion)/);
   }
 });
+
+it('keeps menu labels in sentence case and never caps the menu height', () => {
+  const menu = fs.readFileSync(dir + 'workspace-menu.tsx', 'utf8');
+  // All-caps and letter spacing break Vietnamese diacritics (DESIGN.md section 3).
+  expect(menu).not.toMatch(/uppercase|tracking-/);
+  // The rail's middle row centres and scrolls on its own; a cap on the nav hid its icons.
+  const globals = fs.readFileSync('src/renderer/src/styles/globals.css', 'utf8');
+  expect(globals).not.toMatch(/workspace-navigation'\]\s*\{[^}]*max-height/);
+});
