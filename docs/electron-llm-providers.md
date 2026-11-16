@@ -46,6 +46,8 @@ Google account the model runs on, is the only tool left. Antigravity is offered 
 translation and LLM completions only, not for Ask VoiceStudio Agent repair runs.
 Model IDs come from `agy models` (for example `gemini-3.8-flash-low`); leave the model
 empty to use the CLI's own default. A spent Antigravity quota shows as a rate-limit error.
+The app finds `agy` in its installer's folder (`%LOCALAPPDATA%gyin` on Windows,
+`~/.local/bin` on macOS and Linux) or on Homebrew's path, even when launched from the desktop.
 
 SDK imports are lazy and LiteLLM telemetry and remote pricing-map downloads are
 disabled. Reading the provider catalogue starts no CLI and performs no cloud
