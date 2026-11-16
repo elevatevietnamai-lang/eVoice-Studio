@@ -30,6 +30,8 @@ describe('toolSearchDirs', () => {
       home: 'C:\\Users\\u',
     });
     expect(dirs).toContain(join('C:\\Users\\u\\AppData\\Roaming', 'npm'));
+    // Antigravity (agy) installs here even when Explorer has not refreshed the user PATH yet.
+    expect(dirs).toContain(join('C:\\Users\\u', 'AppData', 'Local', 'agy', 'bin'));
     expect(dirs).not.toContain('/opt/homebrew/bin');
     expect(new Set(dirs).size).toBe(dirs.length);
   });
