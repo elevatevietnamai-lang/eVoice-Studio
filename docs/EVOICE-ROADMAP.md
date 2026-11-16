@@ -33,8 +33,8 @@ specific to eVoice.
 | Host the installer and its SHA-256 at `labs.elevatemarketing.vn/evoice-studio/download/` | ⏳ | The landing page already links there |
 | Publish the eVoice source repository (AGPL-3.0 source offer for every binary) | 🔒 | `elevatevietnamai-lang/eVoice-Studio` |
 | Code-sign the Windows installer (removes the SmartScreen warning) | 🔒 | Needs a certificate |
-| Stop eVoice builds offering upstream VoiceStudio updates | ✅ | `config/app.json` `applicationUpdates: false`: no update check, no release list, no update notice; Settings → Updates says checks are off |
-| In-app update notices from eVoice's own release feed | ⏸ | Deferred by the owner (2026-11-13) until eVoice has its own release process. Then: publish eVoice releases with `latest.yml`, point `electron/src/main/updater.ts` at them, set `applicationUpdates` back to `true` |
+| Stop eVoice builds offering upstream VoiceStudio updates | ✅ | 0.5.7-beta.3 and older ship `applicationUpdates: false`. Newer builds check only `updateRepository` (eVoice releases) |
+| In-app update notices from eVoice's own release feed | ✅ | `config/app.json` `updateRepository` points the updater, release list and build metadata at eVoice releases, with `applicationUpdates: true`. Beta builds follow Beta by default. Each release needs `scripts/publish_windows_update_assets.py` (see `docs/update-channels.md`). Copies on 0.5.7-beta.3 or older have checks off and need one manual install of the next release |
 | macOS (arm64) and Linux (AppImage, deb) installers | ⏳ | Same build scripts; needs a Mac signer and a Linux test pass |
 
 ## 3. Product

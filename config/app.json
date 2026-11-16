@@ -1,7 +1,8 @@
 {
   "productName": "eVoice Studio",
   "appId": "com.voicestudio.desktop",
-  "applicationUpdates": false,
+  "applicationUpdates": true,
+  "updateRepository": "elevatevietnamai-lang/eVoice-Studio",
   "ports": {
     "backend": 3900,
     "web": 3901,

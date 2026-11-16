@@ -16,6 +16,7 @@ metadata and the backend fallback mirror it.
 
 ### Added
 
+- In-app updates come from eVoice Studio's own releases. A beta install follows the Beta channel until you pick one, and Windows releases now carry the update manifest and blockmap (#52)
 - Translate with Agent and the LLM provider list can use the Antigravity CLI (`agy`), locked to text-only answers (#53)
 - Music Studio: *Extend* adds up to 2 minutes before or after a track with a smooth join, and Thinking gets expert language-model options (#34)
 - Music Studio: use a LoRA from your computer, picked in the desktop app's file dialog, with a strength slider and an on/off switch (#35)
@@ -28,6 +29,7 @@ metadata and the backend fallback mirror it.
 
 ### Docs
 
+- How eVoice builds pick their update feed, and how to publish a hand-built Windows release so installed copies can update (#52)
 - Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)
 - User guide screenshots retaken after the menu bar redesign, and the Getting started article now covers only the Windows installer the beta ships (#43)
 - The Vietnamese user guide is reviewed and published: all 19 articles approved, with the update, project copy and voice import steps checked against the app (#48)

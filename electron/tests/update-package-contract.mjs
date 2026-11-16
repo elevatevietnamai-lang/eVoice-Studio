@@ -5,7 +5,7 @@ import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PRODUCT_NAME } from '../../config/app-config.mjs';
+import { PRODUCT_NAME, UPDATE_REPOSITORY, defaultUpdateChannel } from '../../config/app-config.mjs';
 
 const electronRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -44,9 +44,12 @@ async function fileHashes(path, includeSha1) {
 
 const platform = option('platform', process.platform);
 const arch = option('arch', process.arch);
+const { version: expectedVersion } = JSON.parse(
+  readFileSync(resolve(electronRoot, '..', 'package.json'), 'utf8'),
+);
 const channel = option(
   'channel',
-  process.env.VOICESTUDIO_UPDATE_CHANNEL || `electron-stable-${platform}-${arch}`,
+  process.env.VOICESTUDIO_UPDATE_CHANNEL || defaultUpdateChannel(expectedVersion, platform, arch),
 );
 const releaseDir = resolve(electronRoot, option('release', 'release'));
 const expectedChannels =
@@ -69,9 +72,6 @@ const metadataPath = resolve(releaseDir, metadataFilename);
 assert(existsSync(metadataPath), `Update metadata exists: ${basename(metadataPath)}`);
 
 const metadata = readFileSync(metadataPath, 'utf8');
-const expectedVersion = JSON.parse(
-  readFileSync(resolve(electronRoot, '../package.json'), 'utf8'),
-).version;
 const version = capture(metadata, /^version:\s*(.+)$/m, 'version');
 const fileUrl = capture(metadata, /^\s+- url:\s*(.+)$/m, 'files[0].url');
 const fileSha = capture(metadata, /^\s{4}sha512:\s*(.+)$/m, 'files[0].sha512');
@@ -144,7 +144,7 @@ if (platform === 'win32') {
   const header = readFileSync(control).subarray(0, 4096).toString('utf8');
   assert(
     header.includes(
-      `URL: https://github.com/debpalash/VoiceStudio/releases/download/v${expectedVersion}/${fileUrl}\n`,
+      `URL: https://github.com/${UPDATE_REPOSITORY}/releases/download/v${expectedVersion}/${fileUrl}\n`,
     ),
     'zsync downloads the matching release artifact',
   );
