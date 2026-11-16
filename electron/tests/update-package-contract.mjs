@@ -136,7 +136,7 @@ if (platform === 'win32') {
   const updateRelease = channel.startsWith('electron-beta-') ? `v${version}` : 'latest';
   assert.equal(
     updateInfo,
-    `gh-releases-zsync|debpalash|VoiceStudio|${updateRelease}|VoiceStudio-Electron-*-linux-x64.AppImage.zsync`,
+    `gh-releases-zsync|${UPDATE_REPOSITORY.replace('/', '|')}|${updateRelease}|${productPrefix}-Electron-*-linux-x64.AppImage.zsync`,
     'External AppImage updaters follow the channel their image was built for',
   );
   const control = `${artifactPath}.zsync`;
