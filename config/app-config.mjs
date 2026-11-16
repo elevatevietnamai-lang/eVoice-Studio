@@ -24,12 +24,30 @@ function optionalBoolean(value, key, fallback) {
   return value;
 }
 
-/** In-app update checks. eVoice turns them off until it has its own release feed. */
+/** In-app update checks against the GitHub releases of UPDATE_REPOSITORY. */
 export const APPLICATION_UPDATES = optionalBoolean(
   rawConfig.applicationUpdates,
   "applicationUpdates",
   true,
 );
+/** `owner/name` of the GitHub repository whose releases are this build's update feed. */
+export const UPDATE_REPOSITORY = (() => {
+  const value = requiredString(rawConfig.updateRepository, "updateRepository");
+  if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(value)) {
+    throw new TypeError("config/app.json: updateRepository must look like owner/name");
+  }
+  return value;
+})();
+/**
+ * Update feed a build publishes when the release job does not name one
+ * (VOICESTUDIO_UPDATE_CHANNEL): `X.Y.Z-beta.N` builds feed Beta, others Stable.
+ * A local beta build stamped Stable would publish a manifest Beta never reads.
+ */
+export function defaultUpdateChannel(version, platform, arch) {
+  const kind = /^\d+\.\d+\.\d+-beta\.\d+$/.test(String(version)) ? "beta" : "stable";
+  return `electron-${kind}-${platform}-${arch}`;
+}
+
 export const DEFAULT_BACKEND_PORT = requiredPort(rawConfig.ports?.backend, "backend");
 export const DEFAULT_WEB_PORT = requiredPort(rawConfig.ports?.web, "web");
 export const DEFAULT_ELECTRON_DEV_PORT = requiredPort(rawConfig.ports?.electronDev, "electronDev");
@@ -49,6 +67,7 @@ export const APP_CONFIG = Object.freeze({
   productName: PRODUCT_NAME,
   appId: APP_ID,
   applicationUpdates: APPLICATION_UPDATES,
+  updateRepository: UPDATE_REPOSITORY,
   ports: Object.freeze({
     backend: DEFAULT_BACKEND_PORT,
     web: DEFAULT_WEB_PORT,

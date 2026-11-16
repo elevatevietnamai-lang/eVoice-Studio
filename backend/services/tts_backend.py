@@ -1131,12 +1131,20 @@ def _omnivoice_installed_passage(ref_audio: str) -> Optional[tuple[str, str]]:
         return None
     try:
         import soundfile as sf
-        from services.asr_backend import transcribe_reference
+        from services.asr_backend import reference_asr_session, transcribe_reference
     except Exception:
         logger.debug("installed reference ASR import failed")
         return None
 
+    # One recognizer load ranks every window, released before synthesis.
+    with reference_asr_session():
+        return _rank_reference_windows(ref_audio, audio, sr, window, sf, transcribe_reference)
+
+
+def _rank_reference_windows(ref_audio, audio, sr, window, sf, transcribe_reference):
     import tempfile
+
+    from omnivoice.utils.audio import CLONE_REF_MAX_WINDOWS
 
     best_score = -1
     best_activity = -1.0

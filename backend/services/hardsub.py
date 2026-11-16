@@ -8,6 +8,8 @@ one JSON object per line.
 from __future__ import annotations
 
 import asyncio
+import functools
+import hashlib
 import json
 import logging
 import os
@@ -51,8 +53,29 @@ def _marker() -> Path:
     return engine_dir() / ".install-complete"
 
 
+def _read_marker() -> dict:
+    try:
+        info = json.loads(_marker().read_text(encoding="utf-8"))
+        return info if isinstance(info, dict) else {}
+    except Exception:
+        return {}
+
+
+@functools.lru_cache(maxsize=1)
+def lock_fingerprint() -> str:
+    """Hash of the locks this machine installs. A new engine release changes it, so an existing
+    venv is brought up to date (pip steps are incremental) instead of keeping a stale runtime."""
+    h = hashlib.sha256()
+    for lock in (LOCKS / "requirements.lock", _onnxruntime_lock()):
+        h.update(lock.name.encode())
+        h.update(lock.read_bytes().replace(b"\r\n", b"\n"))  # same hash for CRLF checkouts
+    return h.hexdigest()[:16]
+
+
 def is_installed() -> bool:
-    return venv_python().is_file() and _marker().is_file()
+    if not (venv_python().is_file() and _marker().is_file()):
+        return False
+    return _read_marker().get("locks") == lock_fingerprint()
 
 
 def _locate_uv() -> Optional[str]:
@@ -156,7 +179,24 @@ async def install() -> AsyncIterator[dict]:
             pip = [str(venv_python()), "-m", "pip", "install", "--require-hashes"]
         steps.append(("Installing OCR and inpainting libraries",
                       [*pip, "-r", str(LOCKS / "requirements.lock")]))
-        steps.append(("Installing the GPU runtime", [*pip, "-r", str(_onnxruntime_lock())]))
+        ort_lock = _onnxruntime_lock()
+        steps.append(("Installing the GPU runtime", [*pip, "-r", str(ort_lock)]))
+        if ort_lock.name != "ort-cpu.lock":
+            # rapidocr pulls the CPU `onnxruntime`, which shares the `onnxruntime/` package folder
+            # with the GPU build; left in place its files can shadow the GPU ones. Remove it, then
+            # lay the accelerated package down again over the now-incomplete folder.
+            if uv:
+                steps.append(("Removing the CPU-only runtime",
+                              [uv, "pip", "uninstall", "--no-config", "--python", str(venv_python()),
+                               "onnxruntime"]))
+                accel = "onnxruntime-gpu" if ort_lock.name == "ort-gpu.lock" else "onnxruntime-directml"
+                steps.append(("Installing the GPU runtime",
+                              [*pip, "--reinstall-package", accel, "-r", str(ort_lock)]))
+            else:
+                steps.append(("Removing the CPU-only runtime",
+                              [str(venv_python()), "-m", "pip", "uninstall", "-y", "onnxruntime"]))
+                steps.append(("Installing the GPU runtime",
+                              [*pip, "--force-reinstall", "--no-deps", "-r", str(ort_lock)]))
         for i, (label, cmd) in enumerate(steps):
             yield {"type": "progress", "progress": i / len(steps), "message": label}
             async for line in _run_logged(cmd, env, idle_timeout=1800):
@@ -165,6 +205,11 @@ async def install() -> AsyncIterator[dict]:
         info = await probe()
         if not info.get("ocr"):
             raise RuntimeError("OCR library failed to import inside the engine environment.")
+        if info.get("gpu_fallback"):
+            logger.warning("hardsub engine installed, but onnxruntime runs on the CPU: %s",
+                           info.get("active_providers"))
+            yield {"type": "warning", "code": "gpu_fallback"}
+        info["locks"] = lock_fingerprint()
         _marker().write_text(json.dumps(info), encoding="utf-8")
         yield {"type": "done", "installed": True, "engine": info}
 
@@ -178,13 +223,11 @@ async def probe() -> dict:
 
 
 def status() -> dict:
-    info = {}
-    if _marker().is_file():
-        try:
-            info = json.loads(_marker().read_text(encoding="utf-8"))
-        except Exception:
-            info = {}
-    return {"installed": is_installed(), "engine": info, "path": str(engine_dir())}
+    info = _read_marker() if _marker().is_file() else {}
+    installed = is_installed()
+    # An older engine (different locks) needs the install step again; it only updates packages.
+    return {"installed": installed, "needs_update": bool(info) and not installed,
+            "engine": info, "path": str(engine_dir())}
 
 
 async def run_cli(args: list[str], idle_timeout: float = 1800) -> AsyncIterator[dict]:

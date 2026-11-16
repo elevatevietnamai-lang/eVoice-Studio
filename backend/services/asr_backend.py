@@ -3569,7 +3569,82 @@ def _try_reference_candidates(
     return ""
 
 
+# ── Reference ASR session ───────────────────────────────────────────────────
+# `get_active_asr_backend()` builds a FRESH instance for the in-process whisper
+# family, so each `transcribe_reference` loaded the model once and then dropped
+# it without `unload()`. Two costs followed. Ranking a long clone reference's
+# 15 s windows paid one full model load per window (five loads for a 66 s clip,
+# ~40 s before synthesis started). The dropped instances never ran
+# `torch.cuda.empty_cache()` either, so their VAD/alignment memory stayed
+# reserved and the next load saw less free VRAM and degraded its precision.
+# A session reuses one loaded instance for every call made inside it and
+# unloads it on exit. Each `transcribe_reference` call opens a session of its
+# own, so a lone call also releases what it loaded.
+_ref_session = threading.local()
+_LOAD_FAILED = object()
+
+
+@contextlib.contextmanager
+def reference_asr_session():
+    """Share one loaded reference recognizer across nested calls, then free it."""
+    if getattr(_ref_session, "backends", None) is not None:
+        yield  # an outer session owns the loaded models
+        return
+    backends: dict = {}
+    _ref_session.backends = backends
+    try:
+        yield
+    finally:
+        _ref_session.backends = None
+        for backend in backends.values():
+            if backend is not _LOAD_FAILED:
+                _release_reference_backend(backend)
+
+
+def _session_active_backend(*, require_installed: bool, release_after: bool) -> ASRBackend:
+    """The active offline recognizer, loaded once per reference session.
+
+    Shared instances (subprocess-isolated engines) are returned as-is and never
+    unloaded here; only fresh in-process instances belong to the session.
+    ``release_after`` callers unload the backend themselves, so it is not kept.
+    """
+    backends = None if release_after else getattr(_ref_session, "backends", None)
+    key = active_backend_id()
+    if backends is not None and key in backends:
+        cached = backends[key]
+        if cached is _LOAD_FAILED:
+            raise RuntimeError("reference ASR failed to load earlier in this session")
+        return cached
+    try:
+        backend = load_active_asr_backend(
+            require_installed=require_installed, defer_pytorch=True,
+        )
+    except Exception:
+        if backends is not None:
+            backends[key] = _LOAD_FAILED  # one failed load per session, not per window
+        raise
+    # PyTorch Whisper comes back unloaded (defer_pytorch) and may wrap the TTS
+    # model's shared pipeline, so it is never the session's to unload.
+    if (
+        backends is not None
+        and not isinstance(backend, PyTorchWhisperBackend)
+        and not getattr(type(backend), "_is_subprocess_isolated", False)
+    ):
+        backends[key] = backend
+    return backend
+
+
 def transcribe_reference(audio_path: str, *, release_after: bool = False) -> str | None:
+    """Transcript of a clone reference clip; see :func:`_transcribe_reference`.
+
+    Runs inside a :func:`reference_asr_session`, so the recognizer it loads is
+    released afterwards unless an outer session keeps it for further clips.
+    """
+    with reference_asr_session():
+        return _transcribe_reference(audio_path, release_after=release_after)
+
+
+def _transcribe_reference(audio_path: str, *, release_after: bool = False) -> str | None:
     """Transcribe a voice-clone reference clip with the active ASR backend.
 
     Voice cloning without a user-supplied transcript used to fall through to
@@ -3608,8 +3683,8 @@ def transcribe_reference(audio_path: str, *, release_after: bool = False) -> str
         try:
             # `load_*`, not `get_*`: a backend whose shallow probe passes but
             # whose deep import chain is broken must fall through cleanly.
-            backend = load_active_asr_backend(
-                require_installed=not selected_remote, defer_pytorch=True,
+            backend = _session_active_backend(
+                require_installed=not selected_remote, release_after=release_after,
             )
             if not isinstance(backend, PyTorchWhisperBackend):
                 candidates.append(backend)

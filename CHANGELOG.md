@@ -16,6 +16,8 @@ metadata and the backend fallback mirror it.
 
 ### Added
 
+- In-app updates come from eVoice Studio's own releases. A beta install follows the Beta channel until you pick one, and Windows releases now carry the update manifest and blockmap (#52)
+- Translate with Agent and the LLM provider list can use the Antigravity CLI (`agy`), locked to text-only answers (#53)
 - Music Studio: *Extend* adds up to 2 minutes before or after a track with a smooth join, and Thinking gets expert language-model options (#34)
 - Music Studio: use a LoRA from your computer, picked in the desktop app's file dialog, with a strength slider and an on/off switch (#35)
 - Music Studio on the Base model: *Extract* one instrument from a song, *Add layer* with a new one, or *Complete* an arrangement with the instruments you pick (#37)
@@ -23,22 +25,27 @@ metadata and the backend fallback mirror it.
 ### Changed
 
 - Menu bar: the app menu moves beside Settings in the rail, the logo is the bare mark for dark and light, hovers and panels animate smoothly, and every frame control has a tooltip with its shortcut (#36)
+- The rail's section menu matches the panel under it: section name in sentence case with its icon, and each page icon in the same tile (#50)
 
 ### Docs
 
+- How eVoice builds pick their update feed, and how to publish a hand-built Windows release so installed copies can update (#52)
 - Vietnamese user guide drafts for 19 features, with real app screenshots captured by `bun run docs:capture` and a checker for UI labels and personal data (#31)
 - User guide screenshots retaken after the menu bar redesign, and the Getting started article now covers only the Windows installer the beta ships (#43)
 - The Vietnamese user guide is reviewed and published: all 19 articles approved, with the update, project copy and voice import steps checked against the app (#48)
 
 ### Fixed
 
-- Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#49)
-- A failed transcription no longer suggests the video server dropped the download (#49)
-- Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#49)
-- "Video has burned-in subtitles" stays on after you choose a file or paste a link, so the transcript is read from the subtitles (#49)
-- LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#49)
-- NLLB no longer repeats one phrase over and over on long segments (#49)
-- Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#49)
+- Voice Clone: a reference longer than 20 s starts about twice as fast. The recognizer that picks its best 15 s now loads once instead of once per window, and frees its GPU memory afterwards (#51)
+- Voice Clone: the Recent takes button no longer sits under the search field on mid-width windows. It shows only its icon until the pane is wide enough for the label (#51)
+- The rail no longer hides section icons in windows up to 680 px tall, and text set with the label and caption sizes keeps its colour (#50)
+- Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#54)
+- A failed transcription no longer suggests the video server dropped the download (#54)
+- Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#54)
+- "Video has burned-in subtitles" stays on after you choose a file or paste a link, so the transcript is read from the subtitles (#54)
+- LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#54)
+- NLLB no longer repeats one phrase over and over on long segments (#54)
+- Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#54)
 - Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
 - Music Studio: *Polish* keeps your lyrics when the language model changes their words (the small model sometimes slips in junk lines) and says so (#39)
 - Music Studio: a LoRA track no longer fails with "the music server exited while starting" when the server restarts after more than 5 minutes idle (#40)
@@ -120,6 +127,10 @@ a promo video maker. Everything still runs locally; nothing is uploaded.
 
 ### Fixed
 
+- Reading on-screen subtitles runs on NVIDIA GPUs again: the engine pinned a CUDA 13 onnxruntime next to CUDA 12 libraries and quietly read on the CPU; existing installs ask to install again, which only updates the changed packages (#49)
+- Reading on-screen subtitles is about four times faster: frame-exact timing re-reads only the known subtitle lines, and the GPU no longer re-benchmarks for every line width (#49)
+- On-screen subtitles warn in the panel and during reading or removal when GPU acceleration fails and the engine falls back to the CPU (#49)
+- On-screen subtitle reading leaves out text that never changes inside the band (app labels in a screen recording, a watermark) and text much smaller than the subtitle line (#49)
 - Buttons and dropdowns no longer stay outlined in white after you click them or pick an option; the focus ring still shows when you move with the keyboard (#24)
 - Promo video: a saved draft whose files are gone marks them as missing and blocks Render, with one button to remove them, instead of a black preview and a failed render (#12)
 - First-run setup's OmniVoice licence review now includes its audio tokenizer, so the first generation works instead of stopping with another licence dialog, and a model card updates as soon as you accept or withdraw a licence (#10)

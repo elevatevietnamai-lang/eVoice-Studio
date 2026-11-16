@@ -3976,6 +3976,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Removidas",
     "engine_line": "Motor pronto · {{accel}}",
+    "gpu_fallback": "A aceleração por GPU não iniciou, então a leitura roda na CPU e fica muito mais lenta. Instale o mecanismo de legendas novamente para corrigir.",
     "skip_asr": "O vídeo tem legendas na tela",
     "skip_asr_help": "Ignorar o reconhecimento de voz após o envio. Em vez disso, ler as legendas da imagem (mais rápido e preciso para vídeos legendados)."
   },

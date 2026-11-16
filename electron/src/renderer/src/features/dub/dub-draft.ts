@@ -175,7 +175,7 @@ export function restoreDubDraft(raw: string | null, defaults: DubSession): DubSe
       quality: ['fast', 'autofit', 'cinematic', 'agent'].includes(value.quality)
         ? value.quality
         : defaults.quality,
-      agentCli: ['codex', 'claude', 'opencode', 'pi'].includes(value.agentCli)
+      agentCli: ['codex', 'claude', 'opencode', 'pi', 'agy'].includes(value.agentCli)
         ? value.agentCli
         : undefined,
       autoGlossary:

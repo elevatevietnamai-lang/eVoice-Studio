@@ -13,7 +13,7 @@ export function validateAgentCompletion(value: unknown): AgentCompletionRequest 
   const body = value as AgentCompletionRequest;
   if (
     !body ||
-    !['codex', 'claude', 'pi', 'opencode'].includes(body.agent) ||
+    !['codex', 'claude', 'pi', 'opencode', 'agy'].includes(body.agent) ||
     typeof body.model !== 'string' ||
     body.model.length > 200 ||
     (body.model !== '' && !/^[a-zA-Z0-9][\w./:@+-]*$/.test(body.model)) ||

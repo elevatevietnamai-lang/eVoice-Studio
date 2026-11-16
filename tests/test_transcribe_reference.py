@@ -199,3 +199,71 @@ def test_cache_is_bounded(monkeypatch, tmp_path):
         clip.write_bytes(f"clip-{i}".encode())
         ab.transcribe_reference(str(clip))
     assert len(ab._ref_transcript_cache) == ab._REF_TRANSCRIPT_CACHE_MAX
+
+
+# ── Reference ASR session: one load per ranking, released afterwards ───────
+# Ranking a long reference's 15 s windows called transcribe_reference once per
+# window; each call loaded a fresh whisper and dropped it without unload(), so
+# a 66 s clip paid five model loads and left their VRAM reserved.
+
+
+class _TrackedBackend(_FakeBackend):
+    def __init__(self, log, text="spoken words"):
+        super().__init__(result={"text": text})
+        self._log = log
+        log.append("load")
+
+    def unload(self):
+        self._log.append("unload")
+
+
+def test_session_loads_recognizer_once_for_many_clips(monkeypatch, tmp_path):
+    log = []
+    monkeypatch.setattr(ab, "get_active_asr_backend", lambda **kw: _TrackedBackend(log))
+    clips = []
+    for i in range(5):
+        clip = tmp_path / f"w{i}.wav"
+        clip.write_bytes(f"window {i}".encode())
+        clips.append(str(clip))
+    with ab.reference_asr_session():
+        assert [ab.transcribe_reference(c) for c in clips] == ["spoken words"] * 5
+        assert log == ["load"]
+    assert log == ["load", "unload"]
+
+
+def test_lone_call_releases_what_it_loaded(monkeypatch, tmp_path):
+    log = []
+    monkeypatch.setattr(ab, "get_active_asr_backend", lambda **kw: _TrackedBackend(log))
+    clip = tmp_path / "ref.wav"
+    clip.write_bytes(b"ref")
+    assert ab.transcribe_reference(str(clip)) == "spoken words"
+    assert log == ["load", "unload"]
+
+
+def test_failed_load_is_not_retried_per_clip(monkeypatch, tmp_path):
+    calls = []
+
+    def boom(**kw):
+        calls.append(1)
+        raise RuntimeError("no model")
+
+    monkeypatch.setattr(ab, "get_active_asr_backend", boom)
+    with ab.reference_asr_session():
+        for i in range(3):
+            clip = tmp_path / f"w{i}.wav"
+            clip.write_bytes(f"w{i}".encode())
+            assert ab.transcribe_reference(str(clip)) is None
+    assert len(calls) == 1
+
+
+def test_isolated_backend_is_shared_not_unloaded(monkeypatch, tmp_path):
+    log = []
+
+    class _Isolated(_TrackedBackend):
+        _is_subprocess_isolated = True
+
+    monkeypatch.setattr(ab, "get_active_asr_backend", lambda **kw: _Isolated(log))
+    clip = tmp_path / "ref.wav"
+    clip.write_bytes(b"ref")
+    assert ab.transcribe_reference(str(clip)) == "spoken words"
+    assert "unload" not in log

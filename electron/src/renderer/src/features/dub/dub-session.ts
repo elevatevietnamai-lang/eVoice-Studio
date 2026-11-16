@@ -14,6 +14,7 @@ import { apiJson, ApiError } from '@/lib/api/client';
 import { queryClient } from '@/lib/query';
 import { cachedTtsLanguagesSupported } from '@/lib/language-options';
 import { tr } from '@/lib/i18n-text';
+import { toast } from 'sonner';
 import { describeDubTranslationError } from './translation-error';
 import { beginAppActivity } from '@/lib/app-activity';
 import { recordActionBreadcrumb } from '@/lib/report-breadcrumb';
@@ -1985,6 +1986,9 @@ export type HardsubProgress = (progress: number, message: string) => void;
 function hardsubEvent(event: TaskEvent, onProgress?: HardsubProgress) {
   if (event.type === 'progress' && onProgress)
     onProgress(Number(event.progress) || 0, String(event.message || ''));
+  // The engine runs, but onnxruntime dropped the GPU and works on the CPU (much slower).
+  if (event.type === 'warning' && event.code === 'gpu_fallback')
+    toast.warning(tr('dub_hardsub.gpu_fallback'), { id: 'hardsub-gpu-fallback' });
   if (event.type === 'error') {
     const failure = publicFailureFromEvent(event, 'On-screen subtitle task failed');
     patch({ failure });

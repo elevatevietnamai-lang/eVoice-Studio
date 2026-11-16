@@ -3974,6 +3974,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "已擦除",
     "engine_line": "引擎就绪 · {{accel}}",
+    "gpu_fallback": "GPU 加速未能启动，识别改在 CPU 上运行，速度会慢很多。请重新安装字幕引擎进行修复。",
     "skip_asr": "视频带有内嵌字幕",
     "skip_asr_help": "上传后跳过语音识别，直接从画面中提取字幕（对于带字幕的视频更快、更准确）。"
   },

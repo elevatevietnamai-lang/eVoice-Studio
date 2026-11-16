@@ -3974,6 +3974,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "제거됨",
     "engine_line": "엔진 준비됨 · {{accel}}",
+    "gpu_fallback": "GPU 가속을 시작하지 못해 읽기가 CPU에서 실행되며 훨씬 느립니다. 자막 엔진을 다시 설치해 복구하세요.",
     "skip_asr": "영상에 화면 자막 있음",
     "skip_asr_help": "업로드 후 음성 인식을 건너뜁니다. 대신 화면에서 자막을 읽어 들입니다(자막이 있는 영상에서 더 빠르고 정확함)."
   },

@@ -18,8 +18,11 @@ const { autoUpdater } = updaterPackage;
 // `latest/download` never serves a prerelease, so Beta resolves its release
 // through the releases API (see resolveBetaFeed).
 export type UpdateChannel = 'stable' | 'beta';
-const STABLE_FEED = 'https://github.com/debpalash/VoiceStudio/releases/latest/download';
-const RELEASES_API = 'https://api.github.com/repos/debpalash/VoiceStudio/releases?per_page=30';
+// config/app.json `updateRepository`: a fork such as eVoice Studio follows its
+// own releases, never the upstream project's installers.
+const UPDATE_REPOSITORY = __UPDATE_REPOSITORY__;
+const STABLE_FEED = `https://github.com/${UPDATE_REPOSITORY}/releases/latest/download`;
+const RELEASES_API = `https://api.github.com/repos/${UPDATE_REPOSITORY}/releases?per_page=30`;
 
 function feedChannelName(
   platform: NodeJS.Platform = process.platform,
@@ -43,7 +46,7 @@ export function feedManifestName(
   return `${feedChannelName(platform, arch, distribution, channel)}${suffix}.yml`;
 }
 
-const RELEASE_DOWNLOAD = 'https://github.com/debpalash/VoiceStudio/releases/download';
+const RELEASE_DOWNLOAD = `https://github.com/${UPDATE_REPOSITORY}/releases/download`;
 const RELEASE_TAG = /^v(\d+)\.(\d+)\.(\d+)(?:-beta\.(\d+))?$/;
 
 /** Orders `vX.Y.Z-beta.N` below `vX.Y.Z`, as semver does. */
@@ -105,13 +108,21 @@ export async function resolveBetaFeed(
 
 const CHANNEL_FILE = 'updates.json';
 
-/** Anything but an explicit "beta" (including the retired "preview") is Stable. */
-export function readSavedUpdateChannel(userData: string = app.getPath('userData')): UpdateChannel {
+/**
+ * A saved choice wins: anything but an explicit "beta" (including the retired
+ * "preview") is Stable. With no saved choice, a beta build follows Beta: a
+ * project that has only published prereleases has no `latest` release, so
+ * Stable would find nothing to offer, and whoever installed a beta opted in.
+ */
+export function readSavedUpdateChannel(
+  userData: string = app.getPath('userData'),
+  currentVersion: string = app.getVersion(),
+): UpdateChannel {
   try {
     const saved: unknown = JSON.parse(readFileSync(join(userData, CHANNEL_FILE), 'utf8'));
     return saved && (saved as Record<string, unknown>).channel === 'beta' ? 'beta' : 'stable';
   } catch {
-    return 'stable';
+    return /-beta\.\d+$/.test(currentVersion) ? 'beta' : 'stable';
   }
 }
 
@@ -174,9 +185,7 @@ export async function resolveUpdateFeedUrl(
   });
   const release = matchingReleases[0]?.release;
   if (!release) throw new Error(`No Microsoft Store update feed publishes ${manifest}`);
-  return `https://github.com/debpalash/VoiceStudio/releases/download/${encodeURIComponent(
-    release.tag_name as string,
-  )}`;
+  return `${RELEASE_DOWNLOAD}/${encodeURIComponent(release.tag_name as string)}`;
 }
 
 export const UPDATE_CHANNELS = {

@@ -132,6 +132,27 @@ def test_long_reference_uses_installed_asr_windows(
     assert len(windows.paths) == 2
 
 
+def test_window_ranking_shares_one_recognizer_session(
+    tmp_path, monkeypatch, no_prompt_disk_cache
+):
+    """All windows are transcribed inside one ASR session, so the recognizer
+    loads once per ranking instead of once per window and is freed after."""
+    import services.asr_backend as ab
+
+    in_session = []
+
+    def _record(_path):
+        in_session.append(getattr(ab._ref_session, "backends", None) is not None)
+        return "spoken words in this window"
+
+    monkeypatch.setattr(ab, "transcribe_reference", _record)
+    monkeypatch.setattr(_tts(), "_reference_asr_identity", lambda: "fixed-recognizer")
+    _tts()._omnivoice_installed_passage(_wav(tmp_path / "long.wav", 40))
+
+    assert in_session == [True, True, True]
+    assert getattr(ab._ref_session, "backends", None) is None
+
+
 def test_long_reference_over_75s_is_not_windowed(
     tmp_path, monkeypatch, no_prompt_disk_cache
 ):

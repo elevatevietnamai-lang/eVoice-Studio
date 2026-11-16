@@ -3974,6 +3974,7 @@
     "badge_read_other": "{{count}} lines",
     "badge_cleaned": "Entfernt",
     "engine_line": "Engine bereit · {{accel}}",
+    "gpu_fallback": "Die GPU-Beschleunigung ist nicht gestartet, daher läuft das Lesen auf der CPU und ist deutlich langsamer. Installiere die Untertitel-Engine erneut, um das zu beheben.",
     "skip_asr": "Video enthält Bilduntertitel",
     "skip_asr_help": "Spracherkennung nach dem Hochladen überspringen. Stattdessen die Untertitel direkt aus dem Bild auslesen (schneller und genauer bei untertitelten Videos)."
   },

@@ -3,6 +3,8 @@ declare const __APP_VERSION__: string;
 declare const __DISTRIBUTION_TARGET__: string;
 /** From config/app.json `applicationUpdates`; false turns the in-app updater off at build time. */
 declare const __APP_UPDATES__: boolean;
+/** From config/app.json `updateRepository` (`owner/name`): the repository whose releases feed updates. */
+declare const __UPDATE_REPOSITORY__: string;
 declare const __POSTHOG_PROJECT_TOKEN__: string;
 declare const __POSTHOG_HOST__: string;
 declare const __CLOUD_ACCOUNTS__: boolean;

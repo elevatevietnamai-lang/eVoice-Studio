@@ -6,11 +6,33 @@ update about 10 seconds after launch and every six hours while it stays open;
 **Settings → Updates** also has a manual check. The app never downloads an
 update until you ask, and an available update is only offered, never forced.
 
-A build can ship with update checks off: `"applicationUpdates": false` in
-`config/app.json` (the eVoice Studio build does this until it has its own
-release feed). Such a build never contacts a release feed, and
+Updates come from the GitHub releases of the repository named by
+`"updateRepository"` in `config/app.json`. The eVoice Studio build sets it to
+`elevatevietnamai-lang/eVoice-Studio`, so it never offers upstream VoiceStudio
+installers. A build can also ship with update checks off
+(`"applicationUpdates": false`): it never contacts a release feed, and
 **Settings → Updates** says checks are off and to get new versions from the
 download site.
+
+When no channel has been chosen yet, a beta build (`X.Y.Z-beta.N`) follows
+**Beta** and any other build follows **Stable**. A project whose releases are
+all prereleases has no `latest` release, so Stable would find nothing.
+
+### Publishing a Windows build by hand
+
+A release can update installed copies only if it carries the update manifest
+and blockmap next to the installer. After `bun run dist` at the release
+version (a `-beta.N` version writes `electron-beta-win32-x64.yml`, any other
+writes `electron-stable-win32-x64.yml`), create the GitHub release, then run:
+
+```bash
+python scripts/publish_windows_update_assets.py --tag vX.Y.Z-beta.N
+```
+
+It checks that the manifest matches the tag and the installer's SHA-512, and
+that the `.blockmap` exists. It then uploads all three to the
+`updateRepository` and confirms GitHub lists them. Add `--dry-run` to check
+without uploading.
 
 | Build | Where it comes from | Who it's for |
 |-------|--------------------|--------------|

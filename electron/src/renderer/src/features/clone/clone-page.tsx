@@ -150,9 +150,17 @@ export function ClonePage() {
             </div>
             <CommandSearch className="ml-auto" />
             <div className="flex shrink-0 items-center gap-1">
-              <Button variant="ghost" size="sm" onClick={() => setLibraryTab('takes')}>
+              {/* The search field is centred absolutely from @3xl; with the 192px window-control inset a
+                  labelled button here runs under it below a ~1090px pane, so the label waits for @6xl. */}
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label={t('clone.history_title')}
+                title={t('clone.history_title')}
+                onClick={() => setLibraryTab('takes')}
+              >
                 <HistoryIcon data-icon="inline-start" />
-                {t('clone.history_title')}
+                <span className="hidden @6xl:inline">{t('clone.history_title')}</span>
               </Button>
             </div>
           </header>

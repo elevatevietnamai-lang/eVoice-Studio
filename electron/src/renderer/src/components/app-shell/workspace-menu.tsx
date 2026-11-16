@@ -38,6 +38,9 @@ const itemClass =
   'workspace-nav-item group relative flex min-w-0 items-center overflow-hidden rounded-lg text-sm text-(--sidebar-muted-foreground) outline-none transition-colors hover:bg-(--sidebar-row-hover) hover:text-sidebar-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50';
 const iconClass =
   'workspace-nav-icon size-5 shrink-0 text-(--sidebar-muted-foreground) transition-colors';
+/** The page panel's header tile (components/workspace-sidebar.tsx): menu and panel share one grammar. */
+const tileClass =
+  'grid size-7 shrink-0 place-items-center rounded-lg border border-border/45 transition-colors';
 
 function NavigationLink({
   destination: { to, label, description, icon: Icon, activate },
@@ -73,7 +76,7 @@ function NavigationLink({
         compact
           ? 'size-10 justify-center'
           : flyout
-            ? 'min-h-12 gap-3 px-2.5 py-2'
+            ? 'min-h-12 gap-3 px-2 py-2'
             : 'min-h-11 gap-3 px-2.5 py-1.5',
       )}
       activeProps={{
@@ -84,7 +87,13 @@ function NavigationLink({
         'data-lit': lit ? 'true' : undefined,
       }}
     >
-      <Icon className={iconClass} aria-hidden="true" />
+      {compact ? (
+        <Icon className={iconClass} aria-hidden="true" />
+      ) : (
+        <span className={tileClass} aria-hidden="true">
+          <Icon className={cn(iconClass, 'size-4')} />
+        </span>
+      )}
       {!compact && (
         <span className="min-w-0 flex-1 leading-5">
           <span className="block truncate">{t(label)}</span>
@@ -228,6 +237,13 @@ const GROUPS: Record<Exclude<DestinationGroup, 'library'>, string> = {
   more: 'nav.more',
 };
 
+const GROUP_ICONS: Record<keyof typeof GROUPS, typeof AudioLinesIcon> = {
+  voice: FingerprintIcon,
+  stories: AudioLinesIcon,
+  dub: FilmIcon,
+  more: WrenchIcon,
+};
+
 /**
  * The menu of the rail group the user opened, in the panel column: section name, then each page
  * with its one-line description. Choosing a page closes it, and the column shows that page's panel.
@@ -243,6 +259,7 @@ export function GroupMenuPanel() {
 function GroupMenu({ group }: { group: keyof typeof GROUPS }) {
   const { t } = useTranslation();
   const reduced = useReducedMotion() ?? false;
+  const GroupIcon = GROUP_ICONS[group];
   const close = () => {
     setMenuGroup(null);
     document.querySelector<HTMLElement>(`[data-menu-group="${group}"]`)?.focus();
@@ -260,8 +277,13 @@ function GroupMenu({ group }: { group: keyof typeof GROUPS }) {
       }}
       className="absolute inset-y-0 left-0 z-30 flex w-[max(100%,18rem)] flex-col border-r border-border/55 bg-sidebar"
     >
-      <div className="workspace-titlebar flex h-12 shrink-0 items-center border-b border-border/45 px-4">
-        <span className="truncate text-xs font-medium tracking-[0.12em] text-(--sidebar-muted-foreground) uppercase">
+      {/* The panel header it covers, in the same grammar: tile, then the name in sentence case
+          (all-caps and letter spacing break Vietnamese diacritics, DESIGN.md section 3). */}
+      <div className="workspace-titlebar flex h-12 shrink-0 items-center gap-2.5 border-b border-border/45 px-3">
+        <span className={cn(tileClass, 'text-sidebar-foreground')} aria-hidden="true">
+          <GroupIcon className="size-4" />
+        </span>
+        <span className="min-w-0 flex-1 truncate text-sm font-semibold text-sidebar-foreground">
           {t(GROUPS[group])}
         </span>
       </div>

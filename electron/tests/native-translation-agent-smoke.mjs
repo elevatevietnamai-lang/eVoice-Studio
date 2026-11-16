@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path';
 import { _electron as electron } from 'playwright';
 
 const agent = process.argv[2] || 'codex';
-assert.ok(['codex', 'claude', 'opencode', 'pi'].includes(agent));
+assert.ok(['codex', 'claude', 'opencode', 'pi', 'agy'].includes(agent));
 const executablePath = process.env.VOICESTUDIO_PACKAGED_EXE
   ? resolve(process.env.VOICESTUDIO_PACKAGED_EXE)
   : resolve(

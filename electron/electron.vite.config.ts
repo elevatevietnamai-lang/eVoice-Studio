@@ -9,6 +9,7 @@ import {
   DEFAULT_ELECTRON_PROXY_PORT,
   APPLICATION_UPDATES,
   PRODUCT_NAME,
+  UPDATE_REPOSITORY,
 } from '../config/app-config.mjs';
 import { DISTRIBUTION_TARGET } from '../config/distributions.mjs';
 
@@ -24,6 +25,8 @@ const define = {
   __DISTRIBUTION_TARGET__: JSON.stringify(DISTRIBUTION_TARGET),
   // config/app.json applicationUpdates: false builds never contact a release feed.
   __APP_UPDATES__: JSON.stringify(APPLICATION_UPDATES),
+  // config/app.json updateRepository: the GitHub repository whose releases feed updates.
+  __UPDATE_REPOSITORY__: JSON.stringify(UPDATE_REPOSITORY),
   __WEB_DEPLOYMENT__: false,
   // Keep the renderer and its managed Python backend on one analytics project.
   __POSTHOG_PROJECT_TOKEN__: JSON.stringify(

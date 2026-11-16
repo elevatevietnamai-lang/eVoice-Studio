@@ -215,6 +215,8 @@ _PROVIDERS: tuple[Provider, ...] = (
              transport="cli", sdk_provider="pi", model_env="VOICESTUDIO_PI_MODEL"),
     Provider("opencode-cli", "OpenCode (CLI)", "", "",
              transport="cli", sdk_provider="opencode", model_env="VOICESTUDIO_OPENCODE_MODEL"),
+    Provider("agy-cli", "Antigravity (CLI)", "", "",
+             transport="cli", sdk_provider="agy", model_env="VOICESTUDIO_AGY_MODEL"),
     Provider("custom", "Custom (OpenAI-compatible)", "", "",
              key_envs=("TRANSLATE_API_KEY",), base_url_env="TRANSLATE_BASE_URL",
              model_env="TRANSLATE_MODEL", key_optional=True,
