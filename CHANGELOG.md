@@ -33,8 +33,8 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
-- Voice Clone: a reference longer than 20 s starts about twice as fast. The recognizer that picks its best 15 s now loads once instead of once per window, and frees its GPU memory afterwards (#PR)
-- Voice Clone: the Recent takes button no longer sits under the search field on mid-width windows. It shows only its icon until there is room for the label (#PR)
+- Voice Clone: a reference longer than 20 s starts about twice as fast. The recognizer that picks its best 15 s now loads once instead of once per window, and frees its GPU memory afterwards (#51)
+- Voice Clone: the Recent takes button no longer sits under the search field on mid-width windows. It shows only its icon until there is room for the label (#51)
 - The rail no longer hides section icons in windows up to 680 px tall, and text set with the label and caption sizes keeps its colour (#50)
 - Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
 - Music Studio: *Polish* keeps your lyrics when the language model changes their words (the small model sometimes slips in junk lines) and says so (#39)
