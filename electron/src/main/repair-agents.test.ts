@@ -13,6 +13,8 @@ import {
   repairDiagnosticContext,
   requestPrompt,
   translationLaunchArgs,
+  translationStdin,
+  AGY_TRANSLATION_SETTINGS,
 } from './repair-agents';
 
 const request = {
@@ -263,4 +265,85 @@ it('repair agent env strips account bridge vars and other backend-only capabilit
   } finally {
     vi.unstubAllEnvs();
   }
+});
+
+// Lines below are verbatim shapes printed by `agy --output-format stream-json` (Antigravity CLI).
+describe('Antigravity translation agent', () => {
+  const agyRequest = {
+    agent: 'agy' as const,
+    purpose: 'translate' as const,
+    targetLanguage: 'Vietnamese',
+    segments: [
+      { id: '1', sourceText: 'Good morning', start: 0, end: 1 },
+      { id: '2', sourceText: 'Thank you', start: 1, end: 2 },
+    ],
+  };
+
+  it('reads the prompt from stdin and keeps every tool denied', () => {
+    const args = translationLaunchArgs('agy');
+    expect(args).toEqual(expect.arrayContaining(['--input-format', 'stream-json', '-p=']));
+    // `-p` without `=` would take the next flag as the prompt.
+    expect(args).not.toContain('-p');
+    expect(args).not.toContain('--dangerously-skip-permissions');
+    const settings = JSON.parse(args[args.indexOf('--settings') + 1]);
+    expect(settings).toEqual(AGY_TRANSLATION_SETTINGS);
+    expect(settings.toolPermission).toBe('strict');
+    expect(settings.agentMode).toBe('');
+    for (const rule of ['command(*)', 'write_file(*)', 'read_file(*)', 'read_url(*)', 'mcp(*)'])
+      expect(settings.permissions.deny).toContain(rule);
+
+    const line = translationStdin('agy', 'Translate {"x":1}\nnow');
+    expect(line.endsWith('\n')).toBe(true);
+    expect(line.trim().split('\n')).toHaveLength(1);
+    expect(JSON.parse(line)).toEqual({
+      event: 'user',
+      message: { role: 'user', content: 'Translate {"x":1}\nnow' },
+    });
+    expect(translationStdin('codex', 'plain')).toBe('plain');
+  });
+
+  it('parses the final result response, not the streamed deltas', () => {
+    const answer = JSON.stringify({
+      translations: [
+        { id: '1', text: 'Chào buổi sáng' },
+        { id: '2', text: 'Cảm ơn' },
+      ],
+    });
+    const output = [
+      '{"event":"init","conversation_id":"c","init":{"tools":["run_command"],"permission_mode":"strict"}}',
+      JSON.stringify({
+        event: 'step_update',
+        step_update: { step_type: 'agent_response', text_delta: answer.slice(0, 20) },
+      }),
+      JSON.stringify({
+        event: 'result',
+        result: { conversation_id: 'c', status: 'SUCCESS', response: answer + '\n', num_turns: 1 },
+      }),
+    ].join('\n');
+    expect(agentProviderFailure(output)).toBeNull();
+    expect(parseDubAgentTranslations(output, agyRequest).translations).toEqual([
+      { id: '1', text: 'Chào buổi sáng' },
+      { id: '2', text: 'Cảm ơn' },
+    ]);
+  });
+
+  it('classifies quota, sign-in and model errors from the result event', () => {
+    const failure = (error: string) =>
+      agentProviderFailure(
+        JSON.stringify({ event: 'result', result: { status: 'ERROR', response: '', error } }),
+      )?.name;
+    expect(
+      failure(
+        'Individual quota reached. Please upgrade your subscription to increase your limits. Resets in 119h52m10s.',
+      ),
+    ).toBe('AgentRateLimitError');
+    expect(failure('Print mode: not authenticated')).toBe('AgentAuthenticationError');
+    expect(failure('model "nope" not found')).toBe('AgentModelError');
+    expect(failure('stream input message is missing the "event" field')).toBeUndefined();
+    expect(
+      agentProviderFailure(
+        JSON.stringify({ event: 'result', result: { status: 'SUCCESS', response: 'ok' } }),
+      ),
+    ).toBeNull();
+  });
 });

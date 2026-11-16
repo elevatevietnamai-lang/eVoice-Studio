@@ -119,7 +119,7 @@ an inline explanation with a link to LLM settings. It does not silently claim
 that Cinematic or Autofit completed. Browser fixtures cover this fallback and
 reload persistence; real LLM-backed quality passes remain unverified.
 
-**Translate with Agent** detects the installed Codex, Claude Code, OpenCode and Pi CLIs. Dubbing
+**Translate with Agent** detects the installed Codex, Claude Code, OpenCode, Pi and Antigravity (`agy`) CLIs. Dubbing
 presents Agent and the active Google, Argos, NLLB or API engine as separate translator choices;
 Fast, Autofit and Cinematic remain quality choices for engine translation. The selected agent receives the complete ordered
 dialogue, glossary, dialect and per-segment speech budget as untrusted data, returns a strict

@@ -17,6 +17,7 @@ metadata and the backend fallback mirror it.
 ### Added
 
 - In-app updates come from eVoice Studio's own releases. A beta install follows the Beta channel until you pick one, and Windows releases now carry the update manifest and blockmap (#52)
+- Translate with Agent and the LLM provider list can use the Antigravity CLI (`agy`), locked to text-only answers (#53)
 - Music Studio: *Extend* adds up to 2 minutes before or after a track with a smooth join, and Thinking gets expert language-model options (#34)
 - Music Studio: use a LoRA from your computer, picked in the desktop app's file dialog, with a strength slider and an on/off switch (#35)
 - Music Studio on the Base model: *Extract* one instrument from a song, *Add layer* with a new one, or *Complete* an arrangement with the instruments you pick (#37)
