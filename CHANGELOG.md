@@ -8,6 +8,12 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- A first dub of a Chinese video finishes without timing out, and Argos can translate it to Vietnamese
+- Translations no longer loop on one phrase or keep Chinese characters in Vietnamese lines
+- Exported videos tag each audio track with its language
+
 ### Fixed
 
 - Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#56)
