@@ -881,7 +881,8 @@
     "agent_cli_desc": "{{agent}} 会结合上下文翻译每个片段，并在测量语音后重写不符合时长的内容。",
     "choose_translation_agent": "选择翻译智能体",
     "no_local_agents": "安装 Codex、Claude Code、OpenCode 或 Pi，以使用本地代理翻译。",
-    "agent_translation_complete": "{{agent}} 已完成片段翻译。"
+    "agent_translation_complete": "{{agent}} 已完成片段翻译。",
+    "loading_speech_model": "正在下载语音模型（仅首次运行）…"
   },
   "dub_workflow": {
     "preparing_audio": "正在准备音频...",
@@ -2733,7 +2734,9 @@
     "qc_verify": "验证",
     "qc_verify_title": "第二遍 ASR 听到：“{{heard}}” — 重新聆听或重新配音此台词。",
     "live_play_title": "立即流式播放该行(实时预览)",
-    "live_stop_title": "停止实时预览"
+    "live_stop_title": "停止实时预览",
+    "script_leak": "未翻译",
+    "script_leak_title": "有些字符没有被翻译：{{chars}}。请编辑这一行或重新翻译。"
   },
   "update": {
     "checking": "正在检查更新…",
@@ -2871,7 +2874,17 @@
     "active": "引擎：{{name}}",
     "none": "没有启用的引擎",
     "localInstallRequired": "请在后端计算机上通过 localhost 或安装指南安装此引擎。远程安装已禁用。",
-    "argosRuntimeUnavailable": "Argos 运行时不可用。请重新安装后端或选择 NLLB。"
+    "argosRuntimeUnavailable": "Argos 运行时不可用。请重新安装后端或选择 NLLB。",
+    "argosPackUnavailable": "Argos 没有 {{pairs}} 的语言包，经由英语中转也不行。请为该语言选择 NLLB 或其他引擎。",
+    "unavailableReason_license": "尚未接受许可协议。请在模型目录中查看并接受，以启用此引擎。",
+    "unavailableReason_platform": "此引擎无法在这台电脑的平台上运行。其指南列出了支持的平台。",
+    "unavailableReason_no_mps": "此引擎需要 Apple GPU（MPS），但此安装中的 PyTorch 无法使用它。更新 macOS 或重新安装应用通常可以解决。",
+    "unavailableReason_file_missing": "此引擎所需的文件缺失或无法读取。请从模型目录重新安装。",
+    "unavailableReason_file_missing_manual": "此引擎所需的文件缺失或无法读取。其指南列出了安装步骤。",
+    "unavailableReason_needs_config": "此引擎需要先完成设置才能运行，例如在设置中配置 API 密钥或 LLM 提供商。",
+    "unavailableReason_not_installed": "此引擎尚未安装。请从模型目录安装。",
+    "unavailableReason_not_installed_manual": "此引擎尚未安装，且不支持一键安装。其指南列出了安装步骤。",
+    "unavailableReason_unavailable": "此引擎目前无法运行。请检查它是否已安装并完成设置。"
   },
   "performanceProfile": {
     "requiresEngine": "安装并选择 {{engine}} 以调整速度和质量。",

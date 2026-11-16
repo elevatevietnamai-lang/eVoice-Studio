@@ -123,6 +123,7 @@ def _run_stream(tmp_path, monkeypatch, *, job_id: str, backend: _RecordingASR):
     guarded_calls = []
 
     async def _run_guarded(executor, fn, **kwargs):
+        kwargs.pop("load_tracker", None)  # covered by test_asr_model_load_outside_budget
         guarded_calls.append(kwargs)
         return fn()
 

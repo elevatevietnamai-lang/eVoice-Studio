@@ -876,7 +876,8 @@
     "agent_cli_desc": "يترجم {{agent}} كل مقطع ضمن سياقه ويعيد صياغة حالات عدم تطابق التوقيت بعد قياس الكلام.",
     "choose_translation_agent": "اختيار وكيل الترجمة",
     "no_local_agents": "ثبّت Codex أو Claude Code أو OpenCode أو Pi للترجمة باستخدام وكيل محلي.",
-    "agent_translation_complete": "أكمل {{agent}} ترجمة المقاطع."
+    "agent_translation_complete": "أكمل {{agent}} ترجمة المقاطع.",
+    "loading_speech_model": "جارٍ تنزيل نماذج الكلام (في التشغيل الأول فقط)…"
   },
   "dub_workflow": {
     "preparing_audio": "جارٍ تحضير الصوت…",
@@ -2741,7 +2742,9 @@
     "plan_impossible": "لن يتسع +{{seconds}}ث",
     "plan_impossible_title": "الكلام المتوقع ≈{{est}}ث والمتاح {{avail}}ث. تتجاوز الزيادة قدرة الملاءمة بنحو {{seconds}}ث وسيُقتطع الصوت. اختصر النص قبل التوليد.",
     "plan_tight": "ملاءمة ضيقة",
-    "plan_tight_title": "الكلام المتوقع ≈{{est}}ث والمتاح {{avail}}ث. يمكن للملاءمة الذكية استيعابه بتسريع مسموع أو إبطاء الفيديو. اختصر النص لنتيجة أفضل."
+    "plan_tight_title": "الكلام المتوقع ≈{{est}}ث والمتاح {{avail}}ث. يمكن للملاءمة الذكية استيعابه بتسريع مسموع أو إبطاء الفيديو. اختصر النص لنتيجة أفضل.",
+    "script_leak": "غير مترجم",
+    "script_leak_title": "بقيت بعض الأحرف دون ترجمة: {{chars}}. عدّل هذا السطر أو ترجمه مرة أخرى."
   },
   "update": {
     "checking": "جارٍ البحث عن تحديثات…",
@@ -2879,7 +2882,17 @@
     "active": "المحرك: {{name}}",
     "none": "لا يوجد محرك نشط",
     "localInstallRequired": "ثبّت هذا المحرك على جهاز الخادم باستخدام localhost أو دليل الإعداد. التثبيت عن بُعد معطّل.",
-    "argosRuntimeUnavailable": "بيئة تشغيل Argos غير متاحة. أعد تثبيت الخادم الخلفي أو اختر NLLB."
+    "argosRuntimeUnavailable": "بيئة تشغيل Argos غير متاحة. أعد تثبيت الخادم الخلفي أو اختر NLLB.",
+    "argosPackUnavailable": "لا تتوفر لدى Argos حزمة لغة لـ {{pairs}}، ولا حتى عبر الإنجليزية. اختر NLLB أو محركًا آخر لهذه اللغة.",
+    "unavailableReason_license": "لم يتم قبول الترخيص بعد. راجعه واقبله في كتالوج النماذج لتفعيل هذا المحرك.",
+    "unavailableReason_platform": "لا يعمل هذا المحرك على منصة هذا الكمبيوتر. يسرد دليله المنصات المدعومة.",
+    "unavailableReason_no_mps": "يحتاج هذا المحرك إلى وحدة معالجة الرسومات من Apple (MPS)، ولا يستطيع PyTorch في هذا التثبيت استخدامها. عادةً يحل تحديث macOS أو إعادة تثبيت التطبيق المشكلة.",
+    "unavailableReason_file_missing": "ملف يحتاجه هذا المحرك مفقود أو غير قابل للقراءة. أعد تثبيته من كتالوج النماذج.",
+    "unavailableReason_file_missing_manual": "ملف يحتاجه هذا المحرك مفقود أو غير قابل للقراءة. يسرد دليله خطوات التثبيت.",
+    "unavailableReason_needs_config": "يحتاج هذا المحرك إلى إعداد قبل تشغيله، مثل مفتاح API أو مزوّد LLM في الإعدادات.",
+    "unavailableReason_not_installed": "هذا المحرك غير مثبت بعد. ثبّته من كتالوج النماذج.",
+    "unavailableReason_not_installed_manual": "هذا المحرك غير مثبت بعد وليس له تثبيت بنقرة واحدة. يسرد دليله خطوات التثبيت.",
+    "unavailableReason_unavailable": "لا يمكن تشغيل هذا المحرك الآن. تحقق من أنه مثبت ومُعد."
   },
   "performanceProfile": {
     "requiresEngine": "ثبّت {{engine}} وحدده لضبط السرعة والجودة.",

@@ -8,7 +8,10 @@ download had worked; the hint sent the user to retry the wrong step.
 
 import pytest
 
-from core.failure import VIDEO_SOURCE_STAGES, build_failure
+from core.failure import build_failure
+
+# The stages that fetch the source video (services/dub_pipeline.py).
+VIDEO_SOURCE_STAGES = {"download", "ingest"}
 
 _TRANSCRIBE_TIMEOUT = "Transcription timed out. Try a smaller model or set ASR to CPU."
 

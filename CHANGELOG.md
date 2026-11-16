@@ -32,6 +32,13 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#49)
+- A failed transcription no longer suggests the video server dropped the download (#49)
+- Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#49)
+- "Video has burned-in subtitles" stays on after you choose a file or paste a link, so the transcript is read from the subtitles (#49)
+- LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#49)
+- NLLB no longer repeats one phrase over and over on long segments (#49)
+- Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#49)
 - Settings → Support no longer requests a Momo QR image that is not shipped, which logged a 404 error (#32)
 - Music Studio: *Polish* keeps your lyrics when the language model changes their words (the small model sometimes slips in junk lines) and says so (#39)
 - Music Studio: a LoRA track no longer fails with "the music server exited while starting" when the server restarts after more than 5 minutes idle (#40)

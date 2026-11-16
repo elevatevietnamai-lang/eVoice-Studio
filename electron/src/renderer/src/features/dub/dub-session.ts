@@ -80,6 +80,8 @@ export interface DubSegment {
   translate_errors?: Record<string, string>;
   translation_skipped?: boolean;
   translate_degraded?: string;
+  /** Han/kana/Hangul the translation left in a non-CJK target line. */
+  translate_script_leak?: string;
   translate_literal?: string;
   translate_critique?: string;
   rate_ratio?: number;
@@ -546,6 +548,7 @@ const patchSegment = (segment: DubSegment, value: Partial<DubSegment>) => {
     delete next.rate_error;
     delete next.translate_error;
     delete next.translate_degraded;
+    delete next.translate_script_leak;
     delete next.translate_literal;
     delete next.translate_critique;
     if (segment.agent_generated_lang && next.agent_generated_langs) {
@@ -678,6 +681,7 @@ export function restoreDubSegments() {
       text === segment.text &&
       !segment.translate_error &&
       !segment.translate_degraded &&
+      !segment.translate_script_leak &&
       !segment.translation_skipped
     )
       return segment;
@@ -686,6 +690,7 @@ export function restoreDubSegments() {
       text,
       translate_error: undefined,
       translate_degraded: undefined,
+      translate_script_leak: undefined,
       translation_skipped: undefined,
     });
   });
@@ -1208,6 +1213,7 @@ export async function translateDubWithAgent(
             translate_error: undefined,
             translate_errors: Object.keys(translateErrors).length ? translateErrors : undefined,
             translate_degraded: undefined,
+            translate_script_leak: undefined,
             translation_skipped: undefined,
             translate_literal: undefined,
             translate_critique: undefined,
@@ -1283,6 +1289,7 @@ export async function translateDub(
           text: string;
           error?: string;
           degraded?: string;
+          script_leak?: string;
           literal?: string;
           critique?: string;
           rate_ratio?: number;
@@ -1365,6 +1372,7 @@ export async function translateDub(
             translate_error: row?.error,
             translate_errors: Object.keys(translateErrors).length ? translateErrors : undefined,
             translate_degraded: row?.degraded,
+            translate_script_leak: row?.error ? undefined : row?.script_leak,
             translation_skipped: undefined,
             translate_literal: row?.literal,
             translate_critique: row?.critique,

@@ -1,4 +1,5 @@
 import { Textarea } from '@/components/ui/textarea';
+import { engineAvailabilityText } from '@/lib/engine-availability';
 import { DubProjects } from './dub-projects';
 import { Reveal } from '@/components/motion';
 import { Menu } from '@base-ui/react/menu';
@@ -165,6 +166,8 @@ type ArgosPackStatus = {
     source_lang: string;
     target_lang: string;
     installed: boolean;
+    /** Languages the translation passes through; zh → en → vi when Argos has no direct pack. */
+    route?: string[];
   }>;
 };
 
@@ -562,7 +565,9 @@ export function DubPage() {
     : session.phase === 'preparing'
       ? preparationStageKey(session.event?.type)
       : session.phase === 'transcribing'
-        ? 'dub_workflow.transcribing_audio'
+        ? session.event?.type === 'model_loading'
+          ? 'dub.loading_speech_model'
+          : 'dub_workflow.transcribing_audio'
         : session.phase === 'translating'
           ? 'dub.translating'
           : session.phase === 'cleaning'
@@ -1635,7 +1640,11 @@ export function DubPage() {
                 <PipelineFailure
                   className="text-xs"
                   fallback={`${t('modelMaintenance.install')} · ${provider.display_name} · ${missingArgosPacks
-                    .map((pair) => `${pair.source_lang} → ${pair.target_lang}`)
+                    .map((pair) =>
+                      (pair.route?.length ? pair.route : [pair.source_lang, pair.target_lang]).join(
+                        ' → ',
+                      ),
+                    )
                     .join(', ')}`}
                   action={
                     <Button
@@ -1659,7 +1668,7 @@ export function DubPage() {
               {provider && !(provider.ready ?? provider.installed) && (
                 <PipelineFailure
                   className="text-xs"
-                  fallback={provider.availability_reason || t('modelSettings.unavailable')}
+                  fallback={engineAvailabilityText(t, provider) || t('modelSettings.unavailable')}
                 />
               )}
             </Reveal>
@@ -2566,6 +2575,7 @@ export function DubPage() {
                               )}
                               {(segment.translate_error ||
                                 segment.translate_degraded ||
+                                segment.translate_script_leak ||
                                 segment.plan?.status === 'tight' ||
                                 segment.plan?.status === 'impossible' ||
                                 segment.fit_status?.status === 'overflows') && (
@@ -2579,6 +2589,17 @@ export function DubPage() {
                                     >
                                       <AlertCircleIcon className="size-3" />
                                       {t('common.error')}
+                                    </span>
+                                  )}
+                                  {segment.translate_script_leak && (
+                                    <span
+                                      className="inline-flex items-center gap-1 rounded-full bg-warning/10 px-1.5 py-0.5 text-[11px] font-medium text-warning"
+                                      title={t('segment.script_leak_title', {
+                                        chars: segment.translate_script_leak,
+                                      })}
+                                    >
+                                      <AlertCircleIcon className="size-3" />
+                                      {t('segment.script_leak')}
                                     </span>
                                   )}
                                   {segment.translate_degraded && (

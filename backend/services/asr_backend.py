@@ -54,6 +54,120 @@ logger = logging.getLogger("omnivoice.asr")
 ASR_TRANSCRIBE_TIMEOUT_S = float(os.environ.get("OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S", "300.0"))
 
 
+#: Upper bound on ONE model download/load inside a guarded transcribe. The
+#: transcribe budget pauses while a model loads (see ModelLoadTracker), so a
+#: first run's aligner download never eats it; this cap still ends a load
+#: that is genuinely wedged. HF downloads also raise on a dead socket
+#: (HF_HUB_DOWNLOAD_TIMEOUT), so reaching it means something is very wrong.
+ASR_MODEL_LOAD_TIMEOUT_S = float(os.environ.get("OMNIVOICE_ASR_MODEL_LOAD_TIMEOUT_S", "1800.0"))
+
+
+class ModelLoadTracker:
+    """Model loads that ran inside one guarded transcribe call.
+
+    A first run downloads the wav2vec2 aligner (1.27 GB for Chinese) inside the
+    first chunk's ``transcribe()``, because the language is only known there.
+    Counting that against the per-chunk budget timed the chunk out while the
+    download was still progressing. The worker thread marks each load through
+    :func:`model_loading`; the guard excludes that time from the budget and the
+    caller reports the load as its own stage.
+    """
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self._active: tuple[str, str] | None = None
+        self._active_since: float | None = None
+        self._paused_s = 0.0
+        self._started: list[tuple[str, str]] = []
+
+    def begin(self, kind: str, name: str) -> None:
+        with self._lock:
+            self._active = (kind, name)
+            self._active_since = time.monotonic()
+            self._started.append((kind, name))
+
+    def end(self) -> None:
+        with self._lock:
+            if self._active_since is not None:
+                self._paused_s += time.monotonic() - self._active_since
+            self._active = None
+            self._active_since = None
+
+    def active(self) -> tuple[str, str] | None:
+        with self._lock:
+            return self._active
+
+    def active_for(self) -> float:
+        """Seconds the current load has been running (0 when none is)."""
+        with self._lock:
+            if self._active_since is None:
+                return 0.0
+            return time.monotonic() - self._active_since
+
+    def paused_seconds(self) -> float:
+        """Total load time so far, including a load still in progress."""
+        with self._lock:
+            running = (
+                time.monotonic() - self._active_since
+                if self._active_since is not None else 0.0
+            )
+            return self._paused_s + running
+
+    def started_since(self, index: int) -> list[tuple[str, str]]:
+        """Loads begun at or after position ``index`` (for progress events)."""
+        with self._lock:
+            return list(self._started[index:])
+
+
+_load_tracker_local = threading.local()
+
+
+@contextlib.contextmanager
+def model_loading(kind: str, name: str = ""):
+    """Mark a model download/load on this thread's guarded transcribe, if any.
+
+    Outside a guarded call (dictation, preflight) it is a no-op, and it only
+    ever touches the tracker bound to THIS worker thread, so one job's load
+    never pauses another job's budget."""
+    tracker = getattr(_load_tracker_local, "tracker", None)
+    if tracker is None:
+        yield
+        return
+    tracker.begin(kind, str(name or ""))
+    try:
+        yield
+    finally:
+        tracker.end()
+
+
+@contextlib.contextmanager
+def _bind_load_tracker(tracker: ModelLoadTracker):
+    previous = getattr(_load_tracker_local, "tracker", None)
+    _load_tracker_local.tracker = tracker
+    try:
+        yield
+    finally:
+        _load_tracker_local.tracker = previous
+
+
+def _counts_as_model_load(kind: str, loaded, name=lambda self: ""):
+    """Decorate a lazy ``_ensure_*`` loader so a real load pauses the budget.
+
+    ``loaded(self)`` short-circuits the cached case, so a warm call neither
+    pauses the clock nor reports a load stage."""
+    def wrap(fn):
+        import functools
+
+        @functools.wraps(fn)
+        def inner(self, *args, **kwargs):
+            if loaded(self):
+                return fn(self, *args, **kwargs)
+            with model_loading(kind, name(self)):
+                return fn(self, *args, **kwargs)
+        return inner
+    return wrap
+
+
 class ASRTimeoutError(TimeoutError):
     """Raised when a whole-file transcribe exceeds ASR_TRANSCRIBE_TIMEOUT_S.
 
@@ -151,7 +265,8 @@ async def run_transcribe_guarded(executor, fn, *, what: str = "ASR",
                                  timeout: float = ASR_TRANSCRIBE_TIMEOUT_S,
                                  timeout_env: str = "OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S",
                                  reset_on_timeout: bool = False,
-                                 on_abandon=None):
+                                 on_abandon=None,
+                                 load_tracker: ModelLoadTracker | None = None):
     """Run a blocking transcribe ``fn`` in ``executor`` with a hard wall-clock
     bound. On timeout, raise :class:`ASRTimeoutError` with guidance instead of
     letting the request hang forever.
@@ -167,7 +282,13 @@ async def run_transcribe_guarded(executor, fn, *, what: str = "ASR",
     longer access its inputs. Queued work cancelled before it starts calls it
     immediately; running work calls it from the worker finalizer. Normal
     completion leaves cleanup with the caller.
+
+    ``timeout`` bounds transcription only: time ``fn`` spends inside
+    :func:`model_loading` (a first-run model download) is excluded, and each
+    such load is bounded by ``ASR_MODEL_LOAD_TIMEOUT_S`` instead. Pass
+    ``load_tracker`` to watch those loads from the caller.
     """
+    tracker = load_tracker if load_tracker is not None else ModelLoadTracker()
     from services.inference_cancellation import InferenceCancellation
     cancellation = InferenceCancellation()
     loop = asyncio.get_running_loop()
@@ -195,7 +316,7 @@ async def run_transcribe_guarded(executor, fn, *, what: str = "ASR",
 
     def _job():
         try:
-            with cancellation.activate():
+            with cancellation.activate(), _bind_load_tracker(tracker):
                 return inner()
         finally:
             with abandon_lock:
@@ -217,15 +338,41 @@ async def run_transcribe_guarded(executor, fn, *, what: str = "ASR",
         if cancelled_before_start or finished:
             _fire_abandon_callback()
 
+    started = time.monotonic()
+    load_timed_out = False
     try:
-        # Shield the wrapper so timeout does not discard our ability to tell a
-        # queued cancellation from a native thread that is still running.
-        result = await asyncio.wait_for(asyncio.shield(fut), timeout=timeout)
+        # asyncio.wait never cancels ``fut``, so a timeout keeps our ability to
+        # tell a queued cancellation from a native thread still running.
+        while True:
+            if tracker.active() is not None:
+                if tracker.active_for() >= ASR_MODEL_LOAD_TIMEOUT_S:
+                    load_timed_out = True
+                    raise asyncio.TimeoutError
+                # Wake periodically to enforce the load cap.
+                wait_s = min(5.0, ASR_MODEL_LOAD_TIMEOUT_S - tracker.active_for())
+            else:
+                spent = time.monotonic() - started - tracker.paused_seconds()
+                wait_s = timeout - spent
+                if wait_s <= 0:
+                    raise asyncio.TimeoutError
+            done, _ = await asyncio.wait({fut}, timeout=max(0.01, wait_s))
+            if done:
+                result = fut.result()
+                break
     except asyncio.CancelledError:
         _abandon()
         raise
     except asyncio.TimeoutError:
         _abandon()
+        if load_timed_out:
+            kind, name = tracker.active() or ("model", "")
+            raise ASRTimeoutError(
+                f"{what}: loading the {kind} model {name} took longer than "
+                f"{ASR_MODEL_LOAD_TIMEOUT_S:.0f}s and was abandoned. Check your "
+                "network connection or the Hugging Face mirror in Settings, then "
+                "retry; the download resumes. (Raise "
+                "OMNIVOICE_ASR_MODEL_LOAD_TIMEOUT_S for a very slow link.)"
+            )
         if reset_on_timeout:
             reset_pool_after_wedge(executor, what=what)
         streak = _note_transcribe_timeout()
@@ -586,9 +733,10 @@ def load_align_model(language_code: str, device: str):
     try:
         import whisperx
 
-        model, metadata = whisperx.load_align_model(
-            language_code=language_code, device=device,
-        )
+        with model_loading("aligner", language_code):
+            model, metadata = whisperx.load_align_model(
+                language_code=language_code, device=device,
+            )
         _ALIGN_CACHE[key] = (model, metadata)
     except Exception as e:  # noqa: BLE001 — missing aligner is normal, not fatal
         logger.info(
@@ -773,6 +921,9 @@ class WhisperXBackend(ASRBackend):
         # and OOM→CPU fallbacks are exhausted.
         self._ensure_asr()
 
+    @_counts_as_model_load(
+        "asr", lambda self: self._asr is not None, lambda self: self._model_name,
+    )
     def _ensure_asr(self):
         if self._asr is not None:
             return
@@ -1148,6 +1299,10 @@ class FasterWhisperBackend(ASRBackend):
             return False, f"faster-whisper failed to load ({type(e).__name__}): {e}"
         return _ctranslate2_cudnn_ok()
 
+    @_counts_as_model_load(
+        "asr", lambda self: self._model is not None,
+        lambda self: getattr(self, "_model_name", "") or "",
+    )
     def _ensure_model(self):
         if self._model is not None:
             return
@@ -1542,6 +1697,9 @@ class PyTorchWhisperBackend(ASRBackend):
         # once during the stream preflight so the real failure is reported once.
         self._ensure_pipe()
 
+    @_counts_as_model_load(
+        "asr", lambda self: self._pipe is not None, lambda self: self._model_name(),
+    )
     def _ensure_pipe(self):
         if self._pipe is not None:
             return

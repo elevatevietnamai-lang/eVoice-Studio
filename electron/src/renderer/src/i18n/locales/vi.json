@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}} dịch từng đoạn theo ngữ cảnh và viết lại các đoạn lệch thời lượng sau khi đo giọng nói.",
     "choose_translation_agent": "Chọn agent dịch",
     "no_local_agents": "Cài đặt Codex, Claude Code, OpenCode hoặc Pi để dịch bằng agent trên máy.",
-    "agent_translation_complete": "{{agent}} đã dịch xong các đoạn."
+    "agent_translation_complete": "{{agent}} đã dịch xong các đoạn.",
+    "loading_speech_model": "Đang tải model nhận dạng giọng nói (chỉ lần chạy đầu)…"
   },
   "dub_workflow": {
     "preparing_audio": "Đang chuẩn bị âm thanh…",
@@ -2733,7 +2734,9 @@
     "plan_impossible": "Không vừa +{{seconds}}s",
     "plan_impossible_title": "Lời thoại dự kiến ≈{{est}} giây so với {{avail}} giây trống — vượt quá khả năng co giãn khoảng {{seconds}} giây nên âm thanh sẽ bị cắt. Rút ngắn văn bản trước khi tạo.",
     "plan_tight": "Vừa sát giới hạn",
-    "plan_tight_title": "Lời thoại dự kiến ≈{{est}} giây so với {{avail}} giây trống — Khớp thông minh vẫn xử lý được nhưng sẽ phải tăng tốc giọng đọc hoặc làm chậm video rõ rệt. Rút ngắn văn bản để kết quả tự nhiên hơn."
+    "plan_tight_title": "Lời thoại dự kiến ≈{{est}} giây so với {{avail}} giây trống — Khớp thông minh vẫn xử lý được nhưng sẽ phải tăng tốc giọng đọc hoặc làm chậm video rõ rệt. Rút ngắn văn bản để kết quả tự nhiên hơn.",
+    "script_leak": "Chưa dịch hết",
+    "script_leak_title": "Còn ký tự chưa được dịch: {{chars}}. Hãy sửa dòng này hoặc dịch lại."
   },
   "update": {
     "checking": "Đang kiểm tra bản cập nhật…",
@@ -2871,7 +2874,17 @@
     "active": "Engine: {{name}}",
     "none": "Không có engine đang hoạt động",
     "localInstallRequired": "Cài đặt engine này trên máy chạy backend qua localhost hoặc theo hướng dẫn thiết lập. Đã tắt cài đặt từ xa.",
-    "argosRuntimeUnavailable": "Môi trường chạy Argos không khả dụng. Cài lại backend hoặc chọn NLLB."
+    "argosRuntimeUnavailable": "Môi trường chạy Argos không khả dụng. Cài lại backend hoặc chọn NLLB.",
+    "argosPackUnavailable": "Argos không có gói ngôn ngữ cho {{pairs}}, kể cả khi dịch qua tiếng Anh. Hãy chọn NLLB hoặc engine khác cho ngôn ngữ này.",
+    "unavailableReason_license": "Chưa chấp nhận giấy phép. Xem và chấp nhận trong Thư viện model để bật engine này.",
+    "unavailableReason_platform": "Engine này không chạy được trên nền tảng của máy tính này. Hướng dẫn của engine liệt kê các nền tảng được hỗ trợ.",
+    "unavailableReason_no_mps": "Engine này cần GPU của Apple (MPS), nhưng PyTorch trong bản cài này không dùng được. Cập nhật macOS hoặc cài lại ứng dụng thường sẽ khắc phục.",
+    "unavailableReason_file_missing": "Thiếu hoặc không đọc được một tệp engine này cần. Hãy cài lại từ Thư viện model.",
+    "unavailableReason_file_missing_manual": "Thiếu hoặc không đọc được một tệp engine này cần. Hướng dẫn của engine liệt kê các bước cài đặt.",
+    "unavailableReason_needs_config": "Engine này cần được thiết lập trước khi chạy, ví dụ khóa API hoặc nhà cung cấp LLM trong Cài đặt.",
+    "unavailableReason_not_installed": "Engine này chưa được cài. Hãy cài từ Thư viện model.",
+    "unavailableReason_not_installed_manual": "Engine này chưa được cài và không có nút cài một lần nhấp. Hướng dẫn của engine liệt kê các bước cài đặt.",
+    "unavailableReason_unavailable": "Engine này hiện không chạy được. Hãy kiểm tra engine đã được cài và thiết lập chưa."
   },
   "performanceProfile": {
     "requiresEngine": "Cài đặt và chọn {{engine}} để điều chỉnh tốc độ và chất lượng.",

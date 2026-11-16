@@ -1,4 +1,5 @@
 import { useBackendStatus } from '@/hooks/use-backend-status';
+import { engineAvailabilityText } from '@/lib/engine-availability';
 import { Reveal } from '@/components/motion';
 import { isBackendReachable } from '@shared/utils/backendStage';
 import { LanguagesIcon } from 'lucide-react';
@@ -27,6 +28,8 @@ export interface TranslationEngine {
   needs_key: boolean;
   pip_package: string | null;
   availability_reason?: string | null;
+  /** Stable reason code; the UI translates it (engineAvailabilityText). */
+  availability_code?: string | null;
 }
 export function useTranslationEngines() {
   const status = useBackendStatus();
@@ -90,7 +93,7 @@ export function TranslationSettings() {
       title={engine.display_name}
       description={[
         t('modelMaintenance.' + engine.category),
-        ready(engine) ? engine.configured_via : engine.availability_reason,
+        ready(engine) ? engine.configured_via : engineAvailabilityText(t, engine),
       ]
         .filter(Boolean)
         .join(' · ')}

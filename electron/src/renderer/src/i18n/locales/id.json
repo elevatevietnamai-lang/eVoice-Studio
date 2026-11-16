@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}} menerjemahkan setiap segmen sesuai konteks dan menulis ulang ketidakcocokan waktu setelah durasi ucapan diukur.",
     "choose_translation_agent": "Pilih agen penerjemah",
     "no_local_agents": "Instal Codex, Claude Code, OpenCode, atau Pi untuk menerjemahkan dengan agen lokal.",
-    "agent_translation_complete": "{{agent}} selesai menerjemahkan segmen."
+    "agent_translation_complete": "{{agent}} selesai menerjemahkan segmen.",
+    "loading_speech_model": "Mengunduh model suara (hanya saat pertama kali)…"
   },
   "dub_workflow": {
     "preparing_audio": "Mempersiapkan audio…",
@@ -2733,7 +2734,9 @@
     "plan_impossible": "Tidak muat +{{seconds}}d",
     "plan_impossible_title": "Perkiraan ucapan ≈{{est}}d, waktu tersedia {{avail}}d. Sekitar {{seconds}}d melebihi kemampuan penyesuaian dan audio akan terpotong. Persingkat teks sebelum membuat audio.",
     "plan_tight": "Hampir tidak muat",
-    "plan_tight_title": "Perkiraan ucapan ≈{{est}}d, waktu tersedia {{avail}}d. Penyesuaian cerdas dapat mengatasinya dengan mempercepat suara secara nyata atau memperlambat video. Persingkat teks untuk hasil lebih baik."
+    "plan_tight_title": "Perkiraan ucapan ≈{{est}}d, waktu tersedia {{avail}}d. Penyesuaian cerdas dapat mengatasinya dengan mempercepat suara secara nyata atau memperlambat video. Persingkat teks untuk hasil lebih baik.",
+    "script_leak": "Belum diterjemahkan",
+    "script_leak_title": "Beberapa karakter belum diterjemahkan: {{chars}}. Edit baris ini atau terjemahkan ulang."
   },
   "update": {
     "checking": "Memeriksa pembaruan…",
@@ -2871,7 +2874,17 @@
     "active": "Mesin: {{name}}",
     "none": "Tidak ada mesin aktif",
     "localInstallRequired": "Instal mesin ini di komputer backend melalui localhost atau panduan penyiapannya. Instalasi jarak jauh dinonaktifkan.",
-    "argosRuntimeUnavailable": "Runtime Argos tidak tersedia. Instal ulang backend atau pilih NLLB."
+    "argosRuntimeUnavailable": "Runtime Argos tidak tersedia. Instal ulang backend atau pilih NLLB.",
+    "argosPackUnavailable": "Argos tidak punya paket bahasa untuk {{pairs}}, bahkan melalui bahasa Inggris. Pilih NLLB atau mesin lain untuk bahasa ini.",
+    "unavailableReason_license": "Lisensi belum diterima. Tinjau dan terima di Katalog Model untuk mengaktifkan mesin ini.",
+    "unavailableReason_platform": "Mesin ini tidak berjalan di platform komputer ini. Panduannya mencantumkan platform yang didukung.",
+    "unavailableReason_no_mps": "Mesin ini memerlukan GPU Apple (MPS), yang tidak dapat digunakan oleh PyTorch di instalasi ini. Memperbarui macOS atau menginstal ulang aplikasi biasanya memperbaikinya.",
+    "unavailableReason_file_missing": "File yang dibutuhkan mesin ini hilang atau tidak dapat dibaca. Instal ulang dari Katalog Model.",
+    "unavailableReason_file_missing_manual": "File yang dibutuhkan mesin ini hilang atau tidak dapat dibaca. Panduannya mencantumkan langkah instalasi.",
+    "unavailableReason_needs_config": "Mesin ini perlu diatur sebelum berjalan, misalnya kunci API atau penyedia LLM di Pengaturan.",
+    "unavailableReason_not_installed": "Mesin ini belum terinstal. Instal dari Katalog Model.",
+    "unavailableReason_not_installed_manual": "Mesin ini belum terinstal dan tidak punya instalasi sekali klik. Panduannya mencantumkan langkah instalasi.",
+    "unavailableReason_unavailable": "Mesin ini tidak dapat berjalan saat ini. Periksa apakah sudah terinstal dan diatur."
   },
   "performanceProfile": {
     "requiresEngine": "Instal dan pilih {{engine}} untuk menyesuaikan kecepatan dan kualitas.",

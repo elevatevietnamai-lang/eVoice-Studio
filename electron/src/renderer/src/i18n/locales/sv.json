@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}} översätter varje segment i sitt sammanhang och skriver om tidsavvikelser efter uppmätt tal.",
     "choose_translation_agent": "Välj översättningsagent",
     "no_local_agents": "Installera Codex, Claude Code, OpenCode eller Pi för att översätta med en lokal agent.",
-    "agent_translation_complete": "{{agent}} har översatt segmenten."
+    "agent_translation_complete": "{{agent}} har översatt segmenten.",
+    "loading_speech_model": "Laddar ner talmodeller (bara första gången)…"
   },
   "dub_workflow": {
     "preparing_audio": "Förbereder ljud...",
@@ -2733,7 +2734,9 @@
     "plan_impossible": "Ryms inte +{{seconds}}s",
     "plan_impossible_title": "Beräknat tal ≈{{est}}s, tillgänglig tid {{avail}}s. Cirka {{seconds}}s överskrider vad anpassningen klarar och ljudet skulle klippas. Korta texten före generering.",
     "plan_tight": "Ryms precis",
-    "plan_tight_title": "Beräknat tal ≈{{est}}s, tillgänglig tid {{avail}}s. Smart anpassning kan lösa detta med hörbart snabbare tal eller långsammare video. Korta texten för ett bättre resultat."
+    "plan_tight_title": "Beräknat tal ≈{{est}}s, tillgänglig tid {{avail}}s. Smart anpassning kan lösa detta med hörbart snabbare tal eller långsammare video. Korta texten för ett bättre resultat.",
+    "script_leak": "Oöversatt",
+    "script_leak_title": "Vissa tecken översattes inte: {{chars}}. Redigera raden eller översätt den igen."
   },
   "update": {
     "checking": "Söker efter uppdateringar…",
@@ -2871,7 +2874,17 @@
     "active": "Motor: {{name}}",
     "none": "Ingen motor aktiv",
     "localInstallRequired": "Installera motorn på backenddatorn via localhost eller installationsguiden. Fjärrinstallation är avstängd.",
-    "argosRuntimeUnavailable": "Argos körmiljö är inte tillgänglig. Installera om backend eller välj NLLB."
+    "argosRuntimeUnavailable": "Argos körmiljö är inte tillgänglig. Installera om backend eller välj NLLB.",
+    "argosPackUnavailable": "Argos har inget språkpaket för {{pairs}}, inte ens via engelska. Välj NLLB eller en annan motor för det här språket.",
+    "unavailableReason_license": "Licensen är inte godkänd än. Granska och godkänn den i Modellkatalogen för att aktivera motorn.",
+    "unavailableReason_platform": "Den här motorn fungerar inte på datorns plattform. Dess guide listar plattformarna som stöds.",
+    "unavailableReason_no_mps": "Den här motorn behöver Apples GPU (MPS), som PyTorch i den här installationen inte kan använda. Att uppdatera macOS eller installera om appen brukar lösa det.",
+    "unavailableReason_file_missing": "En fil som motorn behöver saknas eller går inte att läsa. Installera om den från Modellkatalogen.",
+    "unavailableReason_file_missing_manual": "En fil som motorn behöver saknas eller går inte att läsa. Dess guide listar installationsstegen.",
+    "unavailableReason_needs_config": "Den här motorn måste konfigureras innan den kan köras, till exempel med en API-nyckel eller en LLM-leverantör i Inställningar.",
+    "unavailableReason_not_installed": "Den här motorn är inte installerad än. Installera den från Modellkatalogen.",
+    "unavailableReason_not_installed_manual": "Den här motorn är inte installerad än och saknar installation med ett klick. Dess guide listar installationsstegen.",
+    "unavailableReason_unavailable": "Den här motorn kan inte köras just nu. Kontrollera att den är installerad och konfigurerad."
   },
   "performanceProfile": {
     "requiresEngine": "Installera och välj {{engine}} för att justera hastighet och kvalitet.",
