@@ -168,11 +168,22 @@ def _media_tool_kind(exe) -> "str | None":
     return None
 
 
+def _local_input(source):
+    """``-`` (stdin) spelled as ``pipe:0``.
+
+    ffmpeg 7 opens ``-`` through its ``fd`` protocol, which the local-only
+    whitelist refuses, so a stdin input would fail with "Invalid argument";
+    ``pipe:0`` is the same stdin through the allowed ``pipe`` protocol.
+    """
+    return "pipe:0" if source == "-" else source
+
+
 def local_inputs_only(cmd, tool: "str | None" = None) -> list:
     """Return ``cmd`` with every ffmpeg/ffprobe input limited to local protocols.
 
     Adds ``-protocol_whitelist file,pipe`` before each ffmpeg ``-i`` (input
-    options apply per input) or once for ffprobe's single input. Idempotent:
+    options apply per input) or once for ffprobe's single input, and spells a
+    stdin input ``-`` as ``pipe:0`` (see ``_local_input``). Idempotent:
     an input that already sets a whitelist keeps it. Any other command is
     returned unchanged. ``tool`` skips name-based detection when the caller
     knows which binary it runs.
@@ -197,7 +208,7 @@ def local_inputs_only(cmd, tool: "str | None" = None) -> list:
         elif arg == "-i" and i + 1 < len(cmd):
             if not group_has_whitelist:
                 out += [_WHITELIST_FLAG, LOCAL_INPUT_PROTOCOLS]
-            out += [arg, cmd[i + 1]]
+            out += [arg, _local_input(cmd[i + 1])]
             group_has_whitelist = False
             i += 2
             continue

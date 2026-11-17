@@ -64,6 +64,22 @@ def test_whitelist_is_idempotent_and_keeps_an_existing_one():
     assert local_inputs_only(preset) == preset
 
 
+def test_stdin_input_is_spelled_through_the_allowed_pipe_protocol():
+    cmd = local_inputs_only(["ffmpeg", "-f", "s16le", "-i", "-", "out.wav"])
+    assert cmd[cmd.index("-i") + 1] == "pipe:0"
+    assert cmd[-1] == "out.wav"
+    assert local_inputs_only(cmd) == cmd
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="needs a system ffmpeg")
+def test_ffmpeg_reads_stdin_through_the_wrapper():
+    # ffmpeg 7+ opens "-" via the "fd" protocol, which "file,pipe" refuses.
+    cmd = local_inputs_only([shutil.which("ffmpeg"), "-v", "error", "-f", "s16le", "-ar",
+                             "8000", "-ac", "1", "-i", "-", "-f", "null", "-"])
+    proc = subprocess.run(cmd, input=bytes(1600), capture_output=True, timeout=60, check=False)
+    assert proc.returncode == 0, proc.stderr.decode(errors="replace")
+
+
 def test_ffprobe_gets_the_whitelist_once():
     cmd = local_inputs_only(["C:\\tools\\ffprobe.exe", "-v", "error", "x.mp4"])
     assert cmd[1:3] == [WL, LOCAL_INPUT_PROTOCOLS]

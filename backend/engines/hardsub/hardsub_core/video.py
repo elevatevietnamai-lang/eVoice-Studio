@@ -68,7 +68,7 @@ class VideoWriter:
         enc, enc_args = video_encoder(prefer_gpu)
         cmd = [ffmpeg_bin(), "-y", "-hide_banner", "-loglevel", "error",
                "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{info.width}x{info.height}",
-               "-r", info.fps_str, "-i", "-"]
+               "-r", info.fps_str, "-i", "pipe:0"]
         if audio_src and info.has_audio:
             cmd += ["-i", audio_src, "-map", "0:v", "-map", "1:a?", "-c:a", "copy"]
         cmd += ["-c:v", enc, *enc_args, "-pix_fmt", "yuv420p", out_path]
