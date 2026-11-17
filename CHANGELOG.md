@@ -14,7 +14,7 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
-- Ask VoiceStudio Agent no longer cuts off a music, dubbing or speech job after two minutes: it waits while the job reports progress and returns the result without the progress lines (#72)
+- Ask VoiceStudio Agent no longer cuts off a music, dubbing or speech job after two minutes: it waits for the job to finish, returns the result without the progress lines, and reports a job that ends in an error as failed (#72)
 
 ### Docs
 

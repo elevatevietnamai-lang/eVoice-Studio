@@ -90,10 +90,13 @@ into the run's temporary folder (never into your checkout) and starts
 | `--settings` | `toolPermission: request-review`, `agentMode: ""`, an allow rule for `mcp(voicestudio/api_request)` only, and deny rules for `command(*)`, `unsandboxed(*)`, `write_file(*)`, URL reads, actions and downloads and, without source, `read_file(*)`. A headless run cannot answer an approval prompt, so anything else is refused and the run ends. |
 | Checkout | Added with `--add-dir` for Diagnose, so the agent reads it by absolute path. |
 
-The API bridge waits for long jobs. A call that streams progress (music, dubbing, speech)
-runs until the job ends, and is stopped only when VoiceStudio sends nothing for 120 s, or
-after an hour. The agent gets the job's final events without the progress lines; clients
-that ask for MCP progress receive it as progress notifications instead.
+The API bridge waits for long jobs. A route that answers only when its job ends (speech
+generation, transcription) is given up to an hour, and the backend enforces its own queue and
+generation limits inside it. A route that streams progress (music, audiobook and dub export)
+runs until the job ends and is stopped only when VoiceStudio sends nothing for 120 s. The
+agent gets the job's final events without the progress lines, and a job that ends on an error
+event comes back as a failed call. Clients that ask for MCP progress receive it as progress
+notifications.
 
 Compared with the other harnesses: Codex Fix edits and runs commands in its workspace
 sandbox, Claude Code Fix uses `acceptEdits` in the checkout, and both read files

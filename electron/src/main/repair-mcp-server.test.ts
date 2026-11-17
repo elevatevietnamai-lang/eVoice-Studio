@@ -38,6 +38,21 @@ beforeAll(async () => {
       res.flushHeaders();
       return;
     }
+    if (req.url === '/slow-headers') {
+      // A blocking route (`/generate`): silent until its job ends.
+      setTimeout(() => res.writeHead(200).end('{"ok": true}'), 2_500);
+      return;
+    }
+    if (req.url === '/dub-stream' || req.url === '/failed-stream') {
+      // Dub streams name each event in its JSON `type`, with no `event:` line.
+      res.writeHead(200, { 'content-type': 'text/event-stream' });
+      const data = (value: object) => `data: ${JSON.stringify(value)}\n\n`;
+      for (let current = 1; current <= 3; current += 1)
+        res.write(data({ type: 'progress', current, total: 3, text: `line ${current}` }));
+      res.write(data({ type: 'error', segment: 2, error: 'one segment failed' }));
+      res.end(req.url === '/dub-stream' ? data({ type: 'done', segments: 3 }) : '');
+      return;
+    }
     if (req.url === '/slow-stream' || req.url === '/progress-flood') {
       // A generation job: progress events, then its result. The slow stream outlasts the idle
       // timeout in total but never goes quiet for that long; the flood outgrows the byte cap.
@@ -167,6 +182,24 @@ describe('repair MCP api_request', () => {
     const [reply] = await call([apiCall('/silent')], quickIdle);
     expect(reply.result.isError).toBe(true);
     expect(reply.result.content[0].text).toMatch(/sent nothing for 1 s/);
+  }, 20_000);
+
+  it('waits for a blocking route past the idle timeout: only a started response can go quiet', async () => {
+    const [reply] = await call([apiCall('/slow-headers')], quickIdle);
+    expect(reply.result.isError).toBe(false);
+    expect(reply.result.content[0].text).toBe('HTTP 200\n{"ok": true}');
+  }, 20_000);
+
+  it('reads progress named in the JSON type, and only a final error fails the call', async () => {
+    const messages = await call([apiCall('/dub-stream', { progressToken: 7 })]);
+    const notes = messages.filter((message) => message.method === 'notifications/progress');
+    expect(notes.map((note) => note.params.progress)).toEqual([1 / 3, 2 / 3, 1]);
+    const reply = messages.at(-1)!;
+    expect(reply.result.isError).toBe(false);
+    expect(reply.result.content[0].text).not.toContain('"progress"');
+    expect(reply.result.content[0].text).toContain('one segment failed');
+    const [failed] = await call([apiCall('/failed-stream')]);
+    expect(failed.result.isError).toBe(true);
   }, 20_000);
 
   it('forwards stream progress as MCP progress notifications when asked', async () => {

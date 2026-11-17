@@ -32,17 +32,65 @@ function error(id: JsonRpcRequest['id'], code: number, message: string): void {
 }
 
 /**
- * A request is stopped only when the backend goes quiet: generation endpoints (music, dubbing,
- * speech) stream progress for many minutes, and a fixed total timeout cut them off mid-run and
- * cancelled the job. The total cap only guards against a stream that never ends.
+ * A fixed 120 s total timeout cut long jobs off mid-run and cancelled them. Now:
+ * - Until the response starts, only the total cap applies. Blocking routes (`/generate`,
+ *   transcription) answer when the job ends, after a GPU queue wait of up to 30 min, and the
+ *   backend enforces its own limits there.
+ * - Once the body streams (music, audiobook, dub export progress), the request is stopped only
+ *   when the backend goes quiet for the idle timeout.
+ * - The total cap guards against a stream that never ends.
  */
 const IDLE_TIMEOUT_MS = Number(process.env.VOICESTUDIO_REPAIR_IDLE_TIMEOUT_MS) || 120_000;
 const TOTAL_TIMEOUT_MS = 60 * 60_000;
 
-/** One parsed `progress` event of a server-sent event stream. */
+/** Progress reported by a stream: a fraction (music) or a count of `total` (dub segments). */
 interface StreamProgress {
   progress?: number;
   message?: string;
+}
+
+/** What an agent sees of a server-sent event stream. */
+interface EventStreamText {
+  text: string;
+  /** The job ended on an error event (a stream answers 200 before its job runs). */
+  failed: boolean;
+}
+
+/**
+ * The kind of one server-sent event: its `event:` line (music), else the `type` of its JSON
+ * data (dub, audiobook), and the parsed data.
+ */
+function eventKind(event: string): { kind: string; data: Record<string, unknown> | undefined } {
+  const raw = event
+    .split(/\r?\n/)
+    .filter((line) => line.startsWith('data:'))
+    .map((line) => line.slice(5).replace(/^ /, ''))
+    .join('\n');
+  let data: Record<string, unknown> | undefined;
+  try {
+    const parsed = raw ? (JSON.parse(raw) as unknown) : undefined;
+    if (parsed && typeof parsed === 'object') data = parsed as Record<string, unknown>;
+  } catch {
+    // Plain-text data still has a kind from its `event:` line.
+  }
+  const named = /^event:\s*(\S+)\s*$/m.exec(event)?.[1];
+  const typed = typeof data?.type === 'string' ? data.type : undefined;
+  return { kind: named ?? typed ?? 'message', data };
+}
+
+/** Reads a fraction from a progress event: `progress` (0-1), or `current` of `total`. */
+function progressOf(data: Record<string, unknown> | undefined): StreamProgress {
+  if (!data) return {};
+  const message =
+    typeof data.message === 'string'
+      ? data.message
+      : typeof data.text === 'string'
+        ? data.text
+        : undefined;
+  if (typeof data.progress === 'number') return { progress: data.progress, message };
+  if (typeof data.current === 'number' && typeof data.total === 'number' && data.total > 0)
+    return { progress: data.current / data.total, message };
+  return { message };
 }
 
 /** Reads at most `limit` bytes, cancels the rest of the stream, and never emits a split UTF-8 character. */
@@ -92,27 +140,28 @@ async function readEventStream(
   limit: number,
   onChunk: () => void,
   onProgress: (progress: StreamProgress) => void,
-): Promise<string> {
-  if (!response.body) return '';
+): Promise<EventStreamText> {
+  if (!response.body) return { text: '', failed: false };
   const reader = response.body.getReader();
   const decoder = new TextDecoder('utf-8');
   let pending = '';
   let kept = '';
   let lastProgress = '';
+  let lastKind = '';
+  const finish = (text: string): EventStreamText => ({
+    text: clipBytes(text, limit),
+    // A segment that fails mid-job is reported, but only a final error fails the call.
+    failed: lastKind === 'error',
+  });
   const take = (event: string): boolean => {
     if (!event.trim()) return false;
-    if (/^event:\s*progress\s*$/m.test(event)) {
+    const { kind, data } = eventKind(event);
+    if (kind === 'progress') {
       lastProgress = event;
-      const data = /^data:\s?(.*)$/m.exec(event)?.[1];
-      if (data) {
-        try {
-          onProgress(JSON.parse(data) as StreamProgress);
-        } catch {
-          // A progress line that is not JSON is still progress; there is nothing to report.
-        }
-      }
+      onProgress(progressOf(data));
       return false;
     }
+    lastKind = kind;
     kept += `${event}\n\n`;
     return Buffer.byteLength(kept, 'utf8') >= limit;
   };
@@ -126,10 +175,10 @@ async function readEventStream(
       }
       const events = pending.split(/\r?\n\r?\n/);
       pending = done ? '' : (events.pop() ?? '');
-      for (const event of events) if (take(event)) return clipBytes(kept, limit);
+      for (const event of events) if (take(event)) return finish(kept);
       // One endless event without a blank line is held to the same cap.
-      if (Buffer.byteLength(pending, 'utf8') >= limit) return clipBytes(kept + pending, limit);
-      if (done) return clipBytes(kept || lastProgress, limit);
+      if (Buffer.byteLength(pending, 'utf8') >= limit) return finish(kept + pending);
+      if (done) return finish(kept || lastProgress);
     }
   } finally {
     await reader.cancel().catch(() => {});
@@ -158,7 +207,8 @@ async function callApi(
     stop(`The request ran past ${TOTAL_TIMEOUT_MS / 60_000} minutes and was stopped`),
     TOTAL_TIMEOUT_MS,
   );
-  let idle = setTimeout(quiet, IDLE_TIMEOUT_MS);
+  // Armed once the response starts: a blocking route stays silent until its job ends.
+  let idle: ReturnType<typeof setTimeout> | undefined;
   const alive = () => {
     clearTimeout(idle);
     idle = setTimeout(quiet, IDLE_TIMEOUT_MS);
@@ -171,9 +221,11 @@ async function callApi(
       signal: controller.signal,
     });
     alive();
-    const text = /^text\/event-stream\b/i.test(response.headers.get('content-type') ?? '')
+    const { text, failed } = /^text\/event-stream\b/i.test(
+      response.headers.get('content-type') ?? '',
+    )
       ? await readEventStream(response, MAX_RESPONSE, alive, onProgress)
-      : await readBounded(response, MAX_RESPONSE, alive);
+      : { text: await readBounded(response, MAX_RESPONSE, alive), failed: false };
     return {
       content: [
         {
@@ -181,7 +233,7 @@ async function callApi(
           text: `HTTP ${response.status}${text ? `\n${text}` : ''}`,
         },
       ],
-      isError: !response.ok,
+      isError: !response.ok || failed,
     };
   } finally {
     clearTimeout(total);
