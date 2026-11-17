@@ -17,6 +17,7 @@ import json
 import logging
 import os
 import re
+import statistics
 import time
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -216,6 +217,38 @@ def _join_lines(raw: str) -> str:
     return out
 
 
+def _text_line(data: dict) -> dict | None:
+    """Where the read subtitles sit on screen, as fractions of the frame height.
+
+    The median bottom edge and height of each cue's lowest text line: burned
+    translations go there, at that size, instead of the bottom of the region
+    the person scanned, which is usually taller than the text.
+    """
+    try:
+        height = float(data.get("height") or 0)
+    except (TypeError, ValueError):
+        return None
+    if height <= 0:
+        return None
+    bottoms: list[float] = []
+    sizes: list[float] = []
+    for cue in data.get("cues", []):
+        boxes = [b for b in (cue.get("boxes") or [])
+                 if isinstance(b, (list, tuple)) and len(b) == 4]
+        if not boxes:
+            continue
+        low = max(boxes, key=lambda b: float(b[3]))
+        size = float(low[3]) - float(low[1])
+        if size <= 0:
+            continue
+        bottoms.append(float(low[3]) / height)
+        sizes.append(size / height)
+    if not bottoms:
+        return None
+    return {"bottom": round(statistics.median(bottoms), 4),
+            "height": round(statistics.median(sizes), 4)}
+
+
 def _apply_cues(job_id: str, data: dict, top: float, bottom: float) -> list[dict]:
     from api.routers.dub_core import _carry_srt_voice_metadata
     from services.speaker_clone import build_cast_sources
@@ -251,6 +284,11 @@ def _apply_cues(job_id: str, data: dict, top: float, bottom: float) -> list[dict
             job.pop("cast_sources", None)
         hs = dict(job.get("hardsub") or {})
         hs.update(region=[top, bottom], cue_count=len(data.get("cues", [])), ocr_at=time.time())
+        line = _text_line(data)
+        if line:
+            hs["text_line"] = line
+        else:
+            hs.pop("text_line", None)
         job["hardsub"] = hs
         job["source_lang_override"] = job.get("source_lang_override") or "zh"
         dub_pipeline.save_job(job_id, job)
