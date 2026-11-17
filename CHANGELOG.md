@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Export a translated-subtitle video without dubbing
+
+### Added
+
+- **Video + subtitles** export keeps the original audio and burns the translated subtitles where the removed on-screen ones were, with no dub needed (#79)
+
 ## [0.5.7-beta.8] — 2026-11-18
 
 Removing burned-in subtitles works again: on current ffmpeg the cleanup failed with "Invalid
