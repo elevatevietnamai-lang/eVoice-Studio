@@ -31,8 +31,74 @@ function error(id: JsonRpcRequest['id'], code: number, message: string): void {
   send({ jsonrpc: '2.0', id, error: { code, message } });
 }
 
+/**
+ * A fixed 120 s total timeout cut long jobs off mid-run and cancelled them. Now:
+ * - Until the response starts, only the total cap applies. Blocking routes (`/generate`,
+ *   transcription) answer when the job ends, after a GPU queue wait of up to 30 min, and the
+ *   backend enforces its own limits there.
+ * - Once the body streams (music, audiobook, dub export progress), the request is stopped only
+ *   when the backend goes quiet for the idle timeout.
+ * - The total cap guards against a stream that never ends.
+ */
+const IDLE_TIMEOUT_MS = Number(process.env.VOICESTUDIO_REPAIR_IDLE_TIMEOUT_MS) || 120_000;
+const TOTAL_TIMEOUT_MS = 60 * 60_000;
+
+/** Progress reported by a stream: a fraction (music) or a count of `total` (dub segments). */
+interface StreamProgress {
+  progress?: number;
+  message?: string;
+}
+
+/** What an agent sees of a server-sent event stream. */
+interface EventStreamText {
+  text: string;
+  /** The job ended on an error event (a stream answers 200 before its job runs). */
+  failed: boolean;
+}
+
+/**
+ * The kind of one server-sent event: its `event:` line (music), else the `type` of its JSON
+ * data (dub, audiobook), and the parsed data.
+ */
+function eventKind(event: string): { kind: string; data: Record<string, unknown> | undefined } {
+  const raw = event
+    .split(/\r?\n/)
+    .filter((line) => line.startsWith('data:'))
+    .map((line) => line.slice(5).replace(/^ /, ''))
+    .join('\n');
+  let data: Record<string, unknown> | undefined;
+  try {
+    const parsed = raw ? (JSON.parse(raw) as unknown) : undefined;
+    if (parsed && typeof parsed === 'object') data = parsed as Record<string, unknown>;
+  } catch {
+    // Plain-text data still has a kind from its `event:` line.
+  }
+  const named = /^event:\s*(\S+)\s*$/m.exec(event)?.[1];
+  const typed = typeof data?.type === 'string' ? data.type : undefined;
+  return { kind: named ?? typed ?? 'message', data };
+}
+
+/** Reads a fraction from a progress event: `progress` (0-1), or `current` of `total`. */
+function progressOf(data: Record<string, unknown> | undefined): StreamProgress {
+  if (!data) return {};
+  const message =
+    typeof data.message === 'string'
+      ? data.message
+      : typeof data.text === 'string'
+        ? data.text
+        : undefined;
+  if (typeof data.progress === 'number') return { progress: data.progress, message };
+  if (typeof data.current === 'number' && typeof data.total === 'number' && data.total > 0)
+    return { progress: data.current / data.total, message };
+  return { message };
+}
+
 /** Reads at most `limit` bytes, cancels the rest of the stream, and never emits a split UTF-8 character. */
-async function readBounded(response: Response, limit: number): Promise<string> {
+async function readBounded(
+  response: Response,
+  limit: number,
+  onChunk: () => void = () => {},
+): Promise<string> {
   if (!response.body) return '';
   const reader = response.body.getReader();
   const decoder = new TextDecoder('utf-8');
@@ -42,6 +108,7 @@ async function readBounded(response: Response, limit: number): Promise<string> {
     for (;;) {
       const { done, value } = await reader.read();
       if (done) return text + decoder.decode();
+      onChunk();
       const room = limit - received;
       if (value.byteLength >= room) {
         // Bytes of a character cut by the limit stay buffered in the decoder and are dropped.
@@ -55,7 +122,73 @@ async function readBounded(response: Response, limit: number): Promise<string> {
   }
 }
 
-async function callApi(args: Record<string, unknown>) {
+/** Cuts `text` to at most `limit` UTF-8 bytes without splitting a character. */
+function clipBytes(text: string, limit: number): string {
+  const bytes = Buffer.from(text, 'utf8');
+  if (bytes.byteLength <= limit) return text;
+  return new TextDecoder('utf-8').decode(bytes.subarray(0, limit), { stream: true });
+}
+
+/**
+ * Reads a server-sent event stream for an agent. Progress events are reported through
+ * `onProgress` and left out of the text, so a long job's result (`track`, `done`, `error`) is
+ * never pushed past the byte cap by hundreds of progress lines. The last progress event is kept
+ * when the stream ends without any other event.
+ */
+async function readEventStream(
+  response: Response,
+  limit: number,
+  onChunk: () => void,
+  onProgress: (progress: StreamProgress) => void,
+): Promise<EventStreamText> {
+  if (!response.body) return { text: '', failed: false };
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let pending = '';
+  let kept = '';
+  let lastProgress = '';
+  let lastKind = '';
+  const finish = (text: string): EventStreamText => ({
+    text: clipBytes(text, limit),
+    // A segment that fails mid-job is reported, but only a final error fails the call.
+    failed: lastKind === 'error',
+  });
+  const take = (event: string): boolean => {
+    if (!event.trim()) return false;
+    const { kind, data } = eventKind(event);
+    if (kind === 'progress') {
+      lastProgress = event;
+      onProgress(progressOf(data));
+      return false;
+    }
+    lastKind = kind;
+    kept += `${event}\n\n`;
+    return Buffer.byteLength(kept, 'utf8') >= limit;
+  };
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) pending += decoder.decode();
+      else {
+        onChunk();
+        pending += decoder.decode(value, { stream: true });
+      }
+      const events = pending.split(/\r?\n\r?\n/);
+      pending = done ? '' : (events.pop() ?? '');
+      for (const event of events) if (take(event)) return finish(kept);
+      // One endless event without a blank line is held to the same cap.
+      if (Buffer.byteLength(pending, 'utf8') >= limit) return finish(kept + pending);
+      if (done) return finish(kept || lastProgress);
+    }
+  } finally {
+    await reader.cancel().catch(() => {});
+  }
+}
+
+async function callApi(
+  args: Record<string, unknown>,
+  onProgress: (progress: StreamProgress) => void = () => {},
+) {
   const path = typeof args.path === 'string' ? args.path : '';
   if (!path.startsWith('/') || path.startsWith('//')) throw new Error('path must start with /');
   const method = typeof args.method === 'string' ? args.method.toUpperCase() : 'GET';
@@ -65,21 +198,71 @@ async function callApi(args: Record<string, unknown>) {
   const headers: Record<string, string> = { ...context.headers };
   const hasBody = args.body !== undefined && !['GET', 'HEAD'].includes(method);
   if (hasBody) headers['Content-Type'] = 'application/json';
-  const response = await fetch(`${context.baseUrl}${path}`, {
-    method,
-    headers,
-    body: hasBody ? JSON.stringify(args.body) : undefined,
-    signal: AbortSignal.timeout(120_000),
-  });
-  const text = await readBounded(response, MAX_RESPONSE);
-  return {
-    content: [
-      {
-        type: 'text',
-        text: `HTTP ${response.status}${text ? `\n${text}` : ''}`,
+  const controller = new AbortController();
+  const stop = (message: string) => () => controller.abort(new Error(message));
+  const quiet = stop(
+    `VoiceStudio sent nothing for ${Math.round(IDLE_TIMEOUT_MS / 1000)} s, so the request was stopped`,
+  );
+  const total = setTimeout(
+    stop(`The request ran past ${TOTAL_TIMEOUT_MS / 60_000} minutes and was stopped`),
+    TOTAL_TIMEOUT_MS,
+  );
+  // Armed once the response starts: a blocking route stays silent until its job ends.
+  let idle: ReturnType<typeof setTimeout> | undefined;
+  const alive = () => {
+    clearTimeout(idle);
+    idle = setTimeout(quiet, IDLE_TIMEOUT_MS);
+  };
+  try {
+    const response = await fetch(`${context.baseUrl}${path}`, {
+      method,
+      headers,
+      body: hasBody ? JSON.stringify(args.body) : undefined,
+      signal: controller.signal,
+    });
+    alive();
+    const { text, failed } = /^text\/event-stream\b/i.test(
+      response.headers.get('content-type') ?? '',
+    )
+      ? await readEventStream(response, MAX_RESPONSE, alive, onProgress)
+      : { text: await readBounded(response, MAX_RESPONSE, alive), failed: false };
+    return {
+      content: [
+        {
+          type: 'text',
+          text: `HTTP ${response.status}${text ? `\n${text}` : ''}`,
+        },
+      ],
+      isError: !response.ok || failed,
+    };
+  } finally {
+    clearTimeout(total);
+    clearTimeout(idle);
+  }
+}
+
+/** Forwards stream progress as MCP progress notifications when the client asked for them. */
+function progressNotifier(request: JsonRpcRequest): (progress: StreamProgress) => void {
+  const meta = request.params?._meta as { progressToken?: unknown } | undefined;
+  const token = meta?.progressToken;
+  if (typeof token !== 'string' && typeof token !== 'number') return () => {};
+  let last = -1;
+  let count = 0;
+  return ({ progress, message }) => {
+    // MCP requires the value to grow with every notification.
+    const value = typeof progress === 'number' && progress > last ? progress : last + 1e-6;
+    last = value;
+    count += 1;
+    send({
+      jsonrpc: '2.0',
+      method: 'notifications/progress',
+      params: {
+        progressToken: token,
+        progress: value,
+        ...(typeof progress === 'number' && progress <= 1 ? { total: 1 } : {}),
+        ...(typeof message === 'string' && message ? { message } : { message: `step ${count}` }),
       },
-    ],
-    isError: !response.ok,
+    });
   };
 }
 
@@ -107,7 +290,7 @@ async function handle(request: JsonRpcRequest): Promise<void> {
           name: 'api_request',
           title: 'VoiceStudio app API',
           description:
-            'Read or update the running VoiceStudio app through its session-scoped repair bridge. Use /openapi.json to discover backend routes and /__voicestudio/status plus the Electron controls listed in the repair context for backend recovery.',
+            'Read or update the running VoiceStudio app through its session-scoped repair bridge. Read /openapi.json before calling a route you have not seen in it; do not guess paths. Use /__voicestudio/status plus the Electron controls listed in the repair context for backend recovery. Generation routes that stream progress (music, dubbing, speech) can run for many minutes: one call waits for the whole job and returns its final events, so do not call it again while it runs.',
           inputSchema: {
             type: 'object',
             properties: {
@@ -135,7 +318,10 @@ async function handle(request: JsonRpcRequest): Promise<void> {
     try {
       result(
         request.id,
-        await callApi((request.params.arguments as Record<string, unknown> | undefined) ?? {}),
+        await callApi(
+          (request.params.arguments as Record<string, unknown> | undefined) ?? {},
+          progressNotifier(request),
+        ),
       );
     } catch (reason) {
       result(request.id, {
