@@ -164,30 +164,32 @@ export function LogSettings() {
           {t('common.open')}
         </Button>
       )}
-      {confirmClear && (
-        <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-warning/20 bg-warning/5 px-4 py-2 text-sm">
-          <p className="mr-auto">
-            {t(
-              source === 'frontend'
-                ? 'settings.clear_frontend_confirm'
-                : 'settings.clear_backend_confirm',
-            )}
-          </p>
-          <div className="flex gap-2">
-            <Button size="sm" disabled={busy} onClick={() => void clear()}>
-              {t('common.clear')}
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={busy}
-              onClick={() => setConfirmClear(false)}
-            >
-              {t('common.cancel')}
-            </Button>
+      <Reveal>
+        {confirmClear && (
+          <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-warning/20 bg-warning/5 px-4 py-2 text-sm">
+            <p className="mr-auto">
+              {t(
+                source === 'frontend'
+                  ? 'settings.clear_frontend_confirm'
+                  : 'settings.clear_backend_confirm',
+              )}
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" disabled={busy} onClick={() => void clear()}>
+                {t('common.clear')}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={busy}
+                onClick={() => setConfirmClear(false)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Reveal>
       <Reveal className="shrink-0">
         {(failed || query.isError) && (
           <p

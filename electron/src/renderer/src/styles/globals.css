@@ -365,7 +365,10 @@ html[data-theme-id=''] {
 }
 details > summary .lucide-chevron-down,
 details > summary .lucide-chevron-right {
-  transition: transform var(--motion-fast) var(--ease-standard);
+  /* Tailwind v4's rotate-* sets `rotate`, not `transform`, so both are listed. */
+  transition-property: transform, rotate;
+  transition-duration: var(--motion-fast);
+  transition-timing-function: var(--ease-standard);
 }
 [data-slot='secondary-sidebar-content'] details > summary,
 [data-slot='workspace-pane-content'] details > summary {

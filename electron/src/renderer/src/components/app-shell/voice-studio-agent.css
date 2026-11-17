@@ -35,7 +35,13 @@
   margin-left: auto;
   border: 1px solid var(--border);
   border-radius: var(--control-radius);
-  padding: 2px;
+  /* 1 px border + 1 px inset around 24 px (xs) buttons: the frame is 28 px, the height of the
+     sm buttons beside it. */
+  padding: 1px;
+}
+.agent-workspace-modes > * {
+  /* Concentric with the 8 px frame, 2 px in. */
+  border-radius: calc(var(--control-radius) - 2px);
 }
 .agent-workspace-details {
   flex-shrink: 0;
