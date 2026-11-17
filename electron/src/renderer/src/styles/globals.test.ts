@@ -185,7 +185,9 @@ it('never recolours the Button primitive from unlayered CSS', () => {
   expect(css).toMatch(
     /@layer utilities \{\s*:where\(\.workspace-titlebar \[data-variant='ghost'\]\)\[data-slot='button'\]/,
   );
-  expect(css).toMatch(/:where\(\.secondary-sidebar\[data-variant='navigation'\][^)]*\)\[data-slot='button'\]:hover/);
+  expect(css).toMatch(
+    /:where\(\s*\.secondary-sidebar\[data-variant='navigation'\][^)]*\)\[data-slot='button'\]:hover/,
+  );
 });
 
 /**
