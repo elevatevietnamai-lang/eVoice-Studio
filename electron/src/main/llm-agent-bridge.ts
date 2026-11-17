@@ -9,14 +9,21 @@ export interface AgentCompletionRequest {
   timeoutMs: number;
 }
 
+/** A CLI model id: never empty-but-flag-like, so it cannot become a CLI option. */
+export function validAgentModel(model: unknown): model is string {
+  return (
+    typeof model === 'string' &&
+    model.length <= 200 &&
+    (model === '' || /^[a-zA-Z0-9][\w./:@+-]*$/.test(model))
+  );
+}
+
 export function validateAgentCompletion(value: unknown): AgentCompletionRequest {
   const body = value as AgentCompletionRequest;
   if (
     !body ||
     !['codex', 'claude', 'pi', 'opencode', 'agy'].includes(body.agent) ||
-    typeof body.model !== 'string' ||
-    body.model.length > 200 ||
-    (body.model !== '' && !/^[a-zA-Z0-9][\w./:@+-]*$/.test(body.model)) ||
+    !validAgentModel(body.model) ||
     !Array.isArray(body.messages) ||
     body.messages.length < 1 ||
     body.messages.length > 100 ||

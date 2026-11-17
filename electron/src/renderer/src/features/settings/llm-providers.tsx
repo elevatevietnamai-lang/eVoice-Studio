@@ -11,7 +11,10 @@ import { Input } from '@/components/ui/input';
 import SearchableSelect from '@shared/components/SearchableSelect';
 import { ExternalLink } from '@/components/external-link';
 import { SettingsRowsSkeleton, SettingsSection, SettingsRow } from './settings-layout';
+import { GeminiAccount } from './gemini-account';
 const endpoint = '/api/settings/llm-providers';
+/** Gemini through the user's Google account (Antigravity CLI, agent `agy`). */
+export const GEMINI_PROVIDER_ID = 'agy-cli';
 export interface Provider {
   configured: boolean;
   id: string;
@@ -292,6 +295,31 @@ function ProviderForm({ provider, active }: { provider: Provider; active: boolea
       operation.current = null;
     }
   };
+  // A picked Gemini model is saved at once: Translate with Agent reads the saved value.
+  const pickModel = async (model: string) => {
+    change('model', model);
+    if (operation.current || provider.model_from_env) return;
+    const controller = new AbortController();
+    operation.current = controller;
+    setBusy(true);
+    setFailed(null);
+    try {
+      await apiJson(endpoint + '/' + encodeURIComponent(provider.id), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model, make_active: false, activate_if_unset: false }),
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted) return;
+      setSaved(true);
+      await client.invalidateQueries({ queryKey: ['llm-providers'] });
+    } catch {
+      if (!controller.signal.aborted) setFailed('settings.llmp_save_failed');
+    } finally {
+      if (!controller.signal.aborted) setBusy(false);
+      operation.current = null;
+    }
+  };
   const field = (key: keyof typeof fields, title: string, pinned: boolean, password = false) => (
     <SettingsRow
       id={'llm-' + key}
@@ -325,6 +353,13 @@ function ProviderForm({ provider, active }: { provider: Provider; active: boolea
     <div className="divide-y divide-border/50">
       {provider.transport === 'cli' && (
         <p className="px-4 py-3 text-sm text-muted-foreground">{t('settings.llmp_cli_help')}</p>
+      )}
+      {provider.id === GEMINI_PROVIDER_ID && (
+        <GeminiAccount
+          model={fields.model}
+          disabled={busy || provider.model_from_env}
+          onPickModel={(model) => void pickModel(model)}
+        />
       )}
       {provider.transport === 'sdk' && (
         <p className="px-4 py-3 text-sm text-muted-foreground">{t('settings.llmp_sdk_help')}</p>

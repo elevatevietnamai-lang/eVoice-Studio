@@ -13,7 +13,7 @@ The same provider and per-skill selectors support three transports:
 | --- | --- |
 | OpenAI-compatible SDK | OpenAI, Gemini, Mistral, Cohere, DeepSeek, xAI, Together, Fireworks, Perplexity, Qwen, Kimi, MiniMax, Z.AI, OpenRouter and other listed hosts; key, model, optional endpoint override |
 | Native LiteLLM SDK | Anthropic directly; Amazon Bedrock; Google Vertex AI; other LiteLLM providers using `provider/model` |
-| Installed CLI | Claude Code, Codex, Pi, OpenCode and Antigravity (`agy`) using their existing CLI login; model is optional |
+| Installed CLI | Claude Code, Codex, Pi, OpenCode and Gemini through Antigravity (`agy`) using their existing CLI login; model is optional |
 
 Azure OpenAI uses the resource's `/openai/v1` base URL and the deployment name
 as Model. Bedrock accepts a Bedrock API key or an existing `AWS_PROFILE` /
@@ -34,9 +34,32 @@ directory with restricted tools, without the repair API capability. A private
 loopback bridge lets backend LLM skills call that runner; its credential never
 reaches renderer JavaScript or the CLI child. Standalone web/backend deployments
 do not advertise desktop CLI providers as configured. Install/sign in to a CLI
-outside the app, then restart VoiceStudio to refresh discovery. CLI startup can
+outside the app, then restart VoiceStudio to refresh discovery (Gemini can also
+sign in from the app, below). CLI startup can
 exceed dictation's short latency budget; Ollama or a direct API is preferable for
 live cleanup. Existing batch agent dubbing remains available in the Dubbing tab.
+
+### Gemini with a Google account (Antigravity)
+
+**Gemini · Google account (Antigravity CLI)** runs Gemini on the Google account
+signed in to the Antigravity CLI (`agy`), such as a Google AI Pro plan. No API key
+is stored. Opening this provider in **Settings → LLM providers** checks the sign-in
+with `agy models` (a request to Google, run only then or on **Check again**) and
+shows one of three states: signed in, not signed in, or could not check (a timeout
+or network error is never reported as signed out). When signed out, **Sign in with
+Google** starts `agy acp --login`, opens Google's sign-in page in the browser and
+asks for the authorization code (or the address of the page Google lands on); the
+app passes it to the CLI and checks again. The card lists the account's Gemini
+models; the one picked is saved as this provider's model and is also what
+**Translate with Agent** in Dubbing uses when Gemini is the chosen agent. Blank
+uses the CLI's default model. The status check and sign-in only start from that
+page (`electron/src/main/gemini-account.ts`).
+
+Gemini CLI (`gemini`, "Login with Google") was considered as well. Antigravity was
+kept: its text-only lockdown and output parsing were already in place, its sign-in
+can be completed inside the app with a pasted code, and its Google AI Pro sign-in
+offers the newer Gemini models. Ask VoiceStudio Agent repair and app-operation runs
+need tools, so Gemini stays limited to translation and LLM completions.
 
 Antigravity cannot switch its tools off, and its headless runs default to Auto mode.
 VoiceStudio therefore starts it with strict tool review, no trusted workspaces, and

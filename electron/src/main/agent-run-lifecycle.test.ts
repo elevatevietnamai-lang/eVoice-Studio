@@ -192,11 +192,15 @@ const translation = {
 };
 const translate = () => mock.handlers.get(REPAIR_CHANNELS.translate)!(event, translation);
 
+/** Lookups made so far: setup locates every known CLI, however many there are. */
+const lookups = () => mock.execFile.mock.calls.length;
+
 it('stopping while the repair CLI is located prevents the spawn', async () => {
   await setup();
+  const base = lookups();
   const release = holdLocate();
   const first = start();
-  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(5));
+  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(base + 1));
   // Pending before the await: a concurrent run is refused, a stop is honoured.
   await expect(start()).rejects.toThrow('already running');
   expect(mock.handlers.get(REPAIR_CHANNELS.stop)!(event).status).toBe('stopped');
@@ -212,9 +216,10 @@ it('stopping while the repair CLI is located prevents the spawn', async () => {
 
 it('stopping while the translation CLI is located prevents the spawn', async () => {
   await setup();
+  const base = lookups();
   const release = holdLocate();
   const pending = translate();
-  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(5));
+  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(base + 1));
   await expect(start()).rejects.toThrow('already running');
   mock.handlers.get(REPAIR_CHANNELS.stopTranslation)!(event);
   release();
@@ -223,7 +228,7 @@ it('stopping while the translation CLI is located prevents the spawn', async () 
   // The cancelled launch is no longer pending, and a stale stop cancels nothing new.
   const again = holdLocate();
   const next = translate();
-  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(6));
+  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(base + 2));
   mock.handlers.get(REPAIR_CHANNELS.stopTranslation)!(event);
   again();
   await expect(next).rejects.toThrow('Agent translation was stopped');
@@ -232,17 +237,19 @@ it('stopping while the translation CLI is located prevents the spawn', async () 
 
 it('disposing while a CLI is located prevents both launches from spawning', async () => {
   await setup();
+  let base = lookups();
   let release = holdLocate();
   const repair = start();
-  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(5));
+  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(base + 1));
   dispose!();
   release();
   await repair;
 
   await setup();
+  base = lookups();
   release = holdLocate();
   const pending = translate();
-  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(10));
+  await vi.waitFor(() => expect(mock.execFile).toHaveBeenCalledTimes(base + 1));
   dispose!();
   dispose = undefined;
   release();
