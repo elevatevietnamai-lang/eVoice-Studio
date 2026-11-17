@@ -39,6 +39,7 @@
     "invalid": "عينات صوت غير صالحة"
   },
   "agentWorkspace": {
+    "model": "النموذج",
     "repair": "إصلاح مشكلة",
     "setup": "إعداد الاستوديو",
     "new_chat": "محادثة جديدة",
@@ -2986,6 +2987,7 @@
     "connect": "اتصال"
   },
   "repairAgent": {
+    "launcherHint": "اسحب للنقل، أو Alt + مفاتيح الأسهم",
     "title": "اسأل eVoice Studio Agent",
     "notInstalled": "غير مثبّت",
     "noSource": "افتح نسخة قابلة للكتابة من مصدر VoiceStudio ليتمكن الوكيل من إصلاحها.",

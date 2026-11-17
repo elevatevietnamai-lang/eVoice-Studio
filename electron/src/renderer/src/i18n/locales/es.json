@@ -39,6 +39,7 @@
     "invalid": "Muestras de audio no válidas"
   },
   "agentWorkspace": {
+    "model": "Modelo",
     "repair": "Reparar un problema",
     "setup": "Configurar mi estudio",
     "new_chat": "Nuevo chat",
@@ -2980,6 +2981,7 @@
     "connect": "Conectar"
   },
   "repairAgent": {
+    "launcherHint": "Arrastra para mover, o Alt + flechas",
     "title": "Preguntar a eVoice Studio Agent",
     "notInstalled": "No instalado",
     "noSource": "Abra una caja fuente VoiceStudio grabable para permitir que un agente la repare.",

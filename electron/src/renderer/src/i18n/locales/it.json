@@ -39,6 +39,7 @@
     "invalid": "Campioni audio non validi"
   },
   "agentWorkspace": {
+    "model": "Modello",
     "repair": "Ripara un problema",
     "setup": "Configura il mio studio",
     "new_chat": "Nuova chat",
@@ -2980,6 +2981,7 @@
     "connect": "Connetti"
   },
   "repairAgent": {
+    "launcherHint": "Trascina per spostare, oppure Alt + frecce",
     "title": "Chiedi a eVoice Studio Agent",
     "notInstalled": "Non installato",
     "noSource": "Apri un checkout scrivibile del sorgente di VoiceStudio per consentire la riparazione.",

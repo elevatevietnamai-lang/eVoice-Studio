@@ -414,6 +414,21 @@ async function versionOf(command: LaunchCommand): Promise<string> {
   return `${result.stdout || result.stderr || ''}`.trim().split(/\r?\n/)[0]?.slice(0, 120) || '';
 }
 
+/** A run's arguments: the harness's own, then the model picked in the dock (empty: CLI default). */
+export function repairLaunchArgs(
+  agent: RepairAgentId,
+  mode: 'diagnose' | 'fix',
+  appOperationOnly: boolean,
+  mcpConfigFile: string | undefined,
+  model: string,
+): string[] {
+  // Every CLI takes `--model`, as translation runs already pass it.
+  return [
+    ...launchArgs(agent, mode, appOperationOnly, mcpConfigFile),
+    ...(model ? ['--model', model] : []),
+  ];
+}
+
 export function launchArgs(
   agent: RepairAgentId,
   mode: 'diagnose' | 'fix',
@@ -1185,7 +1200,13 @@ export async function registerRepairAgents(
         args.push(...agyRepairArgs(sourceRoot, [bridgeDirectory], request.model ?? ''));
       } else {
         args.push(
-          ...launchArgs(request.agent, request.mode, appOperationOnly, apiBridge.mcpConfigFile),
+          ...repairLaunchArgs(
+            request.agent,
+            request.mode,
+            appOperationOnly,
+            apiBridge.mcpConfigFile,
+            request.model ?? '',
+          ),
         );
       }
       if (request.agent === 'opencode') {

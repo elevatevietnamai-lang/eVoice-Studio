@@ -39,6 +39,7 @@
     "invalid": "無效音訊取樣"
   },
   "agentWorkspace": {
+    "model": "模型",
     "repair": "修復問題",
     "setup": "設定我的工作室",
     "new_chat": "新增對話",
@@ -2978,6 +2979,7 @@
     "connect": "連線"
   },
   "repairAgent": {
+    "launcherHint": "拖曳以移動，或按 Alt + 方向鍵",
     "title": "詢問 eVoice Studio Agent",
     "notInstalled": "未安裝",
     "noSource": "請開啟可寫入的 VoiceStudio 原始碼簽出目錄，讓代理進行修復。",

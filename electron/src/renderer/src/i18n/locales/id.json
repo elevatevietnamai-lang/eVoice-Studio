@@ -39,6 +39,7 @@
     "invalid": "Sampel audio tidak valid"
   },
   "agentWorkspace": {
+    "model": "Model",
     "repair": "Perbaiki masalah",
     "setup": "Siapkan studio saya",
     "new_chat": "Chat baru",
@@ -2978,6 +2979,7 @@
     "connect": "Hubungkan"
   },
   "repairAgent": {
+    "launcherHint": "Seret untuk memindahkan, atau Alt + tombol panah",
     "title": "Tanya eVoice Studio Agent",
     "notInstalled": "Belum terpasang",
     "noSource": "Buka checkout sumber VoiceStudio yang dapat ditulis agar agen dapat memperbaikinya.",

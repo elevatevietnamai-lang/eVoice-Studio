@@ -39,6 +39,7 @@
     "invalid": "अमान्य ऑडियो सैंपल"
   },
   "agentWorkspace": {
+    "model": "मॉडल",
     "repair": "समस्या ठीक करें",
     "setup": "मेरा स्टूडियो सेट करें",
     "new_chat": "नई चैट",
@@ -2978,6 +2979,7 @@
     "connect": "कनेक्ट करें"
   },
   "repairAgent": {
+    "launcherHint": "खिसकाने के लिए खींचें, या Alt + तीर कुंजियाँ",
     "title": "eVoice Studio Agent से पूछें",
     "notInstalled": "इंस्टॉल नहीं है",
     "noSource": "एजेंट को सुधार करने देने के लिए लिखने योग्य VoiceStudio स्रोत चेकआउट खोलें।",

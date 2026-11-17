@@ -39,6 +39,7 @@
     "invalid": "Geçersiz ses örnekleri"
   },
   "agentWorkspace": {
+    "model": "Model",
     "repair": "Bir sorunu gider",
     "setup": "Stüdyomu kur",
     "new_chat": "Yeni sohbet",
@@ -2978,6 +2979,7 @@
     "connect": "Bağlan"
   },
   "repairAgent": {
+    "launcherHint": "Taşımak için sürükleyin veya Alt + ok tuşları",
     "title": "eVoice Studio Agent’a sor",
     "notInstalled": "Yüklü değil",
     "noSource": "Bir ajanın onarabilmesi için yazılabilir bir VoiceStudio kaynak çalışma kopyası açın.",

@@ -44,6 +44,9 @@ import {
 import { translationActivity } from '@/features/dub/translation-activity';
 import { TranslationAgentDock } from './translation-agent-dock';
 import { AgentDockFrame } from './agent-dock-frame';
+import { AgentLauncher } from './agent-launcher';
+import { AgentModelPicker } from './agent-model-picker';
+import { AnimatePresence } from 'motion/react';
 import './voice-studio-agent.css';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -262,24 +265,8 @@ export function VoiceStudioAgent() {
     }
   }
   if (!bridge) return null;
-  if (!open && !running && translation.runs.length) return <TranslationAgentDock />;
-  if (!open)
-    return createPortal(
-      <Button
-        size="icon"
-        variant="secondary"
-        aria-label={t('repairAgent.title')}
-        title={t('repairAgent.title')}
-        onClick={() => setOpen(true)}
-        className="fixed right-3 top-1/2 z-40 size-11 -translate-y-1/2 rounded-full border border-sidebar-border bg-sidebar text-sidebar-foreground shadow-lg"
-      >
-        <BotIcon />
-        {running && <span className="absolute right-1 top-1 size-2 rounded-full bg-primary" />}
-      </Button>,
-      document.body,
-    );
 
-  return (
+  const dock = (
     <AgentDockFrame
       label={t('repairAgent.title')}
       className="agent-workspace"
@@ -559,16 +546,38 @@ export function VoiceStudioAgent() {
             </Button>
           )}
         </div>
-        <p className="agent-workspace-hint">
-          {t(
-            planOnly
-              ? 'agentWorkspace.plan_only_source'
-              : shownMode === 'fix'
-                ? 'agentWorkspace.autopilot_hint'
-                : 'agentWorkspace.plan_hint',
-          )}
-        </p>
+        <div className="agent-workspace-footer">
+          <AgentModelPicker agent={selected} disabled={running} />
+          <p className="agent-workspace-hint">
+            {t(
+              planOnly
+                ? 'agentWorkspace.plan_only_source'
+                : shownMode === 'fix'
+                  ? 'agentWorkspace.autopilot_hint'
+                  : 'agentWorkspace.plan_hint',
+            )}
+          </p>
+        </div>
       </form>
     </AgentDockFrame>
+  );
+
+  // The dock opens by height under the page and the launcher scales in, instead of one
+  // replacing the other in a single frame (DESIGN.md, motion by function).
+  const view = open ? 'agent' : !running && translation.runs.length ? 'translation' : 'launcher';
+  return (
+    <>
+      <Reveal className="shrink-0">
+        {view === 'agent' ? dock : view === 'translation' ? <TranslationAgentDock /> : null}
+      </Reveal>
+      {createPortal(
+        <AnimatePresence>
+          {view === 'launcher' && (
+            <AgentLauncher key="agent-launcher" running={running} onOpen={() => setOpen(true)} />
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
+    </>
   );
 }

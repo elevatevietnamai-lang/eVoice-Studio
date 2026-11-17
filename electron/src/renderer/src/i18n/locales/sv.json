@@ -39,6 +39,7 @@
     "invalid": "Ogiltiga ljudsamplingar"
   },
   "agentWorkspace": {
+    "model": "Modell",
     "repair": "Åtgärda ett problem",
     "setup": "Konfigurera min studio",
     "new_chat": "Ny chatt",
@@ -2978,6 +2979,7 @@
     "connect": "Anslut"
   },
   "repairAgent": {
+    "launcherHint": "Dra för att flytta, eller Alt + piltangenter",
     "title": "Fråga eVoice Studio Agent",
     "notInstalled": "Inte installerad",
     "noSource": "Öppna en skrivbar VoiceStudio källcheck för att låta en agent reparera den.",

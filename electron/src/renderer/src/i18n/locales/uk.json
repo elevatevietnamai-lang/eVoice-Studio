@@ -39,6 +39,7 @@
     "invalid": "Некоректні аудіосемпли"
   },
   "agentWorkspace": {
+    "model": "Модель",
     "repair": "Усунути проблему",
     "setup": "Налаштувати студію",
     "new_chat": "Новий чат",
@@ -2982,6 +2983,7 @@
     "connect": "Підключитися"
   },
   "repairAgent": {
+    "launcherHint": "Перетягніть, щоб перемістити, або Alt + стрілки",
     "title": "Запитати eVoice Studio Agent",
     "notInstalled": "Не встановлено",
     "noSource": "Відкрийте доступну для запису копію коду VoiceStudio, щоб агент міг її виправити.",

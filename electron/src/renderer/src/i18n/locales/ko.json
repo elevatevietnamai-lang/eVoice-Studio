@@ -39,6 +39,7 @@
     "invalid": "유효하지 않은 오디오 샘플"
   },
   "agentWorkspace": {
+    "model": "모델",
     "repair": "문제 해결",
     "setup": "스튜디오 설정",
     "new_chat": "새 채팅",
@@ -2978,6 +2979,7 @@
     "connect": "연결"
   },
   "repairAgent": {
+    "launcherHint": "드래그하여 이동하거나 Alt + 화살표 키",
     "title": "eVoice Studio Agent에게 물어보기",
     "notInstalled": "설치되지 않음",
     "noSource": "에이전트가 수정할 수 있도록 쓰기 가능한 VoiceStudio 소스 체크아웃을 여세요.",

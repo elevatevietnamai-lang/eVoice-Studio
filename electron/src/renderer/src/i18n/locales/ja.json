@@ -39,6 +39,7 @@
     "invalid": "無効な音声サンプル"
   },
   "agentWorkspace": {
+    "model": "モデル",
     "repair": "問題を修復",
     "setup": "スタジオを設定",
     "new_chat": "新しいチャット",
@@ -2978,6 +2979,7 @@
     "connect": "接続"
   },
   "repairAgent": {
+    "launcherHint": "ドラッグで移動、または Alt + 矢印キー",
     "title": "eVoice Studio Agent に相談",
     "notInstalled": "未インストール",
     "noSource": "エージェントが修復できるよう、書き込み可能な VoiceStudio のソースチェックアウトを開いてください。",
