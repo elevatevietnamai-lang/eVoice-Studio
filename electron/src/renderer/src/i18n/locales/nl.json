@@ -2018,6 +2018,8 @@
     "languages": "Talen",
     "current_target": "Huidig doel ({{code}})",
     "all_selected_dubs": "Alle geselecteerde dubs ({{count}})",
+    "subtitled_video": "Video + ondertitels",
+    "subtitled_note": "Behoudt de originele audio en brandt de vertaalde ondertitels in de video — geen nasynchronisatie nodig. Regels staan waar de verwijderde ondertitels stonden.",
     "subs_note": "Ondertitels worden gegenereerd op basis van segmenttekst zoals ze zijn. Bewerk de segmenttabel voordat u deze exporteert als u typefouten tegenkomt.",
     "retime_note": "Het per segment hertimen van de video hercodeert bij het exporteren de hele video — reken op ongeveer 0,5–2× de videolengte op de CPU.",
     "pkg_clips_title": "Clips per segment (.zip)",

@@ -2018,6 +2018,8 @@
     "languages": "Ngôn ngữ",
     "current_target": "Ngôn ngữ đích hiện tại ({{code}})",
     "all_selected_dubs": "Tất cả bản lồng tiếng đã chọn ({{count}})",
+    "subtitled_video": "Video + phụ đề",
+    "subtitled_note": "Giữ âm thanh gốc và in phụ đề đã dịch vào video — không cần lồng tiếng. Các dòng nằm đúng chỗ phụ đề gốc đã xóa.",
     "subs_note": "Phụ đề được tạo nguyên trạng từ văn bản từng đoạn — chỉnh sửa bảng đoạn trước khi xuất nếu có lỗi chính tả.",
     "retime_note": "Căn lại thời gian video theo từng đoạn sẽ mã hóa lại toàn bộ video khi xuất — thường mất khoảng 0,5–2× thời lượng video trên CPU.",
     "pkg_clips_title": "Clip theo từng đoạn (.zip)",

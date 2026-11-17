@@ -1,5 +1,12 @@
 import { expect, it } from 'vitest';
-import { dubExportRequest, restoreExportPreferences, type DubExportOptions } from './dub-export';
+import {
+  dubExportRequest,
+  restoreExportPreferences,
+  subtitleCues,
+  subtitleLanguages,
+  type DubExportOptions,
+} from './dub-export';
+import type { DubSegment } from './dub-session';
 const options: DubExportOptions = {
   jobId: 'job',
   format: 'mp4',
@@ -65,4 +72,73 @@ it('restores only known karaoke styles from saved projects', () => {
   expect(restoreExportPreferences({ karaokeStyle: 'pop' }).karaokeStyle).toBe('pop');
   expect(restoreExportPreferences({ karaokeStyle: 'wobble' }).karaokeStyle).toBeUndefined();
   expect(restoreExportPreferences({ karaoke: true }).karaokeStyle).toBeUndefined();
+});
+it('burns subtitles over the original audio without needing a dub', () => {
+  const result = dubExportRequest({ ...options, format: 'subtitled', track: 'vi', tracks: [] });
+  const url = new URL(result.path, 'http://localhost');
+  expect(url.pathname).toBe('/dub/download/job');
+  expect(Object.fromEntries(url.searchParams)).toEqual({
+    lang: 'vi',
+    subtitles_only: 'true',
+    dual: 'true',
+  });
+  expect(result.name.endsWith('-vi-subtitled.mp4')).toBe(true);
+  expect(restoreExportPreferences({ format: 'subtitled' }).format).toBe('subtitled');
+  expect(restoreExportPreferences({ format: 'gif' }).format).toBeUndefined();
+});
+const segment = (id: string, over: Partial<DubSegment>): DubSegment => ({
+  id,
+  start: 0,
+  end: 1,
+  text: '',
+  text_original: '',
+  ...over,
+});
+it('offers subtitle languages that have translated text before any Generate', () => {
+  const untranslated = [segment('a', { text: '你好', text_original: '你好' })];
+  expect(subtitleLanguages(untranslated, 'vi')).toEqual([]);
+  const translated = [
+    segment('a', { text: 'Xin chào', text_original: '你好', translations: { vi: 'Xin chào' } }),
+    segment('b', {
+      text: '再见',
+      text_original: '再见',
+      translations: { fr: 'Au revoir', de: ' ' },
+    }),
+  ];
+  expect(subtitleLanguages(translated, 'vi').sort()).toEqual(['fr', 'vi']);
+  // A direct edit writes `text` only; the current target still counts.
+  expect(subtitleLanguages([segment('a', { text: 'Chào', text_original: '你好' })], 'vi')).toEqual([
+    'vi',
+  ]);
+});
+it('sends the lines the editor shows, with the original for dual layout', () => {
+  const segments = [
+    segment('a', {
+      start: 0,
+      end: 1,
+      text: 'Chào bạn',
+      text_original: '你好',
+      translations: { vi: 'Xin chào', fr: 'Bonjour' },
+    }),
+    segment('b', { start: 1, end: 2, text: '', text_original: '再见', translations: {} }),
+    segment('c', { start: 3, end: 3, text: 'zero length', text_original: 'x' }),
+    // Untranslated: the editor shows the source text, which must not burn back.
+    segment('d', { start: 4, end: 5, text: '你好', text_original: '你好' }),
+    // A translation equal to the source (a product name) still burns.
+    segment('e', {
+      start: 5,
+      end: 6,
+      text: 'ComfyUI',
+      text_original: 'ComfyUI',
+      translations: { vi: 'ComfyUI' },
+    }),
+  ];
+  // The current target burns the edited text, not the stored translation.
+  expect(subtitleCues(segments, 'vi', 'vi')).toEqual([
+    { id: 'a', start: 0, end: 1, text: 'Chào bạn', text_original: '你好' },
+    { id: 'e', start: 5, end: 6, text: 'ComfyUI' },
+  ]);
+  expect(subtitleCues(segments, 'fr', 'vi')).toEqual([
+    { id: 'a', start: 0, end: 1, text: 'Bonjour', text_original: '你好' },
+  ]);
 });

@@ -2018,6 +2018,8 @@
     "languages": "Bahasa",
     "current_target": "Target saat ini ({{code}})",
     "all_selected_dubs": "Semua sulih suara yang dipilih ({{count}})",
+    "subtitled_video": "Video + subtitle",
+    "subtitled_note": "Mempertahankan audio asli dan menanamkan subtitle terjemahan ke video — tanpa sulih suara. Baris muncul di tempat subtitle asli yang dihapus.",
     "subs_note": "Subjudul dihasilkan dari teks segmen sebagaimana adanya — edit tabel segmen sebelum mengekspor jika Anda melihat kesalahan ketik.",
     "retime_note": "Pengaturan ulang waktu video per segmen mengodekan ulang seluruh video saat ekspor — perkirakan sekitar 0,5–2× durasi video pada CPU.",
     "pkg_clips_title": "Klip per segmen (.zip)",

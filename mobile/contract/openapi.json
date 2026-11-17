@@ -5028,6 +5028,82 @@
     "title": "StreamOutputCapability",
     "type": "object"
    },
+   "SubtitleCue": {
+    "description": "One subtitle line as the editor shows it (translated text, its timing).",
+    "properties": {
+     "end": {
+      "title": "End",
+      "type": "number"
+     },
+     "id": {
+      "anyOf": [
+       {
+        "maxLength": 128,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Id"
+     },
+     "start": {
+      "minimum": 0.0,
+      "title": "Start",
+      "type": "number"
+     },
+     "text": {
+      "maxLength": 4000,
+      "title": "Text",
+      "type": "string"
+     },
+     "text_original": {
+      "anyOf": [
+       {
+        "maxLength": 4000,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Text Original"
+     }
+    },
+    "required": [
+     "start",
+     "end",
+     "text"
+    ],
+    "title": "SubtitleCue",
+    "type": "object"
+   },
+   "SubtitleCuesRequest": {
+    "description": "The lines a subtitles-only video export burns. Translations live in the\neditor until a dub is generated, so the job has no copy of them yet.",
+    "properties": {
+     "cues": {
+      "items": {
+       "$ref": "#/components/schemas/SubtitleCue"
+      },
+      "maxItems": 20000,
+      "minItems": 1,
+      "title": "Cues",
+      "type": "array"
+     },
+     "lang": {
+      "maxLength": 32,
+      "minLength": 1,
+      "title": "Lang",
+      "type": "string"
+     }
+    },
+    "required": [
+     "lang",
+     "cues"
+    ],
+    "title": "SubtitleCuesRequest",
+    "type": "object"
+   },
    "SysinfoResponse": {
     "additionalProperties": true,
     "description": "GET /sysinfo",
@@ -11961,6 +12037,29 @@
       }
      },
      {
+      "description": "Keep the original audio and burn the translated subtitles of `lang` (posted to /dub/subtitle-cues, or a generated track's text). No dubbed track needed; other audio options are ignored.",
+      "in": "query",
+      "name": "subtitles_only",
+      "required": false,
+      "schema": {
+       "default": false,
+       "description": "Keep the original audio and burn the translated subtitles of `lang` (posted to /dub/subtitle-cues, or a generated track's text). No dubbed track needed; other audio options are ignored.",
+       "title": "Subtitles Only",
+       "type": "boolean"
+      }
+     },
+     {
+      "description": "With subtitles_only=1: the language whose subtitles are burned.",
+      "in": "query",
+      "name": "lang",
+      "required": false,
+      "schema": {
+       "description": "With subtitles_only=1: the language whose subtitles are burned.",
+       "title": "Lang",
+       "type": "string"
+      }
+     },
+     {
       "in": "header",
       "name": "X-VoiceStudio-Path-Authorization",
       "required": false,
@@ -12105,6 +12204,29 @@
        "default": "m4a",
        "description": "Audio-only jobs (#119): output container \u2014 wav, m4a, mp3, or flac. Ignored for video jobs.",
        "title": "Out Format",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Keep the original audio and burn the translated subtitles of `lang` (posted to /dub/subtitle-cues, or a generated track's text). No dubbed track needed; other audio options are ignored.",
+      "in": "query",
+      "name": "subtitles_only",
+      "required": false,
+      "schema": {
+       "default": false,
+       "description": "Keep the original audio and burn the translated subtitles of `lang` (posted to /dub/subtitle-cues, or a generated track's text). No dubbed track needed; other audio options are ignored.",
+       "title": "Subtitles Only",
+       "type": "boolean"
+      }
+     },
+     {
+      "description": "With subtitles_only=1: the language whose subtitles are burned.",
+      "in": "query",
+      "name": "lang",
+      "required": false,
+      "schema": {
+       "description": "With subtitles_only=1: the language whose subtitles are burned.",
+       "title": "Lang",
        "type": "string"
       }
      },
@@ -13368,6 +13490,54 @@
      }
     },
     "summary": "Dub Export Srt"
+   }
+  },
+  "/dub/subtitle-cues/{job_id}": {
+   "post": {
+    "description": "Keep the subtitle lines the editor shows for one language on the job.\n\nTranslations stay in the editor until a dub is generated, so a\nsubtitles-only export (``/dub/download?subtitles_only=1``) has nothing to\nburn without them. Stored apart from ``segments_i18n``, which belongs to\ngenerated tracks.",
+    "operationId": "dub_subtitle_cues_dub_subtitle_cues__job_id__post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SubtitleCuesRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Dub Subtitle Cues"
    }
   },
   "/dub/thumb/{job_id}": {

@@ -2018,6 +2018,8 @@
     "languages": "Diller",
     "current_target": "Mevcut hedef ({{code}})",
     "all_selected_dubs": "Seçilen tüm dublajlar ({{count}})",
+    "subtitled_video": "Video + altyazı",
+    "subtitled_note": "Orijinal sesi korur ve çevrilmiş altyazıları videoya gömer — dublaj gerekmez. Satırlar, kaldırılan altyazıların yerinde görünür.",
     "subs_note": "Alt başlıklar olduğu gibi bölüm metninden oluşturulur; yazım hataları fark ederseniz, dışa aktarmadan önce bölüm tablosunu düzenleyin.",
     "retime_note": "Segment bazlı video yeniden zamanlama, dışa aktarmada videonun tamamını yeniden kodlar — CPU'da yaklaşık video süresinin 0,5–2 katını bekleyin.",
     "pkg_clips_title": "Segment başına klipler (.zip)",

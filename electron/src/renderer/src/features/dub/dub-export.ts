@@ -1,4 +1,26 @@
-export type DubExportFormat = 'mp4' | 'wav' | 'mp3' | 'srt' | 'vtt' | 'ass' | 'stems' | 'clips';
+import type { DubSegment } from './dub-session';
+
+export type DubExportFormat =
+  | 'mp4'
+  | 'subtitled'
+  | 'wav'
+  | 'mp3'
+  | 'srt'
+  | 'vtt'
+  | 'ass'
+  | 'stems'
+  | 'clips';
+export const DUB_EXPORT_FORMATS: readonly DubExportFormat[] = [
+  'mp4',
+  'subtitled',
+  'wav',
+  'mp3',
+  'srt',
+  'vtt',
+  'ass',
+  'stems',
+  'clips',
+];
 /** Karaoke look: the backend's `karaoke_style` (backend/services/karaoke_ass.py). */
 export type KaraokeStyle = 'sweep' | 'highlight' | 'pop';
 export const KARAOKE_STYLES: readonly KaraokeStyle[] = ['sweep', 'highlight', 'pop'];
@@ -33,6 +55,12 @@ export function dubExportRequest(options: DubExportOptions) {
     query.set('karaoke', String(burn && karaoke && !dual));
     if (burn && karaoke && !dual && karaokeStyle !== 'sweep')
       query.set('karaoke_style', karaokeStyle);
+  } else if (format === 'subtitled') {
+    // Original audio + burned translated subtitles: no dubbed track needed.
+    endpoint = 'download';
+    extension = 'mp4';
+    query.set('subtitles_only', 'true');
+    query.set('dual', String(dual));
   } else if (format === 'wav' || format === 'mp3') {
     endpoint = format === 'wav' ? 'download-audio' : 'download-mp3';
     query.set('preserve_bg', String(preserveBg));
@@ -67,7 +95,7 @@ export function restoreExportPreferences(raw: unknown): DubExportPreferences {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
   const value = raw as Record<string, unknown>;
   const result: DubExportPreferences = {};
-  if (['mp4', 'wav', 'mp3', 'srt', 'vtt', 'ass', 'stems', 'clips'].includes(String(value.format)))
+  if (DUB_EXPORT_FORMATS.includes(value.format as DubExportFormat))
     result.format = value.format as DubExportFormat;
   if (typeof value.track === 'string') result.track = value.track;
   if (Array.isArray(value.excluded))
@@ -79,4 +107,64 @@ export function restoreExportPreferences(raw: unknown): DubExportPreferences {
   if (['128', '192', '256', '320'].includes(String(value.bitrate)))
     result.bitrate = String(value.bitrate);
   return result;
+}
+
+/** One burned subtitle line, as `POST /dub/subtitle-cues` takes it. */
+export interface SubtitleCue {
+  id: string;
+  start: number;
+  end: number;
+  text: string;
+  text_original?: string;
+}
+const cueText = (segment: DubSegment, code: string, currentCode: string) => {
+  if (code !== currentCode) return segment.translations?.[code]?.trim() || '';
+  // A row still showing its source text is untranslated: burning it would put
+  // the original back over the spot its on-screen subtitle was removed from.
+  const text = segment.text.trim();
+  const translated =
+    Boolean(segment.translations?.[code]?.trim()) || text !== (segment.text_original || '').trim();
+  return translated ? text : '';
+};
+/**
+ * Languages with translated subtitle text in the editor. Translations live in
+ * the editor until a dub is generated, so this works before any Generate. The
+ * current target counts once any line differs from its original (direct edits
+ * write `text` only).
+ */
+export function subtitleLanguages(segments: DubSegment[], currentCode: string): string[] {
+  const codes = new Set<string>();
+  for (const segment of segments)
+    for (const [code, text] of Object.entries(segment.translations || {}))
+      if (text?.trim()) codes.add(code);
+  if (
+    currentCode &&
+    segments.some(
+      (segment) =>
+        segment.text.trim() && segment.text.trim() !== (segment.text_original || '').trim(),
+    )
+  )
+    codes.add(currentCode);
+  return [...codes];
+}
+/** The lines a subtitles-only export burns for `code`: what the editor shows. */
+export function subtitleCues(
+  segments: DubSegment[],
+  code: string,
+  currentCode: string,
+): SubtitleCue[] {
+  return segments.flatMap((segment) => {
+    const text = cueText(segment, code, currentCode);
+    if (!text || !(segment.end > segment.start) || segment.start < 0) return [];
+    const original = segment.text_original?.trim();
+    return [
+      {
+        id: segment.id,
+        start: segment.start,
+        end: segment.end,
+        text,
+        ...(original && original !== text ? { text_original: original } : {}),
+      },
+    ];
+  });
 }

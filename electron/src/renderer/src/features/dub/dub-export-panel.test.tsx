@@ -4,6 +4,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 const state = vi.hoisted(() => ({
   setPreferences: vi.fn(),
   saveExport: vi.fn(async (_url: string, _name: string) => undefined),
+  apiJson: vi.fn(async (_path: string, _init?: RequestInit) => ({})),
+  calls: [] as string[],
 }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }),
@@ -12,6 +14,7 @@ vi.mock('./dub-session', () => ({ setDubExportPreferences: state.setPreferences 
 vi.mock('@/components/bridge', () => ({ getBridge: () => ({}) }));
 vi.mock('@/lib/export-history', () => ({ saveExport: state.saveExport }));
 vi.mock('@/lib/api/client', () => ({
+  apiJson: state.apiJson,
   apiPath: (path: string) => path,
   describeError: (error: unknown) => String(error),
   errorFromResponse: async () => new Error('failed'),
@@ -64,4 +67,84 @@ it('offers karaoke looks only while karaoke burns, and exports the chosen look',
 
   rerender(<DubExportPanel session={session({ format: 'ass' })} disabled={false} />);
   expect(screen.getByText('exportModal.karaoke_style')).toBeTruthy();
+});
+
+it('exports burned subtitles with the original audio before any dub is generated', async () => {
+  state.apiJson.mockImplementation(async (path: string) => {
+    state.calls.push(path);
+    return {};
+  });
+  state.saveExport.mockImplementation(async (url: string) => {
+    state.calls.push(url);
+    return undefined;
+  });
+  const untranslated = {
+    ...session({ format: 'subtitled' }),
+    tracks: [],
+    target: 'Vietnamese',
+    segments: [{ id: 'a', start: 0, end: 1, text: '你好', text_original: '你好' }],
+  } as unknown as DubSession;
+  const { rerender } = render(<DubExportPanel session={untranslated} disabled={false} />);
+  expect(screen.getByRole('button', { name: 'exportModal.subtitled_video' })).toBeTruthy();
+  expect(
+    (screen.getByRole('button', { name: 'exportModal.export' }) as HTMLButtonElement).disabled,
+  ).toBe(true);
+
+  const translated = {
+    ...untranslated,
+    segments: [
+      {
+        id: 'a',
+        start: 0,
+        end: 1,
+        text: 'Xin chào',
+        text_original: '你好',
+        translations: { vi: 'Xin chào' },
+      },
+    ],
+  } as unknown as DubSession;
+  rerender(<DubExportPanel session={translated} disabled={false} />);
+  expect(screen.getByText('exportModal.subtitled_note')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'exportModal.export' }));
+  await waitFor(() => expect(state.saveExport).toHaveBeenCalled());
+  const [path, init] = state.apiJson.mock.calls[0];
+  expect(path).toBe('/dub/subtitle-cues/job');
+  expect(JSON.parse(String(init?.body))).toEqual({
+    lang: 'vi',
+    cues: [{ id: 'a', start: 0, end: 1, text: 'Xin chào', text_original: '你好' }],
+  });
+  // Cues are stored before the export reads them.
+  expect(state.calls[0]).toBe('/dub/subtitle-cues/job');
+  expect(state.calls[1]).toContain('subtitles_only=true');
+  expect(state.calls[1]).toContain('lang=vi');
+});
+
+it('hides the subtitled video export for audio-only jobs, even when it was the saved choice', () => {
+  render(
+    <DubExportPanel
+      session={
+        {
+          ...session({ format: 'subtitled' }),
+          inputType: 'audio',
+          target: 'Vietnamese',
+          segments: [
+            {
+              id: 'a',
+              start: 0,
+              end: 1,
+              text: 'Xin chào',
+              text_original: '你好',
+              translations: { vi: 'Xin chào' },
+            },
+          ],
+        } as unknown as DubSession
+      }
+      disabled={false}
+    />,
+  );
+  expect(screen.queryByRole('button', { name: 'exportModal.subtitled_video' })).toBeNull();
+  expect(
+    screen.getByRole('button', { name: 'exportModal.wav_lossless' }).getAttribute('aria-pressed'),
+  ).toBe('true');
+  expect(screen.queryByText('exportModal.subtitled_note')).toBeNull();
 });

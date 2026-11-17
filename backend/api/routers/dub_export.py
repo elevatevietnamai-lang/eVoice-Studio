@@ -37,7 +37,7 @@ from services.video_retime import (
 )
 
 from api.routers.dub_core import _get_job, _safe_lang_or_400
-from schemas.requests import ProsodyMirrorRequest
+from schemas.requests import ProsodyMirrorRequest, SubtitleCuesRequest
 from core.browser_guard import reject_cross_site_get
 
 router = APIRouter()
@@ -877,6 +877,111 @@ def _build_audio_export_cmd(
     return local_inputs_only(cmd, tool="ffmpeg")
 
 
+@router.post("/dub/subtitle-cues/{job_id}")
+async def dub_subtitle_cues(job_id: str, req: SubtitleCuesRequest):
+    """Keep the subtitle lines the editor shows for one language on the job.
+
+    Translations stay in the editor until a dub is generated, so a
+    subtitles-only export (``/dub/download?subtitles_only=1``) has nothing to
+    burn without them. Stored apart from ``segments_i18n``, which belongs to
+    generated tracks.
+    """
+    from services.dub_pipeline import put_job, save_job
+
+    _job_dir_or_400(job_id)
+    lang = _safe_lang_or_400(req.lang)
+    job = _get_job(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    cues = [cue.model_dump(exclude_none=True) for cue in req.cues]
+    stored = dict(job.get("subtitle_cues") or {})
+    stored[lang] = cues
+    job["subtitle_cues"] = stored
+    put_job(job_id, job)
+    save_job(job_id, job)
+    return {"lang": lang, "count": len(cues)}
+
+
+def _subtitle_only_segments(job: dict, lang: "str | None") -> list:
+    """Lines to burn: the editor's posted cues, else a generated track's text."""
+    if not lang:
+        return []
+    posted = (job.get("subtitle_cues") or {}).get(lang)
+    if isinstance(posted, list) and posted:
+        return [dict(cue) for cue in posted if isinstance(cue, dict)]
+    i18n = job.get("segments_i18n")
+    if isinstance(i18n, dict) and i18n.get(lang):
+        return _segments_for_lang(job, lang)
+    return []
+
+
+async def _export_subtitles_only(
+    job: dict, job_id: str, job_dir: str, lang: "str | None", dual: bool, save_authorization: str,
+):
+    """The job video (cleaned of on-screen subtitles when that ran) with its
+    original audio and the translated subtitles burned in. No dub needed."""
+    if (job.get("input_type") or "video").lower() == "audio":
+        raise HTTPException(status_code=400, detail="Burned subtitles need a video; this job is audio only")
+    segments = [
+        seg for seg in _subtitle_only_segments(job, lang)
+        if str(seg.get("text") or "").strip()
+    ]
+    if not segments:
+        raise HTTPException(status_code=400, detail="No translated subtitles to burn yet")
+
+    video_path = _dub_artifact(job["video_path"], job_id, missing_detail="Source video not found")
+    stamp = _unique_stamp()
+    exports_dir = os.path.join(job_dir, "exports")
+    os.makedirs(exports_dir, exist_ok=True)
+    # The burn writer reads job["segments"]; give it these lines, untouched by
+    # generated-track overlays. Placement over removed on-screen subtitles
+    # still comes from the job's hardsub state and job_dir.
+    burn_job = {**job, "segments": segments, "segments_i18n": None}
+    sub_path = _write_burn_srt(burn_job, exports_dir, stamp, dual)
+    if not sub_path:
+        raise HTTPException(status_code=400, detail="No translated subtitles to burn yet")
+    output_path = os.path.join(exports_dir, f"subtitled_video_{stamp}.mp4")
+    cmd = [
+        find_ffmpeg(), "-i", video_path,
+        "-filter_complex", subtitle_burn_filter("[0:v]", sub_path, "[vsub]", job=job, is_ass=False),
+        "-map", "[vsub]", "-map", "0:a:0?",
+        "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-b:a", "192k",
+    ]
+    cmd += audio_track_metadata(0, job.get("source_lang"), "Original")
+    cmd += ["-movflags", "+faststart", output_path, "-y"]
+    try:
+        rc, _, stderr = await run_ffmpeg(cmd, timeout=1800.0, job_id=job_id)
+        if rc != 0:
+            raise Exception(stderr.decode(errors="replace") if stderr else "ffmpeg burn non-zero")
+    except asyncio.TimeoutError:
+        raise HTTPException(status_code=504, detail="ffmpeg subtitle burn timed out")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=explain_ffmpeg_failure(e, "burn subtitles into the video", cmd=cmd),
+        )
+    finally:
+        try:
+            os.remove(sub_path)
+        except OSError:
+            pass
+    if not os.path.exists(output_path) or os.path.getsize(output_path) == 0:
+        raise HTTPException(status_code=500, detail="ffmpeg subtitle burn produced no output file")
+    logger.info("Subtitles-only export completed (%d bytes)", os.path.getsize(output_path))
+
+    base_name = os.path.splitext(job.get("filename", "output"))[0]
+    safe_name = "".join(c for c in base_name if c.isalnum() or c in "-_ ").strip() or "output"
+    dl_name = f"subtitled_{safe_name}_{stamp}.mp4"
+    save_path = _consume_native_save(save_authorization)
+    if save_path:
+        return _native_save(output_path, save_path, dl_name, media_type="video/mp4")
+    return FileResponse(
+        output_path, media_type="video/mp4",
+        headers={"Content-Disposition": content_disposition(dl_name)},
+    )
+
+
 @router.get("/dub/download/{job_id}", dependencies=[Depends(reject_cross_site_get)])
 @router.get("/dub/download/{job_id}/{filename}", dependencies=[Depends(reject_cross_site_get)])
 async def dub_download(
@@ -890,6 +995,8 @@ async def dub_download(
     karaoke: bool = Query(False, description="When burn_subs=1, burn a word-timed karaoke highlight (ASS) instead of line subtitles. Ignored when dual=1 (dual karaoke is unsupported — the line burn renders instead)."),
     karaoke_style: KaraokeStyle = Query("sweep", description="Karaoke look: sweep (left-to-right fill), highlight (only the spoken word is coloured) or pop (highlight plus a short bounce). Used only with karaoke=1."),
     out_format: str = Query("m4a", description="Audio-only jobs (#119): output container — wav, m4a, mp3, or flac. Ignored for video jobs."),
+    subtitles_only: bool = Query(False, description="Keep the original audio and burn the translated subtitles of `lang` (posted to /dub/subtitle-cues, or a generated track's text). No dubbed track needed; other audio options are ignored."),
+    lang: str = Query(None, description="With subtitles_only=1: the language whose subtitles are burned."),
 ):
     # Strict allowlist on the path param BEFORE it reaches any filesystem
     # path or ffmpeg argv (export dir, retime work path, slice paths). Real
@@ -898,6 +1005,11 @@ async def dub_download(
     job = _get_job(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
+
+    if subtitles_only:
+        return await _export_subtitles_only(
+            job, job_id, job_dir, _safe_lang_or_400(lang), dual, save_authorization,
+        )
 
     tracks = job.get("dubbed_tracks", {})
     if not tracks:

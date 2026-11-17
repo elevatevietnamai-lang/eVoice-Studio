@@ -2018,6 +2018,8 @@
     "languages": "語言",
     "current_target": "目前目標 ({{code}})",
     "all_selected_dubs": "所有選定的配音 ({{count}})",
+    "subtitled_video": "影片 + 字幕",
+    "subtitled_note": "保留原始音訊，並將翻譯後的字幕燒錄到影片中，無需配音。字幕顯示在已移除的原字幕位置。",
     "subs_note": "字幕原樣從片段文字產生 - 如果您發現拼字錯誤，請在匯出之前編輯片段表。",
     "retime_note": "按片段重新調整影片時長需要在匯出時對整部影片重新編碼——在 CPU 上大約需要影片長度的 0.5–2 倍。",
     "pkg_clips_title": "每段剪輯 (.zip)",

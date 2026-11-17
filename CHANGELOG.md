@@ -12,10 +12,12 @@ metadata and the backend fallback mirror it.
 
 - Dubbing can research the video before translating: your agent writes an editable brief that translation follows
 - The user guides send readers to the download page instead of the code repository
+- Export a translated-subtitle video without dubbing
 
 ### Added
 
 - **Research the video** beside the translation brief: the chosen agent reads the transcript, five frames and the web, then writes the topic, tone, terminology, likely OCR errors and rules into the brief, only when you click it (#81)
+- **Video + subtitles** export keeps the original audio and burns the translated subtitles where the removed on-screen ones were, with no dub needed (#79)
 
 ### Changed
 

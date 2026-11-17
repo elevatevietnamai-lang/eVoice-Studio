@@ -2020,6 +2020,8 @@
     "languages": "Langues",
     "current_target": "Cible actuelle ({{code}})",
     "all_selected_dubs": "Tous les doublages sélectionnés ({{count}})",
+    "subtitled_video": "Vidéo + sous-titres",
+    "subtitled_note": "Conserve l’audio d’origine et incruste les sous-titres traduits dans la vidéo, sans doublage. Les lignes se placent là où étaient les sous-titres supprimés.",
     "subs_note": "Les sous-titres sont générés à partir du texte du segment tel quel : modifiez le tableau des segments avant de l'exporter si vous avez repéré des fautes de frappe.",
     "retime_note": "Le recalage vidéo par segment réencode l'intégralité de la vidéo à l'export — comptez environ 0,5 à 2× la durée de la vidéo sur CPU.",
     "pkg_clips_title": "Clips par segment (.zip)",

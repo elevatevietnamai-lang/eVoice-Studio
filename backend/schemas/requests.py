@@ -221,6 +221,30 @@ class ProsodyMirrorSegment(BaseModel):
         return self
 
 
+class SubtitleCue(BaseModel):
+    """One subtitle line as the editor shows it (translated text, its timing)."""
+
+    id: Optional[str] = Field(default=None, max_length=128)
+    start: float = Field(ge=0)
+    end: float
+    text: str = Field(max_length=4000)
+    text_original: Optional[str] = Field(default=None, max_length=4000)
+
+    @model_validator(mode="after")
+    def validate_span(self) -> "SubtitleCue":
+        if self.end <= self.start:
+            raise ValueError("Subtitle end must be after its start")
+        return self
+
+
+class SubtitleCuesRequest(BaseModel):
+    """The lines a subtitles-only video export burns. Translations live in the
+    editor until a dub is generated, so the job has no copy of them yet."""
+
+    lang: str = Field(min_length=1, max_length=32)
+    cues: List[SubtitleCue] = Field(min_length=1, max_length=20000)
+
+
 class CleanupSegmentsRequest(BaseModel):
     """The editor's current segments; without them the job's stored copy is
     cleaned, which misses every edit made since transcription."""
