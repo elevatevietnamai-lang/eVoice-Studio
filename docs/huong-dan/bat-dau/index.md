@@ -24,7 +24,7 @@ eVoice Studio là ứng dụng máy tính để lồng tiếng, nhân bản gi�
 
 ### 1. Tải và cài đặt eVoice Studio trên Windows
 
-1. Tải file bộ cài `eVoice-Studio-Electron-<phiên bản>-win-x64.exe` từ trang Releases tại `https://github.com/elevatevietnamai-lang/eVoice-Studio` hoặc bấm nút tải trên trang `https://evoice.elevatemarketing.vn`.
+1. Bấm nút tải trên trang `https://evoice.elevatemarketing.vn` để tải file bộ cài `eVoice-Studio-Electron-<phiên bản>-win-x64.exe`.
 2. Mở file `.exe` vừa tải về để chạy trình cài đặt. Vì bộ cài bản beta chưa ký số, Windows SmartScreen có thể hiện hộp thoại cảnh báo: hãy bấm `Thông tin thêm` rồi chọn `Vẫn chạy`.
 3. Chọn thư mục cài đặt theo hướng dẫn trên màn hình. Trình cài đặt chạy dưới quyền người dùng hiện tại, không yêu cầu quyền quản trị viên (Administrator), và tự thiết lập Python cùng công cụ âm thanh trong lần khởi động đầu tiên.
 
