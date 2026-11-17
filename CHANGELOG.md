@@ -14,11 +14,11 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
-- Ask VoiceStudio Agent no longer cuts off a music, dubbing or speech job after two minutes: it waits while the job reports progress and returns the result without the progress lines (#PR)
+- Ask VoiceStudio Agent no longer cuts off a music, dubbing or speech job after two minutes: it waits while the job reports progress and returns the result without the progress lines (#72)
 
 ### Docs
 
-- The LLM provider guide explains how the agent's API bridge waits for long jobs, and that an empty Gemini model uses the one set in Antigravity (#PR)
+- The LLM provider guide explains how the agent's API bridge waits for long jobs, and that an empty Gemini model uses the one set in Antigravity (#72)
 
 ## [0.5.7-beta.6] — 2026-11-17
 
