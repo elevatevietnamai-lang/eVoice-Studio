@@ -101,7 +101,9 @@ def local_inputs_only(cmd: list) -> list:
     out, i = [cmd[0]], 1
     while i < len(cmd):
         if cmd[i] == "-i" and i + 1 < len(cmd):
-            out += [*wl, "-i", cmd[i + 1]]
+            # ffmpeg 7 reads "-" through its "fd" protocol, which the whitelist refuses;
+            # "pipe:0" is the same stdin through the allowed "pipe" protocol.
+            out += [*wl, "-i", "pipe:0" if cmd[i + 1] == "-" else cmd[i + 1]]
             i += 2
         else:
             out.append(cmd[i])
