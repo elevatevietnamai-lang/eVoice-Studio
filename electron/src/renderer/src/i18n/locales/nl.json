@@ -56,7 +56,8 @@
     "send": "Versturen",
     "autopilot_hint": "Automatisch voert de gevraagde acties uit. Enter verstuurt; Shift+Enter begint een nieuwe regel.",
     "plan_hint": "Plannen bekijkt de appstatus zonder wijzigingen.",
-    "no_harness": "Installeer Codex, Claude Code, OpenCode of Pi en meld je daar aan om een agent te verbinden."
+    "plan_only_source": "Gemini leest de broncode om een oplossing te plannen, maar bewerkt die niet. Zet de bron uit voor Autopilot.",
+    "no_harness": "Installeer Codex, Claude Code, OpenCode, Gemini (Antigravity) of Pi en meld je daar aan om een agent te verbinden."
   },
   "siteBrowser": {
     "return_studio": "Terug naar Studio",
@@ -867,7 +868,7 @@
     "agent_rerendering": "Gecorrigeerde lijnen weergeven...",
     "agent_cli_desc": "{{agent}} vertaalt elk segment in context en herschrijft timingafwijkingen na meting van de spraak.",
     "choose_translation_agent": "Vertaalagent kiezen",
-    "no_local_agents": "Installeer Codex, Claude Code, OpenCode of Pi om met een lokale agent te vertalen.",
+    "no_local_agents": "Installeer Codex, Claude Code, OpenCode, Gemini (Antigravity) of Pi om met een lokale agent te vertalen.",
     "agent_translation_complete": "{{agent}} heeft de segmenten vertaald.",
     "loading_speech_model": "Spraakmodellen worden gedownload (alleen de eerste keer)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "Vraag het eVoice Studio Agent",
     "notInstalled": "Niet geïnstalleerd",
     "noSource": "Open een beschrijfbare VoiceStudio-broncheckout zodat een agent deze kan repareren.",
-    "noneFound": "Installeer Codex, Claude Code, OpenCode of Pi voor lokale reparatie.",
+    "noneFound": "Installeer Codex, Claude Code, OpenCode, Gemini (Antigravity) of Pi voor lokale reparatie.",
     "ready": "Gereed",
     "placeholder": "Wat ging er mis? Voeg stappen, zichtbare fouten of verwacht gedrag toe.",
     "prReady": "Reparatie voltooid. Controleer de wijzigingen en stel een PR voor zodra de gerichte tests slagen.",

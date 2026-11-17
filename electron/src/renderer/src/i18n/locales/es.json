@@ -56,7 +56,8 @@
     "send": "Enviar",
     "autopilot_hint": "El piloto automático realiza las acciones solicitadas. Intro envía; Mayús+Intro añade una línea.",
     "plan_hint": "Planificar consulta el estado de la aplicación sin modificarlo.",
-    "no_harness": "Instala e inicia sesión en Codex, Claude Code, OpenCode o Pi para conectar un agente."
+    "plan_only_source": "Gemini lee el código fuente para planificar un arreglo, pero no lo edita. Desactiva el código fuente para usar Piloto automático.",
+    "no_harness": "Instala e inicia sesión en Codex, Claude Code, OpenCode, Gemini (Antigravity) o Pi para conectar un agente."
   },
   "siteBrowser": {
     "return_studio": "Volver al estudio",
@@ -869,7 +870,7 @@
     "agent_rerendering": "Representando líneas corregidas...",
     "agent_cli_desc": "{{agent}} traduce cada segmento en contexto y reajusta los desajustes de tiempo después de medir el habla.",
     "choose_translation_agent": "Elegir agente de traducción",
-    "no_local_agents": "Instala Codex, Claude Code, OpenCode o Pi para traducir con un agente local.",
+    "no_local_agents": "Instala Codex, Claude Code, OpenCode, Gemini (Antigravity) o Pi para traducir con un agente local.",
     "agent_translation_complete": "{{agent}} terminó de traducir los segmentos.",
     "loading_speech_model": "Descargando los modelos de voz (solo la primera vez)…"
   },
@@ -2982,7 +2983,7 @@
     "title": "Preguntar a eVoice Studio Agent",
     "notInstalled": "No instalado",
     "noSource": "Abra una caja fuente VoiceStudio grabable para permitir que un agente la repare.",
-    "noneFound": "Instale Codex, Claude Code, OpenCode o Pi para utilizar la reparación local.",
+    "noneFound": "Instale Codex, Claude Code, OpenCode, Gemini (Antigravity) o Pi para utilizar la reparación local.",
     "ready": "Listo",
     "placeholder": "¿Qué salió mal? Añade los pasos, los errores visibles o el comportamiento esperado.",
     "prReady": "Reparación completada. Revise los cambios y proponga un PR cuando pasen las pruebas específicas.",

@@ -56,7 +56,8 @@
     "send": "보내기",
     "autopilot_hint": "자동 실행은 요청한 앱 작업을 수행합니다. Enter로 전송하고 Shift+Enter로 줄을 바꿉니다.",
     "plan_hint": "계획은 앱 상태를 변경하지 않고 확인합니다.",
-    "no_harness": "Codex, Claude Code, OpenCode 또는 Pi를 설치하고 로그인하여 에이전트를 연결하세요."
+    "plan_only_source": "Gemini는 소스를 읽고 수정 계획을 세우지만 편집하지는 않습니다. 자동 조종을 쓰려면 소스를 끄세요.",
+    "no_harness": "Codex, Claude Code, OpenCode, Gemini (Antigravity) 또는 Pi를 설치하고 로그인하여 에이전트를 연결하세요."
   },
   "siteBrowser": {
     "return_studio": "스튜디오로 돌아가기",
@@ -867,7 +868,7 @@
     "agent_rerendering": "수정된 선을 렌더링하는 중...",
     "agent_cli_desc": "{{agent}}가 각 세그먼트를 문맥에 맞게 번역하고 음성 측정 후 시간 차이가 나는 문장을 다시 작성합니다.",
     "choose_translation_agent": "번역 에이전트 선택",
-    "no_local_agents": "로컬 에이전트로 번역하려면 Codex, Claude Code, OpenCode 또는 Pi를 설치하세요.",
+    "no_local_agents": "로컬 에이전트로 번역하려면 Codex, Claude Code, OpenCode, Gemini (Antigravity) 또는 Pi를 설치하세요.",
     "agent_translation_complete": "{{agent}}가 세그먼트 번역을 마쳤습니다.",
     "loading_speech_model": "음성 모델을 다운로드하는 중(처음 실행할 때만)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "eVoice Studio Agent에게 물어보기",
     "notInstalled": "설치되지 않음",
     "noSource": "에이전트가 수정할 수 있도록 쓰기 가능한 VoiceStudio 소스 체크아웃을 여세요.",
-    "noneFound": "로컬 복구를 사용하려면 Codex, Claude Code, OpenCode 또는 Pi를 설치하세요.",
+    "noneFound": "로컬 복구를 사용하려면 Codex, Claude Code, OpenCode, Gemini (Antigravity) 또는 Pi를 설치하세요.",
     "ready": "준비됨",
     "placeholder": "무엇이 잘못되었나요? 단계, 표시된 오류 또는 예상 동작을 추가하세요.",
     "prReady": "수정이 완료되었습니다. 변경 사항을 검토하고 대상 테스트가 통과하면 PR을 제안하세요.",

@@ -56,7 +56,8 @@
     "send": "ส่ง",
     "autopilot_hint": "โหมดอัตโนมัติทำงานตามที่ขอ กด Enter เพื่อส่ง หรือ Shift+Enter เพื่อขึ้นบรรทัดใหม่",
     "plan_hint": "โหมดวางแผนตรวจสอบสถานะแอปโดยไม่เปลี่ยนแปลง",
-    "no_harness": "ติดตั้งและลงชื่อเข้าใช้ Codex, Claude Code, OpenCode หรือ Pi เพื่อเชื่อมต่อเอเจนต์"
+    "plan_only_source": "Gemini อ่านซอร์สโค้ดเพื่อวางแผนการแก้ไขแต่จะไม่แก้ไขโค้ด ปิดซอร์สเพื่อใช้โหมดอัตโนมัติ",
+    "no_harness": "ติดตั้งและลงชื่อเข้าใช้ Codex, Claude Code, OpenCode, Gemini (Antigravity) หรือ Pi เพื่อเชื่อมต่อเอเจนต์"
   },
   "siteBrowser": {
     "return_studio": "กลับไปที่สตูดิโอ",
@@ -867,7 +868,7 @@
     "agent_rerendering": "กำลังแสดงผลบรรทัดที่แก้ไข...",
     "agent_cli_desc": "{{agent}} แปลแต่ละช่วงตามบริบทและปรับข้อความที่มีเวลาไม่ตรงหลังวัดเสียงพูด",
     "choose_translation_agent": "เลือกเอเจนต์แปลภาษา",
-    "no_local_agents": "ติดตั้ง Codex, Claude Code, OpenCode หรือ Pi เพื่อแปลด้วยเอเจนต์ในเครื่อง",
+    "no_local_agents": "ติดตั้ง Codex, Claude Code, OpenCode, Gemini (Antigravity) หรือ Pi เพื่อแปลด้วยเอเจนต์ในเครื่อง",
     "agent_translation_complete": "{{agent}} แปลช่วงต่าง ๆ เสร็จแล้ว",
     "loading_speech_model": "กำลังดาวน์โหลดโมเดลเสียงพูด (เฉพาะครั้งแรก)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "ถาม eVoice Studio Agent",
     "notInstalled": "ยังไม่ได้ติดตั้ง",
     "noSource": "เปิดสำเนาซอร์สโค้ด VoiceStudio ที่เขียนได้เพื่อให้เอเจนต์ซ่อมแซม",
-    "noneFound": "ติดตั้ง Codex, Claude Code, OpenCode หรือ Pi เพื่อใช้การซ่อมแซมในเครื่อง",
+    "noneFound": "ติดตั้ง Codex, Claude Code, OpenCode, Gemini (Antigravity) หรือ Pi เพื่อใช้การซ่อมแซมในเครื่อง",
     "ready": "พร้อม",
     "placeholder": "เกิดอะไรขึ้น? เพิ่มขั้นตอน ข้อผิดพลาดที่เห็น หรือพฤติกรรมที่คาดหวัง",
     "prReady": "แก้ไขเสร็จแล้ว ตรวจสอบการเปลี่ยนแปลงและเสนอ PR เมื่อการทดสอบเฉพาะผ่าน",

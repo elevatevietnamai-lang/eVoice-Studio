@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { getFrontendLogs } from '@shared/utils/consoleBuffer';
 import { agentFeatures, type AgentFeature } from '@shared/agent-workspace';
 import { useBackendStatus } from '@/hooks/use-backend-status';
+import { savedAgentModel } from '@/lib/saved-agent-model';
 import type { RepairAgentId, RepairAgentInfo } from '../../../../preload/index.d';
 import {
   DEFAULT_REPAIR_AGENT_KEY,
@@ -98,6 +99,9 @@ export function VoiceStudioAgent() {
   const active = conversation.messages.find((message) => message.id === conversation.activeId);
   const running = active?.status === 'running';
   const selectedAgent = agents.find((agent) => agent.id === selected);
+  // Antigravity never edits a source checkout: with source attached it plans only.
+  const planOnly = Boolean(source && selectedAgent?.sourceDiagnoseOnly);
+  const shownMode = planOnly ? 'diagnose' : mode;
   const canSend = Boolean(
     selectedAgent?.available &&
     conversation.draft.trim() &&
@@ -111,8 +115,7 @@ export function VoiceStudioAgent() {
   const showAgents = (scan: number, scanned: RepairAgentInfo[]) => {
     if (scan < scans.current.applied) return;
     scans.current.applied = scan;
-    // Translation-only CLIs (Antigravity) have no repair or app-operation mode.
-    const found = scanned.filter((agent) => !agent.translationOnly);
+    const found = scanned;
     setAgents(found);
     setSelected((current) =>
       found.some((agent) => agent.id === current && agent.available)
@@ -210,15 +213,18 @@ export function VoiceStudioAgent() {
       setDetails(true);
       return;
     }
+    const runMode = useSource && selectedAgent.sourceDiagnoseOnly ? 'diagnose' : nextMode;
     submitting.current = true;
     setError('');
     const history = conversationHistory();
     const turn = beginAgentTurn(text.trim());
     follow.current = true;
     try {
+      const model = await savedAgentModel(selected);
       const result = await bridge.repair.start({
         agent: selected,
-        mode: nextMode,
+        mode: runMode,
+        ...(model ? { model } : {}),
         workspace: useSource ? 'source' : 'app',
         features,
         report: text.trim(),
@@ -336,8 +342,8 @@ export function VoiceStudioAgent() {
         <div className="agent-workspace-modes" role="group" aria-label={t('agentWorkspace.mode')}>
           <Button
             size="xs"
-            variant={mode === 'diagnose' ? 'secondary' : 'ghost'}
-            aria-pressed={mode === 'diagnose'}
+            variant={shownMode === 'diagnose' ? 'secondary' : 'ghost'}
+            aria-pressed={shownMode === 'diagnose'}
             disabled={running}
             onClick={() => setMode('diagnose')}
           >
@@ -345,9 +351,10 @@ export function VoiceStudioAgent() {
           </Button>
           <Button
             size="xs"
-            variant={mode === 'fix' ? 'secondary' : 'ghost'}
-            aria-pressed={mode === 'fix'}
-            disabled={running}
+            variant={shownMode === 'fix' ? 'secondary' : 'ghost'}
+            aria-pressed={shownMode === 'fix'}
+            disabled={running || planOnly}
+            title={planOnly ? t('agentWorkspace.plan_only_source') : undefined}
             onClick={() => setMode('fix')}
           >
             {t('agentWorkspace.autopilot')}
@@ -361,7 +368,10 @@ export function VoiceStudioAgent() {
         >
           {t('agentWorkspace.features')}
           <ChevronDownIcon
-            className={cn('transition-[rotate] duration-200 motion-reduce:transition-none', details && 'rotate-180')}
+            className={cn(
+              'transition-[rotate] duration-200 motion-reduce:transition-none',
+              details && 'rotate-180',
+            )}
           />
         </Button>
       </div>
@@ -550,7 +560,13 @@ export function VoiceStudioAgent() {
           )}
         </div>
         <p className="agent-workspace-hint">
-          {t(mode === 'fix' ? 'agentWorkspace.autopilot_hint' : 'agentWorkspace.plan_hint')}
+          {t(
+            planOnly
+              ? 'agentWorkspace.plan_only_source'
+              : shownMode === 'fix'
+                ? 'agentWorkspace.autopilot_hint'
+                : 'agentWorkspace.plan_hint',
+          )}
         </p>
       </form>
     </AgentDockFrame>

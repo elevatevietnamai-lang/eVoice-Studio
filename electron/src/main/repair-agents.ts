@@ -8,6 +8,7 @@ import {
   accessSync,
   constants,
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -59,15 +60,15 @@ const DEFINITIONS: Array<{
   id: RepairAgentId;
   label: string;
   command: string;
-  translationOnly?: boolean;
+  sourceDiagnoseOnly?: boolean;
 }> = [
   { id: 'codex', label: 'Codex', command: 'codex' },
   { id: 'claude', label: 'Claude Code', command: 'claude' },
   { id: 'opencode', label: 'OpenCode', command: 'opencode' },
   { id: 'pi', label: 'Pi', command: 'pi' },
-  // Gemini through the user's Google account. Antigravity has no repair launch
-  // mode here: it translates and completes text only.
-  { id: 'agy', label: 'Gemini · Antigravity', command: 'agy', translationOnly: true },
+  // Gemini through the user's Google account. Antigravity's write permissions
+  // cannot be confined to the source checkout, so it never edits source.
+  { id: 'agy', label: 'Gemini · Antigravity', command: 'agy', sourceDiagnoseOnly: true },
 ];
 
 /**
@@ -93,6 +94,121 @@ export const AGY_TRANSLATION_SETTINGS = {
     ],
   },
 };
+
+/** The custom agent VoiceStudio writes for an Antigravity repair or app-operation run. */
+export const AGY_REPAIR_AGENT = 'voicestudio-agent';
+/** The MCP rule for the one tool an Antigravity run may call without approval. */
+export const AGY_REPAIR_MCP_RULE = 'mcp(voicestudio/api_request)';
+/** Read-only file tools for a Diagnose run with the source checkout attached. */
+export const AGY_SOURCE_TOOLS = ['view_file', 'list_dir', 'grep_search', 'find_by_name'] as const;
+
+/**
+ * Settings for an Antigravity repair or app-operation run. Request review asks
+ * before every unlisted tool, and a headless run cannot ask, so anything not
+ * allowed here is refused. Only the VoiceStudio API tool is allowed. Deny rules
+ * beat allow rules, so the file-read deny applies only when no source is attached;
+ * a source run is held to its read-only tools by the custom agent instead.
+ */
+export function agyRepairSettings(sourceAttached: boolean, privatePaths: string[] = []) {
+  const slash = (path: string) => path.replace(/\\/g, '/');
+  return {
+    toolPermission: 'request-review',
+    agentMode: '',
+    allowNonWorkspaceAccess: false,
+    trustedWorkspaces: [],
+    permissions: {
+      allow: [AGY_REPAIR_MCP_RULE],
+      deny: [
+        'command(*)',
+        'unsandboxed(*)',
+        'write_file(*)',
+        'write_file(/)',
+        'read_url(*)',
+        'execute_url(*)',
+        ...(sourceAttached
+          ? privatePaths.map((path) => `read_file(${slash(path)})`)
+          : ['read_file(*)', 'read_file(/)']),
+      ],
+    },
+  };
+}
+
+/**
+ * The custom agent definition for an Antigravity repair run. It drops every
+ * default tool and component, inherits none of the user's MCP servers, skills
+ * or rules, and declares the VoiceStudio MCP server as its only server. Every
+ * frontmatter scalar is JSON-quoted, which YAML reads as a double-quoted string.
+ */
+export function agyRepairAgentFile(options: {
+  nodePath: string;
+  mcpServerPath: string;
+  contextFile: string;
+  sourcePath?: string;
+}): string {
+  const quote = (value: string) => JSON.stringify(value);
+  const tools = options.sourcePath ? AGY_SOURCE_TOOLS : [];
+  const scope = options.sourcePath
+    ? `The VoiceStudio source checkout is attached read-only at ${quote(options.sourcePath)}. Your file tools need absolute paths inside it. You cannot edit files or run commands in this session.`
+    : 'No source checkout is attached. You have no file or shell tools in this session.';
+  return `---
+name: ${quote(AGY_REPAIR_AGENT)}
+description: "VoiceStudio Agent: app operation and repair diagnosis"
+mainAgent: true
+subagent: false
+hidden: true
+excludeDefaultComponents: true
+inheritMcp: false
+inheritCustomizations: false
+tools: [${tools.map(quote).join(', ')}]
+mcpServers:
+  - name: "voicestudio"
+    command: ${quote(options.nodePath)}
+    args: [${quote(options.mcpServerPath)}]
+    env:
+      ELECTRON_RUN_AS_NODE: "1"
+      VOICESTUDIO_REPAIR_CONTEXT_FILE: ${quote(options.contextFile)}
+---
+# VoiceStudio Agent
+You are VoiceStudio Agent. Reach VoiceStudio only through the api_request tool of the voicestudio MCP server; it already holds the session credential. ${scope} Follow the task in the user message.
+`;
+}
+
+/** Writes the Antigravity workspace (the run's working directory) beside the bridge files. */
+export function writeAgyRepairWorkspace(
+  bridgeDirectory: string,
+  options: Parameters<typeof agyRepairAgentFile>[0],
+): string {
+  const root = join(bridgeDirectory, 'agy');
+  const agents = join(root, '.agents', 'agents');
+  mkdirSync(agents, { recursive: true });
+  writeFileSync(join(agents, `${AGY_REPAIR_AGENT}.md`), agyRepairAgentFile(options), {
+    encoding: 'utf8',
+    flag: 'wx',
+    mode: 0o600,
+  });
+  return root;
+}
+
+export function agyRepairArgs(
+  sourcePath: string | null,
+  privatePaths: string[],
+  model = '',
+): string[] {
+  return [
+    '--agent',
+    AGY_REPAIR_AGENT,
+    '--input-format',
+    'stream-json',
+    '--output-format',
+    'stream-json',
+    '--disable-slash-commands',
+    '--settings',
+    JSON.stringify(agyRepairSettings(Boolean(sourcePath), privatePaths)),
+    ...(sourcePath ? ['--add-dir', sourcePath] : []),
+    ...(model ? ['--model', model] : []),
+    '-p=',
+  ];
+}
 const MAX_REPORT = 12_000;
 const MAX_CONTEXT = 50_000;
 const MAX_OUTPUT = 250_000;
@@ -395,7 +511,33 @@ function persistWorkspace(path: string): void {
   );
 }
 
-function readableJsonEvent(line: string): string {
+/** Antigravity streams `step_update` events: reply text in deltas, then tool steps. */
+function readableAgyEvent(event: Record<string, unknown>): string | null {
+  if (event.event === 'step_update') {
+    const step = event.step_update as Record<string, unknown> | undefined;
+    if (!step) return '';
+    if (typeof step.text_delta === 'string') return step.text_delta;
+    if (step.step_type === 'tool' && step.state === 'ACTIVE' && typeof step.tool_name === 'string')
+      return `\n› ${step.tool_name}\n`;
+    if (step.step_type === 'tool' && step.state === 'ERROR') {
+      const info = step.tool_info as { error?: { message?: unknown } } | undefined;
+      const message = typeof info?.error?.message === 'string' ? info.error.message : '';
+      return message ? `  ${message.split('\n')[0].slice(0, 300)}\n` : '';
+    }
+    return '';
+  }
+  if (event.event === 'result') {
+    // The reply already arrived as deltas; only a failed turn adds text.
+    const result = event.result as Record<string, unknown> | undefined;
+    return result?.status === 'ERROR' && typeof result.error === 'string'
+      ? `\n${result.error}\n`
+      : '\n';
+  }
+  if (event.event === 'init') return '';
+  return null;
+}
+
+export function readableJsonEvent(line: string): string {
   const trimmed = line.trim();
   if (!trimmed) return '';
   let event: Record<string, unknown>;
@@ -404,6 +546,8 @@ function readableJsonEvent(line: string): string {
   } catch {
     return `${line}\n`;
   }
+  const agy = readableAgyEvent(event);
+  if (agy !== null) return agy;
   const found: string[] = [];
   const add = (value: unknown) => {
     if (typeof value === 'string' && value.trim() && !found.includes(value)) found.push(value);
@@ -771,9 +915,11 @@ Read AGENTS.md first, then CLAUDE.md and CONTEXT.md. Follow repository skills an
     : request.mode === 'fix'
       ? 'Inspect live app state, perform the requested operation, and verify the resulting state.'
       : 'Inspect live app state without changing it, then explain the concrete recovery action.';
-  const mcpOnly = !sourceAttached && (request.agent === 'claude' || request.agent === 'opencode');
+  const mcpOnly = !sourceAttached && ['claude', 'opencode', 'agy'].includes(request.agent);
   const appOperationRules = sourceAttached
-    ? ''
+    ? request.agent === 'agy'
+      ? 'Make API requests only with the VoiceStudio MCP API tool, named api_request on the voicestudio server; it already holds the session credential. Start with GET /openapi.json. Source runs with this agent are Diagnose only: report the fix and test plan instead of editing.'
+      : ''
     : `${
         mcpOnly
           ? 'Your only available tool is the VoiceStudio MCP API tool, named voicestudio_api_request (some clients display it as mcp__voicestudio__api_request). Its server already owns the session credential: do not inspect environment variables, run shell commands, or read files. Call it with GET /openapi.json first, then use only the routes it describes.'
@@ -800,6 +946,15 @@ ${task}
 
 ## Renderer context
 ${request.context.slice(0, MAX_CONTEXT)}${context}`;
+}
+
+/** Refuses a run an agent cannot do safely: Antigravity never edits a source checkout. */
+export function assertRepairAgentRun(agent: unknown, mode: unknown, sourceAttached: boolean): void {
+  const definition = DEFINITIONS.find((item) => item.id === agent);
+  if (!definition) throw new Error('Unknown repair agent');
+  if (mode !== 'diagnose' && mode !== 'fix') throw new Error('Invalid repair mode');
+  if (definition.sourceDiagnoseOnly && sourceAttached && mode === 'fix')
+    throw new Error(`${definition.label} can diagnose source but not fix it; choose Plan`);
 }
 
 export async function registerRepairAgents(
@@ -841,7 +996,7 @@ export async function registerRepairAgents(
           label: definition.label,
           available: Boolean(command),
           version: command ? await versionOf(command) : '',
-          ...(definition.translationOnly ? { translationOnly: true } : {}),
+          ...(definition.sourceDiagnoseOnly ? { sourceDiagnoseOnly: true } : {}),
         };
       }),
     );
@@ -894,10 +1049,9 @@ export async function registerRepairAgents(
       workspaceRoot = null;
       state = { ...state, workspaceAvailable: false, workspacePath: undefined };
     }
-    if (!request || !DEFINITIONS.some((item) => item.id === request.agent && !item.translationOnly))
-      throw new Error('Unknown repair agent');
-    if (request.mode !== 'diagnose' && request.mode !== 'fix')
-      throw new Error('Invalid repair mode');
+    if (!request) throw new Error('Unknown repair agent');
+    if (request.model !== undefined && !validAgentModel(request.model))
+      throw new Error('Invalid agent model');
     if (typeof request.report !== 'string' || typeof request.context !== 'string')
       throw new Error('Invalid repair request');
     validateAgentWorkspace(request);
@@ -905,6 +1059,7 @@ export async function registerRepairAgents(
     const sourceRoot = appOperationOnly ? null : workspaceRoot;
     if (!sourceRoot && !appOperationOnly)
       throw new Error('A writable VoiceStudio source checkout is required');
+    assertRepairAgentRun(request.agent, request.mode, Boolean(sourceRoot));
 
     // The session is pending from here, before any await: a stop or disposal
     // while the CLI is still being located must prevent the spawn.
@@ -951,17 +1106,31 @@ export async function registerRepairAgents(
         apiBridge = null;
         return { sessionId };
       }
-      const args = [
-        ...command.prefix,
-        ...launchArgs(request.agent, request.mode, appOperationOnly, apiBridge.mcpConfigFile),
-      ];
+      const bridgeDirectory = dirname(apiBridge.contextFile);
+      let agentCwd = sourceRoot ?? bridgeDirectory;
+      const args = [...command.prefix];
+      if (request.agent === 'agy') {
+        // Antigravity runs from its own workspace holding the confined custom
+        // agent; the checkout is added read-only for Diagnose.
+        agentCwd = writeAgyRepairWorkspace(bridgeDirectory, {
+          nodePath: process.execPath,
+          mcpServerPath: join(app.getAppPath(), 'out', 'main', 'repair-mcp-server.js'),
+          contextFile: apiBridge.contextFile,
+          ...(sourceRoot ? { sourcePath: sourceRoot } : {}),
+        });
+        args.push(...agyRepairArgs(sourceRoot, [bridgeDirectory], request.model ?? ''));
+      } else {
+        args.push(
+          ...launchArgs(request.agent, request.mode, appOperationOnly, apiBridge.mcpConfigFile),
+        );
+      }
       if (request.agent === 'opencode') {
         promptFile = join(app.getPath('temp'), `voicestudio-repair-${sessionId}.md`);
         writeFileSync(promptFile, prompt, 'utf8');
         args.push(...openCodePromptArgs(promptFile));
       }
       child = spawn(command.executable, args, {
-        cwd: sourceRoot ?? dirname(apiBridge.contextFile),
+        cwd: agentCwd,
         env: agentChildEnv({
           NO_COLOR: '1',
           FORCE_COLOR: '0',
@@ -998,7 +1167,7 @@ export async function registerRepairAgents(
         emit({ sessionId, type: 'state', status, exitCode: code });
       });
       if (request.agent === 'opencode') child.stdin.end();
-      else child.stdin.end(prompt);
+      else child.stdin.end(translationStdin(request.agent, prompt));
       return { sessionId };
     } catch (error) {
       if (promptFile) rmSync(promptFile, { force: true });

@@ -23,6 +23,9 @@ vi.mock('./agent-dock-frame', () => ({
   AgentDockFrame: ({ children }: { children: ReactNode }) => <section>{children}</section>,
 }));
 vi.mock('@shared/utils/consoleBuffer', () => ({ getFrontendLogs: () => [] }));
+vi.mock('@/lib/saved-agent-model', () => ({
+  savedAgentModel: vi.fn(async (agent: string) => (agent === 'agy' ? 'gemini-3.8-flash-low' : '')),
+}));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, args?: { feature?: string }) =>
@@ -117,7 +120,6 @@ it('requires an attached checkout only for explicitly selected source repair', a
   );
 });
 
-
 it.each([
   ['Renderer crashed unexpectedly', 'source'],
   ['ACTION_REQUEST: Restart the backend', 'app'],
@@ -125,15 +127,16 @@ it.each([
   const { DEFAULT_REPAIR_AGENT_KEY, openRepairAgent } = await import('@/lib/repair-agent-events');
   localStorage.setItem(DEFAULT_REPAIR_AGENT_KEY, 'codex');
   mocks.repair.getState.mockResolvedValue({
-    status: 'idle', output: '', workspaceAvailable: workspace === 'source',
+    status: 'idle',
+    output: '',
+    workspaceAvailable: workspace === 'source',
   });
   render(<VoiceStudioAgent />);
   act(() => openRepairAgent(report, true));
-  await waitFor(() => expect(mocks.repair.start).toHaveBeenCalledWith(
-    expect.objectContaining({ workspace, report }),
-  ));
+  await waitFor(() =>
+    expect(mocks.repair.start).toHaveBeenCalledWith(expect.objectContaining({ workspace, report })),
+  );
 });
-
 
 it('keeps crash repair ready for Send until a source checkout is attached', async () => {
   const { DEFAULT_REPAIR_AGENT_KEY, openRepairAgent } = await import('@/lib/repair-agent-events');
@@ -145,14 +148,21 @@ it('keeps crash repair ready for Send until a source checkout is attached', asyn
   expect(screen.getByRole('button', { name: 'agentWorkspace.send' })).toBeDisabled();
   fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Enter' });
   expect(mocks.repair.start).not.toHaveBeenCalled();
-  mocks.repair.chooseWorkspace.mockResolvedValue({ workspaceAvailable: true, workspacePath: '/source' });
+  mocks.repair.chooseWorkspace.mockResolvedValue({
+    workspaceAvailable: true,
+    workspacePath: '/source',
+  });
   fireEvent.click(choose);
-  await waitFor(() => expect(screen.getByRole('button', { name: 'agentWorkspace.send' })).toBeEnabled());
+  await waitFor(() =>
+    expect(screen.getByRole('button', { name: 'agentWorkspace.send' })).toBeEnabled(),
+  );
   expect(mocks.repair.start).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button', { name: 'agentWorkspace.send' }));
-  await waitFor(() => expect(mocks.repair.start).toHaveBeenCalledWith(
-    expect.objectContaining({ workspace: 'source', report: 'Renderer crashed unexpectedly' }),
-  ));
+  await waitFor(() =>
+    expect(mocks.repair.start).toHaveBeenCalledWith(
+      expect.objectContaining({ workspace: 'source', report: 'Renderer crashed unexpectedly' }),
+    ),
+  );
 });
 it('keeps the newest CLI scan when an older one answers last', async () => {
   let answerMount!: (agents: unknown) => void;
@@ -177,4 +187,47 @@ it('keeps the newest CLI scan when an older one answers last', async () => {
     ]);
   });
   expect(screen.getByRole('button', { name: 'Claude Code' })).toBeEnabled();
+});
+it('offers Gemini for app operation and keeps source runs in Plan with its saved model', async () => {
+  mocks.repair.list.mockResolvedValue([
+    { id: 'agy', label: 'Gemini · Antigravity', available: true, sourceDiagnoseOnly: true },
+  ]);
+  mocks.repair.getState.mockResolvedValue({
+    status: 'idle',
+    output: '',
+    workspaceAvailable: true,
+    workspacePath: '/source',
+  });
+  render(<VoiceStudioAgent />);
+  fireEvent.click(screen.getByRole('button', { name: 'repairAgent.title' }));
+  await screen.findByRole('button', { name: 'Gemini · Antigravity' });
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Make a preview' } });
+  fireEvent.click(screen.getByRole('button', { name: 'agentWorkspace.send' }));
+  await waitFor(() =>
+    expect(mocks.repair.start).toHaveBeenCalledWith(
+      expect.objectContaining({
+        agent: 'agy',
+        mode: 'fix',
+        workspace: 'app',
+        model: 'gemini-3.8-flash-low',
+      }),
+    ),
+  );
+  act(() => receiveAgentEvent({ type: 'state', sessionId: 'one', status: 'complete' }));
+  fireEvent.click(screen.getByRole('button', { name: 'agentWorkspace.features' }));
+  fireEvent.click(screen.getByRole('checkbox', { name: 'agentWorkspace.source' }));
+  expect(screen.getByRole('button', { name: 'agentWorkspace.autopilot' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'agentWorkspace.plan' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  expect(screen.getAllByText('agentWorkspace.plan_only_source').length).toBeGreaterThan(0);
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Why does it crash?' } });
+  fireEvent.click(screen.getByRole('button', { name: 'agentWorkspace.send' }));
+  await waitFor(() => expect(mocks.repair.start).toHaveBeenCalledTimes(2));
+  expect(mocks.repair.start.mock.calls[1][0]).toMatchObject({
+    agent: 'agy',
+    mode: 'diagnose',
+    workspace: 'source',
+  });
 });

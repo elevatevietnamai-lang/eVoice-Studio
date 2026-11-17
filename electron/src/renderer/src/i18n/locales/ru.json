@@ -56,7 +56,8 @@
     "send": "Отправить",
     "autopilot_hint": "Автопилот выполняет запрошенные действия. Enter отправляет; Shift+Enter добавляет строку.",
     "plan_hint": "План проверяет состояние приложения, не изменяя его.",
-    "no_harness": "Установите Codex, Claude Code, OpenCode или Pi и войдите в аккаунт, чтобы подключить агента."
+    "plan_only_source": "Gemini читает исходный код, чтобы спланировать исправление, но не изменяет его. Отключите исходный код для автопилота.",
+    "no_harness": "Установите Codex, Claude Code, OpenCode, Gemini (Antigravity) или Pi и войдите в аккаунт, чтобы подключить агента."
   },
   "siteBrowser": {
     "return_studio": "Вернуться в студию",
@@ -871,7 +872,7 @@
     "agent_rerendering": "Отрисовка исправленных строк...",
     "agent_cli_desc": "{{agent}} переводит каждый сегмент с учётом контекста и исправляет расхождения по времени после измерения речи.",
     "choose_translation_agent": "Выбрать агента перевода",
-    "no_local_agents": "Установите Codex, Claude Code, OpenCode или Pi для перевода локальным агентом.",
+    "no_local_agents": "Установите Codex, Claude Code, OpenCode, Gemini (Antigravity) или Pi для перевода локальным агентом.",
     "agent_translation_complete": "{{agent}} завершил перевод сегментов.",
     "loading_speech_model": "Загрузка речевых моделей (только при первом запуске)…"
   },
@@ -2984,7 +2985,7 @@
     "title": "Спросить eVoice Studio Agent",
     "notInstalled": "Не установлено",
     "noSource": "Откройте доступную для записи копию исходного кода VoiceStudio, чтобы агент мог внести исправления.",
-    "noneFound": "Установите Codex, Claude Code, OpenCode или Pi для локального исправления.",
+    "noneFound": "Установите Codex, Claude Code, OpenCode, Gemini (Antigravity) или Pi для локального исправления.",
     "ready": "Готов",
     "placeholder": "Что пошло не так? Укажите шаги, видимые ошибки или ожидаемое поведение.",
     "prReady": "Исправление завершено. Проверьте изменения и предложите PR после прохождения целевых тестов.",

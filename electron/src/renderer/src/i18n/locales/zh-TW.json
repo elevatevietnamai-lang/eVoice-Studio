@@ -56,7 +56,8 @@
     "send": "傳送",
     "autopilot_hint": "自動執行會完成你要求的操作。Enter 傳送，Shift+Enter 換行。",
     "plan_hint": "規劃模式只檢查應用程式狀態，不做變更。",
-    "no_harness": "安裝並登入 Codex、Claude Code、OpenCode 或 Pi 即可連接代理程式。"
+    "plan_only_source": "Gemini 會讀取原始碼來規劃修復，但不會編輯。要使用自動駕駛，請關閉原始碼。",
+    "no_harness": "安裝並登入 Codex、Claude Code、OpenCode、Gemini (Antigravity) 或 Pi 即可連接代理程式。"
   },
   "siteBrowser": {
     "return_studio": "返回工作室",
@@ -867,7 +868,7 @@
     "agent_rerendering": "渲染修正後的線條...",
     "agent_cli_desc": "{{agent}} 會結合上下文翻譯每個片段，並在測量語音後重寫不符合時長的內容。",
     "choose_translation_agent": "選擇翻譯代理",
-    "no_local_agents": "安裝 Codex、Claude Code、OpenCode 或 Pi，以使用本機代理翻譯。",
+    "no_local_agents": "安裝 Codex、Claude Code、OpenCode、Gemini (Antigravity) 或 Pi，以使用本機代理翻譯。",
     "agent_translation_complete": "{{agent}} 已完成片段翻譯。",
     "loading_speech_model": "正在下載語音模型（僅首次執行）…"
   },
@@ -2980,7 +2981,7 @@
     "title": "詢問 eVoice Studio Agent",
     "notInstalled": "未安裝",
     "noSource": "請開啟可寫入的 VoiceStudio 原始碼簽出目錄，讓代理進行修復。",
-    "noneFound": "安裝 Codex、Claude Code、OpenCode 或 Pi 以使用本機修復。",
+    "noneFound": "安裝 Codex、Claude Code、OpenCode、Gemini (Antigravity) 或 Pi 以使用本機修復。",
     "ready": "就緒",
     "placeholder": "出了什麼問題？請加入操作步驟、可見錯誤或預期行為。",
     "prReady": "修復已完成。請檢查變更，並在目標測試通過後提出 PR。",

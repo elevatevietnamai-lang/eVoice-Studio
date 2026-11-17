@@ -58,18 +58,42 @@ page (`electron/src/main/gemini-account.ts`).
 Gemini CLI (`gemini`, "Login with Google") was considered as well. Antigravity was
 kept: its text-only lockdown and output parsing were already in place, its sign-in
 can be completed inside the app with a pasted code, and its Google AI Pro sign-in
-offers the newer Gemini models. Ask VoiceStudio Agent repair and app-operation runs
-need tools, so Gemini stays limited to translation and LLM completions.
+offers the newer Gemini models.
 
-Antigravity cannot switch its tools off, and its headless runs default to Auto mode.
-VoiceStudio therefore starts it with strict tool review, no trusted workspaces, and
-deny rules for commands, file reads and writes, URL reads and MCP tools, and sends
-the prompt as one stream-json message on stdin. Web search, which goes to the same
-Google account the model runs on, is the only tool left. Antigravity is offered for
-translation and LLM completions only, not for Ask VoiceStudio Agent repair runs.
+For translation and LLM completions, Antigravity cannot switch its tools off and its
+headless runs default to Auto mode. VoiceStudio therefore starts it with strict tool
+review, no trusted workspaces, and deny rules for commands, file reads and writes, URL
+reads and MCP tools, and sends the prompt as one stream-json message on stdin. Web
+search, which goes to the same Google account the model runs on, is the only tool left.
+
+### Gemini in Ask VoiceStudio Agent
+
+Gemini is also a harness in **Ask VoiceStudio Agent**: app operation in Plan and
+Autopilot, and source repair in **Plan (Diagnose) only**. Each run writes a custom agent
+into the run's temporary folder (never into your checkout) and starts
+`agy --agent voicestudio-agent` from there (`electron/src/main/repair-agents.ts`):
+
+| Layer | What it does |
+|---|---|
+| Custom agent | `excludeDefaultComponents: true` removes every built-in tool (shell, file edits, browser, web search, image generation, subagents). App operation keeps only the MCP call tool; source Diagnose adds `view_file`, `list_dir`, `grep_search` and `find_by_name`. `inheritMcp: false` and `inheritCustomizations: false` leave out your own MCP servers, skills and rules. |
+| MCP server | The agent declares one server, VoiceStudio's session-scoped API bridge, the same one Claude Code and OpenCode use. |
+| `--settings` | `toolPermission: request-review`, `agentMode: ""`, an allow rule for `mcp(voicestudio/api_request)` only, and deny rules for `command(*)`, `unsandboxed(*)`, `write_file(*)`, URL reads and, without source, `read_file(*)`. A headless run cannot answer an approval prompt, so anything else is refused and the run ends. |
+| Checkout | Added with `--add-dir` for Diagnose, so the agent reads it by absolute path. |
+
+Compared with the other harnesses: Codex Fix edits and runs commands in its workspace
+sandbox, Claude Code Fix uses `acceptEdits` in the checkout, and both read files
+anywhere. Gemini reads like them but never edits source, because Antigravity cannot
+confine writes to the checkout: deny and ask rules always win over allow rules, so
+"deny everywhere, allow the checkout" cannot be written, and writes that your own
+Antigravity `trustedWorkspaces` already trust (often your home folder) go through
+without asking; `--settings` cannot take that list away. The app refuses source Fix
+for Gemini in the main process, and the dock switches to Plan when source is on.
+Antigravity keeps each run's conversation in its own history, as it does for any
+`agy -p` run. The model is the one picked in **Settings → LLM providers**.
+
 Model IDs come from `agy models` (for example `gemini-3.8-flash-low`); leave the model
 empty to use the CLI's own default. A spent Antigravity quota shows as a rate-limit error.
-The app finds `agy` in its installer's folder (`%LOCALAPPDATA%gyin` on Windows,
+The app finds `agy` in its installer's folder (`%LOCALAPPDATA%\agy\bin` on Windows,
 `~/.local/bin` on macOS and Linux) or on Homebrew's path, even when launched from the desktop.
 
 SDK imports are lazy and LiteLLM telemetry and remote pricing-map downloads are

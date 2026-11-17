@@ -16,7 +16,7 @@ Bộ công cụ khắc phục sự cố giúp bạn xem nhật ký hoạt độn
 ## Cần chuẩn bị
 
 - Mở sẵn eVoice Studio trên máy tính.
-- Nếu muốn dùng trợ lý sửa lỗi cục bộ cho mã nguồn, bạn cần cài sẵn một trong các công cụ dòng lệnh được hỗ trợ (Codex, Claude Code, OpenCode hoặc Pi) và mở thư mục mã nguồn có quyền ghi. Các thao tác kiểm tra hoặc khôi phục cài đặt ứng dụng thông thường không cần mã nguồn.
+- Nếu muốn dùng trợ lý sửa lỗi cục bộ cho mã nguồn, bạn cần cài sẵn một trong các công cụ dòng lệnh được hỗ trợ (Codex, Claude Code, OpenCode, Gemini (Antigravity) hoặc Pi) và mở thư mục mã nguồn có quyền ghi. Các thao tác kiểm tra hoặc khôi phục cài đặt ứng dụng thông thường không cần mã nguồn. Gemini chỉ đọc mã nguồn để lập kế hoạch sửa (chế độ **Lập kế hoạch**), không tự sửa file; muốn trợ lý tự sửa mã, hãy chọn Codex hoặc Claude Code.
 - Chỉ cần kết nối mạng và trình duyệt khi bạn muốn tải lại model bị thiếu hoặc gửi báo cáo lỗi lên GitHub.
 
 ## Các bước
@@ -65,7 +65,7 @@ Bộ công cụ khắc phục sự cố giúp bạn xem nhật ký hoạt độn
 
 - hiện thông báo **Nhật ký hệ thống trống. Hoạt động sẽ hiện tại đây khi backend ghi lại.** hoặc **Chưa có nhật ký bảng điều khiển giao diện.**: hệ thống chưa phát sinh sự kiện mới hoặc bạn vừa xóa nhật ký. Hãy thực hiện lại thao tác gây lỗi rồi bấm **Làm mới**.
 - hiện thông báo **Không thể sao chép nhật ký**: quyền truy cập bộ nhớ tạm thời bị gián đoạn. Hãy bấm **Làm mới** và thử bấm lại **Sao chép nhật ký hiển thị**.
-- hiện thông báo **Cài đặt Codex, Claude Code, OpenCode hoặc Pi để sửa lỗi cục bộ.**: máy của bạn chưa cài công cụ dòng lệnh nào được hỗ trợ. Hãy cài một trong các công cụ trên trước khi dùng trợ lý sửa lỗi.
+- hiện thông báo **Cài đặt Codex, Claude Code, OpenCode, Gemini (Antigravity) hoặc Pi để sửa lỗi cục bộ.**: máy của bạn chưa cài công cụ dòng lệnh nào được hỗ trợ. Hãy cài một trong các công cụ trên trước khi dùng trợ lý sửa lỗi.
 - hiện thông báo **Mở bản mã nguồn VoiceStudio có quyền ghi để trợ lý có thể sửa lỗi.**: bạn đang yêu cầu sửa mã nguồn từ bản cài đặt đóng gói hoặc thư mục chỉ đọc. Với nhu cầu cài đặt model và chọn lại engine trong ứng dụng, chỉ cần dùng chế độ khôi phục ứng dụng mà không cần chọn thư mục mã nguồn.
 - quá trình tạo giọng hoặc chép lời báo hết bộ nhớ hệ thống hoặc thiếu gói phụ thuộc Python: đóng bớt ứng dụng nặng, giải phóng model không dùng, hoặc mở mục **Mô hình** để cài đặt lại engine bị thiếu rồi bấm **Thử lại**.
 - báo lỗi không tìm thấy công cụ xử lý đa phương tiện (FFmpeg hoặc yt-dlp): mở **Cài đặt**, chọn **Công cụ âm thanh** để khôi phục bản đi kèm của ứng dụng hoặc trỏ sang bản có sẵn trên hệ thống.

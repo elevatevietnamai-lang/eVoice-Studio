@@ -168,8 +168,8 @@ export interface RepairAgentInfo {
   label: string;
   available: boolean;
   version: string;
-  /** Offered for dub translation and LLM completions, never for repair runs. */
-  translationOnly?: boolean;
+  /** With a source checkout attached, this agent runs Diagnose (Plan) only, never Fix. */
+  sourceDiagnoseOnly?: boolean;
 }
 export interface RepairAgentRunRequest {
   workspace?: 'app' | 'source';
@@ -177,6 +177,8 @@ export interface RepairAgentRunRequest {
   history?: import('../shared/agent-workspace').AgentChatMessage[];
   agent: RepairAgentId;
   mode: 'diagnose' | 'fix';
+  /** CLI model id for Antigravity (the Gemini model saved in Settings); empty uses the CLI default. */
+  model?: string;
   report: string;
   context: string;
 }

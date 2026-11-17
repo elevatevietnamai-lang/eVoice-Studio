@@ -56,7 +56,8 @@
     "send": "Надіслати",
     "autopilot_hint": "Автопілот виконує запитані дії. Enter надсилає; Shift+Enter додає рядок.",
     "plan_hint": "План перевіряє стан застосунку без змін.",
-    "no_harness": "Установіть Codex, Claude Code, OpenCode або Pi й увійдіть в обліковий запис, щоб підключити агента."
+    "plan_only_source": "Gemini читає вихідний код, щоб спланувати виправлення, але не змінює його. Вимкніть вихідний код для автопілота.",
+    "no_harness": "Установіть Codex, Claude Code, OpenCode, Gemini (Antigravity) або Pi й увійдіть в обліковий запис, щоб підключити агента."
   },
   "siteBrowser": {
     "return_studio": "Повернутися до студії",
@@ -871,7 +872,7 @@
     "agent_rerendering": "Візуалізація виправлених ліній...",
     "agent_cli_desc": "{{agent}} перекладає кожен сегмент з урахуванням контексту й виправляє розбіжності в часі після вимірювання мовлення.",
     "choose_translation_agent": "Вибрати агента перекладу",
-    "no_local_agents": "Установіть Codex, Claude Code, OpenCode або Pi для перекладу локальним агентом.",
+    "no_local_agents": "Установіть Codex, Claude Code, OpenCode, Gemini (Antigravity) або Pi для перекладу локальним агентом.",
     "agent_translation_complete": "{{agent}} завершив переклад сегментів.",
     "loading_speech_model": "Завантаження мовленнєвих моделей (лише під час першого запуску)…"
   },
@@ -2984,7 +2985,7 @@
     "title": "Запитати eVoice Studio Agent",
     "notInstalled": "Не встановлено",
     "noSource": "Відкрийте доступну для запису копію коду VoiceStudio, щоб агент міг її виправити.",
-    "noneFound": "Встановіть Codex, Claude Code, OpenCode або Pi для локального виправлення.",
+    "noneFound": "Встановіть Codex, Claude Code, OpenCode, Gemini (Antigravity) або Pi для локального виправлення.",
     "ready": "Готовий",
     "placeholder": "Що пішло не так? Додайте кроки, видимі помилки або очікувану поведінку.",
     "prReady": "Виправлення завершено. Перевірте зміни та запропонуйте PR після проходження цільових тестів.",

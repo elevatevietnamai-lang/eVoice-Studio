@@ -11,6 +11,7 @@ metadata and the backend fallback mirror it.
 **Highlights**
 
 - Gemini runs on your Google account, with sign-in and model choice in Settings
+- Gemini can operate the app and diagnose source in Ask VoiceStudio Agent
 - Dropdowns, menus and panels open with their full motion again
 - Buttons line up with the button groups beside them
 
@@ -18,10 +19,12 @@ metadata and the backend fallback mirror it.
 
 - Gemini with your Google account: the Antigravity provider is now **Gemini · Google account**, shows whether you are signed in, signs in with Google from Settings and lets you pick the Gemini model (#61)
 - **Translate with Agent** uses the Gemini model picked in Settings when Gemini is the chosen agent (#61)
+- Gemini is a harness in **Ask VoiceStudio Agent**: it operates the app in Plan and Autopilot and diagnoses source in Plan, with only the VoiceStudio API and read-only file tools (#65)
 
 ### Docs
 
 - The LLM provider guide explains Gemini sign-in and shows the Antigravity install folder correctly (#61)
+- The LLM provider guide explains how Gemini is confined in Ask VoiceStudio Agent and why it does not edit source (#65)
 
 ### Fixed
 

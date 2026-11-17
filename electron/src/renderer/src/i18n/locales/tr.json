@@ -56,7 +56,8 @@
     "send": "Gönder",
     "autopilot_hint": "Otomatik pilot istenen işlemleri yapar. Enter gönderir; Shift+Enter yeni satır ekler.",
     "plan_hint": "Planla, uygulama durumunu değiştirmeden inceler.",
-    "no_harness": "Bir ajan bağlamak için Codex, Claude Code, OpenCode veya Pi kurup oturum açın."
+    "plan_only_source": "Gemini bir düzeltme planlamak için kaynak kodu okur ancak düzenlemez. Otomatik pilot için kaynağı kapatın.",
+    "no_harness": "Bir ajan bağlamak için Codex, Claude Code, OpenCode, Gemini (Antigravity) veya Pi kurup oturum açın."
   },
   "siteBrowser": {
     "return_studio": "Stüdyoya dön",
@@ -867,7 +868,7 @@
     "agent_rerendering": "Düzeltilmiş çizgiler oluşturuluyor...",
     "agent_cli_desc": "{{agent}} her bölümü bağlam içinde çevirir ve ölçülen konuşmadan sonra zamanlama sapmalarını yeniden düzenler.",
     "choose_translation_agent": "Çeviri ajanını seç",
-    "no_local_agents": "Yerel bir aracıyla çevirmek için Codex, Claude Code, OpenCode veya Pi kurun.",
+    "no_local_agents": "Yerel bir aracıyla çevirmek için Codex, Claude Code, OpenCode, Gemini (Antigravity) veya Pi kurun.",
     "agent_translation_complete": "{{agent}} bölümlerin çevirisini tamamladı.",
     "loading_speech_model": "Konuşma modelleri indiriliyor (yalnızca ilk çalıştırmada)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "eVoice Studio Agent’a sor",
     "notInstalled": "Yüklü değil",
     "noSource": "Bir ajanın onarabilmesi için yazılabilir bir VoiceStudio kaynak çalışma kopyası açın.",
-    "noneFound": "Yerel onarım için Codex, Claude Code, OpenCode veya Pi yükleyin.",
+    "noneFound": "Yerel onarım için Codex, Claude Code, OpenCode, Gemini (Antigravity) veya Pi yükleyin.",
     "ready": "Hazır",
     "placeholder": "Ne yanlış gitti? Adımları, görünen hataları veya beklenen davranışı ekleyin.",
     "prReady": "Düzeltme tamamlandı. Değişiklikleri inceleyin ve hedefli testler geçince bir PR önerin.",
