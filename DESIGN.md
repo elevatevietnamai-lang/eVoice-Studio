@@ -122,7 +122,7 @@ motion:
   hover: "200 ms, --motion-hover, ease-out cubic --ease-settle cubic-bezier(0.33, 1, 0.68, 1)"
   panel: "260 ms, --motion-panel: a page switch fades the content and panel column in from 60% opacity"
   css: "--default-transition-duration var(--motion-hover) and --default-transition-timing-function var(--ease-settle) set in globals.css @theme; components/motion/tokens.test.ts keeps CSS and JS equal and blocks one-off duration-150/160"
-  js: "components/motion: MotionProvider (reducedMotion=user), FadeIn (8 px drift), Stagger (40 ms)"
+  js: "components/motion: MotionProvider (reducedMotion=user), FadeIn (4 px drift), Stagger (40 ms)"
   icons: "components/ui/morph-icon.tsx, spring snappy, reducedMotion user, stroke 1.75"
   reducedMotion: "globals.css cuts CSS animation and transition to 0.01 ms; MotionConfig reducedMotion=user covers motion; MorphIcon reducedMotion=user"
 themes:
@@ -200,7 +200,7 @@ Display hierarchy (dense desktop: hierarchy comes from face, weight and colour, 
 ## 4. Component Stylings
 
 - **Button** (`components/ui/button.tsx`): heights 24 (xs), 28 (sm), 32 (default), 36 (lg); icon buttons are square at the same sizes. Radius 8 px. Primary is flat (no inset highlight), `shadow-xs`, hover at 90%. Variants: default, outline, secondary, ghost, destructive, link. Icons 14 px (xs, sm) or 16 px.
-- **Input, Select, Textarea**: 32 px high, 8 px radius (`--control-radius`), `border-input`, fill at 20% of the input token. Focus is the shadcn ring on every primitive: the border turns `--ring` and a 3 px ring at 50% alpha appears, animated with the colour transition. Panes never restyle field surfaces from `globals.css` (`globals.test.ts`).
+- **Input, Select, Textarea**: 32 px high, 8 px radius (`--control-radius`), `border-input`, fill at 20% of the input token. Focus is the shadcn ring on every primitive: the border turns `--ring` and a 3 px ring at 50% alpha appears, animated with the colour transition (Button, Input, Select, Toggle, ToggleGroup and Tabs alike: `control-motion.test.ts`). Panes never restyle field surfaces from `globals.css` (`globals.test.ts`).
 - **Card**: 12 px radius (`--card-radius`), `ring-1`, no shadow.
 - **Dialog**: 20 px radius (`--surface-radius`). Menus and the select popup use the card radius.
 - **Select list and menu rows**: every Select list drops below its trigger (flipping above when there is no room), 4 px away, at least the trigger's width and kept 8 px inside the window; it never lays the selected item over the trigger (`alignItemWithTrigger` stays off in `components/ui/select.tsx`). The popup has a 4 px inset (`p-1`) and its rows use 8 px corners, concentric with the 12 px popup. A row lights with the flat `bg-accent` on Base UI's `data-highlighted`, which follows both the pointer and the keyboard; never `focus:` or `hover:` fills. Menu rows use `menuItemClass` from `components/menu-popup.ts` (`select-popup.test.tsx` enforces both).
@@ -289,20 +289,20 @@ Motion grammar by function:
 | Inline show and hide (errors, notices, saved and status lines, toggled panels, results) | height from 0 and fade, 240 ms | height to 0 and fade, 150 ms | `<Reveal>{cond && …}</Reveal>`; the condition stays at the call site |
 | Message inserted by a re-render (`role="alert"`, `role="status"`, `[data-slot=alert]`, `[data-reveal]`) | fade and 4 px rise, 240 ms | with its `Reveal` | global `@starting-style` rule in `globals.css` |
 | Content swap (empty and list, placeholder and result) | fade and 4 px rise, 240 ms | fade, 120 ms, before the new state | `<Swap id={state}>` |
-| Tab panel | fade, 240 ms | none (the old panel unmounts) | `TabsContent` `starting:opacity-0` |
+| Tab panel | fade, 260 ms (`--motion-panel`) | none (the old panel unmounts) | `TabsContent` `starting:opacity-0` |
 | Overlay (popover, select, menu, tooltip, dialog) | fade and scale from 96 to 97%, 200 to 240 ms | fade and scale, 150 ms | Base UI `data-starting-style` / `data-ending-style`; hand-built popups use `usePresence` |
 | Page | from 60% opacity, 120 ms | none | `RouteFade` |
 
-Things that leave are faster than they arrived, and travel less. Nothing loops, bounces or moves on its own. Blocks already on screen when a page mounts do not animate (`Reveal` uses `initial={false}`). Reduced motion means no movement, not no animation: it drops translate, scale and height changes and keeps short fades, so a closing popup or message still fades instead of vanishing. `reveal.test.tsx` fails on a conditional error, alert or status block that is not wrapped in `Reveal`.
+Things that leave are faster than they arrived, and travel less. Nothing loops, bounces or moves on its own. Blocks already on screen when a page mounts do not animate (`Reveal` uses `initial={false}`). Reduced motion means no movement, not no animation: it drops translate, scale and height changes and keeps short fades, so a closing popup or message still fades instead of vanishing. `reveal.test.tsx` fails on a conditional error, alert or status block that is not wrapped in `Reveal`. `Reveal` reads the setting itself (`useReducedMotion`), since `reducedMotion="user"` drops only transforms and would leave the height change running (`reveal-reduced.test.tsx`). The Switch thumb slides and changes colour in one transition.
 
 Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 
 - `MotionProvider`: Wrap the app once; reducedMotion "user" turns every motion component off for people who ask.
-- `FadeIn`: Fade plus 8 px drift on mount. For a page section, a card or a result appearing after a user action.
+- `FadeIn`: Fade plus 4 px drift on mount. For a page section, a card or a result appearing after a user action.
 - `Stagger`: Container that reveals StaggerItem children 40 ms apart. For grids and lists of at most about 12 items.
 - `StaggerItem`: Child of Stagger.
-- `RouteFade`: App shell wraps the routed page: opacity from 60% over 120 ms (never from blank, since the old page has no exit), keyed on the top-level route segment. The control panel column runs the same settle (`.secondary-sidebar` in `globals.css`), so both columns change together.
-- `MenuReveal` / `MenuRevealItem` and `menuSurfaceMotion`: the rail group menu's surface wipes open from the rail side over 280 ms and closes the same way in 180 ms. It is a clip, never a fade, so it stays opaque and the panel under it never shows through, and it never pops in as an empty block. Its items settle in 60 ms apart over 320 ms each, rising 6 px, with ease-out cubic (ease-out quint stops too early and reads as a snap).
+- `RouteFade`: App shell wraps the routed page: opacity from 60% over 260 ms (`--motion-panel`; never from blank, since the old page has no exit), keyed on the top-level route segment. The control panel column runs the same settle (`.secondary-sidebar` in `globals.css`), so both columns change together.
+- `MenuReveal` / `MenuRevealItem` and `menuSurfaceMotion`: the rail group menu's surface wipes open from the rail side over 340 ms (`motionTokens.reveal`) and closes the same way in 200 ms. It is a clip, never a fade, so it stays opaque and the panel under it never shows through, and it never pops in as an empty block. Its items settle in 35 ms apart over 340 ms each, rising 4 px, with ease-out cubic (ease-out quint stops too early and reads as a snap).
 - `MorphIcon`: See morph-icon above.
 
 ## 5. Layout Principles
