@@ -56,7 +56,8 @@
     "send": "إرسال",
     "autopilot_hint": "ينفذ التشغيل التلقائي الإجراءات المطلوبة. Enter للإرسال وShift+Enter لسطر جديد.",
     "plan_hint": "يفحص التخطيط حالة التطبيق دون تغييرها.",
-    "no_harness": "ثبّت Codex أو Claude Code أو OpenCode أو Pi وسجّل الدخول لتوصيل وكيل."
+    "plan_only_source": "يقرأ Gemini الشيفرة المصدرية لتخطيط الإصلاح لكنه لا يعدّلها. أوقف المصدر لاستخدام القيادة الآلية.",
+    "no_harness": "ثبّت Codex أو Claude Code أو OpenCode, Gemini (Antigravity) أو Pi وسجّل الدخول لتوصيل وكيل."
   },
   "siteBrowser": {
     "return_studio": "العودة إلى الاستوديو",
@@ -875,7 +876,7 @@
     "agent_rerendering": "عرض الخطوط المصححة...",
     "agent_cli_desc": "يترجم {{agent}} كل مقطع ضمن سياقه ويعيد صياغة حالات عدم تطابق التوقيت بعد قياس الكلام.",
     "choose_translation_agent": "اختيار وكيل الترجمة",
-    "no_local_agents": "ثبّت Codex أو Claude Code أو OpenCode أو Pi للترجمة باستخدام وكيل محلي.",
+    "no_local_agents": "ثبّت Codex أو Claude Code أو OpenCode, Gemini (Antigravity) أو Pi للترجمة باستخدام وكيل محلي.",
     "agent_translation_complete": "أكمل {{agent}} ترجمة المقاطع.",
     "loading_speech_model": "جارٍ تنزيل نماذج الكلام (في التشغيل الأول فقط)…"
   },
@@ -2988,7 +2989,7 @@
     "title": "اسأل eVoice Studio Agent",
     "notInstalled": "غير مثبّت",
     "noSource": "افتح نسخة قابلة للكتابة من مصدر VoiceStudio ليتمكن الوكيل من إصلاحها.",
-    "noneFound": "ثبّت Codex أو Claude Code أو OpenCode أو Pi لاستخدام الإصلاح المحلي.",
+    "noneFound": "ثبّت Codex أو Claude Code أو OpenCode, Gemini (Antigravity) أو Pi لاستخدام الإصلاح المحلي.",
     "ready": "جاهز",
     "placeholder": "ما الذي حدث؟ أضف الخطوات أو الأخطاء الظاهرة أو السلوك المتوقع.",
     "prReady": "اكتمل الإصلاح. راجع التغييرات واقترح طلب سحب بعد نجاح الاختبارات المستهدفة.",

@@ -56,7 +56,8 @@
     "send": "Kirim",
     "autopilot_hint": "Autopilot menjalankan tindakan yang diminta. Enter mengirim; Shift+Enter membuat baris baru.",
     "plan_hint": "Rencanakan memeriksa keadaan aplikasi tanpa mengubahnya.",
-    "no_harness": "Instal dan masuk ke Codex, Claude Code, OpenCode, atau Pi untuk menghubungkan agen."
+    "plan_only_source": "Gemini membaca kode sumber untuk merencanakan perbaikan tetapi tidak mengeditnya. Matikan sumber untuk Autopilot.",
+    "no_harness": "Instal dan masuk ke Codex, Claude Code, OpenCode, Gemini (Antigravity), atau Pi untuk menghubungkan agen."
   },
   "siteBrowser": {
     "return_studio": "Kembali ke Studio",
@@ -867,7 +868,7 @@
     "agent_rerendering": "Merender garis yang dikoreksi...",
     "agent_cli_desc": "{{agent}} menerjemahkan setiap segmen sesuai konteks dan menulis ulang ketidakcocokan waktu setelah durasi ucapan diukur.",
     "choose_translation_agent": "Pilih agen penerjemah",
-    "no_local_agents": "Instal Codex, Claude Code, OpenCode, atau Pi untuk menerjemahkan dengan agen lokal.",
+    "no_local_agents": "Instal Codex, Claude Code, OpenCode, Gemini (Antigravity), atau Pi untuk menerjemahkan dengan agen lokal.",
     "agent_translation_complete": "{{agent}} selesai menerjemahkan segmen.",
     "loading_speech_model": "Mengunduh model suara (hanya saat pertama kali)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "Tanya eVoice Studio Agent",
     "notInstalled": "Belum terpasang",
     "noSource": "Buka checkout sumber VoiceStudio yang dapat ditulis agar agen dapat memperbaikinya.",
-    "noneFound": "Pasang Codex, Claude Code, OpenCode, atau Pi untuk perbaikan lokal.",
+    "noneFound": "Pasang Codex, Claude Code, OpenCode, Gemini (Antigravity), atau Pi untuk perbaikan lokal.",
     "ready": "Siap",
     "placeholder": "Apa yang salah? Tambahkan langkah, galat yang terlihat, atau perilaku yang diharapkan.",
     "prReady": "Perbaikan selesai. Tinjau perubahan dan usulkan PR setelah pengujian terarah lulus.",

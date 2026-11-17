@@ -56,7 +56,8 @@
     "send": "发送",
     "autopilot_hint": "自动执行会完成你请求的应用操作。Enter 发送，Shift+Enter 换行。",
     "plan_hint": "规划模式只检查应用状态，不做更改。",
-    "no_harness": "安装并登录 Codex、Claude Code、OpenCode 或 Pi 即可连接智能体。"
+    "plan_only_source": "Gemini 会读取源代码来规划修复，但不会编辑。要使用自动驾驶，请关闭源代码。",
+    "no_harness": "安装并登录 Codex、Claude Code、OpenCode、Gemini (Antigravity) 或 Pi 即可连接智能体。"
   },
   "siteBrowser": {
     "return_studio": "返回工作室",
@@ -880,7 +881,7 @@
     "agent_rerendering": "渲染修正后的线条...",
     "agent_cli_desc": "{{agent}} 会结合上下文翻译每个片段，并在测量语音后重写不符合时长的内容。",
     "choose_translation_agent": "选择翻译智能体",
-    "no_local_agents": "安装 Codex、Claude Code、OpenCode 或 Pi，以使用本地代理翻译。",
+    "no_local_agents": "安装 Codex、Claude Code、OpenCode、Gemini (Antigravity) 或 Pi，以使用本地代理翻译。",
     "agent_translation_complete": "{{agent}} 已完成片段翻译。",
     "loading_speech_model": "正在下载语音模型（仅首次运行）…"
   },
@@ -2980,7 +2981,7 @@
     "title": "询问 eVoice Studio Agent",
     "notInstalled": "未安装",
     "noSource": "请打开可写的 VoiceStudio 源码检出目录，让智能体进行修复。",
-    "noneFound": "安装 Codex、Claude Code、OpenCode 或 Pi 以使用本地修复。",
+    "noneFound": "安装 Codex、Claude Code、OpenCode、Gemini (Antigravity) 或 Pi 以使用本地修复。",
     "ready": "就绪",
     "placeholder": "出了什么问题？请添加操作步骤、可见错误或预期行为。",
     "prReady": "修复已完成。请检查更改，并在目标测试通过后提交 PR。",

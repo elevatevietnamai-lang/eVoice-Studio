@@ -56,7 +56,8 @@
     "send": "Invia",
     "autopilot_hint": "Il pilota automatico esegue le azioni richieste. Invio per inviare; Maiusc+Invio per una nuova riga.",
     "plan_hint": "Pianifica esamina lo stato dell’app senza modificarlo.",
-    "no_harness": "Installa e accedi a Codex, Claude Code, OpenCode o Pi per collegare un agente."
+    "plan_only_source": "Gemini legge il codice sorgente per pianificare una correzione ma non lo modifica. Disattiva il sorgente per il pilota automatico.",
+    "no_harness": "Installa e accedi a Codex, Claude Code, OpenCode, Gemini (Antigravity) o Pi per collegare un agente."
   },
   "siteBrowser": {
     "return_studio": "Torna allo studio",
@@ -869,7 +870,7 @@
     "agent_rerendering": "Rendering delle linee corrette...",
     "agent_cli_desc": "{{agent}} traduce ogni segmento nel contesto e corregge gli scarti di durata dopo aver misurato il parlato.",
     "choose_translation_agent": "Scegli l’agente di traduzione",
-    "no_local_agents": "Installa Codex, Claude Code, OpenCode o Pi per tradurre con un agente locale.",
+    "no_local_agents": "Installa Codex, Claude Code, OpenCode, Gemini (Antigravity) o Pi per tradurre con un agente locale.",
     "agent_translation_complete": "{{agent}} ha terminato la traduzione dei segmenti.",
     "loading_speech_model": "Download dei modelli vocali in corso (solo al primo avvio)…"
   },
@@ -2982,7 +2983,7 @@
     "title": "Chiedi a eVoice Studio Agent",
     "notInstalled": "Non installato",
     "noSource": "Apri un checkout scrivibile del sorgente di VoiceStudio per consentire la riparazione.",
-    "noneFound": "Installa Codex, Claude Code, OpenCode o Pi per usare la riparazione locale.",
+    "noneFound": "Installa Codex, Claude Code, OpenCode, Gemini (Antigravity) o Pi per usare la riparazione locale.",
     "ready": "Pronto",
     "placeholder": "Che cosa non ha funzionato? Aggiungi passaggi, errori visibili o comportamento previsto.",
     "prReady": "Correzione completata. Controlla le modifiche e proponi una PR quando i test mirati passano.",

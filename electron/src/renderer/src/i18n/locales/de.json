@@ -56,7 +56,8 @@
     "send": "Senden",
     "autopilot_hint": "Autopilot führt die gewünschten App-Aktionen aus. Enter sendet; Umschalt+Enter fügt eine Zeile ein.",
     "plan_hint": "Planen prüft den App-Zustand, ohne ihn zu ändern.",
-    "no_harness": "Installiere Codex, Claude Code, OpenCode oder Pi und melde dich dort an."
+    "plan_only_source": "Gemini liest den Quellcode, um eine Korrektur zu planen, ändert ihn aber nicht. Schalte die Quelle für Autopilot aus.",
+    "no_harness": "Installiere Codex, Claude Code, OpenCode, Gemini (Antigravity) oder Pi und melde dich dort an."
   },
   "siteBrowser": {
     "return_studio": "Zurück zum Studio",
@@ -867,7 +868,7 @@
     "agent_rerendering": "Korrigierte Zeilen werden gerendert...",
     "agent_cli_desc": "{{agent}} übersetzt jedes Segment im Kontext und überarbeitet Timing-Abweichungen nach der gemessenen Sprache.",
     "choose_translation_agent": "Übersetzungsagent wählen",
-    "no_local_agents": "Installieren Sie Codex, Claude Code, OpenCode oder Pi, um mit einem lokalen Agenten zu übersetzen.",
+    "no_local_agents": "Installieren Sie Codex, Claude Code, OpenCode, Gemini (Antigravity) oder Pi, um mit einem lokalen Agenten zu übersetzen.",
     "agent_translation_complete": "{{agent}} hat die Segmente fertig übersetzt.",
     "loading_speech_model": "Sprachmodelle werden heruntergeladen (nur beim ersten Start)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "eVoice Studio Agent fragen",
     "notInstalled": "Nicht installiert",
     "noSource": "Öffnen Sie eine beschreibbare VoiceStudio-Quelle zum Auschecken, damit ein Agent sie reparieren kann.",
-    "noneFound": "Installieren Sie Codex, Claude Code, OpenCode oder Pi, um die lokale Reparatur zu verwenden.",
+    "noneFound": "Installieren Sie Codex, Claude Code, OpenCode, Gemini (Antigravity) oder Pi, um die lokale Reparatur zu verwenden.",
     "ready": "Bereit",
     "placeholder": "Was ist schiefgelaufen? Ergänze Schritte, sichtbare Fehler oder das erwartete Verhalten.",
     "prReady": "Fix abgeschlossen. Überprüfen Sie die Änderungen und schlagen Sie eine PR vor, wenn die gezielten Tests erfolgreich sind.",

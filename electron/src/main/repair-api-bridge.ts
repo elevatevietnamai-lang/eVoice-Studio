@@ -1,5 +1,5 @@
 import { randomBytes, timingSafeEqual } from 'node:crypto';
-import { chmodSync, mkdtempSync, rmSync, rmdirSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer, request as httpRequest, type IncomingHttpHeaders } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import { join } from 'node:path';
@@ -26,6 +26,14 @@ const APP_CONTROL_PATHS = {
   restartBackend: '/__voicestudio/backend/restart',
   setupRuntime: '/__voicestudio/backend/setup-runtime',
 } as const;
+
+function removeBridgeDirectory(directory: string): void {
+  try {
+    rmSync(directory, { recursive: true, force: true, maxRetries: 2 });
+  } catch {
+    // The capability files are gone; an external scanner may briefly hold the directory.
+  }
+}
 
 function authorized(headers: IncomingHttpHeaders, capability: Buffer): boolean {
   const value = headers[CAPABILITY_HEADER];
@@ -151,12 +159,14 @@ export async function startRepairApiBridge(
       }
     };
     if (pathname.startsWith('/__voicestudio/')) {
-      void control().then((handled) => {
-        if (!handled && !response.writableEnded)
-          json(404, { detail: 'Unknown Electron recovery operation' });
-      }).catch(() => {
-        if (!response.writableEnded) response.destroy();
-      });
+      void control()
+        .then((handled) => {
+          if (!handled && !response.writableEnded)
+            json(404, { detail: 'Unknown Electron recovery operation' });
+        })
+        .catch(() => {
+          if (!response.writableEnded) response.destroy();
+        });
       return;
     }
     let target: URL | null = null;
@@ -304,11 +314,7 @@ export async function startRepairApiBridge(
     rmSync(contextFile, { force: true });
     if (mcpConfigFile) rmSync(mcpConfigFile, { force: true });
     if (openCodeConfigFile) rmSync(openCodeConfigFile, { force: true });
-    try {
-      rmdirSync(directory);
-    } catch {
-      // Best effort after a failed launch.
-    }
+    removeBridgeDirectory(directory);
     throw error;
   }
 
@@ -326,11 +332,8 @@ export async function startRepairApiBridge(
         rmSync(contextFile, { force: true });
         if (mcpConfigFile) rmSync(mcpConfigFile, { force: true });
         if (openCodeConfigFile) rmSync(openCodeConfigFile, { force: true });
-        try {
-          rmdirSync(directory);
-        } catch {
-          // The context file is gone; an external scanner may briefly hold the directory.
-        }
+        // Also removes an agent workspace written beside the bridge files (Antigravity).
+        removeBridgeDirectory(directory);
       });
       return closing;
     },

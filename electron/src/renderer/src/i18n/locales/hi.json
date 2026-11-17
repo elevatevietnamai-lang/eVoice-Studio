@@ -56,7 +56,8 @@
     "send": "भेजें",
     "autopilot_hint": "ऑटोपायलट माँगे गए ऐप कार्य करता है। Enter से भेजें; Shift+Enter से नई पंक्ति जोड़ें।",
     "plan_hint": "योजना मोड ऐप की स्थिति जाँचता है, बिना बदलाव किए।",
-    "no_harness": "एजेंट जोड़ने के लिए Codex, Claude Code, OpenCode या Pi इंस्टॉल करके साइन इन करें।"
+    "plan_only_source": "Gemini सुधार की योजना बनाने के लिए स्रोत कोड पढ़ता है, पर उसे बदलता नहीं। ऑटोपायलट के लिए स्रोत बंद करें।",
+    "no_harness": "एजेंट जोड़ने के लिए Codex, Claude Code, OpenCode, Gemini (Antigravity) या Pi इंस्टॉल करके साइन इन करें।"
   },
   "siteBrowser": {
     "return_studio": "स्टूडियो पर वापस जाएँ",
@@ -867,7 +868,7 @@
     "agent_rerendering": "संशोधित पंक्तियाँ प्रस्तुत की जा रही हैं...",
     "agent_cli_desc": "{{agent}} हर सेगमेंट का संदर्भ सहित अनुवाद करता है और मापी गई वाणी के बाद समय-अंतर को दोबारा लिखता है।",
     "choose_translation_agent": "अनुवाद एजेंट चुनें",
-    "no_local_agents": "स्थानीय एजेंट से अनुवाद करने के लिए Codex, Claude Code, OpenCode या Pi इंस्टॉल करें।",
+    "no_local_agents": "स्थानीय एजेंट से अनुवाद करने के लिए Codex, Claude Code, OpenCode, Gemini (Antigravity) या Pi इंस्टॉल करें।",
     "agent_translation_complete": "{{agent}} ने सेगमेंट का अनुवाद पूरा कर दिया।",
     "loading_speech_model": "स्पीच मॉडल डाउनलोड हो रहे हैं (केवल पहली बार)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "eVoice Studio Agent से पूछें",
     "notInstalled": "इंस्टॉल नहीं है",
     "noSource": "एजेंट को सुधार करने देने के लिए लिखने योग्य VoiceStudio स्रोत चेकआउट खोलें।",
-    "noneFound": "स्थानीय सुधार के लिए Codex, Claude Code, OpenCode या Pi इंस्टॉल करें।",
+    "noneFound": "स्थानीय सुधार के लिए Codex, Claude Code, OpenCode, Gemini (Antigravity) या Pi इंस्टॉल करें।",
     "ready": "तैयार",
     "placeholder": "क्या गलत हुआ? चरण, दिखाई देने वाली त्रुटियाँ या अपेक्षित व्यवहार जोड़ें।",
     "prReady": "सुधार पूरा हुआ। बदलावों की समीक्षा करें और लक्षित परीक्षण पास होने पर PR प्रस्तावित करें।",

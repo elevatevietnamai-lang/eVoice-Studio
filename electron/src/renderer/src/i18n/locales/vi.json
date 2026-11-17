@@ -56,7 +56,8 @@
     "send": "Gửi",
     "autopilot_hint": "Chế độ tự động thực hiện các thao tác được yêu cầu. Enter để gửi; Shift+Enter để xuống dòng.",
     "plan_hint": "Chế độ Lập kế hoạch kiểm tra trạng thái ứng dụng mà không thay đổi.",
-    "no_harness": "Cài đặt và đăng nhập Codex, Claude Code, OpenCode hoặc Pi để kết nối tác nhân."
+    "plan_only_source": "Gemini đọc mã nguồn để lập kế hoạch sửa nhưng không sửa. Tắt mã nguồn để dùng Tự động.",
+    "no_harness": "Cài đặt và đăng nhập Codex, Claude Code, OpenCode, Gemini (Antigravity) hoặc Pi để kết nối tác nhân."
   },
   "siteBrowser": {
     "return_studio": "Quay lại Studio",
@@ -867,7 +868,7 @@
     "agent_rerendering": "Đang tạo lại các câu đã sửa...",
     "agent_cli_desc": "{{agent}} dịch từng đoạn theo ngữ cảnh và viết lại các đoạn lệch thời lượng sau khi đo giọng nói.",
     "choose_translation_agent": "Chọn agent dịch",
-    "no_local_agents": "Cài đặt Codex, Claude Code, OpenCode hoặc Pi để dịch bằng agent trên máy.",
+    "no_local_agents": "Cài đặt Codex, Claude Code, OpenCode, Gemini (Antigravity) hoặc Pi để dịch bằng agent trên máy.",
     "agent_translation_complete": "{{agent}} đã dịch xong các đoạn.",
     "loading_speech_model": "Đang tải model nhận dạng giọng nói (chỉ lần chạy đầu)…"
   },
@@ -2980,7 +2981,7 @@
     "title": "Hỏi eVoice Studio Agent",
     "notInstalled": "Chưa cài đặt",
     "noSource": "Mở bản mã nguồn VoiceStudio có quyền ghi để trợ lý có thể sửa lỗi.",
-    "noneFound": "Cài đặt Codex, Claude Code, OpenCode hoặc Pi để sửa lỗi cục bộ.",
+    "noneFound": "Cài đặt Codex, Claude Code, OpenCode, Gemini (Antigravity) hoặc Pi để sửa lỗi cục bộ.",
     "ready": "Sẵn sàng",
     "placeholder": "Đã xảy ra lỗi gì? Mô tả các bước thực hiện, lỗi hiển thị hoặc kết quả mong đợi.",
     "prReady": "Đã sửa xong. Xem lại thay đổi và tạo PR khi các bài kiểm tra liên quan đạt yêu cầu.",

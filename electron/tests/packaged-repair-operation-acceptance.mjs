@@ -5,9 +5,9 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 const agentId = process.argv[2];
-if (!['codex', 'claude', 'opencode', 'pi'].includes(agentId)) {
+if (!['codex', 'claude', 'opencode', 'pi', 'agy'].includes(agentId)) {
   throw new Error(
-    'Usage: node electron/tests/packaged-repair-operation-acceptance.mjs <codex|claude|opencode|pi>',
+    'Usage: node electron/tests/packaged-repair-operation-acceptance.mjs <codex|claude|opencode|pi|agy>',
   );
 }
 
