@@ -485,7 +485,10 @@ export class DesktopUpdater {
 
   install(): void {
     if (!this.updatesSupported() || this.state.status !== 'downloaded') return;
-    autoUpdater.quitAndInstall(false, true);
+    // Silent: the Windows installer (NSIS, not one-click) otherwise opens its wizard and waits
+    // for clicks, so "Install & Restart" stopped at a Setup window. With --updated it keeps the
+    // existing install folder, then relaunches the app. macOS and Linux ignore the flag.
+    autoUpdater.quitAndInstall(true, true);
   }
 
   private configureFeed(url: string, feedChannel: string): void {
