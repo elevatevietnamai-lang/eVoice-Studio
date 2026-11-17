@@ -471,13 +471,6 @@ details > summary .lucide-chevron-right {
 .secondary-sidebar[data-variant='controls']
   [data-slot='secondary-sidebar-content']
   > details[open]
-  > summary {
-  padding-bottom: 0.625rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 62%, transparent);
-}
-.secondary-sidebar[data-variant='controls']
-  [data-slot='secondary-sidebar-content']
-  > details[open]
   > summary
   + * {
   margin-top: 0.75rem;

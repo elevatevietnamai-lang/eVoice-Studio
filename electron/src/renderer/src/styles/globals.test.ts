@@ -168,6 +168,14 @@ it('never recolours a utility class from unlayered CSS', () => {
   expect(offenders.map(({ selector }) => selector)).toEqual([]);
 });
 
+/**
+ * An open card in a control panel separates its title from its body with space alone, like the
+ * framed Collapsible (DESIGN.md: Expanding cards); a rule under the summary was dropped.
+ */
+it('draws no divider under an open card title', () => {
+  expect(css).not.toMatch(/details\[open\]\s*>\s*summary\s*\{[^}]*border-bottom/);
+});
+
 /** Tailwind v4's `group-open:rotate-180` sets `rotate`, so the chevron transition must name it. */
 it('turns disclosure chevrons smoothly', () => {
   const rule = css.slice(css.indexOf('details > summary .lucide-chevron-down'));

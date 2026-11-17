@@ -22,6 +22,12 @@ export interface VirtualSelectProps {
   buttonClassName?: string;
   /** Trigger height, as SelectTrigger: `default` 32 px, `sm` 24 px for toolbars. */
   size?: 'default' | 'sm';
+  /**
+   * `field` (default) is the form control: border, fill and the `size` height. `ghost` is a
+   * borderless toolbar button: it draws no field and takes its height and look from
+   * `buttonClassName` (the ghost Button classes of the toolbar it sits in).
+   */
+  variant?: 'field' | 'ghost';
   renderOption?: (option: SearchOption) => ReactNode;
   renderValue?: (option: SearchOption | undefined) => ReactNode;
   header?: ReactNode;
@@ -95,6 +101,7 @@ export function VirtualSearchableSelect({
   disabled = false,
   buttonClassName = '',
   size = 'default',
+  variant = 'field',
   renderOption,
   renderValue,
   header,
@@ -203,7 +210,9 @@ export function VirtualSearchableSelect({
         data-size={size}
         // The same field as SelectTrigger and Input: height, radius, border and fill.
         className={cn(
-          'inline-flex w-fit min-w-0 items-center justify-between gap-1.5 rounded-(--control-radius) border border-input bg-control-fill px-2 text-sm whitespace-nowrap transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-8 data-[size=sm]:h-6',
+          'inline-flex w-fit min-w-0 items-center justify-between gap-1.5 whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50',
+          variant === 'field' &&
+            'rounded-(--control-radius) border border-input bg-control-fill px-2 text-sm transition-[color,background-color,border-color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[size=default]:h-8 data-[size=sm]:h-6',
           buttonClassName,
         )}
         onKeyDown={(event) => {
