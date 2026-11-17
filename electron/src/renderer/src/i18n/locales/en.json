@@ -39,6 +39,7 @@
     "invalid": "Invalid audio samples"
   },
   "agentWorkspace": {
+    "model": "Model",
     "repair": "Repair a problem",
     "setup": "Set up my studio",
     "new_chat": "New chat",
@@ -2978,6 +2979,7 @@
     "connect": "Connect"
   },
   "repairAgent": {
+    "launcherHint": "Drag to move, or Alt+arrow keys",
     "title": "Ask eVoice Studio Agent",
     "notInstalled": "Not installed",
     "noSource": "Open a writable VoiceStudio source checkout to let an agent repair it.",

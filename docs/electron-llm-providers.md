@@ -107,7 +107,8 @@ Antigravity `trustedWorkspaces` already trust (often your home folder) go throug
 without asking; `--settings` cannot take that list away. The app refuses source Fix
 for Gemini in the main process, and the dock switches to Plan when source is on.
 Antigravity keeps each run's conversation in its own history, as it does for any
-`agy -p` run. The model is the one picked in **Settings → LLM providers**.
+`agy -p` run. The model is the one picked in **Settings → LLM providers**, or in the model
+picker under the Agent's message box, which saves to the same setting.
 
 Model IDs come from `agy models` (for example `gemini-3.8-flash-low`); leave the model
 empty to use the model chosen in Antigravity's own settings (`model` in

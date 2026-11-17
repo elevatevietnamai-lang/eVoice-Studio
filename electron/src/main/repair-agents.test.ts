@@ -8,6 +8,7 @@ import {
   dubTranslationPrompt,
   guardAgentProcessStreams,
   launchArgs,
+  repairLaunchArgs,
   openCodePromptArgs,
   parseDubAgentTranslations,
   repairDiagnosticContext,
@@ -110,6 +111,15 @@ describe('packaged app repair sessions', () => {
     expect(args).toContain('dontAsk');
     expect(args).not.toContain('bypassPermissions');
     expect(args).not.toContain('acceptEdits');
+  });
+
+  it('runs the model picked in the dock, and the CLI default when none is', () => {
+    const picked = repairLaunchArgs('claude', 'fix', true, 'C:\\temp\\mcp.json', 'sonnet');
+    expect(picked.slice(0, -2)).toEqual(launchArgs('claude', 'fix', true, 'C:\\temp\\mcp.json'));
+    expect(picked.slice(-2)).toEqual(['--model', 'sonnet']);
+    expect(repairLaunchArgs('codex', 'diagnose', false, undefined, '')).toEqual(
+      launchArgs('codex', 'diagnose'),
+    );
   });
 
   it('does not broadly auto-approve checkout-free OpenCode operations', () => {

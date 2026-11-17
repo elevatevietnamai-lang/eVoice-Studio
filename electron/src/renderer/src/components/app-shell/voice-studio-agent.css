@@ -113,12 +113,12 @@
   margin-bottom: 14px;
   padding: 12px 15px;
   border: 1px solid var(--border);
-  border-radius: var(--card-radius) var(--card-radius) var(--card-radius) 4px;
+  /* A message is a card: every corner takes the card radius, like every other card. */
+  border-radius: var(--card-radius);
   background: var(--card);
 }
 .agent-workspace-message.is-user {
   margin-left: auto;
-  border-radius: var(--card-radius) var(--card-radius) 4px var(--card-radius);
   background: color-mix(in srgb, var(--primary) 9%, var(--card));
   border-color: color-mix(in srgb, var(--primary) 20%, var(--border));
 }
@@ -153,9 +153,13 @@
   border: 1px solid var(--border);
   background: var(--background);
   border-radius: var(--card-radius);
+  transition:
+    border-color var(--motion-hover) var(--ease-standard),
+    box-shadow var(--motion-hover) var(--ease-standard);
 }
 .agent-workspace-input:focus-within {
   border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 25%, transparent);
 }
 .agent-workspace-input textarea {
   flex: 1;
@@ -169,8 +173,16 @@
   line-height: 1.6;
   background: transparent;
 }
-.agent-workspace-hint {
+.agent-workspace-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: 5px;
+  min-width: 0;
+}
+.agent-workspace-hint {
+  flex: 1;
+  min-width: 0;
   font-size: 11px;
   color: var(--muted-foreground);
 }

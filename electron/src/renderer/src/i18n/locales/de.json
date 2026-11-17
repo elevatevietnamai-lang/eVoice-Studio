@@ -39,6 +39,7 @@
     "invalid": "Ungültige Audiodaten"
   },
   "agentWorkspace": {
+    "model": "Modell",
     "repair": "Problem beheben",
     "setup": "Studio einrichten",
     "new_chat": "Neuer Chat",
@@ -2978,6 +2979,7 @@
     "connect": "Verbinden"
   },
   "repairAgent": {
+    "launcherHint": "Zum Verschieben ziehen oder Alt+Pfeiltasten",
     "title": "eVoice Studio Agent fragen",
     "notInstalled": "Nicht installiert",
     "noSource": "Öffnen Sie eine beschreibbare VoiceStudio-Quelle zum Auschecken, damit ein Agent sie reparieren kann.",

@@ -11,14 +11,23 @@ metadata and the backend fallback mirror it.
 **Highlights**
 
 - Ask VoiceStudio Agent can run music, dubbing and speech jobs that take longer than two minutes
+- Pick the agent's model under its message box, and drag the Agent button to any edge of the window
+
+### Added
+
+- A model picker under the Agent's message box: Gemini lists its models from your Google account (the same setting as Settings), Claude Code offers Opus, Sonnet and Haiku (#PR)
+- The Agent button can be dragged and snaps to the nearest edge of the window, or moves with Alt+arrow keys; it remembers where you left it (#PR)
 
 ### Fixed
 
+- The Agent panel slides open and closed, its button scales in and out, and the message box's focus ring fades in, instead of each appearing at once (#PR)
+- Agent chat messages round every corner alike, like the app's other cards (#PR)
 - Ask VoiceStudio Agent no longer cuts off a music, dubbing or speech job after two minutes: it waits for the job to finish, returns the result without the progress lines, and reports a job that ends in an error as failed (#72)
 
 ### Docs
 
 - The LLM provider guide explains how the agent's API bridge waits for long jobs, and that an empty Gemini model uses the one set in Antigravity (#72)
+- The LLM provider guide and DESIGN.md cover the Agent's model picker and its movable button (#PR)
 
 ## [0.5.7-beta.6] — 2026-11-17
 

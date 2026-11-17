@@ -39,6 +39,7 @@
     "invalid": "Mẫu âm thanh không hợp lệ"
   },
   "agentWorkspace": {
+    "model": "Mô hình",
     "repair": "Khắc phục sự cố",
     "setup": "Thiết lập studio",
     "new_chat": "Cuộc trò chuyện mới",
@@ -2978,6 +2979,7 @@
     "connect": "Kết nối"
   },
   "repairAgent": {
+    "launcherHint": "Kéo để di chuyển, hoặc Alt + phím mũi tên",
     "title": "Hỏi eVoice Studio Agent",
     "notInstalled": "Chưa cài đặt",
     "noSource": "Mở bản mã nguồn VoiceStudio có quyền ghi để trợ lý có thể sửa lỗi.",

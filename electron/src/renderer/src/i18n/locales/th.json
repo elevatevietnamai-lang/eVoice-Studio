@@ -39,6 +39,7 @@
     "invalid": "ตัวอย่างเสียงไม่ถูกต้อง"
   },
   "agentWorkspace": {
+    "model": "โมเดล",
     "repair": "แก้ไขปัญหา",
     "setup": "ตั้งค่าสตูดิโอ",
     "new_chat": "แชตใหม่",
@@ -2978,6 +2979,7 @@
     "connect": "เชื่อมต่อ"
   },
   "repairAgent": {
+    "launcherHint": "ลากเพื่อย้าย หรือกด Alt + ปุ่มลูกศร",
     "title": "ถาม eVoice Studio Agent",
     "notInstalled": "ยังไม่ได้ติดตั้ง",
     "noSource": "เปิดสำเนาซอร์สโค้ด VoiceStudio ที่เขียนได้เพื่อให้เอเจนต์ซ่อมแซม",

@@ -39,6 +39,7 @@
     "invalid": "Ongeldige audiosamples"
   },
   "agentWorkspace": {
+    "model": "Model",
     "repair": "Probleem oplossen",
     "setup": "Mijn studio instellen",
     "new_chat": "Nieuwe chat",
@@ -2978,6 +2979,7 @@
     "connect": "Verbinden"
   },
   "repairAgent": {
+    "launcherHint": "Sleep om te verplaatsen, of Alt + pijltjestoetsen",
     "title": "Vraag het eVoice Studio Agent",
     "notInstalled": "Niet geïnstalleerd",
     "noSource": "Open een beschrijfbare VoiceStudio-broncheckout zodat een agent deze kan repareren.",
