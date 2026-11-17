@@ -19,6 +19,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
+- Removing on-screen subtitles with LaMa is about 6x faster on screen recordings and slides: a still shot reuses its fill instead of running LaMa on every frame, and LaMa works on native-resolution tiles (#84)
 - Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#81)
 - The rail gives the logo room at the top and lists its icons straight under it instead of centring them in the window's height (#82)
 - The "Something went wrong" recovery page uses the near-black eVoice look and the real eVoice mark instead of the old magenta styling (#83)
