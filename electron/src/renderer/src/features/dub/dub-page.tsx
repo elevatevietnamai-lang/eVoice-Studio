@@ -34,6 +34,9 @@ import {
   setDubQuality,
   setDubProduction,
   setDubTranslationOptions,
+  researchDubVideo,
+  stopDubResearch,
+  DUB_RESEARCH_FRAMES,
 } from './dub-session';
 import { DEFAULT_REPAIR_AGENT_KEY } from '@/lib/repair-agent-events';
 import type { RepairAgentId, RepairAgentInfo } from '../../../../preload/index.d';
@@ -74,6 +77,7 @@ import {
   Redo2Icon,
   RotateCcwIcon,
   ScissorsIcon,
+  SearchIcon,
   Settings2Icon,
   ShieldCheckIcon,
   SlidersHorizontalIcon,
@@ -83,6 +87,7 @@ import {
   UsersRoundIcon,
   WandSparklesIcon,
   XIcon,
+  SquareIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -263,6 +268,8 @@ export function DubPage() {
   const [translationAgents, setTranslationAgents] = useState<RepairAgentInfo[]>([]);
   const [translationAgent, setTranslationAgent] = useState<RepairAgentId>('codex');
   const [translationAgentsLoading, setTranslationAgentsLoading] = useState(true);
+  const [researching, setResearching] = useState(false);
+  const [researchError, setResearchError] = useState<string | null>(null);
   const [livePreviewEnabled, setLivePreviewEnabled] = useState(() => {
     try {
       return localStorage.getItem(LIVE_PREVIEW_KEY) === '1';
@@ -927,6 +934,20 @@ export function DubPage() {
     const skipped = await translateDubBatch(batchTargets, provider.id);
     if (skipped.length) toast.error(t('dub.multi_lang_skipped', { langs: skipped.join(', ') }));
   };
+  // Explicit click only: the transcript and frames go to the agent's cloud model.
+  const researchVideo = async () => {
+    if (!selectedTranslationAgent || researching) return;
+    setResearching(true);
+    setResearchError(null);
+    try {
+      const brief = await researchDubVideo(selectedTranslationAgent.id, target);
+      if (brief) toast.success(t('dubResearch.done'));
+    } catch (error) {
+      setResearchError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setResearching(false);
+    }
+  };
   const installArgosLanguagePacks = async () => {
     if (!missingArgosPacks.length || installingArgosPacks) return;
     setInstallingArgosPacks(true);
@@ -1514,7 +1535,7 @@ export function DubPage() {
                   rows={4}
                   maxLength={5000}
                   value={session.translationInstructions || ''}
-                  disabled={busy || Boolean(session.recovery)}
+                  disabled={busy || researching || Boolean(session.recovery)}
                   onChange={(event) =>
                     setDubTranslationOptions({ translationInstructions: event.target.value })
                   }
@@ -1526,6 +1547,64 @@ export function DubPage() {
                 >
                   {t('dubStyle.help')}
                 </p>
+                {selectedTranslationAgent && (
+                  <div
+                    data-slot="dub-research"
+                    className="space-y-1.5 rounded-md border border-border/60 p-2"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      {researching ? (
+                        <Button size="sm" variant="outline" onClick={stopDubResearch}>
+                          <SquareIcon />
+                          {t('dubResearch.stop')}
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          aria-describedby="dub-research-consent"
+                          disabled={
+                            busy ||
+                            Boolean(session.recovery) ||
+                            !session.jobId ||
+                            !session.segments.length
+                          }
+                          onClick={() => void researchVideo()}
+                        >
+                          <SearchIcon />
+                          {t('dubResearch.button', { agent: selectedTranslationAgent.label })}
+                        </Button>
+                      )}
+                      {researching && (
+                        <span
+                          role="status"
+                          className="flex items-center gap-1.5 text-xs text-muted-foreground"
+                        >
+                          <LoaderCircleIcon className="size-3.5 animate-spin motion-reduce:animate-none" />
+                          {t('dubResearch.running')}
+                        </span>
+                      )}
+                    </div>
+                    <p
+                      id="dub-research-consent"
+                      className="text-xs leading-5 text-muted-foreground"
+                    >
+                      {session.inputType === 'video'
+                        ? t('dubResearch.consent', {
+                            agent: selectedTranslationAgent.label,
+                            frames: DUB_RESEARCH_FRAMES,
+                          })
+                        : t('dubResearch.consent_audio', {
+                            agent: selectedTranslationAgent.label,
+                          })}
+                    </p>
+                    {researchError && (
+                      <p role="alert" className="text-xs leading-5 text-destructive">
+                        {t('dubResearch.failed', { error: researchError })}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
             {session.quality !== 'agent' && (

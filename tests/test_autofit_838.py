@@ -161,6 +161,7 @@ def test_measured_agent_uses_real_render_duration_once(monkeypatch):
     assert result["measured_ratio"] == pytest.approx(1.6)
     assert len(fake.calls) == 1
     assert "Use warm conversational language." in fake.calls[0]["system"]
+    assert "Use its terminology and OCR corrections" in fake.calls[0]["system"]
     assert "Exact target duration: 2.00s" in fake.calls[0]["user"]
     assert "Measured duration of this line: 3.20s" in fake.calls[0]["user"]
     assert "Previous source line (context only)" in fake.calls[0]["user"]

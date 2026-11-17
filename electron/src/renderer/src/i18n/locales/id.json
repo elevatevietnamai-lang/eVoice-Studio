@@ -3005,6 +3005,15 @@
     "label": "Instruksi gaya terjemahan",
     "help": "Jelaskan nada, audiens, dan gaya adaptasi, misalnya pertahankan lelucon dan sesuaikan idiom secara alami. Disimpan dalam proyek untuk terjemahan dan penyesuaian durasi. Kosongkan untuk gaya bawaan."
   },
+  "dubResearch": {
+    "button": "Riset video dengan {{agent}}",
+    "stop": "Hentikan riset",
+    "running": "Sedang meriset: membaca transkrip dan bingkai, mencari di web…",
+    "consent": "Mengirim transkrip, nama file, dan {{frames}} bingkai dari video ke model cloud {{agent}}, yang juga dapat mencari dan membuka halaman web. Ringkasan yang ditulisnya menggantikan teks di atas (catatan Anda tetap dipakai bila masih relevan); periksa sebelum menerjemahkan.",
+    "consent_audio": "Mengirim transkrip dan nama file ke model cloud {{agent}}, yang juga dapat mencari dan membuka halaman web. Ringkasan yang ditulisnya menggantikan teks di atas (catatan Anda tetap dipakai bila masih relevan); periksa sebelum menerjemahkan.",
+    "done": "Ringkasan riset siap. Periksa sebelum menerjemahkan.",
+    "failed": "Riset gagal: {{error}}"
+  },
   "dubActivity": {
     "output": "Terjemahan",
     "waiting": "Belum ada keluaran yang diterima.",

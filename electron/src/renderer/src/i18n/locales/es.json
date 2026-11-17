@@ -3007,6 +3007,15 @@
     "label": "Instrucciones de estilo de traducción",
     "help": "Describe el tono, el público y la adaptación, por ejemplo conservar los chistes y adaptar los modismos con naturalidad. Se guarda en el proyecto y se aplica a la traducción y los ajustes de duración. Déjalo vacío para el estilo predeterminado."
   },
+  "dubResearch": {
+    "button": "Investigar el vídeo con {{agent}}",
+    "stop": "Detener investigación",
+    "running": "Investigando: leyendo la transcripción y los fotogramas, buscando en la web…",
+    "consent": "Envía la transcripción, el nombre del archivo y {{frames}} fotogramas del vídeo al modelo en la nube de {{agent}}, que también puede buscar y abrir páginas web. El resumen que escriba sustituye el texto de arriba (tus notas se mantienen si siguen siendo válidas); revísalo antes de traducir.",
+    "consent_audio": "Envía la transcripción y el nombre del archivo al modelo en la nube de {{agent}}, que también puede buscar y abrir páginas web. El resumen que escriba sustituye el texto de arriba (tus notas se mantienen si siguen siendo válidas); revísalo antes de traducir.",
+    "done": "Resumen de investigación listo. Revísalo antes de traducir.",
+    "failed": "La investigación falló: {{error}}"
+  },
   "dubActivity": {
     "output": "Traducciones",
     "waiting": "Aún no se ha recibido ninguna salida.",

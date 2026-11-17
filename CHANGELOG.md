@@ -8,6 +8,18 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Dubbing can research the video before translating: your agent writes an editable brief that translation follows
+
+### Added
+
+- **Research the video** beside the translation brief: the chosen agent reads the transcript, five frames and the web, then writes the topic, tone, terminology, likely OCR errors and rules into the brief, only when you click it (#PR)
+
+### Changed
+
+- Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#PR)
+
 ## [0.5.7-beta.8] — 2026-11-18
 
 Removing burned-in subtitles works again: on current ffmpeg the cleanup failed with "Invalid
