@@ -16,13 +16,13 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
-- Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#56)
-- A failed transcription no longer suggests the video server dropped the download (#56)
-- Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#56)
-- "Video has burned-in subtitles" stays on after you choose a file or paste a link, so the transcript is read from the subtitles (#56)
-- LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#56)
-- NLLB no longer repeats one phrase over and over on long segments (#56)
-- Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#56)
+- Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#57)
+- A failed transcription no longer suggests the video server dropped the download (#57)
+- Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#57)
+- "Video has burned-in subtitles" stays on after you choose a file or paste a link, so the transcript is read from the subtitles (#57)
+- LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#57)
+- NLLB no longer repeats one phrase over and over on long segments (#57)
+- Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#57)
 
 ## [0.5.7-beta.4] — 2026-11-16
 
