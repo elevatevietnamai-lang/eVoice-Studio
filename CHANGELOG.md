@@ -8,6 +8,18 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.6] — 2026-11-17
+
+Gemini now runs on your Google account: sign in from Settings, pick the model, and use it for
+translation and in Ask VoiceStudio Agent, with no API key. This beta also finishes a pass over the
+app's motion, so dropdowns, menus and panels open and close smoothly, and from now on updates on
+Windows install silently.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.6-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.4 or beta.5 update in **Settings → Updates**; this one update still shows the Setup window once |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
 - Gemini runs on your Google account, with sign-in and model choice in Settings
