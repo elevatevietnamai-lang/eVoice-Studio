@@ -207,8 +207,8 @@ def _hardsub_burn_style(job: dict) -> str:
         top = bottom = -1.0
     if 0.0 < line_bottom <= 1.0 and 0.0 < line_height < line_bottom:
         # Where the removed text actually was, and the size it was drawn at.
-        margin = max(2, min(140, int(round((1.0 - line_bottom) * 288))))
-        size = max(10, min(40, int(round(line_height * 288))))
+        margin = max(2, min(140, round((1.0 - line_bottom) * 288)))
+        size = max(10, min(40, round(line_height * 288)))
         fields.append(f"MarginV={margin},Fontsize={size},Bold=1,Outline=1.6,Shadow=0")
     elif 0.0 <= top < bottom <= 1.0:
         margin = max(4, min(140, int(round((1.0 - bottom) * 288 + 2))))

@@ -217,7 +217,7 @@ def _join_lines(raw: str) -> str:
     return out
 
 
-def _text_line(data: dict) -> "dict | None":
+def _text_line(data: dict) -> dict | None:
     """Where the read subtitles sit on screen, as fractions of the frame height.
 
     The median bottom edge and height of each cue's lowest text line: burned
