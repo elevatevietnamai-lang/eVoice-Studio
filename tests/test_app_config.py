@@ -53,3 +53,27 @@ def test_active_launchers_do_not_mirror_default_port_literals() -> None:
         source = re.sub(r"//.*", "", source)
         for port in (3900, 3901, 3902, 3903):
             assert str(port) not in source, f"{relative} mirrors port {port}"
+
+
+def test_update_paths_read_the_update_repository_from_config() -> None:
+    """Every update path follows `updateRepository` and the branded artifact name,
+    so an eVoice build never updates from upstream releases and the AppImage zsync
+    pattern matches the files the release actually ships."""
+    for rel in (
+        "electron/src/main/updater.ts",
+        "electron/electron-builder.config.mjs",
+        "electron/scripts/embed-appimage-update.mjs",
+        "electron/tests/update-package-contract.mjs",
+    ):
+        source = (ROOT / rel).read_text(encoding="utf-8")
+        assert "debpalash" not in source, f"{rel} hardcodes the upstream update repository"
+        assert "UPDATE_REPOSITORY" in source, f"{rel} must read config/app-config.mjs"
+        assert "VoiceStudio-Electron-" not in source, f"{rel} hardcodes the pre-rename artifact name"
+
+
+def test_release_pipeline_finds_artifacts_under_the_product_name() -> None:
+    """The workflows and release checker must not look for the pre-rename
+    `VoiceStudio-Electron-*` files: eVoice builds are `eVoice-Studio-Electron-*`."""
+    paths = [*sorted((ROOT / ".github/workflows").glob("*.yml")), ROOT / "scripts/check_electron_release_assets.py"]
+    for path in paths:
+        assert "VoiceStudio-Electron-" not in path.read_text(encoding="utf-8"), path.name

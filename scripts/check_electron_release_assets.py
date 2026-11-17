@@ -39,6 +39,16 @@ OPTIONAL_TARGETS = {
 }
 
 
+def _artifact_prefix() -> str:
+    """Direct-build artifact prefix, as electron-builder.config.mjs derives it."""
+    config_path = Path(__file__).resolve().parents[1] / "config" / "app.json"
+    product = json.loads(config_path.read_text(encoding="utf-8"))["productName"]
+    return f"{re.sub(r'[^A-Za-z0-9]+', '-', product)}-Electron"
+
+
+ARTIFACT_PREFIX = _artifact_prefix()
+
+
 class ReleaseContractError(RuntimeError):
     """The published release cannot safely serve an Electron update."""
 
@@ -85,7 +95,7 @@ def verify_release(
         if target in OPTIONAL_TARGETS:
             # Skip only when NOTHING of this target is published: an installer
             # or blockmap without its manifest is an incomplete release.
-            payload = f"VoiceStudio-Electron-{version}-{os_token}-{arch}{extension}"
+            payload = f"{ARTIFACT_PREFIX}-{version}-{os_token}-{arch}{extension}"
             traces = (manifest_name, payload, f"{payload}.blockmap")
             if not manifest_path.is_file() and not any(name in assets for name in traces):
                 continue
@@ -114,7 +124,7 @@ def verify_release(
             raise ReleaseContractError(
                 f"{manifest_name} has version {declared_version}, expected {version}"
             )
-        expected_artifact = f"VoiceStudio-Electron-{version}-{os_token}-{arch}{extension}"
+        expected_artifact = f"{ARTIFACT_PREFIX}-{version}-{os_token}-{arch}{extension}"
         if artifact != expected_artifact or legacy_path != artifact:
             raise ReleaseContractError(f"{manifest_name} points at unexpected artifact {artifact}")
         if legacy_sha != file_sha or len(file_sha) < 80:

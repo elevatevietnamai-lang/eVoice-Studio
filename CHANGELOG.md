@@ -6,6 +6,12 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/).
 `package.json` is the maintained app-version source of truth; Electron package
 metadata and the backend fallback mirror it.
 
+## [Unreleased]
+
+### Fixed
+
+- Linux AppImages point external updaters at eVoice Studio's own release files, so the Linux release check no longer fails on the old upstream name
+
 ## [0.5.7-beta.4] — 2026-11-16
 
 From this beta on, eVoice Studio updates itself: install it once by hand and later betas arrive in
