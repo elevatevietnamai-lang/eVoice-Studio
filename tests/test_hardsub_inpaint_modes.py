@@ -117,3 +117,177 @@ def test_engine_video_writer_streams_frames_through_the_whitelist(tmp_path, monk
         writer.write(np.zeros((48, 64, 3), np.uint8))
     writer.close()
     assert (tmp_path / "o.mp4").stat().st_size > 0
+
+
+def _mismatched_neighbours(n):
+    """Neighbours whose surroundings differ (another shot): each costs a try, none may fill."""
+    out = []
+    for _ in range(n):
+        img = (255 - _background()).astype(np.uint8)
+        out.append((img, np.ones((H, W), bool)))
+    return out
+
+
+def _all_valid():
+    return np.ones((H, W), bool)
+
+
+def test_previous_clean_frame_is_tried_after_the_neighbour_budget_runs_out():
+    """Other cues' frames each expose part of the hole and use up max_tries; the previous clean
+    frame must still be tried, or a static shot runs LaMa on every frame."""
+    prev = (_background(), _background(), _all_valid())
+    _, rest = inpaint.temporal_fill(_cur(), HOLE, _mismatched_neighbours(20) + [prev[:2]])
+    assert (rest == HOLE).all()  # last in `cands`: never reached once 16 tries are spent
+    out, rest = inpaint.temporal_fill(_cur(), HOLE, _mismatched_neighbours(20), previous=prev)
+    assert not rest.any()
+    assert _err(out, _background()) < 1.0
+
+
+def test_previous_clean_frame_needs_matching_surroundings():
+    """A previous frame from another shot is refused like any neighbour."""
+    other = _mismatched_neighbours(1)[0][0]
+    _, rest = inpaint.temporal_fill(_cur(), HOLE, [], previous=(other, other, _all_valid()))
+    assert (rest == HOLE).all()
+
+
+def test_previous_clean_frame_is_judged_against_its_anchor_not_the_last_frame():
+    """Slow drift passes every one-frame check; the patch was made for the anchor's surroundings,
+    so once those no longer match, the patch is stale and must be rebuilt."""
+    ys, xs = np.mgrid[0:H, 0:W]
+    drifted = np.dstack([(xs + 40) * 1.5, ys * 2.5, (xs + 40 + ys)]).clip(0, 255).astype(np.uint8)
+    prev = _background()  # last frame: surroundings equal the current frame's
+    _, rest = inpaint.temporal_fill(_cur(), HOLE, [], previous=(prev, drifted, _all_valid()))
+    assert (rest == HOLE).all()
+    _, rest = inpaint.temporal_fill(_cur(), HOLE, [], previous=(prev, prev, _all_valid()))
+    assert not rest.any()
+
+
+def test_feather_blend_matches_the_whole_band_formula():
+    rng = np.random.default_rng(1)
+    orig = rng.integers(0, 256, (H, W, 3), dtype=np.uint8)
+    filled = orig.copy()
+    filled[HOLE] = rng.integers(0, 256, (int(HOLE.sum()), 3), dtype=np.uint8)
+    m = cv2.GaussianBlur(HOLE.astype(np.float32), (0, 0), 3)
+    m = np.maximum(m, HOLE.astype(np.float32))[..., None]
+    want = (filled.astype(np.float32) * m + orig.astype(np.float32) * (1 - m)).astype(np.uint8)
+    assert (inpaint._feather_blend(orig, filled, HOLE) == want).all()
+
+
+def test_previous_clean_frame_is_refused_when_the_scene_behind_a_static_overlay_changes():
+    """A subtitle's box or shadow outside the mask matches every frame; reuse must also look at
+    what LaMa sees farther out, or a stale patch stays on screen while the scene changes."""
+    anchor = _background()
+    cur = _cur()
+    cur[:30] = 255 - cur[:30]  # far from the hole (rows 60-80), a third of the context
+    prev = (_background(), anchor, _all_valid())
+    _, rest = inpaint.temporal_fill(cur, HOLE, [], previous=prev)
+    assert (rest == HOLE).all()
+    cur = _cur()
+    cur[0:2, 0:20] = 255 - cur[0:2, 0:20]  # a cursor-sized change far away is tolerated
+    _, rest = inpaint.temporal_fill(cur, HOLE, [], previous=prev)
+    assert not rest.any()
+
+
+class _CountingLama:
+    size = 512
+
+    def __init__(self):
+        self.shapes = []
+
+    def run(self, img, mask):
+        self.shapes.append(img.shape[:2])
+        return img
+
+
+def test_lama_tiles_are_native_model_size_crops_of_the_frame():
+    """A subtitle line on a 1024x576 frame takes at most two native 512 tiles, never band-high
+    crops blown up to the model size (3+ runs per frame, 4x the pixels)."""
+    f = inpaint.Filler("sttn", "unused", False)
+    f.lama = _CountingLama()
+    frame = np.zeros((576, 1024, 3), np.uint8)
+    hole = np.zeros((576, 1024), bool)
+    hole[506:563, 289:735] = True  # a 446-px subtitle line near the bottom
+    f.fill(frame, hole)
+    assert 1 <= len(f.lama.shapes) <= 2
+    assert all(s == (512, 512) for s in f.lama.shapes)
+
+
+def _run_static_clip(monkeypatch, n=30, lift=2):
+    """A still shot whose subtitle never leaves the screen; from frame 1 on the scene is `lift`
+    levels brighter. Returns (output frames, LaMa runs, hole mask)."""
+    from hardsub_core.subs import Segment
+    from hardsub_core.video import VideoInfo
+
+    h, w = 120, 200
+    ys, xs = np.mgrid[0:h, 0:w]
+    bg = np.dstack([xs * 1.2, ys * 1.5, (xs + ys) * 0.6]).clip(0, 235).astype(np.uint8)
+    frames = []
+    for i in range(n):
+        f = bg.copy() if i == 0 else (bg + lift).astype(np.uint8)
+        cv2.rectangle(f, (60, 92), (140, 104), (255, 255, 255), -1)
+        frames.append(f)
+
+    class Cap:
+        def __init__(self, _src):
+            self.i = 0
+
+        def read(self):
+            if self.i >= n:
+                return False, None
+            self.i += 1
+            return True, frames[self.i - 1].copy()
+
+        def release(self):
+            pass
+
+    out = []
+
+    class Writer:
+        def __init__(self, *_a, **_k):
+            pass
+
+        def write(self, fr):
+            out.append(fr)
+
+        def close(self):
+            pass
+
+    runs = []
+
+    class Lama:
+        size = 512
+
+        def __init__(self, *_a, **_k):
+            self.gpu_fallback = False
+
+        def run(self, img, mask):
+            runs.append(1)
+            res = img.copy()
+            res[mask] = np.median(img[~mask], axis=0).astype(np.uint8)
+            return res
+
+    monkeypatch.setattr(inpaint.cv2, "VideoCapture", Cap)
+    monkeypatch.setattr(inpaint, "VideoWriter", Writer)
+    monkeypatch.setattr(inpaint, "LamaOnnx", Lama)
+    monkeypatch.setattr(inpaint, "ensure_lama", lambda *_a, **_k: "fake.onnx")
+    info = VideoInfo("v.mp4", w, h, 1.0, "1", n, float(n), False)
+    seg = Segment.from_dict({"idx": 1, "start": 0.0, "end": float(n), "text": "x", "boxes": [[64, 94, 136, 102]]})
+    inpaint.remove_subtitles("v.mp4", "o.mp4", info, [seg], method="lama", log=lambda _m: None)
+    hole = np.zeros((h, w), bool)
+    hole[94:102, 64:136] = True
+    return out, len(runs), hole
+
+
+def test_still_shot_runs_lama_once_then_reuses_the_fill(monkeypatch):
+    out, runs, _ = _run_static_clip(monkeypatch)
+    assert len(out) == 30
+    assert 1 <= runs <= 2  # the first frame's tiles only, not one set per frame
+
+
+def test_reused_fill_does_not_drift_frame_by_frame(monkeypatch):
+    """Colour correction is applied once, to the anchor frame's output; re-correcting the previous
+    frame's copy every frame walks the patch into a flat tinted box."""
+    out, _, hole = _run_static_clip(monkeypatch, n=30, lift=2)
+    early = out[1][hole].astype(np.float32).mean()
+    late = out[-1][hole].astype(np.float32).mean()
+    assert abs(late - early) < 1.0

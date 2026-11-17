@@ -28,7 +28,12 @@ burned into the picture. Dub can read them and remove them:
 4. **Remove subtitles from video** rebuilds the covered pixels:
    real background revealed in neighbouring frames (camera motion compensated,
    accepted only when the surroundings still match), then the previous clean
-   frame, then LaMa (AI) or a fast classical fill for what was never visible.
+   frame's fill while the scene around the text is unchanged since that fill was
+   made, then LaMa (AI) or a fast classical fill for what was never visible.
+   Still shots (screen recordings, slides) therefore run LaMa about once per
+   line instead of on every frame; LaMa works on native-resolution tiles of the
+   whole frame, and the neighbour search runs on spare CPU cores while LaMa
+   works.
    The clean video becomes the job's video for preview, burned-in subtitle
    export and every video export. **Use original video** switches back.
    To put translated subtitles back without dubbing, translate the lines and
