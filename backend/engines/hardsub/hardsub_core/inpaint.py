@@ -320,7 +320,8 @@ class TemporalFill:
         while the surroundings still match the anchor: within `REUSE_NEAR_PX` of the hole at most
         `REUSE_NEAR_CHANGED` of the pixels may differ, and across the band around it (full band
         height, a band height either side) at most `REUSE_WIDE_CHANGED`. LaMa ignores the pixels
-        under the mask, so unchanged surroundings give the same fill. A thin ring is not enough: a
+        under the mask, so near-unchanged surroundings give a near-identical fill (its tiles also see
+        rows above the band, which this check leaves out). A thin ring is not enough: a
         subtitle's own box or shadow outside the mask stays put while the scene behind it changes.
         Neighbours from other cues each expose a sliver of the hole and can use up `max_tries`, so
         this runs outside that budget. True when it was used."""
@@ -463,6 +464,7 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
     all_valid = np.ones((by1 - by0, info.width), bool)
     # (source band, its valid mask, its clean output) of the last frame not filled by reuse
     anchor = None
+    prev_out_band = None  # median modes vote with the previous clean band, as before
     read_idx = 0
     out_idx = 0
     eof = False
@@ -500,11 +502,12 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
         return filler.fill(full, m)[by0:by1]
 
     def process(t, frame):
-        nonlocal anchor, n_ai, n_temporal
+        nonlocal anchor, prev_out_band, n_ai, n_temporal
         hole = holes.get(t)
         band = bands[t]
         if hole is None or not hole.any():
             anchor = (band, all_valid, band)
+            prev_out_band = band
             return frame
         reused = False
         filled = band
@@ -513,7 +516,10 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
             job, tf = pending.pop(t)
             job.result()
             # nền thật ưu tiên trước, rồi mới tới khung đã lấp (ngoài ngân sách thử)
-            if anchor is not None:
+            if median_of > 1:
+                if prev_out_band is not None:  # one more vote, inside the try budget
+                    tf.feed([(prev_out_band, all_valid)])
+            elif anchor is not None:
                 src, valid, clean = anchor
                 reused = tf.feed_previous(clean, src, valid)
             filled, remaining = tf.result()
@@ -534,6 +540,7 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
         filled = _feather_blend(band, filled, hole)
         out = frame.copy()
         out[by0:by1] = filled
+        prev_out_band = filled
         if not reused:
             anchor = (band, valids[t], filled)
         return out
