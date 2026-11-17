@@ -1,6 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { apiFetch } from '@/lib/api/client';
 import {
+  dubResearchState,
   dubSession,
   researchDubVideo,
   researchErrorMessage,
@@ -115,10 +116,15 @@ it('keeps the brief field when research is stopped or fails', async () => {
   await vi.waitFor(() => expect(research).toHaveBeenCalled());
   // Frames that cannot be read are skipped; the transcript still goes.
   expect(research.mock.calls[0][0].frames).toEqual([]);
+  // The page locks translation on this, and it survives leaving and reopening the page.
+  expect(dubResearchState.state.running).toBe(true);
+  await expect(researchDubVideo('codex', 'Vietnamese')).resolves.toBeNull();
+  expect(research).toHaveBeenCalledTimes(1);
   stopDubResearch();
   expect(stopTranslation).toHaveBeenCalled();
   release({ agent: 'codex', brief: 'late brief' });
   await expect(running).resolves.toBeNull();
+  expect(dubResearchState.state.running).toBe(false);
   expect(dubSession.state.translationInstructions).toBe('Xưng "mình".');
 
   withBridge({

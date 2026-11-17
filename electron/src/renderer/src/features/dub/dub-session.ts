@@ -1188,6 +1188,10 @@ export function researchErrorMessage(error: unknown): string {
 
 let researchController: AbortController | null = null;
 
+/** Whether a video research run is in flight: outlives the page, which locks its controls on it. */
+export const dubResearchState = new Store({ running: false });
+export const useDubResearching = () => useStore(dubResearchState, (state) => state.running);
+
 /** Stops a running research: the agent process is terminated in Electron main. */
 export function stopDubResearch(): void {
   researchController?.abort();
@@ -1208,10 +1212,17 @@ export async function researchDubVideo(
   const bridge = window.voicestudio?.repair;
   if (!bridge?.research) throw new Error('LOCAL_TRANSLATION_AGENT_UNAVAILABLE');
   const snapshot = dubSession.state;
-  if (!snapshot.jobId || !snapshot.segments.length || snapshot.recovery || researchController)
+  if (
+    !snapshot.jobId ||
+    !snapshot.segments.length ||
+    snapshot.recovery ||
+    !['idle', 'editing', 'done'].includes(snapshot.phase) ||
+    researchController
+  )
     return null;
   const controller = new AbortController();
   researchController = controller;
+  dubResearchState.setState(() => ({ running: true }));
   const stop = () => void bridge.stopTranslation().catch(() => {});
   controller.signal.addEventListener('abort', stop, { once: true });
   const requestId = `research-${crypto.randomUUID()}`;
@@ -1265,7 +1276,10 @@ export async function researchDubVideo(
     finishActivity();
     unsubscribe?.();
     controller.signal.removeEventListener('abort', stop);
-    if (researchController === controller) researchController = null;
+    if (researchController === controller) {
+      researchController = null;
+      dubResearchState.setState(() => ({ running: false }));
+    }
   }
 }
 

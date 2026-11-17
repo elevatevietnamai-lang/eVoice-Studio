@@ -357,7 +357,8 @@ before translating; translation then uses it like any brief.
 
 This sends the transcript and frames to the agent's cloud model, so it runs only when
 you click the button, which says so beside it; it never runs on its own. **Stop
-research** ends the agent process. Each agent gets only what research needs, and
+research** ends the agent process. Translation and generation stay locked while it
+runs, since one agent run holds the slot at a time. Each agent gets only what research needs, and
 never a shell or file writes:
 
 | Agent | Frames | Web | Everything else |

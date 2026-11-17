@@ -36,6 +36,7 @@ import {
   setDubTranslationOptions,
   researchDubVideo,
   stopDubResearch,
+  useDubResearching,
   DUB_RESEARCH_FRAMES,
 } from './dub-session';
 import { DEFAULT_REPAIR_AGENT_KEY } from '@/lib/repair-agent-events';
@@ -268,7 +269,7 @@ export function DubPage() {
   const [translationAgents, setTranslationAgents] = useState<RepairAgentInfo[]>([]);
   const [translationAgent, setTranslationAgent] = useState<RepairAgentId>('codex');
   const [translationAgentsLoading, setTranslationAgentsLoading] = useState(true);
-  const [researching, setResearching] = useState(false);
+  const researching = useDubResearching();
   const [researchError, setResearchError] = useState<string | null>(null);
   const [livePreviewEnabled, setLivePreviewEnabled] = useState(() => {
     try {
@@ -333,7 +334,8 @@ export function DubPage() {
   const selectedTranslationAgent = availableTranslationAgents.find(
     (agent) => agent.id === translationAgent,
   );
-  const busy = !['idle', 'editing', 'done'].includes(session.phase);
+  // A research run holds the agent slot: translation and generation wait for it.
+  const busy = !['idle', 'editing', 'done'].includes(session.phase) || researching;
   const livePreview = useDubLivePreview({
     enabled: livePreviewEnabled && !busy && !session.recovery,
     language: target,
@@ -937,15 +939,12 @@ export function DubPage() {
   // Explicit click only: the transcript and frames go to the agent's cloud model.
   const researchVideo = async () => {
     if (!selectedTranslationAgent || researching) return;
-    setResearching(true);
     setResearchError(null);
     try {
       const brief = await researchDubVideo(selectedTranslationAgent.id, target);
       if (brief) toast.success(t('dubResearch.done'));
     } catch (error) {
       setResearchError(error instanceof Error ? error.message : String(error));
-    } finally {
-      setResearching(false);
     }
   };
   const installArgosLanguagePacks = async () => {
@@ -1535,7 +1534,7 @@ export function DubPage() {
                   rows={4}
                   maxLength={5000}
                   value={session.translationInstructions || ''}
-                  disabled={busy || researching || Boolean(session.recovery)}
+                  disabled={busy || Boolean(session.recovery)}
                   onChange={(event) =>
                     setDubTranslationOptions({ translationInstructions: event.target.value })
                   }
