@@ -8,6 +8,11 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Removing on-screen subtitles works again on current ffmpeg
+- Translated subtitles go back exactly where the original ones were
+
 ### Fixed
 
 - Removing on-screen subtitles no longer fails with "Invalid argument" on ffmpeg 7 and later: video frames reach the encoder through the allowed pipe input (#75)
