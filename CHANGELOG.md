@@ -25,6 +25,7 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- The language picker in the Clone and Voice Design toolbars is a borderless button with a hover, like the quality and voice buttons beside it (#63)
 - Windows: **Install & Restart** installs silently and reopens the app instead of stopping at a Setup window that waits for clicks (#62)
 - Select lists, menus, popovers and tooltips scale in as they fade, a Select's chevron turns while it is open, and long lists stop at 20 rem instead of running to the window edge (#60)
 - Agent features, the source folder picker, song lyrics, delete confirmations and other show/hide panels slide open instead of popping in, and disclosure chevrons turn smoothly (#60)
