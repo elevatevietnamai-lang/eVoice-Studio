@@ -14,6 +14,7 @@ import {
   requestPrompt,
   translationLaunchArgs,
   translationStdin,
+  AGY_PERMISSION_KINDS,
   AGY_TRANSLATION_SETTINGS,
 } from './repair-agents';
 
@@ -289,8 +290,22 @@ describe('Antigravity translation agent', () => {
     expect(settings).toEqual(AGY_TRANSLATION_SETTINGS);
     expect(settings.toolPermission).toBe('strict');
     expect(settings.agentMode).toBe('');
-    for (const rule of ['command(*)', 'write_file(*)', 'read_file(*)', 'read_url(*)', 'mcp(*)'])
-      expect(settings.permissions.deny).toContain(rule);
+    // Browser tools have no rule kind of their own, so every kind agy 1.5.10's
+    // rule parser accepts is denied.
+    const kinds = [
+      'command',
+      'unsandboxed',
+      'read_file',
+      'write_file',
+      'read_url',
+      'execute_url',
+      'download_url',
+      'mcp',
+    ];
+    expect([...AGY_PERMISSION_KINDS].sort()).toEqual([...kinds].sort());
+    for (const kind of kinds) expect(settings.permissions.deny).toContain(`${kind}(*)`);
+    // `/browser` and other slash commands stay off in print mode.
+    expect(args).toContain('--disable-slash-commands');
 
     const line = translationStdin('agy', 'Translate {"x":1}\nnow');
     expect(line.endsWith('\n')).toBe(true);
