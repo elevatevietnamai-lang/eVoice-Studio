@@ -17,6 +17,7 @@ metadata and the backend fallback mirror it.
 
 - Removing on-screen subtitles no longer fails with "Invalid argument" on ffmpeg 7 and later: video frames reach the encoder through the allowed pipe input (#75)
 - Translated subtitles burned over removed on-screen subtitles sit on the original text line, at its size, instead of the bottom of the scanned area (#76)
+- Each burned translation follows its own original line when on-screen subtitles move within a video, such as a talking head followed by a screen recording (#77)
 
 ## [0.5.7-beta.7] — 2026-11-17
 

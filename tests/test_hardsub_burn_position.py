@@ -81,3 +81,98 @@ def test_burned_line_covers_the_original_text_line(tmp_path):
     job = {"hardsub": {"region": [0.62, 0.98], "text_line": _text_line(CUES)}}
     top, bottom = _burned_rows(job, tmp_path)
     assert abs(top - 519) <= 4 and abs(bottom - 549) <= 4, (top, bottom)
+
+
+# A video whose subtitles move: a talking head (line at y 519..549), then a
+# screen recording with the line higher up (y 482..514), as in real tutorials.
+MOVING = {
+    "width": 1024,
+    "height": 576,
+    "region": [0.8, 0.965],
+    "cues": [
+        {"start": 0.0, "end": 1.0, "text": "a", "boxes": [[358.0, 519.0, 662.0, 549.0]]},
+        {"start": 1.0, "end": 2.0, "text": "b", "boxes": [[200.0, 482.0, 500.0, 514.0]]},
+    ],
+}
+
+
+def _job_with_moving_cues(tmp_path):
+    import json
+
+    from api.routers.dub_hardsub import CUES_FILE
+
+    (tmp_path / CUES_FILE).write_text(json.dumps(MOVING), encoding="utf-8")
+    exports = tmp_path / "exports"
+    exports.mkdir()
+    job = {
+        "hardsub": {"region": MOVING["region"]},
+        "segments": [
+            {"id": 0, "start": 0.0, "end": 1.0, "text": "Người ấy đã về thật rồi"},
+            {"id": 1, "start": 1.05, "end": 1.95, "text": "Người ấy đã về thật rồi"},
+            {"id": 2, "start": 5.0, "end": 6.0, "text": "no cue here"},
+        ],
+    }
+    return job, exports
+
+
+def test_each_cue_is_placed_on_its_own_original_line(tmp_path):
+    from api.routers.dub_export import _hardsub_cue_places
+
+    job, _ = _job_with_moving_cues(tmp_path)
+    play_res, places = _hardsub_cue_places(job, str(tmp_path), job["segments"])
+    assert play_res == (1024, 576)
+    assert places == [(510.0, 549.0, 30), (350.0, 514.0, 32), None]  # None: no OCR'd cue overlaps
+
+
+def test_cue_places_need_a_read_region_and_the_cues_file(tmp_path):
+    from api.routers.dub_export import _hardsub_cue_places
+
+    job, _ = _job_with_moving_cues(tmp_path)
+    assert _hardsub_cue_places({"segments": job["segments"]}, str(tmp_path), job["segments"]) is None
+    assert _hardsub_cue_places(job, str(tmp_path / "missing"), job["segments"]) is None
+
+
+def test_placed_burn_is_an_ass_script_because_srt_drops_position_tags(tmp_path):
+    # ffmpeg's SRT reader keeps only {\anN}: {\pos} and {\fs} never reach libass.
+    from api.routers.dub_export import _write_burn_srt
+
+    job, exports = _job_with_moving_cues(tmp_path)
+    path = _write_burn_srt(job, str(exports), "t", True)
+    assert path.endswith(".ass")
+    with open(path, encoding="utf-8") as f:
+        script = f.read()
+    assert "PlayResX: 1024" in script and "PlayResY: 576" in script
+    assert r"{\an2\pos(510,549)\fs30}Người ấy" in script
+    assert r"{\an2\pos(350,514)\fs32}" in script
+    assert ",Default,,0,0,0,,no cue here" in script  # unmatched: the style's own placement
+
+
+def test_jobs_without_read_subtitles_keep_the_srt_burn(tmp_path):
+    from api.routers.dub_export import _write_burn_srt
+
+    job, exports = _job_with_moving_cues(tmp_path)
+    job.pop("hardsub")
+    assert _write_burn_srt(job, str(exports), "t", False).endswith(".srt")
+
+
+@pytest.mark.skipif(not shutil.which("ffmpeg"), reason="needs a system ffmpeg")
+def test_burned_lines_follow_subtitles_that_move(tmp_path):
+    from api.routers.dub_export import _write_burn_srt, subtitle_burn_filter
+
+    job, exports = _job_with_moving_cues(tmp_path)
+    srt = _write_burn_srt(job, str(exports), "t", False)
+    graph = subtitle_burn_filter("[0:v]", srt, "[v]", job=job, is_ass=False)
+    raw = subprocess.run(
+        [shutil.which("ffmpeg"), "-v", "error", "-f", "lavfi", "-i",
+         "color=c=black:s=1024x576:r=10:d=2", "-filter_complex", graph, "-map", "[v]",
+         "-f", "rawvideo", "-pix_fmt", "gray", "-"],
+        capture_output=True, check=True, timeout=60,
+    ).stdout
+    frames = np.frombuffer(raw, np.uint8).reshape(-1, 576, 1024)
+    # Frame 5 is at 0.5 s (talking head), frame 15 at 1.5 s (screen recording).
+    for index, (top, bottom, centre) in ((5, (519, 549, 510)), (15, (482, 514, 350))):
+        lit = frames[index] > 128
+        rows = np.where(lit.any(axis=1))[0]
+        cols = np.where(lit.any(axis=0))[0]
+        assert abs(int(rows.min()) - top) <= 4 and abs(int(rows.max()) - bottom) <= 4, (index, rows.min(), rows.max())
+        assert abs((int(cols.min()) + int(cols.max())) / 2 - centre) <= 6, (index, cols.min(), cols.max())
