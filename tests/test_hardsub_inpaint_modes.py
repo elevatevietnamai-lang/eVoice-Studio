@@ -136,7 +136,7 @@ def test_previous_clean_frame_is_tried_after_the_neighbour_budget_runs_out():
     """Other cues' frames each expose part of the hole and use up max_tries; the previous clean
     frame must still be tried, or a static shot runs LaMa on every frame."""
     prev = (_background(), _background(), _all_valid())
-    budget_only, rest = inpaint.temporal_fill(_cur(), HOLE, _mismatched_neighbours(20) + [prev[:2]])
+    _, rest = inpaint.temporal_fill(_cur(), HOLE, _mismatched_neighbours(20) + [prev[:2]])
     assert (rest == HOLE).all()  # last in `cands`: never reached once 16 tries are spent
     out, rest = inpaint.temporal_fill(_cur(), HOLE, _mismatched_neighbours(20), previous=prev)
     assert not rest.any()
