@@ -14,6 +14,7 @@ metadata and the backend fallback mirror it.
 - Gemini can operate the app and diagnose source in Ask VoiceStudio Agent
 - Dropdowns, menus and panels open with their full motion again
 - Buttons line up with the button groups beside them
+- Panels that follow a choice slide open, and reduced motion keeps everything in place
 
 ### Added
 
@@ -31,6 +32,9 @@ metadata and the backend fallback mirror it.
 
 - Music task options, inline confirmations, the dub selection bar and segment options, and other panels that follow a choice slide open instead of popping in (#69)
 - First-run setup steps settle in when you move between them (#69)
+- With reduced motion on, messages and panels that appear fade in place instead of opening by height (#68)
+- Toggles, toggle groups and tabs fade their keyboard focus ring in like buttons and fields, and the switch thumb changes colour with its track in dark mode (#68)
+- Navigation rows in the Projects, Gallery and Tools panels brighten their text on hover again, and outline buttons in a page header keep their own hover (#67)
 - Gemini translation through Antigravity now also blocks file downloads, so every tool permission the CLI checks is denied (#65)
 - Open cards in the control panels (Starting points and others) no longer draw a line under their title (#64)
 - The language picker in the Clone and Voice Design toolbars is a borderless button with a hover, like the quality and voice buttons beside it (#63)
