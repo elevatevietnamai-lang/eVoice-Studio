@@ -63,13 +63,22 @@ need tools, so Gemini stays limited to translation and LLM completions.
 
 Antigravity cannot switch its tools off, and its headless runs default to Auto mode.
 VoiceStudio therefore starts it with strict tool review, no trusted workspaces, and
-deny rules for commands, file reads and writes, URL reads and MCP tools, and sends
-the prompt as one stream-json message on stdin. Web search, which goes to the same
-Google account the model runs on, is the only tool left. Antigravity is offered for
+deny rules for every permission kind the CLI enforces: commands (`command`,
+`unsandboxed`), file reads and writes, URL reads, URL actions and downloads
+(`read_url`, `execute_url`, `download_url`) and MCP tools. It sends the prompt as one
+stream-json message on stdin with `--disable-slash-commands`, so `/browser` cannot
+start. Antigravity has no permission kind or user setting for its browser tools
+(`browserEnabled` is an admin control that `--settings` rejects). A real headless run
+with agy 1.5.10 lists the `browser_*` tools in its `init` event but never gives them
+to the model, with or without strict review; asked to open a page, the model reports
+them unavailable. If a later CLI exposes them, `execute_url(*)` and `read_url(*)`
+are the rules for page actions and reads, and `mcp(*)` covers the `/browser` subagent's Chrome
+DevTools tools. Web search, which goes to the same Google account the model runs on,
+has no permission kind and stays available. Antigravity is offered for
 translation and LLM completions only, not for Ask VoiceStudio Agent repair runs.
 Model IDs come from `agy models` (for example `gemini-3.8-flash-low`); leave the model
 empty to use the CLI's own default. A spent Antigravity quota shows as a rate-limit error.
-The app finds `agy` in its installer's folder (`%LOCALAPPDATA%gyin` on Windows,
+The app finds `agy` in its installer's folder (`%LOCALAPPDATA%\agy\bin` on Windows,
 `~/.local/bin` on macOS and Linux) or on Homebrew's path, even when launched from the desktop.
 
 SDK imports are lazy and LiteLLM telemetry and remote pricing-map downloads are
