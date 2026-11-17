@@ -16,6 +16,8 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- Tabs, segmented buttons and "Advanced" toggles light up on hover again, and the selected one shows bright text (#58)
+- Music Studio's Advanced and Expert sections match the field corners, and the Expert section slides in when you turn on Thinking (#58)
 - Dubbing's first run no longer times out while the alignment model downloads: the download is its own step on the Dub page, and the 1.27 GB second copy transformers fetched for the same model is gone (#57)
 - A failed transcription no longer suggests the video server dropped the download (#57)
 - Argos translates Chinese to Vietnamese and other pairs without a direct pack, through English, instead of blocking the Dub page (#57)

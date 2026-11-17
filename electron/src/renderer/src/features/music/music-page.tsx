@@ -1050,11 +1050,7 @@ export function MusicPage() {
             />
           </label>
 
-          <Collapsible
-            open={advancedOpen}
-            onOpenChange={setAdvancedOpen}
-            className="rounded-(--card-radius) border border-border/60"
-          >
+          <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen} framed>
             <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 px-3 py-2 text-label font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
               {t('musicStudio.advanced')}
               <ChevronDownIcon
@@ -1404,80 +1400,78 @@ export function MusicPage() {
                 aria-label={t('musicStudio.thinking_downloading')}
               />
             )}
-            {thinking && lmReady && (
-              <Collapsible
-                open={expertOpen}
-                onOpenChange={setExpertOpen}
-                className="rounded-(--card-radius) border border-border/60"
-              >
-                <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 px-3 py-2 text-label font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
-                  {t('musicStudio.lm_expert')}
-                  <ChevronDownIcon
-                    className={cn('size-3.5 transition-transform', expertOpen && 'rotate-180')}
-                    aria-hidden="true"
-                  />
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="space-y-3 px-3 pb-3">
-                    <p className="leading-5 text-muted-foreground">
-                      {t('musicStudio.lm_expert_help')}
-                    </p>
-                    {LM_PARAM_IDS.map((id) => {
-                      const [low, high, fallback] = LM_PARAMS[id].range;
-                      const value = lmValues[id];
-                      return (
-                        <div key={id} className="space-y-1.5">
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">{t(`musicStudio.${id}`)}</span>
-                            <span className="text-muted-foreground tabular-nums">
-                              {value === null ? t('musicStudio.lm_top_k_off') : value}
-                            </span>
+            <Reveal>
+              {thinking && lmReady && (
+                <Collapsible open={expertOpen} onOpenChange={setExpertOpen} framed>
+                  <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 px-3 py-2 text-label font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+                    {t('musicStudio.lm_expert')}
+                    <ChevronDownIcon
+                      className={cn('size-3.5 transition-transform', expertOpen && 'rotate-180')}
+                      aria-hidden="true"
+                    />
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="space-y-3 px-3 pb-3">
+                      <p className="leading-5 text-muted-foreground">
+                        {t('musicStudio.lm_expert_help')}
+                      </p>
+                      {LM_PARAM_IDS.map((id) => {
+                        const [low, high, fallback] = LM_PARAMS[id].range;
+                        const value = lmValues[id];
+                        return (
+                          <div key={id} className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">{t(`musicStudio.${id}`)}</span>
+                              <span className="text-muted-foreground tabular-nums">
+                                {value === null ? t('musicStudio.lm_top_k_off') : value}
+                              </span>
+                            </div>
+                            <Slider
+                              min={id === 'lm_top_k' ? 0 : low}
+                              max={high}
+                              step={LM_PARAMS[id].step}
+                              value={[value ?? 0]}
+                              disabled={busy}
+                              aria-label={t(`musicStudio.${id}`)}
+                              onValueChange={(next) => {
+                                const raw = Array.isArray(next) ? next[0] : next;
+                                const rounded = Math.round(raw * 100) / 100;
+                                setLmValues((current) => ({
+                                  ...current,
+                                  [id]: id === 'lm_top_k' && rounded < low ? fallback : rounded,
+                                }));
+                              }}
+                            />
                           </div>
-                          <Slider
-                            min={id === 'lm_top_k' ? 0 : low}
-                            max={high}
-                            step={LM_PARAMS[id].step}
-                            value={[value ?? 0]}
-                            disabled={busy}
-                            aria-label={t(`musicStudio.${id}`)}
-                            onValueChange={(next) => {
-                              const raw = Array.isArray(next) ? next[0] : next;
-                              const rounded = Math.round(raw * 100) / 100;
-                              setLmValues((current) => ({
-                                ...current,
-                                [id]: id === 'lm_top_k' && rounded < low ? fallback : rounded,
-                              }));
-                            }}
-                          />
-                        </div>
-                      );
-                    })}
-                    <label className="flex min-w-0 flex-col gap-1.5">
-                      <span className="font-medium">{t('musicStudio.lm_negative_prompt')}</span>
-                      <Input
-                        value={lmNegative}
-                        maxLength={500}
+                        );
+                      })}
+                      <label className="flex min-w-0 flex-col gap-1.5">
+                        <span className="font-medium">{t('musicStudio.lm_negative_prompt')}</span>
+                        <Input
+                          value={lmNegative}
+                          maxLength={500}
+                          disabled={busy}
+                          placeholder={LM_NEGATIVE_PROMPT_DEFAULT}
+                          onChange={(event) => setLmNegative(event.target.value)}
+                        />
+                      </label>
+                      <Button
+                        size="xs"
+                        variant="ghost"
                         disabled={busy}
-                        placeholder={LM_NEGATIVE_PROMPT_DEFAULT}
-                        onChange={(event) => setLmNegative(event.target.value)}
-                      />
-                    </label>
-                    <Button
-                      size="xs"
-                      variant="ghost"
-                      disabled={busy}
-                      onClick={() => {
-                        setLmValues(defaultLmValues());
-                        setLmNegative('');
-                      }}
-                    >
-                      <RotateCcwIcon />
-                      {t('musicStudio.lm_reset')}
-                    </Button>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            )}
+                        onClick={() => {
+                          setLmValues(defaultLmValues());
+                          setLmNegative('');
+                        }}
+                      >
+                        <RotateCcwIcon />
+                        {t('musicStudio.lm_reset')}
+                      </Button>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+            </Reveal>
           </div>
 
           {lmReady && (
