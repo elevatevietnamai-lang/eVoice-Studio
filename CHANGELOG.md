@@ -8,6 +8,17 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.7] — 2026-11-17
+
+Ask VoiceStudio Agent now waits for long jobs: a music, dubbing or speech job that runs past two
+minutes finishes instead of being cut off. The Agent also gets a model picker under its message
+box, a button you can drag to any edge of the window, and panels that slide open and closed.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.7-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.6 update silently in **Settings → Updates**; copies on 0.5.7-beta.4 or beta.5 update there too, showing the Setup window once |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
 - Ask VoiceStudio Agent can run music, dubbing and speech jobs that take longer than two minutes
