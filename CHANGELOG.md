@@ -22,11 +22,11 @@ metadata and the backend fallback mirror it.
 ### Docs
 
 - The LLM provider guide explains Gemini sign-in and shows the Antigravity install folder correctly (#61)
-- The LLM provider guide explains how Gemini translation keeps Antigravity's browser tools out of reach, and the Windows install path is no longer garbled
+- The LLM provider guide explains how Gemini translation keeps Antigravity's browser tools out of reach, and the Windows install path is no longer garbled (#65)
 
 ### Fixed
 
-- Gemini translation through Antigravity now also blocks file downloads, so every tool permission the CLI checks is denied
+- Gemini translation through Antigravity now also blocks file downloads, so every tool permission the CLI checks is denied (#65)
 - Select lists, menus, popovers and tooltips scale in as they fade, a Select's chevron turns while it is open, and long lists stop at 20 rem instead of running to the window edge (#60)
 - Agent features, the source folder picker, song lyrics, delete confirmations and other show/hide panels slide open instead of popping in, and disclosure chevrons turn smoothly (#60)
 - A button beside a button group is now the group's height (Agent, Batch, Recent takes), and a selected segment has the same edge as a selected tab (#60)
