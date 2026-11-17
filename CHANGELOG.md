@@ -8,6 +8,10 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+### Fixed
+
+- Removing on-screen subtitles no longer fails with "Invalid argument" on ffmpeg 7 and later: video frames reach the encoder through the allowed pipe input (#75)
+
 ## [0.5.7-beta.7] — 2026-11-17
 
 Ask VoiceStudio Agent now waits for long jobs: a music, dubbing or speech job that runs past two

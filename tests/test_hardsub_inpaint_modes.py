@@ -96,4 +96,24 @@ def test_engine_media_commands_only_open_files_and_pipes():
     enc = local_inputs_only(["/x/ffmpeg", "-f", "rawvideo", "-i", "-", "-i", "a.mp4", "o.mp4"])
     assert enc.count("-protocol_whitelist") == 2
     assert all(enc[i - 2:i] == ["-protocol_whitelist", "file,pipe"] for i, a in enumerate(enc) if a == "-i")
+    # ffmpeg 7 opens "-" through the "fd" protocol, which the whitelist refuses.
+    assert "-" not in enc and enc[enc.index("rawvideo") + 4] == "pipe:0"
     assert local_inputs_only(enc) == enc  # idempotent
+    preset = local_inputs_only(["/x/ffmpeg", "-protocol_whitelist", "file", "-i", "-", "o.mp4"])
+    assert preset == ["/x/ffmpeg", "-protocol_whitelist", "file", "-i", "pipe:0", "o.mp4"]
+
+
+def test_engine_video_writer_streams_frames_through_the_whitelist(tmp_path, monkeypatch):
+    """Every subtitle removal ends in VideoWriter: its stdin input must pass the whitelist."""
+    import shutil
+
+    from hardsub_core import video
+    if not shutil.which("ffmpeg"):
+        pytest.skip("needs a system ffmpeg")
+    monkeypatch.setattr(video, "video_encoder", lambda prefer_gpu=True: ("libx264", ("-preset", "ultrafast")))
+    info = video.VideoInfo("x", 64, 48, 10.0, "10/1", 5, 0.5, False)
+    writer = video.VideoWriter(str(tmp_path / "o.mp4"), info, prefer_gpu=False)
+    for _ in range(5):
+        writer.write(np.zeros((48, 64, 3), np.uint8))
+    writer.close()
+    assert (tmp_path / "o.mp4").stat().st_size > 0
