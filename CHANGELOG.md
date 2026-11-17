@@ -11,6 +11,7 @@ metadata and the backend fallback mirror it.
 **Highlights**
 
 - Dubbing can research the video before translating: your agent writes an editable brief that translation follows
+- The user guides send readers to the download page instead of the code repository
 
 ### Added
 
@@ -19,6 +20,10 @@ metadata and the backend fallback mirror it.
 ### Changed
 
 - Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#81)
+
+### Docs
+
+- The Getting started and Troubleshooting guides point to the download page and describe bug reports without naming a code host (#80)
 
 ## [0.5.7-beta.8] — 2026-11-18
 

@@ -17,7 +17,7 @@ Bộ công cụ khắc phục sự cố giúp bạn xem nhật ký hoạt độn
 
 - Mở sẵn eVoice Studio trên máy tính.
 - Nếu muốn dùng trợ lý sửa lỗi cục bộ cho mã nguồn, bạn cần cài sẵn một trong các công cụ dòng lệnh được hỗ trợ (Codex, Claude Code, OpenCode, Gemini (Antigravity) hoặc Pi) và mở thư mục mã nguồn có quyền ghi. Các thao tác kiểm tra hoặc khôi phục cài đặt ứng dụng thông thường không cần mã nguồn. Gemini chỉ đọc mã nguồn để lập kế hoạch sửa (chế độ **Lập kế hoạch**), không tự sửa file; muốn trợ lý tự sửa mã, hãy chọn Codex hoặc Claude Code.
-- Chỉ cần kết nối mạng và trình duyệt khi bạn muốn tải lại model bị thiếu hoặc gửi báo cáo lỗi lên GitHub.
+- Chỉ cần kết nối mạng và trình duyệt khi bạn muốn tải lại model bị thiếu hoặc gửi báo cáo lỗi.
 
 ## Các bước
 
@@ -48,12 +48,12 @@ Bộ công cụ khắc phục sự cố giúp bạn xem nhật ký hoạt độn
 3. Chọn chế độ **Chẩn đoán** nếu bạn chỉ muốn trợ lý kiểm tra trạng thái qua cầu nối API chỉ đọc, hoặc bấm **Sửa lỗi** khi gặp thông báo thiếu engine hay model để ứng dụng tự chọn engine tương thích, tải model cần thiết và kích hoạt lại.
 4. Bấm **Dừng** bất cứ lúc nào nếu bạn muốn hủy quá trình chuẩn bị hoặc dừng tiến trình trợ lý đang chạy.
 
-### 4. Báo lỗi qua GitHub bằng URL điền sẵn
+### 4. Gửi báo cáo lỗi điền sẵn
 
 1. Bấm **Báo lỗi** trên thông báo sự cố hoặc chọn **Báo lỗi (sao chép thông tin chẩn đoán)** trong bảng nhật ký khi bạn không thể tự khắc phục lỗi.
-2. Kiểm tra thông báo **Đã sao chép báo cáo chẩn đoán — dán vào GitHub issue.** hoặc cửa sổ trình duyệt mở ra với URL GitHub đã điền sẵn thông tin.
+2. Kiểm tra thông báo đã sao chép báo cáo chẩn đoán, hoặc cửa sổ trình duyệt mở ra trang báo lỗi đã điền sẵn thông tin.
 3. Xem lại nội dung báo cáo trên trình duyệt của bạn. Ứng dụng đã tự lược bỏ đường dẫn thư mục cá nhân và các chuỗi giống khóa truy cập trước khi tạo nội dung.
-4. Bấm gửi issue trực tiếp từ trình duyệt của bạn để hoàn tất báo cáo.
+4. Bấm gửi trực tiếp từ trình duyệt của bạn để hoàn tất báo cáo.
 
 ## Mẹo
 
