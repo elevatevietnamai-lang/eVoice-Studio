@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}} は各セグメントを文脈に沿って翻訳し、音声の実測後に時間のずれを修正します。",
     "choose_translation_agent": "翻訳エージェントを選択",
     "no_local_agents": "ローカルエージェントで翻訳するには Codex、Claude Code、OpenCode、Pi のいずれかをインストールしてください。",
-    "agent_translation_complete": "{{agent}} がセグメントの翻訳を完了しました。"
+    "agent_translation_complete": "{{agent}} がセグメントの翻訳を完了しました。",
+    "loading_speech_model": "音声モデルをダウンロードしています（初回のみ）…"
   },
   "dub_workflow": {
     "preparing_audio": "オーディオを準備しています…",
@@ -2733,7 +2734,9 @@
     "plan_impossible": "収まりません +{{seconds}}秒",
     "plan_impossible_title": "予測音声は約{{est}}秒、使用可能時間は{{avail}}秒です。調整できる範囲を約{{seconds}}秒超えており、音声が切り詰められます。生成前に文章を短くしてください。",
     "plan_tight": "余裕が少ない",
-    "plan_tight_title": "予測音声は約{{est}}秒、使用可能時間は{{avail}}秒です。スマートフィットで調整できますが、音声の速度上昇や動画の減速が目立ちます。より自然な結果にするには文章を短くしてください。"
+    "plan_tight_title": "予測音声は約{{est}}秒、使用可能時間は{{avail}}秒です。スマートフィットで調整できますが、音声の速度上昇や動画の減速が目立ちます。より自然な結果にするには文章を短くしてください。",
+    "script_leak": "未翻訳",
+    "script_leak_title": "翻訳されていない文字があります: {{chars}}。この行を編集するか、もう一度翻訳してください。"
   },
   "update": {
     "checking": "アップデートを確認中…",
@@ -2871,7 +2874,17 @@
     "active": "エンジン：{{name}}",
     "none": "有効なエンジンがありません",
     "localInstallRequired": "バックエンドのコンピューターで localhost またはセットアップガイドを使ってこのエンジンをインストールしてください。リモートインストールは無効です。",
-    "argosRuntimeUnavailable": "Argos ランタイムを利用できません。バックエンドを再インストールするか、NLLB を選択してください。"
+    "argosRuntimeUnavailable": "Argos ランタイムを利用できません。バックエンドを再インストールするか、NLLB を選択してください。",
+    "argosPackUnavailable": "Argos には {{pairs}} の言語パックがなく、英語経由でも利用できません。この言語には NLLB か別のエンジンを選択してください。",
+    "unavailableReason_license": "ライセンスがまだ承諾されていません。このエンジンを有効にするには、モデルカタログで確認して承諾してください。",
+    "unavailableReason_platform": "このエンジンはこのコンピューターのプラットフォームでは動作しません。対応プラットフォームはガイドに記載されています。",
+    "unavailableReason_no_mps": "このエンジンには Apple の GPU（MPS）が必要ですが、このインストールの PyTorch では使用できません。macOS の更新またはアプリの再インストールで通常は解決します。",
+    "unavailableReason_file_missing": "このエンジンに必要なファイルが見つからないか、読み取れません。モデルカタログから再インストールしてください。",
+    "unavailableReason_file_missing_manual": "このエンジンに必要なファイルが見つからないか、読み取れません。インストール手順はガイドに記載されています。",
+    "unavailableReason_needs_config": "このエンジンを実行する前に設定が必要です（設定での API キーや LLM プロバイダーなど）。",
+    "unavailableReason_not_installed": "このエンジンはまだインストールされていません。モデルカタログからインストールしてください。",
+    "unavailableReason_not_installed_manual": "このエンジンはまだインストールされておらず、ワンクリックでのインストールもありません。インストール手順はガイドに記載されています。",
+    "unavailableReason_unavailable": "このエンジンは現在実行できません。インストールと設定が済んでいるか確認してください。"
   },
   "performanceProfile": {
     "requiresEngine": "速度と品質を調整するには、{{engine}} をインストールして選択してください。",

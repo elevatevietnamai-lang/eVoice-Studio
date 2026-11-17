@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { engineAvailabilityText } from '@/lib/engine-availability';
 import {
   usePerformanceProfile,
   type PerformanceProfileState,
@@ -436,7 +437,7 @@ export function StatusBar({
       problem:
         (selectedTranslation?.ready ?? selectedTranslation?.installed)
           ? undefined
-          : selectedTranslation?.availability_reason,
+          : engineAvailabilityText(t, selectedTranslation),
       runtime: loadedTranslation?.device,
       state: translation.isPending
         ? 'engineRuntime.loading'

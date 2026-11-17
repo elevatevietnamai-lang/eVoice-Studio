@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}} vertaalt elk segment in context en herschrijft timingafwijkingen na meting van de spraak.",
     "choose_translation_agent": "Vertaalagent kiezen",
     "no_local_agents": "Installeer Codex, Claude Code, OpenCode of Pi om met een lokale agent te vertalen.",
-    "agent_translation_complete": "{{agent}} heeft de segmenten vertaald."
+    "agent_translation_complete": "{{agent}} heeft de segmenten vertaald.",
+    "loading_speech_model": "Spraakmodellen worden gedownload (alleen de eerste keer)…"
   },
   "dub_workflow": {
     "preparing_audio": "Audio voorbereiden…",
@@ -2733,7 +2734,9 @@
     "plan_impossible": "Past niet +{{seconds}}s",
     "plan_impossible_title": "Verwachte spraak ≈{{est}}s bij {{avail}}s beschikbare tijd. Ongeveer {{seconds}}s kan niet worden opgevangen; de audio zou worden afgekapt. Kort de tekst in vóór het genereren.",
     "plan_tight": "Past maar net",
-    "plan_tight_title": "Verwachte spraak ≈{{est}}s bij {{avail}}s beschikbare tijd. Slim passend maken kan dit opvangen door hoorbaar snellere spraak of tragere video. Kort de tekst in voor een beter resultaat."
+    "plan_tight_title": "Verwachte spraak ≈{{est}}s bij {{avail}}s beschikbare tijd. Slim passend maken kan dit opvangen door hoorbaar snellere spraak of tragere video. Kort de tekst in voor een beter resultaat.",
+    "script_leak": "Niet vertaald",
+    "script_leak_title": "Sommige tekens zijn niet vertaald: {{chars}}. Bewerk deze regel of vertaal hem opnieuw."
   },
   "update": {
     "checking": "Controleren op updates…",
@@ -2871,7 +2874,17 @@
     "active": "Engine: {{name}}",
     "none": "Geen engine actief",
     "localInstallRequired": "Installeer deze engine op de backendcomputer via localhost of de installatiehandleiding. Installatie op afstand is uitgeschakeld.",
-    "argosRuntimeUnavailable": "De Argos-runtime is niet beschikbaar. Installeer de backend opnieuw of kies NLLB."
+    "argosRuntimeUnavailable": "De Argos-runtime is niet beschikbaar. Installeer de backend opnieuw of kies NLLB.",
+    "argosPackUnavailable": "Argos heeft geen taalpakket voor {{pairs}}, ook niet via het Engels. Kies NLLB of een andere engine voor deze taal.",
+    "unavailableReason_license": "Licentie nog niet geaccepteerd. Bekijk en accepteer deze in de Modelcatalogus om deze engine in te schakelen.",
+    "unavailableReason_platform": "Deze engine werkt niet op het platform van deze computer. De handleiding noemt de ondersteunde platforms.",
+    "unavailableReason_no_mps": "Deze engine heeft de GPU van Apple (MPS) nodig, die PyTorch in deze installatie niet kan gebruiken. macOS bijwerken of de app opnieuw installeren lost dit meestal op.",
+    "unavailableReason_file_missing": "Een bestand dat deze engine nodig heeft ontbreekt of is onleesbaar. Installeer hem opnieuw vanuit de Modelcatalogus.",
+    "unavailableReason_file_missing_manual": "Een bestand dat deze engine nodig heeft ontbreekt of is onleesbaar. De handleiding noemt de installatiestappen.",
+    "unavailableReason_needs_config": "Deze engine moet eerst worden ingesteld, bijvoorbeeld met een API-sleutel of een LLM-provider in Instellingen.",
+    "unavailableReason_not_installed": "Deze engine is nog niet geïnstalleerd. Installeer hem vanuit de Modelcatalogus.",
+    "unavailableReason_not_installed_manual": "Deze engine is nog niet geïnstalleerd en heeft geen installatie met één klik. De handleiding noemt de installatiestappen.",
+    "unavailableReason_unavailable": "Deze engine kan nu niet draaien. Controleer of hij geïnstalleerd en ingesteld is."
   },
   "performanceProfile": {
     "requiresEngine": "Installeer en selecteer {{engine}} om snelheid en kwaliteit af te stellen.",

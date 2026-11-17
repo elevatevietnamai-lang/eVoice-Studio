@@ -32,7 +32,11 @@ from core.engine_licenses import LICENSE_GATED_ENGINES
 from services import tts_backend, asr_backend, llm_backend, translation_engines
 from services.audio_dsp import list_effect_presets
 from api.schemas import EffectPresetsResponse
-from api.public_engine_metadata import public_backends, public_unavailability
+from api.public_engine_metadata import (
+    public_backends,
+    public_unavailable_reason,
+    unavailable_code,
+)
 
 router = APIRouter()
 logger = logging.getLogger("omnivoice.engines_api")
@@ -280,12 +284,20 @@ def list_translation_engines():
     The UI uses this to show a one-click Install chip when the user picks
     an engine whose Python dependency isn't importable yet.
     """
+    engines = []
+    for entry in translation_engines.list_engines():
+        # Classified like the other engine families: "not configured" names
+        # the fix instead of the catch-all "check installation", and the code
+        # lets the UI say it in the user's language.
+        reason = public_unavailable_reason(entry.get("availability_reason"))
+        engines.append({
+            **entry,
+            "availability_reason": reason,
+            "availability_code": unavailable_code(reason),
+        })
     return {
         "active": prefs.get("translation_backend", "argos"),
-        "engines": [
-            {**entry, "availability_reason": public_unavailability(entry.get("availability_reason"))}
-            for entry in translation_engines.list_engines()
-        ],
+        "engines": engines,
         "sandboxed": translation_engines.is_frozen(),
     }
 
@@ -336,6 +348,16 @@ async def install_argos_packs(request: ArgosPackRequest):
             source,
             targets,
         )
+    except translation_engines.ArgosPackUnavailable as exc:
+        # Typed so the UI can say it in the user's language and point at NLLB.
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": exc.code,
+                "message": str(exc),
+                "pairs": [f"{source} → {target}" for source, target in exc.pairs],
+            },
+        ) from exc
     except (ImportError, ValueError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
 

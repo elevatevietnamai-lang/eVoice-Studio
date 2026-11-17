@@ -409,6 +409,44 @@ def _configure_argos_cache() -> None:
     os.environ.setdefault("ARGOS_DATA_DIR", argos_cache)
 
 
+#: Argos publishes most pairs only to and from English; ``argostranslate``
+#: chains two installed packs through it on its own (``CompositeTranslation``),
+#: so a pair with no direct pack (zh → vi) still works once both legs exist.
+ARGOS_PIVOT_LANG = "en"
+
+
+class ArgosPackUnavailable(ValueError):
+    """No direct or English-pivot pack exists in the Argos index for a pair."""
+
+    code = "argos_pack_unavailable"
+
+    def __init__(self, pairs: list[tuple[str, str]]):
+        self.pairs = pairs
+        super().__init__(
+            "No Argos language pack is available for "
+            + ", ".join(f"{source} → {target}" for source, target in pairs)
+        )
+
+
+def argos_route(source: str, target: str, pairs) -> list[str] | None:
+    """Languages a translation passes through using ``pairs``, or ``None``.
+
+    Prefers the direct pack and falls back to the English pivot that
+    ``argostranslate.translate`` builds itself when both legs are present."""
+    if source == target:
+        return [source]
+    if (source, target) in pairs:
+        return [source, target]
+    pivot = ARGOS_PIVOT_LANG
+    if (
+        pivot not in (source, target)
+        and (source, pivot) in pairs
+        and (pivot, target) in pairs
+    ):
+        return [source, pivot, target]
+    return None
+
+
 def argos_pack_status(source_lang: str, target_langs: list[str]) -> dict:
     """Report installed Argos pairs without refreshing the remote index."""
     _configure_argos_cache()
@@ -420,21 +458,24 @@ def argos_pack_status(source_lang: str, target_langs: list[str]) -> dict:
         (package.from_code, package.to_code)
         for package in argostranslate.package.get_installed_packages()
     }
-    return {
-        "source_lang": source,
-        "pairs": [
-            {
-                "source_lang": source,
-                "target_lang": target,
-                "installed": source == target or (source, target) in installed,
-            }
-            for target in targets
-        ],
-    }
+    pairs = []
+    for target in targets:
+        route = argos_route(source, target, installed)
+        pairs.append({
+            "source_lang": source,
+            "target_lang": target,
+            "installed": route is not None,
+            "route": route or [source, target],
+        })
+    return {"source_lang": source, "pairs": pairs}
 
 
 def install_argos_packs(source_lang: str, target_langs: list[str]) -> dict:
-    """Explicitly download and install the requested Argos language pairs."""
+    """Explicitly download and install the requested Argos language pairs.
+
+    A pair with no direct pack installs its two English-pivot legs instead.
+    Every pair that can be installed is installed before a pair the index
+    does not cover at all is reported."""
     _configure_argos_cache()
     import argostranslate.package
 
@@ -442,30 +483,31 @@ def install_argos_packs(source_lang: str, target_langs: list[str]) -> dict:
     targets = list(dict.fromkeys(argos_lang_code(code) for code in target_langs))
     with _ARGOS_INSTALL_LOCK:
         status = argos_pack_status(source, targets)
-        missing = {
-            pair["target_lang"]
-            for pair in status["pairs"]
-            if not pair["installed"]
+        missing = [pair["target_lang"] for pair in status["pairs"] if not pair["installed"]]
+        if not missing:
+            return status
+        installed = {
+            (package.from_code, package.to_code)
+            for package in argostranslate.package.get_installed_packages()
         }
-        if missing:
-            argostranslate.package.update_package_index()
-            available = argostranslate.package.get_available_packages()
-            for target in targets:
-                if target not in missing:
+        argostranslate.package.update_package_index()
+        available = {
+            (item.from_code, item.to_code): item
+            for item in argostranslate.package.get_available_packages()
+        }
+        unavailable: list[tuple[str, str]] = []
+        for target in missing:
+            route = argos_route(source, target, installed | set(available))
+            if route is None:
+                unavailable.append((source, target))
+                continue
+            for leg in zip(route, route[1:]):
+                if leg in installed:
                     continue
-                package = next(
-                    (
-                        item
-                        for item in available
-                        if item.from_code == source and item.to_code == target
-                    ),
-                    None,
-                )
-                if package is None:
-                    raise ValueError(
-                        f"No Argos language pack is available for {source} → {target}"
-                    )
-                argostranslate.package.install_from_path(package.download())
+                argostranslate.package.install_from_path(available[leg].download())
+                installed.add(leg)
+        if unavailable:
+            raise ArgosPackUnavailable(unavailable)
         return argos_pack_status(source, targets)
 
 

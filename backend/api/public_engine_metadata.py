@@ -115,7 +115,7 @@ _UNAVAILABLE_SIGNATURES = (
     )),
     (_UNAVAILABLE_NEEDS_CONFIG, (
         "environment variable", "configure a server endpoint", "api key",
-        "unconfigured", "set the", "base url",
+        "unconfigured", "not configured", "set the", "base url",
     )),
     (_UNAVAILABLE_NOT_INSTALLED, (
         "not installed", "package missing", "not available", "no module named",
@@ -131,6 +131,34 @@ def _public_unavailable_reason(diagnostic: object) -> str:
         if any(marker in private for marker in markers):
             return public
     return _UNAVAILABLE
+
+
+#: Stable code for each public sentence. The sentences are English; the UI
+#: renders ``engines.unavailableReason.<code>`` in the user's language and
+#: keeps the sentence only as a fallback for an older client.
+_UNAVAILABLE_CODES = {
+    _UNAVAILABLE_LICENSE: "license",
+    _UNAVAILABLE_PLATFORM: "platform",
+    _UNAVAILABLE_NO_MPS: "no_mps",
+    _UNAVAILABLE_FILE_MISSING: "file_missing",
+    _UNAVAILABLE_FILE_MISSING_MANUAL: "file_missing_manual",
+    _UNAVAILABLE_NEEDS_CONFIG: "needs_config",
+    _UNAVAILABLE_NOT_INSTALLED: "not_installed",
+    _UNAVAILABLE_NOT_INSTALLED_MANUAL: "not_installed_manual",
+    _UNAVAILABLE: "unavailable",
+}
+
+
+def unavailable_code(public_reason: object) -> str | None:
+    """The stable code of a public unavailability sentence (None when none)."""
+    if public_reason is None:
+        return None
+    return _UNAVAILABLE_CODES.get(public_reason, "unavailable")
+
+
+def public_unavailable_reason(diagnostic: object) -> str | None:
+    """Classified public sentence for a private probe; None when available."""
+    return None if diagnostic is None else _public_unavailable_reason(diagnostic)
 
 
 def public_backends(entries: list[dict]) -> list[dict]:
@@ -155,6 +183,7 @@ def public_backends(entries: list[dict]) -> list[dict]:
             if item.get("one_click_install") is False:
                 reason = _MANUAL_INSTALL_VARIANT.get(reason, reason)
             item["reason"] = reason
+            item["reason_code"] = unavailable_code(reason)
         if item.get("last_error") is not None:
             item["last_error"] = _PREVIOUS_FAILURE
         if item.get("routing_reason") is not None:

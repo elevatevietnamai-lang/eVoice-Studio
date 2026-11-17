@@ -3,6 +3,7 @@ import os
 import time
 import asyncio
 import logging
+from types import SimpleNamespace
 from typing import Optional
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
@@ -10,11 +11,13 @@ from fastapi.responses import JSONResponse
 from schemas.requests import AgentFitRequest, TranslateRequest
 from services.model_manager import _cpu_pool, _gpu_pool
 from services.hf_revisions import revision_for
+from services.mt_split import join_mt_pieces, split_for_mt
 from services.model_acceptance import ModelLicenceNotAccepted
 from services.translator import (
     SCRIPT_RANGES,
     _cinematic_budget,
     cinematic_available,
+    cjk_leak,
     cinematic_refine_many,
     script_ratio,
 )
@@ -24,6 +27,8 @@ router = APIRouter()
 logger = logging.getLogger("omnivoice.api")
 
 _NLLB_REPO_ID = "facebook/nllb-200-distilled-600M"
+#: NLLB decoding guard against repetition loops on long inputs.
+NLLB_NO_REPEAT_NGRAM_SIZE = 3
 
 
 def _load_nllb_component(factory):
@@ -465,7 +470,12 @@ async def dub_translate(req: TranslateRequest):
 
                 # Snapshot once so every segment and device fallback in this
                 # job uses the same decoding effort even if preferences change.
-                decode_options = translation_decode_defaults()
+                # NLLB loops on long inputs ("khoa học" x19): block any repeated
+                # 3-gram. A performance profile's own setting still wins.
+                decode_options = {
+                    "no_repeat_ngram_size": NLLB_NO_REPEAT_NGRAM_SIZE,
+                    **translation_decode_defaults(),
+                }
                 def _generate_rows(rows, target_language):
                     global _nllb_device
 
@@ -509,14 +519,23 @@ async def dub_translate(req: TranslateRequest):
                 # A target-language BOS token is shared by a forward pass, so
                 # group mixed-language rows first. Preserve request order in
                 # the final response even though groups render independently.
-                grouped: dict[str, list[tuple[int, object]]] = {}
-                results_by_index: dict[int, dict] = {}
+                # A long segment is translated sentence by sentence (the
+                # model is sentence-level) and rejoined below; each piece is
+                # its own row keyed (segment index, piece index).
+                grouped: dict[str, list[tuple[tuple[int, int], object]]] = {}
+                results_by_index: dict = {}
+                pieces_by_index: dict[int, tuple[int, str]] = {}
                 for index, seg in enumerate(req.segments):
                     if not seg.text or not seg.text.strip():
                         results_by_index[index] = {"id": seg.id, "text": seg.text}
                         continue
                     target = resolved[seg.target_lang] if seg.target_lang else flores_tgt
-                    grouped.setdefault(target, []).append((index, seg))
+                    pieces = split_for_mt(seg.text)
+                    pieces_by_index[index] = (len(pieces), target)
+                    for piece_no, piece in enumerate(pieces):
+                        grouped.setdefault(target, []).append(
+                            ((index, piece_no), SimpleNamespace(id=seg.id, text=piece))
+                        )
 
                 # Beam search multiplies decoder memory per row. Keep the
                 # effective hypothesis count bounded while still widening the
@@ -566,6 +585,19 @@ async def dub_translate(req: TranslateRequest):
                         for (index, seg), translated_text in zip(batch, translated_texts):
                             results_by_index[index] = {"id": seg.id, "text": translated_text}
 
+                for index, (count, target) in pieces_by_index.items():
+                    parts = [results_by_index.pop((index, n)) for n in range(count)]
+                    failed = next((part for part in parts if part.get("error")), None)
+                    seg = req.segments[index]
+                    if failed is not None:
+                        results_by_index[index] = {
+                            "id": seg.id, "text": seg.text, "error": failed["error"],
+                        }
+                    else:
+                        results_by_index[index] = {
+                            "id": seg.id,
+                            "text": join_mt_pieces([part["text"] for part in parts], target),
+                        }
                 return [results_by_index[index] for index in range(len(req.segments))]
 
             translated = await loop.run_in_executor(_gpu_pool, _translate_nllb)
@@ -707,12 +739,22 @@ async def dub_translate(req: TranslateRequest):
                 tgt_code = seg.target_lang if seg.target_lang else req.target_lang
                 system_msg = _build_prompt(src_lang, tgt_code)
                 last_err = None
+                leaked = ""
                 # Up to 2 attempts: if the first response fails the
                 # script-ratio gate (e.g. Hindi target but mostly Latin
                 # output), retry once with a more emphatic instruction.
                 for attempt in range(2):
                     sys_for_attempt = system_msg
-                    if attempt == 1:
+                    if attempt == 1 and leaked:
+                        sys_for_attempt = (
+                            system_msg
+                            + " Your previous attempt left these characters "
+                            f"untranslated: {leaked}. Translate every word into "
+                            f"{LANG_NAMES.get(tgt_code, tgt_code)}; the reply "
+                            "must not contain any Chinese, Japanese or Korean "
+                            "characters."
+                        )
+                    elif attempt == 1:
                         sys_for_attempt = (
                             system_msg
                             + " Your previous attempt produced output in the "
@@ -745,6 +787,19 @@ async def dub_translate(req: TranslateRequest):
                                 seg.id, attempt + 1, last_err,
                             )
                             continue
+                        # A non-CJK target with Han/kana/Hangul left in
+                        # ("phiên bản" + Han): retry once naming them; if they
+                        # survive, keep the mostly translated line and flag it
+                        # so the editor shows which row needs a hand.
+                        leaked = cjk_leak(out_text, tgt_code)
+                        if leaked:
+                            logger.warning(
+                                "translate %s: attempt %d left %d CJK characters",
+                                seg.id, attempt + 1, len(leaked),
+                            )
+                            if attempt == 0:
+                                continue
+                            return {"id": seg.id, "text": out_text, "script_leak": leaked}
                         # Stage 2 — reflect pass: critique→rewrite the direct
                         # translation into natural spoken dialogue. Returns None
                         # on ANY failure/timeout/divergence, in which case the
@@ -1114,6 +1169,23 @@ async def _finalize_duration_plan(rows, req, loop) -> None:
     _stamp_duration_plan(rows, req)
     if getattr(req, "condense", False):
         await _apply_condense_pass(rows, req, loop)
+    _stamp_script_leaks(rows, req)
+
+
+def _stamp_script_leaks(rows, req) -> None:
+    """Flag rows whose FINAL text kept Han/kana/Hangul in a non-CJK target.
+
+    Every provider path and every polish/fit/condense pass ends here, so the
+    flag describes the text the user gets, whichever step left the characters
+    (an LLM keeping untranslated Han in a Vietnamese line, a refine pass, Argos)."""
+    targets = {str(s.id): s.target_lang or req.target_lang for s in req.segments}
+    for row in rows:
+        row.pop("script_leak", None)
+        if row.get("error"):
+            continue
+        leaked = cjk_leak(row.get("text") or "", targets.get(str(row["id"]), req.target_lang))
+        if leaked:
+            row["script_leak"] = leaked
 
 
 def _stamp_predicted_rate_ratio(translated, req) -> None:

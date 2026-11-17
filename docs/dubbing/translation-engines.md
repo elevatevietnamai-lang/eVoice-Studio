@@ -280,6 +280,14 @@ Argos accepts Chinese/Simplified Chinese names, Mandarin aliases, and language t
 
 Mixed or malformed SRT files can make a bare number indistinguishable from spoken dialogue. The importer removes numbering only when cue boundaries and sequential numbering support it; ambiguous nonsequential numbers are retained as text to avoid silent data loss. Standard indexed SRT and WebVTT exports avoid this ambiguity.
 
+Argos publishes most language pairs only to and from English. A pair with no direct pack (for example Chinese → Vietnamese) installs its two English legs (zh → en and en → vi) and translates through English; the Argos pack notice shows that route. When the Argos index has no pack either way, the install answers with the stable `argos_pack_unavailable` code and the app asks for NLLB in the user's language.
+
+NLLB translates a long segment sentence by sentence (Chinese and Japanese lines split at about 40 characters, other scripts at about 120) and blocks any repeated 3-word run, so a long line no longer loops on one phrase.
+
+An LLM translation into a language that is not written in Chinese, Japanese or Korean script is retried once when it keeps CJK characters, naming them. If they survive, the line is kept and marked *Untranslated* in the editor so it can be fixed by hand.
+
+Settings → Translation, the Dub page and Batch show why an engine is unavailable in the app language. The API's `availability_reason` stays an English sentence; `availability_code` (`needs_config`, `not_installed`, …) is the stable value to read.
+
 If the Argos native runtime cannot load, both desktop and browser clients show localized recovery guidance: reinstall the backend or select NLLB. The API returns the stable `argos_runtime_unavailable` error code without exposing native library paths.
 
 WebVTT import separates metadata blocks from cue identifiers using the [WebVTT block-parsing rules](https://www.w3.org/TR/webvtt1/#file-parsing): a timing line immediately after an identifier makes a cue, even when that identifier is NOTE, STYLE, or REGION. Later timing examples inside metadata are ignored, and empty cues never borrow the next cue’s identifier as dialogue.

@@ -777,7 +777,7 @@ export function ModelLibrary({
         client.invalidateQueries({ queryKey: ['engines'] }),
         client.invalidateQueries({ queryKey: ['performance-profile'] }),
       ]);
-      const feedback = engineSelectionFeedback(result, 'asr');
+      const feedback = engineSelectionFeedback(result, t('engineSidebar.asr'), model.label);
       if (feedback.tone === 'warning') toast.warning(t(feedback.key, feedback.values));
       else toast.success(t(feedback.key, feedback.values));
     } catch (error) {
@@ -806,7 +806,11 @@ export function ModelLibrary({
         client.invalidateQueries({ queryKey: ['transcription-readiness'] }),
         client.invalidateQueries({ queryKey: ['performance-profile'] }),
       ]);
-      const feedback = engineSelectionFeedback({ active: model.dictation_id }, 'dictation');
+      const feedback = engineSelectionFeedback(
+        { active: model.dictation_id },
+        t('engineSidebar.dictation'),
+        model.label,
+      );
       toast.success(t(feedback.key, feedback.values));
     } catch (error) {
       setFailed(true);

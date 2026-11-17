@@ -105,6 +105,18 @@ function detailToString(detail: unknown): string {
     detail &&
     typeof detail === "object" &&
     "code" in detail &&
+    detail.code === "argos_pack_unavailable"
+  )
+    return tr("engines.argosPackUnavailable", {
+      pairs:
+        "pairs" in detail && Array.isArray(detail.pairs)
+          ? detail.pairs.join(", ")
+          : "",
+    });
+  if (
+    detail &&
+    typeof detail === "object" &&
+    "code" in detail &&
     detail.code === "dub_background_unavailable"
   )
     return tr("dubIntegrity.backgroundUnavailable");

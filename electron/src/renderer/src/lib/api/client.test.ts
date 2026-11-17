@@ -44,6 +44,24 @@ describe("errorFromResponse", () => {
     expect(translate).toHaveBeenCalledWith("engines.argosRuntimeUnavailable");
     expect(err.payload?.detail).toEqual(detail);
   });
+  it("localizes a missing Argos pack instead of showing the English sentence", async () => {
+    const translate = vi
+      .spyOn(i18next, "t")
+      .mockReturnValue("Localized: choose NLLB");
+    const detail = {
+      code: "argos_pack_unavailable",
+      message: "No Argos language pack is available for zh → eo",
+      pairs: ["zh → eo"],
+    };
+    const err = await errorFromResponse(
+      new Response(JSON.stringify({ detail }), { status: 422 }),
+    );
+    expect(err.detail).toBe("Localized: choose NLLB");
+    expect(translate).toHaveBeenCalledWith("engines.argosPackUnavailable", {
+      pairs: "zh → eo",
+    });
+    translate.mockRestore();
+  });
   it("announces unaccepted model licences so the app can ask for acceptance", async () => {
     const translate = vi
       .spyOn(i18next, "t")

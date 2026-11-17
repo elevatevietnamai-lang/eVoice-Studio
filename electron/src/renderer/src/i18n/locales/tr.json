@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}} her bölümü bağlam içinde çevirir ve ölçülen konuşmadan sonra zamanlama sapmalarını yeniden düzenler.",
     "choose_translation_agent": "Çeviri ajanını seç",
     "no_local_agents": "Yerel bir aracıyla çevirmek için Codex, Claude Code, OpenCode veya Pi kurun.",
-    "agent_translation_complete": "{{agent}} bölümlerin çevirisini tamamladı."
+    "agent_translation_complete": "{{agent}} bölümlerin çevirisini tamamladı.",
+    "loading_speech_model": "Konuşma modelleri indiriliyor (yalnızca ilk çalıştırmada)…"
   },
   "dub_workflow": {
     "preparing_audio": "Ses hazırlanıyor…",
@@ -2733,7 +2734,9 @@
     "plan_impossible": "Sığmayacak +{{seconds}}sn",
     "plan_impossible_title": "Tahmini konuşma ≈{{est}}sn, kullanılabilir süre {{avail}}sn. Yaklaşık {{seconds}}sn hiçbir uyarlamayla karşılanamaz ve ses kesilir. Üretmeden önce metni kısaltın.",
     "plan_tight": "Zar zor sığıyor",
-    "plan_tight_title": "Tahmini konuşma ≈{{est}}sn, kullanılabilir süre {{avail}}sn. Akıllı uyarlama, sesi belirgin biçimde hızlandırarak veya videoyu yavaşlatarak bunu karşılayabilir. Daha iyi sonuç için metni kısaltın."
+    "plan_tight_title": "Tahmini konuşma ≈{{est}}sn, kullanılabilir süre {{avail}}sn. Akıllı uyarlama, sesi belirgin biçimde hızlandırarak veya videoyu yavaşlatarak bunu karşılayabilir. Daha iyi sonuç için metni kısaltın.",
+    "script_leak": "Çevrilmedi",
+    "script_leak_title": "Bazı karakterler çevrilmeden kaldı: {{chars}}. Bu satırı düzenleyin veya yeniden çevirin."
   },
   "update": {
     "checking": "Güncellemeler denetleniyor…",
@@ -2871,7 +2874,17 @@
     "active": "Motor: {{name}}",
     "none": "Etkin motor yok",
     "localInstallRequired": "Bu motoru arka uç bilgisayarında localhost veya kurulum kılavuzu üzerinden yükleyin. Uzaktan kurulum devre dışıdır.",
-    "argosRuntimeUnavailable": "Argos çalışma ortamı kullanılamıyor. Arka ucu yeniden yükleyin veya NLLB seçin."
+    "argosRuntimeUnavailable": "Argos çalışma ortamı kullanılamıyor. Arka ucu yeniden yükleyin veya NLLB seçin.",
+    "argosPackUnavailable": "Argos'ta {{pairs}} için, İngilizce üzerinden bile, dil paketi yok. Bu dil için NLLB'yi veya başka bir motoru seçin.",
+    "unavailableReason_license": "Lisans henüz kabul edilmedi. Bu motoru etkinleştirmek için Model Kataloğu'nda inceleyip kabul edin.",
+    "unavailableReason_platform": "Bu motor bu bilgisayarın platformunda çalışmaz. Kılavuzu desteklenen platformları listeler.",
+    "unavailableReason_no_mps": "Bu motor Apple GPU'suna (MPS) ihtiyaç duyar ve bu kurulumdaki PyTorch onu kullanamıyor. macOS'u güncellemek veya uygulamayı yeniden kurmak genellikle sorunu çözer.",
+    "unavailableReason_file_missing": "Bu motorun ihtiyaç duyduğu bir dosya eksik veya okunamıyor. Model Kataloğu'ndan yeniden kurun.",
+    "unavailableReason_file_missing_manual": "Bu motorun ihtiyaç duyduğu bir dosya eksik veya okunamıyor. Kılavuzu kurulum adımlarını listeler.",
+    "unavailableReason_needs_config": "Bu motorun çalışmadan önce ayarlanması gerekir; örneğin Ayarlar'da bir API anahtarı veya LLM sağlayıcısı.",
+    "unavailableReason_not_installed": "Bu motor henüz kurulu değil. Model Kataloğu'ndan kurun.",
+    "unavailableReason_not_installed_manual": "Bu motor henüz kurulu değil ve tek tıklamayla kurulumu yok. Kılavuzu kurulum adımlarını listeler.",
+    "unavailableReason_unavailable": "Bu motor şu anda çalışamıyor. Kurulu ve ayarlanmış olduğunu kontrol edin."
   },
   "performanceProfile": {
     "requiresEngine": "Hız ve kaliteyi ayarlamak için {{engine}} yükleyip seçin.",

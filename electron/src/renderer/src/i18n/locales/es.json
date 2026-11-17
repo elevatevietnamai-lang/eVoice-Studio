@@ -870,7 +870,8 @@
     "agent_cli_desc": "{{agent}} traduce cada segmento en contexto y reajusta los desajustes de tiempo después de medir el habla.",
     "choose_translation_agent": "Elegir agente de traducción",
     "no_local_agents": "Instala Codex, Claude Code, OpenCode o Pi para traducir con un agente local.",
-    "agent_translation_complete": "{{agent}} terminó de traducir los segmentos."
+    "agent_translation_complete": "{{agent}} terminó de traducir los segmentos.",
+    "loading_speech_model": "Descargando los modelos de voz (solo la primera vez)…"
   },
   "dub_workflow": {
     "preparing_audio": "Preparando audio…",
@@ -2735,7 +2736,9 @@
     "plan_impossible": "No cabe +{{seconds}}s",
     "plan_impossible_title": "Voz estimada ≈{{est}}s frente a {{avail}}s disponibles. Sobran unos {{seconds}}s que ningún ajuste puede compensar; se recortaría el audio. Acorta el texto antes de generar.",
     "plan_tight": "Ajuste justo",
-    "plan_tight_title": "Voz estimada ≈{{est}}s frente a {{avail}}s disponibles. El ajuste inteligente puede compensarlo acelerando la voz de forma audible o ralentizando el vídeo. Acorta el texto para mejorar el resultado."
+    "plan_tight_title": "Voz estimada ≈{{est}}s frente a {{avail}}s disponibles. El ajuste inteligente puede compensarlo acelerando la voz de forma audible o ralentizando el vídeo. Acorta el texto para mejorar el resultado.",
+    "script_leak": "Sin traducir",
+    "script_leak_title": "Quedaron caracteres sin traducir: {{chars}}. Edita esta línea o vuelve a traducirla."
   },
   "update": {
     "checking": "Buscando actualizaciones…",
@@ -2873,7 +2876,17 @@
     "active": "Motor: {{name}}",
     "none": "Ningún motor activo",
     "localInstallRequired": "Instala este motor en el equipo del servidor mediante localhost o su guía de configuración. La instalación remota está desactivada.",
-    "argosRuntimeUnavailable": "El entorno de ejecución de Argos no está disponible. Reinstala el backend o selecciona NLLB."
+    "argosRuntimeUnavailable": "El entorno de ejecución de Argos no está disponible. Reinstala el backend o selecciona NLLB.",
+    "argosPackUnavailable": "Argos no tiene paquete de idioma para {{pairs}}, ni siquiera a través del inglés. Elige NLLB u otro motor para este idioma.",
+    "unavailableReason_license": "La licencia aún no está aceptada. Revísala y acéptala en el Catálogo de modelos para activar este motor.",
+    "unavailableReason_platform": "Este motor no funciona en la plataforma de este equipo. Su guía indica las plataformas compatibles.",
+    "unavailableReason_no_mps": "Este motor necesita la GPU de Apple (MPS), que el PyTorch de esta instalación no puede usar. Actualizar macOS o reinstalar la app suele solucionarlo.",
+    "unavailableReason_file_missing": "Falta un archivo que necesita este motor o no se puede leer. Reinstálalo desde el Catálogo de modelos.",
+    "unavailableReason_file_missing_manual": "Falta un archivo que necesita este motor o no se puede leer. Su guía indica los pasos de instalación.",
+    "unavailableReason_needs_config": "Este motor necesita configuración antes de funcionar, como una clave de API o un proveedor LLM en Ajustes.",
+    "unavailableReason_not_installed": "Este motor aún no está instalado. Instálalo desde el Catálogo de modelos.",
+    "unavailableReason_not_installed_manual": "Este motor aún no está instalado y no tiene instalación con un clic. Su guía indica los pasos de instalación.",
+    "unavailableReason_unavailable": "Este motor no puede funcionar ahora. Comprueba que esté instalado y configurado."
   },
   "performanceProfile": {
     "requiresEngine": "Instala y selecciona {{engine}} para ajustar la velocidad y la calidad.",

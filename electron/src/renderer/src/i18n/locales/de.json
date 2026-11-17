@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}} übersetzt jedes Segment im Kontext und überarbeitet Timing-Abweichungen nach der gemessenen Sprache.",
     "choose_translation_agent": "Übersetzungsagent wählen",
     "no_local_agents": "Installieren Sie Codex, Claude Code, OpenCode oder Pi, um mit einem lokalen Agenten zu übersetzen.",
-    "agent_translation_complete": "{{agent}} hat die Segmente fertig übersetzt."
+    "agent_translation_complete": "{{agent}} hat die Segmente fertig übersetzt.",
+    "loading_speech_model": "Sprachmodelle werden heruntergeladen (nur beim ersten Start)…"
   },
   "dub_workflow": {
     "preparing_audio": "Audio wird vorbereitet…",
@@ -2733,7 +2734,9 @@
     "plan_impossible": "Passt nicht +{{seconds}}s",
     "plan_impossible_title": "Geschätzte Sprache ≈{{est}}s bei {{avail}}s verfügbarer Zeit. Etwa {{seconds}}s lassen sich nicht ausgleichen; Audio würde abgeschnitten. Text vor dem Generieren kürzen.",
     "plan_tight": "Knapp passend",
-    "plan_tight_title": "Geschätzte Sprache ≈{{est}}s bei {{avail}}s verfügbarer Zeit. Smart Fit kann dies mit hörbarer Beschleunigung oder langsamerem Video ausgleichen. Für ein besseres Ergebnis den Text kürzen."
+    "plan_tight_title": "Geschätzte Sprache ≈{{est}}s bei {{avail}}s verfügbarer Zeit. Smart Fit kann dies mit hörbarer Beschleunigung oder langsamerem Video ausgleichen. Für ein besseres Ergebnis den Text kürzen.",
+    "script_leak": "Unübersetzt",
+    "script_leak_title": "Einige Zeichen wurden nicht übersetzt: {{chars}}. Bearbeite diese Zeile oder übersetze sie erneut."
   },
   "update": {
     "checking": "Nach Updates suchen…",
@@ -2871,7 +2874,17 @@
     "active": "Engine: {{name}}",
     "none": "Keine Engine aktiv",
     "localInstallRequired": "Installiere diese Engine auf dem Backend-Rechner über localhost oder die Einrichtungsanleitung. Die Ferninstallation ist deaktiviert.",
-    "argosRuntimeUnavailable": "Die Argos-Laufzeit ist nicht verfügbar. Installiere das Backend neu oder wähle NLLB."
+    "argosRuntimeUnavailable": "Die Argos-Laufzeit ist nicht verfügbar. Installiere das Backend neu oder wähle NLLB.",
+    "argosPackUnavailable": "Argos hat kein Sprachpaket für {{pairs}}, auch nicht über Englisch. Wähle NLLB oder eine andere Engine für diese Sprache.",
+    "unavailableReason_license": "Lizenz noch nicht akzeptiert. Prüfe und akzeptiere sie im Modellkatalog, um diese Engine zu aktivieren.",
+    "unavailableReason_platform": "Diese Engine läuft nicht auf der Plattform dieses Computers. Ihre Anleitung nennt die unterstützten Plattformen.",
+    "unavailableReason_no_mps": "Diese Engine braucht Apples GPU (MPS), die das PyTorch dieser Installation nicht nutzen kann. Ein macOS-Update oder eine Neuinstallation der App behebt das meist.",
+    "unavailableReason_file_missing": "Eine Datei, die diese Engine braucht, fehlt oder ist nicht lesbar. Installiere sie im Modellkatalog neu.",
+    "unavailableReason_file_missing_manual": "Eine Datei, die diese Engine braucht, fehlt oder ist nicht lesbar. Ihre Anleitung nennt die Installationsschritte.",
+    "unavailableReason_needs_config": "Diese Engine muss vor dem Start eingerichtet werden, etwa mit einem API-Schlüssel oder einem LLM-Anbieter in den Einstellungen.",
+    "unavailableReason_not_installed": "Diese Engine ist noch nicht installiert. Installiere sie im Modellkatalog.",
+    "unavailableReason_not_installed_manual": "Diese Engine ist noch nicht installiert und hat keine Ein-Klick-Installation. Ihre Anleitung nennt die Installationsschritte.",
+    "unavailableReason_unavailable": "Diese Engine kann gerade nicht laufen. Prüfe, ob sie installiert und eingerichtet ist."
   },
   "performanceProfile": {
     "requiresEngine": "Installiere und wähle {{engine}}, um Geschwindigkeit und Qualität anzupassen.",

@@ -136,6 +136,26 @@ def _looks_like_target_script(text: str, code: str, threshold: float = 0.5) -> b
     return script_ratio(text, code) >= threshold
 
 
+# Hangul syllables and jamo, the third CJK script a small LLM leaks.
+_HANGUL_RANGES = ((0x1100, 0x11FF), (0x3130, 0x318F), (0xAC00, 0xD7AF))
+_CJK_LEAK_RANGES = _HAN_RANGES + _KANA_RANGES + _HANGUL_RANGES
+#: Targets written in Han, kana or Hangul themselves: a CJK letter there is
+#: the language, not a leak.
+_CJK_TARGET_BASES = frozenset({"zh", "ja", "ko", "yue", "cmn", "wuu", "lzh", "zho", "jpn", "kor"})
+
+
+def cjk_leak(text: str, target_lang: str) -> str:
+    """CJK letters left in a translation into a non-CJK language, else "".
+
+    A 7B LLM translating Chinese keeps words it cannot place ("phiên bản" +
+    two Han characters). The script-ratio gate passes such a line for a
+    Latin-script target — it is still mostly Latin — so it is checked here."""
+    base = (target_lang or "").replace("_", "-").split("-")[0].lower()
+    if not base or base in _CJK_TARGET_BASES:
+        return ""
+    return "".join(c for c in (text or "") if c.isalpha() and _in_ranges(c, _CJK_LEAK_RANGES))
+
+
 # ── Divergence guard (shared with speech_rate's Autofit fit pass) ────────────
 # For every Latin-script target `_looks_like_target_script` passes ANY text
 # unconditionally (no `_SCRIPT_RANGES` entry), so it was the only — and for
@@ -221,6 +241,10 @@ def refine_output_ok(
         return False, "empty"
     if not _looks_like_target_script(cand, target_lang):
         return False, f"wrong-script:{target_lang}"
+    if cjk_leak(cand, target_lang) and not cjk_leak(ref, target_lang):
+        # A polish pass must not reintroduce source characters the line it
+        # rewrote did not have.
+        return False, f"wrong-script:{target_lang}:cjk-leak"
     lo, hi = _refine_ratio_bounds()
     if max_ratio is not None:
         hi = max_ratio

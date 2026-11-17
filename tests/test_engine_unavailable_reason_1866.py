@@ -225,3 +225,23 @@ def test_the_next_step_matches_whether_the_app_can_install_it(diagnostic, one_cl
 def test_rows_without_the_install_field_keep_the_catalogue_wording():
     # ASR / LLM / translation rows carry no one_click_install field.
     assert "Model Catalogue" in _reason_for("transformers not installed")
+
+
+def test_translation_engines_carry_a_classified_reason_and_code(monkeypatch):
+    """Settings → Translation showed "Engine unavailable. Check installation
+    and configuration." in English for an LLM engine that only needed a
+    provider: the reason was never classified and had no code to translate."""
+    from api.routers import engines as engines_router
+    from services import translation_engines
+
+    monkeypatch.setattr(translation_engines, "list_engines", lambda: [
+        {"id": "openai", "availability_reason": "Translation provider is not configured"},
+        {"id": "argos", "availability_reason": "import 'argostranslate.translate' failed: No module named 'x'"},
+        {"id": "nllb", "availability_reason": None},
+    ])
+    rows = {row["id"]: row for row in engines_router.list_translation_engines()["engines"]}
+    assert rows["openai"]["availability_code"] == "needs_config"
+    assert rows["argos"]["availability_code"] == "not_installed"
+    assert rows["nllb"]["availability_code"] is None
+    assert rows["nllb"]["availability_reason"] is None
+    assert "No module named" not in rows["argos"]["availability_reason"]
