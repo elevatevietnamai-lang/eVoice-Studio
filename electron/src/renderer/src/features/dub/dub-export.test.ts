@@ -122,10 +122,21 @@ it('sends the lines the editor shows, with the original for dual layout', () => 
     }),
     segment('b', { start: 1, end: 2, text: '', text_original: '再见', translations: {} }),
     segment('c', { start: 3, end: 3, text: 'zero length', text_original: 'x' }),
+    // Untranslated: the editor shows the source text, which must not burn back.
+    segment('d', { start: 4, end: 5, text: '你好', text_original: '你好' }),
+    // A translation equal to the source (a product name) still burns.
+    segment('e', {
+      start: 5,
+      end: 6,
+      text: 'ComfyUI',
+      text_original: 'ComfyUI',
+      translations: { vi: 'ComfyUI' },
+    }),
   ];
   // The current target burns the edited text, not the stored translation.
   expect(subtitleCues(segments, 'vi', 'vi')).toEqual([
     { id: 'a', start: 0, end: 1, text: 'Chào bạn', text_original: '你好' },
+    { id: 'e', start: 5, end: 6, text: 'ComfyUI' },
   ]);
   expect(subtitleCues(segments, 'fr', 'vi')).toEqual([
     { id: 'a', start: 0, end: 1, text: 'Bonjour', text_original: '你好' },

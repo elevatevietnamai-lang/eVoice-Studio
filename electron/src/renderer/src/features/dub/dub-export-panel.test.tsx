@@ -119,12 +119,32 @@ it('exports burned subtitles with the original audio before any dub is generated
   expect(state.calls[1]).toContain('lang=vi');
 });
 
-it('hides the subtitled video export for audio-only jobs', () => {
+it('hides the subtitled video export for audio-only jobs, even when it was the saved choice', () => {
   render(
     <DubExportPanel
-      session={{ ...session({}), inputType: 'audio' } as unknown as DubSession}
+      session={
+        {
+          ...session({ format: 'subtitled' }),
+          inputType: 'audio',
+          target: 'Vietnamese',
+          segments: [
+            {
+              id: 'a',
+              start: 0,
+              end: 1,
+              text: 'Xin chào',
+              text_original: '你好',
+              translations: { vi: 'Xin chào' },
+            },
+          ],
+        } as unknown as DubSession
+      }
       disabled={false}
     />,
   );
   expect(screen.queryByRole('button', { name: 'exportModal.subtitled_video' })).toBeNull();
+  expect(
+    screen.getByRole('button', { name: 'exportModal.wav_lossless' }).getAttribute('aria-pressed'),
+  ).toBe('true');
+  expect(screen.queryByText('exportModal.subtitled_note')).toBeNull();
 });

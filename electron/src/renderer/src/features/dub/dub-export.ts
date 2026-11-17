@@ -117,8 +117,15 @@ export interface SubtitleCue {
   text: string;
   text_original?: string;
 }
-const cueText = (segment: DubSegment, code: string, currentCode: string) =>
-  (code === currentCode ? segment.text : segment.translations?.[code])?.trim() || '';
+const cueText = (segment: DubSegment, code: string, currentCode: string) => {
+  if (code !== currentCode) return segment.translations?.[code]?.trim() || '';
+  // A row still showing its source text is untranslated: burning it would put
+  // the original back over the spot its on-screen subtitle was removed from.
+  const text = segment.text.trim();
+  const translated =
+    Boolean(segment.translations?.[code]?.trim()) || text !== (segment.text_original || '').trim();
+  return translated ? text : '';
+};
 /**
  * Languages with translated subtitle text in the editor. Translations live in
  * the editor until a dub is generated, so this works before any Generate. The

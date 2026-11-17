@@ -138,7 +138,10 @@ Pop (Highlight plus a short bounce). Translated lines and older jobs have no wor
 timing, so longer words get proportionally more time, and Chinese, Japanese, Thai,
 Lao, Khmer and Burmese highlight character by character. Burned subtitles use the
 bundled Inter font on every OS; scripts it lacks (CJK, Arabic, Devanagari, Thai)
-fall back to a system font. Audio supports WAV or MP3 with bitrate choice;
+fall back to a system font. **Video + subtitles** (video jobs) needs no dub: it
+keeps the original audio and burns the translated lines the editor shows, sending
+them to the backend first because translations stay in the renderer until a dub is
+generated; untranslated rows are left out. Audio supports WAV or MP3 with bitrate choice;
 SRT/VTT/ASS sidecars and per-language stem/segment ZIPs use the existing backend.
 Each download is explicit and targets the selected language. Export errors retain
 all choices for retry. Native save filters match the encoded file format.

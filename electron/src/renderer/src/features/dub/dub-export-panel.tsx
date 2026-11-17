@@ -23,7 +23,8 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
   const { t } = useTranslation();
   const preferences = session.exportOptions || {};
   const format =
-    session.inputType === 'audio' && preferences.format === 'mp4'
+    session.inputType === 'audio' &&
+    (preferences.format === 'mp4' || preferences.format === 'subtitled')
       ? 'wav'
       : preferences.format || (session.inputType === 'audio' ? 'wav' : 'mp4');
   const setFormat = (format: DubExportFormat) => setDubExportPreferences({ format });

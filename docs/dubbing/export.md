@@ -15,7 +15,8 @@ the original subtitles were removed, each translated line goes where its
 original was; **Dual** adds the original under the translation.
 
 The option is offered for video jobs once a language has translated lines. It
-burns the lines as the editor shows them: the app first sends them with
+burns the lines as the editor shows them (lines still in the source language are
+left out): the app first sends them with
 `POST /dub/subtitle-cues/{job_id}` (`{"lang", "cues": [{id, start, end, text,
 text_original}]}`), then saves `GET /dub/download/{job_id}?subtitles_only=1&lang=&dual=`.
 With no posted lines, a generated track's text for that language is used; with
