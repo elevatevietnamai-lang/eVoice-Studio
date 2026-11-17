@@ -21,6 +21,7 @@ import math
 import os
 import urllib.request
 from collections import deque
+from concurrent.futures import ThreadPoolExecutor
 
 import cv2
 import numpy as np
@@ -32,6 +33,10 @@ from .video import VideoInfo, VideoWriter
 METHODS = ("sttn", "lama", "propainter", "opencv")
 MEDIAN_FRAMES = {"sttn": 5, "propainter": 5}
 PROPAINTER_TEMPORAL_WEIGHT = 0.65
+# Reusing the previous clean frame's fill (see TemporalFill.feed_previous).
+REUSE_NEAR_PX = 24
+REUSE_NEAR_CHANGED = 0.005
+REUSE_WIDE_CHANGED = 0.05
 
 # Pinned to one Hugging Face commit and one SHA-256: a swapped file (or a mirror serving a different
 # one) is rejected before it ever reaches onnxruntime.
@@ -93,6 +98,9 @@ class LamaOnnx:
         import onnxruntime as ort
         so = ort.SessionOptions()
         so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        # One tile per run. A fixed batch lets onnxruntime fold the shape-derived Fourier
+        # matrices this export rebuilds on every run: ~5x faster session start, ~7% faster runs.
+        so.add_free_dimension_override_by_name("batch", 1)
         self.sess = None
         requested = list(ort_providers(prefer_gpu))
         for provs in (requested, ["CPUExecutionProvider"]):
@@ -163,7 +171,9 @@ class Filler:
         ys, xs = np.nonzero(hole)
         y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
         bh = y1 - y0
-        side = int(min(min(H, W), max(256, bh * 2.2)))
+        # Tiles at the model's own size, cut from the whole frame: native pixels, real context above
+        # the band, and ~3x fewer runs than band-high tiles blown up to the model size.
+        side = int(min(min(H, W), max(self.lama.size, bh * 2.2)))
         stride = max(1, int(side * 0.7))
         cy = (y0 + y1) // 2
         if bh <= side * 0.8:
@@ -215,84 +225,175 @@ def _estimate_shift(g_cur, g_ref, invalid):
     return dx, dy, resp
 
 
+def _ring_match(g_cur, g, ring, ring_n, valid, diff_thr, match_frac):
+    """(ring pixels compared, which of them match) when `g` shows the same background, else None."""
+    r = ring & valid
+    if r.sum() < 0.35 * ring_n:
+        return None
+    match = np.abs(g_cur[r] - g[r]) < diff_thr * 2
+    # cảnh coi là cùng nền nếu đa số viền khớp (chịu được vật thể nhỏ đi ngang)
+    if match.mean() < match_frac:
+        return None
+    return r, match
+
+
 def temporal_fill(cur, hole, cands, ring_px=12, diff_thr=6.0, max_tries=16, match_frac=0.85,
-                  median_of=1):
+                  median_of=1, previous=None):
     """cands: list (ảnh band, valid bool) theo thứ tự ưu tiên. Trả (ảnh, phần còn thiếu).
 
     median_of > 1: gom tối đa ngần ấy khung khớp nền rồi lấy trung vị từng điểm ảnh (loại vật thể
-    đi ngang); =1: lấy từ khung khớp đầu tiên (nhanh hơn)."""
-    out = cur.copy()
-    remaining = hole.copy()
-    k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * ring_px + 1, 2 * ring_px + 1))
-    ring = cv2.dilate(hole.astype(np.uint8), k).astype(bool) & ~hole
-    ring_n = ring.sum()
-    if ring_n == 0:
-        return out, remaining
-    g_cur = _gray(cur)
-    tries = 0
-    stack: list[tuple[np.ndarray, np.ndarray]] = []
-    votes = np.zeros(hole.shape, np.int16)
-    for img, valid in cands:
-        if tries >= max_tries:
-            break
-        if median_of <= 1 and not remaining.any():
-            break
-        if median_of > 1 and hole.any() and votes[hole].min() >= median_of:
-            break
-        if not ((remaining if median_of <= 1 else hole) & valid).any():
-            continue
-        tries += 1
-        g = _gray(img)
-        dx, dy, resp = _estimate_shift(g_cur, g, hole | ~valid)
-        if resp > 0.25 and (abs(dx) > 0.5 or abs(dy) > 0.5):
-            if abs(dx) > cur.shape[1] / 4 or abs(dy) > cur.shape[0] / 4:
+    đi ngang); =1: lấy từ khung khớp đầu tiên (nhanh hơn).
+
+    previous: (previous clean band, anchor band, anchor valid) tried after `cands` and outside the
+    `max_tries` budget; see `TemporalFill.feed_previous`."""
+    tf = TemporalFill(cur, hole, ring_px, diff_thr, max_tries, match_frac, median_of)
+    tf.feed(cands)
+    if previous is not None:
+        tf.feed_previous(*previous)
+    return tf.result()
+
+
+class TemporalFill:
+    """`temporal_fill` in two steps: `feed` the real neighbours (needs only the source frames, so it
+    can run ahead on a worker thread), then `feed_previous` and take `result`."""
+
+    def __init__(self, cur, hole, ring_px=12, diff_thr=6.0, max_tries=16, match_frac=0.85,
+                 median_of=1):
+        self.cur, self.hole = cur, hole
+        self.diff_thr, self.max_tries, self.match_frac, self.median_of = (
+            diff_thr, max_tries, match_frac, median_of)
+        self.out = cur.copy()
+        self.remaining = hole.copy()
+        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * ring_px + 1, 2 * ring_px + 1))
+        self.ring = cv2.dilate(hole.astype(np.uint8), k).astype(bool) & ~hole
+        self.ring_n = self.ring.sum()
+        self.g_cur = _gray(cur) if self.ring_n else None
+        self.tries = 0
+        self.stack: list[tuple[np.ndarray, np.ndarray]] = []
+        self.votes = np.zeros(hole.shape, np.int16)
+
+    def feed(self, cands):
+        if self.ring_n == 0:
+            return
+        cur, hole, ring, ring_n, g_cur = self.cur, self.hole, self.ring, self.ring_n, self.g_cur
+        diff_thr, match_frac, median_of = self.diff_thr, self.match_frac, self.median_of
+        remaining, votes = self.remaining, self.votes
+        for img, valid in cands:
+            if self.tries >= self.max_tries:
+                return
+            if median_of <= 1 and not remaining.any():
+                return
+            if median_of > 1 and hole.any() and votes[hole].min() >= median_of:
+                return
+            if not ((remaining if median_of <= 1 else hole) & valid).any():
                 continue
-            M = np.float32([[1, 0, dx], [0, 1, dy]])
-            size = (cur.shape[1], cur.shape[0])
-            img = cv2.warpAffine(img, M, size, flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
-            valid = cv2.warpAffine(valid.astype(np.uint8), M, size, flags=cv2.INTER_NEAREST,
-                                   borderValue=0).astype(bool)
+            self.tries += 1
             g = _gray(img)
-        r = ring & valid
-        if r.sum() < 0.35 * ring_n:
-            continue
-        d = np.abs(g_cur[r] - g[r])
-        match = d < diff_thr * 2
-        # cảnh coi là cùng nền nếu đa số viền khớp (chịu được vật thể nhỏ đi ngang)
-        if match.mean() < match_frac:
-            continue
-        take = (remaining if median_of <= 1 else hole & (votes < median_of)) & valid
+            # A still shot already matches where it is: skip the phase correlation (the costliest
+            # step on the CPU) and only search for camera motion when it does not.
+            hit = _ring_match(g_cur, g, ring, ring_n, valid, diff_thr, match_frac)
+            if hit is None:
+                dx, dy, resp = _estimate_shift(g_cur, g, hole | ~valid)
+                if not (resp > 0.25 and (abs(dx) > 0.5 or abs(dy) > 0.5)):
+                    continue
+                if abs(dx) > cur.shape[1] / 4 or abs(dy) > cur.shape[0] / 4:
+                    continue
+                M = np.float32([[1, 0, dx], [0, 1, dy]])
+                size = (cur.shape[1], cur.shape[0])
+                img = cv2.warpAffine(img, M, size, flags=cv2.INTER_LINEAR,
+                                     borderMode=cv2.BORDER_REFLECT)
+                valid = cv2.warpAffine(valid.astype(np.uint8), M, size, flags=cv2.INTER_NEAREST,
+                                       borderValue=0).astype(bool)
+                g = _gray(img)
+                hit = _ring_match(g_cur, g, ring, ring_n, valid, diff_thr, match_frac)
+                if hit is None:
+                    continue
+            self._apply(img, valid, img, *hit)
+
+    def feed_previous(self, img, anchor, anchor_valid) -> bool:
+        """Offer `img`, the clean band made for `anchor`, for whatever the neighbours left.
+
+        `anchor` is the source band of the last frame filled without this shortcut and `img` is
+        that frame's output. Copying from that one output (never from the previous frame's copy of
+        it) and comparing with that one source means neither the scene check nor the colour
+        correction can drift a step at a time. The fill is reused only
+        while the surroundings still match the anchor: within `REUSE_NEAR_PX` of the hole at most
+        `REUSE_NEAR_CHANGED` of the pixels may differ, and across the band around it (full band
+        height, a band height either side) at most `REUSE_WIDE_CHANGED`. LaMa ignores the pixels
+        under the mask, so unchanged surroundings give the same fill. A thin ring is not enough: a
+        subtitle's own box or shadow outside the mask stays put while the scene behind it changes.
+        Neighbours from other cues each expose a sliver of the hole and can use up `max_tries`, so
+        this runs outside that budget. True when it was used."""
+        if self.median_of <= 1 and not self.remaining.any():
+            return False
+        hole = self.hole
+        Hb, Wb = hole.shape
+        blocked = hole | ~anchor_valid
+        xs = np.nonzero(blocked.any(0))[0]
+        if xs.size == 0:
+            return False
+        x0, x1 = max(0, xs.min() - Hb), min(Wb, xs.max() + 1 + Hb)
+        blocked = cv2.dilate(blocked.astype(np.uint8), np.ones((7, 7), np.uint8)).astype(bool)
+        wide = np.zeros_like(hole)
+        wide[:, x0:x1] = True
+        wide &= ~blocked
+        k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * REUSE_NEAR_PX + 1,) * 2)
+        near = cv2.dilate(hole.astype(np.uint8), k).astype(bool) & wide
+        if near.sum() < 0.35 * self.ring_n or wide.sum() < 0.25 * Hb * (x1 - x0):
+            return False
+        g_cur = self.g_cur if self.g_cur is not None else _gray(self.cur)
+        changed = np.abs(g_cur - _gray(anchor)) >= self.diff_thr * 2
+        if changed[near].mean() > REUSE_NEAR_CHANGED or changed[wide].mean() > REUSE_WIDE_CHANGED:
+            return False
+        return self._apply(img, np.ones_like(hole), anchor, near, ~changed[near])
+
+    def _apply(self, img, valid, ref, r, match) -> bool:
+        """Copy `img` into the hole where `valid`, colour-matched on the ring through `ref`."""
+        median_of, remaining, votes = self.median_of, self.remaining, self.votes
+        take = (remaining if median_of <= 1 else self.hole & (votes < median_of)) & valid
         if not take.any():
-            continue
+            return False
         # cân bằng sáng theo phần viền khớp để tránh vệt
-        cm = cur[r][match].astype(np.float32)
-        im = img[r][match].astype(np.float32)
+        cm = self.cur[r][match].astype(np.float32)
+        im = ref[r][match].astype(np.float32)
         off = np.median(cm, 0) - np.median(im, 0)
         if np.abs(off).max() > 10:
-            continue  # lệch màu lớn: nhiều khả năng không phải cùng nền
+            return False  # lệch màu lớn: nhiều khả năng không phải cùng nền
         fixed = np.clip(img.astype(np.float32) + off, 0, 255)
         if median_of <= 1:
-            out[take] = fixed[take].astype(np.uint8)
+            self.out[take] = fixed[take].astype(np.uint8)
             remaining &= ~take
         else:
-            stack.append((fixed, take))
+            self.stack.append((fixed, take))
             votes += take
-    if stack:
-        arr = np.stack([np.where(t[..., None], f, np.nan) for f, t in stack])
-        covered = votes > 0
-        med = np.nanmedian(arr[:, covered], axis=0)
-        out[covered] = np.clip(np.round(med), 0, 255).astype(np.uint8)
-        remaining &= ~covered
-    return out, remaining
+        return True
+
+    def result(self):
+        out, remaining = self.out, self.remaining
+        if self.stack:
+            arr = np.stack([np.where(t[..., None], f, np.nan) for f, t in self.stack])
+            covered = self.votes > 0
+            med = np.nanmedian(arr[:, covered], axis=0)
+            out[covered] = np.clip(np.round(med), 0, 255).astype(np.uint8)
+            remaining &= ~covered
+        return out, remaining
 
 
 def _feather_blend(orig, filled, hole, px=3):
     """Làm mềm mép vùng lấp để không thấy đường cắt."""
-    if px <= 0:
+    if px <= 0 or not hole.any():
         return filled
-    m = cv2.GaussianBlur(hole.astype(np.float32), (0, 0), px)
-    m = np.maximum(m, hole.astype(np.float32))[..., None]
-    return (filled.astype(np.float32) * m + orig.astype(np.float32) * (1 - m)).astype(np.uint8)
+    # Only the hole's bounding box plus the blur's reach changes; work there instead of the band.
+    pad = 4 * px + 1  # > OpenCV's float Gaussian radius (4·sigma), so the result is identical
+    ys, xs = np.nonzero(hole)
+    y0, y1 = max(0, ys.min() - pad), min(hole.shape[0], ys.max() + 1 + pad)
+    x0, x1 = max(0, xs.min() - pad), min(hole.shape[1], xs.max() + 1 + pad)
+    h = hole[y0:y1, x0:x1].astype(np.float32)
+    m = np.maximum(cv2.GaussianBlur(h, (0, 0), px), h)[..., None]
+    out = orig.copy()
+    out[y0:y1, x0:x1] = (filled[y0:y1, x0:x1].astype(np.float32) * m
+                         + orig[y0:y1, x0:x1].astype(np.float32) * (1 - m)).astype(np.uint8)
+    return out
 
 
 # ----------------------------------------------------------------------------- masks
@@ -358,43 +459,74 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
     frames: deque = deque()      # (idx, full frame) chờ xuất
     bands: dict[int, np.ndarray] = {}  # band gốc trong cửa sổ
     holes: dict[int, np.ndarray | None] = {}
-    prev_out_band = None
+    valids: dict[int, np.ndarray] = {}  # ~hole, built once per frame instead of once per pairing
+    all_valid = np.ones((by1 - by0, info.width), bool)
+    # (source band, its valid mask, its clean output) of the last frame not filled by reuse
+    anchor = None
     read_idx = 0
     out_idx = 0
     eof = False
     total = max(1, info.frames)
     n_ai = n_temporal = 0
+    median_of = MEDIAN_FRAMES.get(filler.requested, 1)
+    # The neighbour pass of a frame needs only source frames, so workers run it a few frames
+    # ahead while the main thread waits on LaMa. Same candidates, same order: same output.
+    workers = max(1, min(4, (os.cpu_count() or 2) - 1)) if use_temporal else 0
+    ahead = 2 * workers
+    pool = ThreadPoolExecutor(workers, thread_name_prefix="hardsub-temporal") if workers else None
+    pending: dict[int, tuple] = {}
+    queued = 0  # first frame whose neighbour pass is not queued yet
+
+    def queue_neighbours(t):
+        hole = holes.get(t)
+        if hole is None or not hole.any():
+            return
+        cands = []
+        for d in range(1, Wn + 1):
+            for s in (t + d, t - d):
+                if s in bands:
+                    cands.append((bands[s], valids[s]))
+        tf = TemporalFill(bands[t], hole, median_of=median_of)
+        pending[t] = (pool.submit(tf.feed, cands), tf)
+
+    def fill_in_frame(frame, band_img, mask):
+        """Fill `mask` of the band; LaMa sees the band inside its whole frame for context."""
+        if filler.lama is None:
+            return filler.fill(band_img, mask)
+        full = frame.copy()
+        full[by0:by1] = band_img
+        m = np.zeros(full.shape[:2], bool)
+        m[by0:by1] = mask
+        return filler.fill(full, m)[by0:by1]
 
     def process(t, frame):
-        nonlocal prev_out_band, n_ai, n_temporal
+        nonlocal anchor, n_ai, n_temporal
         hole = holes.get(t)
         band = bands[t]
         if hole is None or not hole.any():
-            prev_out_band = band
+            anchor = (band, all_valid, band)
             return frame
+        reused = False
         filled = band
         remaining = hole
         if use_temporal:
-            cands = []
-            for d in range(1, Wn + 1):
-                for s in (t + d, t - d):
-                    if s in bands:
-                        hs = holes.get(s)
-                        cands.append((bands[s], ~hs if hs is not None else np.ones_like(hole)))
-            if prev_out_band is not None:  # nền thật ưu tiên trước, rồi mới tới khung đã lấp
-                cands.append((prev_out_band, np.ones_like(hole)))
-            filled, remaining = temporal_fill(band, hole, cands,
-                                              median_of=MEDIAN_FRAMES.get(filler.requested, 1))
+            job, tf = pending.pop(t)
+            job.result()
+            # nền thật ưu tiên trước, rồi mới tới khung đã lấp (ngoài ngân sách thử)
+            if anchor is not None:
+                src, valid, clean = anchor
+                reused = tf.feed_previous(clean, src, valid)
+            filled, remaining = tf.result()
             if remaining.sum() < hole.sum():
                 n_temporal += 1
         if remaining.any():
             k = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
             remaining = cv2.dilate(remaining.astype(np.uint8), k).astype(bool) & hole
-            filled = filler.fill(filled, remaining)
+            filled = fill_in_frame(frame, filled, remaining)
             n_ai += 1
         if filler.requested == "propainter" and filler.lama is not None:
             # LaMa tinh chỉnh lại toàn vùng: nền thật giữ 65%, LaMa 35% để xóa vệt/ringing
-            refined = filler.fill(filled, hole)
+            refined = fill_in_frame(frame, filled, hole)
             blend = (filled.astype(np.float32) * PROPAINTER_TEMPORAL_WEIGHT
                      + refined.astype(np.float32) * (1 - PROPAINTER_TEMPORAL_WEIGHT))
             filled = np.where(hole[..., None], np.clip(blend, 0, 255).astype(np.uint8), filled)
@@ -402,31 +534,42 @@ def remove_subtitles(src: str, out_path: str, info: VideoInfo, segs: list[Segmen
         filled = _feather_blend(band, filled, hole)
         out = frame.copy()
         out[by0:by1] = filled
-        prev_out_band = filled
+        if not reused:
+            anchor = (band, valids[t], filled)
         return out
 
-    while True:
-        # đọc trước Wn khung hình để có "tương lai"
-        while not eof and read_idx <= out_idx + Wn:
-            ok, fr = cap.read()
-            if not ok:
-                eof = True
+    try:
+        while True:
+            # đọc trước Wn khung hình để có "tương lai" (+ `ahead` cho các luồng phụ)
+            while not eof and read_idx <= out_idx + Wn + ahead:
+                ok, fr = cap.read()
+                if not ok:
+                    eof = True
+                    break
+                frames.append((read_idx, fr))
+                bands[read_idx] = fr[by0:by1].copy()
+                holes[read_idx] = h = plan.hole(read_idx)
+                valids[read_idx] = all_valid if h is None else ~h
+                read_idx += 1
+            # a frame's neighbour pass starts once its whole future window has been read
+            while pool and queued < read_idx and (eof or queued + Wn < read_idx):
+                queue_neighbours(queued)
+                queued += 1
+            if not frames:
                 break
-            frames.append((read_idx, fr))
-            bands[read_idx] = fr[by0:by1].copy()
-            holes[read_idx] = plan.hole(read_idx)
-            read_idx += 1
-        if not frames:
-            break
-        t, fr = frames.popleft()
-        writer.write(process(t, fr))
-        out_idx = t + 1
-        for old in [k for k in bands if k < t - Wn]:
-            bands.pop(old, None)
-            holes.pop(old, None)
-        if progress and t % 15 == 0:
-            progress(min(t / total, 1.0), f"Xóa phụ đề: khung {t}/{total}")
-    cap.release()
+            t, fr = frames.popleft()
+            writer.write(process(t, fr))
+            out_idx = t + 1
+            for old in [k for k in bands if k < t - Wn]:
+                bands.pop(old, None)
+                holes.pop(old, None)
+                valids.pop(old, None)
+            if progress and t % 15 == 0:
+                progress(min(t / total, 1.0), f"Xóa phụ đề: khung {t}/{total}")
+    finally:
+        if pool:
+            pool.shutdown(wait=True, cancel_futures=True)
+        cap.release()
     writer.close()
     log(f"Xóa phụ đề xong: {n_temporal} khung dùng nền thật từ khung lân cận, {n_ai} khung cần AI/OpenCV lấp.")
     return out_path
