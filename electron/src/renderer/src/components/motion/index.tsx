@@ -4,6 +4,7 @@ import {
   MotionConfig,
   motion,
   useIsPresent,
+  useReducedMotion,
   type HTMLMotionProps,
   type Variants,
 } from 'motion/react';
@@ -213,6 +214,14 @@ const revealMotion = {
   },
 } as const;
 
+/** Reduced motion: no height change, so nothing around the block moves; a short fade remains.
+ *  `reducedMotion="user"` drops only transforms, so height has to be left out here. */
+const revealFade = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: motionTokens.fast, ease: motionTokens.ease } },
+  exit: { opacity: 0, transition: { duration: 0.15, ease: leave } },
+} as const;
+
 function present(children: ReactNode) {
   return children !== null && children !== undefined && children !== false && children !== '';
 }
@@ -240,12 +249,13 @@ export function Reveal({ children, className }: { children?: ReactNode; classNam
  *  clicked as live content. */
 function RevealBody({ children, className }: { children: ReactNode; className?: string }) {
   const present = useIsPresent();
+  const reduced = useReducedMotion();
   return (
     <motion.div
       className={className}
       aria-hidden={present ? undefined : true}
       inert={present ? undefined : true}
-      {...revealMotion}
+      {...(reduced ? revealFade : revealMotion)}
     >
       {children}
     </motion.div>
