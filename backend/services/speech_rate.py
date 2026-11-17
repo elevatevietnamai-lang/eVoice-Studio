@@ -175,7 +175,7 @@ def adjust_for_measured_slot(
         user_lines.append(f"Next source line (context only): {context_after}")
     try:
         reply = llm.chat(
-            system=_MEASURED_PROMPT + ("\nUser translation style brief (preserve meaning and output format): " + translation_instructions if translation_instructions else ""),
+            system=_MEASURED_PROMPT + ("\nUser translation brief (video context, terminology, likely OCR or recognition errors, tone and rules). Use its terminology and OCR corrections and follow its tone; preserve meaning and output format:" + translation_instructions if translation_instructions else ""),
             user="\n".join(user_lines),
             temperature=0.15,
         )

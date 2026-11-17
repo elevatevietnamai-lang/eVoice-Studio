@@ -2350,7 +2350,7 @@
     "signed_out_expired": "Du loggades ut. Logga in för att fortsätta synka.",
     "sign_in_failed": "Inloggningen avbröts eller misslyckades",
     "offline": "Offline: ändringar synkas senare",
-    "not_remembered": "Systemets nyckelring är inte tillgänglig, så du behöver logga in igen när VoiceStudio har startats om.",
+    "not_remembered": "Systemets nyckelring är inte tillgänglig, så du behöver logga in igen när eVoice Studio har startats om.",
     "menu_settings": "Kontoinställningar",
     "plan": "Abonnemang",
     "storage": "Molnlagring",
@@ -2984,7 +2984,7 @@
     "launcherHint": "Dra för att flytta, eller Alt + piltangenter",
     "title": "Fråga eVoice Studio Agent",
     "notInstalled": "Inte installerad",
-    "noSource": "Öppna en skrivbar VoiceStudio källcheck för att låta en agent reparera den.",
+    "noSource": "Öppna en skrivbar eVoice Studio källcheck för att låta en agent reparera den.",
     "noneFound": "Installera Codex, Claude Code, OpenCode, Gemini (Antigravity) eller Pi för att använda lokal reparation.",
     "ready": "Redo",
     "placeholder": "Vad gick fel? Lägg till steg, synliga fel eller förväntat beteende.",
@@ -3006,6 +3006,15 @@
   "dubStyle": {
     "label": "Instruktioner för översättningsstil",
     "help": "Beskriv ton, målgrupp och anpassning, till exempel bevara skämt och översätta idiom naturligt. Sparas i projektet för översättning och tidsanpassning. Lämna tomt för standardstilen."
+  },
+  "dubResearch": {
+    "button": "Undersök videon med {{agent}}",
+    "stop": "Stoppa undersökningen",
+    "running": "Undersöker: läser transkriptet och bildrutorna, söker på webben…",
+    "consent": "Skickar transkriptet, filnamnet och {{frames}} bildrutor från videon till {{agent}}s molnmodell, som även kan söka och öppna webbsidor. Underlaget den skriver ersätter texten ovan (dina anteckningar behålls där de fortfarande gäller); granska det innan du översätter.",
+    "consent_audio": "Skickar transkriptet och filnamnet till {{agent}}s molnmodell, som även kan söka och öppna webbsidor. Underlaget den skriver ersätter texten ovan (dina anteckningar behålls där de fortfarande gäller); granska det innan du översätter.",
+    "done": "Underlaget är klart. Granska det innan du översätter.",
+    "failed": "Undersökningen misslyckades: {{error}}"
   },
   "dubActivity": {
     "output": "Översättningar",
@@ -3061,7 +3070,7 @@
     "capabilitiesTitle": "Funktioner",
     "websiteTitle": "Webbplats",
     "mcpHttpHint": "Peka valfri Streamable HTTP MCP-klient mot den här URL:en. Skicka headern {{header}} för att ge klienten en egen röst.",
-    "mcpStdioHint": "För klienter som bara talar stdio: kör den medföljande shimmen från en utcheckning av VoiceStudios källkod. Ersätt cwd med sökvägen till din utcheckning.",
+    "mcpStdioHint": "För klienter som bara talar stdio: kör den medföljande shimmen från en utcheckning av eVoice Studios källkod. Ersätt cwd med sökvägen till din utcheckning.",
     "apiHint": "OpenAI-kompatibla slutpunkter på den här backenden. Lokala anrop behöver ingen nyckel; fjärranrop behöver backendens API-nyckel.",
     "dockerHint": "Använd :stable för releaser; :latest är den löpande förhandsversionen från main. Spara den genererade API-nyckeln: appen frågar efter den eftersom Docker döljer loopback-adressen.",
     "capability": {
@@ -4547,7 +4556,7 @@
     "timeline_preview_note": "Förhandsvisningen är ungefärlig; den renderade videon är exakt.",
     "scene_title": "Egna HTML-scener",
     "scene_intro": "Skriv HTML, CSS och JavaScript för en titel eller en hel scen. Scener körs offline i en sandlåda, utan nätverk och utan åtkomst till dina filer.",
-    "scene_desktop_only": "Egna scener körs i VoiceStudios skrivbordsapp.",
+    "scene_desktop_only": "Egna scener körs i eVoice Studios skrivbordsapp.",
     "scene_pick": "Scen",
     "scene_group_builtin": "Inbyggda",
     "scene_group_saved": "Sparade",

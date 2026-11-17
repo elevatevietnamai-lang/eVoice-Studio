@@ -10,7 +10,7 @@ import { projectSession, type DubProject } from '../projects/project-format';
 import { DUB_DRAFT_KEY, restoreDubDraft } from './dub-draft';
 import { Store } from '@tanstack/store';
 import { useStore } from '@tanstack/react-store';
-import { apiJson, ApiError } from '@/lib/api/client';
+import { apiFetch, apiJson, ApiError } from '@/lib/api/client';
 import { queryClient } from '@/lib/query';
 import { savedAgentModel } from '@/lib/saved-agent-model';
 import { cachedTtsLanguagesSupported } from '@/lib/language-options';
@@ -1166,6 +1166,120 @@ async function runLocalTranslationAgent(
   } finally {
     unsubscribe?.();
     signal.removeEventListener('abort', stop);
+  }
+}
+
+/** Frames a research run sends: few enough to stay cheap, spread across the video. */
+export const DUB_RESEARCH_FRAMES = 5;
+
+/** Evenly spaced frame times, away from the very first and last frame. */
+export function researchFrameTimes(duration: number, count = DUB_RESEARCH_FRAMES): number[] {
+  if (!(duration > 0) || count < 1) return [];
+  return Array.from({ length: count }, (_, index) =>
+    Number((((index + 0.5) / count) * duration).toFixed(2)),
+  );
+}
+
+/** The agent's error without Electron's "Error invoking remote method" wrapper. */
+export function researchErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  return message.replace(/^Error invoking remote method '[^']+':\s*(?:\w*Error:\s*)?/, '');
+}
+
+let researchController: AbortController | null = null;
+
+/** Whether a video research run is in flight: outlives the page, which locks its controls on it. */
+export const dubResearchState = new Store({ running: false });
+export const useDubResearching = () => useStore(dubResearchState, (state) => state.running);
+
+/** Stops a running research: the agent process is terminated in Electron main. */
+export function stopDubResearch(): void {
+  researchController?.abort();
+}
+
+/**
+ * Research the video before translating: the chosen agent reads the transcript
+ * and a few frames, searches the web and writes a translation brief, which
+ * replaces the brief field (the agent keeps the old notes where they still
+ * apply). This sends the transcript and frames to the agent's cloud model, so
+ * it runs only from an explicit click, never on its own.
+ */
+export async function researchDubVideo(
+  agent: RepairAgentId,
+  targetLanguage: string,
+  onLog?: (text: string) => void,
+): Promise<string | null> {
+  const bridge = window.voicestudio?.repair;
+  if (!bridge?.research) throw new Error('LOCAL_TRANSLATION_AGENT_UNAVAILABLE');
+  const snapshot = dubSession.state;
+  if (
+    !snapshot.jobId ||
+    !snapshot.segments.length ||
+    snapshot.recovery ||
+    !['idle', 'editing', 'done'].includes(snapshot.phase) ||
+    researchController
+  )
+    return null;
+  const controller = new AbortController();
+  researchController = controller;
+  dubResearchState.setState(() => ({ running: true }));
+  const stop = () => void bridge.stopTranslation().catch(() => {});
+  controller.signal.addEventListener('abort', stop, { once: true });
+  const requestId = `research-${crypto.randomUUID()}`;
+  const unsubscribe = bridge.onTranslationEvent?.((event) => {
+    if (event.requestId === requestId) onLog?.(event.text);
+  });
+  const finishActivity = beginAppActivity('translation');
+  try {
+    const frames: Array<{ seconds: number; jpeg: Uint8Array }> = [];
+    if (snapshot.inputType === 'video') {
+      for (const seconds of researchFrameTimes(snapshot.duration || 0)) {
+        try {
+          const response = await apiFetch(
+            `/dub/hardsub/frame/${encodeURIComponent(snapshot.jobId)}?t=${seconds}&width=768`,
+            { signal: controller.signal },
+          );
+          frames.push({ seconds, jpeg: new Uint8Array(await response.arrayBuffer()) });
+        } catch (error) {
+          if (controller.signal.aborted) throw error;
+          // A frame that cannot be read is skipped; the transcript still carries the run.
+        }
+      }
+    }
+    if (controller.signal.aborted) return null;
+    const model = await savedAgentModel(agent);
+    const result = await bridge.research({
+      requestId,
+      agent,
+      ...(model ? { model } : {}),
+      title: snapshot.filename,
+      sourceLanguage: snapshot.sourceLang || snapshot.sourceLanguage || undefined,
+      targetLanguage,
+      existingNotes: snapshot.translationInstructions?.trim() || undefined,
+      transcript: snapshot.segments.map((segment) => ({
+        start: segment.start,
+        end: segment.end,
+        text: segment.text_original || segment.text,
+      })),
+      frames,
+    });
+    if (controller.signal.aborted) return null;
+    const current = dubSession.state;
+    // The source changed while the agent worked: the brief belongs to another video.
+    if (current.jobId !== snapshot.jobId) return null;
+    patch({ translationInstructions: result.brief });
+    return result.brief;
+  } catch (error) {
+    if (controller.signal.aborted) return null;
+    throw new Error(researchErrorMessage(error));
+  } finally {
+    finishActivity();
+    unsubscribe?.();
+    controller.signal.removeEventListener('abort', stop);
+    if (researchController === controller) {
+      researchController = null;
+      dubResearchState.setState(() => ({ running: false }));
+    }
   }
 }
 

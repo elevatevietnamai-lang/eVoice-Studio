@@ -2352,7 +2352,7 @@
     "signed_out_expired": "Sei stato disconnesso. Accedi per continuare a sincronizzare.",
     "sign_in_failed": "L’accesso è stato annullato o non è riuscito",
     "offline": "Offline: le modifiche verranno sincronizzate più tardi",
-    "not_remembered": "Il portachiavi di sistema non è disponibile, quindi dovrai accedere di nuovo dopo il riavvio di VoiceStudio.",
+    "not_remembered": "Il portachiavi di sistema non è disponibile, quindi dovrai accedere di nuovo dopo il riavvio di eVoice Studio.",
     "menu_settings": "Impostazioni account",
     "plan": "Piano",
     "storage": "Spazio cloud",
@@ -2986,7 +2986,7 @@
     "launcherHint": "Trascina per spostare, oppure Alt + frecce",
     "title": "Chiedi a eVoice Studio Agent",
     "notInstalled": "Non installato",
-    "noSource": "Apri un checkout scrivibile del sorgente di VoiceStudio per consentire la riparazione.",
+    "noSource": "Apri un checkout scrivibile del sorgente di eVoice Studio per consentire la riparazione.",
     "noneFound": "Installa Codex, Claude Code, OpenCode, Gemini (Antigravity) o Pi per usare la riparazione locale.",
     "ready": "Pronto",
     "placeholder": "Che cosa non ha funzionato? Aggiungi passaggi, errori visibili o comportamento previsto.",
@@ -3008,6 +3008,15 @@
   "dubStyle": {
     "label": "Istruzioni sullo stile di traduzione",
     "help": "Descrivi tono, pubblico e adattamento, ad esempio mantenere le battute e adattare gli idiomi in modo naturale. Salvate nel progetto e usate per traduzione e riscritture temporali. Lascia vuoto per lo stile predefinito."
+  },
+  "dubResearch": {
+    "button": "Studia il video con {{agent}}",
+    "stop": "Interrompi studio",
+    "running": "Studio in corso: lettura della trascrizione e dei fotogrammi, ricerca sul web…",
+    "consent": "Invia la trascrizione, il nome del file e {{frames}} fotogrammi del video al modello cloud di {{agent}}, che può anche cercare e aprire pagine web. Il brief che scrive sostituisce il testo sopra (le tue note restano dove sono ancora valide); controllalo prima di tradurre.",
+    "consent_audio": "Invia la trascrizione e il nome del file al modello cloud di {{agent}}, che può anche cercare e aprire pagine web. Il brief che scrive sostituisce il testo sopra (le tue note restano dove sono ancora valide); controllalo prima di tradurre.",
+    "done": "Brief di studio pronto. Controllalo prima di tradurre.",
+    "failed": "Studio non riuscito: {{error}}"
   },
   "dubActivity": {
     "output": "Traduzioni",
@@ -3063,7 +3072,7 @@
     "capabilitiesTitle": "Funzionalità",
     "websiteTitle": "Sito web",
     "mcpHttpHint": "Punta qualsiasi client MCP Streamable HTTP a questo URL. Invia l'intestazione {{header}} per dare al client una voce propria.",
-    "mcpStdioHint": "Per i client solo stdio, avvia lo shim incluso da una copia del codice sorgente di VoiceStudio. Sostituisci cwd con il percorso della tua copia.",
+    "mcpStdioHint": "Per i client solo stdio, avvia lo shim incluso da una copia del codice sorgente di eVoice Studio. Sostituisci cwd con il percorso della tua copia.",
     "apiHint": "Endpoint compatibili con OpenAI su questo backend. Le richieste locali non richiedono chiave; quelle remote richiedono la chiave API del backend.",
     "dockerHint": "Usa :stable per le release; :latest è l'anteprima continua di main. Conserva la chiave API generata: l'app la richiede perché Docker nasconde l'indirizzo di loopback.",
     "capability": {
@@ -4549,7 +4558,7 @@
     "timeline_preview_note": "L’anteprima è approssimativa; il video creato è esatto.",
     "scene_title": "Scene HTML personalizzate",
     "scene_intro": "Scrivi HTML, CSS e JavaScript per un titolo o un'intera inquadratura. Le scene girano offline in una sandbox, senza rete e senza accesso ai tuoi file.",
-    "scene_desktop_only": "Le scene personalizzate funzionano nell'app desktop di VoiceStudio.",
+    "scene_desktop_only": "Le scene personalizzate funzionano nell'app desktop di eVoice Studio.",
     "scene_pick": "Scena",
     "scene_group_builtin": "Incluse",
     "scene_group_saved": "Salvate",

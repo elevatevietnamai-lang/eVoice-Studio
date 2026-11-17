@@ -203,6 +203,33 @@ export interface DubAgentTranslationRequest {
   /** CLI model id (for Antigravity, a Gemini model from `agy models`); empty uses the CLI default. */
   model?: string;
 }
+/** One video frame for a research run: JPEG bytes and where in the video it sits. */
+export interface DubAgentResearchFrame {
+  seconds: number;
+  jpeg: Uint8Array;
+}
+/**
+ * "Research the video": the agent studies the transcript, a few frames and the
+ * web, then writes the translation brief. Sends this data to the agent's cloud
+ * model, so it only runs on an explicit click.
+ */
+export interface DubAgentResearchRequest {
+  requestId?: string;
+  agent: RepairAgentId;
+  model?: string;
+  /** The video's file name or title. */
+  title: string;
+  sourceLanguage?: string;
+  targetLanguage: string;
+  /** What the translation brief field held before: kept by the agent where it still applies. */
+  existingNotes?: string;
+  transcript: Array<{ start: number; end: number; text: string }>;
+  frames: DubAgentResearchFrame[];
+}
+export interface DubAgentResearchResult {
+  agent: RepairAgentId;
+  brief: string;
+}
 export interface GeminiModel {
   id: string;
   label: string;
@@ -484,6 +511,8 @@ export interface VoiceStudioBridge {
     start(request: RepairAgentRunRequest): Promise<{ sessionId: string }>;
     stop(): Promise<RepairAgentState>;
     translate(request: DubAgentTranslationRequest): Promise<DubAgentTranslationResult>;
+    /** Research the video and return a translation brief (stopped by stopTranslation). */
+    research(request: DubAgentResearchRequest): Promise<DubAgentResearchResult>;
     stopTranslation(): Promise<void>;
     onTranslationEvent(callback: (event: { requestId: string; text: string }) => void): () => void;
     onEvent(callback: (event: RepairAgentEvent) => void): () => void;

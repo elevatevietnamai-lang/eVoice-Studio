@@ -2424,7 +2424,7 @@
     "signed_out_expired": "You were signed out. Sign in to keep syncing.",
     "sign_in_failed": "Sign-in was cancelled or failed",
     "offline": "Offline: changes will sync later",
-    "not_remembered": "Your system keyring is unavailable, so you will need to sign in again after VoiceStudio restarts.",
+    "not_remembered": "Your system keyring is unavailable, so you will need to sign in again after eVoice Studio restarts.",
     "menu_settings": "Account settings",
     "plan": "Plan",
     "storage": "Cloud storage",
@@ -2984,7 +2984,7 @@
     "launcherHint": "Drag to move, or Alt+arrow keys",
     "title": "Ask eVoice Studio Agent",
     "notInstalled": "Not installed",
-    "noSource": "Open a writable VoiceStudio source checkout to let an agent repair it.",
+    "noSource": "Open a writable eVoice Studio source checkout to let an agent repair it.",
     "noneFound": "Install Codex, Claude Code, OpenCode, Gemini (Antigravity), or Pi to use local repair.",
     "ready": "Ready",
     "placeholder": "What went wrong? Add steps, visible errors, or expected behavior.",
@@ -3006,6 +3006,15 @@
   "dubStyle": {
     "label": "Translation style prompt",
     "help": "Describe tone, audience and adaptation style—for example: conversational Bengali, preserve jokes, adapt idioms naturally. Saved with this project; used for translation and timing rewrites. Leave blank for the default style."
+  },
+  "dubResearch": {
+    "button": "Research the video with {{agent}}",
+    "stop": "Stop research",
+    "running": "Researching: reading the transcript and frames, searching the web…",
+    "consent": "Sends the transcript, the file name and {{frames}} frames from the video to {{agent}}'s cloud model, which may also search and open web pages. The brief it writes replaces the text above (your notes are kept where they still apply); check it before translating.",
+    "consent_audio": "Sends the transcript and the file name to {{agent}}'s cloud model, which may also search and open web pages. The brief it writes replaces the text above (your notes are kept where they still apply); check it before translating.",
+    "done": "Research brief ready. Check it before translating.",
+    "failed": "Research failed: {{error}}"
   },
   "dubActivity": {
     "output": "Translations",
@@ -3061,7 +3070,7 @@
     "capabilitiesTitle": "Capabilities",
     "websiteTitle": "Website",
     "mcpHttpHint": "Point any Streamable HTTP MCP client at this URL. Send the {{header}} header to give the client its own voice.",
-    "mcpStdioHint": "For stdio-only clients, run the bundled shim from a VoiceStudio source checkout. Replace cwd with your checkout path.",
+    "mcpStdioHint": "For stdio-only clients, run the bundled shim from a eVoice Studio source checkout. Replace cwd with your checkout path.",
     "apiHint": "OpenAI-compatible endpoints on this backend. Local requests need no key; remote requests need the backend's API key.",
     "dockerHint": "Pin :stable for releases; :latest is the rolling preview from main. Keep the generated API key: the app asks for it because Docker hides the loopback address.",
     "capability": {
@@ -4547,7 +4556,7 @@
     "timeline_preview_note": "Preview is approximate; the rendered video is exact.",
     "scene_title": "Custom HTML scenes",
     "scene_intro": "Write HTML, CSS and JavaScript for a title or a whole shot. Scenes run offline in a sandbox, with no network and no access to your files.",
-    "scene_desktop_only": "Custom scenes run in the VoiceStudio desktop app.",
+    "scene_desktop_only": "Custom scenes run in the eVoice Studio desktop app.",
     "scene_pick": "Scene",
     "scene_group_builtin": "Built in",
     "scene_group_saved": "Saved",

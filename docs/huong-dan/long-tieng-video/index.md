@@ -51,6 +51,8 @@ Chọn phương thức dịch ở mục **Trình dịch**:
 - Bấm **Dịch bằng agent** để giao toàn bộ hội thoại, bảng thuật ngữ và thời lượng từng câu cho agent trên máy hoặc LLM dịch và tự căn chỉnh độ dài câu.
 - Bấm **Dịch thuật** để dùng engine dịch đang bật trong phần cài đặt.
 
+**Nghiên cứu video trước khi dịch.** Dưới ô chỉ dẫn dịch có nút **Nghiên cứu video bằng <agent>**. Bấm nút này, agent đang chọn sẽ đọc lời thoại kèm mốc thời gian, tên file và 5 khung hình của video, tìm thêm trên web, rồi viết một bản tóm tắt bằng ngôn ngữ đích: chủ đề, bối cảnh trên màn hình, giọng văn và cách xưng hô, bảng thuật ngữ, các lỗi OCR có thể gặp, quy tắc dịch và nguồn tham khảo. Bản tóm tắt thay nội dung ô chỉ dẫn (ghi chú cũ của bạn được giữ nếu còn phù hợp), được lưu cùng dự án, và bạn sửa được trước khi dịch. Khi dịch, agent hoặc LLM dùng đúng thuật ngữ và cách sửa lỗi OCR trong đó. Lưu ý: lời thoại và khung hình được gửi tới mô hình đám mây của agent đó, nên việc này chỉ chạy khi bạn bấm nút.
+
 ![Khung chọn cách dịch bằng agent hoặc dịch thuật](shots/trinh-dich.png)
 
 Khi dùng **Dịch thuật**, bạn chọn một trong ba mức chất lượng:

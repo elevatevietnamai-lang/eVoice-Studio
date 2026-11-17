@@ -2350,7 +2350,7 @@
     "signed_out_expired": "Du wurdest abgemeldet. Melde dich an, um weiter zu synchronisieren.",
     "sign_in_failed": "Die Anmeldung wurde abgebrochen oder ist fehlgeschlagen",
     "offline": "Offline: Änderungen werden später synchronisiert",
-    "not_remembered": "Dein System-Schlüsselbund ist nicht verfügbar, daher musst du dich nach einem Neustart von VoiceStudio erneut anmelden.",
+    "not_remembered": "Dein System-Schlüsselbund ist nicht verfügbar, daher musst du dich nach einem Neustart von eVoice Studio erneut anmelden.",
     "menu_settings": "Kontoeinstellungen",
     "plan": "Tarif",
     "storage": "Cloud-Speicher",
@@ -2984,7 +2984,7 @@
     "launcherHint": "Zum Verschieben ziehen oder Alt+Pfeiltasten",
     "title": "eVoice Studio Agent fragen",
     "notInstalled": "Nicht installiert",
-    "noSource": "Öffnen Sie eine beschreibbare VoiceStudio-Quelle zum Auschecken, damit ein Agent sie reparieren kann.",
+    "noSource": "Öffnen Sie eine beschreibbare eVoice Studio-Quelle zum Auschecken, damit ein Agent sie reparieren kann.",
     "noneFound": "Installieren Sie Codex, Claude Code, OpenCode, Gemini (Antigravity) oder Pi, um die lokale Reparatur zu verwenden.",
     "ready": "Bereit",
     "placeholder": "Was ist schiefgelaufen? Ergänze Schritte, sichtbare Fehler oder das erwartete Verhalten.",
@@ -3006,6 +3006,15 @@
   "dubStyle": {
     "label": "Vorgabe für den Übersetzungsstil",
     "help": "Beschreibe Ton, Zielgruppe und Anpassung, etwa Witze erhalten und Redewendungen natürlich übertragen. Wird im Projekt gespeichert und für Übersetzung und Zeitanpassung verwendet. Leer lassen für den Standardstil."
+  },
+  "dubResearch": {
+    "button": "Video mit {{agent}} recherchieren",
+    "stop": "Recherche stoppen",
+    "running": "Recherche läuft: Transkript und Bilder lesen, im Web suchen…",
+    "consent": "Sendet das Transkript, den Dateinamen und {{frames}} Bilder aus dem Video an das Cloud-Modell von {{agent}}, das auch im Web suchen und Seiten öffnen kann. Das Briefing ersetzt den Text oben (deine Notizen bleiben erhalten, soweit sie noch passen); prüfe es vor dem Übersetzen.",
+    "consent_audio": "Sendet das Transkript und den Dateinamen an das Cloud-Modell von {{agent}}, das auch im Web suchen und Seiten öffnen kann. Das Briefing ersetzt den Text oben (deine Notizen bleiben erhalten, soweit sie noch passen); prüfe es vor dem Übersetzen.",
+    "done": "Recherche-Briefing fertig. Prüfe es vor dem Übersetzen.",
+    "failed": "Recherche fehlgeschlagen: {{error}}"
   },
   "dubActivity": {
     "output": "Übersetzungen",
@@ -3061,7 +3070,7 @@
     "capabilitiesTitle": "Funktionen",
     "websiteTitle": "Website",
     "mcpHttpHint": "Richte einen beliebigen Streamable-HTTP-MCP-Client auf diese URL. Sende den Header {{header}}, damit der Client eine eigene Stimme erhält.",
-    "mcpStdioHint": "Für reine stdio-Clients: Starte den mitgelieferten Shim aus einem VoiceStudio-Quellcode-Checkout. Ersetze cwd durch deinen Checkout-Pfad.",
+    "mcpStdioHint": "Für reine stdio-Clients: Starte den mitgelieferten Shim aus einem eVoice Studio-Quellcode-Checkout. Ersetze cwd durch deinen Checkout-Pfad.",
     "apiHint": "OpenAI-kompatible Endpunkte dieses Backends. Lokale Anfragen brauchen keinen Schlüssel; entfernte Anfragen brauchen den API-Schlüssel des Backends.",
     "dockerHint": "Verwende :stable für Releases; :latest ist die laufende Vorschau von main. Bewahre den erzeugten API-Schlüssel auf: Die App fragt danach, weil Docker die Loopback-Adresse verbirgt.",
     "capability": {
@@ -4547,7 +4556,7 @@
     "timeline_preview_note": "Die Vorschau ist ungefähr; das gerenderte Video ist genau.",
     "scene_title": "Eigene HTML-Szenen",
     "scene_intro": "Schreibe HTML, CSS und JavaScript für einen Titel oder eine ganze Einstellung. Szenen laufen offline in einer Sandbox, ohne Netzwerk und ohne Zugriff auf deine Dateien.",
-    "scene_desktop_only": "Eigene Szenen laufen in der VoiceStudio-Desktop-App.",
+    "scene_desktop_only": "Eigene Szenen laufen in der eVoice Studio-Desktop-App.",
     "scene_pick": "Szene",
     "scene_group_builtin": "Mitgeliefert",
     "scene_group_saved": "Gespeichert",

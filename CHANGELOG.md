@@ -10,11 +10,25 @@ metadata and the backend fallback mirror it.
 
 **Highlights**
 
+- Dubbing can research the video before translating: your agent writes an editable brief that translation follows
+- The user guides send readers to the download page instead of the code repository
 - Export a translated-subtitle video without dubbing
 
 ### Added
 
+- **Research the video** beside the translation brief: the chosen agent reads the transcript, five frames and the web, then writes the topic, tone, terminology, likely OCR errors and rules into the brief, only when you click it (#81)
 - **Video + subtitles** export keeps the original audio and burns the translated subtitles where the removed on-screen ones were, with no dub needed (#79)
+
+### Changed
+
+- Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#81)
+- The rail gives the logo room at the top and lists its icons straight under it instead of centring them in the window's height (#82)
+- The "Something went wrong" recovery page uses the near-black eVoice look and the real eVoice mark instead of the old magenta styling (#83)
+- The window opens on the app's own near-black canvas, and messages that called the app "VoiceStudio" now say eVoice Studio (#83)
+
+### Docs
+
+- The Getting started and Troubleshooting guides point to the download page and describe bug reports without naming a code host (#80)
 
 ## [0.5.7-beta.8] — 2026-11-18
 
