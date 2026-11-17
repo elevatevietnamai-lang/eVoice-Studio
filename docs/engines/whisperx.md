@@ -79,6 +79,12 @@ Two more fallback chains run at load time:
 - Transcribes are time-bounded: each dub chunk by
   `OMNIVOICE_TRANSCRIBE_CHUNK_TIMEOUT_S` (default 120 s), whole files by
   `OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S` (default 300 s). Raise them for very
-  long files on slow hardware.
+  long files on slow hardware. Downloading or loading a model inside a
+  chunk (the wav2vec2 aligner on a first run: 1.27 GB for Chinese) does not
+  count against these budgets; the Dub page shows it as its own step, and
+  each such load is capped by `OMNIVOICE_ASR_MODEL_LOAD_TIMEOUT_S`
+  (default 1800 s). The backend sets `DISABLE_SAFETENSORS_CONVERSION=1`, so
+  transformers no longer downloads a second safetensors copy of an aligner
+  or calls the hosted conversion service.
 
 Speed comparisons across engines live in [performance](../performance.md).

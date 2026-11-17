@@ -29,6 +29,7 @@ from services.model_manager import get_model, _gpu_pool, _cpu_pool, get_diarizat
 from services.asr_backend import (
     ASR_TRANSCRIBE_TIMEOUT_S,
     ASRTimeoutError,
+    ModelLoadTracker,
     reset_pool_after_wedge,
     run_transcribe_guarded,
 )
@@ -171,6 +172,7 @@ _SRT_REPLACED_FIELDS = {
     "translations",
     "translate_error",
     "translate_degraded",
+    "translate_script_leak",
     *CUE_SOURCE_FIELDS,
     CUE_SOURCE_ID,
 }
@@ -1688,17 +1690,32 @@ async def dub_transcribe_stream(
             timed_out = False
             for _attempt in range(1, _CHUNK_TRANSCRIBE_ATTEMPTS + 1):
                 # Run as a task and poll so pings keep the EventSource alive.
+                # A model the chunk has to download or load first (the
+                # wav2vec2 aligner on a first run) is its own stage: the guard
+                # leaves that time out of the chunk budget, and the stream
+                # reports it instead of a bare ping.
+                load_tracker = ModelLoadTracker()
                 task = asyncio.ensure_future(run_transcribe_guarded(
                     _gpu_pool, lambda: _asr_work.run(_transcribe_chunk),
                     what=f"Dub chunk {i + 1}/{chunks_n}",
                     timeout=transcribe_timeout_s,
                     timeout_env=transcribe_timeout_env,
+                    load_tracker=load_tracker,
                 ))
                 while True:
                     done, _pending = await asyncio.wait({task}, timeout=5.0)
                     if done:
                         break
-                    yield _sse_event("ping", {})
+                    loading = load_tracker.active()
+                    if loading is not None:
+                        yield _sse_event("model_loading", {
+                            "kind": loading[0],
+                            "model": loading[1],
+                            "chunk": i,
+                            "total_chunks": chunks_n,
+                        })
+                    else:
+                        yield _sse_event("ping", {})
                 try:
                     part = task.result()
                 except ASRTimeoutError:

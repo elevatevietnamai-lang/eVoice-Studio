@@ -10,29 +10,36 @@ export interface EngineSelectionFeedback {
   values: { family: string; engine: string; reason?: string };
 }
 
-/** Interpret the backend's host-routing verdict exactly once for every engine picker. */
+/** Interpret the backend's host-routing verdict exactly once for every engine picker.
+ *
+ * ``familyLabel`` and ``engineName`` are what the user reads: the translated
+ * family name (``t('engineSidebar.translation')``) and the engine's display
+ * name. Passing the internal family id or engine id shows "Switched
+ * TRANSLATION to openai" in every language. */
 export function engineSelectionFeedback(
   result: EngineSelectionResult,
-  family: string,
+  familyLabel: string,
+  engineName?: string | null,
 ): EngineSelectionFeedback {
   const reason = result.routing_reason?.trim();
+  const engine = engineName?.trim() || result.active;
   if (result.routing_status === 'cpu_fallback') {
     return {
       tone: 'warning',
       key: 'engines.selectCpuFallback',
-      values: { family: family.toUpperCase(), engine: result.active, reason: reason || '' },
+      values: { family: familyLabel, engine, reason: reason || '' },
     };
   }
   if (result.routing_status === 'accelerated' && reason) {
     return {
       tone: 'warning',
       key: 'engines.selectWithCaveat',
-      values: { family: family.toUpperCase(), engine: result.active, reason },
+      values: { family: familyLabel, engine, reason },
     };
   }
   return {
     tone: 'success',
     key: 'settings.engine_switched',
-    values: { family: family.toUpperCase(), engine: result.active },
+    values: { family: familyLabel, engine },
   };
 }

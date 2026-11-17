@@ -357,7 +357,17 @@
     "failed": "failed",
     "latencyMs": "{{ms}} ms",
     "localInstallRequired": "Install this engine on the backend computer using localhost or its setup guide. Remote installation is disabled.",
-    "argosRuntimeUnavailable": "Argos runtime unavailable. Reinstall the backend or select NLLB."
+    "argosRuntimeUnavailable": "Argos runtime unavailable. Reinstall the backend or select NLLB.",
+    "argosPackUnavailable": "Argos has no language pack for {{pairs}}, not even through English. Choose NLLB or another engine for this language.",
+    "unavailableReason_license": "License not accepted yet. Review and accept it in Model Catalogue to enable this engine.",
+    "unavailableReason_platform": "This engine doesn't run on this computer's platform. Its guide lists the platforms it supports.",
+    "unavailableReason_no_mps": "This engine needs Apple's GPU (MPS), which this installation's PyTorch can't use. Updating macOS or reinstalling the app usually fixes it.",
+    "unavailableReason_file_missing": "A file this engine needs is missing or unreadable. Reinstall it from Model Catalogue.",
+    "unavailableReason_file_missing_manual": "A file this engine needs is missing or unreadable. Its guide lists the install steps.",
+    "unavailableReason_needs_config": "This engine needs setup before it can run, such as an API key or an LLM provider in Settings.",
+    "unavailableReason_not_installed": "This engine isn't installed yet. Install it from Model Catalogue.",
+    "unavailableReason_not_installed_manual": "This engine isn't installed yet and has no one-click install. Its guide lists the install steps.",
+    "unavailableReason_unavailable": "This engine can't run right now. Check that it is installed and set up."
   },
   "clone": {
     "title": "Voice cloning",
@@ -1055,7 +1065,8 @@
     "agent_cli_desc": "{{agent}} translates every segment in context and rewrites timing misses after measured speech.",
     "choose_translation_agent": "Choose translation agent",
     "no_local_agents": "Install Codex, Claude Code, OpenCode, or Pi to translate with a local agent.",
-    "agent_translation_complete": "{{agent}} finished translating the segments."
+    "agent_translation_complete": "{{agent}} finished translating the segments.",
+    "loading_speech_model": "Downloading speech models (first run only)…"
   },
   "dub_workflow": {
     "preparing_audio": "Preparing audio…",
@@ -2797,7 +2808,9 @@
     "plan_apply": "Use shorter rewrite",
     "plan_apply_title": "Replace this line with the suggested shorter rewrite: \"{{text}}\"",
     "live_play_title": "Stream this line now (live preview)",
-    "live_stop_title": "Stop the live preview"
+    "live_stop_title": "Stop the live preview",
+    "script_leak": "Untranslated",
+    "script_leak_title": "Some characters were left untranslated: {{chars}}. Edit this line or translate it again."
   },
   "update": {
     "checking": "Checking for updates…",

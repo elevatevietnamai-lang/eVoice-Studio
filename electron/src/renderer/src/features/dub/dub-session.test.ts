@@ -8,6 +8,7 @@ import {
   uploadDub,
   setDubProduction,
   setDubFitOptions,
+  setDubHardsubFirst,
   dubSession,
   generateDub,
   resumeDub,
@@ -569,6 +570,30 @@ it('passes explicit source language and speaker hints to file and URL analysis',
       expect.any(AbortSignal),
     );
   }
+});
+
+it('keeps "video has burned-in subtitles" across a new file or link and skips ASR', async () => {
+  for (const upload of [true, false]) {
+    dubSession.setState((current) => ({ ...current, phase: 'idle', recovery: null }));
+    setDubHardsubFirst(true);
+    vi.mocked(apiJson).mockClear().mockResolvedValueOnce({ job_id: 'hardsub', task_id: 'prep' });
+    vi.mocked(consumeTaskStream)
+      .mockClear()
+      .mockImplementation(async (path, emit) => {
+        if (path.startsWith('/tasks')) emit({ type: 'ready' });
+      });
+    if (upload) await uploadDub(new File(['video'], 'clip.mp4', { type: 'video/mp4' }));
+    else await ingestDubUrl('https://example.com/clip.mp4');
+    expect(dubSession.state.hardsubFirst).toBe(true);
+    expect(dubSession.state.phase).toBe('editing');
+    // The transcript comes from the burned-in subtitles, never from speech.
+    expect(consumeTaskStream).not.toHaveBeenCalledWith(
+      expect.stringContaining('/dub/transcribe-stream/'),
+      expect.any(Function),
+      expect.any(AbortSignal),
+    );
+  }
+  setDubHardsubFirst(false);
 });
 
 it('uses saved Smart Fit overrides only for Smart Fit generation', async () => {

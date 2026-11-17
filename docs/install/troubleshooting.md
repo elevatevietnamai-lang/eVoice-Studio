@@ -822,7 +822,10 @@ the bounds with `OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S` (whole-file transcription)
 and `OMNIVOICE_GENERATE_TIMEOUT_S` (generation) — both in seconds, default 300
 — and `OMNIVOICE_TRANSCRIBE_CHUNK_TIMEOUT_S` (per-chunk dub transcription,
 default 120). **Raise** them for very long single files/generations, **lower**
-them to fail faster on a small machine.
+them to fail faster on a small machine. A model download or load inside a dub
+chunk (the first run's alignment model) is not counted against the chunk
+budget: the Dub page shows "Downloading speech models" while it runs, and
+`OMNIVOICE_ASR_MODEL_LOAD_TIMEOUT_S` (default 1800) bounds each load.
 
 Saving a cloned voice without a transcript transcribes the reference with an
 installed speech-to-text model for at most 60 seconds

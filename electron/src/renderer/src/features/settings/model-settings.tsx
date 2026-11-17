@@ -102,7 +102,11 @@ export function DiarisationSettings() {
         client.invalidateQueries({ queryKey: ['sidebar-diarisation'] }),
         client.invalidateQueries({ queryKey: ['loaded-models'] }),
       ]);
-      const feedback = engineSelectionFeedback(result, 'diarisation');
+      const feedback = engineSelectionFeedback(
+        result,
+        t('engineSidebar.diarisation'),
+        query.data?.options.find((option) => option.id === engineId)?.label,
+      );
       toast.success(t(feedback.key, feedback.values));
     } catch (error) {
       setFailed(describeError(error));
@@ -304,7 +308,8 @@ export function ModelSettings({
       ]);
       const feedback = engineSelectionFeedback(
         family === 'dictation' ? { active: id } : result,
-        family ?? 'tts',
+        t(`engineSidebar.${family ?? 'tts'}`),
+        rows?.find((row) => row.id === id)?.name,
       );
       if (feedback.tone === 'warning') toast.warning(t(feedback.key, feedback.values));
       else toast.success(t(feedback.key, feedback.values));

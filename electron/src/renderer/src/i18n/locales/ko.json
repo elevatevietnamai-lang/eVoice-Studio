@@ -868,7 +868,8 @@
     "agent_cli_desc": "{{agent}}가 각 세그먼트를 문맥에 맞게 번역하고 음성 측정 후 시간 차이가 나는 문장을 다시 작성합니다.",
     "choose_translation_agent": "번역 에이전트 선택",
     "no_local_agents": "로컬 에이전트로 번역하려면 Codex, Claude Code, OpenCode 또는 Pi를 설치하세요.",
-    "agent_translation_complete": "{{agent}}가 세그먼트 번역을 마쳤습니다."
+    "agent_translation_complete": "{{agent}}가 세그먼트 번역을 마쳤습니다.",
+    "loading_speech_model": "음성 모델을 다운로드하는 중(처음 실행할 때만)…"
   },
   "dub_workflow": {
     "preparing_audio": "오디오 준비 중…",
@@ -2733,7 +2734,9 @@
     "plan_tight": "빠듯하게 맞음",
     "plan_tight_title": "예상 발화 길이는 ≈{{est}}초, 사용 가능 시간은 {{avail}}초입니다 — 스마트 핏으로 흡수할 수 있지만, 체감되는 속도 조절이나 영상 슬로우다운이 필요합니다. 더 깔끔한 결과를 위해 텍스트를 줄이세요.",
     "live_play_title": "이 줄 지금 스트리밍(실시간 미리듣기)",
-    "live_stop_title": "실시간 미리듣기 중지"
+    "live_stop_title": "실시간 미리듣기 중지",
+    "script_leak": "번역 안 됨",
+    "script_leak_title": "번역되지 않은 문자가 있습니다: {{chars}}. 이 줄을 수정하거나 다시 번역하세요."
   },
   "update": {
     "checking": "업데이트 확인 중…",
@@ -2871,7 +2874,17 @@
     "active": "엔진: {{name}}",
     "none": "활성 엔진 없음",
     "localInstallRequired": "백엔드 컴퓨터에서 localhost 또는 설정 가이드를 사용하여 이 엔진을 설치하세요. 원격 설치는 비활성화되어 있습니다.",
-    "argosRuntimeUnavailable": "Argos 런타임을 사용할 수 없습니다. 백엔드를 다시 설치하거나 NLLB를 선택하세요."
+    "argosRuntimeUnavailable": "Argos 런타임을 사용할 수 없습니다. 백엔드를 다시 설치하거나 NLLB를 선택하세요.",
+    "argosPackUnavailable": "Argos에는 {{pairs}} 언어 팩이 없으며 영어를 거쳐도 사용할 수 없습니다. 이 언어에는 NLLB나 다른 엔진을 선택하세요.",
+    "unavailableReason_license": "아직 라이선스를 수락하지 않았습니다. 이 엔진을 사용하려면 모델 카탈로그에서 검토하고 수락하세요.",
+    "unavailableReason_platform": "이 엔진은 이 컴퓨터의 플랫폼에서 실행되지 않습니다. 지원 플랫폼은 가이드에 나와 있습니다.",
+    "unavailableReason_no_mps": "이 엔진에는 Apple GPU(MPS)가 필요하지만 이 설치의 PyTorch는 이를 사용할 수 없습니다. 보통 macOS를 업데이트하거나 앱을 다시 설치하면 해결됩니다.",
+    "unavailableReason_file_missing": "이 엔진에 필요한 파일이 없거나 읽을 수 없습니다. 모델 카탈로그에서 다시 설치하세요.",
+    "unavailableReason_file_missing_manual": "이 엔진에 필요한 파일이 없거나 읽을 수 없습니다. 설치 단계는 가이드에 나와 있습니다.",
+    "unavailableReason_needs_config": "이 엔진은 실행하기 전에 설정이 필요합니다(설정의 API 키나 LLM 제공자 등).",
+    "unavailableReason_not_installed": "이 엔진은 아직 설치되지 않았습니다. 모델 카탈로그에서 설치하세요.",
+    "unavailableReason_not_installed_manual": "이 엔진은 아직 설치되지 않았고 원클릭 설치도 없습니다. 설치 단계는 가이드에 나와 있습니다.",
+    "unavailableReason_unavailable": "지금은 이 엔진을 실행할 수 없습니다. 설치와 설정이 되었는지 확인하세요."
   },
   "performanceProfile": {
     "requiresEngine": "속도와 품질을 조절하려면 {{engine}}을 설치하고 선택하세요.",

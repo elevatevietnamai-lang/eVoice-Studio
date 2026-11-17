@@ -681,12 +681,36 @@ _AUDIO_FORMAT_CODECS: dict[str, list[str]] = {
 }
 
 
+def audio_track_metadata(stream_index: int, language: object, title: object) -> list[str]:
+    """ffmpeg arguments that label one output audio stream.
+
+    The language goes in as ISO 639-2 ("vie"): the MP4 muxer only packs three
+    letters, so the app's own two-letter "vi" was written as ``und`` and
+    players showed an unlabelled track."""
+    from core.lang_codes import iso639_2
+
+    args = [f"-metadata:s:a:{stream_index}", f"language={iso639_2(language)}"]
+    name = str(title or "").strip()
+    if name:
+        args += [f"-metadata:s:a:{stream_index}", f"title={name}"]
+    return args
+
+
+def _dub_track_title(lang_code: str, track_info: dict) -> str:
+    """A readable track title: the language name, never "Auto" or empty."""
+    name = str((track_info or {}).get("language") or "").strip()
+    if name and name.lower() != "auto":
+        return name
+    return str(lang_code or "").strip()
+
+
 def _build_audio_export_cmd(
     ffmpeg: str,
     track_path: str,
     bg_path: Optional[str],
     out_path: str,
     fmt: str,
+    metadata: Optional[list[str]] = None,
 ) -> list[str]:
     """Build the ffmpeg command for an audio-only dub export (#119).
 
@@ -703,6 +727,7 @@ def _build_audio_export_cmd(
                 bed_mix_filter("1:a", "0:a", bed_gain=1.0),
                 "-map", "[aout]"]
     cmd += codec
+    cmd += metadata or []
     cmd.append(out_path)
     return local_inputs_only(cmd, tool="ffmpeg")
 
@@ -797,7 +822,10 @@ async def dub_download(
             output_name = f"dubbed_audio_{stamp}.m4a"
         out_path = os.path.join(exports_dir, output_name)
         bg = await _preserved_background(job, job_id, lang_code) if preserve_bg else None
-        cmd = _build_audio_export_cmd(ffmpeg, track_info["path"], bg, out_path, fmt)
+        cmd = _build_audio_export_cmd(
+            ffmpeg, track_info["path"], bg, out_path, fmt,
+            metadata=audio_track_metadata(0, lang_code, _dub_track_title(lang_code, track_info)),
+        )
         try:
             rc, _, stderr = await run_ffmpeg(cmd, timeout=1800.0)
             if rc != 0:
@@ -1052,14 +1080,13 @@ async def dub_download(
 
     audio_stream_idx = 0
     if include_original:
-        cmd += [f"-metadata:s:a:{audio_stream_idx}", "language=und", f"-metadata:s:a:{audio_stream_idx}", "title=Original"]
+        cmd += audio_track_metadata(audio_stream_idx, job.get("source_lang"), "Original")
         audio_stream_idx += 1
 
     for t in tracks_to_process:
-        cmd += [
-            f"-metadata:s:a:{audio_stream_idx}", f"language={t['lang_code']}",
-            f"-metadata:s:a:{audio_stream_idx}", f"title={t['info']['language']}"
-        ]
+        cmd += audio_track_metadata(
+            audio_stream_idx, t["lang_code"], _dub_track_title(t["lang_code"], t["info"]),
+        )
         t["stream_idx"] = audio_stream_idx
         audio_stream_idx += 1
 

@@ -1,4 +1,5 @@
 import { splitRoundedMinutes } from '@shared/utils/timeFormat';
+import { engineAvailabilityText } from '@/lib/engine-availability';
 import { Reveal } from '@/components/motion';
 import {
   ActivityIcon,
@@ -300,7 +301,7 @@ export function BatchPage() {
               !(translationEngine?.ready ?? translationEngine?.installed) && (
                 <PipelineFailure
                   fallback={
-                    translationEngine?.availability_reason || t('modelSettings.unavailable')
+                    engineAvailabilityText(t, translationEngine) || t('modelSettings.unavailable')
                   }
                 />
               )}

@@ -192,6 +192,15 @@ if sys.platform == "win32":
 # wrapper that our patch intercepts. Override-able by the user.
 os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
 
+# ── No safetensors auto-conversion ──────────────────────────────────────────
+# transformers, on loading a repo that only ships pytorch_model.bin (the
+# wav2vec2 aligners), starts a background "auto_conversion" thread: it
+# downloads a second copy of the weights from a refs/pr/N conversion PR
+# (1.27 GB more for the Chinese aligner on a first run), and when no such PR
+# exists it calls the hosted safetensors-convert Space — an outbound call
+# VoiceStudio never sanctioned. The .bin it already loaded is enough.
+os.environ.setdefault("DISABLE_SAFETENSORS_CONVERSION", "1")
+
 # ── HF network timeouts ─────────────────────────────────────────────────────
 # Bound HF network ops so a stalled metadata HEAD or a dead download socket
 # RAISES (and surfaces as an error) instead of hanging the model-load worker
