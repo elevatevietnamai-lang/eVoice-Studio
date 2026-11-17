@@ -72,9 +72,26 @@ const DEFINITIONS: Array<{
 ];
 
 /**
+ * Every permission rule kind Antigravity enforces, as its own rule parser lists
+ * them (agy 1.5.10). Browser tools have no kind of their own: page actions are
+ * `execute_url`, page reads `read_url`, and the /browser subagent's DevTools
+ * tools are `mcp`.
+ */
+export const AGY_PERMISSION_KINDS = [
+  'command',
+  'unsandboxed',
+  'read_file',
+  'write_file',
+  'read_url',
+  'execute_url',
+  'download_url',
+  'mcp',
+] as const;
+
+/**
  * Antigravity cannot switch its tools off, and headless runs default to Auto mode.
- * Strict review with nobody to approve, plus deny rules for every rule kind it
- * enforces (commands, file reads and writes, URLs, MCP), leaves it text-only.
+ * Strict review with nobody to approve, plus a deny rule for every rule kind it
+ * enforces, leaves it text-only.
  */
 export const AGY_TRANSLATION_SETTINGS = {
   toolPermission: 'strict',
@@ -90,6 +107,7 @@ export const AGY_TRANSLATION_SETTINGS = {
       'write_file(/)',
       'read_url(*)',
       'execute_url(*)',
+      'download_url(*)',
       'mcp(*)',
     ],
   },
@@ -125,6 +143,7 @@ export function agyRepairSettings(sourceAttached: boolean, privatePaths: string[
         'write_file(/)',
         'read_url(*)',
         'execute_url(*)',
+        'download_url(*)',
         ...(sourceAttached
           ? privatePaths.map((path) => `read_file(${slash(path)})`)
           : ['read_file(*)', 'read_file(/)']),
@@ -519,6 +538,7 @@ const AGY_REFUSED_ACTIONS: Record<string, string> = {
   mcp: 'a tool other than the VoiceStudio API',
   read_url: 'a web request',
   execute_url: 'a web request',
+  download_url: 'a download',
 };
 
 /** Plain names of the actions a headless Antigravity turn was refused (a refusal ends the turn). */

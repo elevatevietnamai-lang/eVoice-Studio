@@ -24,10 +24,12 @@ metadata and the backend fallback mirror it.
 ### Docs
 
 - The LLM provider guide explains Gemini sign-in and shows the Antigravity install folder correctly (#61)
+- The LLM provider guide explains how Gemini translation keeps Antigravity's browser tools out of reach, and the Windows install path is no longer garbled (#65)
 - The LLM provider guide explains how Gemini is confined in Ask VoiceStudio Agent and why it does not edit source (#66)
 
 ### Fixed
 
+- Gemini translation through Antigravity now also blocks file downloads, so every tool permission the CLI checks is denied (#65)
 - Open cards in the control panels (Starting points and others) no longer draw a line under their title (#64)
 - The language picker in the Clone and Voice Design toolbars is a borderless button with a hover, like the quality and voice buttons beside it (#63)
 - Windows: **Install & Restart** installs silently and reopens the app instead of stopping at a Setup window that waits for clicks (#62)

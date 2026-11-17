@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  AGY_PERMISSION_KINDS,
   AGY_REPAIR_AGENT,
   AGY_REPAIR_MCP_RULE,
   AGY_SOURCE_TOOLS,
@@ -26,6 +27,7 @@ const ALWAYS_DENIED = [
   'write_file(/)',
   'read_url(*)',
   'execute_url(*)',
+  'download_url(*)',
 ];
 
 /** Top-level frontmatter keys. Every scalar VoiceStudio writes is JSON, which YAML reads alike. */
@@ -57,9 +59,11 @@ describe('Antigravity repair and app-operation runs', () => {
       expect(settings.permissions.deny.some((rule: string) => rule.startsWith('mcp('))).toBe(false);
       expect(settings).not.toHaveProperty('permissions.ask');
     }
-    expect(agyRepairSettings(false).permissions.deny).toEqual(
-      expect.arrayContaining(['read_file(*)', 'read_file(/)']),
-    );
+    // Without source, every permission kind but the allowed MCP tool is denied outright.
+    const appDeny = agyRepairSettings(false).permissions.deny;
+    for (const kind of AGY_PERMISSION_KINDS.filter((item) => item !== 'mcp'))
+      expect(appDeny).toContain(`${kind}(*)`);
+    expect(appDeny).toContain('read_file(/)');
     const source = agyRepairSettings(true, ['C:\\Temp\\bridge']).permissions.deny;
     expect(source).not.toContain('read_file(*)');
     expect(source).toContain('read_file(C:/Temp/bridge)');

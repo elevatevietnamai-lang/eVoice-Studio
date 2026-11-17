@@ -60,11 +60,21 @@ kept: its text-only lockdown and output parsing were already in place, its sign-
 can be completed inside the app with a pasted code, and its Google AI Pro sign-in
 offers the newer Gemini models.
 
-For translation and LLM completions, Antigravity cannot switch its tools off and its
-headless runs default to Auto mode. VoiceStudio therefore starts it with strict tool
-review, no trusted workspaces, and deny rules for commands, file reads and writes, URL
-reads and MCP tools, and sends the prompt as one stream-json message on stdin. Web
-search, which goes to the same Google account the model runs on, is the only tool left.
+For translation and LLM completions, Antigravity cannot switch its tools off, and its
+headless runs default to Auto mode.
+VoiceStudio therefore starts it with strict tool review, no trusted workspaces, and
+deny rules for every permission kind the CLI enforces: commands (`command`,
+`unsandboxed`), file reads and writes, URL reads, URL actions and downloads
+(`read_url`, `execute_url`, `download_url`) and MCP tools. It sends the prompt as one
+stream-json message on stdin with `--disable-slash-commands`, so `/browser` cannot
+start. Antigravity has no permission kind or user setting for its browser tools
+(`browserEnabled` is an admin control that `--settings` rejects). A real headless run
+with agy 1.5.10 lists the `browser_*` tools in its `init` event but never gives them
+to the model, with or without strict review; asked to open a page, the model reports
+them unavailable. If a later CLI exposes them, `execute_url(*)` and `read_url(*)`
+are the rules for page actions and reads, and `mcp(*)` covers the `/browser` subagent's Chrome
+DevTools tools. Web search, which goes to the same Google account the model runs on,
+has no permission kind and stays available.
 
 ### Gemini in Ask VoiceStudio Agent
 
@@ -77,7 +87,7 @@ into the run's temporary folder (never into your checkout) and starts
 |---|---|
 | Custom agent | `excludeDefaultComponents: true` removes every built-in tool (shell, file edits, browser, web search, image generation, subagents). App operation keeps only the MCP call tool; source Diagnose adds `view_file`, `list_dir`, `grep_search` and `find_by_name`. `inheritMcp: false` and `inheritCustomizations: false` leave out your own MCP servers, skills and rules. |
 | MCP server | The agent declares one server, VoiceStudio's session-scoped API bridge, the same one Claude Code and OpenCode use. |
-| `--settings` | `toolPermission: request-review`, `agentMode: ""`, an allow rule for `mcp(voicestudio/api_request)` only, and deny rules for `command(*)`, `unsandboxed(*)`, `write_file(*)`, URL reads and, without source, `read_file(*)`. A headless run cannot answer an approval prompt, so anything else is refused and the run ends. |
+| `--settings` | `toolPermission: request-review`, `agentMode: ""`, an allow rule for `mcp(voicestudio/api_request)` only, and deny rules for `command(*)`, `unsandboxed(*)`, `write_file(*)`, URL reads, actions and downloads and, without source, `read_file(*)`. A headless run cannot answer an approval prompt, so anything else is refused and the run ends. |
 | Checkout | Added with `--add-dir` for Diagnose, so the agent reads it by absolute path. |
 
 Compared with the other harnesses: Codex Fix edits and runs commands in its workspace
