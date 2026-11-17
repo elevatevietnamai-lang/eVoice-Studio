@@ -129,7 +129,7 @@ def test_brand_sources_do_not_bring_back_the_gradient(name: str) -> None:
 # the "⌁" glyph that stood in for the mark. Exact values only: named palettes (Signal's
 # pink focus, Heritage's violet glass), sticker art and syntax colours legitimately use hues.
 OLD_UI_PALETTE = re.compile(
-    r"#(?:F8981D|FF32A3|F88537|150f19|f7eef7|c70a60|df1672|ff5aa5|d20a68)(?![0-9a-f])|⌁",
+    r"#(?:F8981D|FF32A3|F88537|150f19|f7eef7|c70a60|df1672|ff5aa5|d20a68)(?:[0-9a-f]{2})?(?![0-9a-f])|⌁",
     re.IGNORECASE,
 )
 SHIPPED_UI_GLOBS = (
