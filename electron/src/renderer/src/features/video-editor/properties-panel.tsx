@@ -3,6 +3,7 @@
  * keyframes edits the keyframe at the playhead (adding one there); the
  * diamond adds or removes a keyframe at the playhead.
  */
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { DiamondIcon } from 'lucide-react';
 import type { TimelineElement } from '@/lib/opencut/vendor/timeline/types';
@@ -355,16 +356,18 @@ export function PropertiesPanel({
               onCheckedChange={(on) => param('background.enabled', on, false)}
             />
           </div>
-          {element.params['background.enabled'] === true && (
-            <Row label={t('editor.text_background_color')}>
-              <Input
-                type="color"
-                className="h-8 p-1"
-                value={String(element.params['background.color'])}
-                onChange={(event) => param('background.color', event.target.value)}
-              />
-            </Row>
-          )}
+          <Reveal>
+            {element.params['background.enabled'] === true && (
+              <Row label={t('editor.text_background_color')}>
+                <Input
+                  type="color"
+                  className="h-8 p-1"
+                  value={String(element.params['background.color'])}
+                  onChange={(event) => param('background.color', event.target.value)}
+                />
+              </Row>
+            )}
+          </Reveal>
         </Section>
       )}
 

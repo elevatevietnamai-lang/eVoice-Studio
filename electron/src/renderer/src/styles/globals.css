@@ -321,9 +321,15 @@ html[data-theme-id=''] {
 [data-slot='secondary-sidebar-header'] {
   box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 2.5%, transparent);
 }
-[data-slot='secondary-sidebar-content'] .text-muted-foreground,
-[data-slot='workspace-pane-content'] .text-muted-foreground {
-  color: color-mix(in srgb, var(--muted-foreground) 88%, var(--foreground));
+/* Pane tints for muted text live in the utilities layer at class specificity (the scope is in
+   :where), so a state variant such as hover:text-foreground, aria-pressed:text-foreground or
+   data-active:text-foreground still wins. Unlayered, this rule outranked every variant and froze
+   hover and pressed text in all panes (globals.test.ts). */
+@layer utilities {
+  :where([data-slot='secondary-sidebar-content'], [data-slot='workspace-pane-content'])
+    .text-muted-foreground {
+    color: color-mix(in srgb, var(--muted-foreground) 88%, var(--foreground));
+  }
 }
 [data-slot='secondary-sidebar-content'] {
   scrollbar-gutter: stable;
@@ -512,12 +518,16 @@ details > summary .lucide-chevron-right {
   color: color-mix(in srgb, var(--foreground) 92%, var(--muted-foreground));
   border-radius: var(--control-radius);
 }
-.secondary-sidebar[data-variant='library']
-  [data-slot='secondary-sidebar-content']
-  > div[class*='overflow-y-auto']
-  > button
-  :is(.text-xs, [class*='text-muted-foreground']) {
-  color: color-mix(in srgb, var(--muted-foreground) 90%, var(--foreground));
+@layer utilities {
+  :where(
+      .secondary-sidebar[data-variant='library']
+        [data-slot='secondary-sidebar-content']
+        > div[class*='overflow-y-auto']
+        > button
+    )
+    :is(.text-xs, [class*='text-muted-foreground']) {
+    color: color-mix(in srgb, var(--muted-foreground) 90%, var(--foreground));
+  }
 }
 .secondary-sidebar[data-variant='library']
   [data-slot='secondary-sidebar-content']
@@ -562,8 +572,10 @@ details > summary .lucide-chevron-right {
   background: var(--sidebar);
   color: var(--sidebar-foreground);
 }
-.brand-sidebar .text-muted-foreground {
-  color: var(--sidebar-muted-foreground);
+@layer utilities {
+  :where(.brand-sidebar) .text-muted-foreground {
+    color: var(--sidebar-muted-foreground);
+  }
 }
 
 .performance-tier-button {
@@ -617,8 +629,10 @@ details > summary .lucide-chevron-right {
         ),
         var(--background);
     }
-    html[data-glass='true'][data-theme-id] .app-surface .bg-background {
-      background: transparent;
+    @layer utilities {
+      :where(html[data-glass='true'][data-theme-id] .app-surface) .bg-background {
+        background: transparent;
+      }
     }
     html[data-glass='true'][data-theme-id] .app-surface aside {
       background:

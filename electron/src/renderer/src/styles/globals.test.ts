@@ -126,3 +126,44 @@ it('drops the focus ring after pointer input only', () => {
   );
   expect(css).not.toContain("data-input-modality='keyboard'");
 });
+
+/** Top-level rules outside any `@layer`, with their selectors (nested `@media` included). */
+function unlayeredRules(source: string): { selector: string; body: string }[] {
+  const text = source.replace(/\/\*[\s\S]*?\*\//g, '');
+  const rules: { selector: string; body: string }[] = [];
+  const walk = (chunk: string) => {
+    let depth = 0;
+    let head = 0;
+    let open = 0;
+    for (let i = 0; i < chunk.length; i += 1) {
+      if (chunk[i] === '{') {
+        if (depth === 0) open = i;
+        depth += 1;
+      } else if (chunk[i] === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          const selector = chunk.slice(head, open).trim();
+          const body = chunk.slice(open + 1, i);
+          if (/^@(media|supports|container)/.test(selector)) walk(body);
+          else if (!selector.startsWith('@')) rules.push({ selector, body });
+          head = i + 1;
+        }
+      }
+    }
+  };
+  walk(text);
+  return rules;
+}
+
+/**
+ * Unlayered CSS outranks every Tailwind utility, so an unlayered rule that recolours a utility
+ * class freezes its state variants: `[data-slot=…] .text-muted-foreground` kept segmented tabs,
+ * disclosure triggers and ghost buttons from changing colour on hover or when pressed.
+ */
+it('never recolours a utility class from unlayered CSS', () => {
+  const offenders = unlayeredRules(css).filter(
+    ({ selector, body }) =>
+      /\.(text|bg|border)-[a-z]/.test(selector) && /(^|[;\s])(color|background(-color)?)\s*:/.test(body),
+  );
+  expect(offenders.map(({ selector }) => selector)).toEqual([]);
+});

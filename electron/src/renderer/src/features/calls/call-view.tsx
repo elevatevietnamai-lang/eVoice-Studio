@@ -95,39 +95,41 @@ function LiveControls({ callId, live }: { callId: string; live: LiveCall }) {
   };
   return (
     <div className="space-y-2">
-      {takeover && (
-        <form
-          className="flex gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const next = text.trim();
-            if (!next) return;
-            void run('say', async () => {
-              await sayOnCall(callId, next);
-              setText('');
-            });
-          }}
-        >
-          <label htmlFor={`${ids}-say`} className="sr-only">
-            {t('calls.say_label')}
-          </label>
-          <Input
-            id={`${ids}-say`}
-            autoFocus
-            value={text}
-            placeholder={t('calls.say_placeholder')}
-            onChange={(event) => setText(event.target.value)}
-          />
-          <Button
-            type="submit"
-            disabled={!text.trim() || busy === 'say'}
-            aria-busy={busy === 'say'}
+      <Reveal>
+        {takeover && (
+          <form
+            className="flex gap-2"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const next = text.trim();
+              if (!next) return;
+              void run('say', async () => {
+                await sayOnCall(callId, next);
+                setText('');
+              });
+            }}
           >
-            <SendIcon aria-hidden="true" />
-            {t('calls.say')}
-          </Button>
-        </form>
-      )}
+            <label htmlFor={`${ids}-say`} className="sr-only">
+              {t('calls.say_label')}
+            </label>
+            <Input
+              id={`${ids}-say`}
+              autoFocus
+              value={text}
+              placeholder={t('calls.say_placeholder')}
+              onChange={(event) => setText(event.target.value)}
+            />
+            <Button
+              type="submit"
+              disabled={!text.trim() || busy === 'say'}
+              aria-busy={busy === 'say'}
+            >
+              <SendIcon aria-hidden="true" />
+              {t('calls.say')}
+            </Button>
+          </form>
+        )}
+      </Reveal>
       <div className="flex flex-wrap items-center gap-3">
         <span className="flex items-center gap-2 text-sm">
           <HandIcon aria-hidden="true" className="size-4 text-muted-foreground" />
