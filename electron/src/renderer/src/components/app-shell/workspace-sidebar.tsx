@@ -51,10 +51,13 @@ export function WorkspaceSidebar() {
           )}
         />
       )}
+      {/* 16 px above the mark (on macOS, below the traffic lights), 12 px under it; the group
+          icons follow straight after, from the top. */}
       <div
+        data-slot="rail-brand"
         className={cn(
           'workspace-titlebar flex shrink-0 justify-center',
-          trafficLights ? 'min-h-[72px] items-end pb-1' : 'h-12 items-center',
+          trafficLights ? 'min-h-[72px] items-end pb-3' : 'items-start pt-4 pb-3',
         )}
       >
         {/* The bare mark, no tile and no margin: cropped to its ink box, 32 px tall, white in the
