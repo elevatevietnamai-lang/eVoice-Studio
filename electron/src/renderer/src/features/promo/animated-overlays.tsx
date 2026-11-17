@@ -405,11 +405,13 @@ export function AnimatedOverlays({
     return (
       <div className="space-y-2">
         <p className="text-xs text-muted-foreground">{t('promo.anim_intro')}</p>
-        {browser.state === 'failed' && (
-          <p className="text-xs text-destructive">
-            {t('promo.anim_failed', { message: browser.message })}
-          </p>
-        )}
+        <Reveal>
+          {browser.state === 'failed' && (
+            <p className="text-xs text-destructive">
+              {t('promo.anim_failed', { message: browser.message })}
+            </p>
+          )}
+        </Reveal>
         {confirming ? (
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs">{t('promo.anim_confirm', { size: mb })}</span>
@@ -559,24 +561,26 @@ export function AnimatedOverlays({
           </p>
         )}
       </Reveal>
-      {browser.state === 'ready' && (
-        <div className="flex items-center gap-2">
-          <Button size="sm" disabled={busy || full || !ready} onClick={() => void create()}>
-            {creating ? (
-              <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
-            ) : (
-              <SparklesIcon />
-            )}
-            {creating ? t('promo.anim_creating', { percent: progress }) : t('promo.anim_create')}
-          </Button>
-          {creating && (
-            <Button size="sm" variant="ghost" onClick={() => void bridge.promo.cancelRender()}>
-              <XIcon />
-              {t('promo.anim_cancel')}
+      <Reveal>
+        {browser.state === 'ready' && (
+          <div className="flex items-center gap-2">
+            <Button size="sm" disabled={busy || full || !ready} onClick={() => void create()}>
+              {creating ? (
+                <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
+              ) : (
+                <SparklesIcon />
+              )}
+              {creating ? t('promo.anim_creating', { percent: progress }) : t('promo.anim_create')}
             </Button>
-          )}
-        </div>
-      )}
+            {creating && (
+              <Button size="sm" variant="ghost" onClick={() => void bridge.promo.cancelRender()}>
+                <XIcon />
+                {t('promo.anim_cancel')}
+              </Button>
+            )}
+          </div>
+        )}
+      </Reveal>
       {draft.overlays.length > 0 && (
         <div className="space-y-1">
           <h3 className="text-xs font-medium">{t('promo.anim_overlays')}</h3>

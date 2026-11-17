@@ -172,36 +172,38 @@ export function ProjectSettings({
                   <TrashIcon />
                 </Button>
               </div>
-              {confirmation?.project.id === project.id && (
-                <div className="space-y-2 rounded-lg bg-muted/40 p-2 text-xs">
-                  <p>
-                    {t(
-                      confirmation.action === 'delete'
-                        ? 'stories.deleteProjectConfirm'
-                        : 'projectActions.open',
-                      { name: project.name },
-                    )}
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant={confirmation.action === 'delete' ? 'destructive' : 'default'}
-                      disabled={locked}
-                      onClick={() => void apply()}
-                    >
-                      {t('common.confirm')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      disabled={busy}
-                      onClick={() => setConfirmation(null)}
-                    >
-                      {t('common.cancel')}
-                    </Button>
+              <Reveal>
+                {confirmation?.project.id === project.id && (
+                  <div className="space-y-2 rounded-lg bg-muted/40 p-2 text-xs">
+                    <p>
+                      {t(
+                        confirmation.action === 'delete'
+                          ? 'stories.deleteProjectConfirm'
+                          : 'projectActions.open',
+                        { name: project.name },
+                      )}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant={confirmation.action === 'delete' ? 'destructive' : 'default'}
+                        disabled={locked}
+                        onClick={() => void apply()}
+                      >
+                        {t('common.confirm')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={busy}
+                        onClick={() => setConfirmation(null)}
+                      >
+                        {t('common.cancel')}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </Reveal>
             </div>
           ))}
       </div>

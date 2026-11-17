@@ -153,28 +153,30 @@ export function DubProjects({ active = true }: { active?: boolean }) {
                   )}
                 </span>
               </button>
-              {confirmation === row.id && (
-                <div className="space-y-2 rounded-lg bg-muted/40 p-2 text-xs">
-                  <p>{t('projectActions.open', { name: row.name })}</p>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      disabled={locked || opening !== null}
-                      onClick={() => void open(row.id)}
-                    >
-                      {t('common.confirm')}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      disabled={opening !== null}
-                      onClick={() => setConfirmation(null)}
-                    >
-                      {t('common.cancel')}
-                    </Button>
+              <Reveal>
+                {confirmation === row.id && (
+                  <div className="space-y-2 rounded-lg bg-muted/40 p-2 text-xs">
+                    <p>{t('projectActions.open', { name: row.name })}</p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        disabled={locked || opening !== null}
+                        onClick={() => void open(row.id)}
+                      >
+                        {t('common.confirm')}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={opening !== null}
+                        onClick={() => setConfirmation(null)}
+                      >
+                        {t('common.cancel')}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </Reveal>
             </li>
           );
         })}

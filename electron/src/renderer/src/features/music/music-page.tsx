@@ -620,14 +620,16 @@ export function MusicPage() {
                   <p className="text-muted-foreground tabular-nums">
                     {t(installStepLabel(installStep).key, installStepLabel(installStep).values)}
                   </p>
-                  {installStep.log && (
-                    <p
-                      className="truncate font-mono text-[11px] text-muted-foreground"
-                      title={installStep.log}
-                    >
-                      {installStep.log}
-                    </p>
-                  )}
+                  <Reveal>
+                    {installStep.log && (
+                      <p
+                        className="truncate font-mono text-[11px] text-muted-foreground"
+                        title={installStep.log}
+                      >
+                        {installStep.log}
+                      </p>
+                    )}
+                  </Reveal>
                 </div>
               )}
             </section>
@@ -676,28 +678,30 @@ export function MusicPage() {
               onChange={chooseSource}
             />
           )}
-          {musicTask === 'cover' && (
-            <div className="space-y-1.5 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="font-medium">{t('musicStudio.cover_strength')}</span>
-                <span className="text-muted-foreground tabular-nums">
-                  {Math.round(coverStrength * 100)}%
-                </span>
+          <Reveal>
+            {musicTask === 'cover' && (
+              <div className="space-y-1.5 text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{t('musicStudio.cover_strength')}</span>
+                  <span className="text-muted-foreground tabular-nums">
+                    {Math.round(coverStrength * 100)}%
+                  </span>
+                </div>
+                <Slider
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={[coverStrength]}
+                  disabled={busy}
+                  aria-label={t('musicStudio.cover_strength')}
+                  onValueChange={(value) => setCoverStrength(Array.isArray(value) ? value[0] : value)}
+                />
+                <p className="leading-5 text-muted-foreground">
+                  {t('musicStudio.cover_strength_help')}
+                </p>
               </div>
-              <Slider
-                min={0}
-                max={1}
-                step={0.05}
-                value={[coverStrength]}
-                disabled={busy}
-                aria-label={t('musicStudio.cover_strength')}
-                onValueChange={(value) => setCoverStrength(Array.isArray(value) ? value[0] : value)}
-              />
-              <p className="leading-5 text-muted-foreground">
-                {t('musicStudio.cover_strength_help')}
-              </p>
-            </div>
-          )}
+            )}
+          </Reveal>
           {isBaseTask(musicTask) && (
             <div className="space-y-3 text-xs">
               <div className="space-y-1.5">
@@ -733,122 +737,128 @@ export function MusicPage() {
                   })}
                 </div>
               </div>
-              {musicTask === 'lego' && (
-                <label className="flex min-w-0 flex-col gap-1.5">
-                  <span className="font-medium">{t('musicStudio.global_caption')}</span>
-                  <Input
-                    value={globalCaption}
-                    maxLength={1000}
+              <Reveal>
+                {musicTask === 'lego' && (
+                  <label className="flex min-w-0 flex-col gap-1.5">
+                    <span className="font-medium">{t('musicStudio.global_caption')}</span>
+                    <Input
+                      value={globalCaption}
+                      maxLength={1000}
+                      disabled={busy}
+                      placeholder={t('musicStudio.global_caption_placeholder')}
+                      onChange={(event) => setGlobalCaption(event.target.value)}
+                    />
+                  </label>
+                )}
+              </Reveal>
+            </div>
+          )}
+          <Reveal>
+            {musicTask === 'extend' && source && (
+              <div className="space-y-3 text-xs">
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <span id="music-extend-side" className="font-medium">
+                    {t('musicStudio.extend_side')}
+                  </span>
+                  <ToggleGroup
+                    value={[extendSide]}
                     disabled={busy}
-                    placeholder={t('musicStudio.global_caption_placeholder')}
-                    onChange={(event) => setGlobalCaption(event.target.value)}
-                  />
-                </label>
-              )}
-            </div>
-          )}
-          {musicTask === 'extend' && source && (
-            <div className="space-y-3 text-xs">
-              <div className="flex min-w-0 flex-col gap-1.5">
-                <span id="music-extend-side" className="font-medium">
-                  {t('musicStudio.extend_side')}
-                </span>
-                <ToggleGroup
-                  value={[extendSide]}
-                  disabled={busy}
-                  size="sm"
-                  aria-labelledby="music-extend-side"
-                  onValueChange={(value) => {
-                    const next = value[0];
-                    if ((EXTEND_SIDES as readonly string[]).includes(next as string))
-                      setExtendSide(next as ExtendSide);
-                  }}
-                >
-                  {EXTEND_SIDES.map((value) => (
-                    <ToggleGroupItem key={value} value={value}>
-                      {t(`musicStudio.extend_side_${value}`)}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{t('musicStudio.extend_seconds')}</span>
-                  <span className="text-muted-foreground tabular-nums">
-                    {t('musicStudio.duration_value', {
-                      seconds: Math.min(extendSeconds, extendMax),
-                    })}
-                  </span>
+                    size="sm"
+                    aria-labelledby="music-extend-side"
+                    onValueChange={(value) => {
+                      const next = value[0];
+                      if ((EXTEND_SIDES as readonly string[]).includes(next as string))
+                        setExtendSide(next as ExtendSide);
+                    }}
+                  >
+                    {EXTEND_SIDES.map((value) => (
+                      <ToggleGroupItem key={value} value={value}>
+                        {t(`musicStudio.extend_side_${value}`)}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
                 </div>
-                <Slider
-                  min={EXTEND_SECONDS[0]}
-                  max={extendMax}
-                  step={1}
-                  value={[Math.min(extendSeconds, extendMax)]}
-                  disabled={busy}
-                  aria-label={t('musicStudio.extend_seconds')}
-                  onValueChange={(value) =>
-                    setExtendSeconds(Array.isArray(value) ? value[0] : value)
-                  }
-                />
-                <p className="leading-5 text-muted-foreground">
-                  {t('musicStudio.extend_total', {
-                    seconds: extendedLength(source.duration, Math.min(extendSeconds, extendMax)),
-                  })}
-                </p>
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{t('musicStudio.extend_overlap')}</span>
-                  <span className="text-muted-foreground tabular-nums">
-                    {t('musicStudio.duration_value', { seconds: extendOverlap })}
-                  </span>
-                </div>
-                <Slider
-                  min={EXTEND_OVERLAP[0]}
-                  max={EXTEND_OVERLAP[1]}
-                  step={0.5}
-                  value={[extendOverlap]}
-                  disabled={busy}
-                  aria-label={t('musicStudio.extend_overlap')}
-                  onValueChange={(value) =>
-                    setExtendOverlap(Array.isArray(value) ? value[0] : value)
-                  }
-                />
-                <p className="leading-5 text-muted-foreground">
-                  {t('musicStudio.extend_overlap_help')}
-                </p>
-              </div>
-            </div>
-          )}
-          {regenerating && source && (
-            <div className="space-y-3 text-xs">
-              {musicTask === 'repaint' && (
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">{t('musicStudio.repaint_region')}</span>
+                    <span className="font-medium">{t('musicStudio.extend_seconds')}</span>
                     <span className="text-muted-foreground tabular-nums">
-                      {t('musicStudio.repaint_region_value', {
-                        start: repaintRange[0],
-                        end: repaintRange[1],
+                      {t('musicStudio.duration_value', {
+                        seconds: Math.min(extendSeconds, extendMax),
                       })}
                     </span>
                   </div>
                   <Slider
-                    min={0}
-                    max={Math.max(1, Math.round(source.duration))}
+                    min={EXTEND_SECONDS[0]}
+                    max={extendMax}
                     step={1}
-                    minStepsBetweenValues={1}
-                    value={repaintRange}
+                    value={[Math.min(extendSeconds, extendMax)]}
                     disabled={busy}
-                    aria-label={t('musicStudio.repaint_region')}
-                    onValueChange={(value) => {
-                      if (Array.isArray(value) && value.length === 2)
-                        setRepaintRange([value[0], value[1]]);
-                    }}
+                    aria-label={t('musicStudio.extend_seconds')}
+                    onValueChange={(value) =>
+                      setExtendSeconds(Array.isArray(value) ? value[0] : value)
+                    }
                   />
+                  <p className="leading-5 text-muted-foreground">
+                    {t('musicStudio.extend_total', {
+                      seconds: extendedLength(source.duration, Math.min(extendSeconds, extendMax)),
+                    })}
+                  </p>
                 </div>
-              )}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{t('musicStudio.extend_overlap')}</span>
+                    <span className="text-muted-foreground tabular-nums">
+                      {t('musicStudio.duration_value', { seconds: extendOverlap })}
+                    </span>
+                  </div>
+                  <Slider
+                    min={EXTEND_OVERLAP[0]}
+                    max={EXTEND_OVERLAP[1]}
+                    step={0.5}
+                    value={[extendOverlap]}
+                    disabled={busy}
+                    aria-label={t('musicStudio.extend_overlap')}
+                    onValueChange={(value) =>
+                      setExtendOverlap(Array.isArray(value) ? value[0] : value)
+                    }
+                  />
+                  <p className="leading-5 text-muted-foreground">
+                    {t('musicStudio.extend_overlap_help')}
+                  </p>
+                </div>
+              </div>
+            )}
+          </Reveal>
+          {regenerating && source && (
+            <div className="space-y-3 text-xs">
+              <Reveal>
+                {musicTask === 'repaint' && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{t('musicStudio.repaint_region')}</span>
+                      <span className="text-muted-foreground tabular-nums">
+                        {t('musicStudio.repaint_region_value', {
+                          start: repaintRange[0],
+                          end: repaintRange[1],
+                        })}
+                      </span>
+                    </div>
+                    <Slider
+                      min={0}
+                      max={Math.max(1, Math.round(source.duration))}
+                      step={1}
+                      minStepsBetweenValues={1}
+                      value={repaintRange}
+                      disabled={busy}
+                      aria-label={t('musicStudio.repaint_region')}
+                      onValueChange={(value) => {
+                        if (Array.isArray(value) && value.length === 2)
+                          setRepaintRange([value[0], value[1]]);
+                      }}
+                    />
+                  </div>
+                )}
+              </Reveal>
               <div className="flex min-w-0 flex-col gap-1.5">
                 <span id="music-repaint-mode" className="font-medium">
                   {t('musicStudio.repaint_mode')}
@@ -871,27 +881,29 @@ export function MusicPage() {
                   ))}
                 </ToggleGroup>
               </div>
-              {repaintMode === 'balanced' && (
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{t('musicStudio.repaint_strength')}</span>
-                    <span className="text-muted-foreground tabular-nums">
-                      {Math.round(repaintStrength * 100)}%
-                    </span>
+              <Reveal>
+                {repaintMode === 'balanced' && (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{t('musicStudio.repaint_strength')}</span>
+                      <span className="text-muted-foreground tabular-nums">
+                        {Math.round(repaintStrength * 100)}%
+                      </span>
+                    </div>
+                    <Slider
+                      min={0}
+                      max={1}
+                      step={0.05}
+                      value={[repaintStrength]}
+                      disabled={busy}
+                      aria-label={t('musicStudio.repaint_strength')}
+                      onValueChange={(value) =>
+                        setRepaintStrength(Array.isArray(value) ? value[0] : value)
+                      }
+                    />
                   </div>
-                  <Slider
-                    min={0}
-                    max={1}
-                    step={0.05}
-                    value={[repaintStrength]}
-                    disabled={busy}
-                    aria-label={t('musicStudio.repaint_strength')}
-                    onValueChange={(value) =>
-                      setRepaintStrength(Array.isArray(value) ? value[0] : value)
-                    }
-                  />
-                </div>
-              )}
+                )}
+              </Reveal>
             </div>
           )}
 

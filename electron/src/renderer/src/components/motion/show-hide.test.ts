@@ -45,18 +45,27 @@ it('transitions the property each motion utility actually sets', () => {
   expect(offenders).toEqual([]);
 });
 
-/** A block a person shows with a button, switch or checkbox opens through `<Reveal>`. */
+/**
+ * Blocks whose state is not a boolean move the same way, since a choice, a typed value or a picked
+ * row shows them just as a switch does: Music task options (`musicTask === 'cover'`), inline
+ * confirmations (`confirmation === row.id`), the dub bulk-selection bar and segment options.
+ * Only boolean states were checked, so all of these popped in.
+ */
+const settledElsewhere = new Set([
+  // The whole step settles in through FadeIn on the keyed <main>; each step is one branch of it.
+  'components/setup-gate.tsx step',
+  // An inline field in the split toolbar row: a height reveal would shift the row's controls.
+  'features/longform/story-editor.tsx splitMode',
+]);
+
+/** A block a person shows with a button, switch, choice or input opens through `<Reveal>`. */
 it('reveals user-toggled blocks instead of popping them in', () => {
   const block =
     '(div|section|form|p|ul|ol|fieldset|Collapsible|Row|Card|Alert|label|details|table|SettingsRow)';
   const offenders: string[] = [];
   for (const { file, text } of sources) {
     if (!file.endsWith('.tsx') || file.startsWith('components/ui/')) continue;
-    const states = [
-      ...text.matchAll(
-        /const \[(\w+),\s*(set\w+)\]\s*=\s*useState(?:<boolean>)?\((?:false|true)\)/g,
-      ),
-    ];
+    const states = [...text.matchAll(/const \[(\w+),\s*(set\w+)\]\s*=\s*useState\b/g)];
     for (const [, state, setter] of states) {
       const userDriven = new RegExp(
         `on(Click|CheckedChange|OpenChange|PressedChange|ValueChange|Toggle)=\\{[^}]*${setter}|${setter}\\(\\(?\\w*\\)? =>`,
@@ -68,8 +77,11 @@ it('reveals user-toggled blocks instead of popping them in', () => {
       );
       for (const match of text.matchAll(pattern)) {
         const before = text.slice(Math.max(0, match.index - 160), match.index);
-        if (!/<(Reveal|AnimatePresence|Swap)\b[^>]*>\s*$/.test(before))
-          offenders.push(`${file}: ${state}`);
+        if (
+          !/<(Reveal|AnimatePresence|Swap)\b[^>]*>\s*$/.test(before) &&
+          !settledElsewhere.has(`${file} ${state}`)
+        )
+          offenders.push(`${file}:${text.slice(0, match.index).split('\n').length} ${state}`);
       }
     }
   }

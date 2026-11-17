@@ -110,11 +110,12 @@ it('shows the empty state when there are no dub projects yet', async () => {
 it('asks before replacing a draft and leaves it unchanged when cancelled', async () => {
   renderList();
   fireEvent.click(await screen.findByRole('button', { name: /Launch video/ }));
-  expect(await screen.findByText('projectActions.open')).toBeVisible();
+  // The confirmation opens through Reveal.
+  await waitFor(() => expect(screen.getByText('projectActions.open')).toBeVisible());
   expect(state.readProject).not.toHaveBeenCalled();
   expect(state.openDub).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole('button', { name: 'common.cancel' }));
-  expect(screen.queryByText('projectActions.open')).toBeNull();
+  await waitFor(() => expect(screen.queryByText('projectActions.open')).toBeNull());
   expect(state.openDub).not.toHaveBeenCalled();
   expect(state.navigate).not.toHaveBeenCalled();
 });

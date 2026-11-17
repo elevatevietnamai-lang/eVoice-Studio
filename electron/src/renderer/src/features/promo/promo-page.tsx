@@ -700,32 +700,34 @@ export function PromoPage() {
               </div>
             </section>
           )}
-          {draft.shots.length > 0 && (
-            <section className="flex flex-wrap items-start gap-4">
-              <PromoPreview
-                draft={effective}
-                playhead={playhead}
-                width={previewWidth}
-                musicStart={musicOffset(draft, grid)}
-              />
-              <div className="min-w-[18rem] flex-1">
-                <PromoTimeline
-                  draft={draft}
-                  busy={busy}
+          <Reveal>
+            {draft.shots.length > 0 && (
+              <section className="flex flex-wrap items-start gap-4">
+                <PromoPreview
+                  draft={effective}
                   playhead={playhead}
-                  selection={selection}
-                  canUndo={history.past.length > 0}
-                  canRedo={history.future.length > 0}
-                  onSelect={setSelection}
-                  onCommit={setDraft}
-                  onUndo={() => travel(undo)}
-                  onRedo={() => travel(redo)}
-                  newKey={nextKey}
-                  grid={grid}
+                  width={previewWidth}
+                  musicStart={musicOffset(draft, grid)}
                 />
-              </div>
-            </section>
-          )}
+                <div className="min-w-[18rem] flex-1">
+                  <PromoTimeline
+                    draft={draft}
+                    busy={busy}
+                    playhead={playhead}
+                    selection={selection}
+                    canUndo={history.past.length > 0}
+                    canRedo={history.future.length > 0}
+                    onSelect={setSelection}
+                    onCommit={setDraft}
+                    onUndo={() => travel(undo)}
+                    onRedo={() => travel(redo)}
+                    newKey={nextKey}
+                    grid={grid}
+                  />
+                </div>
+              </section>
+            )}
+          </Reveal>
           <section className="space-y-2">
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-medium">{t('promo.shots')}</h2>

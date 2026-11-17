@@ -1,5 +1,5 @@
 import { TrimAudio } from './trim-audio';
-import { Reveal } from '@/components/motion';
+import { Reveal, Swap } from '@/components/motion';
 import { Play as PlayShape, X as XShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
 import { VoiceDestinations } from './voice-destinations';
@@ -324,57 +324,59 @@ export function ImportsView() {
                   <Trash2Icon />
                 </Button>
               </div>
-              {deleting === voice.id ? (
-                <div className="space-y-2">
-                  <p className="text-sm">{t('gallery.confirm_delete', { name: voice.name })}</p>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    disabled={busy}
-                    onClick={() =>
-                      void run(async () => {
-                        await importsApi.remove(voice.id);
-                        setDeleting(null);
-                        await refresh();
-                      })
-                    }
-                  >
-                    {t('gallery.delete')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy}
-                    onClick={() => setDeleting(null)}
-                  >
-                    {t('common.cancel')}
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between gap-2">
-                  {' '}
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    disabled={busy}
-                    onClick={() => void useVoice(voice)}
-                  >
-                    {t('gallery.use_voice')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy}
-                    onClick={() => setTrimming(voice)}
-                  >
-                    {t('gallery.trim')}
-                  </Button>
-                  <VoiceDestinations
-                    disabled={busy}
-                    onChoose={(target) => void useVoice(voice, target)}
-                  />
-                </div>
-              )}
+              <Swap id={deleting === voice.id ? 'confirm' : 'actions'}>
+                {deleting === voice.id ? (
+                  <div className="space-y-2">
+                    <p className="text-sm">{t('gallery.confirm_delete', { name: voice.name })}</p>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      disabled={busy}
+                      onClick={() =>
+                        void run(async () => {
+                          await importsApi.remove(voice.id);
+                          setDeleting(null);
+                          await refresh();
+                        })
+                      }
+                    >
+                      {t('gallery.delete')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() => setDeleting(null)}
+                    >
+                      {t('common.cancel')}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between gap-2">
+                    {' '}
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={busy}
+                      onClick={() => void useVoice(voice)}
+                    >
+                      {t('gallery.use_voice')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() => setTrimming(voice)}
+                    >
+                      {t('gallery.trim')}
+                    </Button>
+                    <VoiceDestinations
+                      disabled={busy}
+                      onChoose={(target) => void useVoice(voice, target)}
+                    />
+                  </div>
+                )}
+              </Swap>
             </article>
           ))}
         </div>

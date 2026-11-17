@@ -103,25 +103,27 @@ export function DataDirectorySettings() {
             <DialogTitle>{t('settings.data_move_title')}</DialogTitle>
             <DialogDescription>{t('settings.data_move_desc')}</DialogDescription>
           </DialogHeader>
-          {selection && (
-            <div className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/25 p-3.5">
-              <div className="grid min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-2">
-                <code className="truncate text-xs text-muted-foreground" title={selection.source}>
-                  {selection.source}
-                </code>
-                <ArrowRightIcon className="size-4 text-muted-foreground" />
-                <code className="truncate text-xs" title={selection.target}>
-                  {selection.target}
-                </code>
+          <Reveal>
+            {selection && (
+              <div className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/25 p-3.5">
+                <div className="grid min-w-0 grid-cols-[1fr_auto_1fr] items-center gap-2">
+                  <code className="truncate text-xs text-muted-foreground" title={selection.source}>
+                    {selection.source}
+                  </code>
+                  <ArrowRightIcon className="size-4 text-muted-foreground" />
+                  <code className="truncate text-xs" title={selection.target}>
+                    {selection.target}
+                  </code>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {t('settings.data_move_summary', {
+                    size: fmtBytes(selection.size_bytes),
+                    count: selection.file_count,
+                  })}
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {t('settings.data_move_summary', {
-                  size: fmtBytes(selection.size_bytes),
-                  count: selection.file_count,
-                })}
-              </p>
-            </div>
-          )}
+            )}
+          </Reveal>
           <Reveal>
             {busy && stage && (
               <div role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
