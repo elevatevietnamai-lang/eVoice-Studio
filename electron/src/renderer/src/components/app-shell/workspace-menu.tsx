@@ -189,7 +189,8 @@ export function WorkspaceNavigation() {
       aria-label={t('nav.workspaces')}
       className={cn(
         'min-h-0 overflow-y-auto overscroll-contain py-2 [scrollbar-width:none]',
-        'flex flex-col items-center justify-center-safe gap-0.5 px-1.5',
+        // Straight under the logo, from the top: not centred in the rail's height.
+        'flex flex-col items-center justify-start gap-0.5 px-1.5',
       )}
     >
       <NavigationLink destination={HOME} compact exact />

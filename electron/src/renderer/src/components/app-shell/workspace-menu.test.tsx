@@ -40,6 +40,13 @@ afterEach(() => {
   setWorkspace.mockClear();
 });
 
+it('stacks the rail icons from the top, straight under the logo, never centred in its height', () => {
+  render(<Shell />);
+  const nav = document.querySelector('[data-slot="workspace-navigation"]') as HTMLElement;
+  expect(nav).toHaveClass('justify-start');
+  expect(nav.className).not.toMatch(/justify-center|justify-end|my-auto/);
+});
+
 it('opens a rail group as a menu in the panel column, and closes it on a second click', async () => {
   render(<Shell />);
   const voice = screen.getByRole('button', { name: 'nav.voice' });
