@@ -3005,6 +3005,15 @@
     "label": "Hướng dẫn phong cách dịch",
     "help": "Mô tả giọng điệu, đối tượng người xem và phong cách chuyển thể — ví dụ: tiếng Bengal tự nhiên, giữ câu đùa, Việt hóa thành ngữ. Được lưu theo dự án, dùng khi dịch và căn chỉnh thời lượng. Để trống nếu dùng phong cách mặc định."
   },
+  "dubResearch": {
+    "button": "Nghiên cứu video bằng {{agent}}",
+    "stop": "Dừng nghiên cứu",
+    "running": "Đang nghiên cứu: đọc lời thoại và khung hình, tìm trên web…",
+    "consent": "Gửi lời thoại, tên file và {{frames}} khung hình của video tới mô hình đám mây của {{agent}}; agent cũng có thể tìm và mở trang web. Bản tóm tắt nó viết sẽ thay nội dung ô trên (ghi chú của bạn được giữ nếu còn phù hợp); hãy xem lại trước khi dịch.",
+    "consent_audio": "Gửi lời thoại và tên file tới mô hình đám mây của {{agent}}; agent cũng có thể tìm và mở trang web. Bản tóm tắt nó viết sẽ thay nội dung ô trên (ghi chú của bạn được giữ nếu còn phù hợp); hãy xem lại trước khi dịch.",
+    "done": "Đã có bản tóm tắt nghiên cứu. Hãy xem lại trước khi dịch.",
+    "failed": "Nghiên cứu thất bại: {{error}}"
+  },
   "dubActivity": {
     "output": "Bản dịch",
     "waiting": "Chưa có kết quả.",

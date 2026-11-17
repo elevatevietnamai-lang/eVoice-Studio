@@ -3005,6 +3005,15 @@
     "label": "Translation style prompt",
     "help": "Describe tone, audience and adaptation style—for example: conversational Bengali, preserve jokes, adapt idioms naturally. Saved with this project; used for translation and timing rewrites. Leave blank for the default style."
   },
+  "dubResearch": {
+    "button": "Research the video with {{agent}}",
+    "stop": "Stop research",
+    "running": "Researching: reading the transcript and frames, searching the web…",
+    "consent": "Sends the transcript, the file name and {{frames}} frames from the video to {{agent}}'s cloud model, which may also search and open web pages. The brief it writes replaces the text above (your notes are kept where they still apply); check it before translating.",
+    "consent_audio": "Sends the transcript and the file name to {{agent}}'s cloud model, which may also search and open web pages. The brief it writes replaces the text above (your notes are kept where they still apply); check it before translating.",
+    "done": "Research brief ready. Check it before translating.",
+    "failed": "Research failed: {{error}}"
+  },
   "dubActivity": {
     "output": "Translations",
     "waiting": "No output received yet.",

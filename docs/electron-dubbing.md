@@ -337,6 +337,43 @@ output requirements remain in effect. Clear the field to restore the default sty
 changing the brief does not retranslate existing segments until you run translation.
 The field accepts up to 5,000 characters and is locked while work is running.
 
+The brief is not limited to style. Translation prompts (local agent and LLM) tell the
+model to use its terminology and OCR corrections as well as its tone and rules.
+
+### Research the video first
+
+**Research the video with <agent>**, under the brief field, has the chosen local agent
+study the video before anything is translated. It sends the transcript (source text
+with start times), the file name, the target language, what the brief field already
+holds and, for a video, 5 JPEG frames spread evenly across it (768 px wide, read from
+the original video) to that agent. The agent may also search the web and open pages,
+then writes one markdown brief in the target language: topic, on-screen context, tone
+and forms of address, a terminology table (source | target | note, with product, UI
+and model names kept as the target-language community writes them), likely OCR or
+recognition errors, translation rules and the source URLs. The brief is capped at
+4,500 characters, replaces the field (the agent keeps the notes that were there where
+they still apply), is saved with the draft and project, and stays editable. Read it
+before translating; translation then uses it like any brief.
+
+This sends the transcript and frames to the agent's cloud model, so it runs only when
+you click the button, which says so beside it; it never runs on its own. **Stop
+research** ends the agent process. Translation and generation stay locked while it
+runs, since one agent run holds the slot at a time. Each agent gets only what research needs, and
+never a shell or file writes:
+
+| Agent | Frames | Web | Everything else |
+| --- | --- | --- | --- |
+| Gemini · Antigravity (`agy`) | reads them from the run's own folder (`read_file(<folder>/**)`) | web search and `read_url(*)` | request review with nobody to approve: commands, writes, reads elsewhere, URL actions, downloads and MCP are refused (checked with agy 1.5.10) |
+| Codex | attached with `--image` | `-c web_search="live"` | read-only sandbox, shell tool off (checked with codex-cli 0.169) |
+| Claude Code | `Read`, confined to the run's folder by `--restricted` | `WebSearch`, `WebFetch` | `--permission-mode dontAsk` refuses every other tool (flags from `claude --help`; not run live) |
+| OpenCode | attached with `--file` | `webfetch`, `websearch` | every other permission denied (not run live) |
+| Pi | none: researches from the transcript and title | none | no tools |
+
+The transcript is treated as untrusted data: the prompt tells the agent never to
+follow instructions in it or open a URL it asks for. The run's temporary folder,
+frames included, is deleted when the agent exits (`electron/src/main/repair-agents.ts`,
+`researchDubVideo` in `features/dub/dub-session.ts`).
+
 ### Translation activity footer
 
 Translation and timing rewrites use the same footer area as Repair Agent. It opens

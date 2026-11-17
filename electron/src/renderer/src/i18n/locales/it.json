@@ -3007,6 +3007,15 @@
     "label": "Istruzioni sullo stile di traduzione",
     "help": "Descrivi tono, pubblico e adattamento, ad esempio mantenere le battute e adattare gli idiomi in modo naturale. Salvate nel progetto e usate per traduzione e riscritture temporali. Lascia vuoto per lo stile predefinito."
   },
+  "dubResearch": {
+    "button": "Studia il video con {{agent}}",
+    "stop": "Interrompi studio",
+    "running": "Studio in corso: lettura della trascrizione e dei fotogrammi, ricerca sul web…",
+    "consent": "Invia la trascrizione, il nome del file e {{frames}} fotogrammi del video al modello cloud di {{agent}}, che può anche cercare e aprire pagine web. Il brief che scrive sostituisce il testo sopra (le tue note restano dove sono ancora valide); controllalo prima di tradurre.",
+    "consent_audio": "Invia la trascrizione e il nome del file al modello cloud di {{agent}}, che può anche cercare e aprire pagine web. Il brief che scrive sostituisce il testo sopra (le tue note restano dove sono ancora valide); controllalo prima di tradurre.",
+    "done": "Brief di studio pronto. Controllalo prima di tradurre.",
+    "failed": "Studio non riuscito: {{error}}"
+  },
   "dubActivity": {
     "output": "Traduzioni",
     "waiting": "Nessun risultato ricevuto finora.",

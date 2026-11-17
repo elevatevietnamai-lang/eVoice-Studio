@@ -45,6 +45,7 @@ const bridge: VoiceStudioBridge = {
     start: (request) => ipcRenderer.invoke('repair:start', request),
     stop: () => ipcRenderer.invoke('repair:stop'),
     translate: (request) => ipcRenderer.invoke('repair:translate', request),
+    research: (request) => ipcRenderer.invoke('repair:research', request),
     stopTranslation: () => ipcRenderer.invoke('repair:stopTranslation'),
     onTranslationEvent: (callback) => subscribe('repair:translationEvent', callback),
     onEvent: (callback) => subscribe<RepairAgentEvent>('repair:event', callback),

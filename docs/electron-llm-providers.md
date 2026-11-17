@@ -76,6 +76,12 @@ are the rules for page actions and reads, and `mcp(*)` covers the `/browser` sub
 DevTools tools. Web search, which goes to the same Google account the model runs on,
 has no permission kind and stays available.
 
+**Research the video** in Dubbing is the one Antigravity run with more than text: it
+may search the web, read pages (`read_url(*)`) and read files only inside the run's
+own temporary folder, which holds the video frames; commands, writes, other reads,
+URL actions, downloads and MCP stay denied. See
+[Research the video first](electron-dubbing.md#research-the-video-first).
+
 ### Gemini in Ask VoiceStudio Agent
 
 Gemini is also a harness in **Ask VoiceStudio Agent**: app operation in Plan and
