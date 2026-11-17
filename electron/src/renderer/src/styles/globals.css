@@ -390,7 +390,9 @@ details > summary .lucide-chevron-right {
    hover fill and the selected row keep one pseudo-class or attribute more, so they still win over
    the Button variant's own fills. */
 @layer utilities {
-  :where(.secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *)[data-slot='button'] {
+  :where(
+    .secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *
+  )[data-slot='button'] {
     min-height: 2.375rem;
     border: 1px solid transparent;
     border-radius: var(--control-radius);
@@ -400,11 +402,15 @@ details > summary .lucide-chevron-right {
     font-weight: 500;
     transition-property: color, background-color, border-color, box-shadow;
   }
-  :where(.secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *)[data-slot='button']:hover {
+  :where(
+      .secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *
+    )[data-slot='button']:hover {
     border-color: color-mix(in srgb, var(--border) 62%, transparent);
     background: color-mix(in srgb, var(--accent) 70%, transparent);
   }
-  :where(.secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *)[data-slot='button'][aria-pressed='true'] {
+  :where(
+      .secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *
+    )[data-slot='button'][aria-pressed='true'] {
     border-color: transparent;
     background: var(--sidebar-row-selected);
     color: var(--foreground);

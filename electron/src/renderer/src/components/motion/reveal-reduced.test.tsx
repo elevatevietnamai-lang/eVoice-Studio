@@ -24,16 +24,13 @@ afterEach(cleanup);
  * content around it for people who asked for no movement (DESIGN.md: reduced motion drops height).
  */
 it('fades a revealed block in without a height change under reduced motion', () => {
-  const view = render(
+  const view = (saved: boolean) => (
     <MotionProvider>
-      <Reveal>{false && <p>Saved</p>}</Reveal>
-    </MotionProvider>,
+      <Reveal>{saved && <p>Saved</p>}</Reveal>
+    </MotionProvider>
   );
-  view.rerender(
-    <MotionProvider>
-      <Reveal>{true && <p>Saved</p>}</Reveal>
-    </MotionProvider>,
-  );
+  const { rerender } = render(view(false));
+  rerender(view(true));
   const block = screen.getByText('Saved').parentElement!;
   expect(block.style.opacity).toBe('0');
   expect(block.style.height).toBe('');
