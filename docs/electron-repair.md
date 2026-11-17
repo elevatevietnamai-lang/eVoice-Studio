@@ -1,7 +1,7 @@
 # Ask VoiceStudio Agent
 
 The Electron launcher opens a resizable chat workspace inside the app. Select an installed
-Codex, Claude Code, OpenCode or Pi harness, then describe a task. Feature chips supply focused
+Codex, Claude Code, OpenCode, Gemini (Antigravity) or Pi harness, then describe a task. Feature chips supply focused
 instructions for setup, repairs, voice cloning, voice design, dubbing, transcription, stories,
 audiobooks, workflows and audio tools. Starter cards prefill a request without executing it.
 Use **Send** (Enter) to run it; Shift+Enter adds a line.
@@ -62,6 +62,12 @@ Code and OpenCode receive a generated per-run MCP configuration whose default pe
 their checkout-free sessions can call only VoiceStudio's scoped API tool and cannot invoke shell or
 filesystem tools. The MCP process reads the capability from the protected connection file, so the
 token never appears in agent arguments, configuration or output.
+Gemini (Antigravity) runs as a per-run custom agent with every built-in tool removed, none of the
+user's MCP servers, skills or rules, and the same scoped API tool as its only MCP server; any other
+action is refused because a headless run cannot be approved, and the dock reports which action
+stopped the turn. With a source checkout it may only read the checkout (Plan): Electron main rejects
+source Fix for Gemini because Antigravity cannot confine writes to the checkout. See
+[Gemini in Ask VoiceStudio Agent](electron-llm-providers.md#gemini-in-ask-voicestudio-agent).
 
 Explicit source diagnosis and code repair require a writable VoiceStudio source checkout and must follow its
 `AGENTS.md`, `CLAUDE.md`, `CONTEXT.md`, and installed skills. Source builds select the current

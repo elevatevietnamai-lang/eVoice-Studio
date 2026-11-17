@@ -511,6 +511,43 @@ function persistWorkspace(path: string): void {
   );
 }
 
+const AGY_REFUSED_ACTIONS: Record<string, string> = {
+  read_file: 'a file read outside the allowed folder',
+  write_file: 'a file change',
+  command: 'a shell command',
+  unsandboxed: 'a shell command',
+  mcp: 'a tool other than the VoiceStudio API',
+  read_url: 'a web request',
+  execute_url: 'a web request',
+};
+
+/** Plain names of the actions a headless Antigravity turn was refused (a refusal ends the turn). */
+function agyRefusedActions(result: Record<string, unknown> | undefined): string[] {
+  const denied = Array.isArray(result?.denied_actions) ? result.denied_actions : [];
+  const names = denied.map((item: unknown) => {
+    const action = (item as { action?: unknown } | null)?.action;
+    return (typeof action === 'string' && AGY_REFUSED_ACTIONS[action]) || 'an action';
+  });
+  return [...new Set(names)];
+}
+
+/** A refused turn with no answer is a failed run, although Antigravity exits 0. */
+export function agyRunRefused(line: string): boolean {
+  try {
+    const event = JSON.parse(line) as { event?: unknown; result?: Record<string, unknown> };
+    if (event.event !== 'result' || !event.result) return false;
+    const response = typeof event.result.response === 'string' ? event.result.response : '';
+    return agyRefusedActions(event.result).length > 0 && !response.trim();
+  } catch {
+    return false;
+  }
+}
+
+/** Antigravity's own headless hint suggests skipping permissions; the app explains instead. */
+export function stripAgyHints(text: string): string {
+  return text.replace(/^jetski:[^\n]*(?:\n|$)/gm, '');
+}
+
 /** Antigravity streams `step_update` events: reply text in deltas, then tool steps. */
 function readableAgyEvent(event: Record<string, unknown>): string | null {
   if (event.event === 'step_update') {
@@ -527,11 +564,14 @@ function readableAgyEvent(event: Record<string, unknown>): string | null {
     return '';
   }
   if (event.event === 'result') {
-    // The reply already arrived as deltas; only a failed turn adds text.
+    // The reply already arrived as deltas; only a failed or refused turn adds text.
     const result = event.result as Record<string, unknown> | undefined;
-    return result?.status === 'ERROR' && typeof result.error === 'string'
-      ? `\n${result.error}\n`
-      : '\n';
+    const refused = agyRefusedActions(result);
+    const error =
+      result?.status === 'ERROR' && typeof result.error === 'string' ? `\n${result.error}\n` : '';
+    return refused.length
+      ? `${error}\nGemini stopped: it tried ${refused.join(' and ')}, which this session does not allow.\n`
+      : error || '\n';
   }
   if (event.event === 'init') return '';
   return null;
@@ -577,17 +617,21 @@ export function readableJsonEvent(line: string): string {
   return '';
 }
 
-function jsonStream(append: (text: string) => void) {
+function jsonStream(append: (text: string) => void, observe: (line: string) => void = () => {}) {
   let pending = '';
+  const take = (line: string) => {
+    observe(line);
+    append(readableJsonEvent(line));
+  };
   return {
     write(value: Buffer) {
       pending += value.toString('utf8');
       const lines = pending.split(/\r?\n/);
       pending = lines.pop() ?? '';
-      for (const line of lines) append(readableJsonEvent(line));
+      for (const line of lines) take(line);
     },
     flush() {
-      if (pending) append(readableJsonEvent(pending));
+      if (pending) take(pending);
       pending = '';
     },
   };
@@ -1144,11 +1188,20 @@ export async function registerRepairAgents(
         stdio: ['pipe', 'pipe', 'pipe'],
       });
       guardAgentProcessStreams(child, (error) => append(`\n${error.message}\n`));
-      const stdout = request.agent === 'codex' ? null : jsonStream(append);
+      let refused = false;
+      const stdout =
+        request.agent === 'codex'
+          ? null
+          : jsonStream(append, (line) => {
+              if (request.agent === 'agy' && agyRunRefused(line)) refused = true;
+            });
       child.stdout.on('data', (value: Buffer) =>
         stdout ? stdout.write(value) : append(value.toString('utf8')),
       );
-      child.stderr.on('data', (value: Buffer) => append(value.toString('utf8')));
+      child.stderr.on('data', (value: Buffer) => {
+        const text = value.toString('utf8');
+        append(request.agent === 'agy' ? stripAgyHints(text) : text);
+      });
       child.on('error', (error) => append(`\n${error.message}\n`));
       child.on('close', (code) => {
         stdout?.flush();
@@ -1159,7 +1212,7 @@ export async function registerRepairAgents(
         const status =
           state.sessionId === sessionId && state.status === 'stopped'
             ? 'stopped'
-            : code === 0
+            : code === 0 && !refused
               ? 'complete'
               : 'failed';
         state = { ...state, status, exitCode: code };

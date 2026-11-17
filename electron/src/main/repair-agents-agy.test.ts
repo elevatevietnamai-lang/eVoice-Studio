@@ -9,7 +9,9 @@ import {
   agyRepairAgentFile,
   agyRepairArgs,
   agyRepairSettings,
+  agyRunRefused,
   assertRepairAgentRun,
+  stripAgyHints,
   readableJsonEvent,
   requestPrompt,
   translationLaunchArgs,
@@ -227,6 +229,31 @@ describe('Antigravity repair and app-operation runs', () => {
     expect(
       readableJsonEvent('{"event":"result","result":{"status":"ERROR","error":"quota exhausted"}}'),
     ).toBe('\nquota exhausted\n');
+  });
+
+  it('explains a refused turn instead of suggesting skipped permissions, and fails it', () => {
+    // Verbatim shape of a headless turn that tried a read outside the workspace.
+    const refused =
+      '{"event":"result","result":{"status":"SUCCESS","response":"","denied_actions":[{"action":"read_file","display_name":"ReadFile"},{"action":"mcp","display_name":"McpTool"}]}}';
+    expect(readableJsonEvent(refused)).toBe(
+      '\nGemini stopped: it tried a file read outside the allowed folder and a tool other than the VoiceStudio API, which this session does not allow.\n',
+    );
+    expect(agyRunRefused(refused)).toBe(true);
+    // An answer that survived a refused side step is a completed run.
+    expect(
+      agyRunRefused(
+        '{"event":"result","result":{"status":"SUCCESS","response":"Engine ready","denied_actions":[{"action":"command"}]}}',
+      ),
+    ).toBe(false);
+    expect(agyRunRefused('{"event":"result","result":{"status":"SUCCESS","response":""}}')).toBe(
+      false,
+    );
+    expect(agyRunRefused('not json')).toBe(false);
+    expect(
+      stripAgyHints(
+        'jetski: no output produced — re-run with --dangerously-skip-permissions to auto-approve all tools.\nreal error\n',
+      ),
+    ).toBe('real error\n');
   });
 
   it('leaves the text-only translation lockdown unchanged', () => {
