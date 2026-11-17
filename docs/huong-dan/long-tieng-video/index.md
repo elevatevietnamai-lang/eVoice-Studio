@@ -88,6 +88,8 @@ Thiết lập phần âm thanh nền và xử lý chữ in trên hình ở cột
 - Nếu video gốc có phụ đề in cứng trên hình, bạn dùng bảng công cụ phụ đề trên hình ở cột trái để khoanh vùng chứa chữ trên khung hình, đọc nội dung phụ đề theo khung hình hoặc xóa chữ cũ khỏi mặt hình trước khi xuất.
 - Nếu muốn gắn phụ đề mới vào tệp kết quả, hãy bật **In phụ đề vào video** (in cứng phụ đề lên hình) hoặc bật thêm **Phụ đề kép** để hiển thị bản dịch ở dòng trên và văn bản gốc in nghiêng ở dòng dưới.
 
+Nếu bạn chỉ cần dịch phụ đề in cứng mà không lồng tiếng: đọc phụ đề trên hình, xóa chữ cũ, dịch (hoặc **Dán bản dịch**), rồi trong **Tùy chọn xuất** chọn định dạng **Video + phụ đề** và bấm **Xuất**. Video giữ nguyên âm thanh gốc, phụ đề đã dịch được in vào đúng chỗ phụ đề gốc đã xóa; không cần bấm **Tạo lồng tiếng**. Bật **Song ngữ (bản dịch + bản gốc)** nếu muốn giữ cả dòng gốc.
+
 ### 8. Tạo lồng tiếng và xuất file
 
 Bấm **Tạo lồng tiếng** ở góc dưới bên phải để bắt đầu tổng hợp âm thanh cho tất cả đoạn thoại. Sau khi tạo xong:

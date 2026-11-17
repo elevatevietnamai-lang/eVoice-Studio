@@ -2022,6 +2022,8 @@
     "languages": "Języki",
     "current_target": "Aktualny cel ({{code}})",
     "all_selected_dubs": "Wszystkie wybrane duby ({{count}})",
+    "subtitled_video": "Wideo + napisy",
+    "subtitled_note": "Zachowuje oryginalny dźwięk i wypala przetłumaczone napisy w wideo — bez dubbingu. Wiersze pojawiają się tam, gdzie były usunięte napisy.",
     "subs_note": "Napisy są generowane na podstawie tekstu segmentu w niezmienionej postaci — edytuj tabelę segmentów przed eksportem, jeśli zauważysz literówki.",
     "retime_note": "Przetaktowanie wideo per segment wymaga ponownego kodowania całego wideo przy eksporcie — spodziewaj się około 0,5–2× długości wideo na CPU.",
     "pkg_clips_title": "Klipy segmentowe (.zip)",

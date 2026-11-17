@@ -2020,6 +2020,8 @@
     "languages": "Lingue",
     "current_target": "Obiettivo attuale ({{code}})",
     "all_selected_dubs": "Tutti i doppiaggi selezionati ({{count}})",
+    "subtitled_video": "Video + sottotitoli",
+    "subtitled_note": "Mantiene l’audio originale e imprime i sottotitoli tradotti nel video, senza doppiaggio. Le righe compaiono dove c’erano i sottotitoli rimossi.",
     "subs_note": "I sottotitoli vengono generati dal testo del segmento così com'è: modifica la tabella dei segmenti prima dell'esportazione se hai individuato errori di battitura.",
     "retime_note": "Il ritiming video per segmento ricodifica l'intero video durante l'esportazione: prevedi circa 0,5–2× la durata del video su CPU.",
     "pkg_clips_title": "Clip per segmento (.zip)",

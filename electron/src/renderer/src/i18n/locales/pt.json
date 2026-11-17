@@ -2020,6 +2020,8 @@
     "languages": "Idiomas",
     "current_target": "Alvo atual ({{code}})",
     "all_selected_dubs": "Todas as dublagens selecionadas ({{count}})",
+    "subtitled_video": "Vídeo + legendas",
+    "subtitled_note": "Mantém o áudio original e grava as legendas traduzidas no vídeo, sem dublagem. As linhas ficam onde estavam as legendas removidas.",
     "subs_note": "As legendas são geradas a partir do texto do segmento como está – edite a tabela de segmentos antes de exportar se você encontrar erros de digitação.",
     "retime_note": "O reajuste de tempo por segmento recodifica o vídeo inteiro na exportação — espere cerca de 0,5–2× a duração do vídeo na CPU.",
     "pkg_clips_title": "Clipes por segmento (.zip)",

@@ -2020,6 +2020,8 @@
     "languages": "Idiomas",
     "current_target": "Objetivo actual ({{code}})",
     "all_selected_dubs": "Todos los doblajes seleccionados ({{count}})",
+    "subtitled_video": "Vídeo + subtítulos",
+    "subtitled_note": "Conserva el audio original y graba los subtítulos traducidos en el vídeo, sin doblaje. Las líneas aparecen donde estaban los subtítulos eliminados.",
     "subs_note": "Los subtítulos se generan a partir del texto del segmento tal como está: edite la tabla de segmentos antes de exportar si detecta errores tipográficos.",
     "retime_note": "El reajuste de tiempo por segmento recodifica todo el vídeo al exportar: espera que tarde aproximadamente 0,5–2× la duración del vídeo en CPU.",
     "pkg_clips_title": "Clips por segmento (.zip)",

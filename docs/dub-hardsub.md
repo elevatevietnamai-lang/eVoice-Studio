@@ -31,6 +31,9 @@ burned into the picture. Dub can read them and remove them:
    frame, then LaMa (AI) or a fast classical fill for what was never visible.
    The clean video becomes the job's video for preview, burned-in subtitle
    export and every video export. **Use original video** switches back.
+   To put translated subtitles back without dubbing, translate the lines and
+   export **Video + subtitles** (original audio, translations burned where the
+   removed lines were; see [Exporting dubbed video](dubbing/export.md)).
 
    Rebuild modes:
 

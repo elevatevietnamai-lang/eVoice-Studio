@@ -2018,6 +2018,8 @@
     "languages": "Språk",
     "current_target": "Nuvarande mål ({{code}})",
     "all_selected_dubs": "Alla valda dubbar ({{count}})",
+    "subtitled_video": "Video + undertexter",
+    "subtitled_note": "Behåller originalljudet och bränner in de översatta undertexterna i videon — ingen dubbning behövs. Raderna hamnar där de borttagna undertexterna fanns.",
     "subs_note": "Undertexter genereras från segmenttexten i befintligt skick – redigera segmenttabellen innan du exporterar om du upptäckt stavfel.",
     "retime_note": "Omtajming av video per segment kodar om hela videon vid export — räkna med ungefär 0,5–2× videons längd på CPU.",
     "pkg_clips_title": "Klipp per segment (.zip)",

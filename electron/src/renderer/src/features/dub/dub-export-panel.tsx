@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { getBridge } from '@/components/bridge';
 import { PipelineFailure } from '@/components/pipeline-failure';
-import { apiPath, describeError, errorFromResponse } from '@/lib/api/client';
+import { apiJson, apiPath, describeError, errorFromResponse } from '@/lib/api/client';
+import { languageCode } from '@/lib/language-options';
 import { saveExport } from '@/lib/export-history';
 import {
   dubExportRequest,
   KARAOKE_STYLES,
+  subtitleCues,
+  subtitleLanguages,
   type DubExportFormat,
   type KaraokeStyle,
 } from './dub-export';
@@ -45,19 +48,30 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
   const pending = useRef(false);
   const tracks = ['original', ...session.tracks];
   const selected = tracks.filter((code) => !excluded.includes(code));
-  const choices = format === 'mp4' ? selected : session.tracks;
+  const currentCode = languageCode(session.target || '');
+  const subtitled = format === 'subtitled';
+  const choices =
+    format === 'mp4'
+      ? selected
+      : subtitled
+        ? subtitleLanguages(session.segments, currentCode)
+        : session.tracks;
   const track = choices.includes(trackChoice)
     ? trackChoice
-    : choices.find((code) => code !== 'original') || choices[0] || '';
+    : (subtitled && choices.includes(currentCode) && currentCode) ||
+      choices.find((code) => code !== 'original') ||
+      choices[0] ||
+      '';
   const burnAllowed = session.generatedTiming !== 'stretch_video';
   const locked = disabled || saving;
   const subtitles = ['srt', 'vtt', 'ass'].includes(format);
   const ready =
     !!session.jobId &&
     !!track &&
-    (subtitles ? session.segments.length > 0 : session.tracks.length > 0);
+    (subtitled || subtitles ? session.segments.length > 0 : session.tracks.length > 0);
   const labels: Record<DubExportFormat, string> = {
     mp4: t('exportModal.mp4_h264'),
+    subtitled: t('exportModal.subtitled_video'),
     wav: t('exportModal.wav_lossless'),
     mp3: t('exportModal.mp3_compressed'),
     srt: 'SRT',
@@ -84,6 +98,16 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
         karaokeStyle,
         bitrate,
       });
+      if (subtitled)
+        // The translations live in the editor; the backend burns these lines.
+        await apiJson(`/dub/subtitle-cues/${encodeURIComponent(session.jobId!)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lang: track,
+            cues: subtitleCues(session.segments, track, currentCode),
+          }),
+        });
       const url = apiPath(request.path);
       const bridge = getBridge();
       if (bridge) await saveExport(url, request.name);
@@ -131,7 +155,10 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
         <legend className="mb-2 text-xs text-muted-foreground">{t('exportModal.format')}</legend>
         <div className="flex flex-wrap gap-1">
           {(Object.keys(labels) as DubExportFormat[])
-            .filter((value) => value !== 'mp4' || session.inputType === 'video')
+            .filter(
+              (value) =>
+                (value !== 'mp4' && value !== 'subtitled') || session.inputType === 'video',
+            )
             .map((value) => (
               <Button
                 key={value}
@@ -197,7 +224,8 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
         )}
         {format === 'mp4' &&
           toggle(t('exportModal.hardsub'), burn && burnAllowed, setBurn, !burnAllowed)}
-        {(['srt', 'vtt'].includes(format) || (format === 'mp4' && burn && burnAllowed)) &&
+        {(['srt', 'vtt', 'subtitled'].includes(format) ||
+          (format === 'mp4' && burn && burnAllowed)) &&
           toggle(t('exportModal.dual_subs'), dual, setDual)}
         {format === 'mp4' && burn && burnAllowed && (
           <>
@@ -226,6 +254,9 @@ export function DubExportPanel({ session, disabled }: { session: DubSession; dis
           </div>
         )}
         {subtitles && <p className="text-xs text-muted-foreground">{t('exportModal.subs_note')}</p>}
+        {subtitled && (
+          <p className="text-xs text-muted-foreground">{t('exportModal.subtitled_note')}</p>
+        )}
         {format === 'mp4' && !burnAllowed && (
           <p className="text-xs text-muted-foreground">{t('exportModal.stretch_subs_note')}</p>
         )}
