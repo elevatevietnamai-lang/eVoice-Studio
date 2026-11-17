@@ -3007,6 +3007,15 @@
     "label": "Instruções de estilo de tradução",
     "help": "Descreva o tom, o público e a adaptação, como preservar piadas e adaptar expressões naturalmente. Salvas no projeto para tradução e ajustes de duração. Deixe em branco para usar o estilo padrão."
   },
+  "dubResearch": {
+    "button": "Pesquisar o vídeo com {{agent}}",
+    "stop": "Parar pesquisa",
+    "running": "Pesquisando: lendo a transcrição e os quadros, buscando na web…",
+    "consent": "Envia a transcrição, o nome do arquivo e {{frames}} quadros do vídeo para o modelo em nuvem de {{agent}}, que também pode pesquisar e abrir páginas da web. O resumo que ele escrever substitui o texto acima (suas notas são mantidas onde ainda se aplicam); revise-o antes de traduzir.",
+    "consent_audio": "Envia a transcrição e o nome do arquivo para o modelo em nuvem de {{agent}}, que também pode pesquisar e abrir páginas da web. O resumo que ele escrever substitui o texto acima (suas notas são mantidas onde ainda se aplicam); revise-o antes de traduzir.",
+    "done": "Resumo da pesquisa pronto. Revise-o antes de traduzir.",
+    "failed": "A pesquisa falhou: {{error}}"
+  },
   "dubActivity": {
     "output": "Traduções",
     "waiting": "Nenhum resultado recebido ainda.",

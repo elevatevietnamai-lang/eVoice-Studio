@@ -3005,6 +3005,15 @@
     "label": "Vorgabe für den Übersetzungsstil",
     "help": "Beschreibe Ton, Zielgruppe und Anpassung, etwa Witze erhalten und Redewendungen natürlich übertragen. Wird im Projekt gespeichert und für Übersetzung und Zeitanpassung verwendet. Leer lassen für den Standardstil."
   },
+  "dubResearch": {
+    "button": "Video mit {{agent}} recherchieren",
+    "stop": "Recherche stoppen",
+    "running": "Recherche läuft: Transkript und Bilder lesen, im Web suchen…",
+    "consent": "Sendet das Transkript, den Dateinamen und {{frames}} Bilder aus dem Video an das Cloud-Modell von {{agent}}, das auch im Web suchen und Seiten öffnen kann. Das Briefing ersetzt den Text oben (deine Notizen bleiben erhalten, soweit sie noch passen); prüfe es vor dem Übersetzen.",
+    "consent_audio": "Sendet das Transkript und den Dateinamen an das Cloud-Modell von {{agent}}, das auch im Web suchen und Seiten öffnen kann. Das Briefing ersetzt den Text oben (deine Notizen bleiben erhalten, soweit sie noch passen); prüfe es vor dem Übersetzen.",
+    "done": "Recherche-Briefing fertig. Prüfe es vor dem Übersetzen.",
+    "failed": "Recherche fehlgeschlagen: {{error}}"
+  },
   "dubActivity": {
     "output": "Übersetzungen",
     "waiting": "Noch keine Ausgabe empfangen.",

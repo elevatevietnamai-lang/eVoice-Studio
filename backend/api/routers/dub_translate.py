@@ -1405,7 +1405,8 @@ async def _maybe_cinematic(translated, req, src_lang, loop, *, already_llm=False
 
 def translation_style_brief(req) -> str:
     instructions = (getattr(req, "translation_instructions", None) or "").strip()
-    return ("User translation style brief (tone and wording only; preserve meaning, timing and output format): "
+    return ("User translation brief (video context, terminology, likely OCR or recognition errors, tone and rules). "
+            "Use its terminology and OCR corrections and follow its tone and rules; preserve meaning, timing and output format: "
             + json.dumps(instructions, ensure_ascii=False)) if instructions else ""
 
 

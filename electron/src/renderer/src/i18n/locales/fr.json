@@ -3007,6 +3007,15 @@
     "label": "Consignes de style de traduction",
     "help": "Décrivez le ton, le public et l’adaptation, par exemple préserver les blagues et adapter naturellement les expressions. Enregistré dans le projet et utilisé pour la traduction et les ajustements de durée. Laissez vide pour le style par défaut."
   },
+  "dubResearch": {
+    "button": "Étudier la vidéo avec {{agent}}",
+    "stop": "Arrêter l'étude",
+    "running": "Étude en cours : lecture de la transcription et des images, recherche sur le web…",
+    "consent": "Envoie la transcription, le nom du fichier et {{frames}} images de la vidéo au modèle cloud de {{agent}}, qui peut aussi chercher et ouvrir des pages web. La note qu'il rédige remplace le texte ci-dessus (vos notes sont conservées si elles s'appliquent encore) ; relisez-la avant de traduire.",
+    "consent_audio": "Envoie la transcription et le nom du fichier au modèle cloud de {{agent}}, qui peut aussi chercher et ouvrir des pages web. La note qu'il rédige remplace le texte ci-dessus (vos notes sont conservées si elles s'appliquent encore) ; relisez-la avant de traduire.",
+    "done": "Note d'étude prête. Relisez-la avant de traduire.",
+    "failed": "L'étude a échoué : {{error}}"
+  },
   "dubActivity": {
     "output": "Traductions",
     "waiting": "Aucune sortie reçue pour le moment.",

@@ -10,10 +10,16 @@ metadata and the backend fallback mirror it.
 
 **Highlights**
 
+- Dubbing can research the video before translating: your agent writes an editable brief that translation follows
 - The user guides send readers to the download page instead of the code repository
+
+### Added
+
+- **Research the video** beside the translation brief: the chosen agent reads the transcript, five frames and the web, then writes the topic, tone, terminology, likely OCR errors and rules into the brief, only when you click it (#81)
 
 ### Changed
 
+- Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#81)
 - The rail gives the logo room at the top and lists its icons straight under it instead of centring them in the window's height (#82)
 - The "Something went wrong" recovery page uses the near-black eVoice look and the real eVoice mark instead of the old magenta styling (#83)
 - The window opens on the app's own near-black canvas, and messages that called the app "VoiceStudio" now say eVoice Studio (#83)

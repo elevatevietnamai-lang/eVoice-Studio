@@ -3009,6 +3009,15 @@
     "label": "Instrukcje stylu tłumaczenia",
     "help": "Opisz ton, odbiorców i sposób adaptacji, np. zachowanie żartów i naturalne tłumaczenie idiomów. Zapisywane w projekcie i stosowane przy tłumaczeniu oraz dopasowaniu czasu. Pozostaw puste dla stylu domyślnego."
   },
+  "dubResearch": {
+    "button": "Zbadaj wideo za pomocą {{agent}}",
+    "stop": "Zatrzymaj badanie",
+    "running": "Trwa badanie: czytanie transkrypcji i klatek, wyszukiwanie w sieci…",
+    "consent": "Wysyła transkrypcję, nazwę pliku i {{frames}} klatek z wideo do modelu w chmurze {{agent}}, który może też wyszukiwać i otwierać strony internetowe. Napisany przez niego brief zastępuje tekst powyżej (twoje notatki zostają, jeśli nadal pasują); sprawdź go przed tłumaczeniem.",
+    "consent_audio": "Wysyła transkrypcję i nazwę pliku do modelu w chmurze {{agent}}, który może też wyszukiwać i otwierać strony internetowe. Napisany przez niego brief zastępuje tekst powyżej (twoje notatki zostają, jeśli nadal pasują); sprawdź go przed tłumaczeniem.",
+    "done": "Brief z badania gotowy. Sprawdź go przed tłumaczeniem.",
+    "failed": "Badanie nie powiodło się: {{error}}"
+  },
   "dubActivity": {
     "output": "Tłumaczenia",
     "waiting": "Nie otrzymano jeszcze żadnych wyników.",

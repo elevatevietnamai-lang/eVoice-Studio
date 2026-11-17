@@ -483,6 +483,8 @@ async def test_custom_style_reaches_direct_translation(monkeypatch):
     direct = [c for c in client.calls if _is_direct_call(client, c)]
     assert direct
     assert all("Keep it warm and conversational; preserve jokes." in client.system_of(c) for c in direct)
+    # A researched brief carries terminology and OCR fixes, not only tone (#research brief).
+    assert all("Use its terminology and OCR corrections" in client.system_of(c) for c in direct)
 
 
 @pytest.mark.asyncio

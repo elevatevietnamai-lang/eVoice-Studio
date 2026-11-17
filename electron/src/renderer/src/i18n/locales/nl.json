@@ -3005,6 +3005,15 @@
     "label": "Instructies voor vertaalstijl",
     "help": "Beschrijf toon, doelgroep en aanpassing, zoals grappen behouden en uitdrukkingen natuurlijk vertalen. Opgeslagen in dit project voor vertaling en herschrijven op tijdsduur. Laat leeg voor de standaardstijl."
   },
+  "dubResearch": {
+    "button": "Video onderzoeken met {{agent}}",
+    "stop": "Onderzoek stoppen",
+    "running": "Bezig met onderzoek: transcript en beelden lezen, op het web zoeken…",
+    "consent": "Stuurt het transcript, de bestandsnaam en {{frames}} beelden uit de video naar het cloudmodel van {{agent}}, dat ook op het web kan zoeken en pagina's kan openen. De briefing vervangt de tekst hierboven (je notities blijven waar ze nog gelden); controleer hem voor het vertalen.",
+    "consent_audio": "Stuurt het transcript en de bestandsnaam naar het cloudmodel van {{agent}}, dat ook op het web kan zoeken en pagina's kan openen. De briefing vervangt de tekst hierboven (je notities blijven waar ze nog gelden); controleer hem voor het vertalen.",
+    "done": "Onderzoeksbriefing klaar. Controleer hem voor het vertalen.",
+    "failed": "Onderzoek mislukt: {{error}}"
+  },
   "dubActivity": {
     "output": "Vertalingen",
     "waiting": "Nog geen uitvoer ontvangen.",

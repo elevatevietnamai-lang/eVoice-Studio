@@ -3005,6 +3005,15 @@
     "label": "Instruktioner för översättningsstil",
     "help": "Beskriv ton, målgrupp och anpassning, till exempel bevara skämt och översätta idiom naturligt. Sparas i projektet för översättning och tidsanpassning. Lämna tomt för standardstilen."
   },
+  "dubResearch": {
+    "button": "Undersök videon med {{agent}}",
+    "stop": "Stoppa undersökningen",
+    "running": "Undersöker: läser transkriptet och bildrutorna, söker på webben…",
+    "consent": "Skickar transkriptet, filnamnet och {{frames}} bildrutor från videon till {{agent}}s molnmodell, som även kan söka och öppna webbsidor. Underlaget den skriver ersätter texten ovan (dina anteckningar behålls där de fortfarande gäller); granska det innan du översätter.",
+    "consent_audio": "Skickar transkriptet och filnamnet till {{agent}}s molnmodell, som även kan söka och öppna webbsidor. Underlaget den skriver ersätter texten ovan (dina anteckningar behålls där de fortfarande gäller); granska det innan du översätter.",
+    "done": "Underlaget är klart. Granska det innan du översätter.",
+    "failed": "Undersökningen misslyckades: {{error}}"
+  },
   "dubActivity": {
     "output": "Översättningar",
     "waiting": "Ingen utdata har tagits emot ännu.",
