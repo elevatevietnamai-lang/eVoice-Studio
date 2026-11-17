@@ -11,7 +11,10 @@ import { Input } from '@/components/ui/input';
 import SearchableSelect from '@shared/components/SearchableSelect';
 import { ExternalLink } from '@/components/external-link';
 import { SettingsRowsSkeleton, SettingsSection, SettingsRow } from './settings-layout';
+import { GeminiAccount } from './gemini-account';
 const endpoint = '/api/settings/llm-providers';
+/** Gemini through the user's Google account (Antigravity CLI, agent `agy`). */
+export const GEMINI_PROVIDER_ID = 'agy-cli';
 export interface Provider {
   configured: boolean;
   id: string;
@@ -325,6 +328,13 @@ function ProviderForm({ provider, active }: { provider: Provider; active: boolea
     <div className="divide-y divide-border/50">
       {provider.transport === 'cli' && (
         <p className="px-4 py-3 text-sm text-muted-foreground">{t('settings.llmp_cli_help')}</p>
+      )}
+      {provider.id === GEMINI_PROVIDER_ID && (
+        <GeminiAccount
+          model={fields.model}
+          disabled={busy || provider.model_from_env}
+          onPickModel={(model) => change('model', model)}
+        />
       )}
       {provider.transport === 'sdk' && (
         <p className="px-4 py-3 text-sm text-muted-foreground">{t('settings.llmp_sdk_help')}</p>

@@ -429,6 +429,11 @@ hard rules from the first prompt.
     the user (`electron/src/main/updater.ts`).
   - **yt-dlp updates** from PyPI, only when the user clicks update
     (`backend/services/media_tools.py`).
+  - **Gemini sign-in check through the user's Antigravity CLI**, only when the
+    user opens the Gemini provider in Settings → LLM providers, clicks Check
+    again or Sign in with Google: `agy models` and `agy acp --login` reach the
+    Google account signed in to that CLI, and the sign-in page opens in the
+    user's browser (`electron/src/main/gemini-account.ts`).
   - **Chrome Headless Shell for animated promo titles**, only after the user
     turns them on in the desktop app's Promo video page and confirms the size
     shown: one pinned build from Google's Chrome for Testing storage

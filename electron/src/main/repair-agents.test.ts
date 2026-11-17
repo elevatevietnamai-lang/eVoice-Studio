@@ -347,3 +347,23 @@ describe('Antigravity translation agent', () => {
     ).toBeNull();
   });
 });
+
+describe('Gemini model on agent translation', () => {
+  const request = {
+    agent: 'agy' as const,
+    purpose: 'translate' as const,
+    targetLanguage: 'Vietnamese',
+    segments: [{ id: '1', sourceText: 'Hello', start: 0, end: 1 }],
+  };
+
+  it('accepts a Gemini model id or none', () => {
+    expect(() => dubTranslationPrompt({ ...request, model: 'gemini-3.8-flash-low' })).not.toThrow();
+    expect(() => dubTranslationPrompt({ ...request, model: '' })).not.toThrow();
+    expect(() => dubTranslationPrompt(request)).not.toThrow();
+  });
+
+  it('refuses a model that could become a CLI flag', () => {
+    for (const model of ['--dangerously-skip-permissions', '-p', 'a b', 'x'.repeat(201)])
+      expect(() => dubTranslationPrompt({ ...request, model })).toThrow(/Invalid agent model/);
+  });
+});

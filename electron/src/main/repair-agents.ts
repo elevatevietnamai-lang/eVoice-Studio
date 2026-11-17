@@ -16,14 +16,19 @@ import {
 import { dirname, extname, join, resolve } from 'node:path';
 import { StringDecoder } from 'node:string_decoder';
 import { randomUUID } from 'node:crypto';
-import { app, BrowserWindow, dialog, ipcMain, type IpcMainInvokeEvent } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell, type IpcMainInvokeEvent } from 'electron';
 import type { BackendSupervisor } from './backend';
 import { startRepairApiBridge, type RepairApiBridge } from './repair-api-bridge';
 import { isTrustedRenderer } from './trusted-renderer';
-import { agentUsesAppWorkspace, featureGuidance, validateAgentWorkspace } from '../shared/agent-workspace';
+import {
+  agentUsesAppWorkspace,
+  featureGuidance,
+  validateAgentWorkspace,
+} from '../shared/agent-workspace';
 import { envWithToolPath } from './tool-path';
 import { sendToLiveWindow } from './window-safety';
-import { startLlmAgentBridge } from './llm-agent-bridge';
+import { startLlmAgentBridge, validAgentModel } from './llm-agent-bridge';
+import { createGeminiAccount } from './gemini-account';
 import type {
   RepairAgentEvent,
   RepairAgentId,
@@ -44,6 +49,10 @@ export const REPAIR_CHANNELS = {
   stopTranslation: 'repair:stopTranslation',
   event: 'repair:event',
   translationEvent: 'repair:translationEvent',
+  geminiStatus: 'repair:geminiStatus',
+  geminiLoginStart: 'repair:geminiLoginStart',
+  geminiLoginSubmit: 'repair:geminiLoginSubmit',
+  geminiLoginCancel: 'repair:geminiLoginCancel',
 } as const;
 
 const DEFINITIONS: Array<{
@@ -56,8 +65,9 @@ const DEFINITIONS: Array<{
   { id: 'claude', label: 'Claude Code', command: 'claude' },
   { id: 'opencode', label: 'OpenCode', command: 'opencode' },
   { id: 'pi', label: 'Pi', command: 'pi' },
-  // Antigravity has no repair launch mode here: it translates and completes text only.
-  { id: 'agy', label: 'Antigravity', command: 'agy', translationOnly: true },
+  // Gemini through the user's Google account. Antigravity has no repair launch
+  // mode here: it translates and completes text only.
+  { id: 'agy', label: 'Gemini · Antigravity', command: 'agy', translationOnly: true },
 ];
 
 /**
@@ -225,13 +235,12 @@ export function probe(executable: string, args: string[]): Promise<ProbeResult> 
 async function locate(command: string): Promise<LaunchCommand | null> {
   const finder = process.platform === 'win32' ? 'where.exe' : 'which';
   const found = await probe(finder, [command]);
-  const paths =
-    found.ok
-      ? found.stdout
-          .split(/\r?\n/)
-          .map((item) => item.trim())
-          .filter(Boolean)
-      : [];
+  const paths = found.ok
+    ? found.stdout
+        .split(/\r?\n/)
+        .map((item) => item.trim())
+        .filter(Boolean)
+    : [];
   const native = paths.find((item) => ['.exe', '.com'].includes(extname(item).toLowerCase()));
   if (process.platform === 'win32' && native) return { executable: native, prefix: [] };
   if (process.platform !== 'win32' && paths[0]) {
@@ -487,6 +496,8 @@ function validateDubTranslationRequest(
       Buffer.byteLength(segment.sourceText) + Buffer.byteLength(segment.currentText || '');
   }
   if (textBytes > MAX_TRANSLATION_TEXT) throw new Error('Agent translation input is too large');
+  if (request.model !== undefined && !validAgentModel(request.model))
+    throw new Error('Invalid agent model');
 }
 
 export function dubTranslationPrompt(request: DubAgentTranslationRequest): string {
@@ -778,7 +789,7 @@ ${appOperationRules}
 ${finish}
 
 ## Selected VoiceStudio features
-${request.features?.map(feature => `${feature}: ${featureGuidance[feature]}`).join('\n') || 'Discover available features using GET /openapi.json.'}
+${request.features?.map((feature) => `${feature}: ${featureGuidance[feature]}`).join('\n') || 'Discover available features using GET /openapi.json.'}
 Feature selection supplies task context, not authorization to perform unrelated operations. Never claim a generation or repair succeeded without verifying the output or live state. Keep the conversation concise and readable; report generated project IDs or output paths so later turns can continue the work.
 
 ## Previous conversation (context only)
@@ -875,15 +886,15 @@ export async function registerRepairAgents(
   const busy = () => Boolean(child || translationChild || preparing || translationLaunch);
   ipcMain.handle(REPAIR_CHANNELS.start, async (event, request: RepairAgentRunRequest) => {
     trusted(event, getMainWindow());
-    if (busy()) throw Object.assign(new Error('An agent is already running'), { name: 'AgentRateLimitError' });
+    if (busy())
+      throw Object.assign(new Error('An agent is already running'), {
+        name: 'AgentRateLimitError',
+      });
     if (workspaceRoot && !isVoiceStudioCheckout(workspaceRoot)) {
       workspaceRoot = null;
       state = { ...state, workspaceAvailable: false, workspacePath: undefined };
     }
-    if (
-      !request ||
-      !DEFINITIONS.some((item) => item.id === request.agent && !item.translationOnly)
-    )
+    if (!request || !DEFINITIONS.some((item) => item.id === request.agent && !item.translationOnly))
       throw new Error('Unknown repair agent');
     if (request.mode !== 'diagnose' && request.mode !== 'fix')
       throw new Error('Invalid repair mode');
@@ -1023,7 +1034,10 @@ export async function registerRepairAgents(
     timeoutMs = 10 * 60 * 1_000,
   ): Promise<DubAgentTranslationResult> => {
     validateDubTranslationRequest(request);
-    if (busy()) throw Object.assign(new Error('An agent is already running'), { name: 'AgentRateLimitError' });
+    if (busy())
+      throw Object.assign(new Error('An agent is already running'), {
+        name: 'AgentRateLimitError',
+      });
     const definition = DEFINITIONS.find((item) => item.id === request.agent)!;
     // Pending before the await, so a concurrent run is refused and a stop or
     // disposal while the CLI is located prevents the spawn.
@@ -1151,7 +1165,29 @@ export async function registerRepairAgents(
   };
   ipcMain.handle(REPAIR_CHANNELS.translate, (event, request: DubAgentTranslationRequest) => {
     trusted(event, getMainWindow());
-    return translate(request);
+    return translate(request, undefined, request?.model ?? '');
+  });
+  const gemini = createGeminiAccount({
+    locate: () => locate('agy'),
+    env: () => agentChildEnv({ NO_COLOR: '1', FORCE_COLOR: '0' }),
+    terminate: terminateAgentProcess,
+    openExternal: (url) => shell.openExternal(url),
+  });
+  ipcMain.handle(REPAIR_CHANNELS.geminiStatus, (event) => {
+    trusted(event, getMainWindow());
+    return gemini.status();
+  });
+  ipcMain.handle(REPAIR_CHANNELS.geminiLoginStart, (event) => {
+    trusted(event, getMainWindow());
+    return gemini.startLogin();
+  });
+  ipcMain.handle(REPAIR_CHANNELS.geminiLoginSubmit, (event, code: unknown) => {
+    trusted(event, getMainWindow());
+    return gemini.submitLogin(code);
+  });
+  ipcMain.handle(REPAIR_CHANNELS.geminiLoginCancel, (event) => {
+    trusted(event, getMainWindow());
+    gemini.cancelLogin();
   });
   const llmBridge = await startLlmAgentBridge(async (request) => {
     const prompt = `Complete the following chat as a text-only assistant. Follow the system message and answer the final user message. Do not use tools or read files. Return exactly one JSON object: {"translations":[{"id":"reply","text":"your answer"}]}. Preserve any JSON requested by the chat inside the text string.\n${JSON.stringify(request.messages)}`;
@@ -1185,6 +1221,7 @@ export async function registerRepairAgents(
   return () => {
     if (preparing) state = { ...state, status: 'stopped' };
     if (translationLaunch) translationLaunch.cancelled = true;
+    gemini.dispose();
     llmBridge.close();
     delete process.env.VOICESTUDIO_LLM_AGENT_URL;
     delete process.env.VOICESTUDIO_LLM_AGENT_TOKEN;

@@ -10,8 +10,18 @@ metadata and the backend fallback mirror it.
 
 **Highlights**
 
+- Gemini runs on your Google account, with sign-in and model choice in Settings
 - Dropdowns, menus and panels open with their full motion again
 - Buttons line up with the button groups beside them
+
+### Added
+
+- Gemini with your Google account: the Antigravity provider is now **Gemini · Google account**, shows whether you are signed in, signs in with Google from Settings and lets you pick the Gemini model (#61)
+- **Translate with Agent** uses the Gemini model picked in Settings when Gemini is the chosen agent (#61)
+
+### Docs
+
+- The LLM provider guide explains Gemini sign-in and shows the Antigravity install folder correctly (#61)
 
 ### Fixed
 
