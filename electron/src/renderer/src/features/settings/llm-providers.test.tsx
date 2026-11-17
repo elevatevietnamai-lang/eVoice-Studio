@@ -219,3 +219,56 @@ it('turns the active LLM off without erasing provider credentials', async () => 
   );
   expect(mock.api.mock.calls.some(([, init]) => init?.method === 'PUT')).toBe(false);
 });
+
+it('saves a Gemini model as soon as it is picked, without activating the provider', async () => {
+  const gemini = {
+    ...ollama,
+    id: 'agy-cli',
+    display_name: 'Gemini · Google account (Antigravity CLI)',
+    local: false,
+    base_url: '',
+    model: '',
+    has_key: false,
+    transport: 'cli' as const,
+  };
+  mock.api.mockImplementation((path: string) =>
+    Promise.resolve(
+      path === '/api/settings/llm-providers' ? { active: null, providers: [gemini] } : {},
+    ),
+  );
+  (window as unknown as { voicestudio: unknown }).voicestudio = {
+    repair: {
+      geminiStatus: async () => ({
+        installed: true,
+        state: 'signedIn',
+        models: [{ id: 'gemini-3.8-flash-low', label: 'Gemini 3.8 Flash (Low)' }],
+      }),
+      geminiLoginCancel: async () => {},
+    },
+  };
+  try {
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <LlmProviders />
+      </QueryClientProvider>,
+    );
+    fireEvent.click(await screen.findByRole('button', { name: 'Gemini 3.8 Flash (Low)' }));
+    await waitFor(() =>
+      expect(mock.api).toHaveBeenCalledWith(
+        '/api/settings/llm-providers/agy-cli',
+        expect.objectContaining({ method: 'PUT' }),
+      ),
+    );
+    const put = mock.api.mock.calls.find(([, init]) => init?.method === 'PUT')!;
+    expect(JSON.parse(put[1].body)).toEqual({
+      model: 'gemini-3.8-flash-low',
+      make_active: false,
+      activate_if_unset: false,
+    });
+    expect(screen.getByLabelText('settings.llmp_model', { selector: 'input' })).toHaveValue(
+      'gemini-3.8-flash-low',
+    );
+  } finally {
+    delete (window as unknown as { voicestudio?: unknown }).voicestudio;
+  }
+});
