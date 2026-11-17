@@ -99,6 +99,8 @@ def test_engine_media_commands_only_open_files_and_pipes():
     # ffmpeg 7 opens "-" through the "fd" protocol, which the whitelist refuses.
     assert "-" not in enc and enc[enc.index("rawvideo") + 4] == "pipe:0"
     assert local_inputs_only(enc) == enc  # idempotent
+    preset = local_inputs_only(["/x/ffmpeg", "-protocol_whitelist", "file", "-i", "-", "o.mp4"])
+    assert preset == ["/x/ffmpeg", "-protocol_whitelist", "file", "-i", "pipe:0", "o.mp4"]
 
 
 def test_engine_video_writer_streams_frames_through_the_whitelist(tmp_path, monkeypatch):

@@ -95,7 +95,7 @@ def local_inputs_only(cmd: list) -> list:
     """
     wl = ["-protocol_whitelist", "file,pipe"]
     if "-protocol_whitelist" in cmd:
-        return list(cmd)
+        return ["pipe:0" if a == "-" and k and cmd[k - 1] == "-i" else a for k, a in enumerate(cmd)]
     if os.path.basename(str(cmd[0])).lower().startswith("ffprobe"):
         return [cmd[0], *wl, *cmd[1:]]
     out, i = [cmd[0]], 1
