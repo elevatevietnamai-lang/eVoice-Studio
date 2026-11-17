@@ -740,56 +740,60 @@ export function DubPage() {
           </Button>
         )}
       </div>
-      {url && (
-        <details className="space-y-2">
-          <summary className="cursor-pointer text-xs text-muted-foreground">
-            {t('dub.advanced')}
-          </summary>
-          <div className="flex items-center justify-between gap-2 text-xs">
-            <span>{t('dub.pull_captions')}</span>
-            <Switch
-              aria-label={t('dub.pull_captions')}
-              checked={fetchSubs}
-              onCheckedChange={setFetchSubs}
-              disabled={busy || cancelling || Boolean(session.recovery)}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground">{t('dub.youtube_auth')}</p>
-          <Input
-            type="file"
-            accept=".txt,text/plain"
-            aria-label={t('dub.youtube_cookie_file')}
-            disabled={busy || cancelling || Boolean(session.recovery)}
-            onChange={(event) => {
-              const file = event.target.files?.[0];
-              event.target.value = '';
-              setCookieError(Boolean(file && file.size > MAX_COOKIE_EXPORT_BYTES));
-              setCookieFile(file && file.size <= MAX_COOKIE_EXPORT_BYTES ? file : undefined);
-            }}
-          />
-          {cookieFile && (
-            <div className="flex items-center gap-2">
-              <span className="truncate text-xs">{cookieFile.name}</span>
-              <Button
-                type="button"
-                size="xs"
-                variant="ghost"
-                aria-label={t('dub.remove_cookie_file')}
-                onClick={() => setCookieFile(undefined)}
-              >
-                {t('common.cancel')}
-              </Button>
+      <Reveal>
+        {url && (
+          <details className="space-y-2">
+            <summary className="cursor-pointer text-xs text-muted-foreground">
+              {t('dub.advanced')}
+            </summary>
+            <div className="flex items-center justify-between gap-2 text-xs">
+              <span>{t('dub.pull_captions')}</span>
+              <Switch
+                aria-label={t('dub.pull_captions')}
+                checked={fetchSubs}
+                onCheckedChange={setFetchSubs}
+                disabled={busy || cancelling || Boolean(session.recovery)}
+              />
             </div>
-          )}
-          <Reveal>
-            {cookieError && (
-              <p role="alert" className="text-xs text-destructive">
-                {t('dub.cookie_size_error')}
-              </p>
-            )}
-          </Reveal>
-        </details>
-      )}
+            <p className="text-xs text-muted-foreground">{t('dub.youtube_auth')}</p>
+            <Input
+              type="file"
+              accept=".txt,text/plain"
+              aria-label={t('dub.youtube_cookie_file')}
+              disabled={busy || cancelling || Boolean(session.recovery)}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = '';
+                setCookieError(Boolean(file && file.size > MAX_COOKIE_EXPORT_BYTES));
+                setCookieFile(file && file.size <= MAX_COOKIE_EXPORT_BYTES ? file : undefined);
+              }}
+            />
+            <Reveal>
+              {cookieFile && (
+                <div className="flex items-center gap-2">
+                  <span className="truncate text-xs">{cookieFile.name}</span>
+                  <Button
+                    type="button"
+                    size="xs"
+                    variant="ghost"
+                    aria-label={t('dub.remove_cookie_file')}
+                    onClick={() => setCookieFile(undefined)}
+                  >
+                    {t('common.cancel')}
+                  </Button>
+                </div>
+              )}
+            </Reveal>
+            <Reveal>
+              {cookieError && (
+                <p role="alert" className="text-xs text-destructive">
+                  {t('dub.cookie_size_error')}
+                </p>
+              )}
+            </Reveal>
+          </details>
+        )}
+      </Reveal>
       {url && (
         <Button
           type="submit"
@@ -1354,28 +1358,30 @@ export function DubPage() {
                   </Button>
                 ))}
               </div>
-              {segmentPreview && (
-                <div className="space-y-1.5 border-t border-border/50 pt-3">
-                  <div className="flex items-center gap-2 text-xs font-medium">
-                    <HeadphonesIcon className="size-3.5 text-primary" />
-                    <span className="mr-auto">{t('dub.live_preview')}</span>
-                    <Button
-                      size="icon-xs"
-                      variant="ghost"
-                      aria-label={t('common.close')}
-                      onClick={() => setSegmentPreview(null)}
-                    >
-                      <XIcon />
-                    </Button>
+              <Reveal>
+                {segmentPreview && (
+                  <div className="space-y-1.5 border-t border-border/50 pt-3">
+                    <div className="flex items-center gap-2 text-xs font-medium">
+                      <HeadphonesIcon className="size-3.5 text-primary" />
+                      <span className="mr-auto">{t('dub.live_preview')}</span>
+                      <Button
+                        size="icon-xs"
+                        variant="ghost"
+                        aria-label={t('common.close')}
+                        onClick={() => setSegmentPreview(null)}
+                      >
+                        <XIcon />
+                      </Button>
+                    </div>
+                    <WaveformPlayer
+                      key={segmentPreview.url}
+                      src={segmentPreview.url}
+                      source="dub-segment-preview"
+                      compact
+                    />
                   </div>
-                  <WaveformPlayer
-                    key={segmentPreview.url}
-                    src={segmentPreview.url}
-                    source="dub-segment-preview"
-                    compact
-                  />
-                </div>
-              )}
+                )}
+              </Reveal>
             </section>
           )}
           <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
@@ -2350,106 +2356,108 @@ export function DubPage() {
                   onClose={() => setGlossaryOpen(false)}
                 />
               )}
-              {selectedSegmentIds.size > 0 && (
-                <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-border bg-card p-2.5">
-                  <span className="mr-auto flex items-center gap-2 px-1 text-sm font-medium text-primary">
-                    <CheckCheckIcon className="size-4" />
-                    {t('dub.selected_count', {
-                      count: selectedSegmentIds.size,
-                    })}
-                  </span>
-                  <Menu.Root>
-                    <Menu.Trigger
-                      disabled={busy || Boolean(session.recovery)}
-                      className={buttonVariants({
-                        variant: 'outline',
-                        size: 'sm',
+              <Reveal>
+                {selectedSegmentIds.size > 0 && (
+                  <div className="flex flex-wrap items-center gap-2 rounded-(--card-radius) border border-border bg-card p-2.5">
+                    <span className="mr-auto flex items-center gap-2 px-1 text-sm font-medium text-primary">
+                      <CheckCheckIcon className="size-4" />
+                      {t('dub.selected_count', {
+                        count: selectedSegmentIds.size,
                       })}
-                    >
-                      {t('dub.set_voice')}
-                      <ChevronDownIcon />
-                    </Menu.Trigger>
-                    <Menu.Portal>
-                      <Menu.Positioner sideOffset={6} align="end" className="z-50">
-                        <Menu.Popup
-                          className={cn(menuPopupClass, 'max-h-72 min-w-52 overflow-y-auto p-1')}
-                        >
-                          <Menu.Item
-                            onClick={() =>
-                              editDubSegments(selectedSegmentIds, {
-                                profile_id: undefined,
-                              })
-                            }
-                            className={menuItemClass}
+                    </span>
+                    <Menu.Root>
+                      <Menu.Trigger
+                        disabled={busy || Boolean(session.recovery)}
+                        className={buttonVariants({
+                          variant: 'outline',
+                          size: 'sm',
+                        })}
+                      >
+                        {t('dub.set_voice')}
+                        <ChevronDownIcon />
+                      </Menu.Trigger>
+                      <Menu.Portal>
+                        <Menu.Positioner sideOffset={6} align="end" className="z-50">
+                          <Menu.Popup
+                            className={cn(menuPopupClass, 'max-h-72 min-w-52 overflow-y-auto p-1')}
                           >
-                            <RotateCcwIcon className="size-4" />
-                            {t('dub.clear_voice')}
-                          </Menu.Item>
-                          {profiles.data?.map((profile) => (
                             <Menu.Item
-                              key={profile.id}
                               onClick={() =>
                                 editDubSegments(selectedSegmentIds, {
-                                  profile_id: profile.id,
+                                  profile_id: undefined,
                                 })
                               }
                               className={menuItemClass}
                             >
-                              {profile.name}
+                              <RotateCcwIcon className="size-4" />
+                              {t('dub.clear_voice')}
                             </Menu.Item>
-                          ))}
-                        </Menu.Popup>
-                      </Menu.Positioner>
-                    </Menu.Portal>
-                  </Menu.Root>
-                  <EngineLanguagePicker
-                    operation="dub"
-                    value={t('dub.set_lang')}
-                    options={targetOptions}
-                    disabled={busy || Boolean(session.recovery)}
-                    onValueChange={(language) => {
-                      const lang = LANG_CODES.find((item) => item.label === language);
-                      if (lang)
+                            {profiles.data?.map((profile) => (
+                              <Menu.Item
+                                key={profile.id}
+                                onClick={() =>
+                                  editDubSegments(selectedSegmentIds, {
+                                    profile_id: profile.id,
+                                  })
+                                }
+                                className={menuItemClass}
+                              >
+                                {profile.name}
+                              </Menu.Item>
+                            ))}
+                          </Menu.Popup>
+                        </Menu.Positioner>
+                      </Menu.Portal>
+                    </Menu.Root>
+                    <EngineLanguagePicker
+                      operation="dub"
+                      value={t('dub.set_lang')}
+                      options={targetOptions}
+                      disabled={busy || Boolean(session.recovery)}
+                      onValueChange={(language) => {
+                        const lang = LANG_CODES.find((item) => item.label === language);
+                        if (lang)
+                          editDubSegments(selectedSegmentIds, {
+                            target_lang: lang.code,
+                          });
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busy || Boolean(session.recovery)}
+                      onClick={() =>
                         editDubSegments(selectedSegmentIds, {
-                          target_lang: lang.code,
-                        });
-                    }}
-                  />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy || Boolean(session.recovery)}
-                    onClick={() =>
-                      editDubSegments(selectedSegmentIds, {
-                        target_lang: undefined,
-                      })
-                    }
-                  >
-                    <RotateCcwIcon />
-                    {t('dub.default_lang')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={busy || Boolean(session.recovery)}
-                    onClick={() => {
-                      deleteDubSegments(selectedSegmentIds);
-                      setSelectedSegmentIds(new Set());
-                    }}
-                  >
-                    <Trash2Icon />
-                    {t('dub.delete_selected')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setSelectedSegmentIds(new Set())}
-                  >
-                    <XIcon />
-                    {t('dub.clear_selection')}
-                  </Button>
-                </div>
-              )}
+                          target_lang: undefined,
+                        })
+                      }
+                    >
+                      <RotateCcwIcon />
+                      {t('dub.default_lang')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={busy || Boolean(session.recovery)}
+                      onClick={() => {
+                        deleteDubSegments(selectedSegmentIds);
+                        setSelectedSegmentIds(new Set());
+                      }}
+                    >
+                      <Trash2Icon />
+                      {t('dub.delete_selected')}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setSelectedSegmentIds(new Set())}
+                    >
+                      <XIcon />
+                      {t('dub.clear_selection')}
+                    </Button>
+                  </div>
+                )}
+              </Reveal>
               {session.segments.length > 0 && (
                 <DubTimeline
                   segments={session.segments}
@@ -2851,157 +2859,159 @@ export function DubPage() {
                               </div>
                             )}
                             <div className="text-xs">
-                              {expandedSegmentId === segment.id && (
-                                <div
-                                  id={`dub-segment-options-${index}`}
-                                  className="mt-1.5 rounded-lg border border-border/50 bg-muted/20 p-2.5"
-                                >
-                                  <div className="mt-2 flex flex-wrap gap-1">
-                                    {profiles.data?.map((profile) => (
-                                      <Button
-                                        key={profile.id}
-                                        size="xs"
-                                        variant={
-                                          segment.profile_id === profile.id ? 'secondary' : 'ghost'
-                                        }
-                                        disabled={busy || Boolean(session.recovery)}
-                                        onClick={() =>
-                                          editDubSegment(segment.id, {
-                                            profile_id: profile.id,
-                                          })
-                                        }
-                                      >
-                                        {profile.name}
-                                      </Button>
-                                    ))}
-                                  </div>
-                                  <div className="mt-3 grid grid-cols-2 gap-2">
-                                    <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-                                      <span>{t('player.volume')}</span>
+                              <Reveal>
+                                {expandedSegmentId === segment.id && (
+                                  <div
+                                    id={`dub-segment-options-${index}`}
+                                    className="mt-1.5 rounded-lg border border-border/50 bg-muted/20 p-2.5"
+                                  >
+                                    <div className="mt-2 flex flex-wrap gap-1">
+                                      {profiles.data?.map((profile) => (
+                                        <Button
+                                          key={profile.id}
+                                          size="xs"
+                                          variant={
+                                            segment.profile_id === profile.id ? 'secondary' : 'ghost'
+                                          }
+                                          disabled={busy || Boolean(session.recovery)}
+                                          onClick={() =>
+                                            editDubSegment(segment.id, {
+                                              profile_id: profile.id,
+                                            })
+                                          }
+                                        >
+                                          {profile.name}
+                                        </Button>
+                                      ))}
+                                    </div>
+                                    <div className="mt-3 grid grid-cols-2 gap-2">
+                                      <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                                        <span>{t('player.volume')}</span>
+                                        <Input
+                                          type="number"
+                                          min={0}
+                                          max={2}
+                                          step={0.1}
+                                          value={segment.gain ?? 1}
+                                          disabled={busy || Boolean(session.recovery)}
+                                          onChange={(event) => {
+                                            const gain = Number(event.target.value);
+                                            if (Number.isFinite(gain) && gain >= 0 && gain <= 2)
+                                              editDubSegment(segment.id, {
+                                                gain,
+                                              });
+                                          }}
+                                        />
+                                      </label>
+                                      <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                                        <span>{t('clone.speed')}</span>
+                                        <Input
+                                          type="number"
+                                          min={0.5}
+                                          max={2}
+                                          step={0.05}
+                                          placeholder={String(session.speed ?? 1)}
+                                          value={segment.speed ?? ''}
+                                          disabled={busy || Boolean(session.recovery)}
+                                          onChange={(event) => {
+                                            const raw = event.target.value;
+                                            const speed = Number(raw);
+                                            if (
+                                              raw === '' ||
+                                              (Number.isFinite(speed) && speed >= 0.5 && speed <= 2)
+                                            )
+                                              editDubSegment(segment.id, {
+                                                speed: raw === '' ? undefined : speed,
+                                              });
+                                          }}
+                                        />
+                                      </label>
+                                      <label className="col-span-2 flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                                        <span>{t('tools.direction')}</span>
+                                        <Input
+                                          value={segment.direction || ''}
+                                          disabled={busy || Boolean(session.recovery)}
+                                          onChange={(event) =>
+                                            editDubSegment(segment.id, {
+                                              direction: event.target.value,
+                                            })
+                                          }
+                                        />
+                                      </label>
+                                    </div>
+                                    <div className="mt-3 flex gap-2">
                                       <Input
+                                        key={`start:${segment.start}`}
                                         type="number"
+                                        step="0.01"
                                         min={0}
-                                        max={2}
-                                        step={0.1}
-                                        value={segment.gain ?? 1}
+                                        aria-label={t('dubWorkspace.start')}
+                                        defaultValue={segment.start.toFixed(2)}
                                         disabled={busy || Boolean(session.recovery)}
-                                        onChange={(event) => {
-                                          const gain = Number(event.target.value);
-                                          if (Number.isFinite(gain) && gain >= 0 && gain <= 2)
-                                            editDubSegment(segment.id, {
-                                              gain,
-                                            });
+                                        onKeyDown={(event) => {
+                                          if (event.key === 'Enter') event.currentTarget.blur();
+                                          if (event.key === 'Escape') {
+                                            event.currentTarget.value = segment.start.toFixed(2);
+                                            event.currentTarget.blur();
+                                          }
+                                        }}
+                                        onBlur={(event) => {
+                                          const start = Number(event.target.value);
+                                          if (!Number.isFinite(start)) {
+                                            event.currentTarget.value = segment.start.toFixed(2);
+                                            return;
+                                          }
+                                          const timing = clampSegmentEdit(
+                                            session.segments,
+                                            index,
+                                            'start',
+                                            { start, end: segment.end },
+                                            {
+                                              duration: session.duration || undefined,
+                                            },
+                                          );
+                                          event.currentTarget.value = timing.start.toFixed(2);
+                                          moveResizeDubSegment(segment.id, timing);
                                         }}
                                       />
-                                    </label>
-                                    <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-                                      <span>{t('clone.speed')}</span>
                                       <Input
+                                        key={`end:${segment.end}`}
                                         type="number"
-                                        min={0.5}
-                                        max={2}
-                                        step={0.05}
-                                        placeholder={String(session.speed ?? 1)}
-                                        value={segment.speed ?? ''}
+                                        step="0.01"
+                                        min={segment.start}
+                                        aria-label={t('dubWorkspace.end')}
+                                        defaultValue={segment.end.toFixed(2)}
                                         disabled={busy || Boolean(session.recovery)}
-                                        onChange={(event) => {
-                                          const raw = event.target.value;
-                                          const speed = Number(raw);
-                                          if (
-                                            raw === '' ||
-                                            (Number.isFinite(speed) && speed >= 0.5 && speed <= 2)
-                                          )
-                                            editDubSegment(segment.id, {
-                                              speed: raw === '' ? undefined : speed,
-                                            });
+                                        onKeyDown={(event) => {
+                                          if (event.key === 'Enter') event.currentTarget.blur();
+                                          if (event.key === 'Escape') {
+                                            event.currentTarget.value = segment.end.toFixed(2);
+                                            event.currentTarget.blur();
+                                          }
+                                        }}
+                                        onBlur={(event) => {
+                                          const end = Number(event.target.value);
+                                          if (!Number.isFinite(end)) {
+                                            event.currentTarget.value = segment.end.toFixed(2);
+                                            return;
+                                          }
+                                          const timing = clampSegmentEdit(
+                                            session.segments,
+                                            index,
+                                            'end',
+                                            { start: segment.start, end },
+                                            {
+                                              duration: session.duration || undefined,
+                                            },
+                                          );
+                                          event.currentTarget.value = timing.end.toFixed(2);
+                                          moveResizeDubSegment(segment.id, timing);
                                         }}
                                       />
-                                    </label>
-                                    <label className="col-span-2 flex min-w-0 flex-col gap-1.5 text-label font-medium">
-                                      <span>{t('tools.direction')}</span>
-                                      <Input
-                                        value={segment.direction || ''}
-                                        disabled={busy || Boolean(session.recovery)}
-                                        onChange={(event) =>
-                                          editDubSegment(segment.id, {
-                                            direction: event.target.value,
-                                          })
-                                        }
-                                      />
-                                    </label>
+                                    </div>
                                   </div>
-                                  <div className="mt-3 flex gap-2">
-                                    <Input
-                                      key={`start:${segment.start}`}
-                                      type="number"
-                                      step="0.01"
-                                      min={0}
-                                      aria-label={t('dubWorkspace.start')}
-                                      defaultValue={segment.start.toFixed(2)}
-                                      disabled={busy || Boolean(session.recovery)}
-                                      onKeyDown={(event) => {
-                                        if (event.key === 'Enter') event.currentTarget.blur();
-                                        if (event.key === 'Escape') {
-                                          event.currentTarget.value = segment.start.toFixed(2);
-                                          event.currentTarget.blur();
-                                        }
-                                      }}
-                                      onBlur={(event) => {
-                                        const start = Number(event.target.value);
-                                        if (!Number.isFinite(start)) {
-                                          event.currentTarget.value = segment.start.toFixed(2);
-                                          return;
-                                        }
-                                        const timing = clampSegmentEdit(
-                                          session.segments,
-                                          index,
-                                          'start',
-                                          { start, end: segment.end },
-                                          {
-                                            duration: session.duration || undefined,
-                                          },
-                                        );
-                                        event.currentTarget.value = timing.start.toFixed(2);
-                                        moveResizeDubSegment(segment.id, timing);
-                                      }}
-                                    />
-                                    <Input
-                                      key={`end:${segment.end}`}
-                                      type="number"
-                                      step="0.01"
-                                      min={segment.start}
-                                      aria-label={t('dubWorkspace.end')}
-                                      defaultValue={segment.end.toFixed(2)}
-                                      disabled={busy || Boolean(session.recovery)}
-                                      onKeyDown={(event) => {
-                                        if (event.key === 'Enter') event.currentTarget.blur();
-                                        if (event.key === 'Escape') {
-                                          event.currentTarget.value = segment.end.toFixed(2);
-                                          event.currentTarget.blur();
-                                        }
-                                      }}
-                                      onBlur={(event) => {
-                                        const end = Number(event.target.value);
-                                        if (!Number.isFinite(end)) {
-                                          event.currentTarget.value = segment.end.toFixed(2);
-                                          return;
-                                        }
-                                        const timing = clampSegmentEdit(
-                                          session.segments,
-                                          index,
-                                          'end',
-                                          { start: segment.start, end },
-                                          {
-                                            duration: session.duration || undefined,
-                                          },
-                                        );
-                                        event.currentTarget.value = timing.end.toFixed(2);
-                                        moveResizeDubSegment(segment.id, timing);
-                                      }}
-                                    />
-                                  </div>
-                                </div>
-                              )}
+                                )}
+                              </Reveal>
                             </div>
                           </div>
                         </article>

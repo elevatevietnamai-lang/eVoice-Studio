@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import {
   CodeIcon,
@@ -704,27 +705,29 @@ export function SceneEditor({
       <div className="space-y-1.5">
         <h3 className="text-xs font-medium">{t('promo.scene_assets')}</h3>
         <p className="text-xs text-muted-foreground">{t('promo.scene_asset_hint')}</p>
-        {scene.assets.length > 0 && (
-          <ul className="flex flex-wrap gap-1.5 text-xs">
-            {scene.assets.map((asset) => (
-              <li
-                key={asset.name}
-                className="flex items-center gap-1 rounded-sm border border-border/60 px-1.5 py-0.5"
-              >
-                <span className="font-mono">assets/{asset.name}</span>
-                <Button
-                  size="icon-xs"
-                  variant="ghost"
-                  aria-label={t('promo.remove')}
-                  disabled={locked}
-                  onClick={() => edit({ assets: scene.assets.filter((item) => item !== asset) })}
+        <Reveal>
+          {scene.assets.length > 0 && (
+            <ul className="flex flex-wrap gap-1.5 text-xs">
+              {scene.assets.map((asset) => (
+                <li
+                  key={asset.name}
+                  className="flex items-center gap-1 rounded-sm border border-border/60 px-1.5 py-0.5"
                 >
-                  <XIcon />
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
+                  <span className="font-mono">assets/{asset.name}</span>
+                  <Button
+                    size="icon-xs"
+                    variant="ghost"
+                    aria-label={t('promo.remove')}
+                    disabled={locked}
+                    onClick={() => edit({ assets: scene.assets.filter((item) => item !== asset) })}
+                  >
+                    <XIcon />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Reveal>
         <input
           ref={fileInput}
           type="file"

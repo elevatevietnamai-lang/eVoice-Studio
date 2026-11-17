@@ -254,15 +254,17 @@ export function BatchPage() {
                 </Button>
               </div>
             ))}
-            {files.length > 0 && (
-              <p className="text-xs tabular-nums text-muted-foreground">
-                {t('batch.estimate', {
-                  videos: files.length,
-                  langs: langs.length,
-                  jobs: files.length * langs.length,
-                })}
-              </p>
-            )}
+            <Reveal>
+              {files.length > 0 && (
+                <p className="text-xs tabular-nums text-muted-foreground">
+                  {t('batch.estimate', {
+                    videos: files.length,
+                    langs: langs.length,
+                    jobs: files.length * langs.length,
+                  })}
+                </p>
+              )}
+            </Reveal>
           </section>
           <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
             <h2 className="flex items-center gap-2 text-xs font-medium text-muted-foreground">

@@ -1,5 +1,5 @@
 import { ModelLibrary, PerformanceModelPacks } from '@/features/settings/model-library';
-import { Reveal } from '@/components/motion';
+import { FadeIn, Reveal } from '@/components/motion';
 import { AnalyticsConsent } from './analytics-consent';
 import { AccountConsent } from './account-consent';
 import { SetupRecovery } from './setup-recovery';
@@ -154,7 +154,8 @@ export function SetupGate({ children }: { children: ReactNode }) {
         </nav>
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <main key={step} className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
-            <div className="mx-auto max-w-3xl space-y-6">
+            {/* A new step settles in (fade and a 4 px rise) instead of replacing the last at once. */}
+            <FadeIn className="mx-auto max-w-3xl space-y-6">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-lg font-semibold">{t(steps[step].label)}</h2>
                 <Button
@@ -232,15 +233,17 @@ export function SetupGate({ children }: { children: ReactNode }) {
                   >
                     {t('demo.dictation_title')} · {t('firstrun.chip_optional')}
                   </Button>
-                  {dictationSetup && (
-                    <>
-                      <PermissionsSettings />
-                      <ShortcutSettings />
-                    </>
-                  )}
+                  <Reveal>
+                    {dictationSetup && (
+                      <div className="space-y-6">
+                        <PermissionsSettings />
+                        <ShortcutSettings />
+                      </div>
+                    )}
+                  </Reveal>
                 </div>
               )}
-            </div>
+            </FadeIn>
           </main>
           <footer className="flex shrink-0 items-center justify-between gap-3 border-t border-border/50 p-4">
             <Button

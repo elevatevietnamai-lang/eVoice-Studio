@@ -29,6 +29,8 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- Music task options, inline confirmations, the dub selection bar and segment options, and other panels that follow a choice slide open instead of popping in (#69)
+- First-run setup steps settle in when you move between them (#69)
 - Gemini translation through Antigravity now also blocks file downloads, so every tool permission the CLI checks is denied (#65)
 - Open cards in the control panels (Starting points and others) no longer draw a line under their title (#64)
 - The language picker in the Clone and Voice Design toolbars is a borderless button with a hover, like the quality and voice buttons beside it (#63)

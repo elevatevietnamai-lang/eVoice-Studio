@@ -205,36 +205,38 @@ export function ProfileConsent({ profile }: { profile: Profile }) {
           </Button>
         </div>
       )}
-      {confirm && (
-        <div className="space-y-2 rounded-lg bg-muted/40 p-3 text-xs">
-          <p>
-            {t(
-              confirm === 'unlock'
-                ? 'voice_profile.unlock_confirm'
-                : 'voice_profile.consent_revoke_confirm',
-            )}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              size="sm"
-              disabled={disabled}
-              onClick={() => void change(confirm)}
-            >
-              {t('common.confirm')}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              disabled={busy}
-              onClick={() => setConfirm(null)}
-            >
-              {t('common.cancel')}
-            </Button>
+      <Reveal>
+        {confirm && (
+          <div className="space-y-2 rounded-lg bg-muted/40 p-3 text-xs">
+            <p>
+              {t(
+                confirm === 'unlock'
+                  ? 'voice_profile.unlock_confirm'
+                  : 'voice_profile.consent_revoke_confirm',
+              )}
+            </p>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                size="sm"
+                disabled={disabled}
+                onClick={() => void change(confirm)}
+              >
+                {t('common.confirm')}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                disabled={busy}
+                onClick={() => setConfirm(null)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Reveal>
       <Reveal>
         {(busy || rec.isCleaning) && (
           <p role="status" className="text-xs text-muted-foreground">

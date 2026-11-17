@@ -237,34 +237,36 @@ export function CloudSyncPanel() {
           </SettingsRow>
         );
       })}
-      {turningOff && (
-        <div role="dialog" className="space-y-2 rounded-lg border p-3 text-sm">
-          <p>{t('cloudsync.turned_off_prompt', { area: t(`cloudsync.${turningOff}`) })}</p>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setChoice(turningOff, false, false);
-                setTurningOff(null);
-              }}
-            >
-              {t('cloudsync.keep_in_cloud')}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setChoice(turningOff, false, true);
-                setTurningOff(null);
-              }}
-            >
-              {t('cloudsync.remove_from_cloud', {
-                count: usageOf(turningOff)?.items ?? 0,
-                size: size(usageOf(turningOff)?.bytes),
-              })}
-            </Button>
+      <Reveal>
+        {turningOff && (
+          <div role="dialog" className="space-y-2 rounded-lg border p-3 text-sm">
+            <p>{t('cloudsync.turned_off_prompt', { area: t(`cloudsync.${turningOff}`) })}</p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setChoice(turningOff, false, false);
+                  setTurningOff(null);
+                }}
+              >
+                {t('cloudsync.keep_in_cloud')}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setChoice(turningOff, false, true);
+                  setTurningOff(null);
+                }}
+              >
+                {t('cloudsync.remove_from_cloud', {
+                  count: usageOf(turningOff)?.items ?? 0,
+                  size: size(usageOf(turningOff)?.bytes),
+                })}
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Reveal>
       {view.collections
         .filter((c) => LATER[c.name])
         .map((c) => (

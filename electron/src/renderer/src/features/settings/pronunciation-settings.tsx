@@ -403,26 +403,28 @@ export function PronunciationSettings() {
           }}
         />
       </SettingsRow>
-      {pendingImport && (
-        <div className="flex flex-wrap items-center gap-2 px-4 py-3 text-sm">
-          <p className="min-w-0 flex-1">
-            {t('pronunciation.import_replace_prompt', { count: rows.length })}
-          </p>
-          <Button disabled={busy} onClick={() => void importEntries(pendingImport, true)}>
-            {t('common.yes')}
-          </Button>
-          <Button
-            variant="outline"
-            disabled={busy}
-            onClick={() => void importEntries(pendingImport, false)}
-          >
-            {t('common.no')}
-          </Button>
-          <Button variant="ghost" disabled={busy} onClick={() => setPendingImport(null)}>
-            {t('common.cancel')}
-          </Button>
-        </div>
-      )}
+      <Reveal>
+        {pendingImport && (
+          <div className="flex flex-wrap items-center gap-2 px-4 py-3 text-sm">
+            <p className="min-w-0 flex-1">
+              {t('pronunciation.import_replace_prompt', { count: rows.length })}
+            </p>
+            <Button disabled={busy} onClick={() => void importEntries(pendingImport, true)}>
+              {t('common.yes')}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={() => void importEntries(pendingImport, false)}
+            >
+              {t('common.no')}
+            </Button>
+            <Button variant="ghost" disabled={busy} onClick={() => setPendingImport(null)}>
+              {t('common.cancel')}
+            </Button>
+          </div>
+        )}
+      </Reveal>
       <Reveal>
         {notice && (
           <p role="status" className="px-4 py-3 text-sm text-muted-foreground">

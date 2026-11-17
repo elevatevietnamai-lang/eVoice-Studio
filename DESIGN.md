@@ -293,7 +293,7 @@ Motion grammar by function:
 | Overlay (popover, select, menu, tooltip, dialog) | fade and scale from 96 to 97%, 200 to 240 ms | fade and scale, 150 ms | Base UI `data-starting-style` / `data-ending-style`; hand-built popups use `usePresence` |
 | Page | from 60% opacity, 120 ms | none | `RouteFade` |
 
-Things that leave are faster than they arrived, and travel less. Nothing loops, bounces or moves on its own. Blocks already on screen when a page mounts do not animate (`Reveal` uses `initial={false}`). Reduced motion means no movement, not no animation: it drops translate, scale and height changes and keeps short fades, so a closing popup or message still fades instead of vanishing. `reveal.test.tsx` fails on a conditional error, alert or status block that is not wrapped in `Reveal`.
+Things that leave are faster than they arrived, and travel less. Nothing loops, bounces or moves on its own. Blocks already on screen when a page mounts do not animate (`Reveal` uses `initial={false}`). Reduced motion means no movement, not no animation: it drops translate, scale and height changes and keeps short fades, so a closing popup or message still fades instead of vanishing. `reveal.test.tsx` fails on a conditional error, alert or status block that is not wrapped in `Reveal`. `show-hide.test.ts` does the same for any block a person shows, whatever the state's type: a switch, a chosen option (`task === 'cover'`), a typed value or a picked row (`confirmation === row.id`). A wizard step settles in with `FadeIn`.
 
 Motion kit (`components/motion`, `components/ui/morph-icon.tsx`):
 

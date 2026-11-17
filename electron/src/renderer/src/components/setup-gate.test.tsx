@@ -123,13 +123,14 @@ it('requires passing preflight and installed models before completion', async ()
     'aria-expanded',
     'true',
   );
-  expect(screen.getByText('Shortcuts')).toBeVisible();
+  // The step settles in (FadeIn) and the dictation block closes through Reveal.
+  await waitFor(() => expect(screen.getByText('Shortcuts')).toBeVisible());
   fireEvent.click(screen.getByRole('button', { name: 'dub.advanced' }));
-  expect(screen.queryByText('Shortcuts')).not.toBeInTheDocument();
+  await waitFor(() => expect(screen.queryByText('Shortcuts')).not.toBeInTheDocument());
   fireEvent.click(screen.getByRole('button', { name: /demo.dictation_title/ }));
   expect(screen.getByText('Shortcuts')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: /demo.dictation_title/ }));
-  expect(screen.queryByText('Shortcuts')).not.toBeInTheDocument();
+  await waitFor(() => expect(screen.queryByText('Shortcuts')).not.toBeInTheDocument());
   let finishCatalogue!: () => void;
   const catalogueReady = new Promise<void>((resolve) => {
     finishCatalogue = resolve;
