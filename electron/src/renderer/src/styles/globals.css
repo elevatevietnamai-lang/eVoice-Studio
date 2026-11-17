@@ -284,11 +284,16 @@ html[data-theme-id=''] {
   background: var(--toolbar-background);
   color: var(--toolbar-foreground);
 }
-.workspace-titlebar [data-slot='button'] {
-  color: var(--toolbar-control-foreground);
-}
-.workspace-titlebar [data-slot='button']:hover {
-  background: var(--toolbar-control-hover);
+/* Ghost controls in a title bar take the toolbar role. Layered and scoped to ghost buttons: an
+   outline or secondary button keeps its own colours, and `hover:text-foreground` still steps the
+   text up (class specificity for the colour, one pseudo-class more for the hover fill). */
+@layer utilities {
+  :where(.workspace-titlebar [data-variant='ghost'])[data-slot='button'] {
+    color: var(--toolbar-control-foreground);
+  }
+  :where(.workspace-titlebar [data-variant='ghost'])[data-slot='button']:hover {
+    background: var(--toolbar-control-hover);
+  }
 }
 
 /* Every workspace uses the same pane grammar: a quiet rail, compact section
@@ -380,23 +385,30 @@ details > summary .lucide-chevron-right {
 [data-slot='workspace-pane-content'] details[open] > summary {
   color: var(--foreground);
 }
-.secondary-sidebar[data-variant='navigation']
-  [data-slot='secondary-sidebar-content']
-  > [data-slot='button'] {
-  min-height: 2.375rem;
-  border: 1px solid transparent;
-  border-radius: var(--control-radius);
-  justify-content: flex-start;
-  padding-inline: 0.625rem;
-  color: color-mix(in srgb, var(--foreground) 88%, var(--muted-foreground));
-  font-weight: 500;
-  transition-property: color, background-color, border-color, box-shadow;
-}
-.secondary-sidebar[data-variant='navigation']
-  [data-slot='secondary-sidebar-content']
-  > [data-slot='button']:hover {
-  border-color: color-mix(in srgb, var(--border) 62%, transparent);
-  background: color-mix(in srgb, var(--accent) 70%, transparent);
+/* Navigation rows. Layered at class specificity (the scope is in :where), so the row's own
+   `hover:text-foreground` steps the text up on hover; unlayered, the resting colour froze it. The
+   hover fill and the selected row keep one pseudo-class or attribute more, so they still win over
+   the Button variant's own fills. */
+@layer utilities {
+  :where(.secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *)[data-slot='button'] {
+    min-height: 2.375rem;
+    border: 1px solid transparent;
+    border-radius: var(--control-radius);
+    justify-content: flex-start;
+    padding-inline: 0.625rem;
+    color: color-mix(in srgb, var(--foreground) 88%, var(--muted-foreground));
+    font-weight: 500;
+    transition-property: color, background-color, border-color, box-shadow;
+  }
+  :where(.secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *)[data-slot='button']:hover {
+    border-color: color-mix(in srgb, var(--border) 62%, transparent);
+    background: color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  :where(.secondary-sidebar[data-variant='navigation'] [data-slot='secondary-sidebar-content'] > *)[data-slot='button'][aria-pressed='true'] {
+    border-color: transparent;
+    background: var(--sidebar-row-selected);
+    color: var(--foreground);
+  }
 }
 .secondary-sidebar[data-variant='navigation']
   [data-slot='secondary-sidebar-content']
@@ -413,13 +425,6 @@ details > summary .lucide-chevron-right {
   > [data-slot='button'][aria-pressed='true']
   .lucide {
   color: var(--primary);
-}
-.secondary-sidebar[data-variant='navigation']
-  [data-slot='secondary-sidebar-content']
-  > [data-slot='button'][aria-pressed='true'] {
-  border-color: transparent;
-  background: var(--sidebar-row-selected);
-  color: var(--foreground);
 }
 .secondary-sidebar[data-variant='navigation']
   [data-slot='secondary-sidebar-content']
