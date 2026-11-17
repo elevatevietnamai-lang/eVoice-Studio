@@ -48,6 +48,31 @@ describe('control geometry', () => {
     expect(big.className).not.toMatch(/\bh-9\b|\brounded-lg\b/);
   });
 
+  /**
+   * In a toolbar beside ghost buttons (Clone and Voice Design: quality, voice controls) the
+   * picker is a ghost button too: no border or fill, the toolbar button's height and hover.
+   */
+  it('draws the toolbar picker as a ghost button, not a field', () => {
+    const ghost = buttonVariants({ variant: 'ghost', size: 'lg' });
+    render(
+      <SearchableSelect
+        virtualized
+        variant="ghost"
+        size="sm"
+        value="en"
+        options={options}
+        onChange={() => {}}
+        ariaLabel="toolbar"
+        buttonClassName={ghost}
+      />,
+    );
+    const toolbar = screen.getByRole('button', { name: 'toolbar' });
+    for (const token of ['border-input', 'bg-control-fill', 'data-[size=sm]:h-6'])
+      expect(toolbar.className).not.toContain(token);
+    expect(toolbar.className).toContain('h-9');
+    expect(toolbar.className).toContain('hover:bg-accent');
+  });
+
   it('gives the classic picker the same field and lets callers override it', () => {
     render(
       <>

@@ -7,7 +7,9 @@ import SearchableSelect from '@shared/components/SearchableSelect';
 // @ts-expect-error Shared JSX has no declaration file.
 import LanguageFlag from '@shared/components/LanguageFlag';
 import type { SearchOption } from '@shared/components/VirtualSearchableSelect';
+import { buttonVariants } from '@/components/ui/button';
 import { LANGUAGES } from '@/lib/languages';
+import { cn } from '@/lib/utils';
 import { languageOptions, languageSupported, type LanguageOption } from '@/lib/language-options';
 import { setCloneSetting, useCloneSetting } from '@/lib/store/clone-settings';
 
@@ -23,6 +25,12 @@ export interface LanguagePickerProps {
   recentsScope?: string;
   /** `sm` (24 px) for toolbars, beside other small selects. */
   size?: 'default' | 'sm';
+  /**
+   * `ghost`: a borderless toolbar button with a hover fill, the same as the quality and voice
+   * buttons beside it; `toolbarSize` is their Button size. The default is the form field.
+   */
+  variant?: 'field' | 'ghost';
+  toolbarSize?: 'sm' | 'lg';
 }
 
 export function LanguagePicker({
@@ -36,6 +44,8 @@ export function LanguagePicker({
   capabilityState,
   recentsScope = 'language',
   size = 'default',
+  variant = 'field',
+  toolbarSize = 'lg',
 }: LanguagePickerProps = {}) {
   const { t, i18n } = useTranslation();
   const saved = useCloneSetting('language');
@@ -91,8 +101,17 @@ export function LanguagePicker({
       options={entries}
       disabled={disabled}
       ariaLabel={t('clone.language')}
-      buttonClassName={className}
+      buttonClassName={
+        variant === 'ghost'
+          ? cn(
+              buttonVariants({ variant: 'ghost', size: toolbarSize }),
+              'gap-1.5 font-normal text-muted-foreground hover:text-foreground data-popup-open:bg-secondary data-popup-open:text-foreground',
+              className,
+            )
+          : className
+      }
       size={size}
+      variant={variant}
       unavailableLabel={unavailable}
       recentsKey={`voicestudio.language-recents.${recentsScope}.v1`}
       onChange={(next: string) => {

@@ -387,7 +387,7 @@ describe('DesktopUpdater', () => {
     expect(mocks.autoUpdater.downloadUpdate).toHaveBeenCalledOnce();
     emit('update-downloaded', { version: '0.5.3', releaseNotes: null });
     updater.install();
-    expect(mocks.autoUpdater.quitAndInstall).toHaveBeenCalledWith(false, true);
+    expect(mocks.autoUpdater.quitAndInstall).toHaveBeenCalledWith(true, true);
   });
 
   test('exposes unsupported state without touching updater APIs in development', async () => {
@@ -540,7 +540,7 @@ describe('update IPC', () => {
 
     await install({ sender: webContents, senderFrame: webContents.mainFrame });
     expect(beforeInstall).toHaveBeenCalledOnce();
-    expect(mocks.autoUpdater.quitAndInstall).toHaveBeenCalledWith(false, true);
+    expect(mocks.autoUpdater.quitAndInstall).toHaveBeenCalledWith(true, true);
 
     expect(() =>
       mocks.ipcHandlers.get(UPDATE_CHANNELS.getState)!({

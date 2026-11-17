@@ -418,7 +418,7 @@ export function ActionBar() {
       </Reveal>
       <div className="flex flex-wrap items-center gap-3">
         <div className={cn(segmentedFrameClass, 'flex items-center')}>
-          <EngineLanguagePicker size="sm" />
+          <EngineLanguagePicker variant="ghost" />
           <PresetVoicePicker disabled={isGenerating} />
           <span aria-hidden="true" className="mx-1 h-4 w-px bg-border" />
           <QualityControls disabled={isGenerating} />
