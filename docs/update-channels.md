@@ -5,6 +5,10 @@ VoiceStudio's desktop app follows **Stable** releases unless you opt in to
 update about 10 seconds after launch and every six hours while it stays open;
 **Settings → Updates** also has a manual check. The app never downloads an
 update until you ask, and an available update is only offered, never forced.
+On Windows, **Install & Restart** installs the downloaded version silently into
+the same folder and reopens the app; no Setup window asks for clicks. Copies on
+0.5.7-beta.5 or older still show that window once, for the update that brings
+this change.
 
 Updates come from the GitHub releases of the repository named by
 `"updateRepository"` in `config/app.json`. The eVoice Studio build sets it to
@@ -64,7 +68,7 @@ There is no separate preview desktop feed. To try changes between betas:
 
 Downloads show transferred size, total size, speed, percentage and ETA, and
 can continue while synthesis, transcription or dubbing work runs. VoiceStudio
-only enables **Restart to update** after the package has downloaded and passed
+only enables **Install & Restart** after the package has downloaded and passed
 the updater's checksum verification, and blocks that restart until active work
 has finished and current drafts are flushed.
 
