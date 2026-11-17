@@ -169,6 +169,26 @@ it('never recolours a utility class from unlayered CSS', () => {
 });
 
 /**
+ * A pane may give Buttons a role colour (toolbar, navigation row) only from `@layer utilities` with
+ * its scope inside `:where()`. Unlayered, `.workspace-titlebar [data-slot='button']` repainted
+ * outline and secondary buttons in the title bar with the toolbar hover, and the navigation row
+ * rule froze `hover:text-foreground` on every row of the Projects, Gallery and Tools panels.
+ */
+it('never recolours the Button primitive from unlayered CSS', () => {
+  const offenders = unlayeredRules(css)
+    .filter(({ body }) => /(^|[;\s])(color|background(-color)?)\s*:/.test(body))
+    .flatMap(({ selector }) => selector.split(','))
+    .map((part) => part.trim())
+    .filter((part) => /\[data-slot='button'\](?::[a-z-]+|\[[^\]]+\])*$/.test(part));
+  expect(offenders).toEqual([]);
+  // The roles still exist, layered: ghost-only in the title bar, every navigation row.
+  expect(css).toMatch(
+    /@layer utilities \{\s*:where\(\.workspace-titlebar \[data-variant='ghost'\]\)\[data-slot='button'\]/,
+  );
+  expect(css).toMatch(/:where\(\.secondary-sidebar\[data-variant='navigation'\][^)]*\)\[data-slot='button'\]:hover/);
+});
+
+/**
  * An open card in a control panel separates its title from its body with space alone, like the
  * framed Collapsible (DESIGN.md: Expanding cards); a rule under the summary was dropped.
  */

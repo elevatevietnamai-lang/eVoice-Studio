@@ -29,6 +29,7 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
+- Navigation rows in the Projects, Gallery and Tools panels brighten their text on hover again, and outline buttons in a page header keep their own hover (#67)
 - Gemini translation through Antigravity now also blocks file downloads, so every tool permission the CLI checks is denied (#65)
 - Open cards in the control panels (Starting points and others) no longer draw a line under their title (#64)
 - The language picker in the Clone and Voice Design toolbars is a borderless button with a hover, like the quality and voice buttons beside it (#63)
