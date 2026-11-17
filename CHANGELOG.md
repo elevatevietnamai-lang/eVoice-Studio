@@ -8,6 +8,17 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.8] — 2026-11-18
+
+Removing burned-in subtitles works again: on current ffmpeg the cleanup failed with "Invalid
+argument" before the first frame. Translated subtitles burned in their place now sit exactly where
+each original line was, even in videos whose subtitles move between shots.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.8-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.6 or beta.7 update silently in **Settings → Updates**; copies on 0.5.7-beta.4 or beta.5 update there too, showing the Setup window once |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
 - Removing on-screen subtitles works again on current ffmpeg
