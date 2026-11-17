@@ -187,17 +187,30 @@ def _hardsub_burn_style(job: dict) -> str:
 
     Always names the bundled burn font (``services.burn_fonts``) so the line
     burn looks the same on every OS. When the job's on-screen subtitles were
-    read, also places burned subtitles where the removed ones were: libass
-    renders SRT on a 384x288 canvas; MarginV is measured from the bottom edge
-    in that space.
+    read, also places burned subtitles where the removed ones were, at their
+    size (``text_line``, measured from the OCR boxes; jobs read before it
+    existed fall back to the bottom of the scanned region): libass renders
+    SRT on a 384x288 canvas; MarginV is measured from the bottom edge in that
+    space.
     """
     fields = [f"FontName={BURN_FONT_FAMILY}"]
-    region = (job.get("hardsub") or {}).get("region")
+    hardsub = job.get("hardsub") or {}
+    line = hardsub.get("text_line") or {}
+    region = hardsub.get("region")
+    try:
+        line_bottom, line_height = float(line["bottom"]), float(line["height"])
+    except (TypeError, ValueError, KeyError):
+        line_bottom = line_height = -1.0
     try:
         top, bottom = float(region[0]), float(region[1])
     except (TypeError, ValueError, IndexError):
         top = bottom = -1.0
-    if 0.0 <= top < bottom <= 1.0:
+    if 0.0 < line_bottom <= 1.0 and 0.0 < line_height < line_bottom:
+        # Where the removed text actually was, and the size it was drawn at.
+        margin = max(2, min(140, int(round((1.0 - line_bottom) * 288))))
+        size = max(10, min(40, int(round(line_height * 288))))
+        fields.append(f"MarginV={margin},Fontsize={size},Bold=1,Outline=1.6,Shadow=0")
+    elif 0.0 <= top < bottom <= 1.0:
         margin = max(4, min(140, int(round((1.0 - bottom) * 288 + 2))))
         fields.append(f"MarginV={margin},Fontsize=18,Bold=1,Outline=1.6,Shadow=0")
     return ":force_style='" + ",".join(fields) + "'"

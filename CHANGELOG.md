@@ -8,6 +8,10 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+### Fixed
+
+- Translated subtitles burned over removed on-screen subtitles sit on the original text line, at its size, instead of the bottom of the scanned area (#76)
+
 ## [0.5.7-beta.7] — 2026-11-17
 
 Ask VoiceStudio Agent now waits for long jobs: a music, dubbing or speech job that runs past two
