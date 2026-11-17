@@ -21,6 +21,8 @@ metadata and the backend fallback mirror it.
 
 - Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#81)
 - The rail gives the logo room at the top and lists its icons straight under it instead of centring them in the window's height (#82)
+- The "Something went wrong" recovery page uses the near-black eVoice look and the real eVoice mark instead of the old magenta styling (#83)
+- The window opens on the app's own near-black canvas, and messages that called the app "VoiceStudio" now say eVoice Studio (#83)
 
 ### Docs
 

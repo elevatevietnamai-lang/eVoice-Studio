@@ -39,8 +39,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const PRELOAD_PATH = join(here, '../preload/index.mjs');
 const RENDERER_DIR = join(here, '../renderer');
 
-// Neutral startup surface; the caption buttons are drawn by the renderer (window-controls.tsx).
-const BACKGROUND = '#0a0a0a';
+// DESIGN.md dark canvas, so the first paint matches the app; the caption buttons are drawn by the renderer (window-controls.tsx).
+const BACKGROUND = '#030305';
 
 installAppIdentity(app);
 registerAppScheme();

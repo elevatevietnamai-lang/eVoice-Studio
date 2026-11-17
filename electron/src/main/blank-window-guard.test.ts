@@ -30,6 +30,22 @@ describe('blank window fallback', () => {
     expect(html).toContain(BLANK_CACHE_REPAIR_URL);
   });
 
+  it('draws the current eVoice design, with the real mark', () => {
+    const url = blankFallbackUrl('en');
+    const html = decodeURIComponent(url.slice(url.indexOf(',') + 1));
+    const markSource = readFileSync(
+      join(process.cwd(), 'src/renderer/src/components/brand/evoice-mark.tsx'),
+      'utf8',
+    );
+    const bars = /full: '([^']+)'/.exec(markSource)?.[1];
+    const spark = /SPARK =\s*'([^']+)'/.exec(markSource)?.[1];
+    expect(bars && spark).toBeTruthy();
+    expect(html).toContain(`<path d="${bars}" fill="#FFFFFF"/>`);
+    expect(html).toContain(`<path d="${spark}" fill="#FFFFFF"/>`);
+    expect(html).toContain('background:#030305');
+    expect(html).not.toMatch(/⌁|#(?:150f19|c70a60|df1672|ff5aa5)/i);
+  });
+
   it('stays aligned with every renderer locale catalogue', () => {
     const directory = join(process.cwd(), 'src/renderer/src/i18n/locales');
     const locales = readdirSync(directory).filter((file) => file.endsWith('.json'));

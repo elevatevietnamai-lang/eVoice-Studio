@@ -132,7 +132,7 @@ export function installNativeCapture(
       resizable: false,
       alwaysOnTop: true,
       skipTaskbar: true,
-      backgroundColor: '#0a0a0a',
+      backgroundColor: '#030305',
       webPreferences: {
         preload,
         contextIsolation: true,
