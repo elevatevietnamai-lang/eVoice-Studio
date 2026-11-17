@@ -124,6 +124,66 @@ def test_brand_sources_do_not_bring_back_the_gradient(name: str) -> None:
         assert "<linearGradient" not in text, name
 
 
+# The VoiceStudio-era app palette: the magenta accent and plum canvas the recovery page
+# (`blank-window-guard.ts`) kept after the monochrome redesign, plus the logo gradient and
+# the "⌁" glyph that stood in for the mark. Exact values only: named palettes (Signal's
+# pink focus, Heritage's violet glass), sticker art and syntax colours legitimately use hues.
+OLD_UI_PALETTE = re.compile(
+    r"#(?:F8981D|FF32A3|F88537|150f19|f7eef7|c70a60|df1672|ff5aa5|d20a68)(?![0-9a-f])|⌁",
+    re.IGNORECASE,
+)
+SHIPPED_UI_GLOBS = (
+    "electron/src/main/**/*.ts",
+    "electron/src/preload/**/*.ts",
+    "electron/src/renderer/**/*.ts",
+    "electron/src/renderer/**/*.tsx",
+    "electron/src/renderer/**/*.css",
+    "electron/src/renderer/**/*.html",
+    "electron/public/**/*.svg",
+    "electron/public/**/*.js",
+    "electron/public/**/*.webmanifest",
+    "backend/**/*.py",
+    "backend/**/*.html",
+    "mobile/contract/*.json",
+    "mobile/ios/**/*.swift",
+    "mobile/android/**/*.kt",
+)
+# path -> reason. Add an entry only with a justification.
+OLD_UI_PALETTE_ALLOWED: dict[str, str] = {}
+
+
+def _shipped_ui_sources() -> list[Path]:
+    files: set[Path] = set()
+    for pattern in SHIPPED_UI_GLOBS:
+        for path in ROOT.glob(pattern):
+            rel = path.relative_to(ROOT).as_posix()
+            if "node_modules" in rel or "/tests/" in rel or "/test/" in rel:
+                continue
+            if re.search(r"\.(test|spec)\.[a-z]+$|(^|/)test_[^/]+\.py$", rel):
+                continue
+            files.add(path)
+    return sorted(files)
+
+
+def test_shipped_ui_does_not_use_the_old_voicestudio_palette() -> None:
+    sources = _shipped_ui_sources()
+    assert any(p.name == "blank-window-guard.ts" for p in sources)  # the scope is live
+    offenders = []
+    for path in sources:
+        rel = path.relative_to(ROOT).as_posix()
+        if rel in OLD_UI_PALETTE_ALLOWED:
+            continue
+        for match in OLD_UI_PALETTE.finditer(path.read_text(encoding="utf-8", errors="ignore")):
+            offenders.append(f"{rel}: {match.group(0)}")
+    assert not offenders, "Old VoiceStudio colours; use DESIGN.md tokens:\n" + "\n".join(offenders)
+
+
+def test_recovery_page_draws_the_real_mark() -> None:
+    guard = (ROOT / "electron/src/main/blank-window-guard.ts").read_text(encoding="utf-8")
+    assert MARK_BARS in guard and MARK_SPARK in guard
+    assert "#030305" in guard
+
+
 def test_raster_icons_show_the_bars_and_the_cut_out_star() -> None:
     from PIL import Image
 
