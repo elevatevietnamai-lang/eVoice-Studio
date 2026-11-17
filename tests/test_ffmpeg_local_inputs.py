@@ -76,7 +76,7 @@ def test_ffmpeg_reads_stdin_through_the_wrapper():
     # ffmpeg 7+ opens "-" via the "fd" protocol, which "file,pipe" refuses.
     cmd = local_inputs_only([shutil.which("ffmpeg"), "-v", "error", "-f", "s16le", "-ar",
                              "8000", "-ac", "1", "-i", "-", "-f", "null", "-"])
-    proc = subprocess.run(cmd, input=bytes(1600), capture_output=True, timeout=60)
+    proc = subprocess.run(cmd, input=bytes(1600), capture_output=True, timeout=60, check=False)
     assert proc.returncode == 0, proc.stderr.decode(errors="replace")
 
 

@@ -106,6 +106,7 @@ def test_engine_media_commands_only_open_files_and_pipes():
 def test_engine_video_writer_streams_frames_through_the_whitelist(tmp_path, monkeypatch):
     """Every subtitle removal ends in VideoWriter: its stdin input must pass the whitelist."""
     import shutil
+
     from hardsub_core import video
     if not shutil.which("ffmpeg"):
         pytest.skip("needs a system ffmpeg")
