@@ -63,6 +63,13 @@ it("links the logo Home, named with the app version, drawn with the app icon's o
   expect(mark).toHaveAttribute('data-crop', 'true');
 });
 
+it('gives the logo 16 px of air above it and 12 px before the rail icons', () => {
+  render(<WorkspaceSidebar />);
+  const brand = document.querySelector('[data-slot="rail-brand"]') as HTMLElement;
+  expect(brand).toHaveClass('pt-4', 'pb-3', 'items-start');
+  expect(brand.className).not.toMatch(/\bh-12\b|items-center/);
+});
+
 it('groups the foot of the rail: system status, then the app menu above Settings', () => {
   render(<WorkspaceSidebar />);
   const app = document.querySelector('[data-slot="rail-app"]')!;

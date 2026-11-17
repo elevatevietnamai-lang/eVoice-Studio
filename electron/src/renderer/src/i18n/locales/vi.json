@@ -2348,7 +2348,7 @@
     "signed_out_expired": "Đã đăng xuất. Đăng nhập lại để tiếp tục đồng bộ.",
     "sign_in_failed": "Đăng nhập đã bị hủy hoặc thất bại",
     "offline": "Ngoại tuyến: các thay đổi sẽ được đồng bộ sau",
-    "not_remembered": "Không truy cập được chuỗi khóa hệ thống nên cần đăng nhập lại sau khi khởi động lại VoiceStudio.",
+    "not_remembered": "Không truy cập được chuỗi khóa hệ thống nên cần đăng nhập lại sau khi khởi động lại eVoice Studio.",
     "menu_settings": "Cài đặt tài khoản",
     "plan": "Gói",
     "storage": "Bộ nhớ đám mây",
@@ -2982,7 +2982,7 @@
     "launcherHint": "Kéo để di chuyển, hoặc Alt + phím mũi tên",
     "title": "Hỏi eVoice Studio Agent",
     "notInstalled": "Chưa cài đặt",
-    "noSource": "Mở bản mã nguồn VoiceStudio có quyền ghi để trợ lý có thể sửa lỗi.",
+    "noSource": "Mở bản mã nguồn eVoice Studio có quyền ghi để trợ lý có thể sửa lỗi.",
     "noneFound": "Cài đặt Codex, Claude Code, OpenCode, Gemini (Antigravity) hoặc Pi để sửa lỗi cục bộ.",
     "ready": "Sẵn sàng",
     "placeholder": "Đã xảy ra lỗi gì? Mô tả các bước thực hiện, lỗi hiển thị hoặc kết quả mong đợi.",
@@ -3004,6 +3004,15 @@
   "dubStyle": {
     "label": "Hướng dẫn phong cách dịch",
     "help": "Mô tả giọng điệu, đối tượng người xem và phong cách chuyển thể — ví dụ: tiếng Bengal tự nhiên, giữ câu đùa, Việt hóa thành ngữ. Được lưu theo dự án, dùng khi dịch và căn chỉnh thời lượng. Để trống nếu dùng phong cách mặc định."
+  },
+  "dubResearch": {
+    "button": "Nghiên cứu video bằng {{agent}}",
+    "stop": "Dừng nghiên cứu",
+    "running": "Đang nghiên cứu: đọc lời thoại và khung hình, tìm trên web…",
+    "consent": "Gửi lời thoại, tên file và {{frames}} khung hình của video tới mô hình đám mây của {{agent}}; agent cũng có thể tìm và mở trang web. Bản tóm tắt nó viết sẽ thay nội dung ô trên (ghi chú của bạn được giữ nếu còn phù hợp); hãy xem lại trước khi dịch.",
+    "consent_audio": "Gửi lời thoại và tên file tới mô hình đám mây của {{agent}}; agent cũng có thể tìm và mở trang web. Bản tóm tắt nó viết sẽ thay nội dung ô trên (ghi chú của bạn được giữ nếu còn phù hợp); hãy xem lại trước khi dịch.",
+    "done": "Đã có bản tóm tắt nghiên cứu. Hãy xem lại trước khi dịch.",
+    "failed": "Nghiên cứu thất bại: {{error}}"
   },
   "dubActivity": {
     "output": "Bản dịch",
@@ -3059,7 +3068,7 @@
     "capabilitiesTitle": "Khả năng",
     "websiteTitle": "Trang web",
     "mcpHttpHint": "Trỏ bất kỳ máy khách MCP Streamable HTTP nào tới URL này. Gửi header {{header}} để máy khách có giọng riêng.",
-    "mcpStdioHint": "Với máy khách chỉ hỗ trợ stdio, chạy shim đi kèm từ thư mục mã nguồn VoiceStudio. Thay cwd bằng đường dẫn thư mục mã nguồn.",
+    "mcpStdioHint": "Với máy khách chỉ hỗ trợ stdio, chạy shim đi kèm từ thư mục mã nguồn eVoice Studio. Thay cwd bằng đường dẫn thư mục mã nguồn.",
     "apiHint": "Các endpoint tương thích OpenAI trên backend này. Yêu cầu cục bộ không cần khóa; yêu cầu từ xa cần khóa API của backend.",
     "dockerHint": "Ghim :stable cho bản phát hành; :latest là bản xem trước liên tục từ main. Giữ lại khóa API đã tạo: ứng dụng sẽ hỏi khóa này vì Docker che địa chỉ loopback.",
     "capability": {
@@ -4545,7 +4554,7 @@
     "timeline_preview_note": "Bản xem trước chỉ gần đúng; video xuất ra mới chính xác.",
     "scene_title": "Cảnh HTML tuỳ chỉnh",
     "scene_intro": "Viết HTML, CSS và JavaScript cho một tiêu đề hoặc cả một shot. Cảnh chạy ngoại tuyến trong sandbox, không có mạng và không đọc được file của bạn.",
-    "scene_desktop_only": "Cảnh tuỳ chỉnh chạy trong ứng dụng VoiceStudio trên máy tính.",
+    "scene_desktop_only": "Cảnh tuỳ chỉnh chạy trong ứng dụng eVoice Studio trên máy tính.",
     "scene_pick": "Cảnh",
     "scene_group_builtin": "Có sẵn",
     "scene_group_saved": "Đã lưu",

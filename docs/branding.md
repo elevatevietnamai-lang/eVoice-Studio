@@ -19,7 +19,7 @@ stars identify creation. The product voice is clear, calm, and direct.
 | Desktop/platform icons | `electron/build/icons/` |
 | iOS App Store icon | `mobile/ios/VoiceStudio/AppIcon.svg` → `Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png` |
 | Integration directory tile | `electron/src/shared/assets/integrations/voicestudio.svg` |
-| Sidebar/launchpad artwork | `electron/public/signal-field.webp` |
+| Sidebar/launchpad artwork | `electron/public/signal-field.webp` (still the pink VoiceStudio-era waveform; used by the mobile Home screens and the Play feature graphic, not by the desktop app) |
 
 Regenerate every desktop icon from the canonical vectors after changing the
 mark:
@@ -64,12 +64,16 @@ star, which would otherwise blur into a few pixels.
 The mark is white everywhere. A white mark needs a dark ground: on light
 surfaces put it on the `#030305` tile (`EVoiceMark` does this in the light
 theme), and never drop it bare on white. The one bare mark on a light surface is the app chrome's `tone="ink"` mark (the rail logo), drawn in the `#030305` ink instead of white, never the white mark. The retired orange-to-pink gradient
-must not return; `tests/test_voicestudio_branding.py` checks the sources. Keep the bars and both
+must not return, and neither may the old magenta app palette (`#c70a60`, `#df1672`,
+`#ff5aa5`, plum `#150f19`); `tests/test_voicestudio_branding.py` checks the sources and every
+shipped UI file. Keep the bars and both
 stars together; do not put text inside the icon or add another enclosing ring.
 
 ## Name and copy
 
-- Product name: **VoiceStudio**—one word, capital V and S.
+- Product name: **eVoice Studio** (lower-case e, two words). Keep **VoiceStudio** only where
+  the text means the upstream open-source project: credits, licence, donations, and the
+  upstream VoiceStudio Cloud account service.
 - Voice: concise, professional, warm, and direct.
 - Promise: local-first creation without a subscription or usage meter.
 - Avoid absolute privacy claims: network-backed engines, downloads, analytics,

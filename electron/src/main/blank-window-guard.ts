@@ -58,9 +58,33 @@ function escapeHtml(value: string): string {
     .replaceAll("'", '&#39;');
 }
 
+// The eVoice mark, copied from `components/brand/evoice-mark.tsx` (BARS.full and SPARK): this
+// page must render with no renderer bundle, so it cannot import the component. The test keeps
+// the two in sync.
+const MARK_BARS =
+  'M101.5 44C101.5 27.984 114.484 15 130.5 15C146.516 15 159.5 27.984 159.5 44V150.171Q149.405 165.615 130.25 172Q149.405 178.385 159.5 193.829V296C159.5 312.016 146.516 325 130.5 325C114.484 325 101.5 312.016 101.5 296ZM173 120C173 103.984 185.984 91 202 91C218.016 91 231 103.984 231 120V225C231 241.016 218.016 254 202 254C185.984 254 173 241.016 173 225V193.829Q183.095 178.385 202.25 172Q183.095 165.615 173 150.171ZM30 124C30 107.984 42.984 95 59 95C75.016 95 88 107.984 88 124V215C88 231.016 75.016 244 59 244C42.984 244 30 231.016 30 215ZM244.5 161C244.5 144.984 257.484 132 273.5 132C289.516 132 302.5 144.984 302.5 161V184C302.5 200.016 289.516 213 273.5 213C257.484 213 244.5 200.016 244.5 184Z';
+const MARK_SPARK =
+  'M273.5 42.5Q282.5 69.5 309.5 78.5Q282.5 87.5 273.5 114.5Q264.5 87.5 237.5 78.5Q264.5 69.5 273.5 42.5Z';
+
+// DESIGN.md dark tokens: bg #030305, surface #0d0e10, ink #f6f6f6, primary-ink #15191b,
+// 12% border, card radius 12 px, control radius 8 px, 32 px button, 160 ms transitions.
+const FALLBACK_STYLE = [
+  'html{color-scheme:dark}',
+  '*{box-sizing:border-box}',
+  "body{margin:0;min-height:100vh;display:grid;place-items:center;background:#030305;color:#f6f6f6;font:14px/20px 'Inter Variable',Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}",
+  '.card{width:min(24rem,calc(100vw - 2rem));padding:2rem;text-align:center;border:1px solid rgb(246 246 246/12%);border-radius:12px;background:#0d0e10}',
+  '.mark{display:block;width:48px;height:48px;margin:0 auto 1.25rem}',
+  "h1{margin:0 0 1.25rem;font:600 1.125rem/1.75rem 'Space Grotesk Variable','Space Grotesk','Inter Variable',Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif}",
+  'button{height:32px;padding:0 .875rem;border:0;border-radius:8px;background:#f6f6f6;color:#15191b;font:inherit;font-weight:500;cursor:pointer;box-shadow:0 1px 2px rgb(0 0 0/5%);transition:background-color 160ms cubic-bezier(.22,1,.36,1),box-shadow 160ms cubic-bezier(.22,1,.36,1)}',
+  'button:hover{background:rgb(246 246 246/90%)}',
+  'button:focus-visible{outline:none;box-shadow:0 0 0 3px rgb(246 246 246/50%)}',
+  '@media (prefers-reduced-motion:reduce){button{transition:none}}',
+].join('');
+
 export function blankFallbackUrl(locale: string): string {
   const copy = localizedFallbackCopy(locale);
-  const html = `<!doctype html><html lang="${escapeHtml(fallbackLocale(locale))}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>eVoice Studio</title><style>html{color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#150f19;color:#f7eef7;font:15px/1.5 Inter,system-ui,sans-serif}.card{width:min(28rem,calc(100vw - 3rem));padding:2.5rem;text-align:center;border:1px solid #ffffff18;border-radius:1.5rem;background:#ffffff08;box-shadow:0 24px 80px #0008}.mark{display:grid;place-items:center;width:3.5rem;height:3.5rem;margin:0 auto 1.25rem;border-radius:1rem;background:#d20a681c;color:#ff5aa5;font-size:1.75rem}h1{margin:0 0 1.5rem;font-size:1.25rem}button{border:1px solid #ffffff1f;border-radius:.75rem;background:#c70a60;color:white;padding:.7rem 1.15rem;font:inherit;font-weight:650;cursor:pointer}button:hover{background:#df1672}</style></head><body><main class="card"><div class="mark" aria-hidden="true">⌁</div><h1>${escapeHtml(copy.title)}</h1><button type="button" onclick="location.replace('${BLANK_CACHE_REPAIR_URL}')">${escapeHtml(copy.retry)}</button></main></body></html>`;
+  const mark = `<svg class="mark" viewBox="0 0 340 340" aria-hidden="true"><path d="${MARK_BARS}" fill="#FFFFFF"/><path d="${MARK_SPARK}" fill="#FFFFFF"/></svg>`;
+  const html = `<!doctype html><html lang="${escapeHtml(fallbackLocale(locale))}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>eVoice Studio</title><style>${FALLBACK_STYLE}</style></head><body><main class="card">${mark}<h1>${escapeHtml(copy.title)}</h1><button type="button" onclick="location.replace('${BLANK_CACHE_REPAIR_URL}')">${escapeHtml(copy.retry)}</button></main></body></html>`;
   return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 }
 
