@@ -198,6 +198,21 @@ export interface DubAgentTranslationRequest {
   translationInstructions?: string;
   glossary?: Array<{ source: string; target: string; note?: string }>;
   segments: DubAgentTranslationSegment[];
+  /** CLI model id (for Antigravity, a Gemini model from `agy models`); empty uses the CLI default. */
+  model?: string;
+}
+export interface GeminiModel {
+  id: string;
+  label: string;
+}
+export interface GeminiAccountStatus {
+  installed: boolean;
+  /** `unknown` covers timeouts and network errors: never reported as signed out. */
+  state: 'signedIn' | 'signedOut' | 'unknown';
+  models: GeminiModel[];
+}
+export interface GeminiLoginStart {
+  url: string;
 }
 export interface DubAgentTranslationResult {
   agent: RepairAgentId;
@@ -470,6 +485,13 @@ export interface VoiceStudioBridge {
     stopTranslation(): Promise<void>;
     onTranslationEvent(callback: (event: { requestId: string; text: string }) => void): () => void;
     onEvent(callback: (event: RepairAgentEvent) => void): () => void;
+    /** Lists Gemini models through `agy models` (a Google request); run only on a user action. */
+    geminiStatus(): Promise<GeminiAccountStatus>;
+    /** Starts `agy acp --login` and opens Google's sign-in page in the browser. */
+    geminiLoginStart(): Promise<GeminiLoginStart>;
+    /** Sends the authorization code the user pasted, then re-checks the status. */
+    geminiLoginSubmit(code: string): Promise<GeminiAccountStatus>;
+    geminiLoginCancel(): Promise<void>;
   };
   permissions: {
     getState(): Promise<NativePermissions>;

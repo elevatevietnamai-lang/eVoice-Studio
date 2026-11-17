@@ -48,6 +48,10 @@ const bridge: VoiceStudioBridge = {
     stopTranslation: () => ipcRenderer.invoke('repair:stopTranslation'),
     onTranslationEvent: (callback) => subscribe('repair:translationEvent', callback),
     onEvent: (callback) => subscribe<RepairAgentEvent>('repair:event', callback),
+    geminiStatus: () => ipcRenderer.invoke('repair:geminiStatus'),
+    geminiLoginStart: () => ipcRenderer.invoke('repair:geminiLoginStart'),
+    geminiLoginSubmit: (code) => ipcRenderer.invoke('repair:geminiLoginSubmit', code),
+    geminiLoginCancel: () => ipcRenderer.invoke('repair:geminiLoginCancel'),
   },
   permissions: {
     getState: () => ipcRenderer.invoke('permissions:getState'),
