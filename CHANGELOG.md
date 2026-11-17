@@ -14,7 +14,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
-- The rail gives the logo room at the top and lists its icons straight under it instead of centring them in the window's height (#81)
+- The rail gives the logo room at the top and lists its icons straight under it instead of centring them in the window's height (#82)
 
 ### Docs
 
