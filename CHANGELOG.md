@@ -8,6 +8,18 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Ask VoiceStudio Agent can run music, dubbing and speech jobs that take longer than two minutes
+
+### Fixed
+
+- Ask VoiceStudio Agent no longer cuts off a music, dubbing or speech job after two minutes: it waits while the job reports progress and returns the result without the progress lines (#PR)
+
+### Docs
+
+- The LLM provider guide explains how the agent's API bridge waits for long jobs, and that an empty Gemini model uses the one set in Antigravity (#PR)
+
 ## [0.5.7-beta.6] — 2026-11-17
 
 Gemini now runs on your Google account: sign in from Settings, pick the model, and use it for

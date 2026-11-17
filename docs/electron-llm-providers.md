@@ -90,6 +90,11 @@ into the run's temporary folder (never into your checkout) and starts
 | `--settings` | `toolPermission: request-review`, `agentMode: ""`, an allow rule for `mcp(voicestudio/api_request)` only, and deny rules for `command(*)`, `unsandboxed(*)`, `write_file(*)`, URL reads, actions and downloads and, without source, `read_file(*)`. A headless run cannot answer an approval prompt, so anything else is refused and the run ends. |
 | Checkout | Added with `--add-dir` for Diagnose, so the agent reads it by absolute path. |
 
+The API bridge waits for long jobs. A call that streams progress (music, dubbing, speech)
+runs until the job ends, and is stopped only when VoiceStudio sends nothing for 120 s, or
+after an hour. The agent gets the job's final events without the progress lines; clients
+that ask for MCP progress receive it as progress notifications instead.
+
 Compared with the other harnesses: Codex Fix edits and runs commands in its workspace
 sandbox, Claude Code Fix uses `acceptEdits` in the checkout, and both read files
 anywhere. Gemini reads like them but never edits source, because Antigravity cannot
@@ -102,7 +107,8 @@ Antigravity keeps each run's conversation in its own history, as it does for any
 `agy -p` run. The model is the one picked in **Settings → LLM providers**.
 
 Model IDs come from `agy models` (for example `gemini-3.8-flash-low`); leave the model
-empty to use the CLI's own default. A spent Antigravity quota shows as a rate-limit error.
+empty to use the model chosen in Antigravity's own settings (`model` in
+`~/.gemini/antigravity-cli/settings.json`, for example Gemini 4 Argon). A spent Antigravity quota shows as a rate-limit error.
 The app finds `agy` in its installer's folder (`%LOCALAPPDATA%\agy\bin` on Windows,
 `~/.local/bin` on macOS and Linux) or on Homebrew's path, even when launched from the desktop.
 

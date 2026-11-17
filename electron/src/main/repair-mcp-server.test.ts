@@ -32,6 +32,37 @@ beforeAll(async () => {
       });
       return;
     }
+    if (req.url === '/silent') {
+      // Sends headers, then nothing: a hung backend.
+      res.writeHead(200, { 'content-type': 'text/plain' });
+      res.flushHeaders();
+      return;
+    }
+    if (req.url === '/slow-stream' || req.url === '/progress-flood') {
+      // A generation job: progress events, then its result. The slow stream outlasts the idle
+      // timeout in total but never goes quiet for that long; the flood outgrows the byte cap.
+      res.writeHead(200, { 'content-type': 'text/event-stream' });
+      const progress = (value: number) =>
+        `event: progress\ndata: {"type": "progress", "progress": ${value}, "message": "Generating"}\n\n`;
+      const finish = () =>
+        res.end('event: track\ndata: {"id": "abc"}\n\nevent: done\ndata: {"track": {"id": "abc"}}\n\n');
+      if (req.url === '/progress-flood') {
+        res.write(progress(0).repeat(16_000));
+        finish();
+        return;
+      }
+      let step = 0;
+      const timer = setInterval(() => {
+        step += 1;
+        if (step <= 8) res.write(progress(step / 10));
+        else {
+          clearInterval(timer);
+          finish();
+        }
+      }, 250);
+      res.on('close', () => clearInterval(timer));
+      return;
+    }
     res.writeHead(200).end('hello €');
   });
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -48,9 +79,12 @@ afterAll(() => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-function call(lines: string[]): Promise<Array<Record<string, any>>> {
+function call(
+  lines: string[],
+  env: Record<string, string> = {},
+): Promise<Array<Record<string, any>>> {
   const child = spawn(process.execPath, [join(dir, 'server.mjs')], {
-    env: { ...process.env, VOICESTUDIO_REPAIR_CONTEXT_FILE: join(dir, 'context.json') },
+    env: { ...process.env, VOICESTUDIO_REPAIR_CONTEXT_FILE: join(dir, 'context.json'), ...env },
     stdio: ['pipe', 'pipe', 'ignore'],
   });
   const expected = lines.length;
@@ -63,7 +97,8 @@ function call(lines: string[]): Promise<Array<Record<string, any>>> {
       const parts = out.split('\n');
       out = parts.pop() ?? '';
       for (const part of parts) if (part) messages.push(JSON.parse(part));
-      if (messages.length >= expected) {
+      // Notifications carry no id; resolve once every request has its reply.
+      if (messages.filter((message) => 'id' in message).length >= expected) {
         child.kill();
         resolve(messages);
       }
@@ -73,13 +108,15 @@ function call(lines: string[]): Promise<Array<Record<string, any>>> {
   });
 }
 
-const apiCall = (path: string) =>
+const apiCall = (path: string, meta?: Record<string, unknown>) =>
   JSON.stringify({
     jsonrpc: '2.0',
     id: 1,
     method: 'tools/call',
-    params: { name: 'api_request', arguments: { path } },
+    params: { name: 'api_request', arguments: { path }, ...(meta ? { _meta: meta } : {}) },
   });
+
+const quickIdle = { VOICESTUDIO_REPAIR_IDLE_TIMEOUT_MS: '1000' };
 
 describe('repair MCP api_request', () => {
   it('returns small responses untouched', async () => {
@@ -111,5 +148,34 @@ describe('repair MCP api_request', () => {
     const replies = await call([wide, apiCall('/small')]);
     expect(replies[0].error.code).toBe(-32600);
     expect(replies[1].result.content[0].text).toBe('HTTP 200\nhello €');
+  }, 20_000);
+
+  it('waits out a stream that runs longer than the idle timeout, returning its result without progress lines', async () => {
+    const [reply] = await call([apiCall('/slow-stream')], quickIdle);
+    const text: string = reply.result.content[0].text;
+    expect(reply.result.isError).toBe(false);
+    expect(text).toContain('event: done');
+    expect(text).not.toContain('event: progress');
+  }, 20_000);
+
+  it('keeps the result of a stream whose progress alone passes the byte cap', async () => {
+    const [reply] = await call([apiCall('/progress-flood')]);
+    expect(reply.result.content[0].text).toContain('event: done');
+  }, 20_000);
+
+  it('stops a request when the backend goes quiet, and says why', async () => {
+    const [reply] = await call([apiCall('/silent')], quickIdle);
+    expect(reply.result.isError).toBe(true);
+    expect(reply.result.content[0].text).toMatch(/sent nothing for 1 s/);
+  }, 20_000);
+
+  it('forwards stream progress as MCP progress notifications when asked', async () => {
+    const messages = await call([apiCall('/slow-stream', { progressToken: 'p1' })], quickIdle);
+    const notes = messages.filter((message) => message.method === 'notifications/progress');
+    expect(notes.length).toBe(8);
+    expect(notes.every((note) => note.params.progressToken === 'p1')).toBe(true);
+    const values = notes.map((note) => note.params.progress);
+    expect(values).toEqual([...values].sort((a, b) => a - b));
+    expect(messages.at(-1)?.result.content[0].text).toContain('event: done');
   }, 20_000);
 });
