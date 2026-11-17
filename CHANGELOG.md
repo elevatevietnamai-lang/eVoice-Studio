@@ -14,11 +14,11 @@ metadata and the backend fallback mirror it.
 
 ### Added
 
-- **Research the video** beside the translation brief: the chosen agent reads the transcript, five frames and the web, then writes the topic, tone, terminology, likely OCR errors and rules into the brief, only when you click it (#PR)
+- **Research the video** beside the translation brief: the chosen agent reads the transcript, five frames and the web, then writes the topic, tone, terminology, likely OCR errors and rules into the brief, only when you click it (#81)
 
 ### Changed
 
-- Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#PR)
+- Translation follows a brief's terminology and OCR corrections as well as its tone, for local agents and the configured LLM (#81)
 
 ## [0.5.7-beta.8] — 2026-11-18
 
