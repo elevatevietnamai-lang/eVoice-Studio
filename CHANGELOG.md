@@ -10,9 +10,9 @@ metadata and the backend fallback mirror it.
 
 ### Fixed
 
-- Select lists, menus, popovers and tooltips scale in as they fade, a Select's chevron turns while it is open, and long lists stop at 20 rem instead of running to the window edge
-- Agent features, the source folder picker, song lyrics, delete confirmations and other show/hide panels slide open instead of popping in, and disclosure chevrons turn smoothly
-- A button beside a button group is now the group's height (Agent, Batch, Recent takes), and a selected segment has the same edge as a selected tab
+- Select lists, menus, popovers and tooltips scale in as they fade, a Select's chevron turns while it is open, and long lists stop at 20 rem instead of running to the window edge (#60)
+- Agent features, the source folder picker, song lyrics, delete confirmations and other show/hide panels slide open instead of popping in, and disclosure chevrons turn smoothly (#60)
+- A button beside a button group is now the group's height (Agent, Batch, Recent takes), and a selected segment has the same edge as a selected tab (#60)
 
 ## [0.5.7-beta.5] — 2026-11-17
 
