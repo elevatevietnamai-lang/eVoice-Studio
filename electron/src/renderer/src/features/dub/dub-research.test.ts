@@ -103,7 +103,9 @@ it('sends the source transcript and frames to the chosen agent and stores its br
 
 it('keeps the brief field when research is stopped or fails', async () => {
   let release: (value: unknown) => void = () => {};
-  const research = vi.fn(() => new Promise((resolve) => (release = resolve)));
+  const research = vi.fn(
+    (_request: { frames: unknown[] }) => new Promise((resolve) => (release = resolve)),
+  );
   const stopTranslation = vi.fn().mockResolvedValue(undefined);
   withBridge({ research, stopTranslation });
   vi.mocked(apiFetch).mockRejectedValue(new Error('no frame'));

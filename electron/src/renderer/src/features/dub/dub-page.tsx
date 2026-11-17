@@ -1550,7 +1550,7 @@ export function DubPage() {
                 {selectedTranslationAgent && (
                   <div
                     data-slot="dub-research"
-                    className="space-y-1.5 rounded-md border border-border/60 p-2"
+                    className="space-y-1.5 rounded-lg border border-border/60 p-2"
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       {researching ? (
@@ -1598,11 +1598,13 @@ export function DubPage() {
                             agent: selectedTranslationAgent.label,
                           })}
                     </p>
-                    {researchError && (
-                      <p role="alert" className="text-xs leading-5 text-destructive">
-                        {t('dubResearch.failed', { error: researchError })}
-                      </p>
-                    )}
+                    <Reveal>
+                      {researchError && (
+                        <p role="alert" className="text-xs leading-5 text-destructive">
+                          {t('dubResearch.failed', { error: researchError })}
+                        </p>
+                      )}
+                    </Reveal>
                   </div>
                 )}
               </div>
