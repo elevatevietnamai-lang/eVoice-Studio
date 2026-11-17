@@ -8,6 +8,11 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Dropdowns, menus and panels open with their full motion again
+- Buttons line up with the button groups beside them
+
 ### Fixed
 
 - Select lists, menus, popovers and tooltips scale in as they fade, a Select's chevron turns while it is open, and long lists stop at 20 rem instead of running to the window edge (#60)
