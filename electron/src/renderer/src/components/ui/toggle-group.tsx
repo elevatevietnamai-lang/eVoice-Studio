@@ -76,8 +76,9 @@ function ToggleGroupItem({
           variant: context.variant || variant,
           size: context.size || size,
         }),
-        // One look with TabsTrigger: 4 px corners inside the 8 px frame; pressed is the raised tab.
-        "shrink-0 rounded-lg hover:bg-transparent focus:z-10 focus-visible:z-10 aria-pressed:bg-background aria-pressed:text-foreground dark:aria-pressed:bg-control-fill",
+        // One look with TabsTrigger: 8 px corners 4 px inside the 12 px frame; pressed is the
+        // raised tab, with the same 1 px edge the active tab has in dark mode.
+        "shrink-0 rounded-lg border border-transparent hover:bg-transparent focus:z-10 focus-visible:z-10 aria-pressed:bg-background aria-pressed:text-foreground dark:aria-pressed:border-input dark:aria-pressed:bg-control-fill",
         className
       )}
       {...props}

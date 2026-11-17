@@ -335,7 +335,7 @@ export function VoiceStudioAgent() {
         </div>
         <div className="agent-workspace-modes" role="group" aria-label={t('agentWorkspace.mode')}>
           <Button
-            size="sm"
+            size="xs"
             variant={mode === 'diagnose' ? 'secondary' : 'ghost'}
             aria-pressed={mode === 'diagnose'}
             disabled={running}
@@ -344,7 +344,7 @@ export function VoiceStudioAgent() {
             {t('agentWorkspace.plan')}
           </Button>
           <Button
-            size="sm"
+            size="xs"
             variant={mode === 'fix' ? 'secondary' : 'ghost'}
             aria-pressed={mode === 'fix'}
             disabled={running}
@@ -360,7 +360,9 @@ export function VoiceStudioAgent() {
           onClick={() => setDetails((value) => !value)}
         >
           {t('agentWorkspace.features')}
-          <ChevronDownIcon />
+          <ChevronDownIcon
+            className={cn('transition-[rotate] duration-200 motion-reduce:transition-none', details && 'rotate-180')}
+          />
         </Button>
       </div>
       <div
@@ -375,65 +377,69 @@ export function VoiceStudioAgent() {
             follow.current = element.scrollHeight - element.scrollTop - element.clientHeight < 60;
         }}
       >
-        {details && (
-          <div className="agent-workspace-details studio-scrollbar">
-            <div
-              className="agent-workspace-feature-list"
-              role="group"
-              aria-label={t('agentWorkspace.features')}
-            >
-              {agentFeatures.map((feature) => (
-                <Button
-                  key={feature}
-                  size="xs"
-                  variant={features.includes(feature) ? 'secondary' : 'outline'}
-                  aria-pressed={features.includes(feature)}
-                  disabled={running}
-                  onClick={() =>
-                    setFeatures((current) =>
-                      current.includes(feature)
-                        ? current.filter((item) => item !== feature)
-                        : [...current, feature],
-                    )
-                  }
-                >
-                  {t(labels[feature])}
-                </Button>
-              ))}
-            </div>
-            <label className="agent-workspace-source">
-              <Checkbox
-                checked={source}
-                disabled={running}
-                onCheckedChange={(checked) => setSource(checked)}
-              />
-              <WrenchIcon className="size-3.5" />
-              {t('agentWorkspace.source')}
-            </label>
-            {source && (
-              <div className="flex items-center gap-2 text-xs">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={running}
-                  onClick={() => void chooseWorkspace()}
-                >
-                  <FolderOpenIcon />
-                  {t('settings.models_dir_choose')}
-                </Button>
-                <span className="truncate" title={workspace.path}>
-                  {workspace.path || t('repairAgent.noSource')}
-                </span>
+        <Reveal>
+          {details && (
+            <div className="agent-workspace-details studio-scrollbar">
+              <div
+                className="agent-workspace-feature-list"
+                role="group"
+                aria-label={t('agentWorkspace.features')}
+              >
+                {agentFeatures.map((feature) => (
+                  <Button
+                    key={feature}
+                    size="xs"
+                    variant={features.includes(feature) ? 'secondary' : 'outline'}
+                    aria-pressed={features.includes(feature)}
+                    disabled={running}
+                    onClick={() =>
+                      setFeatures((current) =>
+                        current.includes(feature)
+                          ? current.filter((item) => item !== feature)
+                          : [...current, feature],
+                      )
+                    }
+                  >
+                    {t(labels[feature])}
+                  </Button>
+                ))}
               </div>
-            )}
-            <details>
-              <summary>{t('repairAgent.contextNotice')}</summary>
-              <pre className="agent-workspace-diagnostics">
-                {backend.logTail.slice(-40).join('\n')}
-              </pre>
-            </details>
-          </div>
-        )}
+              <label className="agent-workspace-source">
+                <Checkbox
+                  checked={source}
+                  disabled={running}
+                  onCheckedChange={(checked) => setSource(checked)}
+                />
+                <WrenchIcon className="size-3.5" />
+                {t('agentWorkspace.source')}
+              </label>
+              <Reveal>
+                {source && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={running}
+                      onClick={() => void chooseWorkspace()}
+                    >
+                      <FolderOpenIcon />
+                      {t('settings.models_dir_choose')}
+                    </Button>
+                    <span className="truncate" title={workspace.path}>
+                      {workspace.path || t('repairAgent.noSource')}
+                    </span>
+                  </div>
+                )}
+              </Reveal>
+              <details>
+                <summary>{t('repairAgent.contextNotice')}</summary>
+                <pre className="agent-workspace-diagnostics">
+                  {backend.logTail.slice(-40).join('\n')}
+                </pre>
+              </details>
+            </div>
+          )}
+        </Reveal>
         {conversation.messages.length === 0 ? (
           <div className="agent-workspace-welcome">
             <p>{t('agentWorkspace.welcome')}</p>

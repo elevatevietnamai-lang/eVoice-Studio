@@ -171,29 +171,31 @@ export function HistoryRetention() {
           </Button>
         </form>
       </SettingsRow>
-      {confirm && (
-        <div className="space-y-3 p-4">
-          <p className="text-sm">{t('settings.history_retention_help')}</p>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="destructive"
-              disabled={action.busy || !valid}
-              onClick={() => void save()}
-            >
-              {t('common.confirm')}
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={action.busy}
-              onClick={() => setConfirm(false)}
-            >
-              {t('common.cancel')}
-            </Button>
+      <Reveal>
+        {confirm && (
+          <div className="space-y-3 p-4">
+            <p className="text-sm">{t('settings.history_retention_help')}</p>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="destructive"
+                disabled={action.busy || !valid}
+                onClick={() => void save()}
+              >
+                {t('common.confirm')}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={action.busy}
+                onClick={() => setConfirm(false)}
+              >
+                {t('common.cancel')}
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Reveal>
       <Reveal>
         {(query.isError || action.error) && (
           <p role="alert" className="p-4 text-sm text-destructive">

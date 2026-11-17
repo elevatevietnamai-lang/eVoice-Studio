@@ -41,17 +41,17 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-fit items-center justify-between gap-1.5 rounded-(--control-radius) border border-input bg-control-fill px-2 py-1.5 text-sm whitespace-nowrap transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-6 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 bg-control-fill dark:hover:bg-control-fill dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+        "group/select-trigger flex w-fit items-center justify-between gap-1.5 rounded-(--control-radius) border border-input bg-control-fill px-2 py-1.5 text-sm whitespace-nowrap transition-[color,background-color,border-color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-6 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 bg-control-fill dark:hover:bg-control-fill dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
         className
       )}
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon
-        render={
-          <ChevronDownIcon className="pointer-events-none size-3.5 text-muted-foreground" />
-        }
-      />
+      {/* The chevron turns over while the list is open. Children replace Base UI's default "▼"
+          glyph, which the render prop would otherwise leave inside the svg. */}
+      <SelectPrimitive.Icon className="pointer-events-none flex text-muted-foreground transition-[rotate] duration-200 ease-(--ease-standard) group-data-popup-open/select-trigger:rotate-180 motion-reduce:transition-none">
+        <ChevronDownIcon className="size-3.5" />
+      </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
 }
@@ -85,7 +85,7 @@ function SelectContent({
         <SelectPrimitive.Popup
           data-slot="select-content"
           className={cn(
-            "cn-menu-target cn-menu-translucent relative isolate z-50 max-h-(--available-height) max-w-(--available-width) min-w-[max(var(--anchor-width),8rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-(--card-radius) p-1 surface-glass text-popover-foreground shadow-md ring-1 ring-border transition-[opacity,transform] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:scale-100 motion-reduce:duration-150",
+            "cn-menu-target cn-menu-translucent relative isolate z-50 max-h-[min(var(--available-height),20rem)] max-w-(--available-width) min-w-[max(var(--anchor-width),8rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-(--card-radius) p-1 surface-glass text-popover-foreground shadow-md ring-1 ring-border transition-[opacity,scale,translate] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:scale-100 motion-reduce:duration-150",
             className
           )}
           {...props}

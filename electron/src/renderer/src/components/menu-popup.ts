@@ -4,7 +4,7 @@
  * trigger (DESIGN.md). Call sites add only size and layout classes.
  */
 export const menuPopupClass =
-  'origin-(--transform-origin) rounded-(--card-radius) border border-border bg-popover text-popover-foreground shadow-md outline-none transition-[opacity,transform] duration-200 ease-(--ease-standard) data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:duration-150 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:scale-100 motion-reduce:duration-150';
+  'origin-(--transform-origin) rounded-(--card-radius) border border-border bg-popover text-popover-foreground shadow-md outline-none transition-[opacity,scale,translate] duration-200 ease-(--ease-standard) data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:duration-150 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:scale-100 motion-reduce:duration-150';
 
 /**
  * Row of every dropdown menu (Base UI `Menu.Item`): 8 px corners inside the 12 px popup and its

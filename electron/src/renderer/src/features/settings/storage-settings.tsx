@@ -233,29 +233,31 @@ export function StorageSettings() {
             ) : null}
           </div>
         ))}
-        {confirm && (
-          <div className="space-y-3 p-4">
-            <p className="text-sm">{t('settings.storage_clear_temp_confirm')}</p>
-            <div className="flex gap-2">
-              <Button
-                variant="destructive"
-                size="sm"
-                disabled={action.busy}
-                onClick={() => void clear()}
-              >
-                {t('common.confirm')}
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={action.busy}
-                onClick={() => setConfirm(false)}
-              >
-                {t('common.cancel')}
-              </Button>
+        <Reveal>
+          {confirm && (
+            <div className="space-y-3 p-4">
+              <p className="text-sm">{t('settings.storage_clear_temp_confirm')}</p>
+              <div className="flex gap-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={action.busy}
+                  onClick={() => void clear()}
+                >
+                  {t('common.confirm')}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={action.busy}
+                  onClick={() => setConfirm(false)}
+                >
+                  {t('common.cancel')}
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </Reveal>
         <Reveal>
           {freed != null && (
             <p role="status" className="p-4 text-sm text-muted-foreground">

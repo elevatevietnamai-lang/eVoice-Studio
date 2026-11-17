@@ -167,3 +167,9 @@ it('never recolours a utility class from unlayered CSS', () => {
   );
   expect(offenders.map(({ selector }) => selector)).toEqual([]);
 });
+
+/** Tailwind v4's `group-open:rotate-180` sets `rotate`, so the chevron transition must name it. */
+it('turns disclosure chevrons smoothly', () => {
+  const rule = css.slice(css.indexOf('details > summary .lucide-chevron-down'));
+  expect(rule.slice(0, rule.indexOf('}'))).toMatch(/transition-property:[^;]*\brotate\b/);
+});

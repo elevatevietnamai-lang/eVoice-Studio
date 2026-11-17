@@ -594,7 +594,7 @@ function RecentTakes({ scrollRef }: RecentTakesProps) {
         {(history.data?.length ?? 0) > 0 ? (
           <Button
             variant="ghost"
-            size="xs"
+            size="icon"
             className="shrink-0 text-muted-foreground hover:text-destructive"
             aria-label={t('clone.history_clear')}
             title={t('clone.history_clear')}

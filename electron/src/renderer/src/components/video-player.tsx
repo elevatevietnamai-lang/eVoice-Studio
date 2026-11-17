@@ -150,7 +150,7 @@ function VideoControls({
   }, [player, time]);
   return (
     <div
-      className={`absolute inset-x-2 bottom-2 z-10 space-y-2 rounded-(--card-radius) border border-white/10 bg-black/55 px-2.5 py-2 text-white shadow-[0_12px_32px_rgb(0_0_0/38%)] backdrop-blur-xl transition-[opacity,transform] duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 ${paused || waiting ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}
+      className={`absolute inset-x-2 bottom-2 z-10 space-y-2 rounded-(--card-radius) border border-white/10 bg-black/55 px-2.5 py-2 text-white shadow-[0_12px_32px_rgb(0_0_0/38%)] backdrop-blur-xl transition-[opacity,scale,translate] duration-200 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 ${paused || waiting ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`}
     >
       <Reveal>
         {(error || failed) && (

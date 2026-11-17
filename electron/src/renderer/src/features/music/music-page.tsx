@@ -962,63 +962,67 @@ export function MusicPage() {
             <span className="font-medium">{t('musicStudio.instrumental')}</span>
             <Switch checked={instrumental} disabled={busy} onCheckedChange={setInstrumental} />
           </label>
-          {!instrumental && (
-            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-              <span className="font-medium">{t('musicStudio.lyrics')}</span>
-              <div
-                className="flex flex-wrap gap-1"
-                role="toolbar"
-                aria-label={t('musicStudio.lyric_tags')}
-              >
-                {LYRIC_TAGS.map((tag) => (
-                  <Button
-                    key={tag}
-                    size="xs"
-                    variant="ghost"
-                    disabled={busy}
-                    title={t('musicStudio.lyric_tag_insert', { tag: `[${tag}]` })}
-                    onClick={() => insertTag(tag)}
-                  >
-                    [{tag}]
-                  </Button>
-                ))}
-              </div>
-              <Textarea
-                ref={lyricsRef}
-                value={lyrics}
-                maxLength={8000}
-                rows={6}
-                disabled={busy}
-                placeholder={t('musicStudio.lyrics_placeholder')}
-                onChange={(event) => setLyrics(event.target.value)}
-              />
-            </label>
-          )}
-          {!instrumental && (
-            <div className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-              <span id="music-vocal-language" className="font-medium">
-                {t('musicStudio.vocal_language')}
-              </span>
-              <Select
-                value={vocalLanguage}
-                disabled={busy}
-                onValueChange={(value) => typeof value === 'string' && setVocalLanguage(value)}
-              >
-                <SelectTrigger aria-labelledby="music-vocal-language" className="w-full">
-                  <SelectValue>
-                    {languages.find((item) => item.value === vocalLanguage)?.label ?? vocalLanguage}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  {languages.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
+          <Reveal>
+            {!instrumental && (
+              <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                <span className="font-medium">{t('musicStudio.lyrics')}</span>
+                <div
+                  className="flex flex-wrap gap-1"
+                  role="toolbar"
+                  aria-label={t('musicStudio.lyric_tags')}
+                >
+                  {LYRIC_TAGS.map((tag) => (
+                    <Button
+                      key={tag}
+                      size="xs"
+                      variant="ghost"
+                      disabled={busy}
+                      title={t('musicStudio.lyric_tag_insert', { tag: `[${tag}]` })}
+                      onClick={() => insertTag(tag)}
+                    >
+                      [{tag}]
+                    </Button>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+                </div>
+                <Textarea
+                  ref={lyricsRef}
+                  value={lyrics}
+                  maxLength={8000}
+                  rows={6}
+                  disabled={busy}
+                  placeholder={t('musicStudio.lyrics_placeholder')}
+                  onChange={(event) => setLyrics(event.target.value)}
+                />
+              </label>
+            )}
+          </Reveal>
+          <Reveal>
+            {!instrumental && (
+              <div className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                <span id="music-vocal-language" className="font-medium">
+                  {t('musicStudio.vocal_language')}
+                </span>
+                <Select
+                  value={vocalLanguage}
+                  disabled={busy}
+                  onValueChange={(value) => typeof value === 'string' && setVocalLanguage(value)}
+                >
+                  <SelectTrigger aria-labelledby="music-vocal-language" className="w-full">
+                    <SelectValue>
+                      {languages.find((item) => item.value === vocalLanguage)?.label ?? vocalLanguage}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languages.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </Reveal>
 
           {!editing && (
             <div className="space-y-1.5 text-xs">

@@ -1,3 +1,5 @@
+import { segmentedFrameClass } from '@/components/segmented';
+import { cn } from '@/lib/utils';
 import { splitRoundedMinutes } from '@shared/utils/timeFormat';
 import { engineAvailabilityText } from '@/lib/engine-availability';
 import { Reveal } from '@/components/motion';
@@ -393,11 +395,13 @@ export function BatchPage() {
         </SecondarySidebar>
         <section className="min-w-0 flex-1 overflow-y-auto p-6">
           <div className="mb-5 flex items-center gap-3">
-            <div className="inline-flex gap-1 rounded-(--card-radius) border border-border/50 bg-muted/20 p-1 [&>*]:rounded-lg">
+            <div className={cn(segmentedFrameClass, 'inline-flex')}>
               {['active', 'done', 'failed'].map((value) => (
                 <Button
                   key={value}
+                  size="xs"
                   variant={tab === value ? 'secondary' : 'ghost'}
+                  aria-pressed={tab === value}
                   onClick={() => setTab(value)}
                 >
                   {value === 'active' ? (
@@ -414,7 +418,6 @@ export function BatchPage() {
             <Button
               className="ml-auto"
               variant="ghost"
-              size="sm"
               disabled={jobs.isFetching}
               onClick={() => void jobs.refetch()}
             >
