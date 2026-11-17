@@ -8,12 +8,14 @@ import { createRequire } from 'node:module';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
-import { UPDATE_REPOSITORY } from '../../config/app-config.mjs';
+import { PRODUCT_NAME, UPDATE_REPOSITORY } from '../../config/app-config.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const releaseDir = resolve(root, process.argv[2] || 'release');
 const version = JSON.parse(readFileSync(resolve(root, '../package.json'), 'utf8')).version;
-const filename = `VoiceStudio-Electron-${version}-linux-x64.AppImage`;
+// Same prefix as electron-builder.config.mjs's direct-build artifactName.
+const artifactPrefix = `${PRODUCT_NAME.replace(/[^A-Za-z0-9]+/g, '-')}-Electron`;
+const filename = `${artifactPrefix}-${version}-linux-x64.AppImage`;
 const image = resolve(releaseDir, filename);
 const zsync = `${image}.zsync`;
 const channel = process.env.VOICESTUDIO_UPDATE_CHANNEL || 'electron-stable-linux-x64';
@@ -28,7 +30,7 @@ const releaseTag = `v${version}`;
 const manifestPath = resolve(releaseDir, `${channel}-linux.yml`);
 const updateInfo = `gh-releases-zsync|${UPDATE_REPOSITORY.replace('/', '|')}|${
   isBeta ? releaseTag : 'latest'
-}|VoiceStudio-Electron-*-linux-x64.AppImage.zsync`;
+}|${artifactPrefix}-*-linux-x64.AppImage.zsync`;
 
 // The pinned electron-builder runtime reserves a fixed-size .upd_info ELF
 // section. Read its actual offset instead of assuming a particular runtime

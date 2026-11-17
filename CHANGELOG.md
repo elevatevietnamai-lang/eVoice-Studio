@@ -23,6 +23,7 @@ metadata and the backend fallback mirror it.
 - LLM translations that keep Chinese characters in a Vietnamese line are retried once, then marked *Untranslated* (#57)
 - NLLB no longer repeats one phrase over and over on long segments (#57)
 - Exported videos label each audio track with its language (for example `vie`) and a title, and engine names and unavailable reasons in Settings are shown in your language (#57)
+- Linux AppImages point external updaters at eVoice Studio's own release files, so the Linux release check no longer fails on the old upstream name (#56)
 
 ## [0.5.7-beta.4] — 2026-11-16
 
