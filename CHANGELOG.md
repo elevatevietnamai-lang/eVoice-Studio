@@ -8,11 +8,24 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.5] — 2026-11-17
+
+A first dub of a Chinese video now runs end to end: the alignment model downloads as its own step
+instead of timing out, Argos translates through English when there is no direct pack, and
+translations stop looping or leaking Chinese characters. This is also the first beta that copies
+on 0.5.7-beta.4 receive inside the app.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.5-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.4 update in **Settings → Updates**; copies on 0.5.7-beta.3 or older install this once by hand |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
 - A first dub of a Chinese video finishes without timing out, and Argos can translate it to Vietnamese
 - Translations no longer loop on one phrase or keep Chinese characters in Vietnamese lines
 - Exported videos tag each audio track with its language
+- Tabs, segmented buttons and disclosure toggles respond to hover again
 
 ### Fixed
 
