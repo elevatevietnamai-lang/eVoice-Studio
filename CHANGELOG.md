@@ -12,6 +12,10 @@ metadata and the backend fallback mirror it.
 
 - The user guides send readers to the download page instead of the code repository
 
+### Changed
+
+- The rail gives the logo room at the top and lists its icons straight under it instead of centring them in the window's height (#81)
+
 ### Docs
 
 - The Getting started and Troubleshooting guides point to the download page and describe bug reports without naming a code host (#80)
