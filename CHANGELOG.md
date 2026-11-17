@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- The user guides send readers to the download page instead of the code repository
+
+### Docs
+
+- The Getting started and Troubleshooting guides point to the download page and describe bug reports without naming a code host (#80)
+
 ## [0.5.7-beta.8] — 2026-11-18
 
 Removing burned-in subtitles works again: on current ffmpeg the cleanup failed with "Invalid
