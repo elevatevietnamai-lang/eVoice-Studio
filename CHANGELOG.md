@@ -8,11 +8,23 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.9] — 2026-11-18
+
+Removing burned-in subtitles with LaMa is about six times faster: a five-minute screen recording
+that took 84 minutes on an RTX 3060 now takes under 13. Dubbing can also research the video before
+translating, and a new export keeps the original audio and only swaps in the translated subtitles.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.9-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.6 to beta.8 update silently in **Settings → Updates**; copies on 0.5.7-beta.4 or beta.5 update there too, showing the Setup window once |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
+- Removing on-screen subtitles with LaMa is about 6x faster
 - Dubbing can research the video before translating: your agent writes an editable brief that translation follows
-- The user guides send readers to the download page instead of the code repository
 - Export a translated-subtitle video without dubbing
+- The recovery page and window background use the eVoice look
 
 ### Added
 
