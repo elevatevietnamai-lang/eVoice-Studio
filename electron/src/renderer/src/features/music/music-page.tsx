@@ -86,6 +86,7 @@ import {
 } from './music-options';
 import { MusicSourcePicker, sourceFields, type MusicSource } from './music-source-picker';
 import { MusicLora } from './music-lora';
+import { BusyLabel } from '@/components/busy-label';
 import {
   MusicFormatDialog,
   applyFormat,
@@ -694,7 +695,9 @@ export function MusicPage() {
                   value={[coverStrength]}
                   disabled={busy}
                   aria-label={t('musicStudio.cover_strength')}
-                  onValueChange={(value) => setCoverStrength(Array.isArray(value) ? value[0] : value)}
+                  onValueChange={(value) =>
+                    setCoverStrength(Array.isArray(value) ? value[0] : value)
+                  }
                 />
                 <p className="leading-5 text-muted-foreground">
                   {t('musicStudio.cover_strength_help')}
@@ -1021,7 +1024,8 @@ export function MusicPage() {
                 >
                   <SelectTrigger aria-labelledby="music-vocal-language" className="w-full">
                     <SelectValue>
-                      {languages.find((item) => item.value === vocalLanguage)?.label ?? vocalLanguage}
+                      {languages.find((item) => item.value === vocalLanguage)?.label ??
+                        vocalLanguage}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
@@ -1529,11 +1533,13 @@ export function MusicPage() {
             ) : (
               <SparklesIcon />
             )}
-            {task?.kind === 'generate'
-              ? t('musicStudio.generating')
-              : Number(batchSize) > 1
-                ? t('musicStudio.generate_many', { count: Number(batchSize) })
-                : t('musicStudio.generate')}
+            {task?.kind === 'generate' ? (
+              <BusyLabel label={t('musicStudio.generating')} progress={task.progress} />
+            ) : Number(batchSize) > 1 ? (
+              t('musicStudio.generate_many', { count: Number(batchSize) })
+            ) : (
+              t('musicStudio.generate')
+            )}
           </Button>
           {task?.kind === 'generate' && (
             <>
