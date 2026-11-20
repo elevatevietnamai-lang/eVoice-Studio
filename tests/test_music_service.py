@@ -321,6 +321,54 @@ def test_generate_flow_parses_stringified_result_and_saves_audio(tmp_path, monke
     assert ("POST", "/release_task") in calls and ("GET", "/v1/audio") in calls
 
 
+def test_generate_progress_follows_the_servers_reported_progress(tmp_path, monkeypatch):
+    # ACE-Step reports its own share of the work while a task runs; the bar shows that, not a
+    # guess from the time waited, and never moves backwards.
+    polls = iter([0.2, 0.6, 0.4, None])
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/release_task":
+            return httpx.Response(200, json=_wrap({"task_id": "t1", "status": "queued"}))
+        if request.url.path == "/query_result":
+            share = next(polls)
+            if share is None:
+                result = json.dumps([{"file": "/v1/audio?path=%2Ftmp%2Fa.wav", "status": 1}])
+                return httpx.Response(200, json=_wrap([{"task_id": "t1", "status": 1, "result": result}]))
+            running = json.dumps([{"file": "", "status": 0, "progress": share, "stage": "diffusion"}])
+            return httpx.Response(200, json=_wrap([{"task_id": "t1", "status": 0, "result": running}]))
+        if request.url.path == "/v1/audio":
+            return httpx.Response(200, content=b"RIFFdata")
+        return httpx.Response(404)
+
+    real = httpx.AsyncClient
+    monkeypatch.setattr(music.httpx, "AsyncClient",
+                        lambda **kw: real(transport=httpx.MockTransport(handler), **kw))
+    real_sleep = asyncio.sleep
+    monkeypatch.setattr(music.asyncio, "sleep", lambda *_a, **_k: real_sleep(0))
+    engine = music.AceStepEngine()
+
+    async def fake_running(*_a, **_k):
+        return "http://127.0.0.1:9", "k"
+
+    monkeypatch.setattr(engine, "_ensure_running", fake_running)
+    events = _collect(engine.generate(music.MusicRequest(prompt="x"), str(tmp_path / "t.wav")))
+    ticks = [round(e["progress"], 3) for e in events if e["type"] == "progress"]
+    assert ticks == [0.0, 0.1, 0.27, 0.61, 0.61]
+    assert events[-1]["type"] == "done"
+
+
+@pytest.mark.parametrize("item, expected", [
+    ({"result": json.dumps([{"progress": 0.42}])}, 0.42),
+    ({"result": [{"progress": 1.7}]}, 1.0),
+    ({"result": json.dumps([{"progress": True}])}, None),
+    ({"result": "not json"}, None),
+    ({"result": "[]"}, None),
+    (None, None),
+])
+def test_reported_progress_reads_only_a_real_share(item, expected):
+    assert music._reported_progress(item) == expected
+
+
 def test_library_roundtrip_and_id_validation(tmp_path, monkeypatch):
     monkeypatch.setattr(music_library, "DATA_DIR", str(tmp_path))
     tid = music_library.new_id()

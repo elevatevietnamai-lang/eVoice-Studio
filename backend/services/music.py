@@ -740,6 +740,27 @@ def _task_state(value: object) -> str:
     return "running"
 
 
+def _reported_progress(item: object) -> Optional[float]:
+    """The share of the task done that `query_result` reports while it runs, or None.
+
+    A running task's `result` is a JSON list whose first entry carries ACE-Step's own
+    `progress` (0..1), the same value its web UI shows.
+    """
+    if not isinstance(item, dict):
+        return None
+    result = item.get("result")
+    if isinstance(result, str):
+        try:
+            result = json.loads(result)
+        except ValueError:
+            return None
+    first = result[0] if isinstance(result, list) and result else None
+    value = first.get("progress") if isinstance(first, dict) else None
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return max(0.0, min(1.0, float(value)))
+
+
 def _steps(req: MusicRequest) -> int:
     low, high, default = (DIT_MODELS.get(req.model) or DIT_MODELS["turbo"])["steps"]
     return max(low, min(high, int(req.inference_steps or default)))
@@ -1264,6 +1285,7 @@ class AceStepEngine:
                     raise RuntimeError("The music server did not return a task id.")
                 yield {"type": "progress", "progress": 0.1, "message": "Generating"}
                 waited = 0.0
+                shown = 0.1
                 missing = 0
                 transient = 0
                 while True:
@@ -1307,7 +1329,12 @@ class AceStepEngine:
                         first = {k: v for k, v in tracks[0].items() if k != "path"}
                         yield {"type": "done", "seconds": request.seconds(), **first, "tracks": tracks}
                         return
-                    yield {"type": "progress", "progress": min(0.1 + waited / 240.0, 0.95), "message": "Generating"}
+                    # The server's own share of the work when it reports one; else a guess from the
+                    # time waited. Never backwards, never 100 % before the files are saved.
+                    reported = _reported_progress(item)
+                    estimate = 0.1 + 0.85 * reported if reported is not None else 0.1 + waited / 240.0
+                    shown = max(shown, min(estimate, 0.95))
+                    yield {"type": "progress", "progress": shown, "message": "Generating"}
         finally:
             srv.busy -= 1
             srv.last_used = time.monotonic()
