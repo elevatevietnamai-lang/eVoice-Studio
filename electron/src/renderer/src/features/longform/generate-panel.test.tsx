@@ -63,7 +63,8 @@ it('generates when nothing blocks it and swaps to Stop with the tracker while re
     />,
   );
   expect(screen.queryByRole('button', { name: 'Generate' })).toBeNull();
-  fireEvent.click(screen.getByRole('button', { name: 'Stop' }));
+  // the Stop button carries the finished share, counted like the tracker (1 of 2 chapters)
+  fireEvent.click(screen.getByRole('button', { name: 'Stop 50%' }));
   expect(onStop).toHaveBeenCalledOnce();
   expect(screen.getByText('Two')).toBeVisible();
 });

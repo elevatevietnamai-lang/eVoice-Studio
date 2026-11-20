@@ -14,7 +14,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
-- Generate buttons show how far the job is: Music Studio's Generate reads "Generating… 42%", and reading or removing on-screen subtitles shows its percent in the button (#86)
+- Long jobs show their percent on the button you started them with: Music Studio's Generate, Read and Remove on-screen subtitles, and the Stop or Cancel button that replaces Generate in stories, audiobooks and dubbing (#86)
 
 ## [0.5.7-beta.9] — 2026-11-18
 

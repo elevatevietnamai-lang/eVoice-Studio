@@ -30,7 +30,10 @@ export function BusyLabel({ label, progress }: { label: string; progress?: numbe
   const fraction = progressFraction(progress);
   return (
     <>
-      {label}
+      {/* buttons never wrap: a long label gives way, the percent stays readable */}
+      <span className="min-w-0 truncate">{label}</span>
+      {/* the space keeps the accessible name "Stop 42%"; flex gap does the visual spacing */}
+      {fraction !== null && ' '}
       {fraction !== null && (
         <span data-slot="busy-percent" className="tabular-nums">
           {formatPercent(fraction, i18n.language)}

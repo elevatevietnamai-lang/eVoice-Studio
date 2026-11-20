@@ -31,6 +31,7 @@ it('shows the busy text with the percent, or the busy text alone without a numbe
   const { rerender } = render(<BusyLabel label="Generating…" progress={0.3} />);
   expect(screen.getByText('Generating…')).toBeVisible();
   expect(screen.getByText('30%')).toBeVisible();
+  expect(screen.getByText('Generating…').parentElement).toHaveTextContent('Generating… 30%');
   rerender(<BusyLabel label="Generating…" progress={null} />);
   expect(screen.queryByText(/%/)).toBeNull();
 });

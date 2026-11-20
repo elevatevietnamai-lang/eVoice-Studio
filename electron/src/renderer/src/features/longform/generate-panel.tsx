@@ -1,9 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
+import { BusyLabel } from '@/components/busy-label';
 import { GenerationProgress } from './generation-progress';
 import type { GenerateBlocker } from './generate-blocker';
 import type { AudiobookRenderChapter } from './longform-session';
+
+/** Finished share of the chapters, counted as the progress bar counts them. */
+export function chapterFraction(chapters: AudiobookRenderChapter[]): number | null {
+  if (!chapters.length) return null;
+  const finished = chapters.filter((c) => ['done', 'cached', 'failed'].includes(c.status)).length;
+  return finished / chapters.length;
+}
 
 /** The slice of the render session this panel reads. */
 export interface GenerateSession {
@@ -81,7 +89,10 @@ export function GeneratePanel({
       </Reveal>
       {active ? (
         <Button variant="outline" className="w-full shrink-0" onClick={onStop}>
-          {t('common.stop')}
+          <BusyLabel
+            label={t('common.stop')}
+            progress={session.stage === 'starting' ? null : chapterFraction(session.chapters)}
+          />
         </Button>
       ) : (
         <Button
