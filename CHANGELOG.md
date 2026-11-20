@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Music Studio's progress follows the music engine's own progress
+
+### Changed
+
+- Music Studio's progress comes from the ACE-Step server's own report of how far the song is, instead of a guess from the time waited, and never moves backwards (#87)
+
 ## [0.5.7-beta.9] — 2026-11-18
 
 Removing burned-in subtitles with LaMa is about six times faster: a five-minute screen recording
