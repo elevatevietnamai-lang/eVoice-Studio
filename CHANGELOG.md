@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Generate buttons show the running job's percent
+
+### Changed
+
+- Generate buttons show how far the job is: Music Studio's Generate reads "Generating… 42%", and reading or removing on-screen subtitles shows its percent in the button (#86)
+
 ## [0.5.7-beta.9] — 2026-11-18
 
 Removing burned-in subtitles with LaMa is about six times faster: a five-minute screen recording
