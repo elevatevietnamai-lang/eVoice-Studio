@@ -11,10 +11,12 @@ metadata and the backend fallback mirror it.
 **Highlights**
 
 - Music Studio's progress follows the music engine's own progress
+- Generate buttons show the running job's percent
 
 ### Changed
 
 - Music Studio's progress comes from the ACE-Step server's own report of how far the song is, instead of a guess from the time waited, and never moves backwards (#87)
+- Long jobs show their percent on the button you started them with: Music Studio's Generate, Read and Remove on-screen subtitles, and the Stop or Cancel button that replaces Generate in stories, audiobooks and dubbing (#86)
 
 ## [0.5.7-beta.9] — 2026-11-18
 

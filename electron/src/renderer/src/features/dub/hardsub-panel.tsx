@@ -25,6 +25,7 @@ import {
   useDubSession,
 } from './dub-session';
 import { segmentedFrameClass } from '@/components/segmented';
+import { BusyLabel } from '@/components/busy-label';
 
 type EngineStatus = {
   installed: boolean;
@@ -363,7 +364,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 ) : (
                   <ScanTextIcon />
                 )}
-                {hs?.cue_count ? t('dub_hardsub.read_again') : t('dub_hardsub.read')}
+                <BusyLabel
+                  label={hs?.cue_count ? t('dub_hardsub.read_again') : t('dub_hardsub.read')}
+                  progress={task?.kind === 'ocr' ? task.progress : null}
+                />
               </Button>
               {task?.kind === 'ocr' && (
                 <Progress
@@ -406,7 +410,10 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 ) : (
                   <EraserIcon />
                 )}
-                {hs?.cleaned ? t('dub_hardsub.remove_again') : t('dub_hardsub.remove')}
+                <BusyLabel
+                  label={hs?.cleaned ? t('dub_hardsub.remove_again') : t('dub_hardsub.remove')}
+                  progress={task?.kind === 'clean' ? task.progress : null}
+                />
               </Button>
               {task?.kind === 'clean' && (
                 <Progress

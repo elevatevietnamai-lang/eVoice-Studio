@@ -2,6 +2,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { engineAvailabilityText } from '@/lib/engine-availability';
 import { DubProjects } from './dub-projects';
 import { Reveal } from '@/components/motion';
+import { BusyLabel } from '@/components/busy-label';
 import { Menu } from '@base-ui/react/menu';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
@@ -3112,16 +3113,16 @@ export function DubPage() {
                       ? `${session.batchProgress.current}/${session.batchProgress.total} · ${session.batchProgress.language} · `
                       : ''}
                     {t(stage)}
-                    {progressPercent !== null
-                      ? ` ${Math.max(0, Math.min(100, Math.round(progressPercent)))}%`
-                      : ''}
                   </span>
                   <Button
                     variant="outline"
                     disabled={session.phase === 'importing'}
                     onClick={() => void cancelDub()}
                   >
-                    {t('common.cancel')}
+                    <BusyLabel
+                      label={t('common.cancel')}
+                      progress={progressPercent === null ? null : progressPercent / 100}
+                    />
                   </Button>
                 </>
               ) : (
