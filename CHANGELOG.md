@@ -8,10 +8,22 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.10] — 2026-11-21
+
+Dubbing a Chinese video is cut into short, natural segments again: a 20-second stretch of fast
+speech no longer arrives as one block. Long jobs also show their percent right on the button you
+started them with, and Music Studio's percent now comes from the music engine itself.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.10-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.6 to beta.9 update silently in **Settings → Updates**; copies on 0.5.7-beta.4 or beta.5 update there too, showing the Setup window once |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
-- Music Studio's progress follows the music engine's own progress
+- Chinese, Japanese and Thai transcripts split into dub-sized segments
 - Generate buttons show the running job's percent
+- Music Studio's progress follows the music engine's own progress
 
 ### Changed
 
