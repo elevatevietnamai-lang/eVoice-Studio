@@ -974,7 +974,8 @@
     "retry": "पुनः प्रयास करें",
     "confirm": "पुष्टि करें",
     "details": "विवरण",
-    "unknown": "अज्ञात"
+    "unknown": "अज्ञात",
+    "time_left": "~{{time}} शेष"
   },
   "dubWorkspace": {
     "title": "डबिंग",

@@ -974,7 +974,8 @@
     "retry": "Försök igen",
     "confirm": "Bekräfta",
     "details": "Detaljer",
-    "unknown": "okänd"
+    "unknown": "okänd",
+    "time_left": "~{{time}} kvar"
   },
   "dubWorkspace": {
     "title": "Dubbning",

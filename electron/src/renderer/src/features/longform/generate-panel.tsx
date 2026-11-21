@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
-import { BusyLabel } from '@/components/busy-label';
+import { BusyLabel, JobProgress, useEta } from '@/components/busy-label';
 import { GenerationProgress } from './generation-progress';
 import type { GenerateBlocker } from './generate-blocker';
 import type { AudiobookRenderChapter } from './longform-session';
@@ -44,6 +44,10 @@ export function GeneratePanel({
 }) {
   const { t } = useTranslation();
   const active = session.active === mode;
+  const running = active && session.stage !== 'starting';
+  const fraction = running ? chapterFraction(session.chapters) : null;
+  // Assembling is its own stage: the chapter estimate does not carry over to it.
+  const eta = useEta(fraction, { running, resetKey: session.stage === 'assembling' });
   const status = active
     ? session.stage === 'assembling'
       ? t('audiobook.assembling')
@@ -72,6 +76,7 @@ export function GeneratePanel({
           </p>
         )}
       </Reveal>
+      {running && <JobProgress value={fraction == null ? null : fraction * 100} label={status} />}
       {active && session.stage !== 'starting' && (
         <div className="min-h-0 max-h-[38vh] overflow-y-auto">
           <GenerationProgress
@@ -89,10 +94,7 @@ export function GeneratePanel({
       </Reveal>
       {active ? (
         <Button variant="outline" className="w-full shrink-0" onClick={onStop}>
-          <BusyLabel
-            label={t('common.stop')}
-            progress={session.stage === 'starting' ? null : chapterFraction(session.chapters)}
-          />
+          <BusyLabel label={t('common.stop')} progress={fraction} eta={eta} />
         </Button>
       ) : (
         <Button

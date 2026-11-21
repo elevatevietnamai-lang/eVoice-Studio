@@ -6,7 +6,7 @@ import { DownloadIcon, LoaderCircleIcon, MusicIcon, SparklesIcon } from 'lucide-
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { SimpleSelect } from '@/components/simple-select';
-import { Progress } from '@/components/ui/progress';
+import { BusyLabel, JobProgress, useEta } from '@/components/busy-label';
 import { getBridge } from '@/components/bridge';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { consumeTaskStream } from '@/lib/api/event-stream';
@@ -35,6 +35,8 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
   const [lang, setLang] = useState(session.tracks[0] || '');
   const [task, setTask] = useState<{ kind: 'gen' | 'export'; progress: number } | null>(null);
   const [state, setState] = useState<MusicState>({ has_track: false, revision: 0 });
+  // The time left for the running job, shown in its button (DESIGN.md: progress lives in the button).
+  const taskEta = useEta(task?.progress ?? null, { running: task !== null, resetKey: task?.kind });
 
   const status = useQuery({
     queryKey: ['bgm-status'],
@@ -177,13 +179,14 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
               ) : (
                 <SparklesIcon />
               )}
-              {state.has_track ? t('dub_bgm.regenerate') : t('dub_bgm.generate')}
+              <BusyLabel
+                label={state.has_track ? t('dub_bgm.regenerate') : t('dub_bgm.generate')}
+                progress={task?.kind === 'gen' ? task.progress : null}
+                eta={task?.kind === 'gen' ? taskEta : null}
+              />
             </Button>
             {task?.kind === 'gen' && (
-              <Progress
-                value={Math.round(task.progress * 100)}
-                aria-label={t('dub_bgm.generate')}
-              />
+              <JobProgress value={task.progress * 100} label={t('dub_bgm.generate')} />
             )}
             {state.has_track && (
               <audio
@@ -238,13 +241,14 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
                 ) : (
                   <DownloadIcon />
                 )}
-                {t('dub_bgm.export')}
+                <BusyLabel
+                  label={t('dub_bgm.export')}
+                  progress={task?.kind === 'export' ? task.progress : null}
+                  eta={task?.kind === 'export' ? taskEta : null}
+                />
               </Button>
               {task?.kind === 'export' && (
-                <Progress
-                  value={Math.round(task.progress * 100)}
-                  aria-label={t('dub_bgm.export')}
-                />
+                <JobProgress value={task.progress * 100} label={t('dub_bgm.export')} />
               )}
               {session.tracks.length === 0 && (
                 <p className="text-[11px] leading-4 text-muted-foreground">

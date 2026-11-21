@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Long jobs show their percent and time left in the button that started them, with no bar underneath
+
+### Changed
+
+- Voice cloning, Voice Design, Music Studio, removing on-screen subtitles, dub background music, stories and audiobooks, video export and animated titles show the percent and an estimated time left in the job's own button instead of a progress bar below it (#92)
+
 ## [0.5.7-beta.10] — 2026-11-21
 
 Dubbing a Chinese video is cut into short, natural segments again: a 20-second stretch of fast

@@ -974,7 +974,8 @@
     "retry": "Thử lại",
     "confirm": "Xác nhận",
     "details": "Chi tiết",
-    "unknown": "không rõ"
+    "unknown": "không rõ",
+    "time_left": "còn ~{{time}}"
   },
   "dubWorkspace": {
     "title": "Lồng tiếng",

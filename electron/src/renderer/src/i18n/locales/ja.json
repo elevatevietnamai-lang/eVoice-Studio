@@ -974,7 +974,8 @@
     "retry": "もう一度試してください",
     "confirm": "確認",
     "details": "詳細",
-    "unknown": "未知"
+    "unknown": "未知",
+    "time_left": "残り約 {{time}}"
   },
   "dubWorkspace": {
     "title": "ダビング",

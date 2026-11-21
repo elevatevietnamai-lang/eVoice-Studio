@@ -3,7 +3,7 @@ import { Reveal } from '@/components/motion';
 import { InstallSttButton } from './install-stt-button';
 import { openTake } from '@/lib/store/takes';
 import { setWorkspace } from '@/lib/store/workspace';
-import { Progress as ProgressPrimitive } from '@base-ui/react/progress';
+import { JobProgress, formatClock, useEta } from '@/components/busy-label';
 import {
   AudioLinesIcon,
   ChevronDownIcon,
@@ -32,7 +32,6 @@ import { Input } from '@/components/ui/input';
 import { Kbd, KbdGroup } from '@/components/ui/kbd';
 import { isMac } from '@/components/bridge';
 import { Label } from '@/components/ui/label';
-import { ProgressIndicator, ProgressTrack } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { useGenerateClone } from '@/hooks/use-generate';
@@ -351,6 +350,12 @@ export function ActionBar() {
               : 'clone.generating_status',
       )
     : t('clone.synthesize');
+  // The stage's own percent (model load, then synthesis), 0..100; the estimate restarts per stage.
+  const shownProgress = stage === 'loading' ? modelProgress : progress;
+  const eta = useEta(shownProgress == null ? null : shownProgress / 100, {
+    running: isGenerating,
+    resetKey: stage,
+  });
 
   return (
     <section className="@container/composer">
@@ -451,7 +456,11 @@ export function ActionBar() {
               </span>
               {isGenerating ? (
                 <span className="shrink-0 text-xs font-normal tabular-nums opacity-80">
-                  {`${modelProgress != null && stage === 'loading' ? `${Math.round(modelProgress)}% · ` : ''}${elapsedSeconds.toFixed(1)}s`}
+                  {`${shownProgress != null ? `${Math.round(Math.min(shownProgress, 99))}% · ` : ''}${
+                    eta != null
+                      ? t('common.time_left', { time: formatClock(eta) })
+                      : `${elapsedSeconds.toFixed(1)}s`
+                  }`}
                 </span>
               ) : (
                 <KbdGroup aria-hidden="true" className="shrink-0">
@@ -479,20 +488,7 @@ export function ActionBar() {
             </Button>
           ) : null}
           {isGenerating ? (
-            <ProgressPrimitive.Root
-              value={stage === 'loading' ? modelProgress : progress}
-              aria-label={t('clone.generating_status')}
-              className="absolute inset-x-1 -bottom-2"
-            >
-              <ProgressTrack>
-                <ProgressIndicator
-                  className={cn(
-                    (stage === 'loading' ? modelProgress : progress) == null &&
-                      'w-full animate-pulse motion-reduce:animate-none',
-                  )}
-                />
-              </ProgressTrack>
-            </ProgressPrimitive.Root>
+            <JobProgress value={shownProgress} label={t('clone.generating_status')} />
           ) : null}
         </div>
       </div>

@@ -1,12 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CheckIcon, CircleIcon, LoaderCircleIcon, XIcon, ZapIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { formatClock } from '@/components/busy-label';
 import type { AudiobookRenderChapter } from './longform-session';
-
-function formatElapsed(seconds: number): string {
-  const safe = Math.max(0, Math.floor(seconds));
-  return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, '0')}`;
-}
 
 function ChapterStatusIcon({ status }: { status: string }) {
   if (status === 'rendering')
@@ -33,10 +29,7 @@ export function GenerationProgress({
     [chapters],
   );
   const total = chapters.length;
-  const percent = total ? Math.round((completed / total) * 100) : 0;
   const elapsed = (now - start.current) / 1000;
-  const eta =
-    completed > 0 && completed < total ? (elapsed / completed) * (total - completed) : null;
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(performance.now()), 1000);
@@ -56,15 +49,9 @@ export function GenerationProgress({
             : t('audiobook.progress_summary', { current: completed, total })}
         </span>
         <span className="shrink-0 font-mono tabular-nums text-muted-foreground">
-          {formatElapsed(elapsed)}
-          {eta == null ? '' : ` · ${t('audiobook.eta', { time: formatElapsed(eta) })}`}
+          {/* Elapsed only: the percent and time left live on the Stop button. */}
+          {formatClock(elapsed)}
         </span>
-      </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-primary transition-[width] duration-300 motion-reduce:transition-none"
-          style={{ width: `${assembling ? 100 : percent}%` }}
-        />
       </div>
       {total > 0 && (
         <ol className="mt-2 max-h-36 space-y-0.5 overflow-y-auto">

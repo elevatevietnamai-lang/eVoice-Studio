@@ -21,7 +21,7 @@ import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
 import { Button } from '@/components/ui/button';
 import { MorphIcon } from '@/components/ui/morph-icon';
-import { Progress } from '@/components/ui/progress';
+import { BusyLabel, JobProgress, useEta } from '@/components/busy-label';
 import { apiJson, apiPath, describeError } from '@/lib/api/client';
 import { saveExport } from '@/lib/export-history';
 import { getBridge } from '@/components/bridge';
@@ -126,6 +126,7 @@ export function VideoEditorPage() {
   const [zoom, setZoom] = useState(60);
   const [uploading, setUploading] = useState(false);
   const [exporting, setExporting] = useState<number | null>(null);
+  const exportEta = useEta(exporting, { running: exporting !== null });
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -526,14 +527,14 @@ export function VideoEditorPage() {
               <ZoomInIcon />
             </Button>
             {exporting !== null ? (
-              <div className="ml-2 flex items-center gap-2">
-                <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground motion-reduce:animate-none" aria-hidden />
-                <Progress value={Math.round(exporting * 100)} className="w-28" aria-label={t('editor.exporting')} />
-                <span className="w-9 text-xs tabular-nums text-muted-foreground">{Math.round(exporting * 100)}%</span>
-                <Button size="sm" variant="ghost" onClick={() => abort.current?.abort()}>
-                  {t('editor.cancel')}
+              <>
+                {/* The export's percent and time left ride on its Cancel button (DESIGN.md). */}
+                <Button size="sm" variant="outline" className="ml-2" onClick={() => abort.current?.abort()}>
+                  <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" aria-hidden />
+                  <BusyLabel label={t('editor.cancel')} progress={exporting} eta={exportEta} />
                 </Button>
-              </div>
+                <JobProgress value={exporting * 100} label={t('editor.exporting')} />
+              </>
             ) : (
               <Button size="sm" className="ml-2" disabled={!!problem} onClick={() => void exportVideo()}>
                 <DownloadIcon />

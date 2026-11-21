@@ -976,7 +976,8 @@
     "retry": "Riprova",
     "confirm": "Conferma",
     "details": "Dettagli",
-    "unknown": "sconosciuto"
+    "unknown": "sconosciuto",
+    "time_left": "~{{time}} rimanenti"
   },
   "dubWorkspace": {
     "title": "Doppiaggio",

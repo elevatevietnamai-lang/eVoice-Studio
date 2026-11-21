@@ -644,7 +644,8 @@
     "unknown": "unknown",
     "remove": "Remove {{term}}",
     "not_set": "Not set",
-    "details": "Details"
+    "details": "Details",
+    "time_left": "~{{time}} left"
   },
   "preferences": {
     "title": "Settings",
