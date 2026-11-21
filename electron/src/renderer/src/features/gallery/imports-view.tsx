@@ -305,6 +305,7 @@ export function ImportsView() {
             >
               <div className="flex items-center gap-3">
                 <AudioPreviewButton
+                  size="icon-sm"
                   src={apiPath('/gallery/voices/' + encodeURIComponent(voice.id) + '/preview')}
                   source={'import:' + voice.id}
                 />

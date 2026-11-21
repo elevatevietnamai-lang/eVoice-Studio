@@ -50,6 +50,7 @@ export function DemoPresets({
               <p className="text-xs leading-5 text-muted-foreground">{preset.description}</p>
               <div className="flex items-center justify-between gap-2">
                 <AudioPreviewButton
+                  size="icon-sm"
                   src={apiPath(preset.preview_url)}
                   source={'design-demo-' + preset.id}
                 />
