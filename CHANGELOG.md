@@ -22,6 +22,7 @@ metadata and the backend fallback mirror it.
 
 - The Play button beside Reuse script and Delete in Projects, and on Gallery, imported and community voice cards, is the same height as the buttons next to it (#88)
 - Dubbing a Chinese, Japanese or Thai video no longer turns 20 seconds of speech into one segment when the speech engine returns no word timings: the transcript is cut into 4-9 second segments, and its words join without stray spaces (#89)
+- A translation request from the API, MCP or CLI that names no engine uses the engine chosen in Settings (local Argos by default) instead of Google, which failed when its optional package was missing (#90)
 
 ## [0.5.7-beta.9] — 2026-11-18
 
