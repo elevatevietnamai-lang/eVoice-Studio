@@ -8,6 +8,17 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.11] — 2026-11-22
+
+Long jobs now show how far along they are and how long is left right in the button you pressed:
+"Generating… 42% · ~1:20 left", with no progress bar underneath. Long songs, recordings and videos
+also get the time they need instead of stopping at a fixed 5 or 30 minutes.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.11-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.6 to beta.10 update silently in **Settings → Updates**; copies on 0.5.7-beta.4 or beta.5 update there too, showing the Setup window once |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
 - Long jobs show their percent and time left in the button that started them, with no bar underneath
