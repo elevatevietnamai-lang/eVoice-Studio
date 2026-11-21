@@ -978,7 +978,8 @@
     "retry": "Спробуйте знову",
     "confirm": "Підтвердити",
     "details": "Подробиці",
-    "unknown": "невідомий"
+    "unknown": "невідомий",
+    "time_left": "~{{time}} залишилось"
   },
   "dubWorkspace": {
     "title": "Дубляж",

@@ -974,7 +974,8 @@
     "retry": "ลองอีกครั้ง",
     "confirm": "ยืนยัน",
     "details": "รายละเอียด",
-    "unknown": "ไม่ทราบ"
+    "unknown": "ไม่ทราบ",
+    "time_left": "เหลือ ~{{time}}"
   },
   "dubWorkspace": {
     "title": "การพากย์เสียง",

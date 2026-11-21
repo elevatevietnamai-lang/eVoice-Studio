@@ -86,7 +86,7 @@ import {
 } from './music-options';
 import { MusicSourcePicker, sourceFields, type MusicSource } from './music-source-picker';
 import { MusicLora } from './music-lora';
-import { BusyLabel } from '@/components/busy-label';
+import { BusyLabel, JobProgress, useEta } from '@/components/busy-label';
 import {
   MusicFormatDialog,
   applyFormat,
@@ -225,6 +225,8 @@ export function MusicPage() {
     progress: number;
   } | null>(null);
   const [installStep, setInstallStep] = useState<InstallStep | null>(null);
+  // The time left for the running job, shown in its button (DESIGN.md: progress lives in the button).
+  const taskEta = useEta(task?.progress ?? null, { running: task !== null, resetKey: task?.kind });
   const abort = useRef<AbortController | null>(null);
   const [failure, setFailure] = useState<string | null>(null);
 
@@ -1534,7 +1536,11 @@ export function MusicPage() {
               <SparklesIcon />
             )}
             {task?.kind === 'generate' ? (
-              <BusyLabel label={t('musicStudio.generating')} progress={task.progress} />
+              <BusyLabel
+                label={t('musicStudio.generating')}
+                progress={task.progress}
+                eta={taskEta}
+              />
             ) : Number(batchSize) > 1 ? (
               t('musicStudio.generate_many', { count: Number(batchSize) })
             ) : (
@@ -1543,10 +1549,7 @@ export function MusicPage() {
           </Button>
           {task?.kind === 'generate' && (
             <>
-              <Progress
-                value={Math.round(task.progress * 100)}
-                aria-label={t('musicStudio.generating')}
-              />
+              <JobProgress value={task.progress * 100} label={t('musicStudio.generating')} />
               <Reveal>
                 {task.progress < 0.1 && (
                   <p role="status" className="text-xs text-muted-foreground">

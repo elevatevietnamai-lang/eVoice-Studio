@@ -974,7 +974,8 @@
     "retry": "Coba lagi",
     "confirm": "Konfirmasi",
     "details": "Detail",
-    "unknown": "tidak dikenal"
+    "unknown": "tidak dikenal",
+    "time_left": "~{{time}} tersisa"
   },
   "dubWorkspace": {
     "title": "Sulih suara",

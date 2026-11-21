@@ -974,7 +974,8 @@
     "retry": "Versuchen Sie es erneut",
     "confirm": "Bestätigen",
     "details": "Details",
-    "unknown": "unbekannt"
+    "unknown": "unbekannt",
+    "time_left": "~{{time}} übrig"
   },
   "dubWorkspace": {
     "title": "Synchronisation",

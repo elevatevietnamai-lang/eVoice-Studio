@@ -982,7 +982,8 @@
     "retry": "حاول مرة أخرى",
     "confirm": "تأكيد",
     "details": "التفاصيل",
-    "unknown": "مجهول"
+    "unknown": "مجهول",
+    "time_left": "~{{time}} متبقٍ"
   },
   "dubWorkspace": {
     "title": "الدبلجة",

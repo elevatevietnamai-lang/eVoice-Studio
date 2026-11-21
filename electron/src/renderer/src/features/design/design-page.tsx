@@ -61,6 +61,7 @@ import { VoiceControls } from '@/features/clone/action-bar';
 import { EngineLanguagePicker } from '@/features/clone/engine-language-picker';
 import { queryKeys } from '@/lib/query';
 import { cn } from '@/lib/utils';
+import { BusyLabel, JobProgress, useEta } from '@/components/busy-label';
 import { cloneSettingsStore } from '@/lib/store/clone-settings';
 import type { Profile } from '@/lib/api/types';
 import { CATEGORIES, PRESETS } from '@shared/utils/constants';
@@ -167,6 +168,10 @@ export function DesignPage() {
     : t('clone.synthesize');
   const generationProgress =
     generation.stage === 'loading' ? generation.modelProgress : generation.progress;
+  const generationEta = useEta(generationProgress == null ? null : generationProgress / 100, {
+    running: generation.isGenerating,
+    resetKey: generation.stage,
+  });
   const identityRecipe =
     Object.values(draft.attrs)
       .filter((value) => value && value !== 'Auto')
@@ -574,9 +579,8 @@ export function DesignPage() {
                 role={generation.isGenerating ? 'status' : undefined}
                 className="min-w-24 text-center text-xs tabular-nums text-muted-foreground max-md:hidden"
               >
-                {generation.isGenerating
-                  ? `${generationProgress == null ? '' : `${Math.round(generationProgress)}% · `}${generation.elapsedSeconds.toFixed(1)}s`
-                  : null}
+                {/* Elapsed time only: the percent and time left live in the button. */}
+                {generation.isGenerating ? `${generation.elapsedSeconds.toFixed(1)}s` : null}
               </span>
               <div className="flex w-64 justify-end gap-2 justify-self-end">
                 <Button
@@ -605,7 +609,15 @@ export function DesignPage() {
                   ) : (
                     <PlayIcon />
                   )}
-                  <span className="truncate">{generationLabel}</span>
+                  {generation.isGenerating ? (
+                    <BusyLabel
+                      label={generationLabel}
+                      progress={generationProgress == null ? null : generationProgress / 100}
+                      eta={generationEta}
+                    />
+                  ) : (
+                    <span className="truncate">{generationLabel}</span>
+                  )}
                 </Button>
                 <Button
                   size="icon-lg"
@@ -619,18 +631,7 @@ export function DesignPage() {
                 </Button>
               </div>
               {generation.isGenerating && (
-                <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden bg-muted">
-                  <div
-                    className={
-                      generationProgress == null
-                        ? 'h-full w-full animate-pulse bg-primary motion-reduce:animate-none'
-                        : 'h-full bg-primary transition-[width] duration-200'
-                    }
-                    style={
-                      generationProgress == null ? undefined : { width: `${generationProgress}%` }
-                    }
-                  />
-                </div>
+                <JobProgress value={generationProgress} label={t('clone.generating_status')} />
               )}
             </div>
           </div>

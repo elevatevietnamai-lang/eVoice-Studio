@@ -974,7 +974,8 @@
     "retry": "Tekrar dene",
     "confirm": "Onayla",
     "details": "Ayrıntılar",
-    "unknown": "bilinmiyor"
+    "unknown": "bilinmiyor",
+    "time_left": "~{{time}} kaldı"
   },
   "dubWorkspace": {
     "title": "Dublaj",

@@ -2,7 +2,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { engineAvailabilityText } from '@/lib/engine-availability';
 import { DubProjects } from './dub-projects';
 import { Reveal } from '@/components/motion';
-import { BusyLabel } from '@/components/busy-label';
+import { BusyLabel, useEta } from '@/components/busy-label';
 import { Menu } from '@base-ui/react/menu';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
@@ -595,6 +595,11 @@ export function DubPage() {
       : Number.isFinite(eventCurrent) && Number.isFinite(eventTotal) && eventTotal > 0
         ? (eventCurrent / eventTotal) * 100
         : null;
+  // A new stage or the next language of a batch starts its own estimate.
+  const progressEta = useEta(progressPercent === null ? null : progressPercent / 100, {
+    running: busy,
+    resetKey: `${stage}|${session.batchProgress?.language ?? ''}`,
+  });
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (
@@ -1526,7 +1531,10 @@ export function DubPage() {
             </div>
             {(session.quality === 'agent' || provider?.id === 'openai') && (
               <div className="space-y-1.5 border-t border-border/50 pt-3">
-                <label htmlFor="dub-translation-instructions" className="block text-label font-medium">
+                <label
+                  htmlFor="dub-translation-instructions"
+                  className="block text-label font-medium"
+                >
                   {t('dubStyle.label')}
                 </label>
                 <Textarea
@@ -1817,7 +1825,10 @@ export function DubPage() {
                   ).map((knob) => {
                     const current = session.fitOptions?.[knob.key] ?? knob.defaultValue;
                     return (
-                      <label key={knob.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                      <label
+                        key={knob.key}
+                        className="flex min-w-0 flex-col gap-1.5 text-label font-medium"
+                      >
                         <span className="flex justify-between">
                           <span>{t(knob.label)}</span>
                           <span className="tabular-nums">{current.toFixed(2)}×</span>
@@ -1896,7 +1907,10 @@ export function DubPage() {
                   },
                 ] as const
               ).map((knob) => (
-                <label key={knob.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                <label
+                  key={knob.key}
+                  className="flex min-w-0 flex-col gap-1.5 text-label font-medium"
+                >
                   <span className="flex justify-between">
                     <span>{t('clone.' + knob.label)}</span>
                     <span className="tabular-nums">{session[knob.key] ?? knob.defaultValue}</span>
@@ -2952,7 +2966,9 @@ export function DubPage() {
                                           key={profile.id}
                                           size="xs"
                                           variant={
-                                            segment.profile_id === profile.id ? 'secondary' : 'ghost'
+                                            segment.profile_id === profile.id
+                                              ? 'secondary'
+                                              : 'ghost'
                                           }
                                           disabled={busy || Boolean(session.recovery)}
                                           onClick={() =>
@@ -3122,6 +3138,7 @@ export function DubPage() {
                     <BusyLabel
                       label={t('common.cancel')}
                       progress={progressPercent === null ? null : progressPercent / 100}
+                      eta={progressEta}
                     />
                   </Button>
                 </>

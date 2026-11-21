@@ -974,7 +974,8 @@
     "retry": "Probeer het opnieuw",
     "confirm": "Bevestigen",
     "details": "Details",
-    "unknown": "onbekend"
+    "unknown": "onbekend",
+    "time_left": "~{{time}} resterend"
   },
   "dubWorkspace": {
     "title": "Nasynchronisatie",

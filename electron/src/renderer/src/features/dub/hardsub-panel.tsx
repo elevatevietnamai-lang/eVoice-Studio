@@ -25,7 +25,7 @@ import {
   useDubSession,
 } from './dub-session';
 import { segmentedFrameClass } from '@/components/segmented';
-import { BusyLabel } from '@/components/busy-label';
+import { BusyLabel, JobProgress, useEta } from '@/components/busy-label';
 
 type EngineStatus = {
   installed: boolean;
@@ -85,6 +85,8 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
     null,
   );
   const [installLog, setInstallLog] = useState('');
+  // The time left for the running job, shown in its button (DESIGN.md: progress lives in the button).
+  const taskEta = useEta(task?.progress ?? null, { running: task !== null, resetKey: task?.kind });
   const drag = useRef<{ startY: number; rect: DOMRect } | null>(null);
   const [open, setOpen] = useState(() => !session.hardsub?.cue_count);
 
@@ -367,13 +369,11 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 <BusyLabel
                   label={hs?.cue_count ? t('dub_hardsub.read_again') : t('dub_hardsub.read')}
                   progress={task?.kind === 'ocr' ? task.progress : null}
+                  eta={task?.kind === 'ocr' ? taskEta : null}
                 />
               </Button>
               {task?.kind === 'ocr' && (
-                <Progress
-                  value={Math.round(task.progress * 100)}
-                  aria-label={t('dub_hardsub.read')}
-                />
+                <JobProgress value={task.progress * 100} label={t('dub_hardsub.read')} />
               )}
               <p className="text-[11px] leading-4 text-muted-foreground">
                 {t('dub_hardsub.read_help')}
@@ -413,13 +413,11 @@ export function HardsubPanel({ busy }: { busy: boolean }) {
                 <BusyLabel
                   label={hs?.cleaned ? t('dub_hardsub.remove_again') : t('dub_hardsub.remove')}
                   progress={task?.kind === 'clean' ? task.progress : null}
+                  eta={task?.kind === 'clean' ? taskEta : null}
                 />
               </Button>
               {task?.kind === 'clean' && (
-                <Progress
-                  value={Math.round(task.progress * 100)}
-                  aria-label={t('dub_hardsub.remove')}
-                />
+                <JobProgress value={task.progress * 100} label={t('dub_hardsub.remove')} />
               )}
               {!hs?.cue_count && (
                 <p className="text-[11px] leading-4 text-muted-foreground">

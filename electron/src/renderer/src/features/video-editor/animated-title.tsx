@@ -13,7 +13,7 @@ import { getBridge } from '@/components/bridge';
 import { runRendererTask } from '@/lib/global-error-recovery';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
+import { BusyLabel, JobProgress, useEta } from '@/components/busy-label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { EditorMedia, EditorProject } from './project';
@@ -87,6 +87,7 @@ export function AnimatedTitleDialog({
   const images = project.media.filter((media) => media.kind === 'image');
   const problem = titleProblem(form);
   const rendering = progress !== null;
+  const renderEta = useEta(progress === null ? null : progress / 100, { running: rendering });
   const set = (patch: Partial<TitleForm>) => setForm((current) => ({ ...current, ...patch }));
   const pick = (template: TitleTemplate) =>
     set({ template, color: TITLE_TEMPLATES[template].color, glow: TITLE_TEMPLATES[template].accent });
@@ -239,13 +240,14 @@ export function AnimatedTitleDialog({
           {error ? <p className="text-xs text-destructive">{error}</p> : null}
         </div>
         {rendering ? (
-          <div className="flex items-center gap-2">
-            <Progress value={Math.round(progress ?? 0)} className="flex-1" aria-label={t('editor.title_rendering')} />
-            <span className="w-9 text-xs tabular-nums text-muted-foreground">{Math.round(progress ?? 0)}%</span>
-            <Button size="sm" variant="ghost" onClick={() => void bridge.promo.cancelRender()}>
-              {t('editor.cancel')}
+          <>
+            {/* The render's percent and time left ride on its Cancel button (DESIGN.md). */}
+            <Button size="sm" variant="outline" onClick={() => void bridge.promo.cancelRender()}>
+              <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" aria-hidden />
+              <BusyLabel label={t('editor.cancel')} progress={(progress ?? 0) / 100} eta={renderEta} />
             </Button>
-          </div>
+            <JobProgress value={progress} label={t('editor.title_rendering')} />
+          </>
         ) : (
           <Button size="sm" disabled={!!problem} onClick={() => void render()}>
             <SparklesIcon />
