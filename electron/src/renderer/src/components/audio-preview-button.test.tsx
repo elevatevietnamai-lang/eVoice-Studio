@@ -72,3 +72,10 @@ it('defers onReady until playback stops so a refetch cannot cut the clip', () =>
   expect(onReady).toHaveBeenCalledTimes(1);
   expect(screen.getByRole('button', { name: 'clone.preview_voice' })).toBeVisible();
 });
+it('is a 24 px icon button by default and takes the row size it is given', () => {
+  render(<AudioPreviewButton src="/a" source="s" />);
+  expect(screen.getByRole('button').getAttribute('data-size')).toBe('icon-xs');
+  cleanup();
+  render(<AudioPreviewButton src="/a" source="s" size="icon-sm" />);
+  expect(screen.getByRole('button').getAttribute('data-size')).toBe('icon-sm');
+});
