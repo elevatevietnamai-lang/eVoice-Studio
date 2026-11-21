@@ -818,9 +818,10 @@ did was `generate:start (audio)`, a dub, or a dictation.
 Newer builds **bound** every GPU job — whole-file transcription, **chunked dub
 transcription**, **and** TTS generation: instead of hanging forever and starving
 the backend, a wedged job fails after a timeout with this exact guidance. Tune
-the bounds with `OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S` (whole-file transcription)
-and `OMNIVOICE_GENERATE_TIMEOUT_S` (generation) — both in seconds, default 300
-— and `OMNIVOICE_TRANSCRIBE_CHUNK_TIMEOUT_S` (per-chunk dub transcription,
+the bounds with `OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S` (whole-file transcription;
+default 300 s, or twice the audio's length plus a minute for a dub, batch or QC
+pass over a longer file) and `OMNIVOICE_GENERATE_TIMEOUT_S` (generation, default
+300) — both in seconds — and `OMNIVOICE_TRANSCRIBE_CHUNK_TIMEOUT_S` (per-chunk dub transcription,
 default 120). **Raise** them for very long single files/generations, **lower**
 them to fail faster on a small machine. A model download or load inside a dub
 chunk (the first run's alignment model) is not counted against the chunk

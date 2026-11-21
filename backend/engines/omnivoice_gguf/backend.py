@@ -123,8 +123,12 @@ def _binary_path(slug: Optional[str] = None) -> Path:
     return _REPO_ROOT / "bin" / name
 
 
-def _generate_timeout_s() -> float:
+def _generate_timeout_s(text: "str | None" = None) -> float:
     """Hard per-spawn timeout for the C++ binary, read from the env at call time.
+
+    Without an override it never drops below the length-scaled generate budget
+    for ``text`` (plus a minute): a long text on CPU may need up to the 2 h CPU
+    ceiling, and a flat 600 s killed it first.
 
     ``OMNIVOICE_GGUF_GENERATE_TIMEOUT_S`` overrides; the default sits ABOVE
     the GPU-pool generate budget (``OMNIVOICE_GENERATE_TIMEOUT_S``, 300s
@@ -144,7 +148,15 @@ def _generate_timeout_s() -> float:
         logger.warning(
             "Ignoring invalid OMNIVOICE_GGUF_GENERATE_TIMEOUT_S=%r", raw
         )
-    return 600.0
+    if not text:
+        return 600.0
+    try:
+        from services.model_manager import generate_timeout_s
+
+        budget = float(generate_timeout_s(text, execution_device="cpu"))
+    except Exception:  # noqa: BLE001 — the wedge guard must never fail to arm
+        return 600.0
+    return max(600.0, budget + 60.0) if math.isfinite(budget) else 600.0
 
 
 def _spawn_env() -> dict[str, str]:
@@ -801,7 +813,7 @@ def _make_backend_class():
                 validate_executable,
             )
             validate_executable(Path(argv[0]), hint=_binary_repair_hint())
-            timeout_s = _generate_timeout_s()
+            timeout_s = _generate_timeout_s(stdin_text)
             try:
                 proc = subprocess.run(
                     argv,

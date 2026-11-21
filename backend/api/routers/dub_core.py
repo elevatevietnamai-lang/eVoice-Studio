@@ -29,6 +29,7 @@ from services.model_manager import get_model, _gpu_pool, _cpu_pool, get_diarizat
 from services.asr_backend import (
     ASR_TRANSCRIBE_TIMEOUT_S,
     ASRTimeoutError,
+    asr_timeout_for,
     ModelLoadTracker,
     reset_pool_after_wedge,
     run_transcribe_guarded,
@@ -1582,8 +1583,10 @@ async def dub_transcribe_stream(
             if global_speaker_clustering and total > 0
             else TRANSCRIBE_CHUNK_S
         )
+        # The whole file in one pass gets a budget that grows with its length;
+        # 30 s chunks keep their own per-chunk budget.
         transcribe_timeout_s = (
-            ASR_TRANSCRIBE_TIMEOUT_S
+            max(ASR_TRANSCRIBE_TIMEOUT_S, asr_timeout_for(total))
             if global_speaker_clustering
             else TRANSCRIBE_CHUNK_TIMEOUT_S
         )
@@ -2645,7 +2648,9 @@ async def dub_transcribe(job_id: str, num_speakers: Optional[int] = None):
             # every other request into a "can't reach backend". run_transcribe_guarded
             # leaves an unkillable native worker accounted for on timeout so a
             # retry cannot overlap it (#1669).
-            segments_result = await run_transcribe_guarded(_gpu_pool, _transcribe, what="Dub")
+            segments_result = await run_transcribe_guarded(
+                _gpu_pool, _transcribe, what="Dub", audio_seconds=job.get("duration"),
+            )
         except asyncio.CancelledError:
             job["aborted"] = True
             raise

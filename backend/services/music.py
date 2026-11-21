@@ -226,7 +226,8 @@ _PYTHON_VERSION = "3.11"
 MIN_SECONDS, MAX_SECONDS = 10, 240
 IDLE_STOP_SECONDS = 300
 START_TIMEOUT_SECONDS = 900  # first start loads several GB of weights
-POLL_TIMEOUT_SECONDS = 1800
+POLL_TIMEOUT_SECONDS = 1800  # a running song whose reported progress has not moved this long
+POLL_MAX_SECONDS = 3 * 3600  # the ceiling for any one song, even one still moving
 
 
 def public_reason(exc: BaseException) -> str:
@@ -1285,14 +1286,20 @@ class AceStepEngine:
                     raise RuntimeError("The music server did not return a task id.")
                 yield {"type": "progress", "progress": 0.1, "message": "Generating"}
                 waited = 0.0
+                stalled = 0.0  # seconds since the server's own progress last moved
+                best_reported = -1.0
                 shown = 0.1
                 missing = 0
                 transient = 0
                 while True:
-                    if waited > POLL_TIMEOUT_SECONDS:
+                    # A long song (or a large batch on slow hardware) may legitimately run
+                    # past half an hour: only a job whose progress has stopped moving for
+                    # POLL_TIMEOUT_SECONDS is given up on, under a POLL_MAX_SECONDS ceiling.
+                    if stalled > POLL_TIMEOUT_SECONDS or waited > POLL_MAX_SECONDS:
                         raise RuntimeError("Music generation took too long and was stopped.")
                     await asyncio.sleep(2.0)
                     waited += 2.0
+                    stalled += 2.0
                     srv.last_used = time.monotonic()
                     try:
                         q = await client.post(f"{base}/query_result", json={"task_id_list": [task_id]})
@@ -1332,7 +1339,10 @@ class AceStepEngine:
                     # The server's own share of the work when it reports one; else a guess from the
                     # time waited. Never backwards, never 100 % before the files are saved.
                     reported = _reported_progress(item)
-                    estimate = 0.1 + 0.85 * reported if reported is not None else 0.1 + waited / 240.0
+                    if reported is not None and reported > best_reported + 1e-6:
+                        best_reported = reported
+                        stalled = 0.0
+                    estimate =0.1 + 0.85 * reported if reported is not None else 0.1 + waited / 240.0
                     shown = max(shown, min(estimate, 0.95))
                     yield {"type": "progress", "progress": shown, "message": "Generating"}
         finally:

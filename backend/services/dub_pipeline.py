@@ -47,6 +47,7 @@ from core.config import DUB_DIR
 from fastapi import HTTPException
 from services.ffmpeg_utils import (
     _get_semaphore,
+    media_timeout_s,
     _spawn_with_retry,
     find_ffmpeg,
     find_ffprobe,
@@ -1718,7 +1719,7 @@ async def ingest_pipeline(
                 # "  42%|████      | …" — surface each new integer percent
                 # to the UI so the user sees the bar instead of a static
                 # spinner during the multi-minute separation step.
-                async for evt in run_proc_streaming_stderr(job_id, demucs_cmd, timeout=1800.0):
+                async for evt in run_proc_streaming_stderr(job_id, demucs_cmd, timeout=media_timeout_s(dur)):
                     if evt[0] == "stderr":
                         m = re.search(r"(\d{1,3})%", evt[1])
                         if m:

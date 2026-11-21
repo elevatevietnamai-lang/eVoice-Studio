@@ -11,10 +11,19 @@ metadata and the backend fallback mirror it.
 **Highlights**
 
 - Long jobs show their percent and time left in the button that started them, with no bar underneath
+- Long songs, long recordings and long videos get the time they need instead of a fixed 5 or 30 minutes
 
 ### Changed
 
 - Voice cloning, Voice Design, Music Studio, removing on-screen subtitles, dub background music, stories and audiobooks, video export and animated titles show the percent and an estimated time left in the job's own button instead of a progress bar below it (#92)
+- Music Studio stops a song only when its progress has not moved for 30 minutes (at most 3 hours in all), instead of at 30 minutes regardless (#93)
+- Transcribing a whole long file for dubbing, batch or the dub check is allowed twice the audio's length plus a minute, instead of a flat 5 minutes (#93)
+- Separating voices and exporting or burning subtitles into a long video is allowed three times the video's length, instead of a flat 30 minutes (#93)
+- The GGUF engine gives long text the same time as the generate budget, instead of a flat 10 minutes (#93)
+
+### Docs
+
+- The ASR and GGUF engine guides and Troubleshooting describe the new length-based time limits (#93)
 
 ## [0.5.7-beta.10] — 2026-11-21
 
