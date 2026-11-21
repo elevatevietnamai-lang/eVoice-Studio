@@ -21,6 +21,7 @@ metadata and the backend fallback mirror it.
 ### Fixed
 
 - The Play button beside Reuse script and Delete in Projects, and on Gallery, imported and community voice cards, is the same height as the buttons next to it (#88)
+- Dubbing a Chinese, Japanese or Thai video no longer turns 20 seconds of speech into one segment when the speech engine returns no word timings: the transcript is cut into 4-9 second segments, and its words join without stray spaces (#89)
 
 ## [0.5.7-beta.9] — 2026-11-18
 
