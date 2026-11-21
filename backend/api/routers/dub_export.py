@@ -20,6 +20,7 @@ from fastapi import APIRouter, Header, HTTPException, Query, Request, Response, 
 from fastapi.responses import FileResponse, StreamingResponse
 from services.ffmpeg_utils import (
     bed_mix_filter,
+    media_timeout_s,
     explain_ffmpeg_failure,
     find_ffmpeg,
     local_inputs_only,
@@ -951,7 +952,7 @@ async def _export_subtitles_only(
     cmd += audio_track_metadata(0, job.get("source_lang"), "Original")
     cmd += ["-movflags", "+faststart", output_path, "-y"]
     try:
-        rc, _, stderr = await run_ffmpeg(cmd, timeout=1800.0, job_id=job_id)
+        rc, _, stderr = await run_ffmpeg(cmd, timeout=media_timeout_s(job.get("duration")), job_id=job_id)
         if rc != 0:
             raise Exception(stderr.decode(errors="replace") if stderr else "ffmpeg burn non-zero")
     except asyncio.TimeoutError:
@@ -1084,7 +1085,7 @@ async def dub_download(
             metadata=audio_track_metadata(0, lang_code, _dub_track_title(lang_code, track_info)),
         )
         try:
-            rc, _, stderr = await run_ffmpeg(cmd, timeout=1800.0)
+            rc, _, stderr = await run_ffmpeg(cmd, timeout=media_timeout_s(job.get("duration")))
             if rc != 0:
                 raise Exception(stderr.decode(errors="replace") if stderr else "ffmpeg audio export non-zero")
         except asyncio.TimeoutError:
@@ -1374,7 +1375,7 @@ async def dub_download(
     cmd += [output_path, "-y"]
 
     try:
-        rc, _, stderr = await run_ffmpeg(cmd, timeout=1800.0, job_id=job_id)
+        rc, _, stderr = await run_ffmpeg(cmd, timeout=media_timeout_s(job.get("duration")), job_id=job_id)
         if rc != 0:
             raise Exception(stderr.decode(errors="replace") if stderr else "ffmpeg mux non-zero")
     except asyncio.TimeoutError:
@@ -2004,7 +2005,7 @@ async def dub_qc_pass(job_id: str, lang: str = Query(None), drift_threshold: flo
         )
         from services.model_manager import _get_gpu_pool
         recognized, engine_id = await run_transcribe_guarded(
-            _get_gpu_pool(), _recognize, what="QC",
+            _get_gpu_pool(), _recognize, what="QC", audio_seconds=job.get("duration"),
         )
     except ASRTimeoutError as e:
         # Backend is alive; ASR just couldn't finish in time. 504, not 500/connection.

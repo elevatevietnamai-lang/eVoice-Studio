@@ -78,8 +78,8 @@ Two more fallback chains run at load time:
   PATH lookup ([#479](https://github.com/debpalash/VoiceStudio/issues/479)).
 - Transcribes are time-bounded: each dub chunk by
   `OMNIVOICE_TRANSCRIBE_CHUNK_TIMEOUT_S` (default 120 s), whole files by
-  `OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S` (default 300 s). Raise them for very
-  long files on slow hardware. Downloading or loading a model inside a
+  `OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S` (default 300 s, or for a dub, batch or QC pass twice the audio's length plus a minute when that is longer;
+  setting it fixes the value). Raise them for very long files on slow hardware. Downloading or loading a model inside a
   chunk (the wav2vec2 aligner on a first run: 1.27 GB for Chinese) does not
   count against these budgets; the Dub page shows it as its own step, and
   each such load is capped by `OMNIVOICE_ASR_MODEL_LOAD_TIMEOUT_S`

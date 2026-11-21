@@ -2,6 +2,7 @@ import asyncio
 import errno
 import filecmp
 import logging
+import math
 from core.logging_utils import log_safe
 import os
 import shutil
@@ -993,6 +994,28 @@ def explain_ffmpeg_failure(e, what, cmd=None):
             "working binary."
         )
     return f"Couldn't {what}: ffmpeg reported an error: {e}"
+
+
+#: Seconds of processing allowed per second of media for a long encode or separation,
+#: above the 30-minute floor: a software x264 burn-in or a CPU Demucs pass runs a few
+#: times slower than real time, so an hour-long video needs more than the flat cap.
+MEDIA_SECONDS_PER_SECOND = 3.0
+MEDIA_TIMEOUT_FLOOR_S = 1800.0
+
+
+def media_timeout_s(duration_s: "float | None", *, floor: float = MEDIA_TIMEOUT_FLOOR_S) -> float:
+    """Wall-clock cap for one encode or separation of ``duration_s`` seconds of media.
+
+    Unknown or short media keeps ``floor``; longer media gets
+    ``MEDIA_SECONDS_PER_SECOND`` per second plus five minutes.
+    """
+    try:
+        seconds = float(duration_s or 0.0)
+    except (TypeError, ValueError):
+        return floor
+    if not math.isfinite(seconds) or seconds <= 0:
+        return floor
+    return max(floor, seconds * MEDIA_SECONDS_PER_SECOND + 300.0)
 
 
 async def run_ffmpeg(cmd, timeout: float = 1800.0, capture: bool = True,

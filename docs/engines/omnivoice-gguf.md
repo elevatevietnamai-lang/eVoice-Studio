@@ -83,7 +83,7 @@ Before reporting ready, the engine:
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `OMNIVOICE_GGUF_GENERATE_TIMEOUT_S` | (generous built-in) | Per-generation timeout for the spawned binary |
+| `OMNIVOICE_GGUF_GENERATE_TIMEOUT_S` | the CPU generate budget for the text plus a minute (at least 600 s) | Per-generation timeout for the spawned binary |
 
 ## Troubleshooting
 

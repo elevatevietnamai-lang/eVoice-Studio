@@ -53,6 +53,29 @@ logger = logging.getLogger("omnivoice.asr")
 # but valid); override with the env var for very long single files.
 ASR_TRANSCRIBE_TIMEOUT_S = float(os.environ.get("OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S", "300.0"))
 
+#: A whole-file transcribe may take this many seconds per second of audio before it
+#: is treated as stuck. large-v3 on a CPU runs near real time, so twice the audio
+#: (plus a minute of slack) lets a 10-minute recording finish where the flat 300 s
+#: cut it off, while a 1-minute clip keeps the 300 s floor.
+ASR_SECONDS_PER_AUDIO_SECOND = 2.0
+
+
+def asr_timeout_for(audio_seconds: float | None) -> float:
+    """The transcribe budget for a whole file of ``audio_seconds``.
+
+    An explicit ``OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S`` always wins. Otherwise the
+    budget grows with the audio and never drops below the 300 s default.
+    """
+    if os.environ.get("OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S"):
+        return ASR_TRANSCRIBE_TIMEOUT_S
+    try:
+        seconds = float(audio_seconds or 0.0)
+    except (TypeError, ValueError):
+        seconds = 0.0
+    if seconds <= 0 or seconds != seconds:  # unknown or NaN
+        return ASR_TRANSCRIBE_TIMEOUT_S
+    return max(ASR_TRANSCRIBE_TIMEOUT_S, seconds * ASR_SECONDS_PER_AUDIO_SECOND + 60.0)
+
 
 #: Upper bound on ONE model download/load inside a guarded transcribe. The
 #: transcribe budget pauses while a model loads (see ModelLoadTracker), so a
@@ -262,14 +285,19 @@ def _isolated_engine_hint(streak: int) -> str:
 
 
 async def run_transcribe_guarded(executor, fn, *, what: str = "ASR",
-                                 timeout: float = ASR_TRANSCRIBE_TIMEOUT_S,
+                                 timeout: float | None = None,
                                  timeout_env: str = "OMNIVOICE_ASR_TRANSCRIBE_TIMEOUT_S",
                                  reset_on_timeout: bool = False,
                                  on_abandon=None,
-                                 load_tracker: ModelLoadTracker | None = None):
+                                 load_tracker: ModelLoadTracker | None = None,
+                                 audio_seconds: float | None = None):
     """Run a blocking transcribe ``fn`` in ``executor`` with a hard wall-clock
     bound. On timeout, raise :class:`ASRTimeoutError` with guidance instead of
     letting the request hang forever.
+
+    A whole-file caller passes ``audio_seconds``: the default budget then grows
+    with the audio (:func:`asr_timeout_for`), so a long recording is not cut off
+    at the flat 300 s. An explicit ``timeout`` is kept as given.
 
     A future cannot cancel the underlying thread, so a timed-out
     in-process CTranslate2/whisperx call still owns its model and device. The
@@ -288,6 +316,8 @@ async def run_transcribe_guarded(executor, fn, *, what: str = "ASR",
     such load is bounded by ``ASR_MODEL_LOAD_TIMEOUT_S`` instead. Pass
     ``load_tracker`` to watch those loads from the caller.
     """
+    if timeout is None:
+        timeout = asr_timeout_for(audio_seconds) if audio_seconds is not None else ASR_TRANSCRIBE_TIMEOUT_S
     tracker = load_tracker if load_tracker is not None else ModelLoadTracker()
     from services.inference_cancellation import InferenceCancellation
     cancellation = InferenceCancellation()

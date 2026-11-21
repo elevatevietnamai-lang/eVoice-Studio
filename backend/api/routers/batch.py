@@ -348,7 +348,9 @@ async def _run_batch_pipeline_leased(job_id: str, job: dict, lease: voice_leases
     # ("can't reach backend"); run_transcribe_guarded also resets the pool on
     # timeout to restore capacity.
     from services.asr_backend import run_transcribe_guarded
-    segments, source_lang = await run_transcribe_guarded(_gpu_pool, _transcribe, what="Batch")
+    segments, source_lang = await run_transcribe_guarded(
+        _gpu_pool, _transcribe, what="Batch", audio_seconds=job.get("duration"),
+    )
     source_lang = (source_lang or "en").split("_")[0][:2].lower()
     job["segments"] = segments
     job["source_lang"] = source_lang
