@@ -206,6 +206,7 @@ export function CommunityView({
               </p>
               <div className="flex flex-wrap items-center gap-2">
                 <AudioPreviewButton
+                  size="icon-sm"
                   src={apiPath('/community/items/' + encodeURIComponent(item.id) + '/preview')}
                   fallbackSrc={
                     item.type === 'preset'

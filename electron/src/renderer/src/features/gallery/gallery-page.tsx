@@ -360,6 +360,7 @@ export function GalleryPage() {
                     </p>
                     <div className="flex items-center justify-between gap-2">
                       <AudioPreviewButton
+                        size="icon-sm"
                         src={apiPath('/archetypes/' + encodeURIComponent(item.id) + '/preview')}
                         fallbackSrc={apiPath(
                           '/archetypes/' + encodeURIComponent(item.id) + '/preview?local=true',

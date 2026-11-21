@@ -819,6 +819,7 @@ export function ProjectsPage() {
                       {row.take && (
                         <>
                           <AudioPreviewButton
+                            size="icon-sm"
                             src={apiPath('/audio/' + encodeURIComponent(row.take.audio_path))}
                             source={'projects-take-' + row.take.id}
                           />
@@ -843,6 +844,7 @@ export function ProjectsPage() {
                       )}
                       {row.render && (
                         <AudioPreviewButton
+                          size="icon-sm"
                           src={apiPath('/audio/' + encodeURIComponent(row.render.output))}
                           source={'projects-render-' + row.render.job_id}
                         />

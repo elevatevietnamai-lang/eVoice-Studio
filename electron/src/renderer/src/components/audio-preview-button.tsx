@@ -21,6 +21,11 @@ interface PreviewProps {
   onReady?: () => void;
   disabled?: boolean;
   disabledLabel?: string;
+  /**
+   * The icon-button size. Match the row it sits in (DESIGN.md, "Action rows"): `icon-sm`
+   * beside `sm` buttons (28 px), `icon-xs` in 24 px hover toolbars.
+   */
+  size?: 'icon-xs' | 'icon-sm';
 }
 type Status = 'idle' | 'loading' | 'playing' | 'paused' | 'error';
 export function AudioPreviewButton(props: PreviewProps) {
@@ -40,6 +45,7 @@ function PreviewButton({
   onReady,
   disabled,
   disabledLabel,
+  size = 'icon-xs',
 }: PreviewProps) {
   const { t } = useTranslation();
   const [status, setStatus] = useState<Status>('idle');
@@ -126,7 +132,7 @@ function PreviewButton({
       )}
       <Button
         variant="ghost"
-        size="icon-xs"
+        size={size}
         title={label}
         aria-label={label}
         aria-pressed={status === 'playing'}

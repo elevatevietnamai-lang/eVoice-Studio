@@ -91,6 +91,7 @@ export function DictationDemo() {
             <p className="text-sm leading-relaxed text-muted-foreground">{script.text}</p>
             <div className="flex items-center gap-2">
               <AudioPreviewButton
+                size="icon-sm"
                 src={apiPath(script.wav)}
                 source={'dictation-demo:' + script.id}
               />

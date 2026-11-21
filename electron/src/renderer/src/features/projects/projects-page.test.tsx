@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   edit: vi.fn(),
   active: false,
   drafts: { stories: { projectId: 'book' }, audiobook: { projectId: null } },
+  history: [] as Record<string, unknown>[],
 }));
 vi.mock('@/components/workspace-sidebar', () => ({
   SecondarySidebar: ({ children }: any) => <aside>{children}</aside>,
@@ -17,7 +18,14 @@ vi.mock('@/components/workspace-sidebar', () => ({
 vi.mock('@/components/app-shell/workspace-header', () => ({
   WorkspaceHeader: ({ children }: any) => <header>{children}</header>,
 }));
-vi.mock('@/components/audio-preview-button', () => ({ AudioPreviewButton: () => null }));
+// Renders its size only as given, so a call site that forgets it fails the row-height test.
+vi.mock('@/components/audio-preview-button', () => ({
+  AudioPreviewButton: ({ size }: { size?: string }) => (
+    <button type="button" data-size={size}>
+      Play
+    </button>
+  ),
+}));
 vi.mock('@/components/pipeline-failure', () => ({
   PipelineFailure: ({ fallback }: any) => <p role="alert">{fallback}</p>,
 }));
@@ -27,7 +35,7 @@ vi.mock('@/hooks/use-profiles', () => ({
   useProfiles: () => ({ data: [] }),
   useDeleteProfile: () => ({ mutateAsync: vi.fn() }),
 }));
-vi.mock('@/hooks/use-history', () => ({ useHistory: () => ({ data: [] }) }));
+vi.mock('@/hooks/use-history', () => ({ useHistory: () => ({ data: mocks.history }) }));
 vi.mock('@/lib/api/client', () => ({
   apiJson: mocks.api,
   apiPath: (p: string) => p,
@@ -61,6 +69,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
   mocks.active = false;
+  mocks.history = [];
   exports = [{ id: 'same', filename: 'Exported audio', destination_path: '/kept/audio.wav' }];
   dubs = [{ id: 'same', name: 'Dub project' }];
   mocks.api.mockImplementation(async (path: string, options?: { method?: string }) => {
@@ -219,4 +228,31 @@ it('prevents duplicate submissions and cancellation while deletion is pending', 
   expect(deletions()).toHaveLength(1);
   finish();
   await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+});
+
+it('gives every control in a take row the same 28 px height', async () => {
+  mocks.history = [
+    {
+      id: 't1',
+      text: 'Hello take',
+      mode: 'clone',
+      language: 'en',
+      instruct: null,
+      profile_id: null,
+      audio_path: 't1.wav',
+      duration_seconds: 1,
+      generation_time: 1,
+      seed: 1,
+      starred: false,
+      created_at: 1,
+    },
+  ];
+  await mount();
+  const remove = await screen.findByRole('button', { name: 'Delete Hello take' });
+  const row = remove.parentElement!;
+  const sizes = within(row)
+    .getAllByRole('button')
+    .map((button) => button.getAttribute('data-size'));
+  expect(sizes).toHaveLength(3);
+  for (const size of sizes) expect(['sm', 'icon-sm']).toContain(size);
 });

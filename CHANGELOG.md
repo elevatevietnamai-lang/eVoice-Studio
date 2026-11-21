@@ -18,6 +18,10 @@ metadata and the backend fallback mirror it.
 - Music Studio's progress comes from the ACE-Step server's own report of how far the song is, instead of a guess from the time waited, and never moves backwards (#87)
 - Long jobs show their percent on the button you started them with: Music Studio's Generate, Read and Remove on-screen subtitles, and the Stop or Cancel button that replaces Generate in stories, audiobooks and dubbing (#86)
 
+### Fixed
+
+- The Play button beside Reuse script and Delete in Projects, and on Gallery, imported and community voice cards, is the same height as the buttons next to it (#88)
+
 ## [0.5.7-beta.9] — 2026-11-18
 
 Removing burned-in subtitles with LaMa is about six times faster: a five-minute screen recording
