@@ -432,3 +432,55 @@ def test_unaligned_segment_without_a_usable_span_is_skipped():
         {"start": 2.0, "end": 2.0, "text": "zero span"},
     ]
     assert [w.text for w in _words_from_whisper({"segments": segs})] == ["hi"]
+
+
+# ---------------------------------------------------------------------------
+# Scripts written without spaces (Chinese, Japanese, Thai)
+# ---------------------------------------------------------------------------
+
+_ZH_CHUNK = (
+    "已经相当真实完全可以替代演员所有软件模型我都公开好了需要的朋友三个六我直接甩给你"
+    "接下来的教学部分我将会从comfyui的软件基础AI生图开始到进阶的各种AI视频的生成方法"
+    "手把手带你生成第一个AI电影全程你只需要准备一台电脑即可输入正反提示词我们点击运行选项"
+)
+
+
+def test_unaligned_chinese_chunk_is_cut_into_dub_sized_segments():
+    # WhisperX with no Chinese aligner returns a 20 s chunk with no word timings and no
+    # spaces; it used to stay one 20 s segment because the fallback split on spaces only.
+    result = {
+        "segments": [{"text": _ZH_CHUNK, "start": 0.0, "end": 20.0, "words": []}],
+        "chunks": [{"text": _ZH_CHUNK, "timestamp": (0.0, 20.0)}],
+    }
+    segs = segment_transcript(result, duration=20.0)
+    assert len(segs) >= 3
+    assert all(s["end"] - s["start"] <= MAX_DUR + 1e-6 for s in segs)
+    assert all(" " not in s["text"] for s in segs)
+    assert "".join(s["text"] for s in segs) == _ZH_CHUNK
+
+
+def test_timed_chinese_words_join_without_spaces():
+    words = [Word(0.0, 0.4, "已经"), Word(0.4, 0.8, "相当"), Word(0.8, 1.2, "真实"),
+             Word(1.2, 1.8, "comfyui"), Word(1.8, 2.0, "的"), Word(2.0, 2.4, "软件")]
+    segs = _build_segments_from_words(words)
+    assert [s.text for s in segs] == ["已经相当真实comfyui的软件"]
+
+
+def test_latin_words_still_join_with_spaces():
+    segs = _build_segments_from_words([Word(0.0, 0.5, "Hello"), Word(0.5, 1.0, "world")])
+    assert [s.text for s in segs] == ["Hello world"]
+
+
+def test_best_boundary_can_cut_text_without_spaces():
+    text = "我们点击运行渲染视频刚渲染完成只经过解码的原生视频"
+    pos = _best_boundary(text, len(text) // 2)
+    assert 0 < pos < len(text)
+    assert abs(pos - len(text) // 2) <= 1
+
+
+def test_chinese_clause_punctuation_stays_with_its_character():
+    result = {"segments": [{"text": "今天天气很好，我们出去走走。然后回家吃饭，再看一部电影吧。",
+                            "start": 0.0, "end": 12.0, "words": []}]}
+    segs = segment_transcript(result, duration=12.0)
+    assert len(segs) >= 2
+    assert not any(s["text"].startswith(("，", "。")) for s in segs)

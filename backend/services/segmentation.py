@@ -36,8 +36,35 @@ SPEAKER_GAP = 1.2     # seconds — heuristic speaker-change gap (no pyannote)
 _SENTENCE_END = re.compile(
     r'([.!?。！？।؟…؛܀։՝።။၊।]["\')\]]?)(\s+|$)'
 )
-_CLAUSE_END = re.compile(r'([,;:—、،؍])(\s+|$)')
+_CLAUSE_END = re.compile(r'([,;:—、،؍，；：])(\s+|$)')
 _WS = re.compile(r'\s+')
+# Scripts written without spaces between words: Han, kana, Thai, Lao, Myanmar, Khmer, and the
+# CJK and full-width punctuation that sits between them. Korean (Hangul) uses spaces.
+_NO_SPACE = re.compile(
+    r'[฀-໿က-႟ក-៿　-ヿ㐀-䶿一-鿿'
+    r'豈-﫿＀-￯]'
+)
+# One no-space glyph, or a run of anything else (a Latin word, a number) inside it.
+_GLYPH_OR_RUN = re.compile(_NO_SPACE.pattern + '|(?:(?!' + _NO_SPACE.pattern + ').)+')
+
+
+def _join(parts: Iterable[object]) -> str:
+    """Join word or segment texts the way the language writes them.
+
+    Latin-like scripts take a space between parts; a part that ends or starts in a
+    no-space script (Chinese, Japanese, Thai…) joins its neighbour directly, so
+    "我" + "们" stays "我们" and "comfyui" + "的" stays "comfyui的", as the
+    source wrote them.
+    """
+    out = ""
+    for part in parts:
+        text = _clean(str(part or ""))
+        if not text:
+            continue
+        if out and not (_NO_SPACE.match(out[-1]) or _NO_SPACE.match(text[0])):
+            out += " "
+        out += text
+    return out
 
 
 def _word_count(text: str) -> int:
@@ -129,7 +156,7 @@ def _merge_segment_extra(target: Segment, incoming: Segment, *, prepend: bool) -
         )
 
     def joined(left: object, right: object) -> str:
-        return _clean(f"{left or ''} {right or ''}")
+        return _join((left, right))
 
     target_original = target.extra.get("text_original")
     incoming_original = incoming.extra.get("text_original")
@@ -200,6 +227,15 @@ def _best_boundary(text: str, ideal_pos: int) -> int:
     pick = _closest(space_offsets)
     if pick is not None:
         return pick
+    # Text written without spaces (Chinese, Japanese, Thai…) can break between any two
+    # of its characters.
+    glyph_offsets = [
+        i for i in range(1, length)
+        if _NO_SPACE.match(text[i - 1]) or _NO_SPACE.match(text[i])
+    ]
+    pick = _closest(glyph_offsets)
+    if pick is not None:
+        return pick
     return length
 
 
@@ -209,7 +245,19 @@ def _spread_words(text: str, s: float, e: float) -> List[Word]:
     text = _clean(text)
     if not text or e <= s:
         return []
-    tokens = text.split(" ")
+    tokens = []
+    for token in text.split(" "):
+        if len(token) > 1 and _NO_SPACE.search(token):
+            # No spaces to split on: one token per character, so a long Chinese chunk can
+            # still be cut. A Latin or digit run inside it ("comfyui", "AI") stays whole,
+            # and punctuation stays with the character before it.
+            for piece in _GLYPH_OR_RUN.findall(token):
+                if tokens and (_SENTENCE_END.match(piece) or _CLAUSE_END.match(piece)):
+                    tokens[-1] += piece
+                else:
+                    tokens.append(piece)
+        else:
+            tokens.append(token)
     dur = (e - s) / max(len(tokens), 1)
     return [Word(start=s + k * dur, end=s + (k + 1) * dur, text=tok)
             for k, tok in enumerate(tokens)]
@@ -239,19 +287,22 @@ def _words_from_whisper(result: dict) -> List[Word]:
     """
     segs = result.get("segments") if isinstance(result, dict) else None
     if segs:
-        per_segment = [_timed_words(seg) for seg in segs]
-        if any(per_segment):
-            words: List[Word] = []
-            for seg, timed in zip(segs, per_segment):
-                if timed:
-                    words.extend(timed)
-                    continue
-                try:
-                    start = float(seg.get("start"))
-                    end = float(seg.get("end"))
-                except (TypeError, ValueError):
-                    continue
-                words.extend(_spread_words(seg.get("text", ""), start, end))
+        # Segments without word timings (no forced aligner for the language, as with
+        # WhisperX on Chinese) still carry their own span: spread their text over it
+        # rather than dropping to the coarser chunks or one whole-file segment.
+        words: List[Word] = []
+        for seg in segs:
+            timed = _timed_words(seg)
+            if timed:
+                words.extend(timed)
+                continue
+            try:
+                start = float(seg.get("start"))
+                end = float(seg.get("end"))
+            except (TypeError, ValueError):
+                continue
+            words.extend(_spread_words(seg.get("text", ""), start, end))
+        if words:
             return words
 
     # Fallback: chunk-level timings (no per-word granularity)
@@ -278,7 +329,7 @@ def _build_segments_from_words(words: Sequence[Word]) -> List[Segment]:
         nonlocal buf, buf_start
         if not buf:
             return
-        text = _clean(" ".join(w.text for w in buf))
+        text = _join(w.text for w in buf)
         if not text:
             buf = []
             return
@@ -342,7 +393,7 @@ def _build_segments_from_words(words: Sequence[Word]) -> List[Segment]:
                 segments.append(Segment(
                     start=buf_start,
                     end=left_buf[-1].end,
-                    text=_clean(" ".join(x.text for x in left_buf)),
+                    text=_join(x.text for x in left_buf),
                     extra={"words": _serialize_words(left_buf)},
                 ))
                 buf = list(right_buf)
@@ -412,14 +463,14 @@ def _merge_short(segments: List[Segment]) -> List[Segment]:
                 continue
             if target is prev:
                 _merge_segment_extra(prev, s, prepend=False)
-                prev.text = _clean(prev.text + " " + s.text)
+                prev.text = _join((prev.text, s.text))
                 prev.end = max(prev.end, s.end)
                 segments.pop(i)
                 did_merge = True
                 continue
             if target is nxt:
                 _merge_segment_extra(nxt, s, prepend=True)
-                nxt.text = _clean(s.text + " " + nxt.text)
+                nxt.text = _join((s.text, nxt.text))
                 nxt.start = min(nxt.start, s.start)
                 segments.pop(i)
                 did_merge = True
@@ -457,7 +508,7 @@ def _stitch_adjacent_shorts(segments: List[Segment]) -> List[Segment]:
                 and combined_dur <= MAX_DUR
             ):
                 _merge_segment_extra(a, b, prepend=False)
-                a.text = _clean(a.text + " " + b.text)
+                a.text = _join((a.text, b.text))
                 a.end = b.end
                 segments.pop(i + 1)
                 did = True
@@ -529,8 +580,8 @@ def _apply_scene_cuts(segments: List[Segment], scene_cuts: Iterable[float]) -> L
                     continue
                 split = min(candidates, key=lambda i: abs(float(words[i]["start"]) - cut))
                 left, right = words[:split], words[split:]
-                left_text = _clean(" ".join(str(w.get("text", w.get("word", ""))) for w in left))
-                right_text = _clean(" ".join(str(w.get("text", w.get("word", ""))) for w in right))
+                left_text = _join(w.get("text", w.get("word", "")) for w in left)
+                right_text = _join(w.get("text", w.get("word", "")) for w in right)
                 left_end, right_start = float(left[-1]["end"]), float(right[0]["start"])
                 if (len(left_text) < MIN_CHARS or len(right_text) < MIN_CHARS
                         or left_end - remaining.start < MIN_DUR
@@ -801,7 +852,7 @@ def _resplit_core(
         n_runs = len(runs)
         piece_no = 0
         for k, (label, ws) in enumerate(runs):
-            text = _clean(" ".join(w.text for w in ws))
+            text = _join(w.text for w in ws)
             if not text:
                 continue
             piece = dict(seg)
