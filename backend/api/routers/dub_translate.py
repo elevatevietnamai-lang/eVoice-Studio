@@ -402,10 +402,24 @@ def _should_unload_nllb() -> bool:
         return True
 
 
+def default_translation_provider() -> str:
+    """The engine a request without `provider` uses: the one Settings chose.
+
+    The same rule as the system info Settings reads (env override, else the saved
+    `translation_backend`, else the bundled local Argos), so an API, MCP or CLI caller
+    that omits `provider` gets the engine the app shows, never a cloud engine whose
+    optional package may not even be installed.
+    """
+    from core import prefs
+
+    return (os.environ.get("TRANSLATE_PROVIDER") or prefs.get("translation_backend", "argos")
+            or "argos").lower()
+
+
 @router.post("/dub/translate")
 async def dub_translate(req: TranslateRequest):
     try:
-        provider = (req.provider if req.provider else os.environ.get("TRANSLATE_PROVIDER", "google")).lower()
+        provider = (req.provider or default_translation_provider()).lower()
         from services import translation_engines
 
         if not translation_engines.get_engine(provider):
