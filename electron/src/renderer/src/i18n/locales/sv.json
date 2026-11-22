@@ -987,7 +987,8 @@
     "confirm": "Bekräfta",
     "details": "Detaljer",
     "unknown": "okänd",
-    "time_left": "~{{time}} kvar"
+    "time_left": "~{{time}} kvar",
+    "help_for": "Om: {{name}}"
   },
   "dubWorkspace": {
     "title": "Dubbning",

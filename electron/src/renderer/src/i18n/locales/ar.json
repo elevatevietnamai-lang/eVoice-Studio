@@ -995,7 +995,8 @@
     "confirm": "تأكيد",
     "details": "التفاصيل",
     "unknown": "مجهول",
-    "time_left": "~{{time}} متبقٍ"
+    "time_left": "~{{time}} متبقٍ",
+    "help_for": "شرح: {{name}}"
   },
   "dubWorkspace": {
     "title": "الدبلجة",

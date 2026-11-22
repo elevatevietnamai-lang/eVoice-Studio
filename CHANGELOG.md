@@ -12,6 +12,7 @@ metadata and the backend fallback mirror it.
 
 - Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
 - Frosted-glass hover labels across the app
+- Music Studio explanations open from a "?" beside each title
 
 ### Added
 
@@ -20,6 +21,7 @@ metadata and the backend fallback mirror it.
 ### Changed
 
 - Hover labels on the menu, title bar and buttons are now frosted glass in every theme, instead of a dark chip (#96)
+- Music Studio is tidier: each setting's explanation and the ACE-Step credit now open from a "?" beside its title instead of filling the panel (#98)
 
 ### CI
 

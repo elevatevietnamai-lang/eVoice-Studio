@@ -987,7 +987,8 @@
     "confirm": "पुष्टि करें",
     "details": "विवरण",
     "unknown": "अज्ञात",
-    "time_left": "~{{time}} शेष"
+    "time_left": "~{{time}} शेष",
+    "help_for": "जानकारी: {{name}}"
   },
   "dubWorkspace": {
     "title": "डबिंग",
