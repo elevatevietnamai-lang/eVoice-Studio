@@ -33,6 +33,7 @@ gains an Emotion button.
 
 ### Fixed
 
+- Strings still shown in English in 19 languages are translated, and the dialog close and loading labels follow the app language (#99)
 - Retry and Fix on the backend screen, the player's speed button, the voice editor's Delete and six more rows now share one height (#97)
 
 ### Changed

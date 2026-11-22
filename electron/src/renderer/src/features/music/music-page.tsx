@@ -1312,7 +1312,7 @@ export function MusicPage() {
                     </div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="flex min-w-0 items-center gap-1">
-                        <label htmlFor="music-adg" className="font-medium">
+                        <label htmlFor="music-adg" className="block font-medium">
                           {t('musicStudio.adg')}
                         </label>
                         <HelpHint label={t('musicStudio.adg')}>{t('musicStudio.adg_help')}</HelpHint>
