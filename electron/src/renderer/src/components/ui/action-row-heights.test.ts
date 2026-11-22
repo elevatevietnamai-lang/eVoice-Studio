@@ -41,7 +41,7 @@ const DEFAULT_SIZE: Record<string, string> = {
  * Rows allowed to mix heights, with why. The Clone page's voice picker is the page's title, not an
  * action, and is taller than the Change link beside it on purpose.
  */
-const EXEMPT = [{ file: 'features/clone/clone-page.tsx', className: 'h-12' }];
+const EXEMPT = [{ file: 'features/clone/clone-page.tsx', row: 'Button 48px, Button 28px' }];
 
 type Node = { name: string; attrs: string; children: Node[] };
 
@@ -164,10 +164,7 @@ it('finds the rows it checks', () => {
 it.each(views)('%s keeps each action row one height', (file) => {
   const source = fs.readFileSync(`${root}/${file}`, 'utf8');
   const rows = mixedRows(source).filter(
-    (row) =>
-      !EXEMPT.some(
-        (exempt) => exempt.file === file && source.includes(exempt.className) && /\b48px\b/.test(row),
-      ),
+    (row) => !EXEMPT.some((exempt) => exempt.file === file && exempt.row === row),
   );
   expect(rows).toEqual([]);
 });
