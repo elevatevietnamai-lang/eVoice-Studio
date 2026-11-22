@@ -38,7 +38,7 @@ export function ShellTooltip({
       >
         <span className="grid min-w-0 gap-0.5">
           <span className="font-medium whitespace-nowrap">{label}</span>
-          {hint && <span className="text-background/70 leading-4">{hint}</span>}
+          {hint && <span className="leading-4 text-muted-foreground">{hint}</span>}
         </span>
         {accelerator && (
           <Kbd className="mt-px shrink-0">{formatAccelerator(accelerator, isMac())}</Kbd>

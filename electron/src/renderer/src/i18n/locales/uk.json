@@ -546,6 +546,18 @@
     "opt_very_high_pitch": "дуже високий тон",
     "opt_whisper": "пошепки",
     "style_placeholder": "напр. пошепки",
+    "emotion": "Емоція",
+    "emotion_help": "Опишіть, як має звучати фраза, або виберіть варіант. Застосовується лише в IndexTTS2; сила визначає, наскільки яскраво голос її передає.",
+    "emotion_clear": "Скинути емоцію",
+    "emotion_presets_label": "Готові емоції",
+    "emotion_presets": {
+      "warm": "Тепло",
+      "cheerful": "Весело",
+      "excited": "Захоплено",
+      "calm": "Спокійно",
+      "proud": "Гордо",
+      "sad": "Сумно"
+    },
     "stop_playback": "Зупинити відтворення",
     "describe_label": "Опишіть свій голос",
     "describe_placeholder": "напр. a warm elderly British storyteller, slightly raspy",

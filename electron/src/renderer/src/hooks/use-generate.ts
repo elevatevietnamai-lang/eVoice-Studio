@@ -343,6 +343,11 @@ function useGenerateController(): UseGenerateClone {
           instruct,
           instructVocabulary,
           designRecipe: design?.recipe,
+          // Only engines that apply a described emotion get one; a description
+          // left over from IndexTTS2 never reaches another engine.
+          ...(!design && activeTts?.supports_emotion && settings.emoText.trim()
+            ? { emoText: settings.emoText, emoAlpha: settings.emoAlpha }
+            : {}),
           steps: effectiveSamplingSteps(
             settings.steps,
             queryClient.getQueryData<EnginesResponse>(queryKeys.engines)?.tts?.active,

@@ -544,6 +544,18 @@
     "opt_very_high_pitch": "tono muy alto",
     "opt_whisper": "susurrar",
     "style_placeholder": "por ej. susurrar",
+    "emotion": "Emoción",
+    "emotion_help": "Describe cómo debe sonar la frase o elige un punto de partida. Solo IndexTTS2 la aplica; la intensidad define cuánto se nota en la voz.",
+    "emotion_clear": "Quitar emoción",
+    "emotion_presets_label": "Emociones predefinidas",
+    "emotion_presets": {
+      "warm": "Cálida",
+      "cheerful": "Alegre",
+      "excited": "Entusiasta",
+      "calm": "Tranquila",
+      "proud": "Orgullosa",
+      "sad": "Triste"
+    },
     "stop_playback": "Detener reproducción",
     "describe_label": "Describe tu voz",
     "describe_placeholder": "p. ej. a warm elderly British storyteller, slightly raspy",
