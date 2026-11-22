@@ -12,11 +12,16 @@ metadata and the backend fallback mirror it.
 
 - Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
 - Frosted-glass hover labels across the app
+- Buttons that sit side by side are the same height again
 - Music Studio explanations open from a "?" beside each title
 
 ### Added
 
 - Voice cloning with IndexTTS2 has an Emotion button: describe how the line should feel or pick a preset, then set the strength (#95)
+
+### Fixed
+
+- Retry and Fix on the backend screen, the player's speed button, the voice editor's Delete and six more rows now share one height (#97)
 
 ### Changed
 

@@ -176,7 +176,7 @@ export function GlossaryPanel({
           {extracting ? <LoaderCircleIcon className="animate-spin" /> : <SparklesIcon />}
           {t('glossary.auto_btn')}
         </Button>
-        <Button size="icon-xs" variant="ghost" aria-label={t('glossary.close')} onClick={onClose}>
+        <Button size="icon-sm" variant="ghost" aria-label={t('glossary.close')} onClick={onClose}>
           <XIcon />
         </Button>
       </div>
