@@ -77,6 +77,20 @@ On an AMD ROCm host, swap the venv's torch for a ROCm build after the install
 are the working ones). Left alone, the upstream `pyproject.toml` resolves the
 CUDA build, which cannot see an AMD GPU and runs entirely on the CPU.
 
+## Emotion
+
+With IndexTTS 2.5 selected, the Clone page shows an **Emotion** button (smiley
+icon) next to Voice controls. Describe how the line should feel ("warm and
+proud") or pick a preset, then set the strength. The description is sent as
+`emo_text` and the strength as `emo_alpha`; IndexTTS applies at most 0.6 for a
+text description, so the slider's 100% is that limit. The button is hidden for
+engines that do not apply emotion, and a description left from an earlier
+session is never sent to them. Stories and audiobooks offer the same controls
+under production settings.
+
+API callers can pass the same fields to `POST /generate`: `emo_text` (up to 500
+characters) and `emo_alpha` (0 to 1). Other engines ignore both.
+
 ## Compatibility
 
 VoiceStudio probes these locations in order:

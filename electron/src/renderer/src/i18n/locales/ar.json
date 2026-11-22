@@ -550,6 +550,18 @@
     "opt_very_high_pitch": "درجة عالية جدًا",
     "opt_whisper": "الهمس",
     "style_placeholder": "على سبيل المثال الهمس",
+    "emotion": "المشاعر",
+    "emotion_help": "صف الإحساس الذي تريده للجملة أو اختر نقطة بداية. يطبّقه محرك IndexTTS2 فقط؛ وتحدد الشدة مدى ميل الصوت إليه.",
+    "emotion_clear": "مسح المشاعر",
+    "emotion_presets_label": "مشاعر جاهزة",
+    "emotion_presets": {
+      "warm": "دافئ",
+      "cheerful": "مبهج",
+      "excited": "متحمس",
+      "calm": "هادئ",
+      "proud": "فخور",
+      "sad": "حزين"
+    },
     "stop_playback": "إيقاف التشغيل",
     "describe_label": "صِف صوتك",
     "describe_placeholder": "مثال: a warm elderly British storyteller, slightly raspy",

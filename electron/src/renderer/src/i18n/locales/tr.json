@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "çok yüksek perde",
     "opt_whisper": "fısıltı",
     "style_placeholder": "örneğin fısıltı",
+    "emotion": "Duygu",
+    "emotion_help": "Cümlenin nasıl hissettirmesi gerektiğini anlatın ya da bir başlangıç seçin. Yalnızca IndexTTS2 uygular; yoğunluk, sesin bunu ne kadar yansıtacağını belirler.",
+    "emotion_clear": "Duyguyu temizle",
+    "emotion_presets_label": "Hazır duygular",
+    "emotion_presets": {
+      "warm": "Sıcak",
+      "cheerful": "Neşeli",
+      "excited": "Heyecanlı",
+      "calm": "Sakin",
+      "proud": "Gururlu",
+      "sad": "Hüzünlü"
+    },
     "stop_playback": "Oynatmayı durdur",
     "describe_label": "Sesinizi tarif edin",
     "describe_placeholder": "örn. a warm elderly British storyteller, slightly raspy",

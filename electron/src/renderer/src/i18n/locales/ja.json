@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "とても高いピッチ",
     "opt_whisper": "ささやき声",
     "style_placeholder": "例:ささやき声",
+    "emotion": "感情",
+    "emotion_help": "セリフの雰囲気を説明するか、候補から選んでください。適用されるのは IndexTTS2 のみで、強さで声への反映度を調整します。",
+    "emotion_clear": "感情をクリア",
+    "emotion_presets_label": "感情のプリセット",
+    "emotion_presets": {
+      "warm": "温かい",
+      "cheerful": "明るい",
+      "excited": "わくわく",
+      "calm": "落ち着いた",
+      "proud": "誇らしげ",
+      "sad": "悲しい"
+    },
     "stop_playback": "再生を停止",
     "describe_label": "声を言葉で説明",
     "describe_placeholder": "例: a warm elderly British storyteller, slightly raspy",

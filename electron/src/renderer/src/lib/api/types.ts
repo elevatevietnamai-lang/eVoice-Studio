@@ -78,6 +78,8 @@ export interface EngineBackend {
   default_voice?: string | null;
   /** False: needs a reference clip, so Voice Design is unavailable. Null/absent: undeclared. */
   supports_voice_design?: boolean | null;
+  /** True: applies a described emotion (`emo_text` / `emo_alpha`, IndexTTS2). */
+  supports_emotion?: boolean;
   /** "tags" = OmniVoice's closed design vocabulary; "freeform" = sent as written (#2389). */
   instruct_vocabulary?: InstructVocabulary;
   /** Seconds of a clone reference the engine uses; null when not verified (#2281). */
@@ -169,6 +171,10 @@ export interface CloneGenerateInput {
   instructVocabulary?: InstructVocabulary;
   /** Voice Design draft stored with the take; never affects synthesis. */
   designRecipe?: DesignRecipe;
+  /** Described emotion, sent only to engines that declare `supports_emotion`. */
+  emoText?: string;
+  /** Emotion strength 0..1; ignored without `emoText`. */
+  emoAlpha?: number;
   steps: number;
   cfg: number;
   speed: number;

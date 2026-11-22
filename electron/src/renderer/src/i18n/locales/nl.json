@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "zeer hoge toon",
     "opt_whisper": "fluisteren",
     "style_placeholder": "bijv. fluisteren",
+    "emotion": "Emotie",
+    "emotion_help": "Beschrijf hoe de zin moet klinken of kies een startpunt. Alleen IndexTTS2 past dit toe; de sterkte bepaalt hoe duidelijk de stem het laat horen.",
+    "emotion_clear": "Emotie wissen",
+    "emotion_presets_label": "Emotievoorinstellingen",
+    "emotion_presets": {
+      "warm": "Warm",
+      "cheerful": "Vrolijk",
+      "excited": "Enthousiast",
+      "calm": "Rustig",
+      "proud": "Trots",
+      "sad": "Verdrietig"
+    },
     "stop_playback": "Afspelen stoppen",
     "describe_label": "Beschrijf je stem",
     "describe_placeholder": "bijv. a warm elderly British storyteller, slightly raspy",

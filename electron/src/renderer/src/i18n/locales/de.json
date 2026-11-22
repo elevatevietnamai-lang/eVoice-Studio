@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "sehr hoher Ton",
     "opt_whisper": "flüstern",
     "style_placeholder": "z.B. flüstern",
+    "emotion": "Emotion",
+    "emotion_help": "Beschreibe, wie die Zeile klingen soll, oder wähle einen Ausgangspunkt. Nur IndexTTS2 wendet sie an; die Stärke bestimmt, wie deutlich die Stimme sie zeigt.",
+    "emotion_clear": "Emotion entfernen",
+    "emotion_presets_label": "Emotionsvorlagen",
+    "emotion_presets": {
+      "warm": "Warm",
+      "cheerful": "Fröhlich",
+      "excited": "Begeistert",
+      "calm": "Ruhig",
+      "proud": "Stolz",
+      "sad": "Traurig"
+    },
     "stop_playback": "Wiedergabe stoppen",
     "describe_label": "Beschreibe deine Stimme",
     "describe_placeholder": "z. B. a warm elderly British storyteller, slightly raspy",
