@@ -8,6 +8,10 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
+
 ### Added
 
 - Voice cloning with IndexTTS2 has an Emotion button: describe how the line should feel or pick a preset, then set the strength (#95)
