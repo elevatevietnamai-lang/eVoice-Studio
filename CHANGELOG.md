@@ -14,7 +14,7 @@ metadata and the backend fallback mirror it.
 
 ### Changed
 
-- Music Studio is tidier: each setting's explanation and the ACE-Step credit now open from a "?" beside its title instead of filling the panel.
+- Music Studio is tidier: each setting's explanation and the ACE-Step credit now open from a "?" beside its title instead of filling the panel (#98).
 
 ## [0.5.7-beta.11] — 2026-11-22
 
