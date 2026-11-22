@@ -987,7 +987,8 @@
     "confirm": "確認",
     "details": "詳細資料",
     "unknown": "未知",
-    "time_left": "剩餘約 {{time}}"
+    "time_left": "剩餘約 {{time}}",
+    "help_for": "說明：{{name}}"
   },
   "dubWorkspace": {
     "title": "配音",

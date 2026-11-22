@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { getBridge } from '@/components/bridge';
 import { WorkspaceHeader } from '@/components/app-shell/workspace-header';
 import { SecondarySidebar } from '@/components/workspace-sidebar';
+import { HelpHint, TitleWithHelp } from '@/components/help-hint';
 import { WaveformPlayer } from '@/components/waveform-player';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -587,6 +588,9 @@ export function MusicPage() {
           size="wide"
           variant="controls"
           className="space-y-3"
+          titleAction={
+            <HelpHint label={t('musicStudio.title')}>{t('musicStudio.credit')}</HelpHint>
+          }
         >
           {!installed ? (
             <section className="space-y-2 rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
@@ -639,9 +643,11 @@ export function MusicPage() {
           ) : null}
 
           <div className="flex min-w-0 flex-col gap-1.5 text-label">
-            <span id="music-task" className="font-medium">
-              {t('musicStudio.task')}
-            </span>
+            <TitleWithHelp
+              id="music-task"
+              title={t('musicStudio.task')}
+              help={t(`musicStudio.task_${musicTask}_help`)}
+            />
             <ToggleGroup
               value={[musicTask]}
               disabled={busy}
@@ -664,9 +670,6 @@ export function MusicPage() {
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-            <p className="leading-5 text-muted-foreground">
-              {t(`musicStudio.task_${musicTask}_help`)}
-            </p>
             {model !== 'base' && (
               <p className="leading-5 text-muted-foreground">{t('musicStudio.task_base_only')}</p>
             )}
@@ -685,7 +688,10 @@ export function MusicPage() {
             {musicTask === 'cover' && (
               <div className="space-y-1.5 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{t('musicStudio.cover_strength')}</span>
+                  <TitleWithHelp
+                    title={t('musicStudio.cover_strength')}
+                    help={t('musicStudio.cover_strength_help')}
+                  />
                   <span className="text-muted-foreground tabular-nums">
                     {Math.round(coverStrength * 100)}%
                   </span>
@@ -701,9 +707,6 @@ export function MusicPage() {
                     setCoverStrength(Array.isArray(value) ? value[0] : value)
                   }
                 />
-                <p className="leading-5 text-muted-foreground">
-                  {t('musicStudio.cover_strength_help')}
-                </p>
               </div>
             )}
           </Reveal>
@@ -811,7 +814,10 @@ export function MusicPage() {
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">{t('musicStudio.extend_overlap')}</span>
+                    <TitleWithHelp
+                      title={t('musicStudio.extend_overlap')}
+                      help={t('musicStudio.extend_overlap_help')}
+                    />
                     <span className="text-muted-foreground tabular-nums">
                       {t('musicStudio.duration_value', { seconds: extendOverlap })}
                     </span>
@@ -827,9 +833,6 @@ export function MusicPage() {
                       setExtendOverlap(Array.isArray(value) ? value[0] : value)
                     }
                   />
-                  <p className="leading-5 text-muted-foreground">
-                    {t('musicStudio.extend_overlap_help')}
-                  </p>
                 </div>
               </div>
             )}
@@ -1083,9 +1086,11 @@ export function MusicPage() {
             <CollapsibleContent>
               <div className="space-y-3 px-3 pb-3 text-xs">
                 <div className="flex min-w-0 flex-col gap-1.5">
-                  <span id="music-model" className="font-medium">
-                    {t('musicStudio.model')}
-                  </span>
+                  <TitleWithHelp
+                    id="music-model"
+                    title={t('musicStudio.model')}
+                    help={t(`musicStudio.model_${model}_help`)}
+                  />
                   <ToggleGroup
                     value={[model]}
                     disabled={busy}
@@ -1102,9 +1107,6 @@ export function MusicPage() {
                       </ToggleGroupItem>
                     ))}
                   </ToggleGroup>
-                  <p className="leading-5 text-muted-foreground">
-                    {t(`musicStudio.model_${model}_help`)}
-                  </p>
                   {installed && !modelReady && (
                     <Button
                       className="w-full"
@@ -1205,9 +1207,11 @@ export function MusicPage() {
                   </div>
                 </label>
                 <div className="flex min-w-0 flex-col gap-1.5">
-                  <span id="music-variants" className="font-medium">
-                    {t('musicStudio.variants')}
-                  </span>
+                  <TitleWithHelp
+                    id="music-variants"
+                    title={t('musicStudio.variants')}
+                    help={t('musicStudio.variants_help')}
+                  />
                   <ToggleGroup
                     value={[batchSize]}
                     disabled={busy}
@@ -1224,13 +1228,13 @@ export function MusicPage() {
                       </ToggleGroupItem>
                     ))}
                   </ToggleGroup>
-                  <p className="leading-5 text-muted-foreground">
-                    {t('musicStudio.variants_help')}
-                  </p>
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">{t('musicStudio.steps')}</span>
+                    <TitleWithHelp
+                      title={t('musicStudio.steps')}
+                      help={t(guided ? 'musicStudio.steps_help_slow' : 'musicStudio.steps_help')}
+                    />
                     <span className="text-muted-foreground tabular-nums">{steps}</span>
                   </div>
                   <Slider
@@ -1242,15 +1246,15 @@ export function MusicPage() {
                     aria-label={t('musicStudio.steps')}
                     onValueChange={(value) => setSteps(Array.isArray(value) ? value[0] : value)}
                   />
-                  <p className="leading-5 text-muted-foreground">
-                    {t(guided ? 'musicStudio.steps_help_slow' : 'musicStudio.steps_help')}
-                  </p>
                 </div>
                 {guided && (
                   <>
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium">{t('musicStudio.guidance')}</span>
+                        <TitleWithHelp
+                          title={t('musicStudio.guidance')}
+                          help={t('musicStudio.guidance_help')}
+                        />
                         <span className="text-muted-foreground tabular-nums">{guidance}</span>
                       </div>
                       <Slider
@@ -1264,13 +1268,13 @@ export function MusicPage() {
                           setGuidance(Array.isArray(value) ? value[0] : value)
                         }
                       />
-                      <p className="leading-5 text-muted-foreground">
-                        {t('musicStudio.guidance_help')}
-                      </p>
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium">{t('musicStudio.shift')}</span>
+                        <TitleWithHelp
+                          title={t('musicStudio.shift')}
+                          help={t('musicStudio.shift_help')}
+                        />
                         <span className="text-muted-foreground tabular-nums">{shift}</span>
                       </div>
                       <Slider
@@ -1282,13 +1286,13 @@ export function MusicPage() {
                         aria-label={t('musicStudio.shift')}
                         onValueChange={(value) => setShift(Array.isArray(value) ? value[0] : value)}
                       />
-                      <p className="leading-5 text-muted-foreground">
-                        {t('musicStudio.shift_help')}
-                      </p>
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium">{t('musicStudio.cfg_interval')}</span>
+                        <TitleWithHelp
+                          title={t('musicStudio.cfg_interval')}
+                          help={t('musicStudio.cfg_interval_help')}
+                        />
                         <span className="text-muted-foreground tabular-nums">
                           {cfgInterval[0].toFixed(2)}–{cfgInterval[1].toFixed(2)}
                         </span>
@@ -1305,21 +1309,29 @@ export function MusicPage() {
                             setCfgInterval([value[0], value[1]]);
                         }}
                       />
-                      <p className="leading-5 text-muted-foreground">
-                        {t('musicStudio.cfg_interval_help')}
-                      </p>
                     </div>
-                    <label className="flex items-center justify-between gap-2">
-                      <span className="font-medium">{t('musicStudio.adg')}</span>
-                      <Switch checked={useAdg} disabled={busy} onCheckedChange={setUseAdg} />
-                    </label>
-                    <p className="leading-5 text-muted-foreground">{t('musicStudio.adg_help')}</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex min-w-0 items-center gap-1">
+                        <label htmlFor="music-adg" className="font-medium">
+                          {t('musicStudio.adg')}
+                        </label>
+                        <HelpHint label={t('musicStudio.adg')}>{t('musicStudio.adg_help')}</HelpHint>
+                      </span>
+                      <Switch
+                        id="music-adg"
+                        checked={useAdg}
+                        disabled={busy}
+                        onCheckedChange={setUseAdg}
+                      />
+                    </div>
                   </>
                 )}
                 <div className="flex min-w-0 flex-col gap-1.5">
-                  <span id="music-sampler" className="font-medium">
-                    {t('musicStudio.sampler')}
-                  </span>
+                  <TitleWithHelp
+                    id="music-sampler"
+                    title={t('musicStudio.sampler')}
+                    help={t('musicStudio.sampler_help')}
+                  />
                   <ToggleGroup
                     value={[inferMethod]}
                     disabled={busy}
@@ -1336,7 +1348,6 @@ export function MusicPage() {
                       </ToggleGroupItem>
                     ))}
                   </ToggleGroup>
-                  <p className="leading-5 text-muted-foreground">{t('musicStudio.sampler_help')}</p>
                 </div>
                 <div className="flex min-w-0 flex-col gap-1.5">
                   <span id="music-format" className="font-medium">
@@ -1375,18 +1386,24 @@ export function MusicPage() {
           </Collapsible>
 
           <div className="space-y-1.5 text-xs">
-            <label className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-1.5 font-medium">
-                <BrainIcon className="size-3.5" aria-hidden="true" />
-                {t('musicStudio.thinking')}
+            {/* The ? sits outside the label: inside it, it would become the label's control. */}
+            <div className="flex items-center justify-between gap-2">
+              <span className="flex min-w-0 items-center gap-1">
+                <label htmlFor="music-thinking" className="flex items-center gap-1.5 font-medium">
+                  <BrainIcon className="size-3.5" aria-hidden="true" />
+                  {t('musicStudio.thinking')}
+                </label>
+                <HelpHint label={t('musicStudio.thinking')}>
+                  {t('musicStudio.thinking_help')}
+                </HelpHint>
               </span>
               <Switch
+                id="music-thinking"
                 checked={thinking && lmReady}
                 disabled={busy || !lmReady}
                 onCheckedChange={setThinking}
               />
-            </label>
-            <p className="leading-5 text-muted-foreground">{t('musicStudio.thinking_help')}</p>
+            </div>
             {installed && lm.isPending && (
               <p className="text-muted-foreground">{t('musicStudio.thinking_checking')}</p>
             )}
@@ -1425,18 +1442,20 @@ export function MusicPage() {
             <Reveal>
               {thinking && lmReady && (
                 <Collapsible open={expertOpen} onOpenChange={setExpertOpen} framed>
-                  <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 px-3 py-2 text-label font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
-                    {t('musicStudio.lm_expert')}
-                    <ChevronDownIcon
-                      className={cn('size-3.5 transition-transform', expertOpen && 'rotate-180')}
-                      aria-hidden="true"
-                    />
-                  </CollapsibleTrigger>
+                  <div className="flex items-center gap-1 pe-2">
+                    <CollapsibleTrigger className="flex min-w-0 flex-1 items-center justify-between gap-2 px-3 py-2 text-label font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+                      {t('musicStudio.lm_expert')}
+                      <ChevronDownIcon
+                        className={cn('size-3.5 transition-transform', expertOpen && 'rotate-180')}
+                        aria-hidden="true"
+                      />
+                    </CollapsibleTrigger>
+                    <HelpHint label={t('musicStudio.lm_expert')}>
+                      {t('musicStudio.lm_expert_help')}
+                    </HelpHint>
+                  </div>
                   <CollapsibleContent>
                     <div className="space-y-3 px-3 pb-3">
-                      <p className="leading-5 text-muted-foreground">
-                        {t('musicStudio.lm_expert_help')}
-                      </p>
                       {LM_PARAM_IDS.map((id) => {
                         const [low, high, fallback] = LM_PARAMS[id].range;
                         const value = lmValues[id];
@@ -1497,9 +1516,9 @@ export function MusicPage() {
           </div>
 
           {lmReady && (
-            <div className="space-y-1 text-xs">
+            <div className="flex items-center gap-1 text-xs">
               <Button
-                className="w-full"
+                className="min-w-0 flex-1"
                 size="sm"
                 variant="secondary"
                 disabled={busy || formatting || !prompt.trim()}
@@ -1512,7 +1531,10 @@ export function MusicPage() {
                 )}
                 {formatting ? t('musicStudio.formatting') : t('musicStudio.format')}
               </Button>
-              <p className="leading-5 text-muted-foreground">{t('musicStudio.format_hint')}</p>
+              {/* 28 px, the height of the sm Format button beside it */}
+              <HelpHint label={t('musicStudio.format')} className="size-7">
+                {t('musicStudio.format_hint')}
+              </HelpHint>
             </div>
           )}
 
@@ -1578,7 +1600,6 @@ export function MusicPage() {
               {t('musicStudio.free_memory')}
             </Button>
           )}
-          <p className="text-[11px] leading-4 text-muted-foreground">{t('musicStudio.credit')}</p>
         </SecondarySidebar>
 
         <main className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-5">

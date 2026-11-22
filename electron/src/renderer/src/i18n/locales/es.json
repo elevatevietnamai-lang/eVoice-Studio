@@ -989,7 +989,8 @@
     "confirm": "Confirmar",
     "details": "Detalles",
     "unknown": "desconocido",
-    "time_left": "~{{time}} restante"
+    "time_left": "~{{time}} restante",
+    "help_for": "Información: {{name}}"
   },
   "dubWorkspace": {
     "title": "Doblaje",

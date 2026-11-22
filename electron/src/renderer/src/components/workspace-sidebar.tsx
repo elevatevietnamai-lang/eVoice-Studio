@@ -51,6 +51,7 @@ function PanelBody({
   size = 'default',
   variant = 'controls',
   meta,
+  titleAction,
   footer,
   library,
   libraryLabel,
@@ -62,6 +63,8 @@ function PanelBody({
   size?: 'default' | 'wide' | 'spacious';
   variant?: 'controls' | 'navigation' | 'library';
   meta?: ReactNode;
+  /** Beside the title, such as its HelpHint "?" (DESIGN.md: explanations sit behind a "?"). */
+  titleAction?: ReactNode;
   /** Pinned below the scrolling content — never scrolls out of view. */
   footer?: ReactNode;
   /** Saved items beside the controls. A render callback receives visibility so retained panes can cancel hidden work. */
@@ -181,11 +184,14 @@ function PanelBody({
             ))}
           </div>
         ) : (
-          <span
-            className="min-w-0 flex-1 truncate text-sm font-semibold tracking-[-0.014em] text-foreground/95"
-            title={title}
-          >
-            {title}
+          <span className="flex min-w-0 flex-1 items-center gap-1">
+            <span
+              className="min-w-0 truncate text-sm font-semibold tracking-[-0.014em] text-foreground/95"
+              title={title}
+            >
+              {title}
+            </span>
+            {titleAction}
           </span>
         )}
         {meta !== undefined && meta !== null && (

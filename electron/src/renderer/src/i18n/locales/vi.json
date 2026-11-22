@@ -987,7 +987,8 @@
     "confirm": "Xác nhận",
     "details": "Chi tiết",
     "unknown": "không rõ",
-    "time_left": "còn ~{{time}}"
+    "time_left": "còn ~{{time}}",
+    "help_for": "Giải thích: {{name}}"
   },
   "dubWorkspace": {
     "title": "Lồng tiếng",

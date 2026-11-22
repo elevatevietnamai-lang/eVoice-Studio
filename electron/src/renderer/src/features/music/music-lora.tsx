@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { FileIcon, FolderOpenIcon, Trash2Icon } from 'lucide-react';
 import { getBridge } from '@/components/bridge';
+import { TitleWithHelp } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
@@ -70,10 +71,7 @@ export function MusicLora({ model, disabled }: { model: DitModel; disabled: bool
 
   return (
     <div className="space-y-2 border-t border-border/60 pt-3">
-      <div className="space-y-1">
-        <span className="font-medium">{t('musicStudio.lora')}</span>
-        <p className="leading-5 text-muted-foreground">{t('musicStudio.lora_help')}</p>
-      </div>
+      <TitleWithHelp title={t('musicStudio.lora')} help={t('musicStudio.lora_help')} />
       {lora?.selected ? (
         <div className="space-y-2">
           <label className="flex items-center justify-between gap-2">

@@ -16,7 +16,11 @@ const state = vi.hoisted(() => ({
   },
 }));
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }),
+  useTranslation: () => ({
+    t: (key: string, options?: { name?: string }) =>
+      options?.name ? `${key}:${options.name}` : key,
+    i18n: { language: 'en' },
+  }),
 }));
 vi.mock('@/lib/api/client', () => ({
   apiJson: async (path: string, init?: { method?: string }) => {
@@ -234,8 +238,8 @@ it('sends the language, key, meter, seed and Thinking it shows', async () => {
   state.lm = { model: 'acestep-5Hz-lm-1.7B', ready: true, download_bytes: 0 };
   state.stream.mockImplementation(async () => {});
   renderPage();
-  const thinking = (await screen.findByText('musicStudio.thinking')).closest('label');
-  const toggle = thinking?.querySelector('[role="switch"]') as HTMLElement;
+  // Named by its label: the "?" beside it sits outside the label, so it never takes the click.
+  const toggle = await screen.findByRole('switch', { name: 'musicStudio.thinking' });
   await waitFor(() => expect(toggle.getAttribute('aria-disabled')).not.toBe('true'));
   fireEvent.click(toggle);
   fireEvent.click(screen.getByText('musicStudio.advanced'));
@@ -484,8 +488,8 @@ it('shows the language model options only with Thinking and sends only what was 
   state.lm = { model: 'acestep-5Hz-lm-0.6B', ready: true, download_bytes: 0 };
   state.stream.mockImplementation(async () => {});
   renderPage();
-  const thinking = (await screen.findByText('musicStudio.thinking')).closest('label');
-  const toggle = thinking?.querySelector('[role="switch"]') as HTMLElement;
+  // Named by its label: the "?" beside it sits outside the label, so it never takes the click.
+  const toggle = await screen.findByRole('switch', { name: 'musicStudio.thinking' });
   await waitFor(() => expect(toggle.getAttribute('aria-disabled')).not.toBe('true'));
   expect(screen.queryByText('musicStudio.lm_expert')).toBeNull();
   fireEvent.click(toggle);
@@ -596,5 +600,9 @@ it('offers the stem tasks only on the Base model and sends the instruments picke
   expect(body).not.toHaveProperty('track_name');
   // Leaving Base goes back to a new song.
   fireEvent.click(screen.getByText('musicStudio.model_turbo'));
-  await waitFor(() => expect(screen.getByText('musicStudio.task_text2music_help')).toBeTruthy());
+  // The task's explanation sits behind the "?" beside its title (DESIGN.md).
+  fireEvent.click(
+    await screen.findByRole('button', { name: 'common.help_for:musicStudio.task' }),
+  );
+  expect(await screen.findByText('musicStudio.task_text2music_help')).toBeTruthy();
 });

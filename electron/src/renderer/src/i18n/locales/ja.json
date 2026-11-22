@@ -987,7 +987,8 @@
     "confirm": "確認",
     "details": "詳細",
     "unknown": "未知",
-    "time_left": "残り約 {{time}}"
+    "time_left": "残り約 {{time}}",
+    "help_for": "説明: {{name}}"
   },
   "dubWorkspace": {
     "title": "ダビング",

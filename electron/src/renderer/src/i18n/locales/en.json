@@ -657,7 +657,8 @@
     "remove": "Remove {{term}}",
     "not_set": "Not set",
     "details": "Details",
-    "time_left": "~{{time}} left"
+    "time_left": "~{{time}} left",
+    "help_for": "About: {{name}}"
   },
   "preferences": {
     "title": "Settings",

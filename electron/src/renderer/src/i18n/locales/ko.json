@@ -987,7 +987,8 @@
     "retry": "다시 시도",
     "confirm": "확인",
     "details": "자세히",
-    "time_left": "~{{time}} 남음"
+    "time_left": "~{{time}} 남음",
+    "help_for": "설명: {{name}}"
   },
   "dubWorkspace": {
     "title": "더빙",
