@@ -16,7 +16,7 @@ metadata and the backend fallback mirror it.
 
 - Voice cloning with IndexTTS2 has an Emotion button: describe how the line should feel or pick a preset, then set the strength (#95)
 
-### Fixed
+### CI
 
 - The renderer typecheck passes again after the job-progress guard test (#95)
 
