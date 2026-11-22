@@ -26,6 +26,7 @@ gains an Emotion button.
 - Music Studio explanations open from a "?" beside each title
 - Buttons that sit side by side are the same height again
 - Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
+- Strings left in English are translated in 19 languages
 
 ### Added
 
