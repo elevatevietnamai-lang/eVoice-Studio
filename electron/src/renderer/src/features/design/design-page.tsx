@@ -286,7 +286,7 @@ export function DesignPage() {
                   </Button>
                   <Button
                     variant="ghost"
-                    size="icon-xs"
+                    size="icon-sm"
                     aria-label={t('paneActions.edit') + ': ' + profile.name}
                     onClick={() => {
                       setEditingId(profile.id);
@@ -295,6 +295,7 @@ export function DesignPage() {
                     <PencilIcon />
                   </Button>
                   <AudioPreviewButton
+                    size="icon-sm"
                     src={profileAudioUrl(profile.id, profile.audio_url)}
                     source={'design-profile-' + profile.id}
                     activity={!profile.ref_audio_path ? 'synthesis' : undefined}

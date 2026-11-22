@@ -8,6 +8,10 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+### Fixed
+
+- Buttons that sit side by side are the same height again: Retry and Fix on the backend screen, the player's speed button, the voice editor's Delete, and six more rows.
+
 ## [0.5.7-beta.11] — 2026-11-22
 
 Long jobs now show how far along they are and how long is left right in the button you pressed:

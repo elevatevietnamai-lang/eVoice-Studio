@@ -570,6 +570,7 @@ export function BackendGate({ children, repairDock }: BackendGateProps) {
                 </Button>
               )}
               <AgentFixButton
+                size="default"
                 request={`Restore the VoiceStudio local backend. Current stage: ${status.stage}.${delimitedDiagnostic(status.message)} Inspect Electron status, restart or resume runtime setup as needed, wait until the backend is ready, and verify health. Do not clean reinstall or change user consent.`}
               />
             </div>

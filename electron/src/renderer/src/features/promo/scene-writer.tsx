@@ -192,7 +192,7 @@ export function SceneWriter({
             {SHAPES.map((option) => (
               <Button
                 key={option}
-                size="xs"
+                size="sm"
                 aria-pressed={shape === option}
                 variant={shape === option ? 'secondary' : 'ghost'}
                 disabled={writing}

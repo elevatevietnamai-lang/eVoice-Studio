@@ -630,6 +630,7 @@ export function TranscriptionsPage() {
                   </span>
                   <Button
                     variant="ghost"
+                    size="sm"
                     disabled={!file || busy}
                     onClick={() => file && void transcribe(file)}
                   >
@@ -637,7 +638,7 @@ export function TranscriptionsPage() {
                   </Button>
                   <Button
                     variant="ghost"
-                    size="icon-xs"
+                    size="icon-sm"
                     aria-label={t('common.dismiss')}
                     onClick={() => setFailed(null)}
                   >

@@ -311,7 +311,6 @@ export function EditProfile({ profile, onDone }: { profile: Profile; onDone: () 
             <Button
               type="button"
               variant="ghost"
-              size="sm"
               disabled={deleteProfile.isPending}
               onClick={() => setConfirmDelete(false)}
             >
@@ -320,7 +319,6 @@ export function EditProfile({ profile, onDone }: { profile: Profile; onDone: () 
             <Button
               type="button"
               variant="destructive"
-              size="sm"
               disabled={deleteProfile.isPending}
               onClick={async () => {
                 try {
@@ -340,7 +338,6 @@ export function EditProfile({ profile, onDone }: { profile: Profile; onDone: () 
             <Button
               type="button"
               variant="ghost"
-              size="sm"
               className="mr-auto text-muted-foreground hover:text-destructive"
               disabled={unavailable}
               onClick={() => setConfirmDelete(true)}

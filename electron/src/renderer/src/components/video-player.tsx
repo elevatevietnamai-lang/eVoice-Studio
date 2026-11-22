@@ -260,7 +260,7 @@ function VideoControls({
               }}
             />
             <Button
-              size="xs"
+              size="sm"
               variant="ghost"
               className="min-w-10 px-1.5 text-[11px] tabular-nums hover:bg-accent hover:text-white"
               aria-label={t('clone.speed')}

@@ -253,7 +253,7 @@ export function DubbingDemo({
             <span className="hidden @min-[560px]:inline">{t('demo.dubbing_cta')}</span>
           </Button>
           <Button
-            size="icon-xs"
+            size="icon-sm"
             variant="ghost"
             aria-label={t('demo.dubbing_dismiss')}
             onClick={onDismiss}

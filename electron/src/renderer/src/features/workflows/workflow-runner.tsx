@@ -189,7 +189,7 @@ export function WorkflowRunner({
           )}
           {!busy && run && done < run.items.length && (
             <Button
-              size="icon-sm"
+              size="icon"
               variant="outline"
               disabled={
                 !storageReady || !engines.data || !plan || (needsSpeech && blocker !== null)
