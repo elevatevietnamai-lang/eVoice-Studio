@@ -106,6 +106,13 @@
   --glass-blur: 12px;
   --glass-opacity: 80%;
   --glass-saturation: 1.14;
+  /* Tooltips are frosted glass in every theme, the flat default included (owner request,
+     2026-11-22): a light tint over a blurred backdrop, a hairline edge lit along the top, and a
+     soft shadow. `surface-glass-tooltip` below. */
+  --tooltip-glass-fill: 66%;
+  --tooltip-glass-edge: rgb(255 255 255 / 72%);
+  --tooltip-glass-sheen: rgb(255 255 255 / 50%);
+  --tooltip-glass-shadow: rgb(30 20 40 / 16%);
   --sidebar-primary: var(--foreground);
   --sidebar-primary-foreground: var(--sidebar);
   --sidebar-accent: var(--sidebar-row-hover);
@@ -115,6 +122,10 @@
 .dark {
   --glass-blur: 16px;
   --glass-saturation: 1.08;
+  --tooltip-glass-fill: 58%;
+  --tooltip-glass-edge: rgb(255 255 255 / 16%);
+  --tooltip-glass-sheen: rgb(255 255 255 / 10%);
+  --tooltip-glass-shadow: rgb(0 0 0 / 48%);
 }
 /* The Elevate default is flat: menus and popovers are solid, not frosted. Named palettes keep the glass. */
 html:not([data-theme-id]),
@@ -132,7 +143,28 @@ html[data-theme-id=''] {
   }
 }
 
+@utility surface-glass-tooltip {
+  background: var(--popover);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 var(--tooltip-glass-edge),
+    0 10px 28px -8px var(--tooltip-glass-shadow),
+    0 2px 6px -2px var(--tooltip-glass-shadow);
+  @supports (backdrop-filter: blur(1px)) {
+    background:
+      linear-gradient(155deg, var(--tooltip-glass-sheen), transparent 55%),
+      color-mix(in srgb, var(--popover) var(--tooltip-glass-fill), transparent);
+    backdrop-filter: blur(20px) saturate(1.4);
+    border-color: var(--tooltip-glass-edge);
+  }
+}
+
 @media (prefers-reduced-transparency: reduce) {
+  .surface-glass-tooltip {
+    background: var(--popover);
+    backdrop-filter: none;
+    border-color: var(--border);
+  }
   .surface-glass {
     background: var(--popover);
     backdrop-filter: none;

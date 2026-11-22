@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Frosted-glass hover labels across the app
+
+### Changed
+
+- Hover labels on the menu, title bar and buttons are now frosted glass in every theme, instead of a dark chip.
+
 ## [0.5.7-beta.11] — 2026-11-22
 
 Long jobs now show how far along they are and how long is left right in the button you pressed:
