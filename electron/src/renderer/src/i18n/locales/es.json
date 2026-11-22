@@ -2931,7 +2931,7 @@
     "balanced": "Equilibrado",
     "quality": "Calidad",
     "hint": "Se aplica al muestreo OmniVoice y a la decodificación Faster-Whisper/NLLB. Otros motores mantienen su configuración actual.",
-    "auto": "Auto"
+    "auto": "Automático"
   },
   "recording": {
     "input_device": "Dispositivo de entrada",
@@ -3995,8 +3995,8 @@
     "top_edge": "Borde superior",
     "bottom_edge": "Borde inferior",
     "scan_rate": "Fotogramas escaneados por segundo",
-    "scan_rate_value_one": "{{count}} per second",
-    "scan_rate_value_other": "{{count}} per second",
+    "scan_rate_value_one": "{{count}} por segundo",
+    "scan_rate_value_other": "{{count}} por segundo",
     "read": "Leer subtítulos en pantalla",
     "read_again": "Volver a leer subtítulos",
     "read_help": "Reemplaza la transcripción por los subtítulos mostrados en pantalla, sincronizados con precisión de fotograma. Aumenta la frecuencia de escaneo para líneas muy breves.",
@@ -4014,8 +4014,8 @@
     "remove_needs_read": "Lee primero los subtítulos en pantalla para conocer su posición exacta.",
     "remove_done": "Subtítulos eliminados. La vista previa y las exportaciones ahora usan el video limpio.",
     "restore": "Usar video original",
-    "badge_read_one": "{{count}} line",
-    "badge_read_other": "{{count}} lines",
+    "badge_read_one": "{{count}} línea",
+    "badge_read_other": "{{count}} líneas",
     "badge_cleaned": "Eliminados",
     "engine_line": "Motor listo · {{accel}}",
     "gpu_fallback": "La aceleración por GPU no se inició, así que la lectura se ejecuta en la CPU y es mucho más lenta. Vuelve a instalar el motor de subtítulos para repararlo.",

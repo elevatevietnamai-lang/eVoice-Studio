@@ -34,7 +34,7 @@ export function HelpHint({
             data-slot="help-hint"
             aria-label={t('common.help_for', { name: label })}
             className={cn(
-              'inline-grid size-5 shrink-0 place-items-center rounded-full text-muted-foreground/80 outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 data-popup-open:text-foreground',
+              'inline-grid size-5 shrink-0 place-items-center rounded-full text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 data-popup-open:text-foreground',
               className,
             )}
           />
