@@ -8,6 +8,14 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Music Studio explanations open from a "?" beside each title
+
+### Changed
+
+- Music Studio is tidier: each setting's explanation and the ACE-Step credit now open from a "?" beside its title instead of filling the panel.
+
 ## [0.5.7-beta.11] — 2026-11-22
 
 Long jobs now show how far along they are and how long is left right in the button you pressed:
