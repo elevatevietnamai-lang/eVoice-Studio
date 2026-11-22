@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "매우 높은 음조",
     "opt_whisper": "속삭임",
     "style_placeholder": "예를 들어 속삭임",
+    "emotion": "감정",
+    "emotion_help": "문장의 느낌을 설명하거나 시작점을 고르세요. IndexTTS2에서만 적용되며, 강도로 목소리에 드러나는 정도를 정합니다.",
+    "emotion_clear": "감정 지우기",
+    "emotion_presets_label": "감정 프리셋",
+    "emotion_presets": {
+      "warm": "따뜻함",
+      "cheerful": "명랑함",
+      "excited": "신남",
+      "calm": "차분함",
+      "proud": "자랑스러움",
+      "sad": "슬픔"
+    },
     "stop_playback": "재생 중지",
     "describe_label": "목소리를 설명하세요",
     "describe_placeholder": "예: a warm elderly British storyteller, slightly raspy",

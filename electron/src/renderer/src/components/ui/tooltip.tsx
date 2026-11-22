@@ -26,16 +26,21 @@ function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
 
 function TooltipContent({
   className,
-  surface = "contrast",
+  surface = "glass",
   side = "top",
   sideOffset = 4,
   align = "center",
   alignOffset = 0,
   anchor,
-  showArrow = true,
+  showArrow,
   children,
   ...props
-}: TooltipPrimitive.Popup.Props & { surface?: "contrast" | "theme"; showArrow?: boolean } &
+}: TooltipPrimitive.Popup.Props & {
+  /** "glass" (default): frosted, in every theme. "contrast": the inverted chip. "theme": solid popover. */
+  surface?: "glass" | "contrast" | "theme"
+  /** Defaults to on for solid surfaces; glass has none (a tinted arrow would double up where it overlaps). */
+  showArrow?: boolean
+} &
   Pick<
     TooltipPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset" | "anchor"
@@ -52,15 +57,18 @@ function TooltipContent({
       >
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
+          data-surface={surface}
           className={cn(
-            "z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-lg bg-foreground px-3 py-1.5 text-xs text-background has-data-[slot=kbd]:pr-1.5 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm transition-[opacity,scale,translate] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:scale-100 motion-reduce:duration-150",
+            "z-50 inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs has-data-[slot=kbd]:pr-1.5 **:data-[slot=kbd]:relative **:data-[slot=kbd]:isolate **:data-[slot=kbd]:z-50 **:data-[slot=kbd]:rounded-sm transition-[opacity,scale,translate] duration-200 ease-(--ease-standard) data-ending-style:duration-150 data-starting-style:scale-[0.97] data-starting-style:opacity-0 data-ending-style:scale-[0.97] data-ending-style:opacity-0 motion-reduce:scale-100 motion-reduce:duration-150",
+            surface === "glass" && "surface-glass-tooltip rounded-xl text-popover-foreground",
+            surface === "contrast" && "bg-foreground text-background",
             surface === "theme" && "border border-border bg-popover text-popover-foreground shadow-lg",
             className
           )}
           {...props}
         >
           {children}
-          {showArrow && <TooltipPrimitive.Arrow style={surface === "theme" ? { backgroundColor: "var(--popover)", fill: "var(--popover)" } : undefined} className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-right-1 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5" />}
+          {(showArrow ?? surface !== "glass") && <TooltipPrimitive.Arrow style={surface === "theme" ? { backgroundColor: "var(--popover)", fill: "var(--popover)" } : undefined} className="z-50 size-2.5 translate-y-[calc(-50%-2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground data-[side=bottom]:top-1 data-[side=inline-end]:top-1/2! data-[side=inline-end]:-left-1 data-[side=inline-end]:-translate-y-1/2 data-[side=inline-start]:top-1/2! data-[side=inline-start]:-right-1 data-[side=inline-start]:-translate-y-1/2 data-[side=left]:top-1/2! data-[side=left]:-right-1 data-[side=left]:-translate-y-1/2 data-[side=right]:top-1/2! data-[side=right]:-left-1 data-[side=right]:-translate-y-1/2 data-[side=top]:-bottom-2.5" />}
         </TooltipPrimitive.Popup>
       </TooltipPrimitive.Positioner>
     </TooltipPrimitive.Portal>

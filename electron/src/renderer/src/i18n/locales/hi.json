@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "बहुत ऊंची पिच",
     "opt_whisper": "कानाफूसी",
     "style_placeholder": "जैसे कानाफूसी",
+    "emotion": "भावना",
+    "emotion_help": "बताएँ कि पंक्ति कैसी महसूस होनी चाहिए, या कोई शुरुआती विकल्प चुनें। इसे केवल IndexTTS2 लागू करता है; तीव्रता तय करती है कि आवाज़ में भावना कितनी दिखे।",
+    "emotion_clear": "भावना हटाएँ",
+    "emotion_presets_label": "भावना विकल्प",
+    "emotion_presets": {
+      "warm": "आत्मीय",
+      "cheerful": "प्रसन्न",
+      "excited": "उत्साहित",
+      "calm": "शांत",
+      "proud": "गर्वित",
+      "sad": "उदास"
+    },
     "stop_playback": "प्लेबैक रोकें",
     "describe_label": "अपनी आवाज़ का वर्णन करें",
     "describe_placeholder": "उदा. a warm elderly British storyteller, slightly raspy",

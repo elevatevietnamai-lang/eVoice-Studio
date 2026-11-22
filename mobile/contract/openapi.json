@@ -1215,6 +1215,31 @@
       "title": "Effect Preset",
       "type": "string"
      },
+     "emo_alpha": {
+      "anyOf": [
+       {
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Emo Alpha"
+     },
+     "emo_text": {
+      "anyOf": [
+       {
+        "maxLength": 500,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Emo Text"
+     },
      "engine": {
       "anyOf": [
        {

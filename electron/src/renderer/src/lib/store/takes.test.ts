@@ -52,6 +52,8 @@ describe('take metadata', () => {
       language: 'ignored',
       refText: 'reference words',
       instruct: 'ignored',
+      emoText: 'calm and soothing',
+      emoAlpha: 0.4,
       steps: 32,
       wavBits: 24,
       effectPreset: 'raw',

@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "非常高的音調",
     "opt_whisper": "耳語",
     "style_placeholder": "例如耳語",
+    "emotion": "情感",
+    "emotion_help": "描述這句話應有的感覺，或選一個起點。僅 IndexTTS2 會套用；強度決定聲音表現得有多明顯。",
+    "emotion_clear": "清除情感",
+    "emotion_presets_label": "情感預設",
+    "emotion_presets": {
+      "warm": "溫暖",
+      "cheerful": "歡快",
+      "excited": "興奮",
+      "calm": "平靜",
+      "proud": "自豪",
+      "sad": "悲傷"
+    },
     "stop_playback": "停止播放",
     "describe_label": "描述你想要的聲音",
     "describe_placeholder": "例如：a warm elderly British storyteller, slightly raspy",

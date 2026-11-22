@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "mycket hög tonhöjd",
     "opt_whisper": "viska",
     "style_placeholder": "t.ex. viska",
+    "emotion": "Känsla",
+    "emotion_help": "Beskriv hur repliken ska kännas eller välj en utgångspunkt. Bara IndexTTS2 använder den; styrkan avgör hur tydligt rösten visar den.",
+    "emotion_clear": "Rensa känsla",
+    "emotion_presets_label": "Förvalda känslor",
+    "emotion_presets": {
+      "warm": "Varm",
+      "cheerful": "Glad",
+      "excited": "Entusiastisk",
+      "calm": "Lugn",
+      "proud": "Stolt",
+      "sad": "Ledsen"
+    },
     "stop_playback": "Stoppa uppspelning",
     "describe_label": "Beskriv din röst",
     "describe_placeholder": "t.ex. a warm elderly British storyteller, slightly raspy",

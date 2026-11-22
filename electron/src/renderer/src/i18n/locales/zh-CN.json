@@ -555,6 +555,18 @@
     "opt_very_high_pitch": "极高音",
     "opt_whisper": "低语",
     "style_placeholder": "例如：低语",
+    "emotion": "情感",
+    "emotion_help": "描述这句话应有的感觉，或选一个起点。仅 IndexTTS2 会应用；强度决定声音表现得有多明显。",
+    "emotion_clear": "清除情感",
+    "emotion_presets_label": "情感预设",
+    "emotion_presets": {
+      "warm": "温暖",
+      "cheerful": "欢快",
+      "excited": "兴奋",
+      "calm": "平静",
+      "proud": "自豪",
+      "sad": "悲伤"
+    },
     "stop_playback": "停止播放",
     "describe_label": "描述你想要的声音",
     "describe_placeholder": "例如：中年男性，低音调，四川话",

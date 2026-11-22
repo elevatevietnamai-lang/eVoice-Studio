@@ -170,6 +170,13 @@ export function toGenerateForm(input: CloneGenerateInput): FormData {
     if (instruct) form.append('instruct', instruct);
   }
   if (input.designRecipe) form.append('design_recipe', JSON.stringify(input.designRecipe));
+  const emotion = input.emoText?.trim();
+  if (emotion) {
+    form.append('emo_text', emotion.slice(0, 500));
+    if (typeof input.emoAlpha === 'number' && Number.isFinite(input.emoAlpha)) {
+      form.append('emo_alpha', String(Math.min(1, Math.max(0, input.emoAlpha))));
+    }
+  }
   return form;
 }
 

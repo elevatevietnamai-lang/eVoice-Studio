@@ -546,6 +546,18 @@
     "opt_very_high_pitch": "bardzo wysoki ton",
     "opt_whisper": "szeptać",
     "style_placeholder": "np. szeptać",
+    "emotion": "Emocja",
+    "emotion_help": "Opisz, jak ma brzmieć kwestia, albo wybierz punkt wyjścia. Stosuje ją tylko IndexTTS2; siła określa, jak mocno głos ją wyraża.",
+    "emotion_clear": "Wyczyść emocję",
+    "emotion_presets_label": "Gotowe emocje",
+    "emotion_presets": {
+      "warm": "Ciepło",
+      "cheerful": "Radośnie",
+      "excited": "Entuzjastycznie",
+      "calm": "Spokojnie",
+      "proud": "Z dumą",
+      "sad": "Smutno"
+    },
     "stop_playback": "Zatrzymaj odtwarzanie",
     "describe_label": "Opisz swój głos",
     "describe_placeholder": "np. a warm elderly British storyteller, slightly raspy",

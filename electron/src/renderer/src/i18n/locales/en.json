@@ -401,6 +401,18 @@
     "transcript_hint": "What the reference clip says. Leave empty to let the engine listen.",
     "style": "Style",
     "style_placeholder": "e.g. whisper",
+    "emotion": "Emotion",
+    "emotion_help": "Describe how the line should feel, or pick a starting point. Only IndexTTS2 applies it; strength sets how far the voice leans into it.",
+    "emotion_clear": "Clear emotion",
+    "emotion_presets_label": "Emotion presets",
+    "emotion_presets": {
+      "warm": "Warm",
+      "cheerful": "Cheerful",
+      "excited": "Excited",
+      "calm": "Calm",
+      "proud": "Proud",
+      "sad": "Sad"
+    },
     "optional": "(Optional)",
     "save_as_profile": "Save as voice profile",
     "profile_name": "Profile name",

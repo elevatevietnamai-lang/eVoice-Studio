@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "เสียงสูงมาก",
     "opt_whisper": "กระซิบ",
     "style_placeholder": "เช่น กระซิบ",
+    "emotion": "อารมณ์",
+    "emotion_help": "อธิบายอารมณ์ที่ต้องการให้ประโยค หรือเลือกตัวเลือกเริ่มต้น ใช้ได้กับ IndexTTS2 เท่านั้น ความเข้มกำหนดว่าเสียงจะแสดงอารมณ์มากแค่ไหน",
+    "emotion_clear": "ล้างอารมณ์",
+    "emotion_presets_label": "อารมณ์สำเร็จรูป",
+    "emotion_presets": {
+      "warm": "อบอุ่น",
+      "cheerful": "ร่าเริง",
+      "excited": "ตื่นเต้น",
+      "calm": "สงบ",
+      "proud": "ภาคภูมิใจ",
+      "sad": "เศร้า"
+    },
     "stop_playback": "หยุดเล่น",
     "describe_label": "อธิบายเสียงของคุณ",
     "describe_placeholder": "เช่น a warm elderly British storyteller, slightly raspy",

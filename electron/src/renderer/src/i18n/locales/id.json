@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "nada yang sangat tinggi",
     "opt_whisper": "berbisik",
     "style_placeholder": "misalnya berbisik",
+    "emotion": "Emosi",
+    "emotion_help": "Jelaskan nuansa yang diinginkan untuk kalimat, atau pilih titik awal. Hanya IndexTTS2 yang menerapkannya; kekuatan menentukan seberapa jelas suara menampilkannya.",
+    "emotion_clear": "Hapus emosi",
+    "emotion_presets_label": "Preset emosi",
+    "emotion_presets": {
+      "warm": "Hangat",
+      "cheerful": "Ceria",
+      "excited": "Bersemangat",
+      "calm": "Tenang",
+      "proud": "Bangga",
+      "sad": "Sedih"
+    },
     "stop_playback": "Hentikan pemutaran",
     "describe_label": "Deskripsikan suara Anda",
     "describe_placeholder": "mis. a warm elderly British storyteller, slightly raspy",

@@ -546,6 +546,18 @@
     "opt_very_high_pitch": "очень высокий тон",
     "opt_whisper": "шепот",
     "style_placeholder": "например шепот",
+    "emotion": "Эмоция",
+    "emotion_help": "Опишите, как должна звучать фраза, или выберите вариант. Применяется только в IndexTTS2; сила задаёт, насколько ярко голос её передаёт.",
+    "emotion_clear": "Сбросить эмоцию",
+    "emotion_presets_label": "Готовые эмоции",
+    "emotion_presets": {
+      "warm": "Тепло",
+      "cheerful": "Весело",
+      "excited": "Воодушевлённо",
+      "calm": "Спокойно",
+      "proud": "Гордо",
+      "sad": "Грустно"
+    },
     "stop_playback": "Остановить воспроизведение",
     "describe_label": "Опишите свой голос",
     "describe_placeholder": "напр. a warm elderly British storyteller, slightly raspy",
