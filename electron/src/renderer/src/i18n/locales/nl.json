@@ -975,7 +975,8 @@
     "confirm": "Bevestigen",
     "details": "Details",
     "unknown": "onbekend",
-    "time_left": "~{{time}} resterend"
+    "time_left": "~{{time}} resterend",
+    "help_for": "Uitleg: {{name}}"
   },
   "dubWorkspace": {
     "title": "Nasynchronisatie",

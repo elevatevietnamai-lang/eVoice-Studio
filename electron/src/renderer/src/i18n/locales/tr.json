@@ -975,7 +975,8 @@
     "confirm": "Onayla",
     "details": "Ayrıntılar",
     "unknown": "bilinmiyor",
-    "time_left": "~{{time}} kaldı"
+    "time_left": "~{{time}} kaldı",
+    "help_for": "Açıklama: {{name}}"
   },
   "dubWorkspace": {
     "title": "Dublaj",

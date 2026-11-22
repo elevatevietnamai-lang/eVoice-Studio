@@ -988,7 +988,8 @@
     "retry": "重试",
     "confirm": "确认",
     "details": "详情",
-    "time_left": "剩余约 {{time}}"
+    "time_left": "剩余约 {{time}}",
+    "help_for": "说明：{{name}}"
   },
   "dubWorkspace": {
     "title": "配音",

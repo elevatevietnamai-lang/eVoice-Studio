@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LoaderCircleIcon, UploadIcon, XIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { TitleWithHelp } from '@/components/help-hint';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -85,9 +86,13 @@ export function MusicSourcePicker({
 
   return (
     <div className="flex min-w-0 flex-col gap-1.5 text-label">
-      <span id={`${id}-label`} className="font-medium">
-        {label}
-      </span>
+      {hint ? (
+        <TitleWithHelp id={`${id}-label`} title={label} help={hint} />
+      ) : (
+        <span id={`${id}-label`} className="font-medium">
+          {label}
+        </span>
+      )}
       {value ? (
         <div className="flex min-w-0 items-center gap-2 rounded-(--control-radius) border border-input bg-control-fill px-2 py-1.5 text-sm">
           <span className="min-w-0 flex-1 truncate" title={value.name}>
@@ -163,7 +168,6 @@ export function MusicSourcePicker({
           />
         </div>
       )}
-      {hint && <p className="leading-5 text-muted-foreground">{hint}</p>}
     </div>
   );
 }

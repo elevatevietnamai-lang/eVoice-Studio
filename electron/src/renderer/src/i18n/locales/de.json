@@ -975,7 +975,8 @@
     "confirm": "Bestätigen",
     "details": "Details",
     "unknown": "unbekannt",
-    "time_left": "~{{time}} übrig"
+    "time_left": "~{{time}} übrig",
+    "help_for": "Info: {{name}}"
   },
   "dubWorkspace": {
     "title": "Synchronisation",

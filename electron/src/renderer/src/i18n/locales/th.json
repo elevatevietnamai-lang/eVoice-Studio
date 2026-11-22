@@ -975,7 +975,8 @@
     "confirm": "ยืนยัน",
     "details": "รายละเอียด",
     "unknown": "ไม่ทราบ",
-    "time_left": "เหลือ ~{{time}}"
+    "time_left": "เหลือ ~{{time}}",
+    "help_for": "คำอธิบาย: {{name}}"
   },
   "dubWorkspace": {
     "title": "การพากย์เสียง",

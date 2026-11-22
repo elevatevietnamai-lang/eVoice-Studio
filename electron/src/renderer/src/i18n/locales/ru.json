@@ -979,7 +979,8 @@
     "confirm": "Подтвердить",
     "details": "Подробности",
     "unknown": "неизвестный",
-    "time_left": "~{{time}} осталось"
+    "time_left": "~{{time}} осталось",
+    "help_for": "Справка: {{name}}"
   },
   "dubWorkspace": {
     "title": "Дубляж",

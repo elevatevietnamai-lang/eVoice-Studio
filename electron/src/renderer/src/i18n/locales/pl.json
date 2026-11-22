@@ -979,7 +979,8 @@
     "confirm": "Potwierdź",
     "details": "Szczegóły",
     "unknown": "nieznany",
-    "time_left": "~{{time}} pozostało"
+    "time_left": "~{{time}} pozostało",
+    "help_for": "Informacje: {{name}}"
   },
   "dubWorkspace": {
     "title": "Dubbing",
