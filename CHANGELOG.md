@@ -8,12 +8,25 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+## [0.5.7-beta.12] — 2026-11-22
+
+The app looks calmer: hover labels on the menu, title bar and buttons are frosted glass in every
+theme, Music Studio's explanations open from a "?" beside each title instead of filling the panel,
+and buttons that sit side by side are the same height again. Voice cloning with IndexTTS2 also
+gains an Emotion button.
+
+| Platform | Download |
+| --- | --- |
+| Windows 10/11 x64 | `eVoice-Studio-Electron-0.5.7-beta.12-win-x64.exe` below (unsigned beta: in SmartScreen choose *More info* → *Run anyway*). Copies on 0.5.7-beta.6 to beta.11 update silently in **Settings → Updates**; copies on 0.5.7-beta.4 or beta.5 update there too, showing the Setup window once |
+| macOS, Linux | Not built for this beta yet |
+
 **Highlights**
 
-- Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
 - Frosted-glass hover labels across the app
-- Buttons that sit side by side are the same height again
 - Music Studio explanations open from a "?" beside each title
+- Buttons that sit side by side are the same height again
+- Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
+- Strings left in English are translated in 19 languages
 
 ### Added
 
