@@ -1260,6 +1260,7 @@ def _run_backend_inference(
     max_chunk_chars=None, crossfade_ms=None, *, t_shift=None,
     layer_penalty_factor=None, position_temperature=None,
     class_temperature=None, dropped_sink=None, preset_voice=None,
+    emotion=None,
 ):
     """Engine-aware twin of :func:`_run_inference` (issue #312).
 
@@ -1284,6 +1285,10 @@ def _run_backend_inference(
         )
         if preset_voice:
             gen_kwargs["voice"] = preset_voice
+        # Graded emotion (#1208), already reduced to {} for engines that
+        # do not apply it — see _emotion_generate_kwargs.
+        if emotion:
+            gen_kwargs.update(emotion)
         native_proxy = bool(
             getattr(backend, "supports_native_omnivoice_controls", False)
         )
@@ -1695,6 +1700,25 @@ def _pcm16_b64(wav_tensor) -> str:
     return base64.b64encode(pcm.cpu().numpy().tobytes()).decode("ascii")
 
 
+def _emotion_generate_kwargs(backend_cls, emo_text, emo_alpha) -> dict:
+    """Generate kwargs for a described emotion, or ``{}``.
+
+    Only engines that declare ``supports_emotion`` (IndexTTS2, #1208) get
+    them; every other engine renders exactly as before, so a description left
+    over from an earlier engine never changes a take. Without a description
+    the strength alone means nothing and is dropped too.
+    """
+    if not getattr(backend_cls, "supports_emotion", False):
+        return {}
+    description = (emo_text or "").strip()
+    if not description:
+        return {}
+    kw = {"emo_text": description, "use_emo_text": True}
+    if emo_alpha is not None:
+        kw["emo_alpha"] = float(emo_alpha)
+    return kw
+
+
 def _apply_routing_headers(headers, engine_notice):
     """Attach the local engine-routing notice to a response."""
     if not engine_notice:
@@ -1745,6 +1769,10 @@ async def generate_speech(
     # #2938: one of the engine's built-in voices (``preset_voices`` in the engine
     # list). Only for engines that ship presets and no cloning reference.
     preset_voice: Optional[str] = Form(None),
+    # Graded emotion for engines that support it (IndexTTS2, #1208): a
+    # natural-language description and its strength. Ignored by other engines.
+    emo_text: Optional[str] = Form(None, max_length=500),
+    emo_alpha: Optional[float] = Form(None, ge=0.0, le=1.0),
     # Wave 1.2 — unlimited-length generation: long text is split at sentence
     # boundaries and crossfaded. 0 disables chunking (whole text to engine).
     max_chunk_chars: int = Form(800, ge=0),
@@ -1804,6 +1832,7 @@ async def generate_speech(
     # licence is accepted by the user asking for the audio. Raises the 403.
     from services.tts_backend import ensure_engine_licence
     ensure_engine_licence(backend_cls)
+    _emotion = _emotion_generate_kwargs(backend_cls, emo_text, emo_alpha)
 
     # A design request on an engine that needs a reference clip would only
     # fail inside the engine, after a model load, and a reference on an
@@ -2195,6 +2224,7 @@ async def generate_speech(
                         instruct=instruct, num_step=num_step,
                         guidance_scale=guidance_scale, speed=speed,
                         denoise=denoise, postprocess_output=postprocess_output,
+                        **_emotion,
                         **({
                             key: value for key, value in {
                                 "t_shift": t_shift,
@@ -2287,6 +2317,7 @@ async def generate_speech(
                                     class_temperature=class_temperature,
                                     dropped_sink=_dropped_sink,
                                     preset_voice=preset_voice,
+                                    emotion=_emotion,
                                 ),
                                 what="TTS generate",
                                 min_vram_gb=_engine_min_vram_gb,
@@ -2518,6 +2549,7 @@ async def generate_speech(
                 class_temperature=class_temperature,
                 dropped_sink=_dropped_text,
                 preset_voice=preset_voice,
+                emotion=_emotion,
             )
         else:
             _local_render = functools.partial(

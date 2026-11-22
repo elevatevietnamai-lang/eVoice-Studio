@@ -12,6 +12,10 @@ export interface CloneSettings {
   language: string;
   refText: string;
   instruct: string;
+  /** Described emotion for engines that apply it (IndexTTS2); '' = none. */
+  emoText: string;
+  /** Emotion strength, 0..EMOTION_MAX_ALPHA. */
+  emoAlpha: number;
   steps: number;
   wavBits: 16 | 24 | 32;
   effectPreset: 'broadcast' | 'raw';
@@ -37,6 +41,8 @@ export const DEFAULT_CLONE_SETTINGS: CloneSettings = {
   language: 'Auto',
   refText: '',
   instruct: '',
+  emoText: '',
+  emoAlpha: 0.6,
   steps: 16, // ~16 avoids ODE destabilisation in the flow-matcher.
   wavBits: 16,
   effectPreset: 'broadcast',

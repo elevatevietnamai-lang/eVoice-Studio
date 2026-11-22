@@ -8,6 +8,18 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
+
+### Added
+
+- Voice cloning with IndexTTS2 has an Emotion button: describe how the line should feel or pick a preset, then set the strength (#95)
+
+### CI
+
+- The renderer typecheck passes again after the job-progress guard test (#95)
+
 ## [0.5.7-beta.11] — 2026-11-22
 
 Long jobs now show how far along they are and how long is left right in the button you pressed:

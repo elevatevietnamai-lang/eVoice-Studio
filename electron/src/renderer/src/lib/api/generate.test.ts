@@ -85,6 +85,16 @@ describe('sanitizeInstruct', () => {
 });
 
 describe('toGenerateForm', () => {
+  it('sends a described emotion with its strength, and nothing without one', () => {
+    expect(toGenerateForm(BASE_INPUT).has('emo_text')).toBe(false);
+    expect(toGenerateForm({ ...BASE_INPUT, emoText: '   ', emoAlpha: 0.5 }).has('emo_alpha')).toBe(
+      false,
+    );
+    const form = toGenerateForm({ ...BASE_INPUT, emoText: '  calm  ', emoAlpha: 1.4 });
+    expect(form.get('emo_text')).toBe('calm');
+    expect(form.get('emo_alpha')).toBe('1');
+  });
+
   it('sends the picked preset voice only when one is set (#2938)', () => {
     expect(toGenerateForm(BASE_INPUT).has('preset_voice')).toBe(false);
     expect(toGenerateForm({ ...BASE_INPUT, presetVoice: 'F3' }).get('preset_voice')).toBe('F3');
