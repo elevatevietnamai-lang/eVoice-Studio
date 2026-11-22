@@ -29,6 +29,7 @@ const engine = vi.hoisted(() => ({
   vocabulary: undefined as 'tags' | 'freeform' | undefined,
   design: undefined as boolean | null | undefined,
   cloning: undefined as boolean | null | undefined,
+  emotion: undefined as boolean | undefined,
 }));
 vi.mock('./use-engines', () => ({
   useEngines: () => ({
@@ -36,6 +37,7 @@ vi.mock('./use-engines', () => ({
       instruct_vocabulary: engine.vocabulary,
       supports_voice_design: engine.design,
       supports_cloning: engine.cloning,
+      supports_emotion: engine.emotion,
     },
   }),
 }));
@@ -257,6 +259,41 @@ it('attributes generation to an explicitly selected designed voice', async () =>
     expect.anything(),
   );
 });
+
+it.each([
+  [true, { emoText: 'warm and proud', emoAlpha: 0.45 }],
+  [undefined, {}],
+] as const)(
+  'sends the described emotion only to engines that apply it (supports_emotion=%s)',
+  async (emotion, expected) => {
+    engine.emotion = emotion;
+    patchCloneSettings({
+      text: 'Hello',
+      selectedProfileId: 'voice-1',
+      autoPlay: false,
+      emoText: 'warm and proud',
+      emoAlpha: 0.45,
+    });
+    vi.mocked(generateClone).mockReset().mockRejectedValueOnce(new Error('stop'));
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <GenerationProvider>
+          <Consumer name="emotion" />
+        </GenerationProvider>
+      </QueryClientProvider>,
+    );
+    fireEvent.click(screen.getByText('emotion:idle'));
+    await waitFor(() => expect(generateClone).toHaveBeenCalled());
+    const sent = vi.mocked(generateClone).mock.calls[0][0];
+    expect({ emoText: sent.emoText, emoAlpha: sent.emoAlpha }).toEqual({
+      emoText: undefined,
+      emoAlpha: undefined,
+      ...expected,
+    });
+    engine.emotion = undefined;
+    patchCloneSettings({ emoText: '', emoAlpha: 0.6 });
+  },
+);
 
 it.each([
   ['freeform', 'raspy old female, scottish accent', 'freeform'],

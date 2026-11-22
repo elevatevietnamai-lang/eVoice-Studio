@@ -542,6 +542,18 @@
     "opt_very_high_pitch": "cao độ rất cao",
     "opt_whisper": "thì thầm",
     "style_placeholder": "ví dụ: thì thầm",
+    "emotion": "Cảm xúc",
+    "emotion_help": "Mô tả cảm xúc bạn muốn cho lời đọc, hoặc chọn nhanh một gợi ý. Chỉ engine IndexTTS2 áp dụng; mức độ quyết định giọng thể hiện cảm xúc mạnh đến đâu.",
+    "emotion_clear": "Xóa cảm xúc",
+    "emotion_presets_label": "Gợi ý cảm xúc",
+    "emotion_presets": {
+      "warm": "Ấm áp",
+      "cheerful": "Vui tươi",
+      "excited": "Hào hứng",
+      "calm": "Điềm tĩnh",
+      "proud": "Tự hào",
+      "sad": "Buồn"
+    },
     "stop_playback": "Dừng phát",
     "describe_label": "Mô tả giọng nói",
     "describe_placeholder": "vd. a warm elderly British storyteller, slightly raspy",

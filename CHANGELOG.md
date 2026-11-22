@@ -10,11 +10,20 @@ metadata and the backend fallback mirror it.
 
 **Highlights**
 
+- Voice cloning with IndexTTS2 can sound warm, cheerful, calm or any emotion you describe
 - Frosted-glass hover labels across the app
+
+### Added
+
+- Voice cloning with IndexTTS2 has an Emotion button: describe how the line should feel or pick a preset, then set the strength (#95)
 
 ### Changed
 
-- Hover labels on the menu, title bar and buttons are now frosted glass in every theme, instead of a dark chip.
+- Hover labels on the menu, title bar and buttons are now frosted glass in every theme, instead of a dark chip (#96)
+
+### CI
+
+- The renderer typecheck passes again after the job-progress guard test (#95)
 
 ## [0.5.7-beta.11] — 2026-11-22
 
