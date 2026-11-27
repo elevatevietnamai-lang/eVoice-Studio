@@ -1279,7 +1279,7 @@ export function DubPage() {
                 disabled={busy || Boolean(session.recovery)}
                 onCheckedChange={(checked) => setDubHardsubFirst(Boolean(checked))}
               />
-              <label htmlFor="dub-skip-asr" className="font-medium">
+              <label htmlFor="dub-skip-asr" className="block font-medium">
                 {t('dub_hardsub.skip_asr')}
               </label>
               <HelpHint label={t('dub_hardsub.skip_asr')}>
@@ -1539,7 +1539,10 @@ export function DubPage() {
             {(session.quality === 'agent' || provider?.id === 'openai') && (
               <div className="space-y-1.5 border-t border-border/50 pt-3">
                 <span className="flex min-w-0 items-center gap-1">
-                  <label htmlFor="dub-translation-instructions" className="text-label font-medium">
+                  <label
+                    htmlFor="dub-translation-instructions"
+                    className="block text-label font-medium"
+                  >
                     {t('dubStyle.label')}
                   </label>
                   <HelpHint label={t('dubStyle.label')}>{t('dubStyle.help')}</HelpHint>
@@ -1647,7 +1650,7 @@ export function DubPage() {
                     <>
                       <div className="flex items-center justify-between gap-3 text-xs">
                         <span className="flex min-w-0 items-center gap-1">
-                          <label htmlFor="dub-auto-glossary" className="font-medium">
+                          <label htmlFor="dub-auto-glossary" className="block font-medium">
                             {t('dub.auto_glossary_label')}
                           </label>
                           <HelpHint label={t('dub.auto_glossary_label')}>
@@ -1665,7 +1668,7 @@ export function DubPage() {
                       </div>
                       <div className="flex items-center justify-between gap-3 text-xs">
                         <span className="flex min-w-0 items-center gap-1">
-                          <label htmlFor="dub-reflect" className="font-medium">
+                          <label htmlFor="dub-reflect" className="block font-medium">
                             {t('dub.reflect_label')}
                           </label>
                           <HelpHint label={t('dub.reflect_label')}>
@@ -1685,7 +1688,7 @@ export function DubPage() {
                   )}
                   <div className="flex items-center justify-between gap-3 text-xs">
                     <span className="flex min-w-0 items-center gap-1">
-                      <label htmlFor="dub-condense" className="font-medium">
+                      <label htmlFor="dub-condense" className="block font-medium">
                         {t('dub.condense_label')}
                       </label>
                       <HelpHint label={t('dub.condense_label')}>{t('dub.condense_title')}</HelpHint>

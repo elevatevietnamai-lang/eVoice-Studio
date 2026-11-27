@@ -183,7 +183,7 @@ export function QualityControls({
           )}
           <div className="flex items-center justify-between gap-3 text-xs">
             <span className="flex min-w-0 items-center gap-1">
-              <label htmlFor={`${id}-mastering`} className="font-medium">
+              <label htmlFor={`${id}-mastering`} className="block font-medium">
                 {t('cloneQuality.mastering')}
               </label>
               <HelpHint label={t('cloneQuality.mastering')}>
