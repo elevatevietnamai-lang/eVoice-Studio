@@ -90,9 +90,7 @@ export function RefinementSettings() {
                 ? 'settings.llmskills_dictation_refinement_name'
                 : 'dictation.flag_' + key,
             )}
-            description={
-              key === 'auto' ? t('settings.llmskills_dictation_refinement_desc') : undefined
-            }
+            help={key === 'auto' ? t('settings.llmskills_dictation_refinement_desc') : undefined}
           >
             <Switch
               aria-label={t(

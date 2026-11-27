@@ -82,7 +82,7 @@ export function DataDirectorySettings() {
         <SettingsRow
           id="data-directory"
           title={t('settings.data_directory')}
-          description={t('settings.data_directory_desc')}
+          help={t('settings.data_directory_desc')}
         >
           <DataDirectoryPath />
           {bridge && (

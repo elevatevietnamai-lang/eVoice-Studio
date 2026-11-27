@@ -1,14 +1,12 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
+import { HelpHint } from '@/components/help-hint';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { apiJson } from '@/lib/api/client';
-import {
-  DEFAULT_OVERRIDES,
-  type Overrides,
-} from '@shared/utils/longformOverrides';
+import { DEFAULT_OVERRIDES, type Overrides } from '@shared/utils/longformOverrides';
 const knobs = [
   { key: 'numStep', label: 'steps', min: 8, max: 64, step: 1, value: 32 },
   { key: 'guidanceScale', label: 'cfg', min: 0, max: 4, step: 0.1, value: 2 },
@@ -31,6 +29,7 @@ export function ProductionSettings({
   onChange: (value: Overrides) => void;
 }) {
   const { t, i18n } = useTranslation();
+  const id = useId();
   const milliseconds = new Intl.NumberFormat(i18n.resolvedLanguage || i18n.language, {
     style: 'unit',
     unit: 'millisecond',
@@ -79,26 +78,33 @@ export function ProductionSettings({
           onCheckedChange={(postprocess) => onChange({ ...value, postprocess })}
         />
       </label>
-      <label
-        className="flex items-center justify-between gap-2 text-xs"
-        title={t('audiobook.vary_repeats_help')}
-      >
-        {t('audiobook.vary_repeats')}
+      <div className="flex items-center justify-between gap-2 text-xs">
+        <span className="flex min-w-0 items-center gap-1">
+          <label htmlFor={`${id}-vary`}>{t('audiobook.vary_repeats')}</label>
+          <HelpHint label={t('audiobook.vary_repeats')}>
+            {t('audiobook.vary_repeats_help')}
+          </HelpHint>
+        </span>
         <Switch
+          id={`${id}-vary`}
           disabled={disabled}
           checked={value.varyRepeats}
           onCheckedChange={(varyRepeats) => onChange({ ...value, varyRepeats })}
         />
-      </label>
-      <p className="text-xs text-muted-foreground">{t('audiobook.joins_help')}</p>
-      {gaps.map((gap) => (
-        <label key={gap.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+      </div>
+      {gaps.map((gap, index) => (
+        <div key={gap.key} className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
           <span className="flex justify-between text-muted-foreground">
-            <span>{t('audiobook.' + gap.label)}</span>
+            <span className="flex min-w-0 items-center gap-1">
+              <label htmlFor={`${id}-${gap.key}`}>{t('audiobook.' + gap.label)}</label>
+              {index === 0 && (
+                <HelpHint label={t('audiobook.' + gap.label)}>{t('audiobook.joins_help')}</HelpHint>
+              )}
+            </span>
             <span className="tabular-nums">{milliseconds.format(value[gap.key] ?? gap.value)}</span>
           </span>
           <input
-            aria-label={t('audiobook.' + gap.label)}
+            id={`${id}-${gap.key}`}
             type="range"
             className="w-full accent-primary"
             min={0}
@@ -108,19 +114,20 @@ export function ProductionSettings({
             disabled={disabled}
             onChange={(event) => onChange({ ...value, [gap.key]: Number(event.target.value) })}
           />
-        </label>
+        </div>
       ))}
-      <label
-        className="flex items-center justify-between gap-2 text-xs"
-        title={t('audiobook.trim_edges_help')}
-      >
-        {t('audiobook.trim_edges')}
+      <div className="flex items-center justify-between gap-2 text-xs">
+        <span className="flex min-w-0 items-center gap-1">
+          <label htmlFor={`${id}-trim`}>{t('audiobook.trim_edges')}</label>
+          <HelpHint label={t('audiobook.trim_edges')}>{t('audiobook.trim_edges_help')}</HelpHint>
+        </span>
         <Switch
+          id={`${id}-trim`}
           disabled={disabled}
           checked={value.trimEdges ?? false}
           onCheckedChange={(trimEdges) => onChange({ ...value, trimEdges })}
         />
-      </label>
+      </div>
       <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
         {t('audiobook.seed')}
         <Input
@@ -138,15 +145,18 @@ export function ProductionSettings({
       </label>
       {emotion && (
         <div className="space-y-3">
-          <p className="text-xs text-muted-foreground">{t('audiobook.emotion_help')}</p>
-          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-            {t('audiobook.emotion_text')}
+          <div className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+            <span className="flex min-w-0 items-center gap-1">
+              <label htmlFor={`${id}-emotion`}>{t('audiobook.emotion_text')}</label>
+              <HelpHint label={t('audiobook.emotion_text')}>{t('audiobook.emotion_help')}</HelpHint>
+            </span>
             <Input
+              id={`${id}-emotion`}
               value={value.emoText}
               disabled={disabled}
               onChange={(event) => onChange({ ...value, emoText: event.target.value })}
             />
-          </label>
+          </div>
           <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
             {t('audiobook.emotion_alpha')}
             <input

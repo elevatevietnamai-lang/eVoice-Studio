@@ -34,11 +34,7 @@ export function NetworkSettings() {
     });
   return (
     <SettingsSection icon={NetworkIcon} title={t('settings.network')}>
-      <SettingsRow
-        id="network-proxy"
-        title={t('settings.proxy')}
-        description={t('settings.proxy_desc')}
-      >
+      <SettingsRow id="network-proxy" title={t('settings.proxy')} help={t('settings.proxy_desc')}>
         <form
           className="flex flex-wrap gap-2"
           onSubmit={(event) => {

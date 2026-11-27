@@ -90,11 +90,7 @@ export function UsageSettings() {
 
   return (
     <SettingsSection icon={BarChart3Icon} title={t('settings.usage')}>
-      <SettingsRow
-        id="usage-overview"
-        title={t('settings.usage')}
-        description={t('settings.usage_desc')}
-      >
+      <SettingsRow id="usage-overview" title={t('settings.usage')} help={t('settings.usage_desc')}>
         <ShieldCheckIcon aria-hidden="true" className="size-4 text-emerald-500" />
       </SettingsRow>
       {backend.remote ? (

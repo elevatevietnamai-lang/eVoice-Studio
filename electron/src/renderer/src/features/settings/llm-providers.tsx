@@ -104,8 +104,11 @@ export function LlmProviders() {
         (provider.id === query.data.active ? ' · ' + t('settings.llmp_active_badge') : ''),
     })) ?? [];
   return (
-    <SettingsSection icon={BrainIcon} title={t('settings.llm_providers')}>
-      <p className="px-4 py-3 text-sm leading-5 text-muted-foreground">{t('settings.llmp_desc')}</p>
+    <SettingsSection
+      icon={BrainIcon}
+      title={t('settings.llm_providers')}
+      help={t('settings.llmp_desc')}
+    >
       <div>
         {query.data && (
           <SettingsRow
@@ -150,7 +153,7 @@ export function LlmProviders() {
           <SettingsRow
             id="llm-provider"
             title={t('settings.llmp_provider')}
-            description={t('settings.llmp_provider_hint')}
+            help={t('settings.llmp_provider_hint')}
           >
             <SearchableSelect
               options={providerItems}

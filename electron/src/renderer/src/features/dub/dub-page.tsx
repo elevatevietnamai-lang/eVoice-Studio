@@ -1,4 +1,5 @@
 import { Textarea } from '@/components/ui/textarea';
+import { DisclosureHelp, HelpHint, TitleWithHelp } from '@/components/help-hint';
 import { engineAvailabilityText } from '@/lib/engine-availability';
 import { DubProjects } from './dub-projects';
 import { Reveal } from '@/components/motion';
@@ -1209,9 +1210,15 @@ export function DubPage() {
                   })
                 }
               />
-              <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-                <span>{t('dub.num_speakers_label')}</span>
+              <div className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                <span className="flex min-w-0 items-center gap-1">
+                  <label htmlFor="dub-num-speakers">{t('dub.num_speakers_label')}</label>
+                  <HelpHint label={t('dub.num_speakers_label')}>
+                    {t('dub.num_speakers_help')}
+                  </HelpHint>
+                </span>
                 <Input
+                  id="dub-num-speakers"
                   type="number"
                   min={1}
                   max={20}
@@ -1227,10 +1234,7 @@ export function DubPage() {
                     });
                   }}
                 />
-              </label>
-              <p className="text-xs leading-5 text-muted-foreground">
-                {t('dub.num_speakers_help')}
-              </p>
+              </div>
               <Reveal>
                 {modelCatalogue.isSuccess && (
                   <div
@@ -1268,20 +1272,20 @@ export function DubPage() {
                 )}
               </Reveal>
             </details>
-            <label className="flex items-start gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs">
+            <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs">
               <Switch
+                id="dub-skip-asr"
                 checked={Boolean(session.hardsubFirst)}
                 disabled={busy || Boolean(session.recovery)}
                 onCheckedChange={(checked) => setDubHardsubFirst(Boolean(checked))}
-                aria-label={t('dub_hardsub.skip_asr')}
               />
-              <span className="space-y-0.5">
-                <span className="block font-medium">{t('dub_hardsub.skip_asr')}</span>
-                <span className="block leading-5 text-muted-foreground">
-                  {t('dub_hardsub.skip_asr_help')}
-                </span>
-              </span>
-            </label>
+              <label htmlFor="dub-skip-asr" className="font-medium">
+                {t('dub_hardsub.skip_asr')}
+              </label>
+              <HelpHint label={t('dub_hardsub.skip_asr')}>
+                {t('dub_hardsub.skip_asr_help')}
+              </HelpHint>
+            </div>
             <input
               ref={subtitles}
               type="file"
@@ -1446,41 +1450,51 @@ export function DubPage() {
               }
             />
             {dialectOptionsFor(code).length > 0 && (
-              <details className="group space-y-2 border-t border-border/50 pt-2">
-                <summary className="flex cursor-pointer list-none items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <LanguagesIcon className="size-3.5" />
-                  {t('dub.dialect_label')}
-                  <ChevronDownIcon className="ml-auto size-3.5 transition-transform group-open:rotate-180" />
-                </summary>
-                <p className="text-xs leading-5 text-muted-foreground">{t('dub.dialect_title')}</p>
-                <div className="flex flex-wrap gap-1">
-                  <Button
-                    size="xs"
-                    variant={!session.dialect ? 'secondary' : 'ghost'}
-                    disabled={busy || Boolean(session.recovery)}
-                    onClick={() => setDubTranslationOptions({ dialect: undefined })}
-                  >
-                    {t('dub.dialect_default')}
-                  </Button>
-                  {dialectOptionsFor(code).map((dialect) => (
+              <DisclosureHelp label={t('dub.dialect_label')} help={t('dub.dialect_title')}>
+                <details className="group space-y-2 border-t border-border/50 pt-2">
+                  <summary className="flex cursor-pointer list-none items-center gap-2 text-xs font-medium text-muted-foreground">
+                    <LanguagesIcon className="size-3.5" />
+                    {t('dub.dialect_label')}
+                    <ChevronDownIcon className="ml-auto size-3.5 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <div className="flex flex-wrap gap-1">
                     <Button
-                      key={dialect}
                       size="xs"
-                      variant={session.dialect === dialect ? 'secondary' : 'ghost'}
+                      variant={!session.dialect ? 'secondary' : 'ghost'}
                       disabled={busy || Boolean(session.recovery)}
-                      onClick={() => setDubTranslationOptions({ dialect })}
+                      onClick={() => setDubTranslationOptions({ dialect: undefined })}
                     >
-                      {dialectLabel(dialect, i18n.language)}
+                      {t('dub.dialect_default')}
                     </Button>
-                  ))}
-                </div>
-              </details>
+                    {dialectOptionsFor(code).map((dialect) => (
+                      <Button
+                        key={dialect}
+                        size="xs"
+                        variant={session.dialect === dialect ? 'secondary' : 'ghost'}
+                        disabled={busy || Boolean(session.recovery)}
+                        onClick={() => setDubTranslationOptions({ dialect })}
+                      >
+                        {dialectLabel(dialect, i18n.language)}
+                      </Button>
+                    ))}
+                  </div>
+                </details>
+              </DisclosureHelp>
             )}
             <div className="space-y-2 border-t border-border/50 pt-2">
-              <p className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <LanguagesIcon className="size-3.5" />
-                {t('about.translator')}
-              </p>
+              <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                <p className="flex items-center gap-2">
+                  <LanguagesIcon className="size-3.5" />
+                  {t('about.translator')}
+                </p>
+                {session.quality === 'agent' && (
+                  <HelpHint label={t('about.translator')}>
+                    {selectedTranslationAgent?.label
+                      ? t('dub.agent_cli_desc', { agent: selectedTranslationAgent.label })
+                      : t('dub.agent_quality_desc')}
+                  </HelpHint>
+                )}
+              </div>
               <div
                 role="group"
                 aria-label={t('about.translator')}
@@ -1521,25 +1535,17 @@ export function DubPage() {
                   </span>
                 </Button>
               </div>
-              {session.quality === 'agent' && (
-                <p className="px-1 text-xs leading-5 text-muted-foreground">
-                  {selectedTranslationAgent?.label
-                    ? t('dub.agent_cli_desc', { agent: selectedTranslationAgent.label })
-                    : t('dub.agent_quality_desc')}
-                </p>
-              )}
             </div>
             {(session.quality === 'agent' || provider?.id === 'openai') && (
               <div className="space-y-1.5 border-t border-border/50 pt-3">
-                <label
-                  htmlFor="dub-translation-instructions"
-                  className="block text-label font-medium"
-                >
-                  {t('dubStyle.label')}
-                </label>
+                <span className="flex min-w-0 items-center gap-1">
+                  <label htmlFor="dub-translation-instructions" className="text-label font-medium">
+                    {t('dubStyle.label')}
+                  </label>
+                  <HelpHint label={t('dubStyle.label')}>{t('dubStyle.help')}</HelpHint>
+                </span>
                 <Textarea
                   id="dub-translation-instructions"
-                  aria-describedby="dub-translation-instructions-help"
                   rows={4}
                   maxLength={5000}
                   value={session.translationInstructions || ''}
@@ -1549,12 +1555,6 @@ export function DubPage() {
                   }
                   className="resize-y"
                 />
-                <p
-                  id="dub-translation-instructions-help"
-                  className="text-xs leading-5 text-muted-foreground"
-                >
-                  {t('dubStyle.help')}
-                </p>
                 {selectedTranslationAgent && (
                   <div
                     data-slot="dub-research"
@@ -1619,13 +1619,15 @@ export function DubPage() {
             )}
             {session.quality !== 'agent' && (
               <div className="space-y-2 border-t border-border/50 pt-2">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <GaugeIcon className="size-3.5" />
-                  {t('settings.translate_quality')}
+                <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                  <span className="flex items-center gap-2">
+                    <GaugeIcon className="size-3.5" />
+                    {t('settings.translate_quality')}
+                  </span>
+                  <HelpHint label={t('settings.translate_quality')}>
+                    {t('settings.translate_quality_desc')}
+                  </HelpHint>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {t('settings.translate_quality_desc')}
-                </p>
                 <div className="flex flex-wrap gap-1">
                   {(['fast', 'autofit', 'cinematic'] as const).map((quality) => (
                     <Button
@@ -1643,53 +1645,60 @@ export function DubPage() {
                 <div className="space-y-2 border-t border-border/50 pt-2">
                   {provider?.id === 'openai' && (
                     <>
-                      <label className="flex items-start justify-between gap-3 text-xs">
-                        <span>
-                          <span className="block font-medium">{t('dub.auto_glossary_label')}</span>
-                          <span className="mt-0.5 block leading-5 text-muted-foreground">
+                      <div className="flex items-center justify-between gap-3 text-xs">
+                        <span className="flex min-w-0 items-center gap-1">
+                          <label htmlFor="dub-auto-glossary" className="font-medium">
+                            {t('dub.auto_glossary_label')}
+                          </label>
+                          <HelpHint label={t('dub.auto_glossary_label')}>
                             {t('dub.auto_glossary_title')}
-                          </span>
+                          </HelpHint>
                         </span>
                         <Switch
+                          id="dub-auto-glossary"
                           checked={session.autoGlossary ?? true}
                           disabled={busy || Boolean(session.recovery)}
                           onCheckedChange={(autoGlossary) =>
                             setDubTranslationOptions({ autoGlossary })
                           }
                         />
-                      </label>
-                      <label className="flex items-start justify-between gap-3 text-xs">
-                        <span>
-                          <span className="block font-medium">{t('dub.reflect_label')}</span>
-                          <span className="mt-0.5 block leading-5 text-muted-foreground">
+                      </div>
+                      <div className="flex items-center justify-between gap-3 text-xs">
+                        <span className="flex min-w-0 items-center gap-1">
+                          <label htmlFor="dub-reflect" className="font-medium">
+                            {t('dub.reflect_label')}
+                          </label>
+                          <HelpHint label={t('dub.reflect_label')}>
                             {t('dub.reflect_title')}
-                          </span>
+                          </HelpHint>
                         </span>
                         <Switch
+                          id="dub-reflect"
                           checked={session.reflectPass ?? true}
                           disabled={busy || Boolean(session.recovery)}
                           onCheckedChange={(reflectPass) =>
                             setDubTranslationOptions({ reflectPass })
                           }
                         />
-                      </label>
+                      </div>
                     </>
                   )}
-                  <label className="flex items-start justify-between gap-3 text-xs">
-                    <span>
-                      <span className="block font-medium">{t('dub.condense_label')}</span>
-                      <span className="mt-0.5 block leading-5 text-muted-foreground">
-                        {t('dub.condense_title')}
-                      </span>
+                  <div className="flex items-center justify-between gap-3 text-xs">
+                    <span className="flex min-w-0 items-center gap-1">
+                      <label htmlFor="dub-condense" className="font-medium">
+                        {t('dub.condense_label')}
+                      </label>
+                      <HelpHint label={t('dub.condense_label')}>{t('dub.condense_title')}</HelpHint>
                     </span>
                     <Switch
+                      id="dub-condense"
                       checked={session.condenseSuggest ?? false}
                       disabled={busy || Boolean(session.recovery)}
                       onCheckedChange={(condenseSuggest) =>
                         setDubTranslationOptions({ condenseSuggest })
                       }
                     />
-                  </label>
+                  </div>
                 </div>
               </div>
             )}
@@ -1804,7 +1813,11 @@ export function DubPage() {
               )}
               {session.timingStrategy === 'smart_fit' && (
                 <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground">{t('dub.fit_speed_hint')}</p>
+                  <TitleWithHelp
+                    className="text-xs text-muted-foreground"
+                    title={t('dub.timing_smart_fit')}
+                    help={t('dub.fit_speed_hint')}
+                  />
                   {(
                     [
                       {
@@ -1854,8 +1867,11 @@ export function DubPage() {
                   })}
                 </div>
               )}
-              <p className="text-xs font-medium text-muted-foreground">{t('dub.voice_match')}</p>
-              <p className="text-xs text-muted-foreground">{t('dub.voice_match_title')}</p>
+              <TitleWithHelp
+                className="text-xs text-muted-foreground"
+                title={t('dub.voice_match')}
+                help={t('dub.voice_match_title')}
+              />
               <div className="flex flex-wrap gap-1">
                 {(['per_line', 'consistent'] as const).map((value) => (
                   <Button

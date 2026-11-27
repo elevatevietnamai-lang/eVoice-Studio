@@ -109,10 +109,13 @@ export function PerformanceSettings() {
   return (
     <>
       <SystemPreflight />
-      <SettingsSection icon={ZapIcon} title={t('performanceProfile.title')}>
+      <SettingsSection
+        icon={ZapIcon}
+        title={t('performanceProfile.title')}
+        help={t('performanceProfile.hint')}
+      >
         <div className="p-4">
           <PerformanceProfile variant="settings" />
-          <p className="mt-2 text-xs text-muted-foreground">{t('performanceProfile.hint')}</p>
         </div>
         {modelFamilies.map((family) => {
           const Icon = familyIcons[family];
@@ -136,8 +139,11 @@ export function PerformanceSettings() {
       <GpuAcceleration />
       <CompileSetting />
       <MemoryManagement />
-      <SettingsSection icon={CpuIcon} title={t('settings.generate_budget_title')}>
-        <p className="p-4 text-sm text-muted-foreground">{t('settings.generate_budget_desc')}</p>
+      <SettingsSection
+        icon={CpuIcon}
+        title={t('settings.generate_budget_title')}
+        help={t('settings.generate_budget_desc')}
+      >
         <BudgetRow
           kind="gpu"
           envKey="OMNIVOICE_GENERATE_TIMEOUT_S"
@@ -424,10 +430,9 @@ function OffloadAfterGeneration() {
       <SettingsRow
         id="offload-after-generation"
         title={t('settings.offload_after_generation')}
+        help={t('settings.offload_after_generation_note')}
         description={
-          state?.device === 'cpu'
-            ? t('settings.offload_after_generation_cpu')
-            : t('settings.offload_after_generation_note')
+          state?.device === 'cpu' ? t('settings.offload_after_generation_cpu') : undefined
         }
       >
         <Switch
@@ -493,7 +498,7 @@ function ComputeDevice() {
       <SettingsRow
         id="compute-device"
         title={t('settings.compute_device')}
-        description={t('settings.compute_device_desc')}
+        help={t('settings.compute_device_desc')}
       >
         {['auto', ...new Set(state?.available_families || [])].map((value) => (
           <Button
@@ -674,7 +679,7 @@ function BudgetRow({
       <SettingsRow
         id={'budget-' + kind}
         title={t('settings.generate_timeout_' + kind)}
-        description={t('settings.generate_timeout_' + kind + '_note')}
+        help={t('settings.generate_timeout_' + kind + '_note')}
       >
         <form
           className="flex items-center gap-2"

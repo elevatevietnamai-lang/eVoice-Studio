@@ -1,4 +1,5 @@
 import { PipelineFailure } from '@/components/pipeline-failure';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { InstallSttButton } from './install-stt-button';
 import { openTake } from '@/lib/store/takes';
@@ -204,10 +205,13 @@ function Overrides({ settings }: OverridesProps) {
             <SliderRow key={spec.key} spec={spec} value={settings[spec.key]} />
           ))}
           <div className="flex min-w-0 flex-col gap-2 px-1 py-2">
-            <Label htmlFor={durationId} className="gap-1.5 text-xs font-medium">
-              <ClockIcon className="size-3.5 text-muted-foreground" aria-hidden="true" />
-              {t('clone.duration')}
-            </Label>
+            <span className="flex min-w-0 items-center gap-1">
+              <Label htmlFor={durationId} className="gap-1.5 text-xs font-medium">
+                <ClockIcon className="size-3.5 text-muted-foreground" aria-hidden="true" />
+                {t('clone.duration')}
+              </Label>
+              <HelpHint label={t('clone.duration')}>{t('voiceControls.basics')}</HelpHint>
+            </span>
             <Input
               id={durationId}
               inputMode="decimal"
@@ -218,7 +222,6 @@ function Overrides({ settings }: OverridesProps) {
             />
           </div>
         </div>
-        <p className="px-1 text-[11px] text-muted-foreground">{t('voiceControls.basics')}</p>
       </div>
       <div className="border-t border-border/50 py-1.5">
         <SwitchRow
@@ -242,7 +245,9 @@ function Overrides({ settings }: OverridesProps) {
             aria-hidden="true"
           />
         </summary>
-        <p className="mt-2 px-1 text-[11px] text-muted-foreground">{t('voiceControls.hint')}</p>
+        <div className="mt-2 flex justify-end px-1">
+          <HelpHint label={t('voiceControls.advanced')}>{t('voiceControls.hint')}</HelpHint>
+        </div>
         <div className="mt-1 grid gap-x-4 sm:grid-cols-2">
           {SLIDERS.filter((spec) => spec.key !== 'speed' && spec.key !== 'steps').map((spec) => (
             <SliderRow key={spec.key} spec={spec} value={settings[spec.key]} />

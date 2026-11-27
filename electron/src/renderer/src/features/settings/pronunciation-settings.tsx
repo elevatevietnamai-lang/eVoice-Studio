@@ -201,7 +201,7 @@ export function PronunciationSettings() {
       <SettingsRow
         id="pronunciation-overview"
         title={t('pronunciation.title')}
-        description={t('pronunciation.help')}
+        help={t('pronunciation.help')}
       >
         <Badge variant="secondary">{rows.length}</Badge>
       </SettingsRow>
@@ -265,7 +265,7 @@ export function PronunciationSettings() {
       <SettingsRow
         id="pronunciation-add"
         title={t('pronunciation.add')}
-        description={t('pronunciation.lang_label')}
+        help={t('pronunciation.lang_label')}
       >
         <Input
           value={term}
@@ -380,7 +380,7 @@ export function PronunciationSettings() {
       <SettingsRow
         id="pronunciation-backup"
         title={t('pronunciation.backup_title')}
-        description={t('pronunciation.backup_hint')}
+        help={t('pronunciation.backup_hint')}
       >
         <Button variant="outline" disabled={busy} onClick={() => void exportEntries()}>
           <DownloadIcon />

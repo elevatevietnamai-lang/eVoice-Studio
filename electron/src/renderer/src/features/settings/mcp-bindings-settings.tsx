@@ -103,7 +103,7 @@ export function McpBindingsSettings() {
         <SettingsRow
           id="sharing-mcp-overview"
           title={t('settings.mcp_desc')}
-          description={t('settings.mcp_hint')}
+          help={t('settings.mcp_hint')}
         >
           <ExternalLink href={MCP_DOCS_URL}>{t('common.learn_more')}</ExternalLink>
         </SettingsRow>

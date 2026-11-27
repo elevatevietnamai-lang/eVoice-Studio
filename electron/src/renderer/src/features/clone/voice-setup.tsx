@@ -1,4 +1,5 @@
 import { CheckIcon, PencilIcon, PlusIcon, SearchIcon } from 'lucide-react';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -172,9 +173,9 @@ export function VoiceSetup({ onChosen }: { onChosen: () => void }) {
   return (
     <section className="flex w-full flex-col gap-7">
       {/* No back button: the rail is the way out, and the current voice card returns to it. */}
-      <div className="min-w-0">
+      <div className="flex min-w-0 items-center gap-1.5">
         <h2 className="text-xl font-semibold tracking-tight">{t('cloneFlow.choose_voice')}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{t('cloneFlow.choose_hint')}</p>
+        <HelpHint label={t('cloneFlow.choose_voice')}>{t('cloneFlow.choose_hint')}</HelpHint>
       </div>
       {eligibleVoices.length > 0 && (
         <div className="space-y-3">

@@ -72,8 +72,11 @@ export function LlmSkills() {
     }
   };
   return (
-    <SettingsSection icon={SparklesIcon} title={t('settings.llm_skills')}>
-      <p className="p-4 text-sm text-muted-foreground">{t('settings.llmskills_desc')}</p>
+    <SettingsSection
+      icon={SparklesIcon}
+      title={t('settings.llm_skills')}
+      help={t('settings.llmskills_desc')}
+    >
       {(skills.isError || providers.isError) && (
         <Button
           variant="outline"
@@ -104,7 +107,7 @@ export function LlmSkills() {
           key={skill.id}
           id={'skill-' + skill.id}
           title={t(skill.name_key)}
-          description={t(skill.description_key)}
+          help={t(skill.description_key)}
         >
           <div className="space-y-2">
             <div className="flex items-center justify-end gap-3">

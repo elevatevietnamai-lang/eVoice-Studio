@@ -670,7 +670,7 @@ export function SettingsPage() {
                   <SettingsRow
                     id="language-label"
                     title={t('settings.language')}
-                    description={t('settings.language_desc')}
+                    help={t('settings.language_desc')}
                   >
                     <Select
                       items={APP_LANGUAGE_ITEMS}
@@ -693,7 +693,7 @@ export function SettingsPage() {
                   <SettingsRow
                     id="review-mode-label"
                     title={t('settings.review_mode')}
-                    description={t('settings.review_mode_desc')}
+                    help={t('settings.review_mode_desc')}
                   >
                     <div
                       role="group"

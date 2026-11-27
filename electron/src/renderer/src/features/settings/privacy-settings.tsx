@@ -136,12 +136,15 @@ export function HistoryRetention() {
     else void save();
   };
   return (
-    <SettingsSection icon={ShieldCheckIcon} title={t('settings.history_retention')}>
-      <p className="p-4 text-sm text-muted-foreground">{t('settings.history_retention_help')}</p>
+    <SettingsSection
+      icon={ShieldCheckIcon}
+      title={t('settings.history_retention')}
+      help={t('settings.history_retention_help')}
+    >
       <SettingsRow
         id="retention-cap"
         title={t('settings.history_retention_cap')}
-        description={t('settings.history_retention_cap_hint', { count: query.data?.default })}
+        help={t('settings.history_retention_cap_hint', { count: query.data?.default })}
       >
         <form
           className="flex gap-2"

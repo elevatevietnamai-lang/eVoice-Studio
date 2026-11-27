@@ -47,8 +47,11 @@ export function MirrorSettings() {
     }, false);
   const state = query.data;
   return (
-    <SettingsSection icon={GlobeIcon} title={t('models.mirror_title')}>
-      <p className="px-4 pb-3 text-xs text-muted-foreground">{t('models.mirror_description')}</p>
+    <SettingsSection
+      icon={GlobeIcon}
+      title={t('models.mirror_title')}
+      help={t('models.mirror_description')}
+    >
       {state && (
         <>
           <div className="space-y-1 p-2" role="radiogroup" aria-label={t('models.mirror_title')}>

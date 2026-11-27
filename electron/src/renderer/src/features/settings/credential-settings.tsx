@@ -196,10 +196,11 @@ export function HuggingFaceToken() {
 function TranslationCredentials() {
   const { t } = useTranslation();
   return (
-    <SettingsSection icon={KeyRoundIcon} title={t('settings.translation_providers')}>
-      <p className="p-4 text-sm text-muted-foreground">
-        {t('settings.translation_providers_desc')}
-      </p>
+    <SettingsSection
+      icon={KeyRoundIcon}
+      title={t('settings.translation_providers')}
+      help={t('settings.translation_providers_desc')}
+    >
       {PROVIDER_FIELDS.map((field) => (
         <ProviderCredential key={field.key} field={field} />
       ))}
@@ -223,7 +224,7 @@ function ProviderCredential({ field }: { field: (typeof PROVIDER_FIELDS)[number]
     });
   return (
     <div>
-      <SettingsRow id={'credential-' + field.key} title={label} description={t(field.helpKey)}>
+      <SettingsRow id={'credential-' + field.key} title={label} help={t(field.helpKey)}>
         <form
           className="flex flex-wrap gap-2"
           onSubmit={(event) => {

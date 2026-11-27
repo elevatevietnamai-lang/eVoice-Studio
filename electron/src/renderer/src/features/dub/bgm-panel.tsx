@@ -1,4 +1,5 @@
 import { Input } from '@/components/ui/input';
+import { DisclosureHelp } from '@/components/help-hint';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
@@ -130,135 +131,136 @@ export function BgmPanel({ session, disabled }: { session: DubSession; disabled:
   };
 
   return (
-    <details className="group rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
-      <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
-        <MusicIcon className="size-4 text-muted-foreground" />
-        <span className="mr-auto">{t('dub_bgm.title')}</span>
-        {state.has_track && (
-          <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-primary">
-            {t('dub_bgm.badge_ready')}
-          </span>
-        )}
-      </summary>
-      <div className="mt-3 space-y-3">
-        <p className="text-xs leading-5 text-muted-foreground">{t('dub_bgm.help')}</p>
-        {!running ? (
-          <p
-            role="status"
-            className="rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs leading-5 text-muted-foreground"
-          >
-            {t('dub_bgm.not_running')}
-          </p>
-        ) : (
-          <>
-            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-              <span className="font-medium">{t('dub_bgm.style')}</span>
-              <Input
-                value={style}
-                maxLength={400}
-                disabled={locked}
-                onChange={(event) => setStyle(event.target.value)}
-              />
-            </label>
-            <div className="flex flex-wrap gap-1">
-              {STYLE_PRESETS.map((preset) => (
-                <Button
-                  key={preset}
-                  size="xs"
-                  variant={style === preset ? 'secondary' : 'ghost'}
+    <DisclosureHelp label={t('dub_bgm.title')} help={t('dub_bgm.help')}>
+      <details className="group rounded-(--card-radius) border border-border/60 bg-muted/15 p-3">
+        <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
+          <MusicIcon className="size-4 text-muted-foreground" />
+          <span className="mr-auto">{t('dub_bgm.title')}</span>
+          {state.has_track && (
+            <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-primary">
+              {t('dub_bgm.badge_ready')}
+            </span>
+          )}
+        </summary>
+        <div className="mt-3 space-y-3">
+          {!running ? (
+            <p
+              role="status"
+              className="rounded-lg border border-border/60 bg-background/35 px-2.5 py-2 text-xs leading-5 text-muted-foreground"
+            >
+              {t('dub_bgm.not_running')}
+            </p>
+          ) : (
+            <>
+              <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+                <span className="font-medium">{t('dub_bgm.style')}</span>
+                <Input
+                  value={style}
+                  maxLength={400}
                   disabled={locked}
-                  onClick={() => setStyle(preset)}
-                >
-                  {preset.split(',')[0]}
-                </Button>
-              ))}
-            </div>
-            <Button className="w-full" size="sm" disabled={locked} onClick={generate}>
-              {task?.kind === 'gen' ? (
-                <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
-              ) : (
-                <SparklesIcon />
-              )}
-              <BusyLabel
-                label={state.has_track ? t('dub_bgm.regenerate') : t('dub_bgm.generate')}
-                progress={task?.kind === 'gen' ? task.progress : null}
-                eta={task?.kind === 'gen' ? taskEta : null}
-              />
-            </Button>
-            {task?.kind === 'gen' && (
-              <JobProgress value={task.progress * 100} label={t('dub_bgm.generate')} />
-            )}
-            {state.has_track && (
-              <audio
-                key={state.revision}
-                controls
-                className="w-full"
-                src={apiPath(`/dub/bgm/preview/${encodeURIComponent(jobId)}?v=${state.revision}`)}
-              />
-            )}
-            <div className="space-y-2 border-t border-border/50 pt-3">
-              <label className="flex items-center gap-2 text-xs">
-                <span className="shrink-0">{t('dub_bgm.volume')}</span>
-                <input
-                  type="range"
-                  className="min-w-0 flex-1 accent-primary"
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={gain}
-                  disabled={locked}
-                  onChange={(event) => setGain(Number(event.target.value))}
+                  onChange={(event) => setStyle(event.target.value)}
                 />
-                <span className="w-9 text-right tabular-nums">{Math.round(gain * 100)}%</span>
               </label>
-              <div className="flex items-center justify-between gap-2 text-xs">
-                <span>{t('dub_bgm.track')}</span>
-                <SimpleSelect
-                  label={t('dub_bgm.track')}
-                  value={lang}
-                  items={session.tracks.map((track) => ({ value: track, label: track }))}
-                  disabled={locked || session.tracks.length === 0}
-                  onValueChange={setLang}
-                />
+              <div className="flex flex-wrap gap-1">
+                {STYLE_PRESETS.map((preset) => (
+                  <Button
+                    key={preset}
+                    size="xs"
+                    variant={style === preset ? 'secondary' : 'ghost'}
+                    disabled={locked}
+                    onClick={() => setStyle(preset)}
+                  >
+                    {preset.split(',')[0]}
+                  </Button>
+                ))}
               </div>
-              <label className="flex items-center gap-2 text-xs">
-                <Checkbox
-                  checked={burn}
-                  disabled={locked}
-                  onCheckedChange={(checked) => setBurn(checked)}
-                />
-                {t('dub_bgm.burn')}
-              </label>
-              <Button
-                className="w-full"
-                size="sm"
-                variant="outline"
-                disabled={locked || !state.has_track || !lang}
-                onClick={exportVideo}
-              >
-                {task?.kind === 'export' ? (
+              <Button className="w-full" size="sm" disabled={locked} onClick={generate}>
+                {task?.kind === 'gen' ? (
                   <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
                 ) : (
-                  <DownloadIcon />
+                  <SparklesIcon />
                 )}
                 <BusyLabel
-                  label={t('dub_bgm.export')}
-                  progress={task?.kind === 'export' ? task.progress : null}
-                  eta={task?.kind === 'export' ? taskEta : null}
+                  label={state.has_track ? t('dub_bgm.regenerate') : t('dub_bgm.generate')}
+                  progress={task?.kind === 'gen' ? task.progress : null}
+                  eta={task?.kind === 'gen' ? taskEta : null}
                 />
               </Button>
-              {task?.kind === 'export' && (
-                <JobProgress value={task.progress * 100} label={t('dub_bgm.export')} />
+              {task?.kind === 'gen' && (
+                <JobProgress value={task.progress * 100} label={t('dub_bgm.generate')} />
               )}
-              {session.tracks.length === 0 && (
-                <p className="text-[11px] leading-4 text-muted-foreground">
-                  {t('dub_bgm.needs_dub')}
-                </p>
+              {state.has_track && (
+                <audio
+                  key={state.revision}
+                  controls
+                  className="w-full"
+                  src={apiPath(`/dub/bgm/preview/${encodeURIComponent(jobId)}?v=${state.revision}`)}
+                />
               )}
-            </div>
-          </>
-        )}
-      </div>
-    </details>
+              <div className="space-y-2 border-t border-border/50 pt-3">
+                <label className="flex items-center gap-2 text-xs">
+                  <span className="shrink-0">{t('dub_bgm.volume')}</span>
+                  <input
+                    type="range"
+                    className="min-w-0 flex-1 accent-primary"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={gain}
+                    disabled={locked}
+                    onChange={(event) => setGain(Number(event.target.value))}
+                  />
+                  <span className="w-9 text-right tabular-nums">{Math.round(gain * 100)}%</span>
+                </label>
+                <div className="flex items-center justify-between gap-2 text-xs">
+                  <span>{t('dub_bgm.track')}</span>
+                  <SimpleSelect
+                    label={t('dub_bgm.track')}
+                    value={lang}
+                    items={session.tracks.map((track) => ({ value: track, label: track }))}
+                    disabled={locked || session.tracks.length === 0}
+                    onValueChange={setLang}
+                  />
+                </div>
+                <label className="flex items-center gap-2 text-xs">
+                  <Checkbox
+                    checked={burn}
+                    disabled={locked}
+                    onCheckedChange={(checked) => setBurn(checked)}
+                  />
+                  {t('dub_bgm.burn')}
+                </label>
+                <Button
+                  className="w-full"
+                  size="sm"
+                  variant="outline"
+                  disabled={locked || !state.has_track || !lang}
+                  onClick={exportVideo}
+                >
+                  {task?.kind === 'export' ? (
+                    <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" />
+                  ) : (
+                    <DownloadIcon />
+                  )}
+                  <BusyLabel
+                    label={t('dub_bgm.export')}
+                    progress={task?.kind === 'export' ? task.progress : null}
+                    eta={task?.kind === 'export' ? taskEta : null}
+                  />
+                </Button>
+                {task?.kind === 'export' && (
+                  <JobProgress value={task.progress * 100} label={t('dub_bgm.export')} />
+                )}
+                {session.tracks.length === 0 && (
+                  <p className="text-[11px] leading-4 text-muted-foreground">
+                    {t('dub_bgm.needs_dub')}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </details>
+    </DisclosureHelp>
   );
 }

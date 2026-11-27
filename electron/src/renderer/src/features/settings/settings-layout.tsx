@@ -2,6 +2,7 @@
 // See electron/T3CODE-LICENSE.txt.
 import type { ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { HelpHint } from '@/components/help-hint';
 import { cn } from '@/lib/utils';
 
 export function SettingsContent({
@@ -32,21 +33,27 @@ export function SettingsContent({
 
 export function SettingsSection({
   title,
+  help,
   children,
   icon: Icon,
   contentVariant = 'rows',
 }: {
   title: string;
+  /** What the section is for, behind a "?" beside its title (DESIGN.md). */
+  help?: ReactNode;
   children: ReactNode;
   icon?: LucideIcon;
   contentVariant?: 'rows' | 'cards';
 }) {
   return (
     <section className="min-w-0 space-y-2.5">
-      <h2 className="flex min-h-7 items-center gap-2 px-1 text-sm font-normal tracking-[-0.005em] text-foreground/80">
-        {Icon && <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />}
-        {title}
-      </h2>
+      <div className="flex min-h-7 items-center gap-1 px-1">
+        <h2 className="flex items-center gap-2 text-sm font-normal tracking-[-0.005em] text-foreground/80">
+          {Icon && <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />}
+          {title}
+        </h2>
+        {help && <HelpHint label={title}>{help}</HelpHint>}
+      </div>
       <div
         className={cn(
           contentVariant === 'rows'
@@ -66,6 +73,7 @@ export function SettingsRow({
   title,
   titleHidden = false,
   description,
+  help,
   children,
   variant = 'row',
   active = false,
@@ -74,7 +82,13 @@ export function SettingsRow({
   id: string;
   title: ReactNode;
   titleHidden?: boolean;
+  /** Status, values and what the user agrees to: stays visible under the title. */
   description?: ReactNode;
+  /**
+   * What the setting does, behind a "?" beside the title (DESIGN.md). It sits next to the
+   * heading, not inside it, so the control group's accessible name stays the title alone.
+   */
+  help?: ReactNode;
   children: ReactNode;
   variant?: 'row' | 'card';
   active?: boolean;
@@ -99,13 +113,24 @@ export function SettingsRow({
         )}
       >
         <div className="min-w-0 flex-1 space-y-1">
-          <h3
-            tabIndex={-1}
-            id={id}
-            className={titleHidden ? 'sr-only' : 'min-h-5 text-sm font-medium tracking-[-0.005em]'}
-          >
-            {title}
-          </h3>
+          {help && !titleHidden ? (
+            <div className="flex min-w-0 items-center gap-1">
+              <h3 tabIndex={-1} id={id} className="min-h-5 text-sm font-medium tracking-[-0.005em]">
+                {title}
+              </h3>
+              <HelpHint label={typeof title === 'string' ? title : ''}>{help}</HelpHint>
+            </div>
+          ) : (
+            <h3
+              tabIndex={-1}
+              id={id}
+              className={
+                titleHidden ? 'sr-only' : 'min-h-5 text-sm font-medium tracking-[-0.005em]'
+              }
+            >
+              {title}
+            </h3>
+          )}
           {description && (
             <div
               className={cn(

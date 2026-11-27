@@ -127,7 +127,7 @@ export function AsrOpenAiCompatSettings() {
       <SettingsRow
         id="asr-openai-compat-overview"
         title={t('settings.asr_compat_desc')}
-        description={t('settings.asr_compat_url_hint')}
+        help={t('settings.asr_compat_url_hint')}
       >
         {config.isPending && (
           <LoaderCircleIcon className="size-4 animate-spin text-muted-foreground" />
@@ -198,7 +198,7 @@ export function AsrOpenAiCompatSettings() {
       <SettingsRow
         id="asr-openai-compat-test"
         title={t('settings.llmp_test')}
-        description={t('settings.asr_compat_test_hint')}
+        help={t('settings.asr_compat_test_hint')}
       >
         <Button
           variant="outline"

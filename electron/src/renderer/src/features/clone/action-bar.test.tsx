@@ -142,7 +142,9 @@ describe('ActionBar', () => {
     const { container } = render(<ProductionSettings />);
     expect(screen.getByRole('switch', { name: 'Polish generated audio' })).toBeChecked();
     expect(screen.getByText('1.0×')).toBeInTheDocument();
-    expect(screen.getByText(/1× is normal speed/)).toBeVisible();
+    // The speed and duration explanation sits behind the "?" beside Duration.
+    expect(screen.queryByText(/1× is normal speed/)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^About: Duration/ })).toBeInTheDocument();
     expect(container.querySelector('details')).not.toHaveAttribute('open');
     fireEvent.click(screen.getByText('Advanced model tuning'));
     expect(screen.getByText('Prompt guidance')).toBeVisible();

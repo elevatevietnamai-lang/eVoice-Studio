@@ -12,7 +12,7 @@ export function AecSettings() {
       <SettingsRow
         id="dictation-aec"
         title={t('dictation.aec_row_title')}
-        description={`${t('dictation.aec_description')} ${t('dictation.aec_hint')}`}
+        help={`${t('dictation.aec_description')} ${t('dictation.aec_hint')}`}
       >
         <span className="text-xs text-muted-foreground">{t('dictation.aec_experimental')}</span>
         <Switch
