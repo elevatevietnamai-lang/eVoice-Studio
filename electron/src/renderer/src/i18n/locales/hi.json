@@ -4703,7 +4703,14 @@
     "scene_default_badge": "-40%",
     "scene_default_ticker": "हर ऑर्डर पर मुफ़्त डिलीवरी  •  हर हफ़्ते नए उत्पाद",
     "scene_default_ticker_tag": "आज",
-    "scene_default_cta_sub": "लिंक बायो में"
+    "scene_default_cta_sub": "लिंक बायो में",
+    "scene_builtin_stagger_title": "गिरते अक्षर",
+    "scene_builtin_sticker": "Lottie स्टिकर",
+    "scene_builtin_logo_spring": "स्प्रिंग लोगो",
+    "scene_builtin_card_3d": "3D कार्ड",
+    "scene_problem_unknown_library": "“{{detail}}” साथ आने वाली लाइब्रेरी नहीं है। सीन evoice:motion, evoice:anime, evoice:lottie और evoice:three इम्पोर्ट कर सकते हैं।",
+    "scene_problem_needs_webgl": "यह सीन 3D (WebGL) में बनता है। रेंडर से पहले ऐप जाँचता है कि यह कंप्यूटर इसे बना सकता है या नहीं।",
+    "anim_error_webgl_unavailable": "यह कंप्यूटर रेंडर में 3D (WebGL) नहीं बना सकता, इसलिए यहाँ 3D सीन बंद हैं। बाकी सभी सीन काम करते रहेंगे।"
   },
   "appMenu": {
     "menu": "मेनू",

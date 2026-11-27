@@ -13,13 +13,13 @@
  * ffmpeg on PATH). Without them it is skipped, never faked.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, realpathSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, realpathSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { homedir, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CHROME_OFFLINE_FLAGS, installChromeOfflineFlags, installNetworkGuard } from './promo-network-guard';
-import { parseScene, sceneDocument, type PromoScene } from './promo-scenes';
+import { assetsFontUri, parseScene, sceneDocument, type PromoScene } from './promo-scenes';
 import { packageDir } from './promo-scene-runtime';
 
 // The sticker lives in the renderer, outside this project's tsconfig.
@@ -89,7 +89,9 @@ animate('#b', { x: [0, 200], scale: [0.4, 1] }, { type: spring, stiffness: 120, 
     '<div class="row">' + 'ABCDE'.split('').map((c) => `<span class="ch">${c}</span>`).join('') + '</div>',
     `.row{position:absolute;left:30px;top:250px;display:flex;gap:12px}.ch{display:inline-block;width:48px;height:80px;background:#ffcc00;color:#000;font:700 48px sans-serif;text-align:center}`,
     `import { animate, stagger } from "evoice:anime";
-animate('.ch', { y: [-120, 0], opacity: [0, 1], rotate: [45, 0], duration: 700, delay: stagger(150), ease: 'outBack' });`,
+animate('.ch', { y: [-120, 0], opacity: [0, 1], rotate: [45, 0], duration: 700, delay: stagger(150), ease: 'outBack' });
+// Starts at 1.2 s: seek() counts after the delay, the scene clock from 0.
+animate('.row', { x: [0, 120], duration: 600, delay: 1200 });`,
   ),
   lottie: scene(
     'lottie',
@@ -123,6 +125,21 @@ scene.onFrame((t) => {
   ),
 };
 
+// The built-ins that use the libraries, with their English defaults.
+const renderer = join(process.cwd(), 'src/renderer/src');
+const { builtinScene } = (await import(
+  /* @vite-ignore */ join(renderer, 'features/promo/scene-builtins.ts')
+)) as { builtinScene: (id: string, t: (key: string) => string) => unknown };
+const en = JSON.parse(readFileSync(join(renderer, 'i18n/locales/en.json'), 'utf8')) as {
+  promo: Record<string, string>;
+};
+for (const id of ['stagger_title', 'sticker', 'logo_spring', 'card_3d']) {
+  const built = builtinScene(id, (key) => en.promo[key.replace(/^promo\./, '')] ?? key) as {
+    duration: number;
+  };
+  PARITY_SCENES[`builtin ${id}`] = parseScene({ ...built, duration: DURATION });
+}
+
 let work: string;
 let removeGuard: () => void = () => {};
 let blocked: unknown[] = [];
@@ -137,7 +154,7 @@ afterAll(() => {
 });
 
 async function renderMp4(name: string, html: string): Promise<string> {
-  const sandbox = join(work, name);
+  const sandbox = join(work, name.replace(/\W+/g, '-'));
   const project = join(sandbox, 'project');
   mkdirSync(project, { recursive: true });
   writeFileSync(join(project, 'index.html'), html);
@@ -207,7 +224,7 @@ async function seekFrames(name: string, html: string): Promise<string[]> {
       close(): Promise<void>;
     }>;
   };
-  const dir = join(work, name);
+  const dir = join(work, name.replace(/\W+/g, '-'));
   writeFileSync(join(dir, 'seek.html'), html);
   const browser = await puppeteer.launch({
     executablePath: chromePath!,
@@ -228,7 +245,14 @@ async function seekFrames(name: string, html: string): Promise<string[]> {
           dispatchEvent(event: unknown): void;
           requestAnimationFrame(fn: () => void): void;
           CustomEvent: new (type: string, init: unknown) => unknown;
+          document: { getAnimations(): { pause(): void; currentTime: number }[] };
         };
+        // CSS animations, sought the way HyperFrames seeks them in a render
+        // (the live preview plays them from the page's own start instead).
+        for (const animation of page.document.getAnimations()) {
+          animation.pause();
+          animation.currentTime = time * 1000;
+        }
         const pending: Promise<unknown>[] = [];
         page.dispatchEvent(
           new page.CustomEvent('hf-seek', { detail: { time, waitUntil: (p: Promise<unknown>) => pending.push(p) } }),
@@ -269,7 +293,7 @@ describe.skipIf(!ready)('preview and render match frame for frame', () => {
           width: WIDTH,
           height: HEIGHT,
           mode,
-          fontUri: () => 'data:font/ttf;base64,AA==',
+          fontUri: assetsFontUri(join(process.cwd(), '..', 'backend', 'assets')),
           images: new Map(),
           backdrop: '#000000',
         });

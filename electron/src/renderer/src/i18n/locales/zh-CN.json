@@ -4703,7 +4703,14 @@
     "scene_default_badge": "6折",
     "scene_default_ticker": "全场包邮  •  每周上新",
     "scene_default_ticker_tag": "今日",
-    "scene_default_cta_sub": "链接见简介"
+    "scene_default_cta_sub": "链接见简介",
+    "scene_builtin_stagger_title": "逐字落下",
+    "scene_builtin_sticker": "Lottie 贴纸",
+    "scene_builtin_logo_spring": "弹簧 Logo",
+    "scene_builtin_card_3d": "3D 卡片",
+    "scene_problem_unknown_library": "“{{detail}}”不是内置库。场景可以导入 evoice:motion、evoice:anime、evoice:lottie 和 evoice:three。",
+    "scene_problem_needs_webgl": "此场景以 3D（WebGL）绘制。渲染前，应用会检查这台电脑能否绘制。",
+    "anim_error_webgl_unavailable": "这台电脑在渲染时无法绘制 3D（WebGL），因此此处关闭了 3D 场景。其他场景仍可正常使用。"
   },
   "appMenu": {
     "menu": "菜单",

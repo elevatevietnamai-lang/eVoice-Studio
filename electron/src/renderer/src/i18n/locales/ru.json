@@ -4709,7 +4709,14 @@
     "scene_default_badge": "-40%",
     "scene_default_ticker": "Бесплатная доставка любого заказа  •  Новинки каждую неделю",
     "scene_default_ticker_tag": "Сегодня",
-    "scene_default_cta_sub": "Ссылка в профиле"
+    "scene_default_cta_sub": "Ссылка в профиле",
+    "scene_builtin_stagger_title": "Падающие буквы",
+    "scene_builtin_sticker": "Стикер Lottie",
+    "scene_builtin_logo_spring": "Логотип с пружиной",
+    "scene_builtin_card_3d": "3D-карточка",
+    "scene_problem_unknown_library": "«{{detail}}» — не встроенная библиотека. Сцены могут импортировать evoice:motion, evoice:anime, evoice:lottie и evoice:three.",
+    "scene_problem_needs_webgl": "Эта сцена рисует в 3D (WebGL). Перед рендером приложение проверяет, может ли этот компьютер её нарисовать.",
+    "anim_error_webgl_unavailable": "Этот компьютер не может рисовать 3D (WebGL) при рендере, поэтому 3D-сцены здесь отключены. Все остальные сцены работают."
   },
   "appMenu": {
     "menu": "Меню",

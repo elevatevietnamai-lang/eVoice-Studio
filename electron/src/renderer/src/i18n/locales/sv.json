@@ -4703,7 +4703,14 @@
     "scene_default_badge": "-40 %",
     "scene_default_ticker": "Fri frakt på alla beställningar  •  Nyheter varje vecka",
     "scene_default_ticker_tag": "I dag",
-    "scene_default_cta_sub": "Länk i bion"
+    "scene_default_cta_sub": "Länk i bion",
+    "scene_builtin_stagger_title": "Fallande bokstäver",
+    "scene_builtin_sticker": "Lottie-klistermärke",
+    "scene_builtin_logo_spring": "Fjädrande logga",
+    "scene_builtin_card_3d": "3D-kort",
+    "scene_problem_unknown_library": "”{{detail}}” är inget medföljande bibliotek. Scener kan importera evoice:motion, evoice:anime, evoice:lottie och evoice:three.",
+    "scene_problem_needs_webgl": "Den här scenen ritar i 3D (WebGL). Innan rendering kontrollerar appen att datorn kan rita den.",
+    "anim_error_webgl_unavailable": "Den här datorn kan inte rita 3D (WebGL) vid rendering, så 3D-scener är avstängda här. Alla andra scener fungerar."
   },
   "appMenu": {
     "menu": "Meny",

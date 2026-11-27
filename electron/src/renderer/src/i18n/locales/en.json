@@ -4703,7 +4703,14 @@
     "scene_default_badge": "-40%",
     "scene_default_ticker": "Free shipping on every order  •  New arrivals every week",
     "scene_default_ticker_tag": "Today",
-    "scene_default_cta_sub": "Link in bio"
+    "scene_default_cta_sub": "Link in bio",
+    "scene_builtin_stagger_title": "Letter drop",
+    "scene_builtin_sticker": "Lottie sticker",
+    "scene_builtin_logo_spring": "Logo spring",
+    "scene_builtin_card_3d": "3D card",
+    "scene_problem_unknown_library": "“{{detail}}” is not a bundled library. Scenes can import evoice:motion, evoice:anime, evoice:lottie and evoice:three.",
+    "scene_problem_needs_webgl": "This scene draws in 3D (WebGL). Before rendering, the app checks that this computer can draw it.",
+    "anim_error_webgl_unavailable": "This computer cannot draw 3D (WebGL) in the renderer, so 3D scenes are off here. Every other scene still works."
   },
   "appMenu": {
     "menu": "Menu",

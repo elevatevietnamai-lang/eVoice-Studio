@@ -171,15 +171,18 @@ export * from 'evoice:anime/lib';
 ${CLOCK}
 try { A.engine.useDefaultMainLoop = false; } catch (e) { console.error(e); }
 const unit = () => (A.engine.timeUnit === 's' ? 1 : 1000);
+// seek() counts from after the animation's own delay; the scene clock
+// counts from 0, so a delayed animation is sought earlier by its delay.
+const at = (x, t) => t * unit() - (typeof x._delay === 'number' ? x._delay : 0);
 const tracked = new Set();
 function track(x) {
   if (!x) return x;
-  try { x.pause(); x.seek(now * unit(), true); } catch (e) { console.error(e); }
+  try { x.pause(); x.seek(at(x, now), true); } catch (e) { console.error(e); }
   tracked.add(x);
   return x;
 }
 const paused = (p) => Object.assign({}, p, { autoplay: false });
-tick.add((t) => { for (const x of tracked) { try { x.seek(t * unit()); } catch (e) { console.error(e); } } });
+tick.add((t) => { for (const x of tracked) { try { x.seek(at(x, t)); } catch (e) { console.error(e); } } });
 export function animate(targets, params) { return track(A.animate(targets, paused(params))); }
 export function createTimeline(params) { return track(A.createTimeline(paused(params))); }
 export function createTimer(params) { return track(A.createTimer(paused(params))); }

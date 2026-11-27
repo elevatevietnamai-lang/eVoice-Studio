@@ -25,10 +25,21 @@ const t: T = (key, values) => {
   return text.replace(/\{\{(\w+)\}\}/g, (_, name: string) => String(values?.[name] ?? ''));
 };
 
+/** The bundled library each built-in shows off (the rest are CSS only). */
+const LIBRARY: Record<string, string> = {
+  stagger_title: 'anime',
+  sticker: 'lottie',
+  logo_spring: 'motion',
+  card_3d: 'three',
+};
+
 describe('built-in scenes', () => {
   it.each(BUILTIN_SCENES)('%s passes the checks main applies to any scene', (id) => {
     const scene = parseScene(builtinScene(id, t, { logoId: '0123456789abcdef.png' }));
-    expect(lintScene(scene)).toEqual([]);
+    // The 3D scene only carries the WebGL warning the editor shows.
+    expect(lintScene(scene)).toEqual(
+      id === 'card_3d' ? [{ code: 'needs_webgl', detail: 'three' }] : [],
+    );
     expect(scene.name).not.toMatch(/^promo\./);
     for (const param of scene.params) {
       expect(param.label).not.toMatch(/^promo\./);
@@ -53,13 +64,15 @@ describe('built-in scenes', () => {
     expect(page).not.toMatch(/\{\{\s*[a-z]/);
   });
 
-  it.each(BUILTIN_SCENES)('%s has unique keys and moves with CSS only', (id) => {
+  it.each(BUILTIN_SCENES)('%s has unique keys and moves only on the scene clock', (id) => {
     const scene = parseScene(builtinScene(id, t));
     const keys = scene.params.map((param) => param.key);
     expect(new Set(keys).size).toBe(keys.length);
-    // The render seeks CSS animations exactly, so nothing can stutter. The
-    // starter only carries a commented-out example of scene.onFrame.
-    if (id !== 'starter') expect(scene.js).toBe('');
+    // CSS animations, the bundled libraries' adapters and scene.onFrame are
+    // all sought frame by frame; nothing runs on its own timer or randomness.
+    expect(scene.js).not.toMatch(/requestAnimationFrame|setTimeout|setInterval|Math\.random|Date\.now|performance\.now/);
+    const library = /from "evoice:(\w+)"/.exec(scene.js)?.[1] ?? null;
+    expect(library).toBe(LIBRARY[id] ?? null);
   });
 
   it.each(['lower_third', 'countdown', 'price', 'ticker', 'cta'])(

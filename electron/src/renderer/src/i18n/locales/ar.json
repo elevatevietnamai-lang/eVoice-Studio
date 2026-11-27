@@ -4711,7 +4711,14 @@
     "scene_default_badge": "-40%",
     "scene_default_ticker": "شحن مجاني لكل طلب  •  منتجات جديدة كل أسبوع",
     "scene_default_ticker_tag": "اليوم",
-    "scene_default_cta_sub": "الرابط في النبذة"
+    "scene_default_cta_sub": "الرابط في النبذة",
+    "scene_builtin_stagger_title": "حروف متساقطة",
+    "scene_builtin_sticker": "ملصق Lottie",
+    "scene_builtin_logo_spring": "شعار نابض",
+    "scene_builtin_card_3d": "بطاقة ثلاثية الأبعاد",
+    "scene_problem_unknown_library": "«{{detail}}» ليست مكتبة مضمّنة. يمكن للمشاهد استيراد evoice:motion وevoice:anime وevoice:lottie وevoice:three.",
+    "scene_problem_needs_webgl": "يرسم هذا المشهد بثلاثة أبعاد (WebGL). قبل التصيير يتحقق التطبيق من أن هذا الحاسوب يستطيع رسمه.",
+    "anim_error_webgl_unavailable": "لا يستطيع هذا الحاسوب الرسم ثلاثي الأبعاد (WebGL) أثناء التصيير، لذا أُوقفت المشاهد ثلاثية الأبعاد هنا. تبقى بقية المشاهد تعمل."
   },
   "appMenu": {
     "menu": "القائمة",

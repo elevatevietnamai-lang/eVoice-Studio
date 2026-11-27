@@ -4703,7 +4703,14 @@
     "scene_default_badge": "40% 할인",
     "scene_default_ticker": "모든 주문 무료 배송  •  매주 신상품 입고",
     "scene_default_ticker_tag": "오늘",
-    "scene_default_cta_sub": "링크는 프로필에"
+    "scene_default_cta_sub": "링크는 프로필에",
+    "scene_builtin_stagger_title": "떨어지는 글자",
+    "scene_builtin_sticker": "Lottie 스티커",
+    "scene_builtin_logo_spring": "튕기는 로고",
+    "scene_builtin_card_3d": "3D 카드",
+    "scene_problem_unknown_library": "“{{detail}}”은(는) 포함된 라이브러리가 아닙니다. 장면에서는 evoice:motion, evoice:anime, evoice:lottie, evoice:three를 import할 수 있습니다.",
+    "scene_problem_needs_webgl": "이 장면은 3D(WebGL)로 그립니다. 렌더링 전에 이 컴퓨터가 그릴 수 있는지 확인합니다.",
+    "anim_error_webgl_unavailable": "이 컴퓨터는 렌더링 중 3D(WebGL)를 그릴 수 없어 여기서는 3D 장면이 꺼져 있습니다. 다른 장면은 모두 사용할 수 있습니다."
   },
   "appMenu": {
     "menu": "메뉴",

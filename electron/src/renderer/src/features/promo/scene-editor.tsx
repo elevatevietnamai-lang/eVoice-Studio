@@ -59,6 +59,7 @@ const PREVIEW_WIDTH = { vertical: 180, square: 260, landscape: 320 } as const;
 /** Error codes that get their own sentence (main/promo-ipc.ts, promo-render.ts). */
 const KNOWN_ERRORS = new Set([
   'local_backend_required',
+  'webgl_unavailable',
   'ffmpeg_unavailable',
   'network_blocked',
   'browser_missing',
@@ -89,6 +90,9 @@ function ErrorLine({ text }: { text: string | null }) {
   );
 }
 
+/** Problems that only warn; main lets the scene preview and render. */
+const WARNING_PROBLEMS = new Set<string>(['timer_animation', 'needs_webgl']);
+
 function ProblemList({ problems }: { problems: readonly PromoSceneProblem[] }) {
   const { t } = useTranslation();
   if (!problems.length) return null;
@@ -98,7 +102,7 @@ function ProblemList({ problems }: { problems: readonly PromoSceneProblem[] }) {
         <li
           key={index}
           className={
-            problem.code === 'timer_animation' ? 'text-muted-foreground' : 'text-destructive'
+            WARNING_PROBLEMS.has(problem.code) ? 'text-muted-foreground' : 'text-destructive'
           }
         >
           {t(`promo.scene_problem_${problem.code}`, {

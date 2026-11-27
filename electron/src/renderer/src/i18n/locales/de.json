@@ -4703,7 +4703,14 @@
     "scene_default_badge": "-40 %",
     "scene_default_ticker": "Kostenloser Versand für jede Bestellung  •  Jede Woche neue Artikel",
     "scene_default_ticker_tag": "Heute",
-    "scene_default_cta_sub": "Link in der Bio"
+    "scene_default_cta_sub": "Link in der Bio",
+    "scene_builtin_stagger_title": "Fallende Buchstaben",
+    "scene_builtin_sticker": "Lottie-Sticker",
+    "scene_builtin_logo_spring": "Logo mit Federeffekt",
+    "scene_builtin_card_3d": "3D-Karte",
+    "scene_problem_unknown_library": "„{{detail}}“ ist keine mitgelieferte Bibliothek. Szenen können evoice:motion, evoice:anime, evoice:lottie und evoice:three importieren.",
+    "scene_problem_needs_webgl": "Diese Szene zeichnet in 3D (WebGL). Vor dem Rendern prüft die App, ob dieser Computer das kann.",
+    "anim_error_webgl_unavailable": "Dieser Computer kann beim Rendern kein 3D (WebGL) zeichnen, daher sind 3D-Szenen hier aus. Alle anderen Szenen funktionieren weiter."
   },
   "appMenu": {
     "menu": "Menü",

@@ -4703,7 +4703,14 @@
     "scene_default_badge": "40%オフ",
     "scene_default_ticker": "全品送料無料  •  毎週新商品入荷",
     "scene_default_ticker_tag": "本日",
-    "scene_default_cta_sub": "リンクはプロフィールに"
+    "scene_default_cta_sub": "リンクはプロフィールに",
+    "scene_builtin_stagger_title": "文字が落ちる",
+    "scene_builtin_sticker": "Lottie ステッカー",
+    "scene_builtin_logo_spring": "ばねで弾むロゴ",
+    "scene_builtin_card_3d": "3D カード",
+    "scene_problem_unknown_library": "「{{detail}}」は同梱ライブラリではありません。シーンでは evoice:motion、evoice:anime、evoice:lottie、evoice:three を import できます。",
+    "scene_problem_needs_webgl": "このシーンは 3D (WebGL) で描画します。レンダリング前に、このコンピューターで描画できるかを確認します。",
+    "anim_error_webgl_unavailable": "このコンピューターはレンダリング時に 3D (WebGL) を描画できないため、ここでは 3D シーンをオフにしています。ほかのシーンはすべて使えます。"
   },
   "appMenu": {
     "menu": "メニュー",

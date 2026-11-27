@@ -4703,7 +4703,14 @@
     "scene_default_badge": "-50%",
     "scene_default_ticker": "Gratis ongkir untuk semua pesanan  •  Produk baru tiap minggu",
     "scene_default_ticker_tag": "Hari ini",
-    "scene_default_cta_sub": "Tautan di bio"
+    "scene_default_cta_sub": "Tautan di bio",
+    "scene_builtin_stagger_title": "Huruf berjatuhan",
+    "scene_builtin_sticker": "Stiker Lottie",
+    "scene_builtin_logo_spring": "Logo memantul",
+    "scene_builtin_card_3d": "Kartu 3D",
+    "scene_problem_unknown_library": "“{{detail}}” bukan pustaka bawaan. Adegan dapat mengimpor evoice:motion, evoice:anime, evoice:lottie, dan evoice:three.",
+    "scene_problem_needs_webgl": "Adegan ini menggambar 3D (WebGL). Sebelum merender, aplikasi memeriksa apakah komputer ini bisa menggambarnya.",
+    "anim_error_webgl_unavailable": "Komputer ini tidak bisa menggambar 3D (WebGL) saat merender, jadi adegan 3D dimatikan di sini. Semua adegan lain tetap berfungsi."
   },
   "appMenu": {
     "menu": "Menu",

@@ -4703,7 +4703,14 @@
     "scene_default_badge": "%40 indirim",
     "scene_default_ticker": "Her siparişte ücretsiz kargo  •  Her hafta yeni ürünler",
     "scene_default_ticker_tag": "Bugün",
-    "scene_default_cta_sub": "Bağlantı profilde"
+    "scene_default_cta_sub": "Bağlantı profilde",
+    "scene_builtin_stagger_title": "Düşen harfler",
+    "scene_builtin_sticker": "Lottie çıkartması",
+    "scene_builtin_logo_spring": "Yaylı logo",
+    "scene_builtin_card_3d": "3B kart",
+    "scene_problem_unknown_library": "“{{detail}}” paketle gelen bir kütüphane değil. Sahneler evoice:motion, evoice:anime, evoice:lottie ve evoice:three içe aktarabilir.",
+    "scene_problem_needs_webgl": "Bu sahne 3B (WebGL) çizer. İşlemeden önce uygulama bu bilgisayarın çizebildiğini denetler.",
+    "anim_error_webgl_unavailable": "Bu bilgisayar işleme sırasında 3B (WebGL) çizemiyor, bu yüzden 3B sahneler burada kapalı. Diğer tüm sahneler çalışmaya devam eder."
   },
   "appMenu": {
     "menu": "Menü",

@@ -4703,7 +4703,14 @@
     "scene_default_badge": "-40%",
     "scene_default_ticker": "ส่งฟรีทุกออร์เดอร์  •  สินค้าใหม่ทุกสัปดาห์",
     "scene_default_ticker_tag": "วันนี้",
-    "scene_default_cta_sub": "ลิงก์อยู่ในไบโอ"
+    "scene_default_cta_sub": "ลิงก์อยู่ในไบโอ",
+    "scene_builtin_stagger_title": "ตัวอักษรร่วง",
+    "scene_builtin_sticker": "สติกเกอร์ Lottie",
+    "scene_builtin_logo_spring": "โลโก้เด้ง",
+    "scene_builtin_card_3d": "การ์ด 3 มิติ",
+    "scene_problem_unknown_library": "“{{detail}}” ไม่ใช่ไลบรารีที่มากับแอป ฉากสามารถ import evoice:motion, evoice:anime, evoice:lottie และ evoice:three ได้",
+    "scene_problem_needs_webgl": "ฉากนี้วาดแบบ 3 มิติ (WebGL) ก่อนเรนเดอร์ แอปจะตรวจว่าเครื่องนี้วาดได้หรือไม่",
+    "anim_error_webgl_unavailable": "เครื่องนี้วาด 3 มิติ (WebGL) ตอนเรนเดอร์ไม่ได้ จึงปิดฉาก 3 มิติไว้ ฉากอื่นทั้งหมดยังใช้งานได้"
   },
   "appMenu": {
     "menu": "เมนู",

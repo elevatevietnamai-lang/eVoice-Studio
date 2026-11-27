@@ -4703,7 +4703,14 @@
     "scene_default_badge": "-40%",
     "scene_default_ticker": "Gratis verzending op elke bestelling  •  Elke week nieuwe artikelen",
     "scene_default_ticker_tag": "Vandaag",
-    "scene_default_cta_sub": "Link in bio"
+    "scene_default_cta_sub": "Link in bio",
+    "scene_builtin_stagger_title": "Vallende letters",
+    "scene_builtin_sticker": "Lottie-sticker",
+    "scene_builtin_logo_spring": "Verend logo",
+    "scene_builtin_card_3d": "3D-kaart",
+    "scene_problem_unknown_library": "‘{{detail}}’ is geen meegeleverde bibliotheek. Scènes kunnen evoice:motion, evoice:anime, evoice:lottie en evoice:three importeren.",
+    "scene_problem_needs_webgl": "Deze scène tekent in 3D (WebGL). Voor het renderen controleert de app of deze computer dat kan.",
+    "anim_error_webgl_unavailable": "Deze computer kan bij het renderen geen 3D (WebGL) tekenen, dus 3D-scènes staan hier uit. Alle andere scènes werken nog."
   },
   "appMenu": {
     "menu": "Menu",

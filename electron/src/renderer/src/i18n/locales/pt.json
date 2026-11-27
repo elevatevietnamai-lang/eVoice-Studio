@@ -4705,7 +4705,14 @@
     "scene_default_badge": "-40%",
     "scene_default_ticker": "Frete grátis em todos os pedidos  •  Novidades toda semana",
     "scene_default_ticker_tag": "Hoje",
-    "scene_default_cta_sub": "Link na bio"
+    "scene_default_cta_sub": "Link na bio",
+    "scene_builtin_stagger_title": "Letras caindo",
+    "scene_builtin_sticker": "Adesivo Lottie",
+    "scene_builtin_logo_spring": "Logo com mola",
+    "scene_builtin_card_3d": "Cartão 3D",
+    "scene_problem_unknown_library": "“{{detail}}” não é uma biblioteca incluída. As cenas podem importar evoice:motion, evoice:anime, evoice:lottie e evoice:three.",
+    "scene_problem_needs_webgl": "Esta cena desenha em 3D (WebGL). Antes de renderizar, o app verifica se este computador consegue desenhá-la.",
+    "anim_error_webgl_unavailable": "Este computador não consegue desenhar 3D (WebGL) ao renderizar, então as cenas 3D ficam desativadas aqui. Todas as outras cenas continuam funcionando."
   },
   "appMenu": {
     "menu": "Menu",
