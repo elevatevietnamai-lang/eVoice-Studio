@@ -1,4 +1,5 @@
 import { useId, useRef, type KeyboardEvent } from 'react';
+import { HelpHint } from '@/components/help-hint';
 import { AudioWaveformIcon, CheckIcon, ChevronDownIcon, RotateCcwIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover';
@@ -82,9 +83,12 @@ export function QualityControls({
         className="w-[min(360px,calc(100vw-32px))] p-0"
       >
         <header className="flex items-center justify-between gap-3 px-4 pt-3.5 pb-2">
-          <h3 id={id} className="text-sm font-semibold">
-            {t('cloneQuality.title')}
-          </h3>
+          <span className="flex min-w-0 items-center gap-1">
+            <h3 id={id} className="text-sm font-semibold">
+              {t('cloneQuality.title')}
+            </h3>
+            <HelpHint label={t('cloneQuality.title')}>{t(`cloneQuality.hint${bits}`)}</HelpHint>
+          </span>
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-muted-foreground">{t('cloneQuality.nextTake')}</span>
             <Button
@@ -143,11 +147,7 @@ export function QualityControls({
               );
             })}
           </div>
-          <p className="mt-2 px-1 text-xs text-muted-foreground">{t(`cloneQuality.hint${bits}`)}</p>
-          <p
-            id={`${id}-size`}
-            className="mt-0.5 px-1 text-[11px] text-muted-foreground tabular-nums"
-          >
+          <p id={`${id}-size`} className="mt-2 px-1 text-[11px] text-muted-foreground tabular-nums">
             {estimatedSize
               ? t('cloneQuality.size', { size: estimatedSize })
               : t('cloneQuality.sizeUnknown')}
@@ -158,16 +158,18 @@ export function QualityControls({
           {stepRange && (
             <div className="space-y-2">
               <div className="flex justify-between gap-2 text-xs">
-                <span id={`${id}-steps`} className="font-medium">
-                  {t('cloneQuality.effort')}
+                <span className="flex min-w-0 items-center gap-1">
+                  <span id={`${id}-steps`} className="font-medium">
+                    {t('cloneQuality.effort')}
+                  </span>
+                  <HelpHint label={t('cloneQuality.effort')}>
+                    {t('cloneQuality.effortHint')}
+                  </HelpHint>
                 </span>
                 <output className="text-primary tabular-nums">{steps}</output>
               </div>
               <Slider
-                thumbProps={{
-                  'aria-labelledby': `${id}-steps`,
-                  'aria-describedby': `${id}-effort`,
-                }}
+                thumbProps={{ 'aria-labelledby': `${id}-steps` }}
                 min={stepRange[0]}
                 max={stepRange[1]}
                 step={1}
@@ -177,20 +179,19 @@ export function QualityControls({
                   setCloneSetting('steps', Array.isArray(value) ? value[0] : value)
                 }
               />
-              <p id={`${id}-effort`} className="text-[11px] text-muted-foreground">
-                {t('cloneQuality.effortHint')}
-              </p>
             </div>
           )}
-          <div className="flex items-start justify-between gap-3 text-xs">
-            <span>
-              <span className="font-medium">{t('cloneQuality.mastering')}</span>
-              <span className="mt-0.5 block text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between gap-3 text-xs">
+            <span className="flex min-w-0 items-center gap-1">
+              <label htmlFor={`${id}-mastering`} className="block font-medium">
+                {t('cloneQuality.mastering')}
+              </label>
+              <HelpHint label={t('cloneQuality.mastering')}>
                 {t('cloneQuality.masteringHint')}
-              </span>
+              </HelpHint>
             </span>
             <Switch
-              aria-label={t('cloneQuality.mastering')}
+              id={`${id}-mastering`}
               checked={mastering}
               disabled={disabled}
               onCheckedChange={(checked) =>

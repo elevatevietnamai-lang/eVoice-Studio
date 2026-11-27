@@ -99,7 +99,8 @@ it('saves the offload-to-RAM toggle and locks it when an env var pins it (#2618)
   const toggle = await screen.findByRole('switch', { name: 'settings.offload_after_generation' });
   await waitFor(() => expect(toggle).not.toHaveAttribute('aria-disabled', 'true'));
   expect(toggle).not.toBeChecked();
-  expect(screen.getByText('settings.offload_after_generation_note')).toBeInTheDocument();
+  // The explanation sits behind the "?" beside the title.
+  expect(screen.queryByText('settings.offload_after_generation_note')).toBeNull();
   fireEvent.click(toggle);
   await waitFor(() => expect(toggle).toBeChecked());
   expect(mock.api).toHaveBeenCalledWith(

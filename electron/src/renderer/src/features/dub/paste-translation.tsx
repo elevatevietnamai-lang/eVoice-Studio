@@ -1,4 +1,5 @@
 import { readTextFile } from '@shared/utils/readTextFile';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangleIcon, ClipboardPasteIcon, FileTextIcon, XIcon } from 'lucide-react';
@@ -86,11 +87,11 @@ export function PasteTranslation({ segments, disabled, onApply, onClose }: Paste
         <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
           <ClipboardPasteIcon className="size-4" />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 items-center gap-1 self-center">
           <h2 className="text-sm font-medium">{t('dub.paste_translation_title')}</h2>
-          <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+          <HelpHint label={t('dub.paste_translation_title')}>
             {t('dub.paste_translation_desc')}
-          </p>
+          </HelpHint>
         </div>
         <Button size="icon-xs" variant="ghost" aria-label={t('common.close')} onClick={onClose}>
           <XIcon />

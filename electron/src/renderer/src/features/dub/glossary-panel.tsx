@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import {
   BookOpenIcon,
@@ -154,16 +155,17 @@ export function GlossaryPanel({
         <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
           <BookOpenIcon className="size-4" />
         </div>
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 items-center gap-1 self-center">
           <h2 className="flex items-center gap-2 text-sm font-medium">
             {t('glossary.title')}
             <span className="font-normal tabular-nums text-muted-foreground">
               {t('glossary.count', { count: terms.length })}
             </span>
           </h2>
-          <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
-            {t('dub.glossary_title')}
-          </p>
+          <HelpHint label={t('glossary.title')}>
+            <p>{t('dub.glossary_title')}</p>
+            <p className="mt-1.5">{t('glossary.hint')}</p>
+          </HelpHint>
         </div>
         <Button
           size="sm"
@@ -319,7 +321,6 @@ export function GlossaryPanel({
             {t('glossary.add_term')}
           </Button>
         </form>
-        <p className="text-xs text-muted-foreground">{t('glossary.hint')}</p>
       </div>
     </section>
   );

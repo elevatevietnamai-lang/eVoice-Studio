@@ -123,7 +123,7 @@ export function ShortcutSettings() {
         <SettingsRow
           id="dictation-mode"
           title={t('voicePanel.mode_label')}
-          description={t('voicePanel.mode_sub')}
+          help={t('voicePanel.mode_sub')}
         >
           {(['toggle', 'hold'] as const).map((value) => (
             <Button

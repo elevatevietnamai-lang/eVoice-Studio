@@ -1,4 +1,5 @@
 import { Textarea } from '@/components/ui/textarea';
+import { DisclosureHelp, HelpHint } from '@/components/help-hint';
 import { StoryStems } from './story-stems';
 import { Reveal } from '@/components/motion';
 import { WaveformPlayer } from '@/components/waveform-player';
@@ -318,109 +319,110 @@ export function StoryEditor({
           <PipelineFailure fallback={previewError} onDismiss={() => setPreviewError(null)} />
         )}
       </Reveal>
-      <details
-        className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
-        open={inputOpen}
-        onToggle={(event) => setInputOpen(event.currentTarget.open)}
-      >
-        <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
-          <ChevronRightIcon className="size-4 text-muted-foreground transition-transform group-open:rotate-90" />
-          {t('stories.autocast')}
-        </summary>
-        <div className="mt-3 space-y-3">
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {t('stories.autocastHint')}
-          </p>
-          <Textarea
-            aria-label={t('stories.autocast')}
-            placeholder={t('stories.splitPlaceholder')}
-            className="min-h-32"
-            value={script}
-            disabled={disabled}
-            onChange={(e) => setScript(e.target.value)}
-          />
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={disabled || !script.trim()}
-              onClick={autoCast}
-            >
-              {t('stories.autocast')}
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={disabled || !script.trim()}
-              onClick={() => {
-                const parts = splitStoryText(script, splitMode, maximum);
-                onChange({
-                  lines: [
-                    ...draft.lines,
-                    ...parts.map((text) => ({
-                      id: crypto.randomUUID(),
-                      text,
-                      profileId: null,
-                    })),
-                  ],
-                  importText: '',
-                });
-                setNotice(t('stories.lines', { count: parts.length }));
-              }}
-            >
-              {t('stories.splitIntoTracks')}
-            </Button>
-            <label className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
-              {t('stories.splitMode')}
-              <Select
-                items={SPLIT_MODES.map((mode) => ({
-                  value: mode,
-                  label: t(`stories.split_${mode}`),
-                }))}
-                value={splitMode}
-                disabled={disabled}
-                onValueChange={(value) => setSplitMode(value as SplitMode)}
+      <DisclosureHelp label={t('stories.autocast')} help={t('stories.autocastHint')}>
+        <details
+          className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3"
+          open={inputOpen}
+          onToggle={(event) => setInputOpen(event.currentTarget.open)}
+        >
+          <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
+            <ChevronRightIcon className="size-4 text-muted-foreground transition-transform group-open:rotate-90" />
+            {t('stories.autocast')}
+          </summary>
+          <div className="mt-3 space-y-3">
+            <Textarea
+              aria-label={t('stories.autocast')}
+              placeholder={t('stories.splitPlaceholder')}
+              className="min-h-32"
+              value={script}
+              disabled={disabled}
+              onChange={(e) => setScript(e.target.value)}
+            />
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={disabled || !script.trim()}
+                onClick={autoCast}
               >
-                <SelectTrigger aria-label={t('stories.splitMode')} className="h-8 min-w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent align="end">
-                  {SPLIT_MODES.map((mode) => (
-                    <SelectItem key={mode} value={mode}>
-                      {t(`stories.split_${mode}`)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </label>
-            {splitMode === 'sentences' && (
-              <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                {t('stories.maxChars')}
-                <Input
-                  type="number"
-                  min="40"
-                  max="2000"
-                  step="10"
-                  className="h-8 w-20"
+                {t('stories.autocast')}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={disabled || !script.trim()}
+                onClick={() => {
+                  const parts = splitStoryText(script, splitMode, maximum);
+                  onChange({
+                    lines: [
+                      ...draft.lines,
+                      ...parts.map((text) => ({
+                        id: crypto.randomUUID(),
+                        text,
+                        profileId: null,
+                      })),
+                    ],
+                    importText: '',
+                  });
+                  setNotice(t('stories.lines', { count: parts.length }));
+                }}
+              >
+                {t('stories.splitIntoTracks')}
+              </Button>
+              <label className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
+                {t('stories.splitMode')}
+                <Select
+                  items={SPLIT_MODES.map((mode) => ({
+                    value: mode,
+                    label: t(`stories.split_${mode}`),
+                  }))}
+                  value={splitMode}
                   disabled={disabled}
-                  value={maximum}
-                  onChange={(e) =>
-                    setMaximum(Math.max(40, Math.min(2000, Number(e.target.value) || 40)))
-                  }
-                />
+                  onValueChange={(value) => setSplitMode(value as SplitMode)}
+                >
+                  <SelectTrigger aria-label={t('stories.splitMode')} className="h-8 min-w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    {SPLIT_MODES.map((mode) => (
+                      <SelectItem key={mode} value={mode}>
+                        {t(`stories.split_${mode}`)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </label>
-            )}
+              <HelpHint label={t('stories.splitMode')} className="size-8">
+                {t('stories.splitModeHint')}
+              </HelpHint>
+              {splitMode === 'sentences' && (
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  {t('stories.maxChars')}
+                  <Input
+                    type="number"
+                    min="40"
+                    max="2000"
+                    step="10"
+                    className="h-8 w-20"
+                    disabled={disabled}
+                    value={maximum}
+                    onChange={(e) =>
+                      setMaximum(Math.max(40, Math.min(2000, Number(e.target.value) || 40)))
+                    }
+                  />
+                </label>
+              )}
+            </div>
+            <Reveal>
+              {notice && (
+                <p role="status" className="text-xs text-muted-foreground">
+                  {notice}
+                </p>
+              )}
+            </Reveal>
           </div>
-          <p className="text-xs text-muted-foreground">{t('stories.splitModeHint')}</p>
-          <Reveal>
-            {notice && (
-              <p role="status" className="text-xs text-muted-foreground">
-                {notice}
-              </p>
-            )}
-          </Reveal>
-        </div>
-      </details>
+        </details>
+      </DisclosureHelp>
 
       {draft.lines.length === 0 && (
         <div className="flex min-h-72 flex-col items-center justify-center rounded-(--card-radius) border border-dashed border-border/60 px-6 text-center">
@@ -432,14 +434,15 @@ export function StoryEditor({
             {t('stories.emptyText')}
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
-            <Button
-              disabled={disabled}
-              title={t('audiobook.load_sample_hint')}
-              onClick={loadSample}
-            >
-              <SparklesIcon />
-              {t('audiobook.load_sample')}
-            </Button>
+            <span className="flex items-center gap-1">
+              <Button disabled={disabled} onClick={loadSample}>
+                <SparklesIcon />
+                {t('audiobook.load_sample')}
+              </Button>
+              <HelpHint label={t('audiobook.load_sample')} className="size-8">
+                {t('audiobook.load_sample_hint')}
+              </HelpHint>
+            </span>
             <Button variant="outline" disabled={disabled} onClick={() => add()}>
               <PlusIcon />
               {t('stories.addFirst')}
@@ -580,36 +583,37 @@ export function StoryEditor({
               ))}
             </div>
           </details>
-          <details>
-            <summary className="cursor-pointer text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <UsersIcon className="size-3.5" />
-                {t('stories.inlineVoice')}
-              </span>
-            </summary>
-            <p className="mt-2 text-xs text-muted-foreground">{t('stories.inlineVoiceHint')}</p>
-            <div className="mt-2 flex flex-wrap gap-1">
-              {profiles.map((profile) => (
+          <DisclosureHelp label={t('stories.inlineVoice')} help={t('stories.inlineVoiceHint')}>
+            <details>
+              <summary className="cursor-pointer text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <UsersIcon className="size-3.5" />
+                  {t('stories.inlineVoice')}
+                </span>
+              </summary>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {profiles.map((profile) => (
+                  <Button
+                    key={profile.id}
+                    size="xs"
+                    variant="outline"
+                    disabled={disabled}
+                    onClick={() => setInlineVoice(line, profile.id)}
+                  >
+                    {profile.name}
+                  </Button>
+                ))}
                 <Button
-                  key={profile.id}
                   size="xs"
-                  variant="outline"
+                  variant="ghost"
                   disabled={disabled}
-                  onClick={() => setInlineVoice(line, profile.id)}
+                  onClick={() => setInlineVoice(line, 'default')}
                 >
-                  {profile.name}
+                  {t('stories.resetInlineVoice')}
                 </Button>
-              ))}
-              <Button
-                size="xs"
-                variant="ghost"
-                disabled={disabled}
-                onClick={() => setInlineVoice(line, 'default')}
-              >
-                {t('stories.resetInlineVoice')}
-              </Button>
-            </div>
-          </details>
+              </div>
+            </details>
+          </DisclosureHelp>
           <details>
             <summary className="cursor-pointer text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">

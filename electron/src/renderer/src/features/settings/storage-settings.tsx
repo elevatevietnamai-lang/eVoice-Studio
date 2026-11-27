@@ -83,9 +83,12 @@ export function StorageSettings() {
     <>
       <DataDirectorySettings />
       <ModelsDirectorySettings />
-      <SettingsSection icon={HardDriveIcon} title={t('settings.storage_usage')}>
-        <div className="flex items-center justify-between gap-3 p-4">
-          <p className="text-sm text-muted-foreground">{t('settings.storage_desc')}</p>
+      <SettingsSection
+        icon={HardDriveIcon}
+        title={t('settings.storage_usage')}
+        help={t('settings.storage_desc')}
+      >
+        <div className="flex items-center justify-end gap-3 p-4">
           <Button
             size="sm"
             variant="ghost"

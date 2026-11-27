@@ -1,4 +1,5 @@
-import { CircleHelpIcon, SmileIcon, XIcon } from 'lucide-react';
+import { SmileIcon, XIcon } from 'lucide-react';
+import { HelpHint } from '@/components/help-hint';
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/popover';
@@ -6,7 +7,6 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useEngines } from '@/hooks/use-engines';
 import { patchCloneSettings, setCloneSetting, useCloneSettings } from '@/lib/store/clone-settings';
 import { cn } from '@/lib/utils';
@@ -83,20 +83,7 @@ export function EmotionControls({ disabled = false }: { disabled?: boolean }) {
             <h3 id={titleId} className="text-sm font-semibold">
               {t('clone.emotion')}
             </h3>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <button
-                    type="button"
-                    aria-label={t('clone.emotion_help')}
-                    className="inline-flex size-5 items-center justify-center rounded-full text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
-                  />
-                }
-              >
-                <CircleHelpIcon className="size-3.5" aria-hidden="true" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-64">{t('clone.emotion_help')}</TooltipContent>
-            </Tooltip>
+            <HelpHint label={t('clone.emotion')}>{t('clone.emotion_help')}</HelpHint>
           </div>
           {active && (
             <Button

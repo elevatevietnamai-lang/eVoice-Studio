@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { HelpHint } from '@/components/help-hint';
 import { useTranslation } from 'react-i18next';
 import { Pause as PauseShape, Play as PlayShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
@@ -474,9 +475,9 @@ export function PromoTimeline({
         >
           <ZoomInIcon />
         </Button>
-        <span className="ml-auto text-[11px] text-muted-foreground">
+        <HelpHint label={t('promo.timeline_title')} className="ml-auto size-7">
           {t('promo.timeline_hint')}
-        </span>
+        </HelpHint>
       </div>
       <div
         ref={viewport}

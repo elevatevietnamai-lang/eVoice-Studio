@@ -56,7 +56,7 @@ export function ModelsDirectorySettings() {
       <SettingsRow
         id="models-directory"
         title={t('settings.storage_cat_hf_cache')}
-        description={t('settings.storage_desc')}
+        help={t('settings.storage_desc')}
       >
         <code
           title={path}

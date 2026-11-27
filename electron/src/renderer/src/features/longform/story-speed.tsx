@@ -1,4 +1,5 @@
 import { GaugeIcon } from 'lucide-react';
+import { HelpHint } from '@/components/help-hint';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import type { Draft } from './longform-session';
@@ -27,15 +28,17 @@ export function StorySpeed({
   return (
     <div className="space-y-2">
       <h2 className="flex items-center justify-between gap-2 text-xs font-medium text-muted-foreground">
-        <span className="flex items-center gap-2">
-          <GaugeIcon className="size-4" aria-hidden="true" />
-          {t('stories.global_speed')}
+        <span className="flex items-center gap-1">
+          <span className="flex items-center gap-2">
+            <GaugeIcon className="size-4" aria-hidden="true" />
+            {t('stories.global_speed')}
+          </span>
+          <HelpHint label={t('stories.global_speed')}>{t('stories.global_speed_hint')}</HelpHint>
         </span>
         <span className="tabular-nums text-foreground/90">{draft.globalSpeed.toFixed(2)}×</span>
       </h2>
       <input
         aria-label={t('stories.global_speed')}
-        title={t('stories.global_speed_hint')}
         type="range"
         min="0.5"
         max="2"
@@ -45,7 +48,6 @@ export function StorySpeed({
         value={draft.globalSpeed}
         onChange={(e) => onChange({ globalSpeed: Number(e.target.value) })}
       />
-      <p className="text-xs text-muted-foreground">{t('stories.global_speed_hint')}</p>
       {overrides > 0 && (
         <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>{t('stories.global_speed_overrides', { count: overrides })}</span>

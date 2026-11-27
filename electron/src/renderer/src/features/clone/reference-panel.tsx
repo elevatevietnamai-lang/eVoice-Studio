@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { AgentFixButton } from '@/components/agent-fix-button';
 import type { useReferenceTranscript } from '@/hooks/use-reference-transcript';
@@ -109,9 +110,9 @@ export function SaveProfileForm({
         void form.handleSubmit();
       }}
     >
-      <div>
+      <div className="flex min-w-0 items-center gap-1">
         <h3 className="text-base font-semibold">{t('clone.save_as_profile')}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{t('profileIdentity.save_hint')}</p>
+        <HelpHint label={t('clone.save_as_profile')}>{t('profileIdentity.save_hint')}</HelpHint>
       </div>
       <div className="flex flex-col gap-4">
         <form.Field name="name" validators={{ onChange: required, onSubmit: required }}>

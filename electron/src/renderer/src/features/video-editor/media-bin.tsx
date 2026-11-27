@@ -1,5 +1,6 @@
 /** The project's files: upload, then add to the timeline at the playhead. */
 import { useRef } from 'react';
+import { HelpHint } from '@/components/help-hint';
 import { useTranslation } from 'react-i18next';
 import {
   CaptionsIcon,
@@ -78,12 +79,16 @@ export function MediaBin({
           <SparklesIcon />
           {t('editor.title_add')}
         </Button>
-        <Button size="sm" variant="outline" className="col-span-2" disabled={captioning} onClick={onCaptions}>
-          {captioning ? <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" /> : <CaptionsIcon />}
-          {t(captioning ? 'editor.captions_working' : 'editor.captions')}
-        </Button>
+        <div className="col-span-2 flex items-center gap-1">
+          <Button size="sm" variant="outline" className="flex-1" disabled={captioning} onClick={onCaptions}>
+            {captioning ? <LoaderCircleIcon className="animate-spin motion-reduce:animate-none" /> : <CaptionsIcon />}
+            {t(captioning ? 'editor.captions_working' : 'editor.captions')}
+          </Button>
+          <HelpHint label={t('editor.captions')} className="size-7">
+            {t('editor.captions_hint')}
+          </HelpHint>
+        </div>
       </div>
-      <p className="text-xs text-muted-foreground">{t('editor.captions_hint')}</p>
       <StickerPicker onAdd={onAddSticker} />
       {project.media.length === 0 ? (
         <p className="text-xs text-muted-foreground">{t('editor.media_empty')}</p>

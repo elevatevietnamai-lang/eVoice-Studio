@@ -1,4 +1,5 @@
 import { readTextFile } from '@shared/utils/readTextFile';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { ProfileAvatar } from '@/components/profile-avatar';
 import {
@@ -407,16 +408,20 @@ export function LongformPage({ mode }: { mode: Mode }) {
                   {t('audiobook.import')}
                 </Button>
                 {mode === 'audiobook' && !draft.script.trim() && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    title={t('audiobook.load_sample_hint')}
-                    disabled={locked}
-                    onClick={() => set({ script: SAMPLE_AUDIOBOOK_SCRIPT })}
-                  >
-                    <SparklesIcon />
-                    {t('audiobook.load_sample')}
-                  </Button>
+                  <span className="flex items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={locked}
+                      onClick={() => set({ script: SAMPLE_AUDIOBOOK_SCRIPT })}
+                    >
+                      <SparklesIcon />
+                      {t('audiobook.load_sample')}
+                    </Button>
+                    <HelpHint label={t('audiobook.load_sample')} className="size-7">
+                      {t('audiobook.load_sample_hint')}
+                    </HelpHint>
+                  </span>
                 )}
                 <Button
                   variant="outline"

@@ -15,7 +15,14 @@ it('shows effective legacy joins for untouched and reset drafts', () => {
   );
   expect(screen.getByLabelText(i18n.t('audiobook.line_gap'))).toHaveValue('0');
   expect(screen.getByLabelText(i18n.t('audiobook.paragraph_gap'))).toHaveValue('0');
-  const trim = screen.getByText(i18n.t('audiobook.trim_edges')).querySelector('[role="switch"]');
+  const trim = screen.getByRole('switch', { name: i18n.t('audiobook.trim_edges') });
   expect(trim).toHaveAttribute('aria-checked', 'false');
+  // The joins explanation waits behind the "?" beside the line gap.
+  expect(screen.queryByText(i18n.t('audiobook.joins_help'))).toBeNull();
+  expect(
+    screen.getByRole('button', {
+      name: i18n.t('common.help_for', { name: i18n.t('audiobook.line_gap') }),
+    }),
+  ).toBeInTheDocument();
   expect(overridesToRequest(DEFAULT_OVERRIDES, 'Auto')).toEqual({});
 });

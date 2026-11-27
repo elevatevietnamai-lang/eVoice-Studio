@@ -4,6 +4,7 @@
  * diamond adds or removes a keyframe at the playhead.
  */
 import { Reveal } from '@/components/motion';
+import { HelpHint } from '@/components/help-hint';
 import { useTranslation } from 'react-i18next';
 import { DiamondIcon } from 'lucide-react';
 import type { TimelineElement } from '@/lib/opencut/vendor/timeline/types';
@@ -78,10 +79,22 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  help,
+  children,
+}: {
+  title: string;
+  /** The section's explanation, behind a "?" beside its title (DESIGN.md). */
+  help?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <section className="space-y-3 border-b border-border/60 pb-4 last:border-0">
-      <h2 className="text-xs font-medium">{title}</h2>
+      <div className="flex min-w-0 items-center gap-1">
+        <h2 className="text-xs font-medium">{title}</h2>
+        {help && <HelpHint label={title}>{help}</HelpHint>}
+      </div>
       {children}
     </section>
   );
@@ -179,8 +192,7 @@ function TransitionSettings({ project, selection, apply }: { project: EditorProj
   const set = (nextType: string, nextSeconds: number, merge?: string) =>
     apply((current) => setTransition(current, selection, nextType, nextSeconds), merge);
   return (
-    <Section title={t('editor.transition')}>
-      <p className="text-xs text-muted-foreground">{t('editor.transition_hint')}</p>
+    <Section title={t('editor.transition')} help={t('editor.transition_hint')}>
       <div className="flex flex-wrap gap-1">
         {TRANSITIONS.map((item) => (
           <Button
@@ -398,8 +410,7 @@ export function PropertiesPanel({
       )}
 
       {titleFormOf(element) && onEditTitle && (
-        <Section title={t('editor.title_dialog')}>
-          <p className="text-xs text-muted-foreground">{t('editor.title_edit_hint')}</p>
+        <Section title={t('editor.title_dialog')} help={t('editor.title_edit_hint')}>
           <Button size="sm" variant="outline" onClick={() => onEditTitle(selection)}>
             <SparklesIcon />
             {t('editor.title_edit')}
@@ -512,7 +523,7 @@ export function PropertiesPanel({
       )}
 
       {(element.type === 'video' || element.type === 'image') && (
-        <Section title={t('editor.chroma')}>
+        <Section title={t('editor.chroma')} help={t('editor.chroma_hint')}>
           <div className="flex items-center justify-between gap-2 text-xs">
             <span className="text-muted-foreground">{t('editor.chroma_enable')}</span>
             <Switch
@@ -523,7 +534,6 @@ export function PropertiesPanel({
           </div>
           {element.params['chroma.enabled'] === true && (
             <>
-              <p className="text-xs text-muted-foreground">{t('editor.chroma_hint')}</p>
               <div className="flex items-end gap-2">
                 <Row label={t('editor.chroma_color')}>
                   <Input
@@ -581,16 +591,16 @@ export function PropertiesPanel({
             </div>
           )}
           {element.type === 'audio' && (
-            <div className="space-y-1 text-xs">
-              <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-2 text-xs">
+              <span className="flex min-w-0 items-center gap-1">
                 <span className="text-muted-foreground">{t('editor.duck')}</span>
-                <Switch
-                  aria-label={t('editor.duck')}
-                  checked={element.params.duck === true}
-                  onCheckedChange={(on) => param('duck', on, false)}
-                />
-              </div>
-              <p className="text-muted-foreground">{t('editor.duck_hint')}</p>
+                <HelpHint label={t('editor.duck')}>{t('editor.duck_hint')}</HelpHint>
+              </span>
+              <Switch
+                aria-label={t('editor.duck')}
+                checked={element.params.duck === true}
+                onCheckedChange={(on) => param('duck', on, false)}
+              />
             </div>
           )}
           <KeyframedNumber

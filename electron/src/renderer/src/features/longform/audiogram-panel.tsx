@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { DisclosureHelp } from '@/components/help-hint';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, LoaderCircleIcon, VideoIcon } from 'lucide-react';
 import { Reveal } from '@/components/motion';
@@ -78,71 +79,77 @@ export function AudiogramPanel({
   };
 
   return (
-    <details className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
-      <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
-        <VideoIcon className="size-4 text-muted-foreground" />
-        {t('audiobook.audiogram')}
-        <ChevronDownIcon className="ml-auto size-4 text-muted-foreground transition-transform group-open:rotate-180" />
-      </summary>
-      <fieldset disabled={busy} className="mt-3 space-y-3">
-        <p className="text-xs text-muted-foreground">
-          {t('audiobook.audiogram_hint', { max: MAX_CLIP_SECONDS })}
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-            <span className="text-muted-foreground">{t('audiobook.audiogram_start')}</span>
-            <Input
-              value={start}
-              inputMode="numeric"
-              aria-invalid={startSeconds === null}
-              onChange={(event) => setStart(event.target.value)}
-            />
-          </label>
-          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-            <span className="text-muted-foreground">{t('audiobook.audiogram_length')}</span>
-            <Input
-              type="number"
-              min={1}
-              max={MAX_CLIP_SECONDS}
-              value={length}
-              onChange={(event) => setLength(event.target.value)}
-            />
-          </label>
-        </div>
-        <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">{t('audiobook.audiogram_shape')}</p>
-          <div className="flex flex-wrap gap-1">
-            {SHAPES.map((value) => (
-              <Button
-                key={value}
-                size="xs"
-                aria-pressed={shape === value}
-                variant={shape === value ? 'secondary' : 'ghost'}
-                onClick={() => setShape(value)}
-              >
-                {t(`audiobook.audiogram_shape_${value}`)}
-              </Button>
-            ))}
+    <DisclosureHelp
+      label={t('audiobook.audiogram')}
+      help={t('audiobook.audiogram_hint', { max: MAX_CLIP_SECONDS })}
+    >
+      <details className="group rounded-(--card-radius) border border-border/60 bg-muted/20 p-3">
+        <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-medium">
+          <VideoIcon className="size-4 text-muted-foreground" />
+          {t('audiobook.audiogram')}
+          <ChevronDownIcon className="ml-auto size-4 text-muted-foreground transition-transform group-open:rotate-180" />
+        </summary>
+        <fieldset disabled={busy} className="mt-3 space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+              <span className="text-muted-foreground">{t('audiobook.audiogram_start')}</span>
+              <Input
+                value={start}
+                inputMode="numeric"
+                aria-invalid={startSeconds === null}
+                onChange={(event) => setStart(event.target.value)}
+              />
+            </label>
+            <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+              <span className="text-muted-foreground">{t('audiobook.audiogram_length')}</span>
+              <Input
+                type="number"
+                min={1}
+                max={MAX_CLIP_SECONDS}
+                value={length}
+                onChange={(event) => setLength(event.target.value)}
+              />
+            </label>
           </div>
-        </div>
-        <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
-          <span className="text-muted-foreground">{t('audiobook.audiogram_title')}</span>
-          <Input
-            value={caption}
-            maxLength={120}
-            onChange={(event) => setCaption(event.target.value)}
-          />
-        </label>
-        <Button className="w-full" disabled={!valid || busy} onClick={() => void create()}>
-          {busy ? <LoaderCircleIcon className="animate-spin" /> : <VideoIcon />}
-          {t(busy ? 'audiobook.audiogram_rendering' : 'audiobook.audiogram_create')}
-        </Button>
-      </fieldset>
-      <Reveal>
-        {error && (
-          <PipelineFailure fallback={error} onDismiss={() => setError(null)} className="text-xs" />
-        )}
-      </Reveal>
-    </details>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground">{t('audiobook.audiogram_shape')}</p>
+            <div className="flex flex-wrap gap-1">
+              {SHAPES.map((value) => (
+                <Button
+                  key={value}
+                  size="xs"
+                  aria-pressed={shape === value}
+                  variant={shape === value ? 'secondary' : 'ghost'}
+                  onClick={() => setShape(value)}
+                >
+                  {t(`audiobook.audiogram_shape_${value}`)}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <label className="flex min-w-0 flex-col gap-1.5 text-label font-medium">
+            <span className="text-muted-foreground">{t('audiobook.audiogram_title')}</span>
+            <Input
+              value={caption}
+              maxLength={120}
+              onChange={(event) => setCaption(event.target.value)}
+            />
+          </label>
+          <Button className="w-full" disabled={!valid || busy} onClick={() => void create()}>
+            {busy ? <LoaderCircleIcon className="animate-spin" /> : <VideoIcon />}
+            {t(busy ? 'audiobook.audiogram_rendering' : 'audiobook.audiogram_create')}
+          </Button>
+        </fieldset>
+        <Reveal>
+          {error && (
+            <PipelineFailure
+              fallback={error}
+              onDismiss={() => setError(null)}
+              className="text-xs"
+            />
+          )}
+        </Reveal>
+      </details>
+    </DisclosureHelp>
   );
 }

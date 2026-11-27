@@ -31,7 +31,7 @@ export function SystemPreflight() {
       <SettingsRow
         id="system-preflight-check"
         title={t('setup.system_check')}
-        description={t('setup.system_check_desc')}
+        help={t('setup.system_check_desc')}
       >
         <Button
           type="button"
