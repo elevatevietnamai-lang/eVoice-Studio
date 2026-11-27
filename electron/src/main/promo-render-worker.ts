@@ -14,6 +14,7 @@ import {
   installNetworkGuard,
   type BlockedAttempt,
 } from './promo-network-guard';
+import { probeWebgl } from './promo-webgl';
 
 export type WorkerRequest = {
   type: 'render';
@@ -22,6 +23,8 @@ export type WorkerRequest = {
   fps: number;
   /** Transparent WebM for an overlay (default), opaque MP4 for a full-frame shot. */
   format?: 'webm' | 'mp4';
+  /** The page draws with WebGL (a three.js scene): check that Chrome can first. */
+  requiresWebgl?: boolean;
 };
 
 export type WorkerReply =
@@ -37,6 +40,10 @@ const chrome = installChromeOfflineFlags(process.env.PRODUCER_HEADLESS_SHELL_PAT
 const port = process.parentPort;
 
 async function render(request: WorkerRequest): Promise<void> {
+  if (request.requiresWebgl) {
+    const verdict = await probeWebgl(process.env.PRODUCER_HEADLESS_SHELL_PATH ?? '');
+    if (!verdict.ok) throw new Error(`webgl_unavailable: ${verdict.detail}`);
+  }
   // Imported after the guard so nothing in the producer runs unguarded.
   const { createRenderJob, executeRenderJob } = await import('@hyperframes/producer');
   const job = createRenderJob({

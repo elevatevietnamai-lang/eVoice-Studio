@@ -10,6 +10,7 @@ import {
   type PromoScene,
   type SceneFrame,
 } from './promo-scenes';
+import { usedLibraries, WEBGL_LIBRARIES } from './promo-scene-runtime';
 import {
   writeTemplateProject,
   type PromoTemplateInput,
@@ -133,7 +134,11 @@ function runChild(
     child.on('message', (reply) => {
       if (reply.type === 'progress') onProgress(reply.progress);
       else if (reply.type === 'failed') {
-        finish(new PromoRenderError('render_failed', reply.message, reply.blocked));
+        // 3D scenes need WebGL; a machine without it gets that feature off.
+        const code = reply.message.startsWith('webgl_unavailable')
+          ? 'webgl_unavailable'
+          : 'render_failed';
+        finish(new PromoRenderError(code, reply.message, reply.blocked));
       } else if (reply.blocked.length) {
         // A blocked font or stylesheet still renders, with the wrong look.
         finish(new PromoRenderError('network_blocked', undefined, reply.blocked));
@@ -202,7 +207,7 @@ export function renderTimeoutMs(duration: number, fps: number): number {
 async function renderProject(
   write: (projectDir: string) => Promise<void> | void,
   deps: PromoRenderDeps,
-  options: RenderOptions & { format: 'webm' | 'mp4'; duration: number },
+  options: RenderOptions & { format: 'webm' | 'mp4'; duration: number; requiresWebgl?: boolean },
 ): Promise<PromoMediaResult> {
   const tools = await mediaTools(deps);
   mkdirSync(deps.tempRoot, { recursive: true });
@@ -217,7 +222,14 @@ async function renderProject(
     );
     await runChild(
       child,
-      { type: 'render', projectDir, outputPath, fps: options.fps, format: options.format },
+      {
+        type: 'render',
+        projectDir,
+        outputPath,
+        fps: options.fps,
+        format: options.format,
+        requiresWebgl: options.requiresWebgl,
+      },
       options.signal,
       options.onProgress ?? (() => {}),
       renderTimeoutMs(options.duration, options.fps),
@@ -287,6 +299,11 @@ export async function renderPromoScene(
       );
     },
     deps,
-    { ...options, format: frame.mode === 'shot' ? 'mp4' : 'webm', duration: scene.duration },
+    {
+      ...options,
+      format: frame.mode === 'shot' ? 'mp4' : 'webm',
+      duration: scene.duration,
+      requiresWebgl: usedLibraries(scene.js).some((library) => WEBGL_LIBRARIES.includes(library)),
+    },
   );
 }

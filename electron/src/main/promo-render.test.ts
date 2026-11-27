@@ -282,6 +282,41 @@ describe('renderPromoScene', () => {
     expect(readdirSync(join(root, 'tmp'))).toEqual([]);
   });
 
+  it('asks the worker to check WebGL only for a 3D scene, and names a missing GPU', async () => {
+    const flags: (boolean | undefined)[] = [];
+    const { value } = deps((request, reply) => {
+      flags.push(request.requiresWebgl);
+      writeFileSync(request.outputPath, 'mp4');
+      reply({ type: 'done', blocked: [] });
+    });
+    await renderPromoScene(scene, { width: 640, height: 360, mode: 'shot' }, value, { fps: 30 });
+    const three = parseScene({
+      ...scene,
+      js: 'import * as THREE from "evoice:three";\nscene.onFrame(() => {});',
+    });
+    await renderPromoScene(three, { width: 640, height: 360, mode: 'shot' }, value, { fps: 30 });
+    expect(flags).toEqual([false, true]);
+    const page = (() => {
+      let html = '';
+      return {
+        deps: deps((request, reply) => {
+          html = readFileSync(join(request.projectDir, 'index.html'), 'utf8');
+          reply({ type: 'failed', message: 'webgl_unavailable: no_context', blocked: [] });
+        }),
+        html: () => html,
+      };
+    })();
+    await expect(
+      renderPromoScene(three, { width: 640, height: 360, mode: 'shot' }, page.deps.value, {
+        fps: 30,
+      }),
+    ).rejects.toMatchObject({ code: 'webgl_unavailable' });
+    // The 3D page carries three.js itself, as a module, from the page.
+    expect(page.html()).toContain('<script type="importmap">');
+    expect(page.html()).toContain('"evoice:three":"data:text/javascript;base64,');
+    expect(page.html()).toContain('<script type="module">import * as THREE');
+  });
+
   it('renders an overlay as a transparent WebM', async () => {
     let format: string | undefined;
     const { value } = deps((request, reply) => {
