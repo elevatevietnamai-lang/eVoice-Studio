@@ -200,12 +200,20 @@ async function seekFrames(name: string, html: string): Promise<string[]> {
     const shots: string[] = [];
     for (const index of FRAMES) {
       await page.evaluate(async (time) => {
+        // Runs in the page; this project's types have no DOM.
+        const page = globalThis as unknown as {
+          dispatchEvent(event: unknown): void;
+          requestAnimationFrame(fn: () => void): void;
+          CustomEvent: new (type: string, init: unknown) => unknown;
+        };
         const pending: Promise<unknown>[] = [];
-        dispatchEvent(
-          new CustomEvent('hf-seek', { detail: { time, waitUntil: (p: Promise<unknown>) => pending.push(p) } }),
+        page.dispatchEvent(
+          new page.CustomEvent('hf-seek', { detail: { time, waitUntil: (p: Promise<unknown>) => pending.push(p) } }),
         );
         await Promise.all(pending);
-        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        await new Promise<void>((resolve) =>
+          page.requestAnimationFrame(() => page.requestAnimationFrame(resolve)),
+        );
       }, index / FPS);
       const path = join(dir, `seek-${index}.png`);
       await page.screenshot({ path, clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT } });

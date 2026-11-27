@@ -41,6 +41,7 @@ import {
   type SceneProblem,
   type SceneSummary,
 } from './promo-scenes';
+import { parseStillInput, renderStill, StillInputError } from './promo-still';
 import { parseTemplateInput, previewHtml, TemplateInputError } from './promo-templates';
 import { sendToLiveWindow } from './window-safety';
 
@@ -60,6 +61,7 @@ export const PROMO_CHANNELS = {
   sceneExport: 'promo:sceneExport',
   scenePreview: 'promo:scenePreview',
   sceneRender: 'promo:sceneRender',
+  stillRender: 'promo:stillRender',
 } as const;
 
 export type SceneFailure = { ok: false; code: string; detail?: string };
@@ -72,6 +74,9 @@ export type SceneExportResult = { ok: true } | { ok: false; code: 'cancelled' } 
 export type ScenePreviewResult =
   | { ok: true; url: string; problems: SceneProblem[] }
   | (SceneFailure & { problems?: SceneProblem[] });
+export type StillRenderResult =
+  | { ok: true; media: PromoMediaResult }
+  | { ok: false; code: string; detail?: string };
 export type SceneRenderResult =
   | { ok: true; media: PromoMediaResult }
   | (SceneFailure & { problems?: SceneProblem[] });
@@ -265,6 +270,28 @@ export function registerPromoIpc(
     },
   );
 
+  // A still needs no Chrome: Satori and resvg draw it in this process.
+  ipcMain.handle(
+    PROMO_CHANNELS.stillRender,
+    async (event, raw: unknown): Promise<StillRenderResult> => {
+      trusted(event);
+      if (supervisor.connection.remote) return { ok: false, code: 'local_backend_required' };
+      try {
+        const input = parseStillInput(raw);
+        const media = await renderStill(input, {
+          ...backendDeps(),
+          assetsDir: join(backendRoot(), 'backend', 'assets'),
+        });
+        return { ok: true, media };
+      } catch (error) {
+        if (error instanceof StillInputError) {
+          return { ok: false, code: 'invalid_input', detail: error.field };
+        }
+        if (error instanceof PromoRenderError) return { ok: false, code: error.code };
+        return { ok: false, code: 'still_failed', detail: String(error) };
+      }
+    },
+  );
   ipcMain.handle(PROMO_CHANNELS.renderCancel, (event) => {
     trusted(event);
     rendering?.abort();
