@@ -108,7 +108,13 @@ describe('sceneDocument', () => {
     expect(page.indexOf('default-src *')).toBeGreaterThan(policy);
     expect(page.slice(0, policy)).not.toMatch(/http-equiv="refresh"|<script/);
     // The policy itself allows no connection, frame or remote load.
-    expect(SCENE_CSP).toContain("connect-src 'none'");
+    // Connections reach data: URIs in the page only (dotLottie's renderer).
+    expect(SCENE_CSP).toContain('connect-src data:;');
+    for (const directive of SCENE_CSP.split('; ')) {
+      for (const source of directive.split(' ').slice(1)) {
+        expect(["'none'", "'unsafe-inline'", "'unsafe-eval'", 'data:', 'blob:']).toContain(source);
+      }
+    }
     expect(SCENE_CSP).toContain("default-src 'none'");
     expect(SCENE_CSP).toContain("frame-src 'none'");
     expect(SCENE_CSP).toContain("base-uri 'none'");

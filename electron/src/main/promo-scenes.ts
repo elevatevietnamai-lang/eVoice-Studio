@@ -17,6 +17,13 @@ import {
   type FontId,
   type TemplateLogo,
 } from './promo-templates';
+import {
+  libraryHead,
+  needsModule,
+  unknownModules,
+  usedLibraries,
+  WEBGL_LIBRARIES,
+} from './promo-scene-runtime';
 import { readZip, safeEntryName, writeZip, ZipError } from './promo-zip';
 
 /**
@@ -37,12 +44,15 @@ import { readZip, safeEntryName, writeZip, ZipError } from './promo-zip';
 
 export const SCENE_CSP = [
   "default-src 'none'",
-  "script-src 'unsafe-inline' 'unsafe-eval'",
+  // data: carries the bundled motion libraries (promo-scene-runtime.ts).
+  "script-src 'unsafe-inline' 'unsafe-eval' data:",
   "style-src 'unsafe-inline'",
   'img-src data: blob:',
   'font-src data:',
   'media-src data: blob:',
-  "connect-src 'none'",
+  // data: only: dotLottie reads its renderer and a scene's Lottie files
+  // from data URIs in the page. No URL with a host is ever allowed.
+  "connect-src data:",
   "frame-src 'none'",
   "child-src 'none'",
   "worker-src 'none'",
@@ -128,6 +138,8 @@ export const ASSET_MIME: Record<string, string> = {
   webp: 'image/webp',
   gif: 'image/gif',
   svg: 'image/svg+xml',
+  json: 'application/json',
+  lottie: 'application/zip',
   woff2: 'font/woff2',
   woff: 'font/woff',
   ttf: 'font/ttf',
@@ -272,7 +284,9 @@ export type SceneProblem =
   | { code: 'remote_url'; detail: string }
   | { code: 'css_import' }
   | { code: 'unknown_font'; detail: string }
-  | { code: 'timer_animation' };
+  | { code: 'timer_animation' }
+  | { code: 'unknown_library'; detail: string }
+  | { code: 'needs_webgl'; detail: string };
 
 /** Namespace URIs of inline SVG/MathML: identifiers, never fetched. */
 const NAMESPACE_ATTR = /\sxmlns(?::[a-z]+)?\s*=\s*(["'])http:\/\/www\.w3\.org\/[^"']*\1/gi;
@@ -368,12 +382,21 @@ export function lintScene(scene: PromoScene): SceneProblem[] {
   if (/\b(?:requestAnimationFrame|setInterval|setTimeout)\s*\(/.test(scene.js)) {
     problems.push({ code: 'timer_animation' });
   }
+  for (const name of unknownModules(scene.js)) {
+    problems.push({ code: 'unknown_library', detail: name.slice(0, 40) });
+  }
+  for (const library of usedLibraries(scene.js)) {
+    if (WEBGL_LIBRARIES.includes(library)) problems.push({ code: 'needs_webgl', detail: library });
+  }
   return problems;
 }
 
+/** Problems that are only warnings; the rest stop a preview or render. */
+const WARNINGS = new Set<SceneProblem['code']>(['timer_animation', 'needs_webgl']);
+
 /** Problems that stop a preview or render (the rest are warnings). */
 export const blocking = (problems: SceneProblem[]) =>
-  problems.filter((problem) => problem.code !== 'timer_animation');
+  problems.filter((problem) => !WARNINGS.has(problem.code));
 
 // ── The page ────────────────────────────────────────────────────────────────
 
@@ -444,6 +467,15 @@ function inlineAssets(source: string, scene: PromoScene): string {
  */
 const PREVIEW_DRIVER = `(function(){var s=performance.now();function f(){try{dispatchEvent(new CustomEvent('hf-seek',{detail:{time:(performance.now()-s)/1000,waitUntil:function(){}}}))}catch(e){}requestAnimationFrame(f)}requestAnimationFrame(f);setInterval(function(){parent.postMessage({promoScene:'alive'},'*')},400);parent.postMessage({promoScene:'alive'},'*')})();`;
 
+/**
+ * `scene.onFrame(fn)` and `scene.ready(promise)`. Every frame callback runs on
+ * each `hf-seek`; a callback may return a promise the render waits for. Until
+ * every `ready` promise settles (a Lottie file loading, say), a seek waits for
+ * them and then draws the frame asked for, so frame 0 is never drawn early.
+ * A callback added after the first seek is called once with that time.
+ */
+const SCENE_CLOCK = `var fns=[],wait=[],last=null;function run(t){var out=[];for(var i=0;i<fns.length;i++){try{var r=fns[i](t);if(r&&typeof r.then==='function')out.push(r)}catch(e){console.error(e)}}return out}addEventListener('hf-seek',function(e){var t=e.detail.time;last=t;if(wait.length){var w=wait;e.detail.waitUntil(Promise.all(w).then(function(){wait=wait.filter(function(p){return w.indexOf(p)<0});return Promise.all(run(last))}));return}var out=run(t);if(out.length)e.detail.waitUntil(Promise.all(out))});function onFrame(f){fns.push(f);if(last!==null)try{f(last)}catch(e){console.error(e)}}function ready(p){wait.push(Promise.resolve(p).catch(function(e){console.error(e)}));return p}`;
+
 /** The complete page for a scene, ready for the preview frame or a render. */
 export function sceneDocument(scene: PromoScene, context: SceneContext): string {
   const { width, height } = context;
@@ -478,7 +510,9 @@ export function sceneDocument(scene: PromoScene, context: SceneContext): string 
       );
     })
     .join('\n');
-  const api = `window.scene=Object.freeze({width:${width},height:${height},duration:${duration},params:Object.freeze(${scriptJson(params)}),onFrame:function(f){addEventListener('hf-seek',function(e){f(e.detail.time)})}});`;
+  const api = `window.scene=(function(){${SCENE_CLOCK}return Object.freeze({width:${width},height:${height},duration:${duration},params:Object.freeze(${scriptJson(params)}),onFrame:onFrame,ready:ready})})();`;
+  const libraries = usedLibraries(scene.js);
+  const scriptType = needsModule(scene.js) ? ' type="module"' : '';
   return `<!doctype html>
 <html><head><meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="${SCENE_CSP}">
@@ -487,14 +521,15 @@ html,body{margin:0;padding:0;background:${context.backdrop && COLOR.test(context
 #stage{position:relative;width:${width}px;height:${height}px;overflow:hidden}
 #scene{position:absolute;inset:0}</style>
 <style>${css}</style>
+${libraryHead(libraries)}
 </head><body>
-<div id="stage" data-composition-id="promo-scene" data-start="0" data-duration="${duration}" data-width="${width}" data-height="${height}">
+<div id="stage" data-composition-id="promo-scene" data-no-timeline data-start="0" data-duration="${duration}" data-width="${width}" data-height="${height}">
 <div id="scene" class="clip" data-start="0" data-duration="${duration}" data-track-index="0">
 ${html}
 </div>
 </div>
 <script>${api}${context.mode === 'preview' ? PREVIEW_DRIVER : ''}</script>
-<script>${js}</script>
+<script${scriptType}>${js}</script>
 </body></html>
 `;
 }
