@@ -434,6 +434,13 @@ hard rules from the first prompt.
     again or Sign in with Google: `agy models` and `agy acp --login` reach the
     Google account signed in to that CLI, and the sign-in page opens in the
     user's browser (`electron/src/main/gemini-account.ts`).
+  - **Image sources, only after the user selects one** in Settings → Image
+    sources (off by default; Off starts nothing) and confirms each generation
+    after seeing the exact prompt, the reference images and the destination:
+    the user's own Codex CLI (OpenAI, through the account signed in to it) or
+    Antigravity CLI (Google, through its account), a ComfyUI on loopback, or an
+    OpenAI-style images API at the URL and key the user entered
+    (`backend/services/image_sources/`, `docs/electron-channel-kit.md`).
   - **Chrome Headless Shell for animated promo titles**, only after the user
     turns them on in the desktop app's Promo video page and confirms the size
     shown: one pinned build from Google's Chrome for Testing storage

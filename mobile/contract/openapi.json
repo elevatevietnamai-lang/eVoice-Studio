@@ -182,6 +182,72 @@
     "title": "AttestationBody",
     "type": "object"
    },
+   "Audio": {
+    "additionalProperties": false,
+    "properties": {
+     "brand_voice_id": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Brand Voice Id",
+      "type": "string"
+     },
+     "emotion": {
+      "default": "",
+      "maxLength": 60,
+      "title": "Emotion",
+      "type": "string"
+     },
+     "jingle": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Jingle"
+     },
+     "logo_sound": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Logo Sound"
+     },
+     "music": {
+      "items": {
+       "$ref": "#/components/schemas/NamedAsset"
+      },
+      "maxItems": 30,
+      "title": "Music",
+      "type": "array"
+     },
+     "sfx": {
+      "items": {
+       "$ref": "#/components/schemas/NamedAsset"
+      },
+      "maxItems": 60,
+      "title": "Sfx",
+      "type": "array"
+     },
+     "speech_rate": {
+      "default": 1.0,
+      "maximum": 2.0,
+      "minimum": 0.5,
+      "title": "Speech Rate",
+      "type": "number"
+     }
+    },
+    "title": "Audio",
+    "type": "object"
+   },
    "AudiobookPlanRequest": {
     "properties": {
      "default_voice": {
@@ -741,6 +807,26 @@
      "target_lang"
     ],
     "title": "AutoExtractRequest",
+    "type": "object"
+   },
+   "Beat": {
+    "additionalProperties": false,
+    "properties": {
+     "name": {
+      "default": "",
+      "maxLength": 60,
+      "title": "Name",
+      "type": "string"
+     },
+     "seconds": {
+      "default": 0.0,
+      "maximum": 3600.0,
+      "minimum": 0.0,
+      "title": "Seconds",
+      "type": "number"
+     }
+    },
+    "title": "Beat",
     "type": "object"
    },
    "Body_audiobook_cover_audiobook_cover_post": {
@@ -1474,6 +1560,60 @@
     "title": "Body_inspect_persona_personas_inspect_post",
     "type": "object"
    },
+   "Body_kits_asset_add_kits__kit_id__assets_post": {
+    "properties": {
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "title": "Body_kits_asset_add_kits__kit_id__assets_post",
+    "type": "object"
+   },
+   "Body_kits_guideline_kits_guideline_post": {
+    "properties": {
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     },
+     "language": {
+      "default": "en",
+      "maxLength": 16,
+      "title": "Language",
+      "type": "string"
+     },
+     "provider_id": {
+      "default": "",
+      "maxLength": 64,
+      "title": "Provider Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "title": "Body_kits_guideline_kits_guideline_post",
+    "type": "object"
+   },
+   "Body_kits_import_kits_import_post": {
+    "properties": {
+     "file": {
+      "contentMediaType": "application/octet-stream",
+      "title": "File",
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ],
+    "title": "Body_kits_import_kits_import_post",
+    "type": "object"
+   },
    "Body_lock_profile_profiles__profile_id__lock_post": {
     "properties": {
      "history_id": {
@@ -1803,6 +1943,224 @@
     "title": "Body_upload_voice_clip_gallery_upload_post",
     "type": "object"
    },
+   "Captions": {
+    "additionalProperties": false,
+    "properties": {
+     "bilingual": {
+      "default": false,
+      "title": "Bilingual",
+      "type": "boolean"
+     },
+     "color": {
+      "default": "",
+      "pattern": "^(#[0-9a-fA-F]{6})?$",
+      "title": "Color",
+      "type": "string"
+     },
+     "font": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Font",
+      "type": "string"
+     },
+     "highlight_color": {
+      "default": "",
+      "pattern": "^(#[0-9a-fA-F]{6})?$",
+      "title": "Highlight Color",
+      "type": "string"
+     },
+     "karaoke": {
+      "default": false,
+      "title": "Karaoke",
+      "type": "boolean"
+     },
+     "position": {
+      "default": "",
+      "enum": [
+       "bottom",
+       "middle",
+       "top",
+       ""
+      ],
+      "title": "Position",
+      "type": "string"
+     }
+    },
+    "title": "Captions",
+    "type": "object"
+   },
+   "ChannelFormat": {
+    "additionalProperties": false,
+    "properties": {
+     "aspect": {
+      "default": "9:16",
+      "enum": [
+       "9:16",
+       "1:1",
+       "16:9",
+       "4:5",
+       "4:3"
+      ],
+      "title": "Aspect",
+      "type": "string"
+     },
+     "duration_max": {
+      "default": 0.0,
+      "maximum": 7200.0,
+      "minimum": 0.0,
+      "title": "Duration Max",
+      "type": "number"
+     },
+     "duration_min": {
+      "default": 0.0,
+      "maximum": 7200.0,
+      "minimum": 0.0,
+      "title": "Duration Min",
+      "type": "number"
+     },
+     "id": {
+      "pattern": "^[A-Za-z0-9_-]{1,40}$",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Name",
+      "type": "string"
+     },
+     "platform": {
+      "default": "other",
+      "enum": [
+       "tiktok",
+       "reels",
+       "shorts",
+       "youtube",
+       "facebook",
+       "other"
+      ],
+      "title": "Platform",
+      "type": "string"
+     },
+     "safe_zone": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/SafeZone"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "series": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Series",
+      "type": "string"
+     },
+     "structure": {
+      "items": {
+       "$ref": "#/components/schemas/Beat"
+      },
+      "maxItems": 20,
+      "title": "Structure",
+      "type": "array"
+     }
+    },
+    "required": [
+     "id"
+    ],
+    "title": "ChannelFormat",
+    "type": "object"
+   },
+   "Character": {
+    "additionalProperties": false,
+    "properties": {
+     "animation": {
+      "$ref": "#/components/schemas/CharacterAnimation"
+     },
+     "appearance": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Appearance",
+      "type": "string"
+     },
+     "catchphrases": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Catchphrases",
+      "type": "array"
+     },
+     "id": {
+      "pattern": "^[A-Za-z0-9_-]{1,40}$",
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "maxLength": 80,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+     },
+     "personality": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Personality",
+      "type": "string"
+     },
+     "references": {
+      "items": {
+       "$ref": "#/components/schemas/PoseRef"
+      },
+      "maxItems": 24,
+      "title": "References",
+      "type": "array"
+     },
+     "voice_id": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Voice Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "Character",
+    "type": "object"
+   },
+   "CharacterAnimation": {
+    "additionalProperties": false,
+    "properties": {
+     "asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Asset"
+     },
+     "kind": {
+      "default": "",
+      "enum": [
+       "lottie",
+       "rive",
+       ""
+      ],
+      "title": "Kind",
+      "type": "string"
+     }
+    },
+    "title": "CharacterAnimation",
+    "type": "object"
+   },
    "ChoicesBody": {
     "properties": {
      "choices": {
@@ -1845,6 +2203,114 @@
      "segments"
     ],
     "title": "CleanupSegmentsRequest",
+    "type": "object"
+   },
+   "Clip": {
+    "properties": {
+     "asset": {
+      "default": "",
+      "maxLength": 40,
+      "title": "Asset",
+      "type": "string"
+     },
+     "bbox": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "number"
+        },
+        "maxItems": 4,
+        "minItems": 4,
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Bbox"
+     },
+     "color": {
+      "default": "",
+      "maxLength": 16,
+      "title": "Color",
+      "type": "string"
+     },
+     "colors": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Colors",
+      "type": "array"
+     },
+     "duration": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Duration",
+      "type": "number"
+     },
+     "font": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Font",
+      "type": "string"
+     },
+     "id": {
+      "maxLength": 80,
+      "title": "Id",
+      "type": "string"
+     },
+     "kind": {
+      "default": "other",
+      "enum": [
+       "text",
+       "caption",
+       "logo",
+       "video",
+       "image",
+       "scene",
+       "audio",
+       "sticker",
+       "other"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "logo_variant": {
+      "default": "",
+      "maxLength": 40,
+      "title": "Logo Variant",
+      "type": "string"
+     },
+     "start": {
+      "default": 0.0,
+      "minimum": 0.0,
+      "title": "Start",
+      "type": "number"
+     },
+     "text": {
+      "default": "",
+      "maxLength": 5000,
+      "title": "Text",
+      "type": "string"
+     },
+     "transition": {
+      "default": "",
+      "maxLength": 60,
+      "title": "Transition",
+      "type": "string"
+     },
+     "voice_id": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Voice Id",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id"
+    ],
+    "title": "Clip",
     "type": "object"
    },
    "CommitRequest": {
@@ -2336,6 +2802,43 @@
     "title": "EndpointCapability",
     "type": "object"
    },
+   "Episode": {
+    "additionalProperties": false,
+    "properties": {
+     "cta": {
+      "default": "",
+      "maxLength": 200,
+      "title": "Cta",
+      "type": "string"
+     },
+     "date": {
+      "default": "",
+      "maxLength": 32,
+      "title": "Date",
+      "type": "string"
+     },
+     "hook": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Hook",
+      "type": "string"
+     },
+     "title": {
+      "default": "",
+      "maxLength": 200,
+      "title": "Title",
+      "type": "string"
+     },
+     "topic": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Topic",
+      "type": "string"
+     }
+    },
+    "title": "Episode",
+    "type": "object"
+   },
    "ExportRecordRequest": {
     "properties": {
      "destination_path": {
@@ -2455,6 +2958,53 @@
      }
     },
     "title": "FitOptions",
+    "type": "object"
+   },
+   "Font": {
+    "additionalProperties": false,
+    "properties": {
+     "asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Asset"
+     },
+     "family": {
+      "maxLength": 80,
+      "minLength": 1,
+      "title": "Family",
+      "type": "string"
+     },
+     "role": {
+      "default": "other",
+      "enum": [
+       "heading",
+       "body",
+       "caption",
+       "other"
+      ],
+      "title": "Role",
+      "type": "string"
+     },
+     "weights": {
+      "items": {
+       "type": "integer"
+      },
+      "maxItems": 9,
+      "title": "Weights",
+      "type": "array"
+     }
+    },
+    "required": [
+     "family"
+    ],
+    "title": "Font",
     "type": "object"
    },
    "GenerateBody": {
@@ -2838,6 +3388,85 @@
     "title": "GenerateBody",
     "type": "object"
    },
+   "GenerateRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "character_id": {
+      "anyOf": [
+       {
+        "maxLength": 40,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Character Id"
+     },
+     "kit_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Kit Id"
+     },
+     "prompt": {
+      "maxLength": 6000,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+     },
+     "reference_media_ids": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 6,
+      "title": "Reference Media Ids",
+      "type": "array"
+     },
+     "size": {
+      "default": "square",
+      "enum": [
+       "square",
+       "portrait",
+       "landscape"
+      ],
+      "title": "Size",
+      "type": "string"
+     },
+     "source_id": {
+      "enum": [
+       "codex",
+       "agy",
+       "comfyui",
+       "openai"
+      ],
+      "title": "Source Id",
+      "type": "string"
+     },
+     "transparent": {
+      "default": false,
+      "title": "Transparent",
+      "type": "boolean"
+     },
+     "use_character_references": {
+      "default": true,
+      "title": "Use Character References",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "source_id",
+     "prompt"
+    ],
+    "title": "GenerateRequest",
+    "type": "object"
+   },
    "GlossaryTerm": {
     "properties": {
      "note": {
@@ -2975,6 +3604,55 @@
     "title": "HTTPValidationError",
     "type": "object"
    },
+   "Identity": {
+    "additionalProperties": false,
+    "properties": {
+     "allow_neutrals": {
+      "default": true,
+      "title": "Allow Neutrals",
+      "type": "boolean"
+     },
+     "corner_radius": {
+      "default": 0.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Corner Radius",
+      "type": "number"
+     },
+     "fonts": {
+      "items": {
+       "$ref": "#/components/schemas/Font"
+      },
+      "maxItems": 12,
+      "title": "Fonts",
+      "type": "array"
+     },
+     "image_style": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Image Style",
+      "type": "string"
+     },
+     "logos": {
+      "items": {
+       "$ref": "#/components/schemas/Logo"
+      },
+      "maxItems": 20,
+      "title": "Logos",
+      "type": "array"
+     },
+     "palette": {
+      "items": {
+       "$ref": "#/components/schemas/Swatch"
+      },
+      "maxItems": 24,
+      "title": "Palette",
+      "type": "array"
+     }
+    },
+    "title": "Identity",
+    "type": "object"
+   },
    "IncrementalReq": {
     "properties": {
      "lang": {
@@ -3052,6 +3730,131 @@
     "title": "InstallModelRequest",
     "type": "object"
    },
+   "KitBody": {
+    "additionalProperties": false,
+    "description": "What a client may write. Ids, timestamps and assets are the server's.",
+    "properties": {
+     "audience": {
+      "items": {
+       "$ref": "#/components/schemas/Persona"
+      },
+      "maxItems": 12,
+      "title": "Audience",
+      "type": "array"
+     },
+     "audio": {
+      "$ref": "#/components/schemas/Audio"
+     },
+     "captions": {
+      "$ref": "#/components/schemas/Captions"
+     },
+     "characters": {
+      "items": {
+       "$ref": "#/components/schemas/Character"
+      },
+      "maxItems": 20,
+      "title": "Characters",
+      "type": "array"
+     },
+     "description": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Description",
+      "type": "string"
+     },
+     "formats": {
+      "items": {
+       "$ref": "#/components/schemas/ChannelFormat"
+      },
+      "maxItems": 20,
+      "title": "Formats",
+      "type": "array"
+     },
+     "identity": {
+      "$ref": "#/components/schemas/Identity"
+     },
+     "legal": {
+      "$ref": "#/components/schemas/Legal"
+     },
+     "memory": {
+      "items": {
+       "$ref": "#/components/schemas/Episode"
+      },
+      "maxItems": 500,
+      "title": "Memory",
+      "type": "array"
+     },
+     "motion": {
+      "$ref": "#/components/schemas/Motion"
+     },
+     "name": {
+      "maxLength": 80,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+     },
+     "products": {
+      "items": {
+       "$ref": "#/components/schemas/Product"
+      },
+      "maxItems": 50,
+      "title": "Products",
+      "type": "array"
+     },
+     "references": {
+      "items": {
+       "$ref": "#/components/schemas/ReferenceVideo"
+      },
+      "maxItems": 12,
+      "title": "References",
+      "type": "array"
+     },
+     "voice_tone": {
+      "$ref": "#/components/schemas/VoiceTone"
+     }
+    },
+    "required": [
+     "name"
+    ],
+    "title": "KitBody",
+    "type": "object"
+   },
+   "Legal": {
+    "additionalProperties": false,
+    "properties": {
+     "ai_label": {
+      "default": false,
+      "title": "Ai Label",
+      "type": "boolean"
+     },
+     "ai_label_text": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Ai Label Text",
+      "type": "string"
+     },
+     "disclaimer": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Disclaimer",
+      "type": "string"
+     },
+     "watermark_asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Watermark Asset"
+     }
+    },
+    "title": "Legal",
+    "type": "object"
+   },
    "LocalValue": {
     "properties": {
      "key": {
@@ -3077,6 +3880,66 @@
      "key"
     ],
     "title": "LocalValue",
+    "type": "object"
+   },
+   "Logo": {
+    "additionalProperties": false,
+    "properties": {
+     "asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Asset"
+     },
+     "clear_space": {
+      "default": 0.25,
+      "maximum": 2.0,
+      "minimum": 0.0,
+      "title": "Clear Space",
+      "type": "number"
+     },
+     "id": {
+      "pattern": "^[A-Za-z0-9_-]{1,40}$",
+      "title": "Id",
+      "type": "string"
+     },
+     "min_width": {
+      "default": 0.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Min Width",
+      "type": "number"
+     },
+     "note": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Note",
+      "type": "string"
+     },
+     "variant": {
+      "default": "primary",
+      "enum": [
+       "primary",
+       "light",
+       "dark",
+       "icon",
+       "mono",
+       "wordmark"
+      ],
+      "title": "Variant",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id"
+    ],
+    "title": "Logo",
     "type": "object"
    },
    "LongformChapter": {
@@ -3547,6 +4410,119 @@
     "title": "ModelStatusResponse",
     "type": "object"
    },
+   "Motion": {
+    "additionalProperties": false,
+    "properties": {
+     "easing": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Easing",
+      "type": "array"
+     },
+     "intro_asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Intro Asset"
+     },
+     "lower_third_asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lower Third Asset"
+     },
+     "note": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Note",
+      "type": "string"
+     },
+     "outro_asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Outro Asset"
+     },
+     "speed": {
+      "default": "",
+      "enum": [
+       "slow",
+       "medium",
+       "fast",
+       ""
+      ],
+      "title": "Speed",
+      "type": "string"
+     },
+     "text_in": {
+      "default": "",
+      "maxLength": 60,
+      "title": "Text In",
+      "type": "string"
+     },
+     "text_out": {
+      "default": "",
+      "maxLength": 60,
+      "title": "Text Out",
+      "type": "string"
+     },
+     "transitions_allowed": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 30,
+      "title": "Transitions Allowed",
+      "type": "array"
+     }
+    },
+    "title": "Motion",
+    "type": "object"
+   },
+   "NamedAsset": {
+    "additionalProperties": false,
+    "properties": {
+     "asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Asset"
+     },
+     "name": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Name",
+      "type": "string"
+     }
+    },
+    "title": "NamedAsset",
+    "type": "object"
+   },
    "ParseSubtitleTextRequest": {
     "description": "Raw pasted subtitle text (SRT/VTT-ish) to be parsed into timed cues.\n\nUsed by the \"paste translation from an external source\" flow: the user\npastes what ChatGPT/DeepL/a human gave them and the client needs the\nSAME lenient cue parsing the .srt import path uses \u2014 parsing it here\nkeeps `services.srt_parser` the single source of truth instead of\ngrowing a second, subtly-different implementation in JavaScript.",
     "properties": {
@@ -3559,6 +4535,66 @@
      "text"
     ],
     "title": "ParseSubtitleTextRequest",
+    "type": "object"
+   },
+   "Persona": {
+    "additionalProperties": false,
+    "properties": {
+     "benefits": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Benefits",
+      "type": "array"
+     },
+     "description": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Description",
+      "type": "string"
+     },
+     "name": {
+      "default": "",
+      "maxLength": 80,
+      "title": "Name",
+      "type": "string"
+     },
+     "pains": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Pains",
+      "type": "array"
+     }
+    },
+    "title": "Persona",
+    "type": "object"
+   },
+   "PoseRef": {
+    "additionalProperties": false,
+    "properties": {
+     "asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Asset"
+     },
+     "pose": {
+      "default": "",
+      "maxLength": 60,
+      "title": "Pose",
+      "type": "string"
+     }
+    },
+    "title": "PoseRef",
     "type": "object"
    },
    "PreflightCheck": {
@@ -3677,6 +4713,74 @@
     "title": "PrepareRequest",
     "type": "object"
    },
+   "PreviewRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "character_id": {
+      "anyOf": [
+       {
+        "maxLength": 40,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Character Id"
+     },
+     "kit_id": {
+      "anyOf": [
+       {
+        "maxLength": 12,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Kit Id"
+     },
+     "prompt": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+     },
+     "reference_media_ids": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 6,
+      "title": "Reference Media Ids",
+      "type": "array"
+     },
+     "size": {
+      "default": "square",
+      "enum": [
+       "square",
+       "portrait",
+       "landscape"
+      ],
+      "title": "Size",
+      "type": "string"
+     },
+     "transparent": {
+      "default": false,
+      "title": "Transparent",
+      "type": "boolean"
+     },
+     "use_character_references": {
+      "default": true,
+      "title": "Use Character References",
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "prompt"
+    ],
+    "title": "PreviewRequest",
+    "type": "object"
+   },
    "ProbeReq": {
     "properties": {
      "path": {
@@ -3688,6 +4792,58 @@
      "path"
     ],
     "title": "ProbeReq",
+    "type": "object"
+   },
+   "Product": {
+    "additionalProperties": false,
+    "properties": {
+     "id": {
+      "pattern": "^[A-Za-z0-9_-]{1,40}$",
+      "title": "Id",
+      "type": "string"
+     },
+     "images": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Images",
+      "type": "array"
+     },
+     "name": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+     },
+     "price": {
+      "default": "",
+      "maxLength": 40,
+      "title": "Price",
+      "type": "string"
+     },
+     "proofs": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Proofs",
+      "type": "array"
+     },
+     "usps": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Usps",
+      "type": "array"
+     }
+    },
+    "required": [
+     "id",
+     "name"
+    ],
+    "title": "Product",
     "type": "object"
    },
    "ProfileUpdate": {
@@ -3749,6 +4905,68 @@
      }
     },
     "title": "ProfileUpdate",
+    "type": "object"
+   },
+   "ProjectDescriptor": {
+    "properties": {
+     "ai_content": {
+      "default": false,
+      "title": "Ai Content",
+      "type": "boolean"
+     },
+     "aspect": {
+      "default": "9:16",
+      "maxLength": 8,
+      "title": "Aspect",
+      "type": "string"
+     },
+     "clips": {
+      "items": {
+       "$ref": "#/components/schemas/Clip"
+      },
+      "maxItems": 2000,
+      "title": "Clips",
+      "type": "array"
+     },
+     "duration": {
+      "anyOf": [
+       {
+        "minimum": 0.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Duration"
+     },
+     "format_id": {
+      "anyOf": [
+       {
+        "maxLength": 40,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Format Id"
+     },
+     "platform": {
+      "default": "other",
+      "enum": [
+       "tiktok",
+       "reels",
+       "shorts",
+       "youtube",
+       "facebook",
+       "other"
+      ],
+      "title": "Platform",
+      "type": "string"
+     }
+    },
+    "title": "ProjectDescriptor",
     "type": "object"
    },
    "ProjectRenameRequest": {
@@ -4282,6 +5500,37 @@
     "title": "RateFitReq",
     "type": "object"
    },
+   "ReferenceVideo": {
+    "additionalProperties": false,
+    "properties": {
+     "asset": {
+      "anyOf": [
+       {
+        "pattern": "^[0-9a-f]{16}$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Asset"
+     },
+     "name": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Name",
+      "type": "string"
+     },
+     "notes": {
+      "default": "",
+      "maxLength": 600,
+      "title": "Notes",
+      "type": "string"
+     }
+    },
+    "title": "ReferenceVideo",
+    "type": "object"
+   },
    "RevealRequest": {
     "properties": {
      "path": {
@@ -4310,6 +5559,42 @@
      "repo_id"
     ],
     "title": "RevokeRequest",
+    "type": "object"
+   },
+   "SafeZone": {
+    "additionalProperties": false,
+    "description": "Fractions of the frame covered by the platform's own UI.",
+    "properties": {
+     "bottom": {
+      "default": 0.0,
+      "maximum": 0.5,
+      "minimum": 0.0,
+      "title": "Bottom",
+      "type": "number"
+     },
+     "left": {
+      "default": 0.0,
+      "maximum": 0.5,
+      "minimum": 0.0,
+      "title": "Left",
+      "type": "number"
+     },
+     "right": {
+      "default": 0.0,
+      "maximum": 0.5,
+      "minimum": 0.0,
+      "title": "Right",
+      "type": "number"
+     },
+     "top": {
+      "default": 0.0,
+      "maximum": 0.5,
+      "minimum": 0.0,
+      "title": "Top",
+      "type": "number"
+     }
+    },
+    "title": "SafeZone",
     "type": "object"
    },
    "SceneWriterRequest": {
@@ -4612,6 +5897,88 @@
      "disk_free_gb"
     ],
     "title": "SetupStatusResponse",
+    "type": "object"
+   },
+   "SourcesUpdate": {
+    "additionalProperties": false,
+    "properties": {
+     "active": {
+      "enum": [
+       "off",
+       "codex",
+       "agy",
+       "comfyui",
+       "openai"
+      ],
+      "title": "Active",
+      "type": "string"
+     },
+     "comfyui_url": {
+      "anyOf": [
+       {
+        "maxLength": 200,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Comfyui Url"
+     },
+     "comfyui_workflow": {
+      "anyOf": [
+       {
+        "maxLength": 524288,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Comfyui Workflow"
+     },
+     "openai_base_url": {
+      "anyOf": [
+       {
+        "maxLength": 300,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Openai Base Url"
+     },
+     "openai_key": {
+      "anyOf": [
+       {
+        "maxLength": 400,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Openai Key"
+     },
+     "openai_model": {
+      "anyOf": [
+       {
+        "maxLength": 80,
+        "pattern": "^[A-Za-z0-9._:/-]*$",
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Openai Model"
+     }
+    },
+    "required": [
+     "active"
+    ],
+    "title": "SourcesUpdate",
     "type": "object"
    },
    "SpeechAuthCapabilities": {
@@ -5127,6 +6494,47 @@
      "cues"
     ],
     "title": "SubtitleCuesRequest",
+    "type": "object"
+   },
+   "Swatch": {
+    "additionalProperties": false,
+    "properties": {
+     "hex": {
+      "pattern": "^#[0-9a-fA-F]{6}$",
+      "title": "Hex",
+      "type": "string"
+     },
+     "name": {
+      "default": "",
+      "maxLength": 60,
+      "title": "Name",
+      "type": "string"
+     },
+     "role": {
+      "default": "other",
+      "enum": [
+       "primary",
+       "secondary",
+       "accent",
+       "background",
+       "text",
+       "other"
+      ],
+      "title": "Role",
+      "type": "string"
+     },
+     "usage": {
+      "default": 0.0,
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Usage",
+      "type": "number"
+     }
+    },
+    "required": [
+     "hex"
+    ],
+    "title": "Swatch",
     "type": "object"
    },
    "SysinfoResponse": {
@@ -5697,6 +7105,63 @@
      "type"
     ],
     "title": "ValidationError",
+    "type": "object"
+   },
+   "VoiceTone": {
+    "additionalProperties": false,
+    "properties": {
+     "address": {
+      "default": "",
+      "maxLength": 120,
+      "title": "Address",
+      "type": "string"
+     },
+     "banned_words": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 80,
+      "title": "Banned Words",
+      "type": "array"
+     },
+     "ctas": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Ctas",
+      "type": "array"
+     },
+     "hashtags": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 40,
+      "title": "Hashtags",
+      "type": "array"
+     },
+     "preferred_words": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 80,
+      "title": "Preferred Words",
+      "type": "array"
+     },
+     "sign_off": {
+      "default": "",
+      "maxLength": 200,
+      "title": "Sign Off",
+      "type": "string"
+     },
+     "tone": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Tone",
+      "type": "string"
+     }
+    },
+    "title": "VoiceTone",
     "type": "object"
    },
    "WebSocketTicketRequest": {
@@ -16015,6 +17480,272 @@
     "summary": "Set History Starred"
    }
   },
+  "/images/generate": {
+   "post": {
+    "description": "Start a background job; returns ``{job_id}``. Poll ``/images/jobs/{id}``.",
+    "operationId": "images_generate_images_generate_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/GenerateRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Images Generate Images Generate Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Images Generate",
+    "tags": [
+     "images"
+    ]
+   }
+  },
+  "/images/jobs/{job_id}": {
+   "get": {
+    "description": "``{id, source, status, progress, stage, error, media}``; ``status`` is\nqueued, running, done, failed or cancelled. ``media`` is set when done.",
+    "operationId": "images_job_images_jobs__job_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Images Job Images Jobs  Job Id  Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Images Job",
+    "tags": [
+     "images"
+    ]
+   }
+  },
+  "/images/jobs/{job_id}/cancel": {
+   "post": {
+    "operationId": "images_job_cancel_images_jobs__job_id__cancel_post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "job_id",
+      "required": true,
+      "schema": {
+       "title": "Job Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Images Job Cancel Images Jobs  Job Id  Cancel Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Images Job Cancel",
+    "tags": [
+     "images"
+    ]
+   }
+  },
+  "/images/library": {
+   "get": {
+    "description": "Generated images still in the media library, newest first, with provenance.",
+    "operationId": "images_library_images_library_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Images Library Images Library Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Images Library",
+    "tags": [
+     "images"
+    ]
+   }
+  },
+  "/images/preview": {
+   "post": {
+    "description": "What a generation would send, and where. Nothing is sent by this call.\n\nShow ``prompt``, ``references`` and ``destination`` to the user, then call\n``/images/generate`` with this ``prompt`` and ``source_id`` unchanged.",
+    "operationId": "images_preview_images_preview_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PreviewRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Images Preview Images Preview Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Images Preview",
+    "tags": [
+     "images"
+    ]
+   }
+  },
+  "/images/sources": {
+   "get": {
+    "description": "The selected source (``off`` by default), each source's state and settings.\n\nReads local files only (which CLIs are installed); nothing is contacted.\nThe OpenAI-style key is never returned, only ``openai_key_set``.",
+    "operationId": "images_sources_images_sources_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Images Sources Images Sources Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Images Sources",
+    "tags": [
+     "images"
+    ]
+   },
+   "put": {
+    "operationId": "images_sources_update_images_sources_put",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SourcesUpdate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Images Sources Update Images Sources Put",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Images Sources Update",
+    "tags": [
+     "images"
+    ]
+   }
+  },
   "/jobs": {
    "get": {
     "description": "List persisted jobs, newest first.\n\n`status=active` \u2192 running + pending (what the batch-queue UI wants).\n`status=failed|done|cancelled|pending|running` \u2192 exact match.\n`project_id=...` \u2192 scope to one project.",
@@ -16179,6 +17910,629 @@
      }
     },
     "summary": "List Job Events"
+   }
+  },
+  "/kits": {
+   "get": {
+    "description": "Every Kit on this machine, newest first: ``{kits: [{id, name, description, updated_at, logo_url}]}``.",
+    "operationId": "kits_list_kits_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits List Kits Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Kits List",
+    "tags": [
+     "kits"
+    ]
+   },
+   "post": {
+    "description": "Create a Kit. Asset fields must be empty: upload assets to the new Kit afterwards.",
+    "operationId": "kits_create_kits_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/KitBody"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Create Kits Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Create",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/guideline": {
+   "get": {
+    "description": "Which LLM provider a text guideline would be sent to. Nothing is sent.",
+    "operationId": "kits_guideline_provider_kits_guideline_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Guideline Provider Kits Guideline Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Kits Guideline Provider",
+    "tags": [
+     "kits"
+    ]
+   },
+   "post": {
+    "description": "Draft Kit sections from a guideline (PDF, Markdown, text or image).\n\nText is sent to ``provider_id`` (refused if it is not the active provider);\nan image is measured locally and sent nowhere. Returns ``{draft, sent_to}``;\nnothing is saved.",
+    "operationId": "kits_guideline_kits_guideline_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_kits_guideline_kits_guideline_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Guideline Kits Guideline Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Guideline",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/import": {
+   "post": {
+    "description": "Add the Kit in an ``.evkit`` bundle as a new Kit (new ids).",
+    "operationId": "kits_import_kits_import_post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_kits_import_kits_import_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Import Kits Import Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Import",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/{kit_id}": {
+   "delete": {
+    "operationId": "kits_delete_kits__kit_id__delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Delete Kits  Kit Id  Delete",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Delete",
+    "tags": [
+     "kits"
+    ]
+   },
+   "get": {
+    "description": "The whole Kit, with ``assets[id].url`` to fetch each file.",
+    "operationId": "kits_get_kits__kit_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Get Kits  Kit Id  Get",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Get",
+    "tags": [
+     "kits"
+    ]
+   },
+   "put": {
+    "description": "Replace the Kit's sections. Asset ids must belong to this Kit.",
+    "operationId": "kits_update_kits__kit_id__put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/KitBody"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Update Kits  Kit Id  Put",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Update",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/{kit_id}/assets": {
+   "post": {
+    "description": "Store one logo, font, sound, video, Lottie or Rive file in the Kit.\n\nReturns ``{id, kind, name, ext, size, mime, url}``; put ``id`` into the\nKit's sections with ``PUT /kits/{id}``.",
+    "operationId": "kits_asset_add_kits__kit_id__assets_post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "$ref": "#/components/schemas/Body_kits_asset_add_kits__kit_id__assets_post"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Asset Add Kits  Kit Id  Assets Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Asset Add",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/{kit_id}/assets/{asset_id}": {
+   "delete": {
+    "description": "Remove an asset no section uses any more (409 ``kits:asset_in_use`` otherwise).",
+    "operationId": "kits_asset_delete_kits__kit_id__assets__asset_id__delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "asset_id",
+      "required": true,
+      "schema": {
+       "title": "Asset Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Asset Delete Kits  Kit Id  Assets  Asset Id  Delete",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Asset Delete",
+    "tags": [
+     "kits"
+    ]
+   },
+   "get": {
+    "operationId": "kits_asset_get_kits__kit_id__assets__asset_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "asset_id",
+      "required": true,
+      "schema": {
+       "title": "Asset Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Asset Get",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/{kit_id}/check": {
+   "post": {
+    "description": "Check a project against the Kit, locally (no LLM).\n\nReturns ``{ok, issues: [{clip_id, code, severity, detail}]}``; ``ok`` is\nfalse when any issue is an ``error``.",
+    "operationId": "kits_check_kits__kit_id__check_post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ProjectDescriptor"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Check Kits  Kit Id  Check Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Check",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/{kit_id}/export": {
+   "get": {
+    "description": "The Kit as an ``.evkit`` file (only the assets it uses).",
+    "operationId": "kits_export_kits__kit_id__export_get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {}
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Export",
+    "tags": [
+     "kits"
+    ]
+   }
+  },
+  "/kits/{kit_id}/memory": {
+   "post": {
+    "description": "Add one finished episode to the channel memory (topic, hook, CTA).",
+    "operationId": "kits_memory_kits__kit_id__memory_post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "kit_id",
+      "required": true,
+      "schema": {
+       "title": "Kit Id",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/Episode"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "additionalProperties": true,
+         "title": "Response Kits Memory Kits  Kit Id  Memory Post",
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     }
+    },
+    "summary": "Kits Memory",
+    "tags": [
+     "kits"
+    ]
    }
   },
   "/longform/audiogram": {
