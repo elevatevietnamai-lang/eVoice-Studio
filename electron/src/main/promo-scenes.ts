@@ -24,6 +24,7 @@ import {
   usedLibraries,
   WEBGL_LIBRARIES,
 } from './promo-scene-runtime';
+import { cleanSvgBase64, SvgError } from './promo-svg';
 import { readZip, safeEntryName, writeZip, ZipError } from './promo-zip';
 
 /**
@@ -195,7 +196,14 @@ function parseAssets(raw: unknown): SceneAsset[] {
     if (size > MAX_SCENE_ASSET_BYTES || total > MAX_SCENE_TOTAL_BYTES) {
       throw new SceneInputError('assets');
     }
-    return { name, data: entry.data };
+    if (!/\.svg$/i.test(name)) return { name, data: entry.data };
+    // Every SVG, from any source and from scenes saved before, is cleaned.
+    try {
+      return { name, data: cleanSvgBase64(entry.data) };
+    } catch (error) {
+      if (error instanceof SvgError) throw new SceneInputError(`asset:${name}`);
+      throw error;
+    }
   });
 }
 
