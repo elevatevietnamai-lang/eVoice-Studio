@@ -98,6 +98,29 @@ animate('.ch', { y: [-120, 0], opacity: [0, 1], rotate: [45, 0], duration: 700, 
     `import { DotLottie } from "evoice:lottie";
 new DotLottie({ canvas: document.getElementById('c'), data: ${JSON.stringify(STAR_STICKER)}, loop: true });`,
   ),
+  three: scene(
+    'three',
+    '<canvas id="c"></canvas>',
+    '#c{position:absolute;inset:0;width:100%;height:100%}',
+    `import * as THREE from "evoice:three";
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(scene.width, scene.height, false);
+const world = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, scene.width / scene.height, 0.1, 100);
+camera.position.z = 6;
+const cube = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 1.6), new THREE.MeshStandardMaterial({ color: 0x33ccff }));
+world.add(cube, new THREE.AmbientLight(0xffffff, 0.5));
+const sun = new THREE.DirectionalLight(0xffffff, 2);
+sun.position.set(3, 4, 5);
+world.add(sun);
+scene.onFrame((t) => {
+  cube.rotation.set(t * 0.9, t * 1.3, 0);
+  cube.position.y = Math.sin(t * 2) * 0.8;
+  renderer.render(world, camera);
+});`,
+  ),
 };
 
 let work: string;
