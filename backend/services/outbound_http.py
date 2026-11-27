@@ -74,7 +74,9 @@ def resolve_trusted_endpoint(url: str) -> ResolvedEndpoint:
 # sub-path; requests that do name a sub-path must pick from this allowlist
 # so a misconfigured caller cannot route an arbitrary path at a trusted
 # origin. Add new entries only with a documented, well-known inference route.
-_ALLOWED_SUBPATHS: frozenset[str] = frozenset({"tts"})
+_ALLOWED_SUBPATHS: frozenset[str] = frozenset({"tts", "prompt", "view", "interrupt"})
+# ComfyUI's job status route carries the job id (a UUID the server returned).
+_ALLOWED_SUBPATH_PATTERNS = (re.compile(r"^history/[0-9a-f-]{36}$"),)
 
 
 def _endpoint_path(requested_path: str) -> str:
@@ -85,7 +87,9 @@ def _endpoint_path(requested_path: str) -> str:
     """
     if requested_path in {"", "/"}:
         return "/"
-    if requested_path in _ALLOWED_SUBPATHS:
+    if requested_path in _ALLOWED_SUBPATHS or any(
+        pattern.match(requested_path) for pattern in _ALLOWED_SUBPATH_PATTERNS
+    ):
         return f"/{requested_path}"
     raise UnsafeEndpoint("endpoint path is not on the trusted sub-path allowlist")
 
@@ -127,7 +131,8 @@ def open_trusted_endpoint(
     """Open one request without redirects, pinned to the validated DNS answer.
 
     ``path`` defaults to ``""`` (the origin itself) and is restricted to a
-    small allowlist of known inference routes (``/tts`` today); anything else
+    small allowlist of known inference routes (``/tts``, and ComfyUI's
+    ``/prompt``, ``/history/<id>``, ``/view`` and ``/interrupt``); anything else
     is rejected so a misconfigured caller cannot route an arbitrary path at
     a trusted origin.
 

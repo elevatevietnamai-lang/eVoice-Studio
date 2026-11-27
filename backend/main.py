@@ -769,6 +769,8 @@ def _phase_a_build_inner() -> None:
     from api.routers import telephony_twilio as _telephony_twilio_router  # noqa: E402
     from api.routers import calls as _calls_router  # noqa: E402
     from api.routers import cloud_sync as _cloud_sync_router  # noqa: E402
+    from api.routers import kits as _kits_router  # noqa: E402  Channel Kits
+    from api.routers import images as _images_router  # noqa: E402  Image sources
     _router_modules.extend([
         system, profiles, profile_images, exports, generation, voice_convert, dub_core, dub_generate,
         dub_export, dub_translate, dub_hardsub, dub_bgm, music, projects, glossary, engines, tools,
@@ -778,6 +780,7 @@ def _phase_a_build_inner() -> None:
         audiobook, longform_jobs, promo, pronunciation, settings_router,
         media_tools_router, auth_router, _mcp_bindings_router,
         _telephony_twilio_router, _calls_router, _cloud_sync_router,
+        _kits_router, _images_router,
     ])
     # Download-acceleration state, once, for triage-from-logs (FDL-03).
     try:
