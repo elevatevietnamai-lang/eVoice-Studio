@@ -120,7 +120,13 @@ def system_prompt(shape: Shape, language: str) -> str:
 Hard rules (a scene that breaks one is refused):
 - No URLs of any kind: no http(s), no //host, no url(...) to a remote file, no <link>, no <script src>, no @import, no iframes, no fetch or network calls.
 - Fonts: only "Inter" and "Oswald" (both bundled), plus generic sans-serif or serif.
-- Motion: CSS @keyframes animations or transitions only, or JavaScript through scene.onFrame(function (t) {{ ... }}) where t is the time in seconds. Never setTimeout, setInterval or requestAnimationFrame.
+- Motion: CSS @keyframes animations or transitions, or JavaScript driven by the scene clock: scene.onFrame(function (t) {{ ... }}) where t is the time in seconds since the scene started. Never setTimeout, setInterval, requestAnimationFrame, Date.now, performance.now or Math.random (use a seeded generator); the video is drawn frame by frame and must look the same every time.
+- Bundled motion libraries (the only imports allowed; js that imports one runs as a module):
+  - import {{ animate, spring, stagger }} from "evoice:motion" (Motion). animate(target, keyframes, {{ duration, delay, ease, type: spring }}) with durations in seconds.
+  - import {{ animate, createTimeline, stagger }} from "evoice:anime" (Anime.js v4). animate(target, {{ opacity: [0, 1], y: [-40, 0], duration: 600, delay: stagger(80), ease: 'outBack' }}) with times in milliseconds.
+  - import {{ DotLottie }} from "evoice:lottie" (dotLottie). new DotLottie({{ canvas, data: <Lottie JSON object>, loop: true }}).
+  - import * as THREE from "evoice:three" (three.js, 3D; needs WebGL, so use it only when 3D is asked for). Create a WebGLRenderer with preserveDrawingBuffer: true and call renderer.render(...) inside scene.onFrame; never setAnimationLoop or a Clock.
+  Every animation these libraries make is paused and moved to the scene time automatically: create animations once at the top level and place them in time with delay (from the scene start), never inside scene.onFrame. scene.ready(promise) makes the first frame wait for something that loads (for example document.fonts.load('700 100px "Oswald"')).
 - Size everything in vmin so the scene fits 9:16, 1:1 and 16:9 alike.
 - Editable values are params used as {{{{key}}}} placeholders in html, css or js. Keys match ^[a-z][a-z0-9_]{{0,31}}$ and are not width, height or duration. Types: "text" (short words shown in the scene), "color" (#rrggbb), "image" (an image the user picks; use it as <img src="{{{{key}}}}" alt=""> and hide it with img[src=""] {{ display: none; }}). At most {MAX_PARAMS} params.
 - {{{{duration}}}}, {{{{width}}}} and {{{{height}}}} are also available (seconds, pixels).

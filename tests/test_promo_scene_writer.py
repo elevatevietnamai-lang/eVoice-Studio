@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import os
 import sys
 import types
@@ -269,3 +270,27 @@ def test_loopback_custom_server_counts_as_this_machine(store, monkeypatch):
     assert info["provider_id"] == "custom" and info["local"] is True
     monkeypatch.setenv("TRANSLATE_BASE_URL", "https://llm.example.com/v1")
     assert _writer().describe()["local"] is False
+
+
+# ── The libraries the prompt offers ───────────────────────────────────────────
+
+
+def test_prompt_offers_exactly_the_bundled_libraries():
+    """The prompt and the desktop runtime name the same evoice: modules."""
+    from pathlib import Path
+
+    runtime = (
+        Path(__file__).resolve().parents[1] / "electron" / "src" / "main" / "promo-scene-runtime.ts"
+    ).read_text(encoding="utf-8")
+    listed = re.search(r"SCENE_LIBRARIES = \[([^\]]*)\]", runtime)
+    assert listed, "SCENE_LIBRARIES not found in promo-scene-runtime.ts"
+    bundled = set(re.findall(r"'([a-z]+)'", listed.group(1)))
+    assert bundled == {"motion", "anime", "lottie", "three"}
+    for shape in ("overlay", "shot"):
+        prompt = _writer().system_prompt(shape, "vi")
+        offered = set(re.findall(r'from "evoice:([a-z]+)"', prompt))
+        assert offered == bundled
+        # The frame-seeking rules travel with the libraries.
+        for rule in ("scene.onFrame", "scene.ready", "requestAnimationFrame", "Math.random", "preserveDrawingBuffer"):
+            assert rule in prompt
+        assert "https://" not in prompt and "http://" not in prompt
