@@ -35,6 +35,8 @@ const EXPLANATIONS: Record<string, string[]> = {
     'dub.auto_glossary_title',
     'dub.reflect_title',
     'dub.condense_title',
+    'dub.agent_cli_desc',
+    'dub.agent_quality_desc',
   ],
   'dub/glossary-panel.tsx': ['dub.glossary_title', 'glossary.hint'],
   'dub/hardsub-panel.tsx': [
@@ -51,8 +53,27 @@ const EXPLANATIONS: Record<string, string[]> = {
     'audiobook.trim_edges_help',
     'audiobook.emotion_help',
   ],
-  'longform/story-editor.tsx': ['stories.autocastHint', 'stories.splitModeHint'],
+  'longform/longform-page.tsx': ['audiobook.load_sample_hint'],
+  'longform/story-editor.tsx': [
+    'stories.autocastHint',
+    'stories.splitModeHint',
+    'stories.inlineVoiceHint',
+    'audiobook.load_sample_hint',
+  ],
   'longform/story-speed.tsx': ['stories.global_speed_hint'],
+  'promo/promo-timeline.tsx': ['promo.timeline_hint'],
+  'promo/scene-editor.tsx': ['promo.scene_intro', 'promo.scene_help', 'promo.scene_asset_hint'],
+  'tools/convert-voice.tsx': ['convert.match_duration_hint'],
+  'transcriptions/transcriptions-page.tsx': [
+    'transcriptions.mode_fast_desc',
+    'transcriptions.mode_accurate_desc',
+  ],
+  'workflows/workflow-inputs.tsx': [
+    'workflowRun.normalized',
+    'workflowRun.local_translation',
+    'workflows.condition_hint',
+    'workflowRun.scripts_hint',
+  ],
   'video-editor/media-bin.tsx': ['editor.captions_hint'],
   'video-editor/properties-panel.tsx': [
     'editor.transition_hint',
@@ -117,7 +138,7 @@ describe.each(Object.entries(EXPLANATIONS))('%s', (file, keys) => {
       if (/aria-label=/.test(lines[index])) continue;
       if (/\{confirm && \(/.test(lines.slice(Math.max(0, index - 3), index).join('\n'))) continue;
       // The key's own line or the few above it open the "?" that holds it.
-      const context = lines.slice(Math.max(0, index - 4), index + 1).join('\n');
+      const context = lines.slice(Math.max(0, index - 8), index + 1).join('\n');
       expect(context, `${file}:${index + 1} shows ${key} outside a ?`).toMatch(BEHIND_HELP);
       // Not a visible description or a native title tooltip.
       expect(lines[index]).not.toMatch(

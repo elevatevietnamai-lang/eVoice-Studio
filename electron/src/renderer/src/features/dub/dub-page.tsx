@@ -1510,11 +1510,7 @@ export function DubPage() {
                     (!selectedTranslationAgent && !llmAgentReady)
                   }
                   className="h-auto min-w-0 justify-start px-2.5 py-2"
-                  title={
-                    selectedTranslationAgent
-                      ? t('dub.agent_cli_desc', { agent: selectedTranslationAgent.label })
-                      : t('dub.agent_quality_desc')
-                  }
+                  title={t('dub.translate_with_agent')}
                   onClick={() => setDubQuality('agent')}
                 >
                   <WandSparklesIcon className="shrink-0" />
@@ -3200,9 +3196,6 @@ export function DubPage() {
                         disabled={
                           Boolean(session.recovery) || !session.segments.length || !code || busy
                         }
-                        title={t('dub.agent_cli_desc', {
-                          agent: selectedTranslationAgent.label,
-                        })}
                         onClick={() => void translateTargets(true)}
                       >
                         <WandSparklesIcon />
@@ -3277,7 +3270,6 @@ export function DubPage() {
                       disabled={
                         Boolean(session.recovery) || !session.segments.length || !code || busy
                       }
-                      title={t('dub.agent_quality_desc')}
                       onClick={() => void translateTargets(true)}
                     >
                       <WandSparklesIcon />

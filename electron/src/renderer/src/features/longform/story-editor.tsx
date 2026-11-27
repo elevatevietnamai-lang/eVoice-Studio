@@ -434,14 +434,15 @@ export function StoryEditor({
             {t('stories.emptyText')}
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
-            <Button
-              disabled={disabled}
-              title={t('audiobook.load_sample_hint')}
-              onClick={loadSample}
-            >
-              <SparklesIcon />
-              {t('audiobook.load_sample')}
-            </Button>
+            <span className="flex items-center gap-1">
+              <Button disabled={disabled} onClick={loadSample}>
+                <SparklesIcon />
+                {t('audiobook.load_sample')}
+              </Button>
+              <HelpHint label={t('audiobook.load_sample')} className="size-8">
+                {t('audiobook.load_sample_hint')}
+              </HelpHint>
+            </span>
             <Button variant="outline" disabled={disabled} onClick={() => add()}>
               <PlusIcon />
               {t('stories.addFirst')}
@@ -582,36 +583,37 @@ export function StoryEditor({
               ))}
             </div>
           </details>
-          <details>
-            <summary className="cursor-pointer text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <UsersIcon className="size-3.5" />
-                {t('stories.inlineVoice')}
-              </span>
-            </summary>
-            <p className="mt-2 text-xs text-muted-foreground">{t('stories.inlineVoiceHint')}</p>
-            <div className="mt-2 flex flex-wrap gap-1">
-              {profiles.map((profile) => (
+          <DisclosureHelp label={t('stories.inlineVoice')} help={t('stories.inlineVoiceHint')}>
+            <details>
+              <summary className="cursor-pointer text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <UsersIcon className="size-3.5" />
+                  {t('stories.inlineVoice')}
+                </span>
+              </summary>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {profiles.map((profile) => (
+                  <Button
+                    key={profile.id}
+                    size="xs"
+                    variant="outline"
+                    disabled={disabled}
+                    onClick={() => setInlineVoice(line, profile.id)}
+                  >
+                    {profile.name}
+                  </Button>
+                ))}
                 <Button
-                  key={profile.id}
                   size="xs"
-                  variant="outline"
+                  variant="ghost"
                   disabled={disabled}
-                  onClick={() => setInlineVoice(line, profile.id)}
+                  onClick={() => setInlineVoice(line, 'default')}
                 >
-                  {profile.name}
+                  {t('stories.resetInlineVoice')}
                 </Button>
-              ))}
-              <Button
-                size="xs"
-                variant="ghost"
-                disabled={disabled}
-                onClick={() => setInlineVoice(line, 'default')}
-              >
-                {t('stories.resetInlineVoice')}
-              </Button>
-            </div>
-          </details>
+              </div>
+            </details>
+          </DisclosureHelp>
           <details>
             <summary className="cursor-pointer text-xs text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">

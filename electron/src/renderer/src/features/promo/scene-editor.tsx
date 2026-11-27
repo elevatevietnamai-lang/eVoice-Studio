@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import {
@@ -341,10 +342,13 @@ export function SceneEditor({
 
   const shell = (children: React.ReactNode) => (
     <section className="space-y-3 rounded-(--card-radius) border border-border/60 bg-background/35 p-3">
-      <h2 className="flex items-center gap-1.5 text-sm font-medium">
-        <CodeIcon className="size-4" />
-        {t('promo.scene_title')}
-      </h2>
+      <div className="flex items-center gap-1">
+        <h2 className="flex items-center gap-1.5 text-sm font-medium">
+          <CodeIcon className="size-4" />
+          {t('promo.scene_title')}
+        </h2>
+        <HelpHint label={t('promo.scene_title')}>{t('promo.scene_intro')}</HelpHint>
+      </div>
       {children}
     </section>
   );
@@ -482,7 +486,6 @@ export function SceneEditor({
 
   return shell(
     <>
-      <p className="text-xs text-muted-foreground">{t('promo.scene_intro')}</p>
       {aiSlot?.((next) => load(next, 'draft'))}
       <div className="flex flex-wrap items-end gap-2">
         <div className="w-56">
@@ -631,6 +634,9 @@ export function SceneEditor({
                 {t(`promo.scene_tab_${part}`)}
               </Button>
             ))}
+            <HelpHint label={t('promo.scene_code')} className="size-6">
+              {t('promo.scene_help')}
+            </HelpHint>
           </div>
           <CodeEditor
             key={tab}
@@ -640,7 +646,6 @@ export function SceneEditor({
             disabled={locked}
             onChange={(value) => edit({ [tab]: value } as Partial<PromoScene>)}
           />
-          <p className="text-xs text-muted-foreground">{t('promo.scene_help')}</p>
           {tooLarge && (
             <p className="text-xs text-destructive">
               {t('promo.scene_too_large', { max: SCENE_LIMITS.codeBytes / 1024 })}
@@ -703,8 +708,10 @@ export function SceneEditor({
       </div>
 
       <div className="space-y-1.5">
-        <h3 className="text-xs font-medium">{t('promo.scene_assets')}</h3>
-        <p className="text-xs text-muted-foreground">{t('promo.scene_asset_hint')}</p>
+        <div className="flex items-center gap-1">
+          <h3 className="text-xs font-medium">{t('promo.scene_assets')}</h3>
+          <HelpHint label={t('promo.scene_assets')}>{t('promo.scene_asset_hint')}</HelpHint>
+        </div>
         <Reveal>
           {scene.assets.length > 0 && (
             <ul className="flex flex-wrap gap-1.5 text-xs">

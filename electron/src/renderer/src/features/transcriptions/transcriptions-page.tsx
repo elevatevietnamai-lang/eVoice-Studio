@@ -1,4 +1,5 @@
 import { SecondarySidebar } from '@/components/workspace-sidebar';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import {
   Mic as MicShape,
@@ -367,23 +368,25 @@ export function TranscriptionsPage() {
                 size="sm"
                 aria-label={t('transcriptions.mode_label')}
               >
-                <ToggleGroupItem
-                  value="fast"
-                  title={t('transcriptions.mode_fast_desc')}
-                  className="gap-1.5"
-                >
+                <ToggleGroupItem value="fast" className="gap-1.5">
                   <GaugeIcon />
                   {t('transcriptions.mode_fast')}
                 </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="accurate"
-                  title={t('transcriptions.mode_accurate_desc')}
-                  className="gap-1.5"
-                >
+                <ToggleGroupItem value="accurate" className="gap-1.5">
                   <ScanTextIcon />
                   {t('transcriptions.mode_accurate')}
                 </ToggleGroupItem>
               </ToggleGroup>
+              <HelpHint label={t('transcriptions.mode_label')} className="size-7">
+                <p>
+                  <strong>{t('transcriptions.mode_fast')}</strong>:{' '}
+                  {t('transcriptions.mode_fast_desc')}
+                </p>
+                <p className="mt-1.5">
+                  <strong>{t('transcriptions.mode_accurate')}</strong>:{' '}
+                  {t('transcriptions.mode_accurate_desc')}
+                </p>
+              </HelpHint>
               {selectedModel ? (
                 <span
                   className="inline-flex min-w-0 max-w-72 items-center gap-1.5 px-1 text-xs text-muted-foreground"

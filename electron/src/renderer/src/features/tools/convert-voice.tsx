@@ -1,4 +1,5 @@
 import { useConversion, setConversion } from './conversion-state';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { Mic as MicShape, Square as SquareShape } from 'lucide';
 import { MorphIcon } from '@/components/ui/morph-icon';
@@ -207,18 +208,23 @@ export function ConvertVoice() {
           )}
         </div>
       </section>
-      <div className="space-y-1">
-        <label className="flex items-center gap-3 text-sm">
-          <Switch
-            checked={match}
-            onCheckedChange={(value) => {
-              invalidate();
-              setMatch(value);
-            }}
-          />
-          {t('convert.match_duration')}
-        </label>
-        <p className="text-xs text-muted-foreground">{t('convert.match_duration_hint')}</p>
+      <div className="flex items-center gap-3 text-sm">
+        <Switch
+          id="convert-match-duration"
+          checked={match}
+          onCheckedChange={(value) => {
+            invalidate();
+            setMatch(value);
+          }}
+        />
+        <span className="flex min-w-0 items-center gap-1">
+          <label htmlFor="convert-match-duration" className="block">
+            {t('convert.match_duration')}
+          </label>
+          <HelpHint label={t('convert.match_duration')}>
+            {t('convert.match_duration_hint')}
+          </HelpHint>
+        </span>
       </div>
       <Reveal>
         {engines.isError && !engines.data && !busy && (

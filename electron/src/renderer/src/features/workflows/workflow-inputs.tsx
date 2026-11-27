@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { useTranslation } from 'react-i18next';
 import { UploadIcon, XIcon } from 'lucide-react';
@@ -16,6 +17,24 @@ import SearchableSelect from '@shared/components/SearchableSelect';
 import { deleteWorkflowArtifacts, saveWorkflowMedia } from './workflow-run-store';
 import { CONDITION_MATCHES } from './workflow-model';
 import type { ConditionMatch, WorkflowStep } from './workflow-model';
+
+/** An inspector label with its explanation behind a "?" (DESIGN.md). */
+function LabelWithHelp({
+  htmlFor,
+  label,
+  help,
+}: {
+  htmlFor?: string;
+  label: string;
+  help: string;
+}) {
+  return (
+    <span className="mt-2.5 flex items-center gap-1 [&>*]:mt-0!">
+      <label htmlFor={htmlFor}>{label}</label>
+      <HelpHint label={label}>{help}</HelpHint>
+    </span>
+  );
+}
 
 export function WorkflowInputs({
   step,
@@ -67,7 +86,11 @@ export function WorkflowInputs({
               menuClassName="workflow-shared-select"
               buttonClassName="workflow-select-trigger"
             />
-            <label htmlFor="workflow-speed">{t('clone.speed')}</label>
+            <LabelWithHelp
+              htmlFor="workflow-speed"
+              label={t('clone.speed')}
+              help={t('workflowRun.normalized')}
+            />
             <Input
               id="workflow-speed"
               type="number"
@@ -80,7 +103,6 @@ export function WorkflowInputs({
                 if (Number.isFinite(speed)) onChange({ speed: Math.max(0.5, Math.min(2, speed)) });
               }}
             />
-            <p className="text-xs text-muted-foreground">{t('workflowRun.normalized')}</p>
           </>
         )}
       </>
@@ -107,7 +129,10 @@ export function WorkflowInputs({
               menuClassName="workflow-shared-select"
               buttonClassName="workflow-select-trigger"
             />
-            <label>{t('twilioIntegration.engine')}</label>
+            <LabelWithHelp
+              label={t('twilioIntegration.engine')}
+              help={t('workflowRun.local_translation')}
+            />
             <SearchableSelect
               value={step.provider || 'argos'}
               onChange={(provider: 'argos' | 'nllb') => onChange({ provider })}
@@ -120,7 +145,6 @@ export function WorkflowInputs({
               menuClassName="workflow-shared-select"
               buttonClassName="workflow-select-trigger"
             />
-            <p className="text-xs text-muted-foreground">{t('workflowRun.local_translation')}</p>
           </>
         )}
         <label>{t('clone.language')}</label>
@@ -236,7 +260,10 @@ export function WorkflowInputs({
           maxLength={200}
           onChange={(event) => onChange({ text: event.target.value })}
         />
-        <label>{t('workflows.condition_match')}</label>
+        <LabelWithHelp
+          label={t('workflows.condition_match')}
+          help={t('workflows.condition_hint')}
+        />
         <SearchableSelect
           value={step.match || 'contains'}
           onChange={(match: ConditionMatch) => onChange({ match })}
@@ -249,14 +276,16 @@ export function WorkflowInputs({
           menuClassName="workflow-shared-select"
           buttonClassName="workflow-select-trigger"
         />
-        <p className="text-xs text-muted-foreground">{t('workflows.condition_hint')}</p>
       </>
     );
   if (step.kind !== 'start') return null;
   return (
     <>
-      <label htmlFor="workflow-scripts">{t('workflowRun.scripts')}</label>
-      <p className="text-xs text-muted-foreground">{t('workflowRun.scripts_hint')}</p>
+      <LabelWithHelp
+        htmlFor="workflow-scripts"
+        label={t('workflowRun.scripts')}
+        help={t('workflowRun.scripts_hint')}
+      />
       {!step.scripts?.length && (
         <Textarea
           id="workflow-scripts"

@@ -1,5 +1,5 @@
 import { PipelineFailure } from '@/components/pipeline-failure';
-import { HelpHint } from '@/components/help-hint';
+import { DisclosureHelp, HelpHint } from '@/components/help-hint';
 import { Reveal } from '@/components/motion';
 import { InstallSttButton } from './install-stt-button';
 import { openTake } from '@/lib/store/takes';
@@ -237,23 +237,22 @@ function Overrides({ settings }: OverridesProps) {
           checked={settings.postprocess}
         />
       </div>
-      <details className="group border-t border-border/50 pt-2.5">
-        <summary className="flex cursor-pointer list-none items-center justify-between rounded px-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
-          {t('voiceControls.advanced')}
-          <ChevronDownIcon
-            className="size-3.5 transition-transform group-open:rotate-180"
-            aria-hidden="true"
-          />
-        </summary>
-        <div className="mt-2 flex justify-end px-1">
-          <HelpHint label={t('voiceControls.advanced')}>{t('voiceControls.hint')}</HelpHint>
-        </div>
-        <div className="mt-1 grid gap-x-4 sm:grid-cols-2">
-          {SLIDERS.filter((spec) => spec.key !== 'speed' && spec.key !== 'steps').map((spec) => (
-            <SliderRow key={spec.key} spec={spec} value={settings[spec.key]} />
-          ))}
-        </div>
-      </details>
+      <DisclosureHelp label={t('voiceControls.advanced')} help={t('voiceControls.hint')}>
+        <details className="group border-t border-border/50 pt-2.5">
+          <summary className="flex cursor-pointer list-none items-center justify-between rounded px-1 text-xs text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
+            {t('voiceControls.advanced')}
+            <ChevronDownIcon
+              className="size-3.5 transition-transform group-open:rotate-180"
+              aria-hidden="true"
+            />
+          </summary>
+          <div className="mt-1 grid gap-x-4 sm:grid-cols-2">
+            {SLIDERS.filter((spec) => spec.key !== 'speed' && spec.key !== 'steps').map((spec) => (
+              <SliderRow key={spec.key} spec={spec} value={settings[spec.key]} />
+            ))}
+          </div>
+        </details>
+      </DisclosureHelp>
     </div>
   );
 }

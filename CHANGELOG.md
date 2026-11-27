@@ -12,7 +12,7 @@ metadata and the backend fallback mirror it.
 - Explanations across the app open from a "?" beside each title
 
 ### Changed
-- Clone, Dub, Longform, the Video editor and Settings now keep their explanations behind a "?" beside each title, the way Music Studio does; status lines, warnings and download sizes stay in view
+- Clone, Dub, Longform, the Video editor, Promo video, Transcriptions, Workflows, Tools and Settings keep their explanations behind a "?" beside each title, the way Music Studio does; status lines, warnings and download sizes stay in view
 
 ## [0.5.7-beta.12] — 2026-11-22
 
