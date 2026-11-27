@@ -36,7 +36,7 @@ describe('still images', () => {
     '%s draws a PNG at its size with the bundled fonts',
     async (template) => {
       const png = await stillPng(input(template), assetsDir);
-      expect([...png.slice(0, 4)]).toEqual([0x89, 0x50, 0x4e, 0x47]);
+      expect(Array.from(png.subarray(0, 4))).toEqual([0x89, 0x50, 0x4e, 0x47]);
       expect(pngSize(png)).toEqual(STILL_TEMPLATES[template]);
     },
     30_000,

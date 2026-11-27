@@ -70,7 +70,9 @@ describe('built-in scenes', () => {
     expect(new Set(keys).size).toBe(keys.length);
     // CSS animations, the bundled libraries' adapters and scene.onFrame are
     // all sought frame by frame; nothing runs on its own timer or randomness.
-    expect(scene.js).not.toMatch(/requestAnimationFrame|setTimeout|setInterval|Math\.random|Date\.now|performance\.now/);
+    expect(scene.js).not.toMatch(
+      /requestAnimationFrame|setTimeout|setInterval|Math\.random|Date\.now|performance\.now/,
+    );
     const library = /from "evoice:(\w+)"/.exec(scene.js)?.[1] ?? null;
     expect(library).toBe(LIBRARY[id] ?? null);
   });

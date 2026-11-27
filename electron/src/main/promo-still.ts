@@ -2,7 +2,12 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import satori from 'satori';
-import { fetchLogo, PromoRenderError, type PromoMediaResult, type PromoRenderDeps } from './promo-render';
+import {
+  fetchLogo,
+  PromoRenderError,
+  type PromoMediaResult,
+  type PromoRenderDeps,
+} from './promo-render';
 import { packageDir } from './promo-scene-runtime';
 import { logoDataUri } from './promo-scenes';
 import { LOGO_ID, TEMPLATE_FONTS, type FontId, type TemplateLogo } from './promo-templates';
@@ -49,7 +54,10 @@ const LIMITS = { title: 80, subtitle: 140, badge: 24 } as const;
 function text(value: unknown, field: keyof typeof LIMITS): string {
   if (value === undefined) return '';
   if (typeof value !== 'string') throw new StillInputError(field);
-  const clean = value.replace(/\p{Cc}/gu, ' ').trim().normalize('NFC');
+  const clean = value
+    .replace(/\p{Cc}/gu, ' ')
+    .trim()
+    .normalize('NFC');
   if ([...clean].length > LIMITS[field]) throw new StillInputError(field);
   return clean;
 }
@@ -248,7 +256,11 @@ const STILL_FONTS: { id: FontId; name: string; weight: 400 | 700 }[] = [
 ];
 
 /** The SVG Satori draws for the template, with the bundled fonts. */
-export async function stillSvg(input: StillInput, assetsDir: string, logo?: string): Promise<string> {
+export async function stillSvg(
+  input: StillInput,
+  assetsDir: string,
+  logo?: string,
+): Promise<string> {
   const { width, height } = STILL_TEMPLATES[input.template];
   const fonts = STILL_FONTS.map((font) => ({
     name: font.name,

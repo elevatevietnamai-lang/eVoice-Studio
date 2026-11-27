@@ -105,6 +105,25 @@ from Google's Chrome for Testing storage only when the user turns animated
 titles on, under Google's own terms. Templates use CSS and Web Animations only,
 never GSAP.
 
+Custom promo scenes can import motion libraries that ship inside the app and
+are embedded into the scene page itself, never fetched: Motion (`motion`
+14.6.0, Copyright (c) 2024 Motion B.V., MIT License), Anime.js (`animejs` 4.5.0,
+Copyright (c) 2025 Julian Garnier, MIT License), dotLottie web
+(`@lottiefiles/dotlottie-web` 0.82.1 with its bundled `dotlottie-player.wasm`
+renderer built on ThorVG, Copyright (c) 2023 LottieFiles.com, MIT License) and three.js
+(`three` 0.187.0, Copyright (c) 2010-2026 three.js authors, MIT License). Motion
+also animates the app's own interface. Each is used unmodified, except that
+dotLottie's default CDN addresses for its renderer are replaced with
+`about:blank` when the page is built. SVG files in scenes are cleaned with SVGO
+(`svgo` 4.1.0, MIT License). Still images (thumbnails and posters) are laid out
+with Satori (`satori` 0.63.2, by Vercel, Mozilla Public License 2.0, used
+unmodified as a library; its source is at github.com/vercel/satori) and drawn
+to PNG with resvg (`@resvg/resvg-wasm` 2.6.2, Mozilla Public License 2.0, used
+unmodified; its source is at github.com/thx/resvg-js). Satori in turn uses
+`@shuding/opentype.js`, `harfbuzzjs`, `linebreak`, `fflate`,
+`css-to-react-native` and `yoga-layout`, all MIT License. The Lottie sticker in
+the built-in scenes is drawn for eVoice Studio.
+
 The Video editor's renderer is adapted from OpenCut classic
 (`opencut-app/opencut-classic` at commit `cf5e79e`, Copyright 2025-2026 OpenCut,
 MIT License). The vendored sources live in

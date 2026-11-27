@@ -8,6 +8,27 @@ metadata and the backend fallback mirror it.
 
 ## [Unreleased]
 
+**Highlights**
+
+- Promo scenes can animate with Motion, Anime.js, dotLottie and three.js, frame-exact in the video
+- Four new built-in scenes, including a 3D card
+- Custom scene renders start 45 seconds sooner
+
+### Added
+
+- Promo scenes can use Motion, Anime.js, dotLottie and three.js, bundled with the app and seeked frame by frame so the video matches the preview
+- Four built-in scenes show them off: Letter drop, Lottie sticker, Logo spring and 3D card
+- Write with AI knows the bundled motion libraries and the rules that keep a scene frame-exact
+- 3D scenes check that this computer can draw WebGL before rendering, and say so when it cannot
+
+### Changed
+
+- SVG files in scenes are cleaned with SVGO: scripts, event handlers and outside links are removed
+
+### Fixed
+
+- Rendering a custom scene no longer waits 45 seconds before the first frame
+
 ## [0.5.7-beta.12] — 2026-11-22
 
 The app looks calmer: hover labels on the menu, title bar and buttons are frosted glass in every

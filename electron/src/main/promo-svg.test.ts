@@ -22,7 +22,9 @@ describe('cleanSvg', () => {
   const out = cleanSvg(HOSTILE);
 
   it('drops scripts, handlers, foreign content and every outside link', () => {
-    expect(out).not.toMatch(/<script|onload|onclick|foreignObject|javascript:|evil\.example|https?:\/\/(?!www\.w3\.org)/i);
+    expect(out).not.toMatch(
+      /<script|onload|onclick|foreignObject|javascript:|evil\.example|https?:\/\/(?!www\.w3\.org)/i,
+    );
   });
 
   it('keeps in-file references, data URIs, ids and the viewBox', () => {

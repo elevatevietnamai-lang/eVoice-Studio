@@ -53,7 +53,7 @@ export const SCENE_CSP = [
   'media-src data: blob:',
   // data: only: dotLottie reads its renderer and a scene's Lottie files
   // from data URIs in the page. No URL with a host is ever allowed.
-  "connect-src data:",
+  'connect-src data:',
   "frame-src 'none'",
   "child-src 'none'",
   "worker-src 'none'",

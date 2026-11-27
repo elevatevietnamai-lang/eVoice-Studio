@@ -160,6 +160,10 @@ Built-in scenes open in your language and are edited as a copy:
 | Intro | The logo, a brand name, an accent bar and a tagline on a painted background, fading out at the end | Shot |
 | Outro | The logo, a call to action and a contact pill, with a bar that fills over the scene | Shot |
 | Text slide | A heading and up to three points appearing one by one (empty points are hidden) | Shot |
+| Letter drop | The title's letters drop and turn into place one after another (Anime.js) | Overlay |
+| Lottie sticker | A looping star sticker with a tag on it, in a corner (dotLottie) | Overlay |
+| Logo spring | The logo springs in with a ring, then the brand name and tagline rise (Motion) | Shot |
+| 3D card | A card with the title turns in 3D over a field of dots (three.js; needs WebGL, see below) | Shot |
 
 Overlays fade out over their last 0.4 s; empty text fields are hidden. The
 full-frame scenes take the brand logo from the **Logo** section when it is
@@ -170,12 +174,17 @@ a PNG, JPEG or WebP image.
   in the HTML or CSS to insert its value; text is HTML-escaped, and in CSS only
   colours and images are inserted. JavaScript reads `scene.params`,
   `scene.width`, `scene.height` and `scene.duration`.
-- **Motion.** CSS animations, the Web Animations API and
-  `scene.onFrame(time => …)` are frame-exact in the video (HyperFrames seeks
-  them on every frame). Animation driven by `setTimeout`, `setInterval` or
-  `requestAnimationFrame` may stutter, and the editor says so.
-- **Files** are images and fonts the scene carries (16 at most, 4 MB each,
-  8 MB per scene), referenced as `assets/` plus the file name. Fonts: Inter,
+- **Motion.** CSS animations, the Web Animations API,
+  `scene.onFrame(time => …)` and the bundled motion libraries below are
+  frame-exact in the video (HyperFrames seeks them on every frame). Animation
+  driven by `setTimeout`, `setInterval` or `requestAnimationFrame` may
+  stutter, and the editor says so. `scene.ready(promise)` makes the first frame
+  wait for something that loads, such as a font or a Lottie file.
+- **Files** are images, fonts and Lottie animations (`.json`, `.lottie`) the
+  scene carries (16 at most, 4 MB each, 8 MB per scene), referenced as
+  `assets/` plus the file name. SVG files are cleaned with SVGO whenever a
+  scene is opened, imported or saved: scripts, event handlers,
+  `<foreignObject>` and links that leave the file are removed. Fonts: Inter,
   Oswald and Dancing Script are bundled; any other family needs its file and an
   `@font-face` rule, or the editor flags it.
 - **Save** keeps the scene on this computer (in the app's data folder,
@@ -186,6 +195,31 @@ a PNG, JPEG or WebP image.
 - The live preview needs no download. Rendering needs Chrome Headless Shell,
   which you turn on in the **Animated titles** section; this section never
   downloads it.
+
+### Motion libraries in scenes
+
+A scene's JavaScript can import four libraries that ship with the app. They are
+embedded in the scene page itself (as `data:` modules in an import map), so the
+preview and the render load the same code and nothing is fetched:
+
+| Import | Library | Tips |
+|---|---|---|
+| `import { animate, spring, stagger } from "evoice:motion"` | Motion 14 | Times in seconds; springs work too |
+| `import { animate, createTimeline, stagger } from "evoice:anime"` | Anime.js 4 | Times in milliseconds |
+| `import { DotLottie } from "evoice:lottie"` | dotLottie web | `new DotLottie({ canvas, data, loop })`, or `src: "assets/name.lottie"` |
+| `import * as THREE from "evoice:three"` | three.js | 3D; render inside `scene.onFrame` |
+
+Every animation these libraries create is made paused and moved to the scene
+time on each frame (Motion through its `time`, Anime.js through `seek`, a Lottie
+through `setFrame`), so it matches the preview frame for frame. Create
+animations once when the scene starts and place them in time with `delay`,
+counted from the start of the scene. Other `evoice:` names are refused.
+
+3D scenes need WebGL. The render draws on SwiftShader, Chrome's software
+renderer, the same way on Windows, macOS and Linux; before a 3D scene renders,
+the app checks that Chrome Headless Shell can draw with it on this computer. If
+it cannot, that render stops with a message saying 3D is off on this computer,
+and every other scene keeps working. 3D renders are slower than 2D ones.
 
 ### Writing a scene with AI
 

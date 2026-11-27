@@ -34,9 +34,13 @@ describe('WebGL probe', () => {
     expect(verdict.detail).toBeTruthy();
   }, 30_000);
 
-  it.skipIf(!chrome)('draws with SwiftShader in Chrome Headless Shell under the render flags', async () => {
-    const verdict = await probeWebgl(chrome!);
-    expect(verdict).toMatchObject({ ok: true });
-    expect(verdict.detail.toLowerCase()).toContain('swiftshader');
-  }, 60_000);
+  it.skipIf(!chrome)(
+    'draws with SwiftShader in Chrome Headless Shell under the render flags',
+    async () => {
+      const verdict = await probeWebgl(chrome!);
+      expect(verdict).toMatchObject({ ok: true });
+      expect(verdict.detail.toLowerCase()).toContain('swiftshader');
+    },
+    60_000,
+  );
 });

@@ -13,12 +13,25 @@
  * ffmpeg on PATH). Without them it is skipped, never faked.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, realpathSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  realpathSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { createRequire } from 'node:module';
 import { homedir, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { CHROME_OFFLINE_FLAGS, installChromeOfflineFlags, installNetworkGuard } from './promo-network-guard';
+import {
+  CHROME_OFFLINE_FLAGS,
+  installChromeOfflineFlags,
+  installNetworkGuard,
+} from './promo-network-guard';
 import { assetsFontUri, parseScene, sceneDocument, type PromoScene } from './promo-scenes';
 import { packageDir } from './promo-scene-runtime';
 
@@ -86,7 +99,12 @@ animate('#b', { x: [0, 200], scale: [0.4, 1] }, { type: spring, stiffness: 120, 
   ),
   anime: scene(
     'anime',
-    '<div class="row">' + 'ABCDE'.split('').map((c) => `<span class="ch">${c}</span>`).join('') + '</div>',
+    '<div class="row">' +
+      'ABCDE'
+        .split('')
+        .map((c) => `<span class="ch">${c}</span>`)
+        .join('') +
+      '</div>',
     `.row{position:absolute;left:30px;top:250px;display:flex;gap:12px}.ch{display:inline-block;width:48px;height:80px;background:#ffcc00;color:#000;font:700 48px sans-serif;text-align:center}`,
     `import { animate, stagger } from "evoice:anime";
 animate('.ch', { y: [-120, 0], opacity: [0, 1], rotate: [45, 0], duration: 700, delay: stagger(150), ease: 'outBack' });
@@ -255,7 +273,9 @@ async function seekFrames(name: string, html: string): Promise<string[]> {
         }
         const pending: Promise<unknown>[] = [];
         page.dispatchEvent(
-          new page.CustomEvent('hf-seek', { detail: { time, waitUntil: (p: Promise<unknown>) => pending.push(p) } }),
+          new page.CustomEvent('hf-seek', {
+            detail: { time, waitUntil: (p: Promise<unknown>) => pending.push(p) },
+          }),
         );
         await Promise.all(pending);
         await new Promise<void>((resolve) =>
@@ -297,7 +317,10 @@ describe.skipIf(!ready)('preview and render match frame for frame', () => {
           images: new Map(),
           backdrop: '#000000',
         });
-      const video = process.env.PROMO_PARITY_REUSE && existsSync(join(work, name, 'out.mp4')) ? join(work, name, 'out.mp4') : await renderMp4(name, doc('render'));
+      const video =
+        process.env.PROMO_PARITY_REUSE && existsSync(join(work, name, 'out.mp4'))
+          ? join(work, name, 'out.mp4')
+          : await renderMp4(name, doc('render'));
       const seeks = await seekFrames(name, doc('render'));
       const scores: number[] = [];
       FRAMES.forEach((index, i) => {

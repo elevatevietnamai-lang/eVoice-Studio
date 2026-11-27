@@ -30,7 +30,10 @@ function producerDependency(name: string): string {
 }
 
 interface Engine {
-  buildChromeArgs(options: { width: number; height: number; captureMode?: string }, config?: unknown): string[];
+  buildChromeArgs(
+    options: { width: number; height: number; captureMode?: string },
+    config?: unknown,
+  ): string[];
 }
 interface Puppeteer {
   launch(options: unknown): Promise<{
@@ -53,7 +56,15 @@ function drawOnePixel(): { ok: boolean; detail: string } {
   type GL = {
     clearColor(r: number, g: number, b: number, a: number): void;
     clear(mask: number): void;
-    readPixels(x: number, y: number, w: number, h: number, f: number, t: number, out: Uint8Array): void;
+    readPixels(
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      f: number,
+      t: number,
+      out: Uint8Array,
+    ): void;
     getExtension(name: string): { UNMASKED_RENDERER_WEBGL: number } | null;
     getParameter(id: number): unknown;
     COLOR_BUFFER_BIT: number;

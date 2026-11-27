@@ -42,12 +42,14 @@ const inert: CustomPlugin = {
     },
     text: {
       enter: (node, parent) => {
-        if (parent.type === 'element' && parent.name === 'style') node.value = cleanUrls(node.value);
+        if (parent.type === 'element' && parent.name === 'style')
+          node.value = cleanUrls(node.value);
       },
     },
     cdata: {
       enter: (node, parent) => {
-        if (parent.type === 'element' && parent.name === 'style') node.value = cleanUrls(node.value);
+        if (parent.type === 'element' && parent.name === 'style')
+          node.value = cleanUrls(node.value);
       },
     },
   }),
